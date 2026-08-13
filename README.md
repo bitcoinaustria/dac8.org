@@ -10,7 +10,7 @@ started the European resistance with DAC8.com and its case in France.
 
 ## Development
 
-Astro 7 requires Node.js 22.12+ and pnpm 11.20:
+Astro 7 requires Node.js 22.13+ and pnpm 11.20:
 
 ```sh
 pnpm install
