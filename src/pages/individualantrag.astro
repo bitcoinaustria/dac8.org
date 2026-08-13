@@ -2,22 +2,21 @@
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
 
-const steps = [
+const requirements = [
   {
-    title: "Betroffenheit prüfen",
-    text: "Die angefochtenen Bestimmungen müssen aktuell und unmittelbar in die eigene Rechtssphäre eingreifen. Allgemeine Ablehnung oder bloß wirtschaftliche Reflexwirkungen reichen nicht.",
+    number: "01",
+    title: "Unmittelbar und aktuell betroffen",
+    text: "Die angefochtenen Bestimmungen müssen ohne weiteren Zwischenschritt in deine Rechtssphäre eingreifen. Allgemeine Ablehnung oder bloß wirtschaftliche Reflexwirkungen reichen nicht.",
   },
   {
-    title: "Zumutbaren Rechtsweg ausschließen",
-    text: "Der Individualantrag ist subsidiär. Wer die Frage in einem anderen zumutbaren Gerichts- oder Behördenverfahren klären kann, erfüllt die Voraussetzung regelmäßig nicht.",
+    number: "02",
+    title: "Kein anderer zumutbarer Rechtsweg",
+    text: "Der Individualantrag ist subsidiär. Wer dieselbe Frage in einem anderen zumutbaren Gerichts- oder Behördenverfahren klären kann, erfüllt die Voraussetzung regelmäßig nicht.",
   },
   {
-    title: "Antrag präzise begründen",
+    number: "03",
+    title: "Präzise begründet, anwaltlich vertreten",
     text: "Norm, Fassung, Aufhebungsumfang, individueller Sachverhalt und jedes verfassungsrechtliche Bedenken müssen exakt dargelegt werden. Dafür besteht Anwaltspflicht.",
-  },
-  {
-    title: "VfGH-Verfahren führen",
-    text: "Nach Einbringung prüft der VfGH zuerst die Zulässigkeit. Erst danach kommt es zur inhaltlichen Prüfung. Ein bestimmter Ausgang kann nicht versprochen werden.",
   },
 ]
 ---
@@ -26,24 +25,24 @@ const steps = [
   <MetaPage
     slot="head"
     title="Individualantrag gegen das Krypto-Meldepflichtgesetz"
-    description="Bitcoin Austria bereitet einen Individualantrag beim österreichischen Verfassungsgerichtshof vor. Status, Voraussetzungen und Beteiligungsmöglichkeiten."
+    description="Bitcoin Austria bereitet einen Individualantrag beim österreichischen Verfassungsgerichtshof vor. Status, Voraussetzungen und warum wir dafür keine Daten von Unterstützer:innen sammeln."
   />
 
   <article class="campaign">
     <header class="page-hero">
       <p class="eyebrow">Individualantrag · VfGH</p>
       <h1>
-        Wir wollen Bestimmungen des Krypto-Meldepflichtgesetzes prüfen lassen.
+        Wir wollen Bestimmungen des Krypto-Meldepflichtgesetzes
+        <span>prüfen lassen</span>.
       </h1>
       <p class="intro">
-        Unser Ziel ist, Bestimmungen des österreichischen
-        Krypto-Meldepflichtgesetzes vor den Verfassungsgerichtshof zu bringen.
-        Der Antrag ist in Vorbereitung. Geeignete Betroffene, Expertise und
-        Finanzierung sind jetzt entscheidend.
+        Den Antrag bringen wir ein, anwaltlich vertreten. Du musst dich dafür
+        nirgends registrieren und uns keine Daten schicken. Der Antrag ist in
+        Vorbereitung.
       </p>
       <div class="button-row">
-        <a class="button primary" href="/mitmachen/#betroffene"
-          >Eignung prüfen lassen</a
+        <a class="button primary" href="/mitmachen/#werkzeuge"
+          >Was du selbst tun kannst</a
         >
         <a
           class="button"
@@ -55,53 +54,182 @@ const steps = [
 
     <section class="notice">
       <strong>Status: in Vorbereitung.</strong>
-      Wir veröffentlichen erst nach tatsächlicher Einbringung ein
-      Einreichungsdatum oder eine Geschäftszahl. Unterstützung der Initiative
-      begründet keinen Anspruch auf formelle Beteiligung und garantiert keinen
-      Verfahrensausgang.
+      Ein Einreichungsdatum oder eine Geschäftszahl veröffentlichen wir erst
+      nach tatsächlicher Einbringung. Einen Verfahrensausgang kann niemand
+      garantieren.
+    </section>
+
+    <section class="split-section" aria-labelledby="betroffen-heading">
+      <div>
+        <p class="eyebrow">Wer erfasst wird</p>
+        <h2 id="betroffen-heading">Kunde sein genügt.</h2>
+      </div>
+      <div class="stack">
+        <p>
+          Erfasst wird, wer Kunde eines Anbieters mit Österreich-Bezug ist.
+          <a
+            href="https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=20"
+            >§ 20 Abs. 1</a
+          >
+          verpflichtet meldende Anbieter, die meldepflichtigen Informationen für
+          alle Kunden hinsichtlich aller Transaktionen und Kryptowerte zu
+          ermitteln, zu erfassen, zu speichern und zu verarbeiten, ausdrücklich
+          unabhängig davon, ob der Kunde ein meldepflichtiger Nutzer ist. Auf
+          die Staatsbürgerschaft kommt es dabei nicht an.
+        </p>
+        <p>
+          Welche Anbieter das sind, hängt nach
+          <a
+            href="https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=15"
+            >§ 15 Abs. 1</a
+          >
+          nicht am Firmensitz allein. Es genügt eine Zulassung nach
+          <a
+            href="https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32023R1114"
+            >Art. 63 MiCA</a
+          >
+          im Inland oder die Berechtigung, hier nach einer Mitteilung gemäß Art.
+          60 MiCA tätig zu werden. Erst nachrangig zählen steuerliche
+          Ansässigkeit, Gründung nach österreichischem Recht, Verwaltung im
+          Inland oder eine Niederlassung.
+        </p>
+        <p>
+          Gemeldet wird enger als erfasst: Meldepflichtiger Nutzer ist nach
+          <a
+            href="https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=7"
+            >§ 7 Abs. 4</a
+          >, wer in einem teilnehmenden Staat steuerlich ansässig ist. Der
+          Datenbestand entsteht also vor der Frage, wen der Staat überhaupt
+          melden darf. Genau dort setzen wir an.
+        </p>
+      </div>
     </section>
 
     <section class="split-section" aria-labelledby="ziel-heading">
       <div>
-        <p class="eyebrow">Ziel und Grenze</p>
-        <h2 id="ziel-heading">
-          Österreichisches Gesetz. Europäischer Kontext.
-        </h2>
+        <p class="eyebrow">Wie weit wir gehen</p>
+        <h2 id="ziel-heading">Bis zum EuGH, wenn es sein muss.</h2>
       </div>
       <div class="stack">
         <p>
-          Der VfGH prüft österreichische Rechtsvorschriften. Unser Antrag kann
-          daher nicht allein die EU-Richtlinie DAC8 oder das globale CARF-System
-          aufheben.
+          Der VfGH prüft österreichische Rechtsvorschriften. Ein Erfolg in Wien
+          hebt für sich genommen weder die Richtlinie DAC8 noch das globale
+          CARF-System auf. Der Kern des Problems liegt aber genau dort.
         </p>
         <p>
-          Wenn unionsrechtliche Fragen entscheidend sind, kann eine Vorlage an
-          den Europäischen Gerichtshof relevant werden. Welche Normen in welchem
-          Umfang angefochten werden, wird mit der anwaltlichen Vertretung
-          festgelegt.
+          Deshalb zielen wir auf die unionsrechtliche Ebene. Der VfGH
+          entscheidet letztinstanzlich, und nach
+          <a
+            href="https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:12016E267"
+            >Art. 267 Abs. 3 AEUV</a
+          >
+          muss ein letztinstanzliches Gericht eine unionsrechtliche Frage dem
+          Europäischen Gerichtshof vorlegen, wenn sie entscheidungserheblich und
+          noch nicht geklärt ist. Ob beides zutrifft, beurteilt das Gericht
+          selbst.
+        </p>
+        <p>
+          Vorlegen kann also nur der VfGH, nicht wir. 2012 ist genau das
+          passiert: Der VfGH legte die Vorratsdatenspeicherung dem EuGH vor, der
+          die zugrunde liegende Richtlinie 2014
+          <a
+            href="https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:62012CJ0293"
+            >für ungültig erklärte</a
+          >. Unsere Aufgabe ist, den Antrag so zu bauen, dass sich die
+          unionsrechtliche Frage nicht umgehen lässt.
+        </p>
+        <p>
+          Wir nutzen dafür jeden Weg, der offensteht: den Individualantrag, den
+          Weg über die Datenschutzbehörde und das Bundesverwaltungsgericht, das
+          ebenfalls vorlegen kann, und die Zusammenarbeit mit Verfahren in
+          anderen Mitgliedstaaten.
         </p>
       </div>
     </section>
 
-    <section aria-labelledby="ablauf-heading">
+    <section id="daten" class="split-section" aria-labelledby="daten-heading">
+      <div>
+        <p class="eyebrow">Keine Liste</p>
+        <h2 id="daten-heading">Wir wollen deine Daten nicht.</h2>
+      </div>
+      <div class="stack">
+        <p>
+          Es gibt keine Anmeldung, keine Unterschriftenliste und keine
+          Vollmacht, die du uns schickst. Wer gegen anlasslose Datensammlung
+          vorgeht, sollte nicht selbst tausende Namen, Geburtsdaten und Adressen
+          in einem Vereinsordner liegen haben.
+        </p>
+        <p>
+          Deshalb liegt der Teil, der dich betrifft, bei dir: Du erzeugst deine
+          Beschwerde und deine Briefe selbst und schickst sie selbst ab. Wir
+          erfahren weder, dass du es getan hast, noch was drinsteht.
+        </p>
+        <a class="button primary" href="/mitmachen/#werkzeuge"
+          >Zu den Werkzeugen</a
+        >
+      </div>
+    </section>
+
+    <section aria-labelledby="voraussetzungen-heading">
       <p class="eyebrow">Der Rechtsweg</p>
-      <h2 id="ablauf-heading">Warum nicht einfach „beitreten“?</h2>
+      <h2 id="voraussetzungen-heading">Warum nicht einfach „beitreten“?</h2>
       <p class="section-intro">
         Ein Individualantrag ist keine Sammelklage. Natürliche und juristische
         Personen können Antragsteller sein, müssen ihre Legitimation aber je für
-        sich darlegen.
+        sich darlegen. Genau daran scheitern Massenanträge, und genau deshalb
+        führen wir keinen.
       </p>
-      <ol class="timeline">
-        {steps.map((step, index) => (
+      <ol class="numbered-grid">
+        {requirements.map((requirement) => (
           <li>
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            <div>
-              <h3>{step.title}</h3>
-              <p>{step.text}</p>
-            </div>
+            <span>{requirement.number}</span>
+            <h3>{requirement.title}</h3>
+            <p>{requirement.text}</p>
           </li>
         ))}
       </ol>
+      <p class="section-intro">
+        Nach der Einbringung prüft der VfGH zuerst die Zulässigkeit, erst danach
+        den Inhalt. Einen bestimmten Ausgang kann niemand versprechen.
+      </p>
+      <p class="section-intro">
+        Der Weg über die <a href="https://www.dsb.gv.at">Datenschutzbehörde</a>
+        verfolgt ein anderes Ziel. Die Behörde prüft die Verarbeitung durch
+        einen bestimmten Anbieter. Ein Gesetz aufheben kann sie nicht, das kann
+        nur der Verfassungsgerichtshof. Ob dieser Weg für die Gesetzesprüfung
+        dennoch ein zumutbarer Umweg im Sinne der Subsidiarität ist, beurteilt
+        der VfGH selbst. Diese Frage gehört zu denen, die unser Antrag
+        beantworten muss.
+      </p>
+    </section>
+
+    <section class="split-section" aria-labelledby="vorbild-heading">
+      <div>
+        <p class="eyebrow">Erfahrung aus 2012</p>
+        <h2 id="vorbild-heading">Warum wir es anders machen als 2012.</h2>
+      </div>
+      <div class="stack">
+        <p>
+          Der AKVorrat, heute
+          <a href="https://epicenter.works">epicenter.works</a>, brachte 2012
+          einen „Sammel-Individualantrag“ gegen die Vorratsdatenspeicherung ein:
+          11.130 Menschen, eine unterschriebene Vollmacht pro Person, per
+          Scheibtruhe zum Gericht. 2014 hob der VfGH die Vorratsdatenspeicherung
+          auf.
+        </p>
+        <p>
+          Zulässig blieb am Ende der Antrag einer einzigen dieser Personen. Den
+          Antrag der 11.129 weiteren wies der VfGH am 10. Juni 2014 zurück. Die
+          Unterschriften haben die Kampagne getragen, den Rechtsweg nicht.
+          Diesen Aufwand und dieses Datenrisiko muten wir niemandem noch einmal
+          zu.
+        </p>
+        <a
+          class="arrow-link"
+          href="https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20140627_12G00047_00/JFT_20140627_12G00047_00.html"
+          >VfGH 27.6.2014, G 47/2012 ua →</a
+        >
+      </div>
     </section>
 
     <section class="split-section" aria-labelledby="kosten-heading">
@@ -112,15 +240,15 @@ const steps = [
       <div class="stack">
         <p>
           Für Individualanträge besteht Anwaltspflicht. Dazu kommen eine
-          Eingabengebühr von derzeit 340 Euro sowie regelmäßig Kosten für
-          anwaltliche Arbeit, Forschung und gegebenenfalls Gutachten.
+          Eingabengebühr von derzeit 340 Euro sowie Kosten für anwaltliche
+          Arbeit, Recherche und gegebenenfalls Gutachten. Das trägt die
+          Initiative, nicht du.
         </p>
         <p>
-          Für Rechtsberatung, Antragserstellung, Gebühren, Gutachten,
-          Öffentlichkeitsarbeit und internationale Vernetzung brauchen wir
-          Finanzierung. Die verlinkte Spendenseite unterstützt Bitcoin Austria
-          derzeit allgemein. Für einen zweckgebundenen größeren Beitrag nimm
-          bitte direkt Kontakt auf.
+          Bezahlt werden muss das trotzdem. Anwaltliche Arbeit, Gutachten und
+          Öffentlichkeitsarbeit brauchen Finanzierung. Die verlinkte
+          Spendenseite unterstützt Bitcoin Austria derzeit allgemein. Für einen
+          zweckgebundenen größeren Beitrag nimm bitte direkt Kontakt auf.
         </p>
         <a
           class="button primary"
@@ -132,9 +260,7 @@ const steps = [
 
     <section aria-labelledby="quellen-heading">
       <p class="eyebrow">Verfahrensquellen</p>
-      <h2 id="quellen-heading">
-        Keine Rechtsromantik. Die Regeln sind streng.
-      </h2>
+      <h2 id="quellen-heading">Lies die Regeln selbst nach.</h2>
       <ul class="link-list">
         <li>
           <a
@@ -163,13 +289,9 @@ const steps = [
     </section>
 
     <aside class="closing">
-      <p class="eyebrow">Du bist möglicherweise betroffen?</p>
-      <h2>Lass uns die Voraussetzungen prüfen.</h2>
-      <a
-        class="button light"
-        href="mailto:kontakt@dac8.org?subject=M%C3%B6gliche%20Betroffenheit%20Krypto-MPfG"
-        >Kontakt aufnehmen</a
-      >
+      <p class="eyebrow">Warten musst du nicht</p>
+      <h2>Deine Beschwerde kannst du selbst einbringen.</h2>
+      <a class="button light" href="/mitmachen/#werkzeuge">Zu den Werkzeugen</a>
     </aside>
   </article>
 </Layout>
