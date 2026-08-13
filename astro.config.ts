@@ -14,6 +14,7 @@ import { headingAnchors } from "./src/lib/heading-anchors"
 export default defineConfig({
   site: "https://dac8.org",
   compressHTML: true,
+  server: { port: Number(process.env.PORT) || 4321 },
   prefetch: { prefetchAll: true },
   integrations: [
     sitemap({
