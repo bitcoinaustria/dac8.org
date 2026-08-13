@@ -1,0 +1,82 @@
+<!--
+  Quelle für /static/opengraph-image.png (1200x630).
+  Neu erzeugen:
+    chrome-headless-shell --headless --disable-gpu --hide-scrollbars \
+      --force-device-scale-factor=2 --window-size=1200,630 \
+      --screenshot=og.png file://$PWD/public/static/opengraph-source.html
+    node -e "require('sharp')('og.png').resize(1200,630,{kernel:'lanczos3'})
+      .png({compressionLevel:9,palette:true,quality:92})
+      .toFile('public/static/opengraph-image.png')"
+  In 2x rendern und herunterrechnen, das glättet die Kanten der Schrift.
+-->
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  @font-face {
+    font-family: Plex;
+    src: url("../../src/assets/fonts/IBMPlexSans-VariableFont_wdth%2Cwght.woff2")
+      format("woff2-variations");
+    font-weight: 100 700;
+    font-display: block;
+  }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    width: 1200px;
+    height: 630px;
+  }
+  body {
+    background: #111;
+    color: #eee;
+    font-family: Plex, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 64px 72px;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1 {
+    font-size: 104px;
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.048em;
+  }
+  h1 span {
+    color: #e3000f;
+  }
+  footer {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-top: 1px solid #3a3a3a;
+    padding-top: 26px;
+  }
+  .mark {
+    font-size: 34px;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+  }
+  .mark i {
+    color: #e3000f;
+    font-style: normal;
+  }
+  .by {
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #b4b4b4;
+  }
+</style>
+<h1>
+  Wir wollen die<br><span>Krypto-Massen-<br>überwachung</span><br>vor den VfGH
+  bringen.
+</h1>
+<footer>
+  <p class="mark">dac8<i>.org</i></p>
+  <p class="by">Eine Initiative von Bitcoin Austria</p>
+</footer>
