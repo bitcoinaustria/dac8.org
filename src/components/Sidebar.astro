@@ -20,10 +20,12 @@ const section = NAVIGATION.find(
     <button
       class="menu-toggle"
       type="button"
+      aria-label="Menü öffnen"
       aria-expanded="false"
       aria-controls="site-navigation"
     >
-      Menü
+      <span class="menu-label">Menü öffnen</span>
+      <span class="menu-icon" aria-hidden="true"></span>
     </button>
     <nav id="site-navigation">
       <ul>
@@ -67,8 +69,8 @@ const section = NAVIGATION.find(
         <li class="locale-item">
           <label for="site-locale">Sprache / Land</label>
           <select id="site-locale" name="locale">
-            <option value="de-AT" selected>Österreich · Deutsch</option>
-            <option value="en" disabled>International · English (bald)</option>
+            <option value="de-AT" selected>Deutsch · AT</option>
+            <option value="en" disabled>English · INT (bald)</option>
           </select>
         </li>
         <li class="theme-item">
@@ -104,7 +106,7 @@ const section = NAVIGATION.find(
     display: flex;
     flex-direction: column;
     gap: var(--space-2xs);
-    padding-block-start: var(--space-xl);
+    padding-block-start: calc(var(--space-xl) - 0.25rem);
 
     > a {
       display: inline-flex;
@@ -201,14 +203,70 @@ const section = NAVIGATION.find(
 
   .menu-toggle {
     display: none;
-    padding: var(--space-3xs) var(--space-2xs);
-    border: 1px solid var(--border);
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
 
     @media (width < 72rem) {
       display: inline-flex;
       position: relative;
       z-index: 2;
+    }
+  }
+
+  .menu-label {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .menu-icon,
+  .menu-icon::before,
+  .menu-icon::after {
+    inline-size: 1.4rem;
+    block-size: 2px;
+  }
+
+  .menu-icon {
+    position: relative;
+
+    &::before,
+    &::after {
+      position: absolute;
+      inset: 0;
+      background: currentColor;
+      content: "";
+      transition: transform 180ms cubic-bezier(0.77, 0, 0.175, 1);
+    }
+
+    &::before {
+      transform: translateY(-0.28rem);
+    }
+
+    &::after {
+      transform: translateY(0.28rem);
+    }
+  }
+
+  .menu-toggle[aria-expanded="true"] {
+    .menu-icon::before {
+      transform: rotate(45deg);
+    }
+
+    .menu-icon::after {
+      transform: rotate(-45deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu-icon::before,
+    .menu-icon::after {
+      transition-duration: 0.01ms;
     }
   }
 
@@ -246,7 +304,7 @@ const section = NAVIGATION.find(
     }
 
     select {
-      inline-size: 100%;
+      inline-size: 8rem;
       min-inline-size: 0;
       max-inline-size: 100%;
       padding: var(--space-3xs) var(--space-2xs);
@@ -276,26 +334,26 @@ const section = NAVIGATION.find(
 
 <script>
   const menuToggle = document.querySelector<HTMLButtonElement>(".menu-toggle")
+  const menuLabel = menuToggle?.querySelector(".menu-label")
   const navigation = document.getElementById("site-navigation")
   const background = document.querySelectorAll(
     "page-content, page-footer, page-toc, sidebar-toggle",
   )
 
-  const closeMenu = () => {
+  const setMenuState = (open: boolean) => {
     if (!menuToggle) return
-    menuToggle.setAttribute("aria-expanded", "false")
-    menuToggle.textContent = "Menü"
-    delete document.documentElement.dataset.menuOpen
-    background.forEach((element) => element.removeAttribute("inert"))
+    const label = open ? "Menü schließen" : "Menü öffnen"
+    menuToggle.setAttribute("aria-expanded", String(open))
+    menuToggle.setAttribute("aria-label", label)
+    if (menuLabel) menuLabel.textContent = label
+    document.documentElement.toggleAttribute("data-menu-open", open)
+    background.forEach((element) => element.toggleAttribute("inert", open))
   }
 
+  const closeMenu = () => setMenuState(false)
+
   menuToggle?.addEventListener("click", () => {
-    const open = menuToggle.getAttribute("aria-expanded") !== "true"
-    menuToggle.setAttribute("aria-expanded", String(open))
-    menuToggle.textContent = open ? "Schließen" : "Menü"
-    if (open) document.documentElement.dataset.menuOpen = ""
-    else delete document.documentElement.dataset.menuOpen
-    background.forEach((element) => element.toggleAttribute("inert", open))
+    setMenuState(menuToggle.getAttribute("aria-expanded") !== "true")
   })
 
   navigation?.addEventListener("click", (event) => {
