@@ -13,17 +13,52 @@ import Layout from "@/layouts/Layout.astro"
   <article class="campaign">
     <header class="page-hero">
       <p class="eyebrow">Mitmachen</p>
-      <h1>Diese Initiative gehört allen, die sie tragen.</h1>
+      <h1>Diese Initiative gehört <span>allen, die sie tragen</span>.</h1>
       <p class="intro">
-        Du musst kein Jurist und kein Bitcoiner seit 2011 sein. Du kannst als
-        betroffene Person, mit einer Spende, mit Expertise, Reichweite oder als
-        Partnerorganisation beitragen.
+        Du musst kein Jurist sein und nicht seit 2011 dabei. Du kannst mit
+        deiner eigenen Beschwerde beitragen, mit einer Spende, mit Expertise,
+        Reichweite oder als Partnerorganisation.
       </p>
       <p class="position">
-        Mitmachen kann jede:r. Antragsteller:in kann nur werden, wer die
-        rechtlichen Voraussetzungen erfüllt.
+        Ob der Verfassungsgerichtshof unseren Antrag zulässt, entscheidet der
+        Verfassungsgerichtshof. Was du selbst tun kannst, hängt davon nicht ab
+        und läuft ohne uns.
       </p>
     </header>
+
+    <section id="werkzeuge" aria-labelledby="werkzeuge-heading">
+      <p class="eyebrow">Werkzeuge</p>
+      <h2 id="werkzeuge-heading">Zwei Schreiben, die du selbst abschickst.</h2>
+      <p class="section-intro">
+        Wir bauen gerade zwei Generatoren. Beide laufen vollständig in deinem
+        Browser: Du füllst aus, dein Gerät erzeugt das Dokument, wir bekommen
+        deine Angaben nicht zu sehen.
+      </p>
+      <div class="action-grid two-columns">
+        <article>
+          <h3>Beschwerde an die Datenschutzbehörde</h3>
+          <p>
+            Sobald du Kundin oder Kunde eines Anbieters mit Österreich-Bezug
+            bist, werden deine Daten erfasst. Gegen diese Verarbeitung kannst du
+            dich nach Art. 77 DSGVO bei der
+            <a href="https://www.dsb.gv.at">Datenschutzbehörde</a>
+            beschweren. Der Generator erstellt dir eine begründete Beschwerde,
+            die du selbst einbringst.
+          </p>
+          <p class="pending">In Arbeit</p>
+        </article>
+        <article>
+          <h3>Brief an deine Abgeordneten</h3>
+          <p>
+            Das Gesetz kommt aus Brüssel und wurde in Wien beschlossen. Der
+            Generator schreibt dir ein Schreiben an deine Vertretung im
+            Nationalrat und im Europäischen Parlament, das du anpassen und
+            absenden kannst.
+          </p>
+          <p class="pending">In Arbeit</p>
+        </article>
+      </div>
+    </section>
 
     <section
       id="betroffene"
@@ -32,27 +67,23 @@ import Layout from "@/layouts/Layout.astro"
     >
       <div>
         <p class="eyebrow">Direkt betroffen</p>
-        <h2 id="betroffene-heading">
-          Als mögliche antragstellende Person melden.
-        </h2>
+        <h2 id="betroffene-heading">Du musst dich nirgends eintragen.</h2>
       </div>
       <div class="stack">
         <p>
-          Natürliche und juristische Personen können grundsätzlich einen
-          Individualantrag stellen. Entscheidend sind die unmittelbare und
-          aktuelle Betroffenheit sowie das Fehlen eines anderen zumutbaren
-          Rechtswegs.
+          Den Individualantrag bringen wir ein, anwaltlich vertreten. Die Kosten
+          trägt die Initiative, nicht du. Es gibt keine Unterschriftenliste,
+          keine Vollmacht und keine Anmeldung. Wer gegen anlasslose
+          Datensammlung vorgeht, sollte nicht selbst tausende Namen und Adressen
+          lagern.
         </p>
         <p>
-          Schick uns zunächst nur eine kurze Beschreibung deiner Situation.
-          Keine Wallet-Adressen, Steuerunterlagen oder sensiblen Dokumente per
-          unverschlüsselter E-Mail. Ob eine Beteiligung sinnvoll ist, wird mit
-          der anwaltlichen Vertretung geprüft.
+          Deine eigenen Schritte gehören dir: Die Beschwerde an die
+          Datenschutzbehörde und der Brief an deine Abgeordneten entstehen auf
+          deinem Gerät, und du schickst sie selbst ab.
         </p>
-        <a
-          class="button primary"
-          href="mailto:kontakt@dac8.org?subject=M%C3%B6gliche%20Betroffenheit%20Krypto-MPfG"
-          >Betroffenheit melden</a
+        <a class="button primary" href="/individualantrag/"
+          >Wie der Antrag funktioniert</a
         >
       </div>
     </section>
@@ -72,10 +103,11 @@ import Layout from "@/layouts/Layout.astro"
           formelle Beteiligung oder einen bestimmten Ausgang.
         </p>
         <p>
-          Bitcoin Austria nimmt Spenden über Bitcoin Lightning an. Für einen
-          zweckgebundenen größeren Beitrag zu Rechts- oder Gutachterkosten
-          kontaktiere uns bitte direkt. Angaben zur steuerlichen Absetzbarkeit
-          machen wir nur, wenn sie für den konkreten Zeitpunkt gesichert sind.
+          Bitcoin Austria nimmt Spenden in Bitcoin an. In Euro geht es
+          ebenfalls, schreib uns dafür kurz. Dasselbe gilt für einen
+          zweckgebundenen größeren Beitrag zu Rechts- oder Gutachterkosten.
+          Angaben zur steuerlichen Absetzbarkeit machen wir nur, wenn sie für
+          den konkreten Zeitpunkt gesichert sind.
         </p>
         <a
           class="button primary"
@@ -107,7 +139,8 @@ import Layout from "@/layouts/Layout.astro"
           <h3>Kommunikation</h3>
           <p>
             Medienarbeit, Design, Video, Veranstaltungen, Übersetzung und
-            Reichweite – klar, überprüfbar und ohne weichgespülte PR-Sprache.
+            Reichweite. Klar formuliert und überprüfbar, ohne weichgespülte
+            PR-Sprache.
           </p>
         </article>
         <article>
@@ -132,7 +165,7 @@ import Layout from "@/layouts/Layout.astro"
     >
       <div>
         <p class="eyebrow">Andere Länder</p>
-        <h2 id="partner-heading">Lokale Rechtswege. Gemeinsame Argumente.</h2>
+        <h2 id="partner-heading">In jedem Land ein eigener Rechtsweg.</h2>
       </div>
       <div class="stack">
         <p>
@@ -155,7 +188,7 @@ import Layout from "@/layouts/Layout.astro"
 
     <aside class="closing">
       <p class="eyebrow">Unternehmen und Organisationen</p>
-      <h2>Das Bitcoin-Ökosystem muss jetzt Verantwortung übernehmen.</h2>
+      <h2>Die Branche muss jetzt Verantwortung übernehmen.</h2>
       <a class="button light" href="/unternehmen/">Zu den Partneroptionen</a>
     </aside>
   </article>
