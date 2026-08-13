@@ -48,6 +48,15 @@
   a {
     text-underline-offset: 0.18em;
   }
+
+  /* Fließtext-Links heben sich vom gedämpften Absatztext ab. */
+  :where(p) a {
+    color: var(--foreground);
+  }
+
+  :where(h1, h2) span {
+    color: var(--primary);
+  }
 }
 
 .legal-page {
@@ -68,7 +77,7 @@
 }
 
 .eyebrow {
-  color: var(--primary);
+  color: var(--muted-foreground);
   font-size: var(--step--1);
   font-weight: var(--font-weight-medium);
   letter-spacing: 0.09em;
@@ -230,11 +239,15 @@
     color: var(--muted-foreground);
   }
 
-  a {
+  > article > :where(a, .pending) {
     align-self: end;
     margin-block-start: auto;
     color: var(--foreground);
     font-weight: var(--font-weight-medium);
+  }
+
+  > article > .pending {
+    color: var(--muted-foreground);
   }
 }
 
