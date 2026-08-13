@@ -23,7 +23,7 @@ export const ecOptions: SatteriExpressiveCodeOptions = {
   },
   styleOverrides: {
     codeFontSize: "var(--step--1)",
-    codeFontFamily: "var(--font-mono)",
+    codeFontFamily: "var(--font-sans)",
     codeBackground: "color-mix(in oklab, var(--muted) 25%, transparent)",
     borderColor: "var(--border)",
     borderRadius: "0",

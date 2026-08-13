@@ -1,0 +1,151 @@
+---
+import MetaPage from "@/components/MetaPage.astro"
+import Layout from "@/layouts/Layout.astro"
+
+const argumentsList = [
+  {
+    title: "Eine öffentliche Blockchain vergisst nicht",
+    fact: "Für jede meldepflichtige Person werden je Kryptowert aggregierte Werte, Einheiten, Transaktionszahlen und Übertragungen gemeldet. Bei Übertragungen an Distributed-Ledger-Adressen, von denen der meldende Anbieter nicht weiß oder nicht davon ausgeht, dass sie mit einem Anbieter von Kryptowerte-Dienstleistungen oder einem Finanzinstitut verbunden sind, werden aggregierter Marktwert und Einheiten gemeldet.",
+    position:
+      "Identitätsverknüpfte Kryptodaten sind mehr als Kontodaten. Sie können zum Einstieg in einen öffentlichen, dauerhaften Finanzgraphen werden.",
+  },
+  {
+    title: "Erfassung kommt vor Relevanz",
+    fact: "§ 20 Abs. 1 verpflichtet meldende Anbieter, Informationen für alle Kund:innen hinsichtlich aller Transaktionen und Kryptowerte zu ermitteln, erfassen, speichern und verarbeiten – auch wenn die Person nicht meldepflichtig ist.",
+    position:
+      "Die Logik ist verkehrt: Nicht ein konkreter Anlass öffnet den Datenzugriff. Die Daten werden vorsorglich aufgebaut und ihre Relevanz danach sortiert.",
+  },
+  {
+    title: "Jede zusätzliche Kopie vergrößert den Angriffspunkt",
+    fact: "Die Meldungen gehen an das zuständige Finanzamt; der Bundesminister für Finanzen übermittelt die Informationen automatisiert an die zuständigen Behörden der teilnehmenden Staaten.",
+    position:
+      "Sensible Vermögensdaten werden nicht sicherer, wenn sie systematisch über mehr Behörden, Systeme und Zugriffsberechtigte zirkulieren.",
+  },
+  {
+    title: "Aus Datenrisiko wird physisches Risiko",
+    fact: "Für meldepflichtige Personen verbindet der zu meldende Datensatz zivile Identität, Anschrift, Steueransässigkeit und Wertsignale aus Kryptotransaktionen.",
+    position:
+      "Bei einem global übertragbaren Vermögenswert kann Missbrauch Menschen und ihre Familien zu Zielen machen. Das ist kein abstrakter DSGVO-Schaden.",
+  },
+  {
+    title: "Gezielte Ermittlung ist das mildere Prinzip",
+    fact: "Steuerbehörden verfügen bereits über Ermittlungs-, Auskunfts- und Kontrollinstrumente für konkrete Fälle.",
+    position:
+      "Steuerbetrug gehört verfolgt. Anlasslose Erfassung einer gesamten Nutzergruppe muss sich daran messen lassen, ob gezielte, begründete Zugriffe denselben Zweck mit weniger Grundrechtseingriff erreichen.",
+  },
+  {
+    title: "DAC8 schwächt regulierte europäische Anbieter",
+    fact: "MiCA soll Nutzer in einen regulierten europäischen Markt führen. DAC8 macht gerade diese Anbieter zu Knotenpunkten automatischer Datenerfassung.",
+    position:
+      "Wer Privatsphäre und Sicherheit ernst nimmt, bekommt einen Anreiz, regulierte Dienste zu meiden. Eine Regel für mehr Sichtbarkeit kann so weniger Sichtbarkeit erzeugen.",
+  },
+]
+---
+
+<Layout crumbs={[{ label: "Argumente", href: "/argumente/" }]}>
+  <MetaPage
+    slot="head"
+    title="Warum DAC8 unverhältnismäßig ist"
+    description="Die Argumente von Bitcoin Austria gegen die anlasslose Krypto-Datenerfassung: Blockchain-Transparenz, Sicherheitsrisiken, Verhältnismäßigkeit und mildere Mittel."
+  />
+
+  <article class="campaign">
+    <header class="page-hero">
+      <p class="eyebrow">Unsere Position</p>
+      <h1>DAC8 ist keine harmlose Melderegel.</h1>
+      <p class="intro">
+        Die entscheidende Frage ist nicht, ob Steuerbetrug existiert. Die Frage
+        ist, ob der Staat dafür ohne konkreten Anlass Identität,
+        Steueransässigkeit und Kryptotransaktionen einer ganzen Nutzergruppe
+        erfassen und international verteilen darf.
+      </p>
+      <p class="position">
+        Unsere Antwort: Dieser Eingriff ist zu breit, zu riskant und nicht
+        ausreichend durch mildere Mittel begrenzt.
+      </p>
+    </header>
+
+    <section class="argument-list" aria-label="Argumente gegen DAC8">
+      {argumentsList.map((argument, index) => (
+        <article>
+          <span>{String(index + 1).padStart(2, "0")}</span>
+          <div>
+            <h2>{argument.title}</h2>
+            <p><strong>Gesicherter Ausgangspunkt:</strong> {argument.fact}</p>
+            <p class="opinion"><strong>Unsere Schlussfolgerung:</strong> {argument.position}</p>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <section class="split-section" aria-labelledby="wirksamkeit-heading">
+      <div>
+        <p class="eyebrow">Beweislast</p>
+        <h2 id="wirksamkeit-heading">
+          Ein massiver Eingriff braucht massive Evidenz.
+        </h2>
+      </div>
+      <div class="stack">
+        <p>
+          Automatischer Informationsaustausch wird politisch als notwendige
+          Infrastruktur behandelt. Doch Umfang, Datenqualität, tatsächliche
+          Mehreinnahmen und Verdrängungseffekte müssen transparent belegt werden
+          – besonders, wenn der Datensatz ein physisches Sicherheitsrisiko
+          erzeugt.
+        </p>
+        <p>
+          „Mehr Daten“ ist kein Wirksamkeitsnachweis. Verhältnismäßigkeit
+          verlangt Eignung, Erforderlichkeit und eine faire Abwägung der Folgen.
+        </p>
+      </div>
+    </section>
+
+    <section aria-labelledby="sources-heading">
+      <p class="eyebrow">Quellen</p>
+      <h2 id="sources-heading">
+        Recht zuerst. Kampagnenposition klar markiert.
+      </h2>
+      <ul class="link-list">
+        <li>
+          <a
+            href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064"
+            >Krypto-Meldepflichtgesetz – geltende Fassung</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.parlament.gv.at/dokument/XXVIII/I/306/fnameorig_1723216.html"
+            >Erläuterungen zur österreichischen Regierungsvorlage</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32023L2226"
+            >Richtlinie (EU) 2023/2226 – DAC8</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.vfgh.gv.at/kompetenzen-und-verfahren/kompetenzen.de.html"
+            >VfGH: Prüfung der Verfassungswidrigkeit von Gesetzen</a
+          >
+        </li>
+      </ul>
+    </section>
+
+    <aside class="closing">
+      <p class="eyebrow">Aus Argumenten wird ein Verfahren</p>
+      <h2>Hilf uns, die Verhältnismäßigkeit prüfen zu lassen.</h2>
+      <div class="button-row">
+        <a class="button light" href="/individualantrag/"
+          >Zum Individualantrag</a
+        >
+        <a
+          class="button outline-light"
+          href="https://pay.bitcoin-austria.at/apps/Nbue7dfjRGGcNXcaQ3AqDy1FARY/pos"
+          >Bitcoin Austria unterstützen</a
+        >
+      </div>
+    </aside>
+  </article>
+</Layout>

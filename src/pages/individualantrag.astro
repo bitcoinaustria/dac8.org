@@ -1,0 +1,175 @@
+---
+import MetaPage from "@/components/MetaPage.astro"
+import Layout from "@/layouts/Layout.astro"
+
+const steps = [
+  {
+    title: "Betroffenheit prüfen",
+    text: "Die angefochtenen Bestimmungen müssen aktuell und unmittelbar in die eigene Rechtssphäre eingreifen. Allgemeine Ablehnung oder bloß wirtschaftliche Reflexwirkungen reichen nicht.",
+  },
+  {
+    title: "Zumutbaren Rechtsweg ausschließen",
+    text: "Der Individualantrag ist subsidiär. Wer die Frage in einem anderen zumutbaren Gerichts- oder Behördenverfahren klären kann, erfüllt die Voraussetzung regelmäßig nicht.",
+  },
+  {
+    title: "Antrag präzise begründen",
+    text: "Norm, Fassung, Aufhebungsumfang, individueller Sachverhalt und jedes verfassungsrechtliche Bedenken müssen exakt dargelegt werden. Dafür besteht Anwaltspflicht.",
+  },
+  {
+    title: "VfGH-Verfahren führen",
+    text: "Nach Einbringung prüft der VfGH zuerst die Zulässigkeit. Erst danach kommt es zur inhaltlichen Prüfung. Ein bestimmter Ausgang kann nicht versprochen werden.",
+  },
+]
+---
+
+<Layout crumbs={[{ label: "Individualantrag", href: "/individualantrag/" }]}>
+  <MetaPage
+    slot="head"
+    title="Individualantrag gegen das Krypto-Meldepflichtgesetz"
+    description="Bitcoin Austria bereitet einen Individualantrag beim österreichischen Verfassungsgerichtshof vor. Status, Voraussetzungen und Beteiligungsmöglichkeiten."
+  />
+
+  <article class="campaign">
+    <header class="page-hero">
+      <p class="eyebrow">Individualantrag · VfGH</p>
+      <h1>
+        Wir wollen Bestimmungen des Krypto-Meldepflichtgesetzes prüfen lassen.
+      </h1>
+      <p class="intro">
+        Unser Ziel ist, Bestimmungen des österreichischen
+        Krypto-Meldepflichtgesetzes vor den Verfassungsgerichtshof zu bringen.
+        Der Antrag ist in Vorbereitung. Geeignete Betroffene, Expertise und
+        Finanzierung sind jetzt entscheidend.
+      </p>
+      <div class="button-row">
+        <a class="button primary" href="/mitmachen/#betroffene"
+          >Eignung prüfen lassen</a
+        >
+        <a
+          class="button"
+          href="https://pay.bitcoin-austria.at/apps/Nbue7dfjRGGcNXcaQ3AqDy1FARY/pos"
+          >Bitcoin Austria unterstützen</a
+        >
+      </div>
+    </header>
+
+    <section class="notice">
+      <strong>Status: in Vorbereitung.</strong>
+      Wir veröffentlichen erst nach tatsächlicher Einbringung ein
+      Einreichungsdatum oder eine Geschäftszahl. Unterstützung der Initiative
+      begründet keinen Anspruch auf formelle Beteiligung und garantiert keinen
+      Verfahrensausgang.
+    </section>
+
+    <section class="split-section" aria-labelledby="ziel-heading">
+      <div>
+        <p class="eyebrow">Ziel und Grenze</p>
+        <h2 id="ziel-heading">
+          Österreichisches Gesetz. Europäischer Kontext.
+        </h2>
+      </div>
+      <div class="stack">
+        <p>
+          Der VfGH prüft österreichische Rechtsvorschriften. Unser Antrag kann
+          daher nicht allein die EU-Richtlinie DAC8 oder das globale CARF-System
+          aufheben.
+        </p>
+        <p>
+          Wenn unionsrechtliche Fragen entscheidend sind, kann eine Vorlage an
+          den Europäischen Gerichtshof relevant werden. Welche Normen in welchem
+          Umfang angefochten werden, wird mit der anwaltlichen Vertretung
+          festgelegt.
+        </p>
+      </div>
+    </section>
+
+    <section aria-labelledby="ablauf-heading">
+      <p class="eyebrow">Der Rechtsweg</p>
+      <h2 id="ablauf-heading">Warum nicht einfach „beitreten“?</h2>
+      <p class="section-intro">
+        Ein Individualantrag ist keine Sammelklage. Natürliche und juristische
+        Personen können Antragsteller sein, müssen ihre Legitimation aber je für
+        sich darlegen.
+      </p>
+      <ol class="timeline">
+        {steps.map((step, index) => (
+          <li>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <div>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="split-section" aria-labelledby="kosten-heading">
+      <div>
+        <p class="eyebrow">Kosten</p>
+        <h2 id="kosten-heading">Ein Verfahren braucht mehr als Empörung.</h2>
+      </div>
+      <div class="stack">
+        <p>
+          Für Individualanträge besteht Anwaltspflicht. Dazu kommen eine
+          Eingabengebühr von derzeit 340 Euro sowie regelmäßig Kosten für
+          anwaltliche Arbeit, Forschung und gegebenenfalls Gutachten.
+        </p>
+        <p>
+          Für Rechtsberatung, Antragserstellung, Gebühren, Gutachten,
+          Öffentlichkeitsarbeit und internationale Vernetzung brauchen wir
+          Finanzierung. Die verlinkte Spendenseite unterstützt Bitcoin Austria
+          derzeit allgemein. Für einen zweckgebundenen größeren Beitrag nimm
+          bitte direkt Kontakt auf.
+        </p>
+        <a
+          class="button primary"
+          href="https://pay.bitcoin-austria.at/apps/Nbue7dfjRGGcNXcaQ3AqDy1FARY/pos"
+          >Bitcoin Austria unterstützen</a
+        >
+      </div>
+    </section>
+
+    <section aria-labelledby="quellen-heading">
+      <p class="eyebrow">Verfahrensquellen</p>
+      <h2 id="quellen-heading">
+        Keine Rechtsromantik. Die Regeln sind streng.
+      </h2>
+      <ul class="link-list">
+        <li>
+          <a
+            href="https://www.vfgh.gv.at/downloads/Formular-Individualantrag-Empfehlungen_final.pdf"
+            >VfGH: Empfehlungen für Individualanträge</a
+          >
+        </li>
+        <li>
+          <a href="https://www.vfgh.gv.at/service/faq.de.html"
+            >VfGH: Anwaltspflicht, Gebühr und Einbringung</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=10000245&Paragraf=62"
+            >§ 62 VfGG: Anforderungen an den Antrag</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:12016E267"
+            >Art. 267 AEUV: Vorabentscheidung durch den EuGH</a
+          >
+        </li>
+      </ul>
+    </section>
+
+    <aside class="closing">
+      <p class="eyebrow">Du bist möglicherweise betroffen?</p>
+      <h2>Lass uns die Voraussetzungen prüfen.</h2>
+      <a
+        class="button light"
+        href="mailto:kontakt@dac8.org?subject=M%C3%B6gliche%20Betroffenheit%20Krypto-MPfG"
+        >Kontakt aufnehmen</a
+      >
+    </aside>
+  </article>
+</Layout>

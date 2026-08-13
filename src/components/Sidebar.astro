@@ -1,5 +1,4 @@
 ---
-import Logo from "@/assets/logo.svg"
 import ThemeToggle from "@/components/ThemeToggle.astro"
 import { NAVIGATION, SITE } from "@/consts"
 import { normalizePath } from "@/lib/utils"
@@ -15,11 +14,18 @@ const section = NAVIGATION.find(
 
 <aside data-bar>
   <sidebar-inner>
-    <a href="/" aria-label={SITE.title}>
-      <Logo />
-      <span>{SITE.title}</span>
+    <a class="site-brand" href="/" aria-label={SITE.title}>
+      <span class="site-name">dac8<span>.org</span></span>
     </a>
-    <nav>
+    <button
+      class="menu-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-navigation"
+    >
+      Menü
+    </button>
+    <nav id="site-navigation">
       <ul>
         {NAVIGATION.map((item) => (
             <li>
@@ -58,11 +64,20 @@ const section = NAVIGATION.find(
                 </a>
               </li>
             ))}
+        <li class="locale-item">
+          <label for="site-locale">Sprache / Land</label>
+          <select id="site-locale" name="locale">
+            <option value="de-AT" selected>Österreich · Deutsch</option>
+            <option value="en" disabled>International · English (bald)</option>
+          </select>
+        </li>
+        <li class="theme-item">
+          <ThemeToggle />
+        </li>
       </ul>
     </nav>
   </sidebar-inner>
   <sidebar-toggle>
-    <ThemeToggle />
     <slot name="actions" />
   </sidebar-toggle>
 </aside>
@@ -89,35 +104,32 @@ const section = NAVIGATION.find(
     display: flex;
     flex-direction: column;
     gap: var(--space-2xs);
+    padding-block-start: var(--space-xl);
 
     > a {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
       width: fit-content;
-      font-weight: var(--font-weight-medium);
-      font-size: var(--step-0);
       color: var(--foreground);
       text-decoration-line: none;
+    }
 
-      svg {
-        inline-size: 1.125rem;
-        block-size: 1.125rem;
-        flex-shrink: 0;
-      }
+    .site-brand {
+      font-weight: var(--font-weight-medium);
+      font-size: var(--step-0);
 
-      @media (width < 26rem) {
-        span {
-          display: none;
-        }
+      .site-name span {
+        color: var(--primary);
       }
     }
 
     @media (width < 64rem) {
+      position: relative;
       flex: 1;
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
+      padding-block-start: 0;
     }
   }
 
@@ -163,9 +175,88 @@ const section = NAVIGATION.find(
     }
   }
 
+  nav {
+    @media (width < 48rem) {
+      display: none;
+      position: absolute;
+      z-index: 1;
+      inset-block-start: calc(100% + var(--space-2xs));
+      inset-inline: calc(-1 * var(--bar-gutter));
+      padding: var(--space-s) var(--bar-gutter);
+      border-block-end: 2px solid var(--border);
+      background: var(--background);
+
+      > ul {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-xs);
+      }
+    }
+  }
+
+  sidebar-inner:has(.menu-toggle[aria-expanded="true"]) nav {
+    @media (width < 48rem) {
+      display: block;
+    }
+  }
+
+  .menu-toggle {
+    display: none;
+    padding: var(--space-3xs) var(--space-2xs);
+    border: 1px solid var(--border);
+    cursor: pointer;
+
+    @media (width < 48rem) {
+      display: inline-flex;
+    }
+  }
+
   nav li:has(> ul) > a {
     @media (width < 64rem) {
       color: var(--foreground);
+    }
+  }
+
+  .theme-item {
+    margin-block-start: var(--space-2xs);
+
+    button {
+      margin-inline-start: -0.5rem;
+    }
+  }
+
+  .locale-item {
+    display: grid;
+    gap: var(--space-3xs);
+    margin-block-start: var(--space-s);
+    padding-block-start: var(--space-xs);
+    border-block-start: 1px solid var(--border);
+
+    label {
+      color: var(--muted-foreground);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    select {
+      max-inline-size: 100%;
+      padding: var(--space-3xs) var(--space-2xs);
+      border: 1px solid var(--border);
+      background: var(--background);
+      color: var(--foreground);
+      font: inherit;
+      font-size: var(--step--1);
+    }
+
+    @media (48rem <= width < 64rem) {
+      margin-block-start: 0;
+      padding-block-start: 0;
+      border-block-start: 0;
+
+      label {
+        display: none;
+      }
     }
   }
 
@@ -180,3 +271,28 @@ const section = NAVIGATION.find(
     }
   }
 </style>
+
+<script>
+  const menuToggle = document.querySelector<HTMLButtonElement>(".menu-toggle")
+  const navigation = document.getElementById("site-navigation")
+
+  const closeMenu = () => {
+    if (!menuToggle) return
+    menuToggle.setAttribute("aria-expanded", "false")
+    menuToggle.textContent = "Menü"
+  }
+
+  menuToggle?.addEventListener("click", () => {
+    const open = menuToggle.getAttribute("aria-expanded") !== "true"
+    menuToggle.setAttribute("aria-expanded", String(open))
+    menuToggle.textContent = open ? "Schließen" : "Menü"
+  })
+
+  navigation?.addEventListener("click", (event) => {
+    if ((event.target as Element).closest("a")) closeMenu()
+  })
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMenu()
+  })
+</script>

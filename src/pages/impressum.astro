@@ -1,0 +1,93 @@
+---
+import MetaPage from "@/components/MetaPage.astro"
+import Layout from "@/layouts/Layout.astro"
+---
+
+<Layout crumbs={[{ label: "Impressum", href: "/impressum/" }]}>
+  <MetaPage
+    slot="head"
+    title="Impressum"
+    description="Impressum und rechtliche Angaben von Bitcoin Austria gemäß ECG und MedienG."
+  />
+
+  <prose-content class="legal-page">
+    <h1>Impressum</h1>
+    <p>Angaben gemäß § 5 ECG und § 25 MedienG</p>
+
+    <h2>Vereinsangaben &amp; Postanschrift</h2>
+    <p>
+      Bitcoin Austria – Verein zur Förderung von Bitcoin in Österreich<br>
+      ZVR-Zahl: 828542896<br>
+      c/o STADLER PARTNER Rechtsanwälte GmbH<br>
+      Seilerstätte 24<br>
+      1010 Wien<br>
+      Österreich
+    </p>
+
+    <h2>Kontakt</h2>
+    <p>
+      E-Mail:
+      <a href="mailto:office@bitcoin-austria.at">office@bitcoin-austria.at</a>
+      <br>
+      Website: bitcoin-austria.at
+    </p>
+
+    <h2>Vereinszweck</h2>
+    <p>
+      Bitcoin Austria ist Europas ältester Bitcoin-Verein (gegründet 2011) und
+      fördert die Verbreitung und das Verständnis von Bitcoin in Österreich. Der
+      Verein ist gemeinnützig und nicht auf Gewinn ausgerichtet.
+    </p>
+
+    <h2>Blattlinie (gemäß § 25 MedienG)</h2>
+    <p>
+      Die Website bitcoin-austria.at dient der Information der Öffentlichkeit
+      über Bitcoin, dessen Technologie, Anwendungsmöglichkeiten und
+      gesellschaftliche Bedeutung. Die Inhalte werden nach bestem Wissen und
+      Gewissen erstellt und spiegeln die Positionen des Vereins Bitcoin Austria
+      wider.
+    </p>
+
+    <h2>Lizenz und Markenrecht</h2>
+    <p>
+      Die redaktionellen Inhalte dieser Website (Texte) sind wenn nicht anders
+      gekennzeichnet gemeinfrei und werden unter
+      <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.de"
+        >CC0 1.0 Universal (Public Domain)</a
+      >
+      zur Verfügung gestellt. Kopieren, verbreiten, übersetzen, remixen – alles
+      erlaubt, keine Bedingungen, keine Genehmigung nötig.
+    </p>
+    <p>
+      Der Name <strong>Bitcoin Austria</strong>, das Logo und sonstige
+      Vereinskennzeichen sind keine freien Inhalte und von der CC0-Freigabe
+      ausdrücklich ausgenommen. Die Nutzung der Marke zur Kennzeichnung eigener
+      Produkte, Dienstleistungen oder zur Erweckung des Eindrucks einer
+      Verbindung mit Bitcoin Austria bedarf unserer schriftlichen Zustimmung.
+    </p>
+
+    <h2>Haftungsausschluss</h2>
+    <p>
+      Die Inhalte dieser Website wurden mit Sorgfalt erstellt. Für die
+      Richtigkeit, Vollständigkeit und Aktualität können wir jedoch keine Gewähr
+      übernehmen. Für verlinkte externe Inhalte ist der jeweilige Betreiber
+      verantwortlich.
+    </p>
+
+    <h2>Keine Finanzberatung</h2>
+    <p>
+      Nichts auf dieser Website stellt eine Finanz-, Anlage- oder sonstige
+      Beratung dar. Bitcoin Austria gibt keine Empfehlungen zum Kauf, Verkauf
+      oder Halten von Bitcoin. Jede Investitionsentscheidung liegt in der
+      alleinigen Verantwortung des Nutzers. Do your own research.
+    </p>
+
+    <h2>Streitbeilegung</h2>
+    <p>
+      Die Europäische Kommission stellt eine Plattform zur
+      Online-Streitbeilegung (OS) bereit. Bitcoin Austria ist weder bereit noch
+      verpflichtet, an einem Streitbeilegungsverfahren vor einer
+      Verbraucherschlichtungsstelle teilzunehmen.
+    </p>
+  </prose-content>
+</Layout>

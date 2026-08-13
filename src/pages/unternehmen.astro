@@ -1,0 +1,136 @@
+---
+import MetaPage from "@/components/MetaPage.astro"
+import Layout from "@/layouts/Layout.astro"
+
+const options = [
+  {
+    title: "Rechtskosten mitfinanzieren",
+    text: "Tragt anwaltliche Arbeit, Antragserstellung, Gebühren, Gutachten und belastbare Forschung mit.",
+  },
+  {
+    title: "Expertise bereitstellen",
+    text: "Bringt Rechts-, Compliance-, Sicherheits- oder technische Kompetenz ein – ohne Einfluss auf das Ergebnis zu kaufen.",
+  },
+  {
+    title: "Evidenz liefern",
+    text: "Teilt verifizierbare, aggregierte Erkenntnisse über operative Kosten, Datenflüsse und Auswirkungen auf Nutzer:innen.",
+  },
+  {
+    title: "Öffentlich Position beziehen",
+    text: "Erklärt euren Kund:innen und der Politik, warum gezielte Ermittlungen besser sind als pauschale Datensammlung.",
+  },
+  {
+    title: "Reichweite geben",
+    text: "Verbreitet die Initiative in euren Kanälen, auf Events und gegenüber Medien, Verbänden und Partnern.",
+  },
+  {
+    title: "Still unterstützen",
+    text: "Wenn öffentliche Nennung nicht möglich ist, finden wir einen vertraulichen und sauberen Unterstützungsweg.",
+  },
+]
+---
+
+<Layout crumbs={[{ label: "Für Unternehmen", href: "/unternehmen/" }]}>
+  <MetaPage
+    slot="head"
+    title="Unternehmen gegen DAC8"
+    description="Bitcoin-Unternehmen und Organisationen können den Individualantrag gegen das österreichische Krypto-Meldepflichtgesetz finanzieren und mit Expertise unterstützen."
+  />
+
+  <article class="campaign">
+    <header class="page-hero">
+      <p class="eyebrow">Für Unternehmen und Organisationen</p>
+      <h1>Grundrechte sind Infrastruktur.</h1>
+      <p class="intro">
+        DAC8 betrifft nicht nur einzelne Nutzer:innen. Die Richtlinie verändert
+        das Vertrauen in das gesamte europäische Bitcoin-Ökosystem. Unternehmen,
+        die dieses Ökosystem mittragen, können jetzt Verantwortung übernehmen.
+      </p>
+      <p class="position">
+        Wer an Bitcoin verdient, sollte die Menschen, auf denen dieses Ökosystem
+        beruht, nicht allein lassen.
+      </p>
+      <div class="button-row">
+        <a
+          class="button primary"
+          href="mailto:kontakt@dac8.org?subject=Unternehmen%20unterst%C3%BCtzt%20DAC8.org"
+          >Partnerschaft besprechen</a
+        >
+        <a
+          class="button"
+          href="https://pay.bitcoin-austria.at/apps/Nbue7dfjRGGcNXcaQ3AqDy1FARY/pos"
+          >Bitcoin Austria unterstützen</a
+        >
+      </div>
+    </header>
+
+    <section class="notice strong">
+      Unterstützung finanziert die Arbeit. Sie kauft keinen Einfluss auf die
+      rechtliche Argumentation. Namen und Logos veröffentlichen wir nur mit
+      ausdrücklicher Zustimmung.
+    </section>
+
+    <section aria-labelledby="optionen-heading">
+      <p class="eyebrow">So könnt ihr helfen</p>
+      <h2 id="optionen-heading">Nicht nur Logo. Substanz.</h2>
+      <div class="action-grid two-columns">
+        {options.map((option) => (
+          <article>
+            <h3>{option.title}</h3>
+            <p>{option.text}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="split-section" aria-labelledby="warum-heading">
+      <div>
+        <p class="eyebrow">Warum jetzt</p>
+        <h2 id="warum-heading">Schweigen ist auch eine Position.</h2>
+      </div>
+      <div class="stack">
+        <p>
+          Meldende Anbieter, die Tauschgeschäfte für meldepflichtige Nutzer
+          bewirken, werden durch DAC8 zu Erfassungs- und Meldestellen.
+          Gleichzeitig tragen sie die Beziehung zu den Menschen, deren Daten und
+          Sicherheit betroffen sind.
+        </p>
+        <p>
+          Wir erwarten keine Einheitsmeinung. Wir erwarten, dass Unternehmen den
+          Grundrechtseingriff ernst nehmen, ihre operative Evidenz teilen und
+          eine gerichtliche Prüfung nicht den Betroffenen allein überlassen.
+        </p>
+      </div>
+    </section>
+
+    <section class="split-section" aria-labelledby="international-heading">
+      <div>
+        <p class="eyebrow">Verbände und Organisationen</p>
+        <h2 id="international-heading">Österreich kann den Anfang machen.</h2>
+      </div>
+      <div class="stack">
+        <p>
+          Wir wollen mit Organisationen in anderen DAC8-Staaten
+          zusammenarbeiten. Gemeinsame Forschung und Kommunikation helfen;
+          Rechtsweg, Legitimation und nationale Umsetzung müssen lokal geprüft
+          werden.
+        </p>
+        <a
+          class="arrow-link"
+          href="mailto:kontakt@dac8.org?subject=Organisation%20gegen%20DAC8"
+          >Als Partnerorganisation melden →</a
+        >
+      </div>
+    </section>
+
+    <aside class="closing">
+      <p class="eyebrow">Gespräch beginnen</p>
+      <h2>Sagt uns, was ihr konkret beitragen könnt.</h2>
+      <a
+        class="button light"
+        href="mailto:kontakt@dac8.org?subject=Unternehmen%20unterst%C3%BCtzt%20DAC8.org"
+        >kontakt@dac8.org</a
+      >
+    </aside>
+  </article>
+</Layout>

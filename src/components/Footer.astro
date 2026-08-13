@@ -1,31 +1,200 @@
 ---
-import SocialIcons from "@/components/SocialIcons.astro"
-import { SITE, SOCIALS } from "@/consts"
+import BitcoinAustriaLogo from "@/assets/bitcoin-austria-horizontal.svg"
+
+const sections = [
+  {
+    title: "Initiative",
+    links: [
+      { label: "Individualantrag", href: "/individualantrag/" },
+      { label: "Warum DAC8?", href: "/argumente/" },
+      { label: "Mitmachen", href: "/mitmachen/" },
+      { label: "Für Unternehmen", href: "/unternehmen/" },
+    ],
+  },
+  {
+    title: "Mehr",
+    links: [
+      { label: "International kooperieren", href: "/mitmachen/#international" },
+      {
+        label: "Mit Bitcoin spenden",
+        href: "https://pay.bitcoin-austria.at/apps/Nbue7dfjRGGcNXcaQ3AqDy1FARY/pos",
+      },
+      { label: "Kontakt", href: "mailto:kontakt@dac8.org" },
+    ],
+  },
+  {
+    title: "Angestoßen von",
+    links: [
+      {
+        label: "Bull Bitcoin ↗",
+        href: "https://www.bullbitcoin.com/fr/blog/bull-bitcoin-saisit-le-conseil-detat-pour-faire-annuler-dac8-la-surveillance-de-masse-des-crypto-actifs",
+      },
+    ],
+  },
+]
 ---
 
 <footer>
-  <p>
-    &copy; {new Date().getFullYear()}
-    {SITE.title}
-  </p>
-  <SocialIcons links={SOCIALS} />
+  <div class="footer-main">
+    <div class="footer-lead">
+      <a class="footer-brand" href="/">dac8<span>.org</span></a>
+      <p>
+        Gegen anlasslose Krypto-Datenerfassung. Für Grundrechte, gezielte
+        Ermittlungen und ein freies Bitcoin-Ökosystem. Eine Initiative von
+        Bitcoin Austria.
+      </p>
+    </div>
+
+    <nav aria-label="Footer">
+      {sections.map((section) => (
+        <section>
+          <h2>{section.title}</h2>
+          <ul>
+            {section.links.map((link) => (
+              <li>
+                <a href={link.href}>{link.label}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </nav>
+  </div>
+
+  <div class="footer-base">
+    <a
+      class="association-brand"
+      href="https://bitcoin-austria.at"
+      aria-label="Bitcoin Austria"
+    >
+      <BitcoinAustriaLogo />
+    </a>
+    <div class="footer-meta">
+      <ul class="legal-links" aria-label="Rechtliches">
+        <li><a href="/impressum/">Impressum</a></li>
+        <li><a href="/datenschutz/">Datenschutz</a></li>
+      </ul>
+    </div>
+  </div>
 </footer>
 
 <style>
   footer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-block: var(--space-xs) var(--page-offset-bottom);
+    padding: var(--space-2xl) var(--space-l) var(--space-l);
+  }
 
-    @media (width >= 40rem) {
-      flex-direction: row;
-      justify-content: space-between;
+  .footer-main {
+    display: grid;
+    grid-template-columns: minmax(14rem, 1fr) minmax(0, 2fr);
+    gap: var(--space-xl) var(--space-3xl);
+    align-items: start;
+
+    @media (width < 64rem) {
+      grid-template-columns: 1fr;
     }
+  }
 
-    p {
-      font-size: var(--step--1);
+  .footer-lead p {
+    max-inline-size: 46ch;
+    margin-block-start: var(--space-m);
+    color: var(--muted-foreground);
+  }
+
+  .footer-brand {
+    inline-size: fit-content;
+    font-size: var(--step-3);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: -0.04em;
+    text-decoration: none;
+
+    span {
+      color: var(--primary);
+    }
+  }
+
+  .legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-m);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .association-brand {
+    inline-size: min(100%, 8rem);
+    color: var(--muted-foreground);
+
+    &:hover {
       color: var(--muted-foreground);
     }
+
+    svg {
+      inline-size: 100%;
+      block-size: auto;
+    }
+  }
+
+  nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-xl);
+    align-content: start;
+
+    @media (width < 40rem) {
+      grid-template-columns: 1fr;
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  }
+
+  h2 {
+    margin-block-end: var(--space-xs);
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  nav li + li {
+    margin-block-start: var(--space-2xs);
+  }
+
+  a {
+    text-underline-offset: 0.2em;
+
+    &:hover {
+      color: var(--primary);
+    }
+  }
+
+  .footer-base {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+    margin-block-start: var(--space-xl);
+    padding-block-start: var(--space-m);
+    border-block-start: 1px solid var(--border);
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+
+    @media (width < 40rem) {
+      flex-wrap: wrap;
+    }
+  }
+
+  .footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-m);
   }
 </style>
