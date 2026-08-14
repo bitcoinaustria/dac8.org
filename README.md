@@ -5,8 +5,8 @@ collection under DAC8 and Austria's Crypto-Asset Reporting Obligations Act. It
 supports a planned application to Austria's Constitutional Court and a broader,
 multilingual European effort pursuing every available legal avenue.
 
-[Bull Bitcoin](https://www.bullbitcoin.com/fr/blog/bull-bitcoin-saisit-le-conseil-detat-pour-faire-annuler-dac8-la-surveillance-de-masse-des-crypto-actifs)
-started the European resistance with DAC8.com and its case in France.
+[Bull Bitcoin](https://www.bullbitcoin.com/blog/bull-bitcoin-petitions-frances-conseil-detat-to-strike-down-dac8-the-mass-surveillance-of-crypto-assets)
+started the European resistance with [Dac8.com](https://dac8.com/en/) and its case in France.
 
 ## Development
 
