@@ -19,34 +19,13 @@ const facts = [
     text: "Ein Steuerdatensatz veraltet. Eine Blockchain nicht. Wer eine Adresse einmal einem Namen zuordnet, kann alles nachlesen, was davor und danach über diese Adresse gelaufen ist, auch in zwanzig Jahren.",
   },
 ]
-
-const actions = [
-  {
-    title: "Beschwerde bei der Datenschutzbehörde",
-    text: "Ein Generator erstellt dir eine fertige Beschwerde gegen die Verarbeitung deiner Daten. Läuft im Browser, deine Angaben bleiben auf deinem Gerät.",
-    label: "In Arbeit",
-    href: null,
-  },
-  {
-    title: "Deine Abgeordneten anschreiben",
-    text: "Ein zweiter Generator schreibt dir einen Brief an deine Vertretung im Nationalrat und im Europäischen Parlament. Auch das passiert lokal bei dir.",
-    label: "In Arbeit",
-    href: null,
-  },
-  {
-    title: "Das Verfahren finanzieren",
-    text: "Anwaltspflicht, Eingabengebühr und Gutachten zahlt jemand. Spenden an Bitcoin Austria tragen die Initiative, ohne dass du dich irgendwo eintragen musst.",
-    label: "Spenden",
-    href: "https://pay.bitcoin-austria.at/apps/Nbue7dfjRGGcNXcaQ3AqDy1FARY/pos",
-  },
-]
 ---
 
 <Layout>
   <MetaPage
     slot="head"
     title="DAC8: Krypto-Meldepflicht vor den VfGH bringen"
-    description="Bitcoin Austria bereitet einen Individualantrag gegen das österreichische Krypto-Meldepflichtgesetz vor. Mitmachen ohne Anmeldung und ohne Daten."
+    description="Bitcoin Austria bereitet einen Individualantrag gegen das österreichische Krypto-Meldepflichtgesetz vor. So läuft das Verfahren, so kannst du helfen."
   />
 
   <article class="campaign">
@@ -126,7 +105,9 @@ const actions = [
         <p>
           Wir schöpfen dabei jedes rechtsstaatliche Mittel aus, das offensteht,
           bis hinauf zum Europäischen Gerichtshof. Von dir brauchen wir dafür
-          nichts: keine Anmeldung, keine Unterschrift, keine Daten.
+          derzeit keine Daten. Sollte ein Verfahrensschritt Angaben erfordern,
+          fragen wir gezielt danach und sagen, wofür. Auf Vorrat sammeln wir
+          nicht.
         </p>
         <a class="button primary" href="/individualantrag/"
           >Wie weit wir gehen</a
@@ -136,25 +117,24 @@ const actions = [
 
     <section class="split-section" aria-labelledby="vorbild-heading">
       <div>
-        <p class="eyebrow">Aus 2012 gelernt</p>
+        <p class="eyebrow">Der Präzedenzfall</p>
         <h2 id="vorbild-heading">
           Ein Überwachungsgesetz ist schon einmal gefallen.
         </h2>
       </div>
       <div class="stack">
         <p>
-          2012 gingen 11.130 Menschen gemeinsam gegen die
-          Vorratsdatenspeicherung vor, organisiert vom AKVorrat, dem heutigen
-          <a href="https://epicenter.works">epicenter.works</a>. 2014 hob der
-          Verfassungsgerichtshof die Vorratsdatenspeicherung auf.
+          2012 brachte der AKVorrat, das heutige
+          <a href="https://epicenter.works">epicenter.works</a>, gemeinsam mit
+          11.130 Menschen die Vorratsdatenspeicherung vor den
+          Verfassungsgerichtshof. 2014 hob der VfGH die österreichische
+          Umsetzung auf.
         </p>
         <p>
-          Getragen hat das Verfahren am Ende aber nicht die Zahl. Den Antrag der
-          11.129 Mitantragsteller:innen wies der VfGH am 10. Juni 2014 zurück,
-          inhaltlich entschieden hat er über die Anträge von zwei
-          Einzelpersonen. Wir ziehen daraus einen Schluss: Unterschriften
-          gewinnen kein Verfahren, und dafür Daten einzusammeln lohnt sich
-          nicht.
+          Anlasslose Massenerfassung ist an den Grundrechten also schon einmal
+          gescheitert, und zwar auf genau dem Weg, den wir jetzt gehen: ein
+          Individualantrag beim Verfassungsgerichtshof. Dass dieser Weg begehbar
+          ist, hat epicenter.works vorgeführt. Wir bauen darauf auf.
         </p>
         <a
           class="arrow-link"
@@ -181,59 +161,15 @@ const actions = [
           Bitcoin Austria trägt diesen Impuls nach Österreich. Die Rechtswege
           sind national, dieselbe Klage ist nicht überall möglich. Aber je mehr
           Mitgliedstaaten dieselbe Frage stellen, desto schwerer lässt sie sich
-          aussitzen. Wir teilen dafür Quellen und Argumentation mit
-          Organisationen, die in ihrem Land aktiv werden wollen.
+          aussitzen.
         </p>
         <a
           class="arrow-link"
           href="https://www.bullbitcoin.com/fr/blog/bull-bitcoin-saisit-le-conseil-detat-pour-faire-annuler-dac8-la-surveillance-de-masse-des-crypto-actifs"
           >Bull Bitcoins Initiative und Verfahren →</a
         >
-        <a
-          class="arrow-link"
-          href="mailto:kontakt@dac8.org?subject=Internationale%20Kooperation%20gegen%20DAC8"
-          >Als Partnerorganisation melden →</a
-        >
       </div>
     </section>
-
-    <section aria-labelledby="mitmachen-heading">
-      <p class="eyebrow">Mitmachen</p>
-      <h2 id="mitmachen-heading">
-        Der Antrag ist ungewiss. <span>Deine Beteiligung nicht.</span>
-      </h2>
-      <p class="section-intro">
-        Ob der VfGH unseren Antrag zulässt, entscheidet der VfGH. Was du dagegen
-        tun kannst, hängt davon nicht ab und braucht keine Anmeldung bei uns.
-      </p>
-      <div class="action-grid">
-        {actions.map((action) => (
-          <article>
-            <h3>{action.title}</h3>
-            <p>{action.text}</p>
-            {action.href ? (
-              <a href={action.href}>{action.label} →</a>
-            ) : (
-              <p class="pending">{action.label}</p>
-            )}
-          </article>
-        ))}
-      </div>
-      <a class="arrow-link" href="/mitmachen/">Alle Beteiligungswege →</a>
-    </section>
-
-    <aside class="company-callout">
-      <p class="eyebrow">An das Ökosystem</p>
-      <h2>Wer an Krypto verdient, sollte seine Nutzer nicht allein lassen.</h2>
-      <p>
-        Wir suchen keine gekauften Logos. Wir suchen Mitverantwortung:
-        Finanzierung, juristische oder technische Expertise, Reichweite und eine
-        klare öffentliche Position.
-      </p>
-      <a class="button light" href="/unternehmen/"
-        >Als Unternehmen unterstützen</a
-      >
-    </aside>
 
     <section class="source-strip" aria-labelledby="sources-heading">
       <p class="eyebrow">Primärquellen</p>
@@ -260,17 +196,39 @@ const actions = [
       </ul>
     </section>
 
-    <aside class="closing">
-      <p class="eyebrow">Jetzt zählt Beteiligung</p>
-      <h2>Grundrechte verteidigen sich nicht von selbst.</h2>
+    <section aria-labelledby="mitmachen-heading">
+      <p class="eyebrow">Mitmachen</p>
+      <h2 id="mitmachen-heading">
+        Der Ausgang ist ungewiss. <span>Deine Beteiligung nicht.</span>
+      </h2>
+      <p class="section-intro">
+        Ob der VfGH unseren Antrag zulässt, entscheidet der VfGH. Was du dagegen
+        tun kannst, hängt davon nicht ab. Zwei Generatoren sind in Arbeit, einer
+        für die Beschwerde an die Datenschutzbehörde, einer für den Brief an
+        deine Abgeordneten. Beide laufen im Browser, deine Angaben bleiben auf
+        deinem Gerät. Bis dahin hilft, wer die Rechtskosten mitträgt.
+      </p>
       <div class="button-row">
-        <a class="button light" href="/mitmachen/">Mitmachen</a>
+        <a class="button primary" href="/mitmachen/">Alle Beteiligungswege</a>
         <a
-          class="button outline-light"
+          class="button"
           href="https://pay.bitcoin-austria.at/apps/Nbue7dfjRGGcNXcaQ3AqDy1FARY/pos"
-          >Spenden</a
+          >Jetzt spenden</a
         >
       </div>
+    </section>
+
+    <aside class="company-callout">
+      <p class="eyebrow">An das Ökosystem</p>
+      <h2>Wer an Krypto verdient, sollte seine Nutzer nicht allein lassen.</h2>
+      <p>
+        Wir suchen keine gekauften Logos. Wir suchen Mitverantwortung:
+        Finanzierung, juristische oder technische Expertise, Reichweite und eine
+        klare öffentliche Position.
+      </p>
+      <a class="button light" href="/unternehmen/"
+        >Als Unternehmen unterstützen</a
+      >
     </aside>
   </article>
 </Layout>
