@@ -35,7 +35,7 @@ a { color: inherit; }
   text-decoration: none;
   cursor: pointer;
 }
-.button.primary { border-color: #c2410c; background: #c2410c; color: #fff; }
+.button.primary { border-color: #e3000f; background: #e3000f; color: #fff; }
 `
 
 export function offlinePage(opts: {

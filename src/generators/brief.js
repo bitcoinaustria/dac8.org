@@ -66,12 +66,9 @@ function copyToClipboard(text) {
   return Promise.resolve()
 }
 
-function flash(button, label) {
-  const original = button.textContent
-  button.textContent = label
-  setTimeout(() => {
-    button.textContent = original
-  }, 1800)
+function flash(button) {
+  button.classList.add("copied")
+  setTimeout(() => button.classList.remove("copied"), 1800)
 }
 
 for (const button of document.querySelectorAll(".copy-rows .copy-mini")) {
@@ -79,7 +76,7 @@ for (const button of document.querySelectorAll(".copy-rows .copy-mini")) {
     const text =
       button.dataset.copy ||
       button.closest("dd").querySelector("span").textContent
-    copyToClipboard(text).then(() => flash(button, "✓ Kopiert"))
+    copyToClipboard(text).then(() => flash(button))
   })
 }
 
@@ -88,7 +85,7 @@ copyTextButton.addEventListener("click", () => {
   // innerText statt textContent: erhält Zeilenumbrüche, die beim Bearbeiten
   // der contenteditable-Vorschau als <br>/<div> entstehen.
   copyToClipboard(document.getElementById("mdep-text").innerText).then(() =>
-    flash(copyTextButton, "✓ Kopiert"),
+    flash(copyTextButton),
   )
 })
 

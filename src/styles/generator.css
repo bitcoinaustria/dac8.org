@@ -11,7 +11,7 @@
 .generator .privacy-note {
   justify-self: stretch;
   padding: var(--space-2xs, 0.5rem) var(--space-s, 1rem);
-  border-inline-start: 3px solid var(--primary, #c2410c);
+  border-inline-start: 3px solid var(--primary, #e3000f);
   background: var(--muted, #f2f0ed);
   color: var(--muted-foreground, #555);
   font-size: var(--step--1, 0.875rem);
@@ -52,7 +52,7 @@
 }
 
 .generator :focus-visible {
-  outline: 2px solid var(--primary, #c2410c);
+  outline: 2px solid var(--primary, #e3000f);
   outline-offset: 1px;
 }
 
@@ -103,18 +103,41 @@
   }
 }
 
+/* Icon-Buttons zum Kopieren: Kopiersymbol, nach Klick 1,8 s lang Häkchen
+   (Klasse .copied, gesetzt im Skript). */
 .generator .copy-mini {
-  padding: 0.15em 0.6em;
-  border: 1px solid var(--border, #bbb);
+  padding: 0.2em;
+  border: 0;
   background: none;
   color: var(--muted-foreground, #555);
-  font: inherit;
-  font-size: var(--step--1, 0.875rem);
   cursor: pointer;
 
   &:hover {
-    border-color: var(--foreground, #111);
     color: var(--foreground, #111);
+  }
+
+  &.copied {
+    color: var(--primary, #e3000f);
+  }
+
+  svg {
+    display: block;
+    inline-size: 1.1em;
+    block-size: 1.1em;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  svg:last-child,
+  &.copied svg:first-child {
+    display: none;
+  }
+
+  &.copied svg:last-child {
+    display: block;
   }
 }
 
