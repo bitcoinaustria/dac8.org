@@ -8,6 +8,7 @@ export const SITE = {
 } as const
 
 export const NAVIGATION = [
+  { href: "/was-ist-dac8", label: "Was ist DAC8?" },
   { href: "/individualantrag", label: "Individualantrag" },
   { href: "/argumente", label: "Warum DAC8?" },
   { href: "/mitmachen", label: "Mitmachen" },
