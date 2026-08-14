@@ -101,25 +101,27 @@ function flash(button, label) {
   }, 1800)
 }
 
-for (const button of document.querySelectorAll(".copy-glyph")) {
+for (const button of document.querySelectorAll(".copy-rows .copy-mini")) {
   button.addEventListener("click", () => {
     const text =
       button.dataset.copy ||
       button.closest("dd").querySelector("span").textContent
-    copyToClipboard(text).then(() => flash(button, "✓"))
+    copyToClipboard(text).then(() => flash(button, "✓ Kopiert"))
   })
 }
 
 const copyTextButton = document.getElementById("copy-text")
 copyTextButton.addEventListener("click", () => {
-  copyToClipboard(document.getElementById("text").value).then(() =>
+  // innerText statt textContent: erhält Zeilenumbrüche, die beim Bearbeiten
+  // der contenteditable-Vorschau als <br>/<div> entstehen.
+  copyToClipboard(document.getElementById("text").innerText).then(() =>
     flash(copyTextButton, "✓ Kopiert"),
   )
 })
 
 form.addEventListener("submit", (event) => {
   event.preventDefault()
-  document.getElementById("text").value = buildText()
+  document.getElementById("text").textContent = buildText()
   const out = document.getElementById("out")
   out.hidden = false
   out.scrollIntoView({ behavior: "smooth", block: "nearest" })

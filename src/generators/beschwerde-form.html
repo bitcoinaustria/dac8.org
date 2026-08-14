@@ -71,12 +71,12 @@
         <dd>
           <span>dsb@dsb.gv.at</span>
           <button
-            class="copy-glyph"
+            class="copy-mini"
             type="button"
             data-copy="dsb@dsb.gv.at"
             aria-label="Empfänger kopieren"
           >
-            ⧉
+            Kopieren
           </button>
         </dd>
       </div>
@@ -87,30 +87,41 @@
             >Datenschutzbeschwerde gemäß Art. 77 DSGVO iVm § 24 DSG — anlasslose
             Massenerfassung von Krypto-Daten (DAC8 / Krypto-MPfG)</span
           >
-          <button
-            class="copy-glyph"
-            type="button"
-            aria-label="Betreff kopieren"
-          >
-            ⧉
+          <button class="copy-mini" type="button" aria-label="Betreff kopieren">
+            Kopieren
           </button>
         </dd>
       </div>
     </dl>
-    <textarea id="text" readonly aria-label="Erzeugte Beschwerde"></textarea>
+    <div class="message-card">
+      <div class="message-head">
+        <span>Nachricht · direkt hier bearbeitbar</span>
+        <button
+          class="copy-mini"
+          type="button"
+          id="copy-text"
+          aria-label="Nachricht kopieren"
+        >
+          Kopieren
+        </button>
+      </div>
+      <div
+        class="message-text"
+        id="text"
+        contenteditable="plaintext-only"
+        spellcheck="false"
+        aria-label="Erzeugte Beschwerde"
+      ></div>
+    </div>
     <div class="button-row">
-      <button class="button primary" type="button" id="copy-text">
-        In Zwischenablage kopieren
-      </button>
-      <a class="button" id="mailto" href="#"
+      <a class="button primary" id="mailto" href="#"
         >E-Mail öffnen (Empfänger &amp; Betreff)</a
       >
     </div>
     <p class="gen-note">
-      Der Button öffnet dein Mailprogramm nur mit Empfänger und Betreff — den
-      Text fügst du selbst ein. Am zuverlässigsten: oben kopieren und in eine
-      neue E-Mail an <strong>dsb@dsb.gv.at</strong> einfügen. Die Beschwerde per
-      E-Mail ist vollwertig, das
+      Der Button öffnet dein Mailprogramm nur mit Empfänger und Betreff — die
+      Nachricht fügst du selbst ein. Eine Unterschrift oder digitale Signatur
+      brauchst du nicht. Die Beschwerde per E-Mail ist vollwertig, das
       <a
         href="https://www.formularservice.gv.at/site/fsrv/user/formular.aspx?pid=5a37966ab26c4489adc20dc53162fa4d"
         >Online-Formular der Datenschutzbehörde</a

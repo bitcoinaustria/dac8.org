@@ -41,8 +41,7 @@
 }
 
 .generator input,
-.generator select,
-.generator textarea {
+.generator select {
   inline-size: 100%;
   padding: 0.55em 0.7em;
   border: 1px solid var(--border, #bbb);
@@ -93,6 +92,10 @@
     font-weight: var(--font-weight-medium, 500);
   }
 
+  dd .copy-mini {
+    flex-shrink: 0;
+  }
+
   small {
     display: block;
     color: var(--muted-foreground, #555);
@@ -100,25 +103,45 @@
   }
 }
 
-.generator .copy-glyph {
-  padding: 0 0.3em;
-  border: 0;
+.generator .copy-mini {
+  padding: 0.15em 0.6em;
+  border: 1px solid var(--border, #bbb);
   background: none;
   color: var(--muted-foreground, #555);
-  font-size: 1.1em;
+  font: inherit;
+  font-size: var(--step--1, 0.875rem);
   cursor: pointer;
 
   &:hover {
+    border-color: var(--foreground, #111);
     color: var(--foreground, #111);
   }
 }
 
-.generator textarea {
-  min-block-size: 20rem;
-  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  resize: vertical;
+/* Brief-Vorschau: Kopfzeile mit Kopier-Button, darunter die Nachricht als
+   bearbeitbarer Fließtext statt Formular-Textarea. */
+.generator .message-card {
+  justify-self: stretch;
+  border: 1px solid var(--border, #bbb);
+}
+
+.generator .message-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s, 1rem);
+  padding: var(--space-2xs, 0.5rem) var(--space-s, 1rem);
+  border-block-end: 1px solid var(--border, #bbb);
+  background: var(--muted, #f2f0ed);
+  color: var(--muted-foreground, #555);
+  font-size: var(--step--1, 0.875rem);
+}
+
+.generator .message-text {
+  padding: var(--space-s, 1rem) var(--space-s, 1rem);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
 }
 
 .generator .gen-note {

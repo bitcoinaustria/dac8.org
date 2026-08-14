@@ -74,18 +74,20 @@ function flash(button, label) {
   }, 1800)
 }
 
-for (const button of document.querySelectorAll(".copy-glyph")) {
+for (const button of document.querySelectorAll(".copy-rows .copy-mini")) {
   button.addEventListener("click", () => {
     const text =
       button.dataset.copy ||
       button.closest("dd").querySelector("span").textContent
-    copyToClipboard(text).then(() => flash(button, "✓"))
+    copyToClipboard(text).then(() => flash(button, "✓ Kopiert"))
   })
 }
 
 const copyTextButton = document.getElementById("mdep-copy-text")
 copyTextButton.addEventListener("click", () => {
-  copyToClipboard(document.getElementById("mdep-text").value).then(() =>
+  // innerText statt textContent: erhält Zeilenumbrüche, die beim Bearbeiten
+  // der contenteditable-Vorschau als <br>/<div> entstehen.
+  copyToClipboard(document.getElementById("mdep-text").innerText).then(() =>
     flash(copyTextButton, "✓ Kopiert"),
   )
 })
@@ -94,7 +96,7 @@ form.addEventListener("submit", (event) => {
   event.preventDefault()
   const { body, empf } = buildBrief()
   const emails = empf.map((e) => e.email).join(",")
-  document.getElementById("mdep-text").value = body
+  document.getElementById("mdep-text").textContent = body
   document.getElementById("mdep-emails").textContent = emails
   document.getElementById("mdep-names").textContent = empf
     .map((e) => e.name)
