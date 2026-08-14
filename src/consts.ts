@@ -7,10 +7,21 @@ export const SITE = {
   defaultPageImage: "/static/opengraph-image.png",
 } as const
 
-export const NAVIGATION = [
+export const NAVIGATION: {
+  href: string
+  label: string
+  children?: { href: string; label: string }[]
+}[] = [
   { href: "/was-ist-dac8", label: "Was ist DAC8?" },
   { href: "/individualantrag", label: "Individualantrag" },
   { href: "/argumente", label: "Warum DAC8?" },
-  { href: "/mitmachen", label: "Mitmachen" },
+  {
+    href: "/mitmachen",
+    label: "Mitmachen",
+    children: [
+      { href: "/beschwerde", label: "Beschwerde einreichen" },
+      { href: "/brief", label: "Abgeordnete anschreiben" },
+    ],
+  },
   { href: "/unternehmen", label: "Für Unternehmen" },
 ]

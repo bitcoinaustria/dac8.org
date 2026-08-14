@@ -8,7 +8,10 @@ type Props = { crumbs?: { label: string; href: string }[] }
 const { crumbs = [] } = Astro.props
 const pathname = normalizePath(Astro.url.pathname) || "/"
 const section = NAVIGATION.find(
-  ({ href }) => pathname === href || pathname.startsWith(`${href}/`),
+  ({ href, children }) =>
+    pathname === href ||
+    pathname.startsWith(`${href}/`) ||
+    children?.some((child) => pathname === child.href),
 )
 ---
 
@@ -37,6 +40,20 @@ const section = NAVIGATION.find(
               >
                 {item.label}
               </a>
+              {item.children && (
+                <ul class="nav-children">
+                  {item.children.map((child) => (
+                    <li>
+                      <a
+                        href={child.href}
+                        aria-current={pathname === child.href ? "page" : undefined}
+                      >
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
               {item === section && crumbs.length > 0 && pathname !== item.href && (
                 <ul>
                   {crumbs.map((crumb, i) => (
@@ -167,7 +184,9 @@ const section = NAVIGATION.find(
     }
 
     @media (width < 72rem) {
-      ul {
+      /* Krümelpfade bleiben im Overlay versteckt, die festen Unterpunkte
+         (Generatoren) sollen auch dort erreichbar sein. */
+      ul:not(.nav-children) {
         display: none;
       }
     }
