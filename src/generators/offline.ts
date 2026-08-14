@@ -57,9 +57,8 @@ export function offlinePage(opts: {
 <main>
 <h1>${opts.title}</h1>
 <p>${opts.intro}</p>
-<p class="offline-hint">Diese Datei funktioniert ohne Internet: Öffne sie in
-einem Browser, fülle das Formular aus, und der Text entsteht direkt auf deinem
-Gerät. Nichts wird übertragen oder gespeichert.</p>
+<p class="offline-hint">Diese Datei funktioniert ohne Internet: im Browser
+öffnen und ausfüllen.</p>
 ${opts.formHtml}
 <footer>Eine Datei von <a href="${opts.canonical}">dac8.org</a>, einer
 Initiative des Vereins Bitcoin Austria. Die jeweils aktuelle Fassung dieses
