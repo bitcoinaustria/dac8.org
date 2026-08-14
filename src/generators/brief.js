@@ -42,11 +42,13 @@ function buildBrief() {
 
 als Bürger aus ${landLabel} wende ich mich an Sie als Mitglied des Petitionsausschusses des Europäischen Parlaments.
 
-Mit DAC8 (Richtlinie (EU) 2023/2226) werden seit 2026 die personenbezogenen Daten und Krypto-Transaktionen praktisch aller Krypto-Nutzer in der EU anlasslos und flächendeckend erfasst und automatisch zwischen den Steuerbehörden ausgetauscht – ohne dass die Betroffenen vorab informiert oder angehört werden.
+Mit DAC8 (Richtlinie (EU) 2023/2226) werden seit 1. Jänner 2026 Identität und Transaktionsdaten praktisch aller Krypto-Nutzer in der EU laufend erfasst — anlasslos, flächendeckend, ohne Verdacht und ohne dass die Betroffenen informiert oder angehört werden. Ab 2027 werden diese Daten automatisch zwischen den Steuerbehörden ausgetauscht. Erfasst wird nicht, weil jemand etwas getan hat, sondern weil er etwas besitzt.
 
-Gegen diese unverhältnismäßige Massenerfassung wird derzeit eine Petition an das Europäische Parlament vorbereitet. Ich bitte Sie, sie aufzugreifen, sobald sie vorliegt, und sich schon jetzt für eine verhältnismäßige, datenschutzkonforme Ausgestaltung von DAC8 einzusetzen: zielgerichtete statt anlassloser Erfassung, Datenminimierung, wirksame Betroffenenrechte sowie eine unabhängige Grundrechts-Folgenabschätzung.
+Der Europäische Gerichtshof hat anlasslose Vorratsdatenspeicherung und pauschale Transparenzregime wiederholt als unverhältnismäßig verworfen (Digital Rights Ireland, C-293/12 und C-594/12; La Quadrature du Net, C-511/18 u. a.; WM und Sovim, C-37/20 und C-601/20). Das mildere Mittel existiert: Steuerbehörden können im Einzelfall gezielt Auskunft verlangen. Und jede zentrale Sammlung von Vermögensdaten ist nur so sicher wie ihr schwächstes Glied — geleakte Daten über Krypto-Halter haben nachweislich zu Erpressung und Entführungen geführt, auch gegen Angehörige, die selbst nie Kryptowerte besessen haben.
 
-Der Europäische Gerichtshof hat anlasslose Massenerfassung wiederholt als unverhältnismäßig verworfen. Die zentrale Zusammenführung sensibler Krypto-Daten schafft zudem erhebliche Sicherheitsrisiken für die Betroffenen und ihr Umfeld.${hinweis}
+Gegen diese Massenerfassung wird derzeit eine Petition an das Europäische Parlament vorbereitet. Ich bitte Sie, sie aufzugreifen, sobald sie vorliegt, und sich schon jetzt für eine verhältnismäßige Ausgestaltung von DAC8 einzusetzen: gezielte statt anlassloser Erfassung, Datenminimierung, wirksame Betroffenenrechte und eine unabhängige Grundrechts-Folgenabschätzung.${hinweis}
+
+Der Staat darf Steuern einheben und durchsetzen. Er muss dafür nicht das Vermögen aller sichtbar machen.
 
 Mit freundlichen Grüßen
 ${name}`

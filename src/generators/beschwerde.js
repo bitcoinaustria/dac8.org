@@ -43,9 +43,9 @@ function buildText() {
   const heute = fmtDate(new Date().toISOString().slice(0, 10))
   const grenz =
     land !== "Österreich"
-      ? " In meinem Fall werden meine Daten in Österreich erhoben, an das österreichische BMF gemeldet und von dort an die Steuerbehörde meines Wohnsitzstaates " +
+      ? " In meinem Fall werden meine Daten in Österreich erhoben, an die österreichische Finanzverwaltung gemeldet und sollen von dort an die Steuerbehörde meines Wohnsitzstaates " +
         land +
-        " übermittelt."
+        " übermittelt werden."
       : ""
   return `Sehr geehrte Damen und Herren,
 
@@ -56,22 +56,22 @@ ${vorname} ${nachname}, ${strasse}, ${plz} ${ort}, ${land}${email ? "; E-Mail: "
 Ich bin eine von der unten geschilderten Verarbeitung unmittelbar betroffene natürliche Person.
 
 2. Beschwerdegegnerische Partei
-Bundesministerium für Finanzen, Johannesgasse 5, 1010 Wien — als für die Sammlung, Speicherung und den automatischen zwischenstaatlichen Austausch der Krypto-Daten verantwortliche Stelle.
+Bundesministerium für Finanzen, Johannesgasse 5, 1010 Wien — als die für den automatischen internationalen Austausch der Krypto-Daten zuständige Behörde (§ 21 Krypto-MPfG); die Meldungen der Anbieter ergehen an das zuständige Finanzamt (§§ 3, 18 f Krypto-MPfG).
 
 3. Als verletzt erachtete Rechte
 Grundrecht auf Geheimhaltung (§ 1 Abs. 1 DSG); Datenminimierung und Zweckbindung (Art. 5 Abs. 1 lit. b und c DSGVO); Rechtmäßigkeit der Verarbeitung (Art. 6 DSGVO); Art. 7 und 8 der EU-Grundrechtecharta.
 
 4. Sachverhalt
-Ich kaufe bzw. halte Bitcoin über ${boerse}, eine in Österreich niedergelassene Anbieterin von Krypto-Dienstleistungen. Seit dem Inkrafttreten des Krypto-Meldepflichtgesetzes (Krypto-MPfG, BGBl. I Nr. 96/2025) am 1. Jänner 2026 — der österreichischen Umsetzung von DAC8 (Richtlinie (EU) 2023/2226) — ist dieser Anbieter verpflichtet, personenbezogene Daten sämtlicher Kunden zu erheben und jährlich an das Bundesministerium für Finanzen zu melden (Identität, Steueridentifikationsnummer, Art der Kryptowerte sowie Beträge, Einheiten und Transaktionszahlen). Diese Daten werden gesammelt und im Wege des automatischen Informationsaustauschs an die Steuerbehörden anderer Staaten übermittelt. Die betroffenen Personen werden vor der Übermittlung weder informiert noch angehört.${grenz} Die Erfassung erfolgt anlasslos und flächendeckend und trifft auch mich allein deshalb, weil ich Krypto-Werte halte.
+Ich kaufe bzw. halte Bitcoin über ${boerse}, eine in Österreich niedergelassene Anbieterin von Krypto-Dienstleistungen. Seit dem Inkrafttreten des Krypto-Meldepflichtgesetzes (Krypto-MPfG, BGBl. I Nr. 96/2025) am 1. Jänner 2026 — der österreichischen Umsetzung von DAC8 (Richtlinie (EU) 2023/2226) — ist dieser Anbieter verpflichtet, personenbezogene Daten sämtlicher Kunden laufend zu erfassen und aufzubewahren, und zwar gemäß § 20 Abs. 1 Krypto-MPfG für alle Kunden hinsichtlich aller Transaktionen und Kryptowerte, unabhängig davon, ob eine Meldepflicht besteht. Jährlich sind diese Daten an das zuständige Finanzamt zu melden (Identität, Steueridentifikationsnummer, Art der Kryptowerte sowie Beträge, Einheiten und Transaktionszahlen; §§ 18 f Krypto-MPfG); die erste Meldung hat bis 31. Juli 2027 zu erfolgen, der erste automatische Austausch mit den Steuerbehörden anderer Staaten bis 30. September 2027 (§ 21 Krypto-MPfG). Die betroffenen Personen werden vor der Übermittlung weder informiert noch angehört.${grenz} Die Erfassung erfolgt anlasslos und flächendeckend und trifft auch mich allein deshalb, weil ich Krypto-Werte halte.
 
 5. Gründe der Rechtswidrigkeit
-Die anlasslose, flächendeckende Erfassung verstößt gegen Datenminimierung und Verhältnismäßigkeit (Art. 5 DSGVO, § 1 DSG) und greift unverhältnismäßig in Art. 7 und 8 GRC ein. Der EuGH hat anlasslose Massenerfassung wiederholt verworfen (Digital Rights Ireland; La Quadrature du Net; WM und Sovim). Zudem existiert ein milderes Mittel (gezielte, anlassbezogene Auskunft), und die zentrale Zusammenführung sensibler Krypto-Daten schafft ein erhebliches Missbrauchs- und Sicherheitsrisiko.
+Die anlasslose, flächendeckende Erfassung verstößt gegen Datenminimierung und Verhältnismäßigkeit (Art. 5 DSGVO, § 1 DSG) und greift unverhältnismäßig in Art. 7 und 8 GRC ein. Der EuGH hat anlasslose Vorratsdatenspeicherung und pauschale Transparenzregime wiederholt verworfen (Digital Rights Ireland, C-293/12 und C-594/12; La Quadrature du Net, C-511/18 u. a.; WM und Sovim, C-37/20 und C-601/20). Zudem existiert ein milderes Mittel (Auskunftsverlangen im Einzelfall, § 143 BAO), und die zentrale Zusammenführung sensibler Krypto-Daten schafft ein erhebliches Missbrauchs- und Sicherheitsrisiko.
 
 6. Begehren
-Ich beantrage die Feststellung, dass die Verarbeitung mich in den genannten Rechten verletzt; soweit zulässig die Einschränkung/Unterlassung der weiteren Übermittlung meiner Daten; sowie die Anregung, die Frage der Vereinbarkeit mit Art. 7, 8 GRC dem Gerichtshof der Europäischen Union gemäß Art. 267 AEUV zur Vorabentscheidung vorzulegen.
+Ich beantrage die Feststellung, dass die Verarbeitung mich in den genannten Rechten verletzt; soweit zulässig die Einschränkung bzw. Unterlassung der bevorstehenden Übermittlung meiner Daten; sowie die Anregung, die Frage der Vereinbarkeit mit Art. 7, 8 GRC dem Gerichtshof der Europäischen Union gemäß Art. 267 AEUV zur Vorabentscheidung vorzulegen.
 
 7. Rechtzeitigkeit
-Die laufende Verarbeitung besteht seit 1. Jänner 2026; Kenntnis am ${datum || heute}. Die Beschwerde ist fristgerecht iSd § 24 Abs. 4 DSG.
+Die beanstandete Verarbeitung ist ein andauernder Zustand, der am 1. Jänner 2026 begonnen hat und fortbesteht; Kenntnis von der mich konkret betreffenden Verarbeitung erlangte ich am ${datum || heute}. Die Beschwerde ist daher fristgerecht iSd § 24 Abs. 4 DSG.
 
 8. Betroffenheit
 Meine Betroffenheit ergibt sich aus meiner Kundenbeziehung zu ${boerse}.
