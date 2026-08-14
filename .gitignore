@@ -10,4 +10,5 @@ pnpm-debug.log*
 .env.production
 .DS_Store
 .idea/
+.claude/
 export/

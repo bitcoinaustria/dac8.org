@@ -1,13 +1,25 @@
 ---
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
+
+// label, angezeigter Wert, und was tatsächlich in die Zwischenablage geht.
+const bankDetails = [
+  { label: "Empfänger", value: "Bitcoin Austria" },
+  {
+    label: "IBAN",
+    value: "AT94 2011 1857 7690 6800",
+    copy: "AT942011185776906800",
+  },
+  { label: "BIC", value: "GIBAATWWXXX" },
+  { label: "Betreff", value: "DAC8 Klage" },
+]
 ---
 
 <Layout crumbs={[{ label: "Mitmachen", href: "/mitmachen/" }]}>
   <MetaPage
     slot="head"
     title="Mitmachen gegen die Krypto-Meldepflicht"
-    description="Beschwerde an die Datenschutzbehörde und Brief an deine Abgeordneten, erzeugt im Browser. Keine Anmeldung, keine Liste, deine Angaben bleiben bei dir."
+    description="Beschwerde an die Datenschutzbehörde und Brief an deine Abgeordneten, erzeugt im Browser: Deine Angaben bleiben dabei auf deinem eigenen Gerät."
   />
 
   <article class="campaign">
@@ -67,15 +79,16 @@ import Layout from "@/layouts/Layout.astro"
     >
       <div>
         <p class="eyebrow">Direkt betroffen</p>
-        <h2 id="betroffene-heading">Du musst dich nirgends eintragen.</h2>
+        <h2 id="betroffene-heading">Den Rechtsweg tragen wir.</h2>
       </div>
       <div class="stack">
         <p>
           Den Individualantrag bringen wir ein, anwaltlich vertreten. Die Kosten
-          trägt die Initiative, nicht du. Es gibt keine Unterschriftenliste,
-          keine Vollmacht und keine Anmeldung. Wer gegen anlasslose
-          Datensammlung vorgeht, sollte nicht selbst tausende Namen und Adressen
-          lagern.
+          trägt die Initiative, nicht du. Eintragen musst du dich derzeit
+          nirgends: Wer gegen anlasslose Datensammlung vorgeht, sollte nicht
+          selbst tausende Namen und Adressen lagern. Braucht das Verfahren
+          später Angaben von Betroffenen, fragen wir gezielt und sagen offen,
+          wozu.
         </p>
         <p>
           Deine eigenen Schritte gehören dir: Die Beschwerde an die
@@ -88,7 +101,11 @@ import Layout from "@/layouts/Layout.astro"
       </div>
     </section>
 
-    <section class="split-section" aria-labelledby="spenden-heading">
+    <section
+      id="spenden"
+      class="split-section"
+      aria-labelledby="spenden-heading"
+    >
       <div>
         <p class="eyebrow">Finanzieren</p>
         <h2 id="spenden-heading">
@@ -103,17 +120,71 @@ import Layout from "@/layouts/Layout.astro"
           formelle Beteiligung oder einen bestimmten Ausgang.
         </p>
         <p>
-          Bitcoin Austria nimmt Spenden in Bitcoin an. In Euro geht es
-          ebenfalls, schreib uns dafür kurz. Dasselbe gilt für einen
-          zweckgebundenen größeren Beitrag zu Rechts- oder Gutachterkosten.
-          Angaben zur steuerlichen Absetzbarkeit machen wir nur, wenn sie für
-          den konkreten Zeitpunkt gesichert sind.
+          Bitcoin-Spenden laufen über unseren selbst betriebenen BTCPay-Server,
+          in Euro geht es per Überweisung. Für einen zweckgebundenen größeren
+          Beitrag zu Rechts- oder Gutachterkosten schreib uns bitte vorher kurz.
         </p>
-        <a
-          class="button primary"
-          href="https://pay.bitcoin-austria.at/apps/Nbue7dfjRGGcNXcaQ3AqDy1FARY/pos"
-          >Mit Bitcoin spenden</a
+        <div class="button-row">
+          <a
+            class="button primary"
+            href="https://pay.bitcoin-austria.at/apps/Nbue7dfjRGGcNXcaQ3AqDy1FARY/pos"
+            >Mit Bitcoin spenden</a
+          >
+          <button class="button" type="button" id="fiat-open">
+            In Euro spenden
+          </button>
+        </div>
+        <dialog
+          id="fiat-dialog"
+          class="bank-dialog"
+          aria-labelledby="fiat-heading"
         >
+          <h3 id="fiat-heading">Spende per Überweisung</h3>
+          <dl class="bank-details">
+            {bankDetails.map((detail) => (
+              <>
+                <dt>{detail.label}</dt>
+                <dd>
+                  {detail.value}
+                  <button
+                    class="copy"
+                    type="button"
+                    data-copy={detail.copy ?? detail.value}
+                    aria-label={`${detail.label} kopieren`}
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="9" y="9" width="11" height="11" rx="2" />
+                      <path d="M5 15V5a2 2 0 0 1 2-2h10" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m5 13 4 4 10-10" />
+                    </svg>
+                  </button>
+                </dd>
+              </>
+            ))}
+          </dl>
+          <form method="dialog">
+            <button class="button">Schließen</button>
+          </form>
+        </dialog>
+        <script>
+          const dialog = document.getElementById("fiat-dialog")
+          document
+            .getElementById("fiat-open")
+            ?.addEventListener("click", () => {
+              if (dialog instanceof HTMLDialogElement) dialog.showModal()
+            })
+          for (const button of document.querySelectorAll<HTMLButtonElement>(
+            ".bank-details .copy",
+          )) {
+            button.addEventListener("click", async () => {
+              await navigator.clipboard.writeText(button.dataset.copy ?? "")
+              button.classList.add("copied")
+              setTimeout(() => button.classList.remove("copied"), 1500)
+            })
+          }
+        </script>
       </div>
     </section>
 

@@ -103,6 +103,10 @@
   font-size: var(--step-1);
 }
 
+.section-intro + .button-row {
+  margin-block-start: var(--space-m);
+}
+
 .button-row {
   display: flex;
   flex-wrap: wrap;
@@ -233,6 +237,8 @@
     min-block-size: 15rem;
     padding: var(--space-m);
     border: 1px solid var(--border);
+    /* Im Dunkelmodus trägt der 1px-Rahmen die Karte nicht. */
+    background: light-dark(transparent, var(--gray-3));
   }
 
   p {
@@ -257,12 +263,101 @@
   justify-items: start;
   gap: var(--space-m);
   padding: clamp(1.5rem, 5vw, 4rem);
-  background: #111;
+  /* Im Dunkelmodus wäre #111 die Seitenfarbe, der Kasten verschwände. */
+  background: light-dark(#111, var(--gray-4));
   color: #fff;
 
   p:not(.eyebrow) {
     color: #ccc;
     font-size: var(--step-1);
+  }
+}
+
+/* Native <dialog>, geöffnet per showModal() aus dem Spenden-Abschnitt. */
+.bank-dialog {
+  margin: auto;
+  padding: var(--space-m);
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
+
+  &[open] {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-s);
+  }
+
+  &::backdrop {
+    background: rgb(0 0 0 / 0.55);
+  }
+}
+
+/* .button sitzt sonst nur auf Links; <button> bringt eigene UA-Styles mit. */
+button.button {
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.bank-details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-2xs) var(--space-s);
+  margin: 0;
+  padding: var(--space-s) var(--space-m);
+  border: 1px solid var(--border);
+  background: var(--muted);
+  font-variant-numeric: tabular-nums;
+
+  dt {
+    color: var(--muted-foreground);
+  }
+
+  dd {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-s);
+    margin: 0;
+    font-weight: var(--font-weight-medium);
+  }
+
+  .copy {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--muted-foreground);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--foreground);
+    }
+
+    /* Bestätigung: Häkchen statt Kopiersymbol, gesetzt per .copied. */
+    &.copied {
+      color: var(--primary);
+    }
+
+    svg {
+      display: block;
+      inline-size: 1.1em;
+      block-size: 1.1em;
+      fill: none;
+      stroke: currentcolor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    svg:last-child,
+    &.copied svg:first-child {
+      display: none;
+    }
+
+    &.copied svg:last-child {
+      display: block;
+    }
   }
 }
 
