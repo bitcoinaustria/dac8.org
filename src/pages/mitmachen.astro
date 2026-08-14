@@ -19,32 +19,36 @@ const bankDetails = [
   <MetaPage
     slot="head"
     title="Mitmachen gegen die Krypto-Meldepflicht"
-    description="Beschwerde an die Datenschutzbehörde und Brief an deine Abgeordneten, erzeugt im Browser: Deine Angaben bleiben dabei auf deinem eigenen Gerät."
+    description="Selbst ein Schreiben abschicken, den Rechtsweg finanzieren, sich als Unternehmen dahinterstellen oder im eigenen Land ein Verfahren starten."
   />
 
   <article class="campaign">
     <header class="page-hero">
       <p class="eyebrow">Mitmachen</p>
-      <h1>Diese Initiative gehört <span>allen, die sie tragen</span>.</h1>
+      <h1>Mitmachen heißt hier: <span>selbst handeln</span>.</h1>
       <p class="intro">
-        Du musst kein Jurist sein und nicht seit 2011 dabei. Du kannst mit
-        deiner eigenen Beschwerde beitragen, mit einer Spende, mit Expertise,
-        Reichweite oder als Partnerorganisation.
+        Diese Initiative führt keine Helferliste und vergibt keine Aufgaben.
+        Jeder Weg auf dieser Seite funktioniert ohne Koordination durch uns: Du
+        schickst dein eigenes Schreiben ab, du finanzierst den Rechtsweg, du
+        stellst dich als Unternehmen dahinter, oder du startest in deinem Land
+        ein eigenes Verfahren.
       </p>
       <p class="position">
         Ob der Verfassungsgerichtshof unseren Antrag zulässt, entscheidet der
-        Verfassungsgerichtshof. Was du selbst tun kannst, hängt davon nicht ab
-        und läuft ohne uns.
+        Verfassungsgerichtshof. Was du selbst tun kannst, hängt davon nicht ab.
       </p>
     </header>
 
     <section id="werkzeuge" aria-labelledby="werkzeuge-heading">
-      <p class="eyebrow">Werkzeuge</p>
-      <h2 id="werkzeuge-heading">Zwei Schreiben, die du selbst abschickst.</h2>
+      <p class="eyebrow">Für Privatpersonen</p>
+      <h2 id="werkzeuge-heading">
+        Das Wirksamste, was du tun kannst: selbst absenden.
+      </h2>
       <p class="section-intro">
         Wir bauen gerade zwei Generatoren. Beide laufen vollständig in deinem
-        Browser: Du füllst aus, dein Gerät erzeugt das Dokument, wir bekommen
-        deine Angaben nicht zu sehen.
+        Browser: Du füllst aus, dein Gerät erzeugt das Dokument, du schickst es
+        selbst ab. Wir bekommen deine Angaben nicht zu sehen und müssen nichts
+        nachverfolgen.
       </p>
       <div class="action-grid two-columns">
         <article>
@@ -188,45 +192,28 @@ const bankDetails = [
       </div>
     </section>
 
-    <section aria-labelledby="expertise-heading">
-      <p class="eyebrow">Zeit und Wissen</p>
-      <h2 id="expertise-heading">Wir brauchen Kompetenz, nicht nur Kapital.</h2>
-      <div class="action-grid two-columns">
-        <article>
-          <h3>Recht & Forschung</h3>
-          <p>
-            Verfassungsrecht, Unionsrecht, Datenschutz, Steuerrecht,
-            wissenschaftliche Recherche und belastbare Quellenarbeit.
-          </p>
-        </article>
-        <article>
-          <h3>Sicherheit & Technik</h3>
-          <p>
-            Threat Modeling, Blockchain-Analyse, Datenarchitektur und konkrete
-            technische Einordnung der durch DAC8 entstehenden Risiken.
-          </p>
-        </article>
-        <article>
-          <h3>Kommunikation</h3>
-          <p>
-            Medienarbeit, Design, Video, Veranstaltungen, Übersetzung und
-            Reichweite. Klar formuliert und überprüfbar, ohne weichgespülte
-            PR-Sprache.
-          </p>
-        </article>
-        <article>
-          <h3>Organisation</h3>
-          <p>
-            Projektarbeit, Fundraising, Kontakte zu Betroffenen, Unternehmen,
-            Verbänden und zivilgesellschaftlichen Organisationen.
-          </p>
-        </article>
+    <section
+      id="unternehmen"
+      class="split-section"
+      aria-labelledby="unternehmen-heading"
+    >
+      <div>
+        <p class="eyebrow">Für Anbieter und Unternehmen</p>
+        <h2 id="unternehmen-heading">
+          Stellt euch dahinter, öffentlich oder still.
+        </h2>
       </div>
-      <a
-        class="button primary"
-        href="mailto:kontakt@dac8.org?subject=Ich%20m%C3%B6chte%20bei%20DAC8.org%20mithelfen"
-        >Expertise anbieten</a
-      >
+      <div class="stack">
+        <p>
+          Meldende Anbieter müssen DAC8 selbst vollziehen und kennen die
+          operativen Kosten und Risiken am besten. Genau dieses Gewicht braucht
+          das Verfahren: als Mitfinanzierung der Rechtskosten, als öffentliche
+          Position oder als stille Unterstützung ohne Namensnennung.
+        </p>
+        <a class="button primary" href="/unternehmen/"
+          >Zu den Partneroptionen</a
+        >
+      </div>
     </section>
 
     <section
@@ -258,9 +245,18 @@ const bankDetails = [
     </section>
 
     <aside class="closing">
-      <p class="eyebrow">Unternehmen und Organisationen</p>
-      <h2>Die Branche muss jetzt Verantwortung übernehmen.</h2>
-      <a class="button light" href="/unternehmen/">Zu den Partneroptionen</a>
+      <p class="eyebrow">Etwas anderes?</p>
+      <h2>Du kannst etwas liefern, das hier nicht steht?</h2>
+      <p>
+        Wir koordinieren keine Freiwilligen. Wenn du aber etwas Konkretes fertig
+        beitragen kannst, etwa ein Gutachten, eine Analyse oder eine
+        Übersetzung, dann schreib uns, was.
+      </p>
+      <a
+        class="button light"
+        href="mailto:kontakt@dac8.org?subject=Konkreter%20Beitrag%20zu%20DAC8.org"
+        >kontakt@dac8.org</a
+      >
     </aside>
   </article>
 </Layout>
