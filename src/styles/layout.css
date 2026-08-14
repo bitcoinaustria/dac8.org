@@ -33,7 +33,7 @@
       ) /
       var(--grid-columns)
   );
-  --bar-gutter: max(var(--grid-gutter), (100% - var(--measure)) / 2);
+  --bar-gutter: var(--grid-gutter);
   --bar-border-image: linear-gradient(
       to right,
       transparent 0 var(--bar-gutter),
