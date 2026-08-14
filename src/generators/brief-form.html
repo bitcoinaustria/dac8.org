@@ -1,0 +1,80 @@
+<form id="brief-form" class="generator">
+  <p class="privacy-note">
+    Läuft komplett in deinem Browser: Deine Angaben verlassen dein Gerät nicht.
+    Wir sehen und speichern nichts.
+  </p>
+  <div class="form-grid">
+    <div class="field">
+      <label for="mdep-land">Dein Land</label>
+      <select id="mdep-land" name="mdep-land">
+        <option>Österreich</option>
+        <option>Deutschland</option>
+        <option value="andere">anderes EU-Land</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="mdep-name">Dein Name (optional)</label>
+      <input id="mdep-name" name="mdep-name" autocomplete="name">
+    </div>
+  </div>
+  <div class="button-row">
+    <button class="button primary" type="submit">
+      E-Mail an Abgeordnete erzeugen
+    </button>
+  </div>
+
+  <div class="out" id="mdep-out" hidden>
+    <dl class="copy-rows">
+      <div>
+        <dt>Empfänger</dt>
+        <dd>
+          <span
+            ><span id="mdep-emails"></span>
+            <small id="mdep-names"></small>
+          </span>
+          <button
+            class="copy-glyph"
+            type="button"
+            id="mdep-copy-empf"
+            aria-label="Empfängeradressen kopieren"
+          >
+            ⧉
+          </button>
+        </dd>
+      </div>
+      <div>
+        <dt>Betreff</dt>
+        <dd>
+          <span
+            >Petition gegen die anlasslose Krypto-Datenerfassung (DAC8) – Bitte
+            um Unterstützung</span
+          >
+          <button
+            class="copy-glyph"
+            type="button"
+            aria-label="Betreff kopieren"
+          >
+            ⧉
+          </button>
+        </dd>
+      </div>
+    </dl>
+    <textarea id="mdep-text" readonly aria-label="Erzeugte E-Mail"></textarea>
+    <div class="button-row">
+      <button class="button primary" type="button" id="mdep-copy-text">
+        In Zwischenablage kopieren
+      </button>
+      <a class="button" id="mdep-mailto" href="#"
+        >E-Mail öffnen (Empfänger &amp; Betreff)</a
+      >
+    </div>
+    <p class="gen-note">
+      Der Button öffnet dein Mailprogramm nur mit Empfängern und Betreff — den
+      Text fügst du selbst ein. Am zuverlässigsten: oben kopieren und selbst
+      versenden. Die Adressen (Österreich, Deutschland, Ausschussvorsitz) wurden
+      am 14.&nbsp;08.&nbsp;2026 gegen die MEP-Profile geprüft; weitere Länder
+      folgen. Sobald die Petition eingereicht und zugelassen ist, ergänzen wir
+      ihre Nummer im Text.
+    </p>
+  </div>
+</form>

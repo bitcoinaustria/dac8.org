@@ -1,0 +1,57 @@
+---
+import briefFormHtml from "@/generators/brief-form.html?raw"
+import briefJs from "@/generators/brief.js?raw"
+import MetaPage from "@/components/MetaPage.astro"
+import Layout from "@/layouts/Layout.astro"
+---
+
+<Layout crumbs={[{ label: "Brief", href: "/brief/" }]}>
+  <MetaPage
+    slot="head"
+    title="Brief an deine Abgeordneten im EU-Parlament"
+    description="Erzeugt eine E-Mail an Mitglieder des EU-Petitionsausschusses mit der Bitte, die Petition gegen die anlasslose Krypto-Datenerfassung aufzugreifen — vollständig im Browser."
+  />
+
+  <article class="campaign">
+    <header class="page-hero">
+      <p class="eyebrow">Mitmachen · Brief</p>
+      <h1>Brief an deine <span>Abgeordneten</span>.</h1>
+      <p class="intro">
+        DAC8 kommt aus Brüssel. Damit die Petition gegen die anlasslose
+        Krypto-Datenerfassung Gehör findet, müssen Abgeordnete sie aufgreifen.
+        Dieser Generator erzeugt eine E-Mail an Mitglieder des
+        Petitionsausschusses des Europäischen Parlaments — Land wählen genügt,
+        senden tust du selbst.
+      </p>
+      <p class="position">
+        Alles entsteht in deinem Browser. Den Text kannst du vor dem Senden frei
+        anpassen — persönliche Worte wirken stärker als jede Vorlage.
+      </p>
+    </header>
+
+    <section aria-label="Brief-Generator">
+      <Fragment set:html={briefFormHtml} />
+    </section>
+
+    <section id="offline" class="split-section" aria-labelledby="offline-h">
+      <div>
+        <p class="eyebrow">Offline</p>
+        <h2 id="offline-h">Der Generator als Datei.</h2>
+      </div>
+      <div class="stack">
+        <p>
+          Du kannst dieses Formular als einzelne HTML-Datei herunterladen und
+          ohne Internet verwenden oder weitergeben.
+        </p>
+        <a
+          class="button primary"
+          href="/offline/brief.html"
+          download="dac8-brief-generator.html"
+          >Offline-Version herunterladen</a
+        >
+      </div>
+    </section>
+  </article>
+
+  <script is:inline set:html={briefJs} />
+</Layout>

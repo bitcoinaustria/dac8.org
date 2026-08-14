@@ -1,0 +1,57 @@
+---
+import formHtml from "@/generators/beschwerde-form.html?raw"
+import beschwerdeJs from "@/generators/beschwerde.js?raw"
+import MetaPage from "@/components/MetaPage.astro"
+import Layout from "@/layouts/Layout.astro"
+---
+
+<Layout crumbs={[{ label: "Beschwerde", href: "/beschwerde/" }]}>
+  <MetaPage
+    slot="head"
+    title="DSGVO-Beschwerde gegen die Krypto-Meldepflicht"
+    description="Erzeugt in zwei Minuten eine begründete Beschwerde nach Art. 77 DSGVO an die Datenschutzbehörde — vollständig im Browser, ohne dass Daten das Gerät verlassen."
+  />
+
+  <article class="campaign">
+    <header class="page-hero">
+      <p class="eyebrow">Mitmachen · Beschwerde</p>
+      <h1>Beschwerde an die <span>Datenschutzbehörde</span>.</h1>
+      <p class="intro">
+        Als Kundin oder Kunde einer Börse mit Österreich-Bezug werden deine
+        Daten seit 1. Jänner 2026 erfasst und an das Finanzministerium gemeldet.
+        Dagegen kannst du dich nach Art. 77 DSGVO beschweren: kostenlos, ohne
+        Anwalt, in rund zwei Minuten.
+      </p>
+      <p class="position">
+        Eine anonyme Beschwerde ist nicht möglich, du brauchst Name und Adresse.
+        Alles entsteht in deinem Browser, und du reichst selbst ein.
+      </p>
+    </header>
+
+    <section aria-label="Beschwerde-Generator">
+      <Fragment set:html={formHtml} />
+    </section>
+
+    <section id="offline" class="split-section" aria-labelledby="offline-h">
+      <div>
+        <p class="eyebrow">Offline</p>
+        <h2 id="offline-h">Der Generator als Datei.</h2>
+      </div>
+      <div class="stack">
+        <p>
+          Du kannst dieses Formular als einzelne HTML-Datei herunterladen und
+          ohne Internet verwenden oder weitergeben — etwa an Menschen, die ihre
+          Beschwerde lieber ganz ohne Website erzeugen.
+        </p>
+        <a
+          class="button primary"
+          href="/offline/beschwerde.html"
+          download="dac8-beschwerde-generator.html"
+          >Offline-Version herunterladen</a
+        >
+      </div>
+    </section>
+  </article>
+
+  <script is:inline set:html={beschwerdeJs} />
+</Layout>

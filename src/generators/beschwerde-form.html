@@ -1,0 +1,121 @@
+<form id="beschwerde-form" class="generator">
+  <p class="privacy-note">
+    Läuft komplett in deinem Browser: Deine Angaben verlassen dein Gerät nicht.
+    Wir sehen und speichern nichts.
+  </p>
+  <div class="form-grid">
+    <div class="field">
+      <label for="vorname">Vorname</label>
+      <input id="vorname" name="vorname" autocomplete="given-name" required>
+    </div>
+    <div class="field">
+      <label for="nachname">Nachname</label>
+      <input id="nachname" name="nachname" autocomplete="family-name" required>
+    </div>
+    <div class="field wide">
+      <label for="strasse">Straße &amp; Hausnummer</label>
+      <input id="strasse" name="strasse" autocomplete="street-address" required>
+    </div>
+    <div class="field">
+      <label for="plz">PLZ</label>
+      <input id="plz" name="plz" autocomplete="postal-code" required>
+    </div>
+    <div class="field">
+      <label for="ort">Ort</label>
+      <input id="ort" name="ort" autocomplete="address-level2" required>
+    </div>
+    <div class="field">
+      <label for="land">Wohnsitzland</label>
+      <select id="land" name="land">
+        <option>Österreich</option>
+        <option>Deutschland</option>
+        <option>anderes EU-Land</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="email">E-Mail (optional)</label>
+      <input id="email" name="email" type="email" autocomplete="email">
+    </div>
+    <div class="field">
+      <label for="boerse">Wo kaufst du deine Bitcoin?</label>
+      <select id="boerse" name="boerse">
+        <option>Coinfinity</option>
+        <option>Bitpanda</option>
+        <option>21bitcoin</option>
+        <option>Coinpanion</option>
+        <option>Kurant</option>
+        <option>Morpher</option>
+        <option>Bybit</option>
+        <option>Cryptonow</option>
+        <option>DADAT</option>
+        <option value="andere">andere österreichische Börse …</option>
+      </select>
+    </div>
+    <div class="field" id="boerse-anders-wrap" hidden>
+      <label for="boerse-anders">Name der Börse</label>
+      <input id="boerse-anders" name="boerse-anders">
+    </div>
+    <div class="field">
+      <label for="datum">Wann hast du davon erfahren?</label>
+      <input id="datum" name="datum" type="date" required>
+    </div>
+  </div>
+  <div class="button-row">
+    <button class="button primary" type="submit">Beschwerde erzeugen</button>
+  </div>
+
+  <div class="out" id="out" hidden>
+    <dl class="copy-rows">
+      <div>
+        <dt>Empfänger</dt>
+        <dd>
+          <span>dsb@dsb.gv.at</span>
+          <button
+            class="copy-glyph"
+            type="button"
+            data-copy="dsb@dsb.gv.at"
+            aria-label="Empfänger kopieren"
+          >
+            ⧉
+          </button>
+        </dd>
+      </div>
+      <div>
+        <dt>Betreff</dt>
+        <dd>
+          <span
+            >Datenschutzbeschwerde gemäß Art. 77 DSGVO iVm § 24 DSG — anlasslose
+            Massenerfassung von Krypto-Daten (DAC8 / Krypto-MPfG)</span
+          >
+          <button
+            class="copy-glyph"
+            type="button"
+            aria-label="Betreff kopieren"
+          >
+            ⧉
+          </button>
+        </dd>
+      </div>
+    </dl>
+    <textarea id="text" readonly aria-label="Erzeugte Beschwerde"></textarea>
+    <div class="button-row">
+      <button class="button primary" type="button" id="copy-text">
+        In Zwischenablage kopieren
+      </button>
+      <a class="button" id="mailto" href="#"
+        >E-Mail öffnen (Empfänger &amp; Betreff)</a
+      >
+    </div>
+    <p class="gen-note">
+      Der Button öffnet dein Mailprogramm nur mit Empfänger und Betreff — den
+      Text fügst du selbst ein. Am zuverlässigsten: oben kopieren und in eine
+      neue E-Mail an <strong>dsb@dsb.gv.at</strong> einfügen. Alternativ kannst
+      du den Text in das
+      <a
+        href="https://www.formularservice.gv.at/site/fsrv/user/formular.aspx?pid=5a37966ab26c4489adc20dc53162fa4d"
+        >Online-Formular der Datenschutzbehörde</a
+      >
+      einfügen.
+    </p>
+  </div>
+</form>
