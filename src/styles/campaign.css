@@ -85,6 +85,14 @@
   border-block-end: 1px solid var(--border);
 }
 
+/* Hero, Argumentliste und Zeitleiste schließen jeweils mit einer Linie ab.
+   Bringt der nächste Abschnitt seine eigene Trennlinie mit, stünden zwei
+   Linien mit nichts dazwischen untereinander. */
+:is(.page-hero, .argument-list, section:has(> .timeline)) + .split-section,
+.page-hero + .argument-list > article:first-child {
+  border-block-start: 0;
+}
+
 .eyebrow {
   color: var(--muted-foreground);
   font-size: var(--step--1);
