@@ -91,11 +91,19 @@ copyTextButton.addEventListener("click", () => {
   )
 })
 
-form.addEventListener("submit", (event) => {
-  event.preventDefault()
+// Live-Vorschau: jede Eingabe rendert die E-Mail neu — bis jemand direkt in
+// der Vorschau editiert; ab dann gehört der Text ihm. Empfängerzeile und
+// mailto-Link folgen der Länderauswahl immer.
+const messageEl = document.getElementById("mdep-text")
+let handbearbeitet = false
+messageEl.addEventListener("input", () => {
+  handbearbeitet = true
+})
+
+function render() {
   const { body, empf } = buildBrief()
   const emails = empf.map((e) => e.email).join(",")
-  document.getElementById("mdep-text").textContent = body
+  if (!handbearbeitet) messageEl.textContent = body
   document.getElementById("mdep-emails").textContent = emails
   document.getElementById("mdep-names").textContent = empf
     .map((e) => e.name)
@@ -103,7 +111,8 @@ form.addEventListener("submit", (event) => {
   document.getElementById("mdep-copy-empf").dataset.copy = emails
   document.getElementById("mdep-mailto").href =
     "mailto:" + emails + "?subject=" + encodeURIComponent(SUBJECT)
-  const out = document.getElementById("mdep-out")
-  out.hidden = false
-  out.scrollIntoView({ behavior: "smooth", block: "nearest" })
-})
+}
+
+form.addEventListener("input", render)
+form.addEventListener("submit", (event) => event.preventDefault())
+render()

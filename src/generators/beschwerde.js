@@ -18,7 +18,10 @@ boerseSelect.addEventListener("change", () => {
   boerseAndersInput.required = andere
 })
 
-const val = (id) => document.getElementById(id).value.trim()
+// Leere Pflichtfelder erscheinen in der Live-Vorschau als [Platzhalter].
+const val = (id, platzhalter) =>
+  document.getElementById(id).value.trim() ||
+  (platzhalter ? `[${platzhalter}]` : "")
 
 function fmtDate(iso) {
   if (!iso) return ""
@@ -27,11 +30,11 @@ function fmtDate(iso) {
 }
 
 function buildText() {
-  const vorname = val("vorname")
-  const nachname = val("nachname")
-  const strasse = val("strasse")
-  const plz = val("plz")
-  const ort = val("ort")
+  const vorname = val("vorname", "Vorname")
+  const nachname = val("nachname", "Nachname")
+  const strasse = val("strasse", "Straße und Hausnummer")
+  const plz = val("plz", "PLZ")
+  const ort = val("ort", "Ort")
   const land = val("land")
   const email = val("email")
   const datum = fmtDate(val("datum"))
@@ -116,10 +119,18 @@ copyTextButton.addEventListener("click", () => {
   )
 })
 
-form.addEventListener("submit", (event) => {
-  event.preventDefault()
-  document.getElementById("text").textContent = buildText()
-  const out = document.getElementById("out")
-  out.hidden = false
-  out.scrollIntoView({ behavior: "smooth", block: "nearest" })
+// Live-Vorschau: jede Eingabe rendert den Brief neu — bis jemand direkt in
+// der Vorschau editiert; ab dann gehört der Text ihm.
+const messageEl = document.getElementById("text")
+let handbearbeitet = false
+messageEl.addEventListener("input", () => {
+  handbearbeitet = true
 })
+
+function render() {
+  if (!handbearbeitet) messageEl.textContent = buildText()
+}
+
+form.addEventListener("input", render)
+form.addEventListener("submit", (event) => event.preventDefault())
+render()
