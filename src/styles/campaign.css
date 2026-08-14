@@ -1,3 +1,12 @@
+/* Kampagnenseiten sind auf 72rem ausgelegt. Unterhalb des Desktop-Rasters
+   deckelt das Layout page-content auf die 40rem-Textspalte; dort würden die
+   mehrspaltigen Grids eingequetscht statt die Viewport-Breite zu nutzen. */
+@media (width < 72rem) {
+  page-grid page-content:has(.campaign) {
+    max-inline-size: none;
+  }
+}
+
 .campaign {
   --campaign-measure: 48rem;
   display: block;
@@ -461,6 +470,11 @@ button.button {
 }
 
 @media (width < 52rem) {
+  /* Lange Seiten: kleinere Abstände, damit ein Handy-Scroll nicht endlos wird. */
+  .campaign > :where(section, aside) {
+    margin-block-start: var(--space-2xl);
+  }
+
   .numbered-grid,
   .action-grid,
   .action-grid.two-columns,
@@ -485,6 +499,14 @@ button.button {
 
   .button-row .button {
     inline-size: 100%;
+  }
+
+  /* Die 3rem-Nummernspalte kostet auf schmalen Displays zu viel Textbreite;
+     die Nummer rückt über den Inhalt. */
+  .argument-list > article,
+  .timeline li {
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
   }
 }
 
