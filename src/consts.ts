@@ -1,27 +1,16 @@
 export const SITE = {
   title: "dac8.org",
   description:
-    "Bitcoin Austria bereitet einen Individualantrag gegen die anlasslose Krypto-Datenerfassung durch DAC8 vor.",
+    "Klare Grenzen für DAC8 und staatliche Finanzdaten – eine Initiative von Bitcoin Austria.",
   locale: "de-AT",
   dir: "ltr",
   defaultPageImage: "/static/opengraph-image.png",
+  defaultPostImage: "/static/1200x630.png",
 } as const
 
-export const NAVIGATION: {
-  href: string
-  label: string
-  children?: { href: string; label: string }[]
-}[] = [
-  { href: "/was-ist-dac8", label: "Was ist DAC8?" },
-  { href: "/individualantrag", label: "Individualantrag" },
-  { href: "/argumente", label: "Warum DAC8?" },
-  {
-    href: "/mitmachen",
-    label: "Mitmachen",
-    children: [
-      { href: "/beschwerde", label: "Beschwerde einreichen" },
-      { href: "/brief", label: "Abgeordnete anschreiben" },
-    ],
-  },
-  { href: "/unternehmen", label: "Für Unternehmen" },
+export const NAVIGATION = [
+  { href: "/hintergrund/#was-ist-dac8", label: "Was ist DAC8?" },
+  { href: "/hintergrund/#warum", label: "Warum das alle angeht" },
+  { href: "/hintergrund/#rechtsweg", label: "Rechtsweg" },
+  { href: "/#handeln", label: "Handeln" },
 ]

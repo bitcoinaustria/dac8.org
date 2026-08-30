@@ -1,0 +1,992 @@
+---
+import MetaPage from "@/components/MetaPage.astro"
+import Layout from "@/layouts/Layout.astro"
+
+const facts = [
+  {
+    title: "Alle Kunden werden vorsorglich erfasst",
+    text: "Österreich verpflichtet meldepflichtige Krypto-Dienstleister, die relevanten Daten für alle Kunden, Transaktionen und Kryptowerte zu verarbeiten – unabhängig davon, ob eine Person am Ende tatsächlich meldepflichtig ist.",
+  },
+  {
+    title: "Was jährlich gemeldet wird",
+    text: "Für meldepflichtige Nutzer: Name, Anschrift, Steuerwohnsitz, Steuer-ID sowie Geburtsdatum und gegebenenfalls Geburtsort. Dazu kommen je Kryptowert und Kategorie aggregierte Werte, Einheiten und Transaktionszahlen.",
+  },
+  {
+    title: "Was DAC8 nicht meldet",
+    text: "Der Bericht enthält keine Wallet- oder DLT-Adressen, Transaktions-IDs, einzelnen Transaktionszeitpunkte, Gegenparteien oder rohe Transaktionshistorie. Bei Transfers an unbekannte externe Adressen werden Summen gemeldet, nicht die Adresse selbst. DAC8 meldet auch keinen aktuellen Kontostand und kein vollständiges Vermögen.",
+  },
+  {
+    title: "Keine Meldung von Transaktionen vor 2026",
+    text: "Der erste Meldezeitraum beginnt am 1. Jänner 2026. Vorherige Krypto-Transaktionen werden nach geltendem Recht nicht rückwirkend unter DAC8 gemeldet. Die erste Meldung für 2026 ist bis 31. Juli 2027 fällig; bestehende Kunden müssen aber für die Sorgfaltspflichten eingestuft werden.",
+  },
+  {
+    title: "Was die zehn Jahre wirklich bedeuten",
+    text: "Übermittelte Informationen zum Meldejahr 2026 sind nach § 20 Ende 2036 zu löschen; Dokumente über Melde- und Sorgfaltsschritte sind nach § 39 zehn Jahre aufzubewahren. Eine pauschale Pflicht, jede rohe Transaktion allein wegen DAC8 zehn Jahre zu speichern, steht so nicht im Gesetz. Andere Regeln zu Geldwäsche, MiCA oder Geldtransfers können daneben eigene Pflichten auslösen.",
+  },
+]
+
+const concerns = [
+  {
+    title: "Generalverdacht statt Anlass",
+    text: "Österreich lässt die relevanten Informationen zunächst für alle Kunden und Transaktionen verarbeiten. Es braucht keinen konkreten Verdacht. Genau diese vorsorgliche Massenerfassung lehnen wir ab.",
+  },
+  {
+    title: "Die Verknüpfung macht den Unterschied",
+    text: "DAC8 selbst übermittelt keinen Wallet-Graphen. Werden seine Identitätsdaten aber mit Anbieteraufzeichnungen oder öffentlichen Blockchain-Daten verbunden, können wesentlich tiefere Rückschlüsse entstehen.",
+  },
+  {
+    title: "Gespeicherte Daten wecken neue Begehrlichkeiten",
+    text: "Das DAC-System wurde wiederholt um neue Datenarten erweitert. Seit 2026 können ausgetauschte Informationen unter gesetzlichen Bedingungen auch für Geldwäschebekämpfung und Sanktionen verwendet werden. Darum sind enge Zweckgrenzen keine Nebensache.",
+  },
+  {
+    title: "Fehler reisen mit",
+    text: "Falscher Steuerwohnsitz, doppelte Werte oder missverstandene Transfers können grenzüberschreitend weitergegeben werden. Je mehr Stellen beteiligt sind, desto wichtiger werden Auskunft, Korrektur und nachvollziehbare Löschung.",
+  },
+  {
+    title: "Nutzen ist kein Blankoscheck",
+    text: "Finanzdaten können Ermittlungen unterstützen. Daraus folgt nicht automatisch, dass jedes Feld, jede Person und zehn Jahre Speicherung erforderlich sind. Wirksamkeit und Grundrechtseingriff müssen gemeinsam geprüft werden.",
+  },
+  {
+    title: "Infrastruktur macht Ausbau leichter",
+    text: "Neue Felder, Empfänger oder rückwirkende Meldezeiträume würden eine neue Rechtsgrundlage brauchen. Wenn Standards und Schnittstellen einmal stehen, wird der nächste Ausbau technisch leichter – und politische Kontrolle umso wichtiger.",
+  },
+]
+
+const faqs = [
+  {
+    question: "Wer steht hinter dac8.org?",
+    answer:
+      "Eine Initiative des Vereins Bitcoin Austria, unterstützt unter anderem von Coinfinity.",
+  },
+  {
+    question: "Bin ich automatisch betroffen, wenn ich Bitcoin halte?",
+    answer:
+      "Nein. Entscheidend sind der konkrete Dienstleister, dessen Meldezuständigkeit und deine steuerliche Ansässigkeit. Reine Selbstverwahrung ohne beteiligten meldepflichtigen Dienstleister wird nicht automatisch durch DAC8 meldepflichtig.",
+  },
+  {
+    question: "Wird meine externe Wallet-Adresse gemeldet?",
+    answer:
+      "Die Richtlinie verlangt für Transfers an externe Adressen aggregierte Werte und Einheiten. Die Adresse selbst gehört nicht zu den dort aufgezählten Meldedaten.",
+  },
+  {
+    question: "Ist DAC8 bereits ein vollständiges Vermögensregister?",
+    answer:
+      "Nein. DAC8 meldet jährliche Aktivitätsaggregate, keinen vollständigen Nettowert. Die Sorge ist präziser: Das Profil kann zusammen mit Kontenregistern, Anbieteraufzeichnungen und Blockchain-Analysen Teil einer immer aussagekräftigeren Vermögenskarte werden.",
+  },
+  {
+    question: "Werden Transaktionen vor 2026 rückwirkend gemeldet?",
+    answer:
+      "Nein, nicht nach geltendem Recht. Der erste DAC8-Meldezeitraum beginnt am 1. Jänner 2026. Eine spätere rückwirkende Meldepflicht wäre politisch und technisch denkbar, bräuchte aber eine neue Rechtsgrundlage. Weder DAC9 noch der derzeitige DAC-Recast-Vorschlag enthalten eine solche Pflicht für Krypto-Transaktionen vor 2026.",
+  },
+  {
+    question: "Müssen Anbieter jede Rohtransaktion zehn Jahre speichern?",
+    answer:
+      "Nicht allein aufgrund von DAC8. § 20 Krypto-MPfG sieht zehn Jahre für die übermittelten Informationen vor; § 39 verlangt zehn Jahre für Dokumente über die Melde- und Sorgfaltsschritte. Andere Gesetze – etwa Geldwäsche-, MiCA- oder Geldtransferregeln – können daneben granularere Aufzeichnungen verlangen. Die pauschale Aussage ‚jede Rohtransaktion zehn Jahre wegen DAC8‘ ist vom Gesetzeswortlaut nicht gedeckt.",
+  },
+  {
+    question: "Bedeuten DAC9 und DAC10 automatisch mehr Krypto-Überwachung?",
+    answer:
+      "Nein. DAC9 betrifft die Mindestbesteuerung großer Unternehmensgruppen, nicht zusätzliche Daten einzelner Krypto-Nutzer. Der im Juni 2026 vorgeschlagene DAC-Recast, oft DAC10 genannt, ist noch kein geltendes Recht und führt die bisherigen DAC8-Kryptofelder samt Startdatum fort. Er verlangt derzeit weder Wallet-Adressen noch die Nachmeldung von Transaktionen vor 2026. Das DAC-System wächst trotzdem weiter – deshalb prüfen wir jeden neuen Schritt statt nur auf seine Nummer zu zeigen.",
+  },
+  {
+    question: "Geht es hier gegen Steuern oder Geldwäschebekämpfung?",
+    answer:
+      "Nein. Steuerpflichten sind einzuhalten, und Finanzinformationen können bei Ermittlungen nützlich sein. Wir verlangen, dass Erfassung, Zugriff, Speicherdauer und Weiterverwendung nachweislich notwendig, wirksam und kontrollierbar sind.",
+  },
+  {
+    question: "Ist DAC8 sicher rechtswidrig?",
+    answer:
+      "Wir halten die anlasslose österreichische Alle-Kunden-Verarbeitung für ein ernstes Grundrechtsproblem und wollen sie prüfen lassen. Ob Gerichte sie tatsächlich aufheben, ist offen. Eine klare politische Haltung braucht kein erfundenes Siegesversprechen.",
+  },
+  {
+    question: "Wie funktioniert der Beschwerdegenerator?",
+    answer:
+      "Der Generator läuft ausschließlich in deinem Browser und ordnet deine Angaben zu einem Entwurf. Du musst den konkreten Verantwortlichen, die tatsächliche Verarbeitung und persönliche Belege selbst angeben, den Text prüfen und die Beschwerde anschließend eigenständig einbringen.",
+  },
+  {
+    question: "Was passiert mit Daten auf dieser Website?",
+    answer:
+      "Die Generatoren laufen lokal in deinem Browser; Formulareingaben werden nicht an Bitcoin Austria übertragen oder gespeichert. Vor dem Live-Gang müssen Hoster, Server-Logs und die endgültige Datenschutzerklärung konkret geprüft und benannt werden.",
+  },
+]
+---
+
+<Layout>
+  <MetaPage
+    slot="head"
+    title="Hintergrund zu DAC8"
+    description="Fakten, Risiken, Forderungen, Rechtsweg und Primärquellen zu DAC8 und dem österreichischen Krypto-Meldepflichtgesetz."
+  />
+
+  <article class="campaign">
+    <header class="hero">
+      <p class="eyebrow">Fakten · Risiken · Gegenwehr</p>
+      <h1>DAC8: Finanzüberwachung auf Vorrat.</h1>
+      <p class="intro">
+        Österreich verpflichtet Anbieter, Krypto-Aktivität ohne konkreten
+        Verdacht massenhaft zu erfassen. Wir sind dagegen. Hier steht präzise,
+        was tatsächlich gemeldet wird, wo die Grenzen liegen und wie Gegenwehr
+        aussehen kann.
+      </p>
+      <nav class="hero-actions" aria-label="Direkteinstieg">
+        <a class="primary" href="/#handeln">Was du tun kannst</a>
+        <a href="#was-ist-dac8">Mit den Fakten beginnen</a>
+      </nav>
+      <aside class="status" aria-label="Aktueller Stand">
+        <p><strong>Gesetz in Kraft:</strong> seit 1. Jänner 2026</p>
+        <p><strong>Erste Meldung für 2026:</strong> bis 31. Juli 2027</p>
+        <p><strong>Recherche geprüft:</strong> 30. August 2026</p>
+        <p class="status-note">
+          Beschlossen heißt nicht unangreifbar. Gegenwehr beginnt mit Klarheit.
+        </p>
+      </aside>
+    </header>
+
+    <section id="was-ist-dac8" aria-labelledby="was-heading">
+      <p class="eyebrow">Was das Gesetz tatsächlich macht</p>
+      <h2 id="was-heading">Nicht weniger behaupten. Nicht mehr.</h2>
+      <p class="section-intro">
+        DAC8 erweitert den automatischen Informationsaustausch der EU auf
+        Kryptowerte. Österreich setzt die Richtlinie mit dem
+        Krypto-Meldepflichtgesetz um. Der entscheidende österreichische Punkt:
+        Dienstleister müssen die späteren Meldedaten zunächst für alle Kunden,
+        Transaktionen und Kryptowerte verarbeiten – auch wenn nicht jede Person
+        am Ende gemeldet wird.
+      </p>
+      <ol class="numbered">
+        {facts.map((fact) => (
+          <li>
+            <h3>{fact.title}</h3>
+            <p>{fact.text}</p>
+          </li>
+        ))}
+      </ol>
+      <div class="flow" aria-label="Vereinfachter Datenweg">
+        <p>
+          <span>01</span><strong>Kunde</strong>
+          beim meldepflichtigen Anbieter
+        </p>
+        <p>
+          <span>02</span><strong>Dienstleister</strong>
+          verarbeitet und meldet
+        </p>
+        <p>
+          <span>03</span><strong>Finanzverwaltung</strong>
+          empfängt und prüft
+        </p>
+        <p>
+          <span>04</span><strong>Zuständige Staaten</strong>
+          tauschen Daten aus
+        </p>
+      </div>
+      <aside class="clarification">
+        <strong>Wichtig:</strong>
+        DAC8 übermittelt nicht jede Rohtransaktion. Österreich ordnet trotzdem
+        die vorsorgliche Verarbeitung für alle Kunden und Transaktionen an.
+        Genau diese Logik nennen wir Finanzüberwachung auf Vorrat.
+      </aside>
+    </section>
+
+    <section id="warum" aria-labelledby="warum-heading">
+      <p class="eyebrow">Warum das alle angeht</p>
+      <h2 id="warum-heading">Die Gefahr liegt in der Verknüpfung.</h2>
+      <p class="section-intro">
+        Ein einzelnes Jahresaggregat ist noch kein Vermögensregister. Doch
+        Identität, Wohnadresse, Aktivitätswerte, Anbieteraufzeichnungen und ein
+        öffentliches Ledger können gemeinsam ein sehr genaues Bild ergeben. Je
+        leichter solche Schichten verbunden werden, desto wichtiger werden
+        strenge Zweckgrenzen, kurze Speicherfristen und wirksame Kontrolle.
+      </p>
+      <div class="arguments">
+        {concerns.map((concern) => (
+          <section>
+            <h3>{concern.title}</h3>
+            <p>{concern.text}</p>
+          </section>
+        ))}
+      </div>
+      <blockquote>
+        <p>
+          Wir sind Bitcoiner. Wir haben früh gelernt: Wo Schlüssel, Identitäten
+          und Finanzdaten zusammengeführt werden, entstehen Macht und
+          Angriffsfläche. Diese Erfahrung bringen wir ein. Unser Maßstab gilt
+          aber für alle – auch für Menschen, die nie Bitcoin besessen haben.
+        </p>
+        <cite>Bitcoin Austria</cite>
+      </blockquote>
+      <p class="public-case">
+        Das ist kein Kampf gegen Steuerpflichten. Gezielte Steuerdurchsetzung
+        und Grundrechte sind vereinbar. Die Frage ist, ob der Staat nur jene
+        Daten erhält, die für einen klaren Zweck nachweislich notwendig sind –
+        und ob Betroffene Fehler korrigieren und rechtswidrige Nutzung stoppen
+        können.
+      </p>
+    </section>
+
+    <section id="ausblick" aria-labelledby="ausblick-heading">
+      <p class="eyebrow">Heute beschlossen · morgen offen</p>
+      <h2 id="ausblick-heading">
+        Ausbau ist möglich. Rückwirkung gilt noch nicht.
+      </h2>
+      <p class="section-intro">
+        Das DAC-System wird regelmäßig verändert. Aber eine höhere Nummer ist
+        noch kein Beweis für mehr Krypto-Daten. Wir unterscheiden geltendes
+        Recht, aktuelle Vorschläge und das, was erst politisch verhindert werden
+        muss.
+      </p>
+      <div class="arguments">
+        <section>
+          <h3>DAC8 gilt heute</h3>
+          <p>
+            Gemeldet werden Identität und Jahresaggregate ab 1. Jänner 2026 –
+            keine Wallet-Adressen und keine einzelnen Transaktionsdatensätze.
+          </p>
+        </section>
+        <section>
+          <h3>DAC9 ist kein Krypto-Ausbau</h3>
+          <p>
+            DAC9 betrifft Steuerinformationen großer Unternehmensgruppen. Die
+            Richtlinie erweitert nicht die Meldedaten privater Krypto-Nutzer.
+          </p>
+        </section>
+        <section>
+          <h3>DAC10 ist noch ein Vorschlag</h3>
+          <p>
+            Der DAC-Recast vom Juni 2026 führt die bisherigen Krypto-Felder und
+            das Startdatum fort. Er ordnet keine rückwirkende Meldung vor 2026
+            an.
+          </p>
+        </section>
+        <section>
+          <h3>Der nächste Schritt bleibt politisch</h3>
+          <p>
+            Wallet-Adressen, Einzeltransaktionen oder rückwirkende Zeiträume
+            könnten nur durch neue Regeln hinzukommen. Wir wehren uns, bevor aus
+            einer Möglichkeit der nächste Standard wird.
+          </p>
+        </section>
+      </div>
+    </section>
+
+    <section id="forderungen" aria-labelledby="forderungen-heading">
+      <p class="eyebrow">Wofür wir eintreten</p>
+      <h2 id="forderungen-heading">
+        Eine bessere digitale Zukunft ist möglich.
+      </h2>
+      <p class="section-intro">
+        Wer umfassende Finanzdaten verlangt, trägt die Begründungslast. Wir
+        fordern keine Sonderzone für Bitcoin, sondern rechtsstaatliche
+        Mindeststandards für jede staatliche Finanzdaten-Infrastruktur.
+      </p>
+      <ul class="demands">
+        <li>
+          Transaktionsprofile erst erstellen, wenn eine Person tatsächlich
+          meldepflichtig ist.
+        </li>
+        <li>
+          Speicherfristen für jedes Datenfeld begründen und nie gemeldete Daten
+          zuverlässig löschen.
+        </li>
+        <li>
+          Empfänger, Zugriffe und Weiterverwendung eng begrenzen und lückenlos
+          protokollieren.
+        </li>
+        <li>
+          Auskunft, Korrektur und Löschung über alle Empfänger hinweg praktisch
+          durchsetzbar machen.
+        </li>
+        <li>
+          Zielgerichtete Anfragen nutzen, wo sie das gleiche Ergebnis mit
+          weniger Eingriff erreichen.
+        </li>
+        <li>
+          Nutzen, Kosten und Grundrechtsfolgen unabhängig und regelmäßig
+          evaluieren.
+        </li>
+      </ul>
+      <p class="public-case">
+        <strong>Gegenwehr wirkt:</strong>
+        Die von AKVorrat, heute epicenter.works, organisierte österreichische
+        Beschwerde führte über den VfGH zum EuGH. 2014 wurden die EU-Richtlinie
+        und die zentralen österreichischen Regeln zur Vorratsdatenspeicherung
+        aufgehoben. DAC8 ist ein anderer Fall und der Ausgang offen. Der Erfolg
+        zeigt trotzdem: Grundrechte verteidigen ist kein symbolischer Akt.
+      </p>
+    </section>
+
+    <section id="handeln" aria-labelledby="handeln-heading">
+      <p class="eyebrow">Handeln</p>
+      <h2 id="handeln-heading">Beschwer dich. Schreib deinen Abgeordneten.</h2>
+      <p class="section-intro">
+        DAC8 ist beschlossen. Wie weit Finanzdaten erfasst werden dürfen, bleibt
+        eine rechtliche und politische Frage. Dafür stehen dir eigene
+        demokratische und rechtliche Mittel offen.
+      </p>
+      <ol class="actions">
+        <li>
+          <p class="step">01 · Datenschutz</p>
+          <h3>Eigene Beschwerde einbringen</h3>
+          <p>
+            Wenn ein konkreter Anbieter deine Daten verarbeitet und du darin
+            eine Rechtsverletzung siehst, kannst du selbst eine Beschwerde bei
+            der Datenschutzbehörde einbringen. Benenne den Verantwortlichen, das
+            betroffene Recht und den tatsächlichen Sachverhalt.
+          </p>
+          <a class="action-button" href="/handeln/#beschwerde"
+            >Beschwerde vorbereiten</a
+          >
+        </li>
+        <li>
+          <p class="step">02 · Demokratie</p>
+          <h3>Abgeordnete anschreiben</h3>
+          <p>
+            Schreib deinen gewählten Vertreterinnen und Vertretern mit eigenen
+            Worten. Sag ihnen, warum du gezielte Steuerdurchsetzung unterstützt,
+            aber klare Grenzen für Erfassung, Speicherung und Weiterverwendung
+            erwartest.
+          </p>
+          <a class="action-button" href="/handeln/#abgeordnete"
+            >Brief vorbereiten</a
+          >
+        </li>
+        <li>
+          <p class="step">03 · Öffentlichkeit</p>
+          <h3>Fakten weitergeben</h3>
+          <p>
+            Teile diese Seite mit einem Bitcoiner – und mit einer Person, die
+            glaubt, DAC8 betreffe sie nicht. Finanzielle Privatsphäre ist kein
+            Spezialinteresse einer Szene.
+          </p>
+          <button class="action-button" type="button" data-share>
+            Seite teilen
+          </button>
+        </li>
+      </ol>
+      <aside class="clarification">
+        <strong>Wichtig:</strong>
+        Eine DSB-Beschwerde ist ein persönlicher, förmlicher Rechtsbehelf. Der
+        Generator erleichtert den Entwurf, ersetzt aber weder deine
+        tatsächlichen Angaben noch die Prüfung vor dem Absenden.
+      </aside>
+      <p class="share-status" data-share-status aria-live="polite"></p>
+    </section>
+
+    <section id="rechtsweg" aria-labelledby="rechtsweg-heading">
+      <p class="eyebrow">Rechtsweg</p>
+      <h2 id="rechtsweg-heading">Wir versprechen keinen schnellen Sieg.</h2>
+      <p class="section-intro">
+        Ein starker Fall beginnt nicht mit der größten Behauptung, sondern mit
+        der richtigen betroffenen Person, dem richtigen Verantwortlichen und der
+        vollständigen Gegenjudikatur. Für gewöhnliche Nutzer ist ein direkter
+        Individualantrag nach der aktuellen VfGH-Rechtsprechung besonders
+        riskant.
+      </p>
+      <div class="legal-tracks">
+        <section>
+          <p class="step">Spur A · Nutzer</p>
+          <h3>Konkrete Verarbeitung angreifen</h3>
+          <p>
+            Daten beim konkreten Anbieter erheben, eine präzise Beschwerde bei
+            der Datenschutzbehörde führen und die Sache zum
+            Bundesverwaltungsgericht bringen. Dort können österreichische
+            Normprüfung und eine Vorlage an den EuGH aus einem echten Fall
+            heraus beantragt werden.
+          </p>
+        </section>
+        <section>
+          <p class="step">Spur B · Anbieter</p>
+          <h3>Österreichische Mehrpflichten prüfen</h3>
+          <p>
+            Ein in Österreich direkt verpflichteter Anbieter kann andere
+            Voraussetzungen für einen Individualantrag erfüllen. Dafür müssen
+            die zusätzlichen österreichischen Pflichten und Kosten sauber vom
+            EU-Mindeststandard, MiCA, TFR und Geldwäschepflichten getrennt
+            werden.
+          </p>
+        </section>
+      </div>
+      <div class="route" aria-label="Möglicher Nutzer-Rechtsweg">
+        <span>Anbieter</span><b>→</b><span>DSB</span><b>→</b><span>BVwG</span
+        ><b>→</b><span>VfGH / EuGH</span>
+      </div>
+      <aside class="counsel">
+        <p class="eyebrow">Vorgesehene anwaltliche Begleitung</p>
+        <h3>Rechtsanwaltskanzlei [NAME], Wien</h3>
+        <p>
+          Platzhalter im Mockup. Mandat, Kanzleiname und öffentliche Nennung
+          sind noch nicht bestätigt. Bis dahin behauptet diese Seite weder eine
+          Einbringung noch einen sicheren Verfahrensweg.
+        </p>
+      </aside>
+      <aside class="clarification">
+        <strong>Was der Generator bewusst nicht macht:</strong>
+        Er bestimmt weder automatisch den richtigen Verantwortlichen noch
+        behauptet er einen Sachverhalt für dich. Diese Angaben und deine Belege
+        müssen aus deinem konkreten Fall kommen.
+      </aside>
+    </section>
+
+    <section id="faq" aria-labelledby="faq-heading">
+      <p class="eyebrow">Fragen & Transparenz</p>
+      <h2 id="faq-heading">FAQ</h2>
+      <div class="faq-list">
+        {faqs.map((faq) => (
+          <details>
+            <summary>{faq.question}</summary>
+            <p>{faq.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <section id="quellen" class="sources" aria-labelledby="sources-heading">
+      <p class="eyebrow">Belege statt Behauptungen</p>
+      <h2 id="sources-heading">Selbst prüfen.</h2>
+      <p class="section-intro">
+        Unsere Aussagen beruhen auf geltendem Recht, offizieller Rechtsprechung
+        und institutionellen Unterlagen. Wo nur ein Risiko oder eine politische
+        Bewertung vorliegt, nennen wir es auch so.
+      </p>
+      <ul>
+        <li>
+          <a
+            href="https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_2025_I_96/BGBLA_2025_I_96.pdf"
+            >Krypto-Meldepflichtgesetz, BGBl. I Nr. 96/2025</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:32023L2226"
+            >Richtlinie (EU) 2023/2226 (DAC8)</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=18"
+            >§ 18 Krypto-MPfG – Meldedaten</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40273819/NOR40273819.pdf"
+            >§ 20 Krypto-MPfG – Verarbeitung, Information und Löschung</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=39"
+            >§ 39 Krypto-MPfG – Aufbewahrung von Dokumenten</a
+          >
+        </li>
+        <li>
+          <a href="https://eur-lex.europa.eu/eli/dir/2025/872/oj/deu"
+            >Richtlinie (EU) 2025/872 (DAC9)</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:52026PC0308"
+            >Kommissionsvorschlag COM(2026) 308 – DAC-Recast</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://taxation-customs.ec.europa.eu/taxation/tax-transparency-cooperation/administrative-co-operation-and-mutual-assistance/directive-administrative-cooperation-dac_en"
+            >EU-Kommission – Überblick zum DAC-System und seinen
+            Verwendungszwecken</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://op.europa.eu/en/publication-detail/-/publication/050b047e-3ff5-11ef-865a-01aa75ed71a1"
+            >EU-Machbarkeitsstudie zu einem europäischen Vermögensregister</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20260428_24G00178_00/JFT_20260428_24G00178_00.pdf"
+            >VfGH G 178/2024 – Subsidiarität und DSB/BVwG-Rechtsweg</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:62012CJ0293"
+            >EuGH C-293/12 und C-594/12 – Vorratsdatenspeicherung</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20140627_12G00047_00/JFT_20140627_12G00047_00.pdf"
+            >VfGH G 47/2012 ua – Aufhebung in Österreich</a
+          >
+        </li>
+        <li>
+          <a href="https://epicenter.works/thema/vorratsdatenspeicherung"
+            >epicenter.works – Geschichte der österreichischen Kampagne</a
+          >
+        </li>
+        <li>
+          <a href="https://dsb.gv.at/eingabe-an-die-dsb/beschwerde"
+            >Datenschutzbehörde – offizielle Beschwerdeinformation</a
+          >
+        </li>
+      </ul>
+      <p class="research-note">
+        Recherche- und Informationsstand: 30. August 2026. Keine Rechtsberatung.
+        Verfahrensstatus, Fristen und konkrete Betroffenheit müssen vor Nutzung
+        erneut geprüft werden.
+      </p>
+    </section>
+
+    <aside class="closing">
+      <p class="eyebrow">Jetzt weitertragen</p>
+      <h2>Grundrechte verteidigen sich nicht von selbst.</h2>
+      <p>
+        Teile diese Seite, weil Massenüberwachung nicht normal werden darf. Der
+        Wind dreht sich nicht von selbst – sondern wenn Menschen widersprechen,
+        Beschwerden einbringen und Abgeordnete in die Verantwortung nehmen.
+      </p>
+      <div class="closing-actions">
+        <button type="button" data-share>Seite teilen</button>
+        <a href="https://www.parlament.gv.at/recherchieren/personen/nationalrat"
+          >Abgeordnete finden</a
+        >
+      </div>
+    </aside>
+  </article>
+
+  <script>
+    const shareButtons =
+      document.querySelectorAll<HTMLButtonElement>("[data-share]")
+    const shareStatus = document.querySelector<HTMLElement>(
+      "[data-share-status]",
+    )
+
+    for (const button of shareButtons) {
+      button.addEventListener("click", async () => {
+        const data = {
+          title: "DAC8: Keine Finanzüberwachung auf Vorrat",
+          text: "Warum wir uns gegen anlasslose Erfassung von Finanzaktivität wehren.",
+          url: window.location.href,
+        }
+
+        if (navigator.share) {
+          await navigator.share(data).catch(() => {})
+          return
+        }
+
+        await navigator.clipboard.writeText(data.url)
+        if (shareStatus)
+          shareStatus.textContent = "Link kopiert. Danke fürs Teilen."
+      })
+    }
+  </script>
+</Layout>
+
+<style>
+  .campaign {
+    --rule: 2px solid var(--border);
+    display: grid;
+    gap: var(--space-2xl);
+  }
+
+  .campaign > section {
+    scroll-margin-block-start: var(--space-xl);
+  }
+
+  .hero {
+    padding-block-end: var(--space-xl);
+    border-block-end: var(--rule);
+  }
+
+  .status {
+    display: grid;
+    gap: var(--space-2xs);
+    max-inline-size: 42rem;
+    margin-block-start: var(--space-xl);
+    padding: var(--space-m);
+    border: var(--rule);
+
+    p {
+      margin: 0;
+    }
+
+    .status-note {
+      margin-block-start: var(--space-xs);
+      padding-block-start: var(--space-xs);
+      border-block-start: 1px solid var(--border);
+      color: var(--primary);
+    }
+  }
+
+  .eyebrow,
+  .step,
+  .availability {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .eyebrow,
+  .step {
+    color: var(--primary);
+  }
+
+  h1 {
+    max-inline-size: 18ch;
+    margin-block: var(--space-xs) var(--space-m);
+    font-size: clamp(2.5rem, 5vw, 4.75rem);
+    line-height: 1.03;
+    letter-spacing: -0.04em;
+  }
+
+  h2 {
+    max-inline-size: 23ch;
+    margin-block: var(--space-2xs) var(--space-s);
+    font-size: var(--step-3);
+    line-height: 1.1;
+  }
+
+  h3 {
+    font-size: var(--step-1);
+  }
+
+  .intro,
+  .section-intro {
+    max-inline-size: 62ch;
+    font-size: var(--step-1);
+    line-height: 1.65;
+    color: var(--muted-foreground);
+  }
+
+  .flow {
+    display: grid;
+    gap: var(--space-xs);
+    margin-block-start: var(--space-l);
+
+    p {
+      display: grid;
+      grid-template-columns: 2.5rem 1fr;
+      margin: 0;
+      padding: var(--space-s);
+      border: 1px solid var(--border);
+    }
+
+    span {
+      grid-row: 1 / 3;
+      color: var(--primary);
+      font-family: var(--font-sans);
+    }
+
+    @media (width >= 48rem) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .clarification,
+  .counsel {
+    max-inline-size: 62rem;
+    margin-block-start: var(--space-l);
+    padding: var(--space-m);
+    border-inline-start: 0.3rem solid var(--primary);
+    background: var(--muted);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-block-start: var(--space-l);
+
+    a {
+      padding: 0.7em 1em;
+      border: 1px solid var(--border);
+      text-decoration: none;
+      font-family: var(--font-sans);
+      font-size: var(--step--1);
+    }
+
+    .primary {
+      border-color: var(--primary);
+      color: var(--primary-foreground);
+      background: var(--primary);
+    }
+  }
+
+  .numbered,
+  .actions {
+    padding: 0;
+    margin-block-start: var(--space-l);
+    list-style: none;
+    counter-reset: item;
+  }
+
+  .numbered li {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 0 var(--space-s);
+    padding-block: var(--space-m);
+    border-block-start: var(--rule);
+    counter-increment: item;
+
+    &::before {
+      content: "0" counter(item);
+      grid-row: 1 / 3;
+      font-family: var(--font-sans);
+      color: var(--muted-foreground);
+    }
+
+    h3,
+    p {
+      grid-column: 2;
+    }
+
+    p {
+      margin-block-start: var(--space-2xs);
+      color: var(--muted-foreground);
+    }
+  }
+
+  .arguments {
+    display: grid;
+    gap: var(--space-l);
+    margin-block-start: var(--space-l);
+
+    section {
+      padding-block-start: var(--space-s);
+      border-block-start: var(--rule);
+    }
+
+    p {
+      margin-block-start: var(--space-2xs);
+      color: var(--muted-foreground);
+    }
+
+    @media (width >= 40rem) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  blockquote {
+    max-inline-size: 62rem;
+    margin: var(--space-xl) 0 0;
+    padding: var(--space-l);
+    border: var(--rule);
+
+    p {
+      margin: 0;
+      font-size: var(--step-2);
+      line-height: 1.45;
+    }
+
+    cite {
+      display: block;
+      margin-block-start: var(--space-m);
+      color: var(--primary);
+      font-family: var(--font-sans);
+      font-style: normal;
+    }
+  }
+
+  .public-case {
+    max-inline-size: 62ch;
+    margin-block-start: var(--space-l);
+    font-size: var(--step-1);
+  }
+
+  .demands {
+    display: grid;
+    gap: var(--space-xs);
+    margin-block-start: var(--space-l);
+    padding: 0;
+    list-style: none;
+
+    li {
+      padding: var(--space-s) var(--space-s) var(--space-s) 3rem;
+      border: 1px solid var(--border);
+      background: linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--primary) 12%, transparent),
+        transparent 40%
+      );
+
+      &::before {
+        content: "✓";
+        margin-inline: -1.75rem 1rem;
+        color: var(--primary);
+        font-weight: var(--font-weight-medium);
+      }
+    }
+
+    @media (width >= 48rem) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .actions {
+    display: grid;
+    gap: var(--space-m);
+
+    li {
+      padding: var(--space-m);
+      border: var(--rule);
+    }
+
+    h3 {
+      margin-block: var(--space-xs);
+    }
+
+    .availability,
+    .action-button {
+      display: inline-flex;
+      padding: 0.7em 1em;
+      margin-block-start: var(--space-m);
+      border: 1px solid var(--border);
+      font-family: var(--font-sans);
+      font-size: var(--step--1);
+      text-decoration: none;
+    }
+
+    .action-button {
+      color: var(--primary-foreground);
+      background: var(--primary);
+      cursor: pointer;
+    }
+
+    .availability {
+      color: var(--muted-foreground);
+      background: var(--muted);
+      cursor: not-allowed;
+    }
+
+    @media (width >= 48rem) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .share-status {
+    min-block-size: 1.5em;
+    margin-block-start: var(--space-xs);
+    color: var(--primary);
+  }
+
+  .legal-tracks {
+    display: grid;
+    gap: var(--space-m);
+    margin-block-start: var(--space-l);
+
+    section {
+      padding: var(--space-m);
+      border: var(--rule);
+    }
+
+    h3 {
+      margin-block: var(--space-xs);
+    }
+
+    @media (width >= 48rem) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .route {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-block-start: var(--space-l);
+    padding: var(--space-s);
+    border-block: var(--rule);
+    font-family: var(--font-sans);
+
+    b {
+      color: var(--primary);
+    }
+  }
+
+  .counsel h3 {
+    margin-block: var(--space-xs);
+  }
+
+  .faq-list {
+    margin-block-start: var(--space-l);
+    border-block-end: var(--rule);
+
+    details {
+      border-block-start: var(--rule);
+    }
+
+    summary {
+      padding-block: var(--space-s);
+      cursor: pointer;
+      font-weight: var(--font-weight-medium);
+    }
+
+    p {
+      max-inline-size: 62ch;
+      padding-block-end: var(--space-s);
+      color: var(--muted-foreground);
+    }
+  }
+
+  .sources {
+    ul {
+      margin-block-start: var(--space-m);
+    }
+
+    li + li {
+      margin-block-start: var(--space-2xs);
+    }
+
+    .research-note {
+      max-inline-size: 70ch;
+      margin-block-start: var(--space-l);
+      padding-block-start: var(--space-s);
+      border-block-start: 1px solid var(--border);
+      color: var(--muted-foreground);
+      font-size: var(--step--1);
+    }
+  }
+
+  .closing {
+    padding: var(--space-l);
+    color: var(--primary-foreground);
+    background: var(--primary);
+
+    h2 {
+      margin-block-start: 0;
+    }
+
+    p {
+      max-inline-size: 50ch;
+      margin-block-end: var(--space-m);
+    }
+
+    a,
+    button {
+      display: inline-flex;
+      padding: 0.75em 1em;
+      border: 1px solid currentColor;
+      color: inherit;
+      background: transparent;
+      font-family: var(--font-sans);
+      font-size: var(--step--1);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .closing-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 0.2rem solid var(--primary);
+    outline-offset: 0.2rem;
+  }
+</style>

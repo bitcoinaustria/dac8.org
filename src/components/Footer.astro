@@ -3,33 +3,20 @@ import BitcoinAustriaLogo from "@/assets/bitcoin-austria-horizontal.svg"
 
 const sections = [
   {
-    title: "Initiative",
+    title: "DAC8",
     links: [
-      { label: "Individualantrag", href: "/individualantrag/" },
-      { label: "Warum DAC8?", href: "/argumente/" },
-      { label: "Mitmachen", href: "/mitmachen/" },
-      { label: "Für Unternehmen", href: "/unternehmen/" },
+      { label: "Was ist DAC8?", href: "/hintergrund/#was-ist-dac8" },
+      { label: "Warum das alle angeht", href: "/hintergrund/#warum" },
+      { label: "Rechtsweg", href: "/hintergrund/#rechtsweg" },
+      { label: "Handeln", href: "/#handeln" },
     ],
   },
   {
     title: "Mehr",
     links: [
-      { label: "International kooperieren", href: "/mitmachen/#international" },
-      {
-        label: "Mit Bitcoin spenden",
-        href: "https://pay.bitcoin-austria.at/apps/Nbue7dfjRGGcNXcaQ3AqDy1FARY/pos",
-      },
+      { label: "Primärquellen", href: "/hintergrund/#quellen" },
       { label: "Kontakt", href: "mailto:kontakt@dac8.org" },
-    ],
-  },
-  {
-    title: "Angestoßen von",
-    links: [
-      {
-        label: "Bull Bitcoin Blog (EN) ↗",
-        href: "https://www.bullbitcoin.com/blog/bull-bitcoin-petitions-frances-conseil-detat-to-strike-down-dac8-the-mass-surveillance-of-crypto-assets",
-      },
-      { label: "DAC8.com (EN) ↗", href: "https://dac8.com/en/" },
+      { label: "GitHub", href: "https://github.com/bitcoinaustria/dac8.org" },
     ],
   },
 ]
@@ -40,9 +27,8 @@ const sections = [
     <div class="footer-lead">
       <a class="footer-brand" href="/">dac8<span>.org</span></a>
       <p>
-        Gegen anlasslose Krypto-Datenerfassung. Für Grundrechte, gezielte
-        Ermittlungen und ein freies Krypto-Ökosystem. Eine Initiative von
-        Bitcoin Austria.
+        Klare Grenzen für DAC8 und staatliche Finanzdaten. Eine Initiative des
+        Vereins Bitcoin Austria.
       </p>
     </div>
 
@@ -72,8 +58,10 @@ const sections = [
     </a>
     <div class="footer-meta">
       <ul class="legal-links" aria-label="Rechtliches">
-        <li><a href="/impressum/">Impressum</a></li>
-        <li><a href="/datenschutz/">Datenschutz</a></li>
+        <li><a href="https://bitcoin-austria.at/impressum">Impressum</a></li>
+        <li>
+          <a href="https://bitcoin-austria.at/datenschutz">Datenschutz</a>
+        </li>
       </ul>
     </div>
   </div>
@@ -139,7 +127,7 @@ const sections = [
 
   nav {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-xl);
     align-content: start;
 
@@ -187,8 +175,7 @@ const sections = [
     font-size: var(--step--1);
 
     @media (width < 40rem) {
-      flex-direction: column;
-      align-items: flex-start;
+      flex-wrap: wrap;
     }
   }
 
@@ -198,18 +185,5 @@ const sections = [
     align-items: center;
     justify-content: flex-end;
     gap: var(--space-m);
-
-    @media (width < 40rem) {
-      inline-size: 100%;
-      justify-content: flex-start;
-    }
-  }
-
-  @media (width < 40rem) {
-    .legal-links {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--space-2xs);
-    }
   }
 </style>

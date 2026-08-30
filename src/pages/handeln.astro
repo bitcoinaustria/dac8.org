@@ -1,0 +1,469 @@
+---
+import MetaPage from "@/components/MetaPage.astro"
+import Layout from "@/layouts/Layout.astro"
+import "@/styles/campaign.css"
+---
+
+<Layout>
+  <MetaPage
+    slot="head"
+    title="Beschwerde und Brief vorbereiten"
+    description="Erstelle lokal im Browser einen persönlichen Entwurf für eine Datenschutzbeschwerde oder einen Brief an Abgeordnete."
+  />
+
+  <article class="campaign tool-page">
+    <header class="hero">
+      <p class="eyebrow">Selbst handeln</p>
+      <h1>Deine Stimme. Dein Text.</h1>
+      <p class="lead">
+        Bereite einen persönlichen Entwurf vor. Nichts wird automatisch
+        versendet, gespeichert oder an Bitcoin Austria übertragen.
+      </p>
+      <nav class="hero-actions" aria-label="Werkzeug wählen">
+        <a class="button primary" href="#beschwerde">Beschwerde vorbereiten</a>
+        <a class="button" href="#abgeordnete">Brief vorbereiten</a>
+        <button class="button" type="button" data-download-offline>
+          Offline-Generator (.html)
+        </button>
+      </nav>
+      <p class="status-line">
+        Beide Werkzeuge laufen ausschließlich in deinem Browser. Die Vorschau
+        ist direkt bearbeitbar. Prüfe den Text vor dem Absenden.
+      </p>
+    </header>
+
+    <section
+      id="beschwerde"
+      class="generator"
+      aria-labelledby="complaint-heading"
+    >
+      <p class="eyebrow">01 · Datenschutzbehörde</p>
+      <h2 id="complaint-heading">Beschwerde vorbereiten</h2>
+      <p class="section-intro">
+        Für eine förmliche Beschwerde brauchst du einen konkreten
+        Verantwortlichen, einen tatsächlichen Sachverhalt und persönliche
+        Belege. Der Generator ordnet deine Angaben zu einem Entwurf.
+      </p>
+      <aside class="generator-note">
+        Die Datenschutzbehörde übermittelt eine vollständige Beschwerde an den
+        genannten Gegner. Der Entwurf ist keine Rechtsberatung und wird nicht
+        automatisch eingebracht.
+      </aside>
+
+      <div class="generator-workspace">
+        <form class="generator-form" data-complaint-form>
+          <div class="form-grid">
+            <label class="field">
+              <span>Vor- und Nachname</span>
+              <input name="name" autocomplete="name" required>
+            </label>
+            <label class="field">
+              <span>E-Mail</span>
+              <input name="email" type="email" autocomplete="email" required>
+            </label>
+            <label class="field wide">
+              <span>Deine vollständige Anschrift</span>
+              <textarea
+                name="address"
+                autocomplete="street-address"
+                required
+              ></textarea>
+            </label>
+            <label class="field">
+              <span>Verantwortlicher Anbieter</span>
+              <input name="provider" required>
+            </label>
+            <label class="field">
+              <span>Anschrift des Anbieters</span>
+              <input name="providerAddress" required>
+            </label>
+            <label class="field">
+              <span>Wann hast du davon erfahren?</span>
+              <input name="knowledgeDate" type="date" required>
+            </label>
+            <label class="field wide">
+              <span>Was wird konkret verarbeitet?</span>
+              <textarea
+                name="facts"
+                placeholder="Zum Beispiel: Hinweis des Anbieters, angeforderte Selbstauskunft, gespeicherte Identitäts- oder Transaktionsdaten."
+                required
+              ></textarea>
+            </label>
+            <label class="field wide">
+              <span>Warum siehst du darin eine Rechtsverletzung?</span>
+              <textarea
+                name="reasons"
+                placeholder="Beschreibe in eigenen Worten, was unnötig, unverhältnismäßig, falsch oder nicht transparent ist."
+                required
+              ></textarea>
+            </label>
+            <label class="field wide">
+              <span>Welche Belege legst du bei?</span>
+              <textarea
+                name="evidence"
+                placeholder="Zum Beispiel: Datenschutzhinweis, E-Mail, Auskunft des Anbieters oder Screenshot."
+              ></textarea>
+            </label>
+          </div>
+          <button class="button primary" type="submit" formnovalidate>
+            Vorschau neu erzeugen
+          </button>
+        </form>
+
+        <div class="generator-output" data-complaint-output>
+          <div class="preview-head">
+            <h3>Live-Vorschau</h3>
+            <span>bearbeiten · kopieren · einfügen</span>
+          </div>
+          <textarea
+            id="complaint-text"
+            aria-label="Beschwerdeentwurf"
+          ></textarea>
+          <div class="output-actions">
+            <button
+              class="button"
+              type="button"
+              data-copy-value="Beschwerde gemäß Art. 77 DSGVO in Verbindung mit § 24 DSG – Verarbeitung im Zusammenhang mit DAC8 / Krypto-MPfG"
+            >
+              Betreff kopieren
+            </button>
+            <button
+              class="button primary"
+              type="button"
+              data-copy="complaint-text"
+            >
+              Text kopieren
+            </button>
+            <a
+              class="button"
+              href="https://dsb.gv.at/eingabe-an-die-dsb/beschwerde"
+              >Offizielle Einreichung öffnen</a
+            >
+          </div>
+          <p class="copy-status" data-copy-status aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="abgeordnete"
+      class="generator"
+      aria-labelledby="letter-heading"
+    >
+      <p class="eyebrow">02 · Parlament</p>
+      <h2 id="letter-heading">Brief an Abgeordnete vorbereiten</h2>
+      <p class="section-intro">
+        Der Text fordert gezielte Steuerdurchsetzung und klare Grenzen für
+        Finanzdaten. Ergänze deinen persönlichen Grund – Serienbriefe ohne
+        eigene Stimme überzeugen selten.
+      </p>
+
+      <div class="generator-workspace">
+        <form class="generator-form" data-letter-form>
+          <div class="form-grid">
+            <label class="field">
+              <span>Anrede</span>
+              <select name="salutation">
+                <option>Sehr geehrte Frau</option>
+                <option>Sehr geehrter Herr</option>
+                <option>Guten Tag</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Name der Abgeordneten oder des Abgeordneten</span>
+              <input name="recipient" placeholder="Optional">
+            </label>
+            <label class="field wide">
+              <span>E-Mail der Abgeordneten oder des Abgeordneten</span>
+              <input name="recipientEmail" type="email" placeholder="Optional">
+            </label>
+            <label class="field">
+              <span>Dein Name</span>
+              <input name="sender" autocomplete="name" placeholder="Optional">
+            </label>
+            <label class="field">
+              <span>Dein Wohnort oder Bundesland</span>
+              <input
+                name="location"
+                autocomplete="address-level1"
+                placeholder="Optional"
+              >
+            </label>
+            <label class="field wide">
+              <span>Warum ist dir das persönlich wichtig?</span>
+              <textarea
+                name="personal"
+                placeholder="Ein kurzer eigener Satz macht den Brief glaubwürdiger."
+              ></textarea>
+            </label>
+          </div>
+          <button class="button primary" type="submit" formnovalidate>
+            Vorschau neu erzeugen
+          </button>
+        </form>
+
+        <div class="generator-output" data-letter-output>
+          <div class="preview-head">
+            <h3>Live-Vorschau</h3>
+            <span>bearbeiten · kopieren · einfügen</span>
+          </div>
+          <textarea id="letter-text" aria-label="Briefentwurf"></textarea>
+          <div class="output-actions">
+            <button
+              class="button"
+              type="button"
+              data-copy-value="DAC8 und Krypto-MPfG – keine Finanzüberwachung auf Vorrat"
+            >
+              Betreff kopieren
+            </button>
+            <button
+              class="button primary"
+              type="button"
+              data-copy="letter-text"
+            >
+              Text kopieren
+            </button>
+            <a class="button" data-mailto hidden>E-Mail öffnen</a>
+            <a
+              class="button"
+              href="https://www.parlament.gv.at/recherchieren/personen/nationalrat"
+              >Abgeordnete finden</a
+            >
+          </div>
+          <p class="copy-status" data-copy-status aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <script is:inline data-generator-script>
+    const complaintSubject =
+      "Beschwerde gemäß Art. 77 DSGVO in Verbindung mit § 24 DSG – Verarbeitung im Zusammenhang mit DAC8 / Krypto-MPfG"
+    const letterSubject =
+      "DAC8 und Krypto-MPfG – keine Finanzüberwachung auf Vorrat"
+    const read = (form, name, fallback = "") =>
+      String(new FormData(form).get(name) || "").trim() || fallback
+    const formatDate = (value) =>
+      value
+        ? new Intl.DateTimeFormat("de-AT").format(new Date(`${value}T12:00:00`))
+        : "[Datum der Kenntnis]"
+
+    const complaintForm = document.querySelector("[data-complaint-form]")
+    const complaintText = document.querySelector("#complaint-text")
+    let complaintEdited = false
+
+    const buildComplaint = () => {
+      const name = read(complaintForm, "name", "[Vor- und Nachname]")
+      const email = read(complaintForm, "email", "[E-Mail]")
+      const address = read(complaintForm, "address", "[Vollständige Anschrift]")
+      const provider = read(
+        complaintForm,
+        "provider",
+        "[Verantwortlicher Anbieter]",
+      )
+      const providerAddress = read(
+        complaintForm,
+        "providerAddress",
+        "[Anschrift des Anbieters]",
+      )
+      const knowledgeDate = formatDate(read(complaintForm, "knowledgeDate"))
+      const facts = read(
+        complaintForm,
+        "facts",
+        "[Konkreten Sachverhalt und betroffene Daten beschreiben]",
+      )
+      const reasons = read(
+        complaintForm,
+        "reasons",
+        "[Persönliche Gründe der behaupteten Rechtsverletzung beschreiben]",
+      )
+      const evidence = read(
+        complaintForm,
+        "evidence",
+        "Keine weiteren Beilagen.",
+      )
+
+      return `An die Österreichische Datenschutzbehörde
+
+Betreff: ${complaintSubject}
+
+1. Beschwerdeführende Person
+${name}
+${address}
+E-Mail: ${email}
+
+2. Beschwerdegegnerische Partei
+${provider}
+${providerAddress}
+
+3. Als verletzt erachtete Rechte
+Ich erachte mich durch die unten beschriebene Verarbeitung in meinem Recht auf Geheimhaltung gemäß § 1 DSG sowie in meinem Recht auf eine rechtmäßige und auf das notwendige Maß beschränkte Verarbeitung gemäß Art. 5 Abs. 1 lit. c und Art. 6 DSGVO verletzt.
+
+4. Sachverhalt
+Ich bin Kundin bzw. Kunde der beschwerdegegnerischen Partei. Am ${knowledgeDate} habe ich von folgender Verarbeitung meiner personenbezogenen Daten erfahren:
+
+${facts}
+
+Nach meinem Kenntnisstand erfolgt diese Verarbeitung im Zusammenhang mit DAC8 und dem Krypto-Meldepflichtgesetz. § 20 Abs. 1 Krypto-MPfG verlangt die Verarbeitung der in § 18 genannten Informationen für alle Kunden, Transaktionen und Kryptowerte unabhängig von der späteren Meldepflicht.
+
+5. Gründe der behaupteten Rechtsverletzung
+${reasons}
+
+Ich ersuche die Datenschutzbehörde insbesondere zu prüfen, ob die konkrete Verarbeitung auf einer ausreichenden Rechtsgrundlage beruht und mit Datenminimierung, Zweckbindung und dem Grundrecht auf Geheimhaltung vereinbar ist.
+
+6. Begehren
+Ich beantrage die Feststellung, dass mich die oben beschriebene Verarbeitung in den genannten Rechten verletzt.
+
+7. Rechtzeitigkeit
+Ich habe am ${knowledgeDate} von der behaupteten Rechtsverletzung erfahren. Die Beschwerde wird innerhalb eines Jahres ab Kenntnis eingebracht.
+
+8. Beilagen und Belege
+${evidence}
+
+${name}`
+    }
+
+    const renderComplaint = (force = false) => {
+      if (force) complaintEdited = false
+      if (!complaintEdited) complaintText.value = buildComplaint()
+    }
+
+    const knowledgeDate = complaintForm.elements.namedItem("knowledgeDate")
+    if (!knowledgeDate.value) {
+      knowledgeDate.value = new Intl.DateTimeFormat("en-CA").format(new Date())
+    }
+    complaintForm.addEventListener("input", () => renderComplaint())
+    complaintForm.addEventListener("submit", (event) => {
+      event.preventDefault()
+      renderComplaint(true)
+    })
+    complaintText.addEventListener("input", () => {
+      complaintEdited = true
+    })
+    renderComplaint()
+
+    const letterForm = document.querySelector("[data-letter-form]")
+    const letterText = document.querySelector("#letter-text")
+    const mailto = document.querySelector("[data-mailto]")
+    let letterEdited = false
+
+    const buildLetter = () => {
+      const salutationChoice = read(letterForm, "salutation")
+      const recipient = read(letterForm, "recipient")
+      const sender = read(letterForm, "sender", "[Dein Name]")
+      const location = read(letterForm, "location")
+      const personal = read(letterForm, "personal")
+      const salutation = recipient
+        ? `${salutationChoice} ${recipient},`
+        : "Sehr geehrte Damen und Herren,"
+      const personalParagraph = personal ? `\n\n${personal}` : ""
+      const signature = [sender, location].filter(Boolean).join("\n")
+
+      return `Betreff: ${letterSubject}
+
+${salutation}
+
+seit 1. Jänner 2026 werden in Österreich im Zusammenhang mit DAC8 Identitätsdaten und Krypto-Aktivität verarbeitet. Für meldepflichtige Nutzer werden jährlich Werte, Einheiten und Transaktionszahlen je Kryptowert und Kategorie gemeldet. Österreich verpflichtet Anbieter darüber hinaus, die relevanten Informationen für alle Kunden, Transaktionen und Kryptowerte zu verarbeiten – unabhängig davon, ob am Ende tatsächlich eine Meldepflicht besteht.${personalParagraph}
+
+Ich unterstütze eine gezielte und wirksame Durchsetzung von Steuerpflichten. Ich lehne aber die anlasslose Massenerfassung legaler Finanzaktivität ab. Steuerprüfung darf nicht zur Finanzüberwachung auf Vorrat werden.
+
+Ich ersuche Sie daher, sich insbesondere für folgende Punkte einzusetzen:
+
+– eine parlamentarische Prüfung der österreichischen Alle-Kunden-Regel in § 20 Abs. 1 Krypto-MPfG,
+– keine Ausweitung auf Wallet-Adressen, einzelne Transaktionsdaten oder Zeiträume vor 2026 ohne neue öffentliche und grundrechtliche Prüfung,
+– klare und überprüfbare Grenzen für Zweck, Zugriff, Speicherung und Weiterverwendung,
+– wirksame Information, Auskunft und Korrektur für Betroffene,
+– eine unabhängige Evaluierung von Notwendigkeit, Wirksamkeit und Sicherheitsfolgen.
+
+Bitte teilen Sie mir mit, wie Sie diese Fragen beurteilen und welche parlamentarischen Schritte Sie unterstützen.
+
+Mit freundlichen Grüßen
+${signature}`
+    }
+
+    const renderLetter = (force = false) => {
+      if (force) letterEdited = false
+      if (!letterEdited) letterText.value = buildLetter()
+      const email = read(letterForm, "recipientEmail")
+      mailto.hidden = !email
+      mailto.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(letterSubject)}`
+    }
+
+    letterForm.addEventListener("input", () => renderLetter())
+    letterForm.addEventListener("submit", (event) => {
+      event.preventDefault()
+      renderLetter(true)
+    })
+    letterText.addEventListener("input", () => {
+      letterEdited = true
+    })
+    renderLetter()
+
+    const fallbackCopy = (text) => {
+      const helper = document.createElement("textarea")
+      helper.value = text
+      helper.setAttribute("readonly", "")
+      helper.style.position = "fixed"
+      helper.style.opacity = "0"
+      document.body.append(helper)
+      helper.select()
+      const copied = document.execCommand("copy")
+      helper.remove()
+      return copied
+    }
+
+    document
+      .querySelectorAll("[data-copy], [data-copy-value]")
+      .forEach((button) => {
+        button.addEventListener("click", async () => {
+          const textarea = document.getElementById(button.dataset.copy || "")
+          const text = button.dataset.copyValue || textarea?.value || ""
+          const status = button
+            .closest(".generator-output")
+            .querySelector("[data-copy-status]")
+          try {
+            if (!navigator.clipboard?.writeText) throw new Error()
+            await navigator.clipboard.writeText(text)
+            status.textContent = "Kopiert."
+          } catch {
+            status.textContent = fallbackCopy(text)
+              ? "Kopiert."
+              : "Kopieren nicht möglich. Bitte den Text markieren."
+          }
+        })
+      })
+
+    document
+      .querySelector("[data-download-offline]")
+      .addEventListener("click", () => {
+        const css = [...document.styleSheets]
+          .flatMap((sheet) => {
+            try {
+              return [...sheet.cssRules].map((rule) => rule.cssText)
+            } catch {
+              return []
+            }
+          })
+          .join("\n")
+        const clone = document.documentElement.cloneNode(true)
+        clone
+          .querySelectorAll("script:not([data-generator-script])")
+          .forEach((script) => script.remove())
+        clone
+          .querySelectorAll('link[rel="stylesheet"]')
+          .forEach((link) => link.remove())
+        const style = document.createElement("style")
+        style.textContent = css
+        clone.querySelector("head").append(style)
+        const blob = new Blob(["<!doctype html>\n", clone.outerHTML], {
+          type: "text/html;charset=utf-8",
+        })
+        const url = URL.createObjectURL(blob)
+        const download = document.createElement("a")
+        download.href = url
+        download.download = "dac8-generator-offline.html"
+        download.click()
+        URL.revokeObjectURL(url)
+      })
+  </script>
+</Layout>

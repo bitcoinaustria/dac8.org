@@ -7,12 +7,10 @@ type Props = { crumbs?: { label: string; href: string }[] }
 
 const { crumbs = [] } = Astro.props
 const pathname = normalizePath(Astro.url.pathname) || "/"
-const section = NAVIGATION.find(
-  ({ href, children }) =>
-    pathname === href ||
-    pathname.startsWith(`${href}/`) ||
-    children?.some((child) => pathname === child.href),
-)
+const section = NAVIGATION.find(({ href }) => {
+  const itemPath = normalizePath(new URL(href, Astro.url).pathname) || "/"
+  return pathname === itemPath || pathname.startsWith(`${itemPath}/`)
+})
 ---
 
 <aside data-bar>
@@ -23,12 +21,10 @@ const section = NAVIGATION.find(
     <button
       class="menu-toggle"
       type="button"
-      aria-label="Menü öffnen"
       aria-expanded="false"
       aria-controls="site-navigation"
     >
-      <span class="menu-label">Menü öffnen</span>
-      <span class="menu-icon" aria-hidden="true"></span>
+      Menü
     </button>
     <nav id="site-navigation">
       <ul>
@@ -36,24 +32,10 @@ const section = NAVIGATION.find(
             <li>
               <a
                 href={item.href}
-                aria-current={pathname === item.href ? "page" : undefined}
+                aria-current={item === section ? "page" : undefined}
               >
                 {item.label}
               </a>
-              {item.children && (
-                <ul class="nav-children">
-                  {item.children.map((child) => (
-                    <li>
-                      <a
-                        href={child.href}
-                        aria-current={pathname === child.href ? "page" : undefined}
-                      >
-                        {child.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
               {item === section && crumbs.length > 0 && pathname !== item.href && (
                 <ul>
                   {crumbs.map((crumb, i) => (
@@ -83,13 +65,6 @@ const section = NAVIGATION.find(
                 </a>
               </li>
             ))}
-        <li class="locale-item">
-          <label for="site-locale">Sprache / Land</label>
-          <select id="site-locale" name="locale">
-            <option value="de-AT" selected>Deutsch · AT</option>
-            <option value="en" disabled>English · INT (bald)</option>
-          </select>
-        </li>
         <li class="theme-item">
           <ThemeToggle />
         </li>
@@ -110,7 +85,7 @@ const section = NAVIGATION.find(
     justify-content: space-between;
     height: calc(100svh - var(--page-offset-top) - var(--page-offset-bottom));
 
-    @media (width < 72rem) {
+    @media (width < 64rem) {
       position: static;
       height: auto;
       flex-direction: row;
@@ -123,7 +98,6 @@ const section = NAVIGATION.find(
     display: flex;
     flex-direction: column;
     gap: var(--space-2xs);
-    padding-block-start: calc(var(--space-xl) - 0.25rem);
 
     > a {
       display: inline-flex;
@@ -135,20 +109,19 @@ const section = NAVIGATION.find(
 
     .site-brand {
       font-weight: var(--font-weight-medium);
-      font-size: var(--step-2);
+      font-size: var(--step-0);
 
       .site-name span {
         color: var(--primary);
       }
     }
 
-    @media (width < 72rem) {
+    @media (width < 64rem) {
       position: relative;
       flex: 1;
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      padding-block-start: 0;
     }
   }
 
@@ -183,125 +156,55 @@ const section = NAVIGATION.find(
       }
     }
 
-    @media (width < 72rem) {
-      /* Krümelpfade bleiben im Overlay versteckt, die festen Unterpunkte
-         (Generatoren) sollen auch dort erreichbar sein. */
-      ul:not(.nav-children) {
+    @media (width < 64rem) {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-s);
+
+      ul {
         display: none;
       }
     }
   }
 
   nav {
-    @media (width >= 72rem) {
-      > ul {
-        inline-size: fit-content;
-      }
-    }
-
-    @media (width < 72rem) {
+    @media (width < 48rem) {
       display: none;
-      position: fixed;
+      position: absolute;
       z-index: 1;
-      inset: 0;
-      overflow-y: auto;
-      padding: calc(4rem + var(--space-xl)) var(--bar-gutter) var(--space-xl);
+      inset-block-start: calc(100% + var(--space-2xs));
+      inset-inline: calc(-1 * var(--bar-gutter));
+      padding: var(--space-s) var(--bar-gutter);
+      border-block-end: 2px solid var(--border);
       background: var(--background);
 
       > ul {
         flex-direction: column;
         align-items: stretch;
-        gap: var(--space-s);
-
-        > li > a {
-          font-size: var(--step-2);
-        }
+        gap: var(--space-xs);
       }
     }
   }
 
   sidebar-inner:has(.menu-toggle[aria-expanded="true"]) nav {
-    @media (width < 72rem) {
+    @media (width < 48rem) {
       display: block;
     }
   }
 
   .menu-toggle {
     display: none;
-    inline-size: 2.75rem;
-    block-size: 2.75rem;
-    align-items: center;
-    justify-content: center;
+    padding: var(--space-3xs) var(--space-2xs);
+    border: 1px solid var(--border);
     cursor: pointer;
 
-    @media (width < 72rem) {
+    @media (width < 48rem) {
       display: inline-flex;
-      position: relative;
-      z-index: 2;
     }
-  }
-
-  .menu-label {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  .menu-icon,
-  .menu-icon::before,
-  .menu-icon::after {
-    inline-size: 1.4rem;
-    block-size: 2px;
-  }
-
-  .menu-icon {
-    position: relative;
-
-    &::before,
-    &::after {
-      position: absolute;
-      inset: 0;
-      background: currentColor;
-      content: "";
-      transition: transform 180ms cubic-bezier(0.77, 0, 0.175, 1);
-    }
-
-    &::before {
-      transform: translateY(-0.28rem);
-    }
-
-    &::after {
-      transform: translateY(0.28rem);
-    }
-  }
-
-  .menu-toggle[aria-expanded="true"] {
-    .menu-icon::before {
-      transform: rotate(45deg);
-    }
-
-    .menu-icon::after {
-      transform: rotate(-45deg);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .menu-icon::before,
-    .menu-icon::after {
-      transition-duration: 0.01ms;
-    }
-  }
-
-  .site-brand {
-    position: relative;
-    z-index: 2;
   }
 
   nav li:has(> ul) > a {
-    @media (width < 72rem) {
+    @media (width < 64rem) {
       color: var(--foreground);
     }
   }
@@ -314,43 +217,12 @@ const section = NAVIGATION.find(
     }
   }
 
-  .locale-item {
-    display: grid;
-    gap: var(--space-3xs);
-    margin-block-start: var(--space-s);
-    padding-block-start: var(--space-xs);
-    border-block-start: 1px solid var(--border);
-
-    label {
-      color: var(--muted-foreground);
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    select {
-      inline-size: 8rem;
-      min-inline-size: 0;
-      max-inline-size: 100%;
-      padding: var(--space-3xs) var(--space-2xs);
-      border: 1px solid var(--border);
-      background: var(--background);
-      color: var(--foreground);
-      font: inherit;
-      font-size: var(--step--1);
-    }
-
-    @media (width < 72rem) {
-      margin-block-start: var(--space-m);
-    }
-  }
-
   sidebar-toggle {
     display: flex;
     align-items: center;
     margin-inline-start: -0.5rem;
 
-    @media (width < 72rem) {
+    @media (width < 64rem) {
       margin-inline-start: 0;
       margin-inline-end: -0.5rem;
     }
@@ -359,26 +231,18 @@ const section = NAVIGATION.find(
 
 <script>
   const menuToggle = document.querySelector<HTMLButtonElement>(".menu-toggle")
-  const menuLabel = menuToggle?.querySelector(".menu-label")
   const navigation = document.getElementById("site-navigation")
-  const background = document.querySelectorAll(
-    "page-content, page-footer, page-toc, sidebar-toggle",
-  )
 
-  const setMenuState = (open: boolean) => {
+  const closeMenu = () => {
     if (!menuToggle) return
-    const label = open ? "Menü schließen" : "Menü öffnen"
-    menuToggle.setAttribute("aria-expanded", String(open))
-    menuToggle.setAttribute("aria-label", label)
-    if (menuLabel) menuLabel.textContent = label
-    document.documentElement.toggleAttribute("data-menu-open", open)
-    background.forEach((element) => element.toggleAttribute("inert", open))
+    menuToggle.setAttribute("aria-expanded", "false")
+    menuToggle.textContent = "Menü"
   }
 
-  const closeMenu = () => setMenuState(false)
-
   menuToggle?.addEventListener("click", () => {
-    setMenuState(menuToggle.getAttribute("aria-expanded") !== "true")
+    const open = menuToggle.getAttribute("aria-expanded") !== "true"
+    menuToggle.setAttribute("aria-expanded", String(open))
+    menuToggle.textContent = open ? "Schließen" : "Menü"
   })
 
   navigation?.addEventListener("click", (event) => {
@@ -388,6 +252,4 @@ const section = NAVIGATION.find(
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeMenu()
   })
-
-  matchMedia("(width < 72rem)").addEventListener("change", closeMenu)
 </script>

@@ -1,240 +1,160 @@
 ---
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
-
-const facts = [
-  {
-    number: "01",
-    title: "Erfasst wird vorsorglich",
-    text: "Meldende Anbieter müssen die meldepflichtigen Informationen für alle Kund:innen, alle Transaktionen und alle Kryptowerte ermitteln, erfassen, speichern und verarbeiten. Ob eine Person am Ende überhaupt meldepflichtig ist, spielt dafür keine Rolle. Es genügt, Kundin oder Kunde eines Anbieters mit Österreich-Bezug zu sein.",
-  },
-  {
-    number: "02",
-    title: "Gemeldet wird systematisch",
-    text: "Für meldepflichtige Personen werden Identität, Steueransässigkeit sowie je Kryptowert aggregierte Transaktionskategorien, Beträge, Einheiten, Transaktionszahlen und Übertragungen jährlich an das Finanzamt gemeldet und automatisiert mit den zuständigen Behörden teilnehmender Staaten ausgetauscht.",
-  },
-  {
-    number: "03",
-    title: "Die Blockchain macht die Folgen dauerhaft",
-    text: "Ein Steuerdatensatz veraltet. Eine Blockchain nicht. Wer eine Adresse einmal einem Namen zuordnet, kann alles nachlesen, was davor und danach über diese Adresse gelaufen ist, auch in zwanzig Jahren.",
-  },
-]
+import "@/styles/campaign.css"
 ---
 
 <Layout>
   <MetaPage
     slot="head"
-    title="DAC8: Krypto-Meldepflicht vor den VfGH bringen"
-    description="Bitcoin Austria bereitet einen Individualantrag gegen das österreichische Krypto-Meldepflichtgesetz vor. So läuft das Verfahren, so kannst du helfen."
+    description="Bitcoin Austria stellt sich gegen Finanzüberwachung auf Vorrat. Erfahre, was Österreichs DAC8-Umsetzung erfasst und wie du dich wehren kannst."
   />
 
-  <article class="campaign">
+  <article class="campaign landing">
     <header class="hero">
-      <p class="eyebrow">Eine Initiative von Bitcoin Austria</p>
-      <h1>
-        Wir wollen die <span>Krypto-Massenüberwachung</span> vor den VfGH
-        bringen.
-      </h1>
-      <p class="intro">
-        Das österreichische
-        <a
-          href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064"
-          >Krypto-Meldepflichtgesetz</a
-        >
-        macht aus legitimen Transaktionen einen grenzüberschreitenden
-        Datenbestand. Wir halten diese anlasslose Erfassung für
-        unverhältnismäßig und bereiten einen Individualantrag beim
-        Verfassungsgerichtshof vor. Sind die entscheidenden Fragen europäisch,
-        gehören sie vor den EuGH.
+      <p class="eyebrow">DAC8 · seit 2026 in Kraft</p>
+      <h1>Deine Finanzdaten. Dein Leben. Kein Profil auf Vorrat.</h1>
+      <p class="lead">
+        Österreichs DAC8-Umsetzung erfasst Krypto-Aktivität ohne konkreten
+        Verdacht. Wir nennen diese Logik, was sie ist: Finanzüberwachung auf
+        Vorrat. Steuerpflichten gezielt prüfen – nicht alle vorsorglich
+        durchleuchten.
       </p>
-      <p class="position">
-        Der Staat darf Steuern einheben und durchsetzen. Er muss dafür nicht das
-        Vermögen aller sichtbar machen.
-      </p>
-      <nav class="button-row" aria-label="Initiative unterstützen">
-        <a class="button primary" href="/mitmachen/">So kannst du mitmachen</a>
-        <a
-          class="button"
-          href="https://pay.bitcoin-austria.at/apps/Nbue7dfjRGGcNXcaQ3AqDy1FARY/pos"
-          >Jetzt spenden</a
+      <nav class="hero-actions" aria-label="Direkteinstieg">
+        <a class="button primary" href="#handeln">Was du tun kannst</a>
+        <a class="button" href="/hintergrund/#was-ist-dac8"
+          >DAC8 kurz erklärt</a
         >
-        <a class="text-link" href="/unternehmen/">Als Unternehmen helfen →</a>
       </nav>
+      <p class="status-line">
+        Erste Meldung für 2026: bis 31. Juli 2027. Noch ist Zeit, Grenzen
+        einzufordern. Beschlossen heißt nicht unangreifbar.
+      </p>
     </header>
 
-    <section aria-labelledby="kurz-heading">
-      <p class="eyebrow">DAC8 in einer Minute</p>
-      <h2 id="kurz-heading">
-        Erst alle erfassen. Dann sehen, wen man braucht.
-      </h2>
-      <p class="section-intro">
-        Österreich hat DAC8 mit dem Krypto-Meldepflichtgesetz umgesetzt. Seit 1.
-        Jänner 2026 werden meldende Anbieter zu Erfassungs-, Sorgfalts- und
-        Meldepflichten verpflichtet. Die erste Meldung für 2026 folgt 2027.
-      </p>
-      <ol class="numbered-grid">
-        {facts.map((fact) => (
-          <li>
-            <span>{fact.number}</span>
-            <h3>{fact.title}</h3>
-            <p>{fact.text}</p>
-          </li>
-        ))}
-      </ol>
-      <div class="button-row">
-        <a class="arrow-link" href="/was-ist-dac8/"
-          >Was genau gemeldet wird →</a
-        >
-        <a class="arrow-link" href="/argumente/">Die Argumente im Detail →</a>
+    <section aria-labelledby="stakes-heading">
+      <p class="eyebrow">Was auf dem Spiel steht</p>
+      <h2 id="stakes-heading">Mehr als ein Steuerdatensatz.</h2>
+      <div class="signal-grid">
+        <article>
+          <span>01</span>
+          <h3>Privatsphäre</h3>
+          <p>
+            Name, Adresse und Steuer-ID werden mit jährlicher Krypto-Aktivität
+            verbunden.
+          </p>
+        </article>
+        <article>
+          <span>02</span>
+          <h3>Sicherheit</h3>
+          <p>
+            Mehr identitätsbezogene Finanzdaten vergrößern den möglichen Schaden
+            bei Fehlzugriff oder Datenleck.
+          </p>
+        </article>
+        <article>
+          <span>03</span>
+          <h3>Ausweitung</h3>
+          <p>
+            Das DAC-System wird laufend erweitert. Jeder neue Zweck und jedes
+            neue Datenfeld braucht öffentliche Kontrolle.
+          </p>
+        </article>
       </div>
-    </section>
-
-    <section class="split-section" aria-labelledby="antrag-heading">
-      <div>
-        <p class="eyebrow">Der österreichische Rechtsweg</p>
-        <h2 id="antrag-heading">Den Antrag bringen wir ein.</h2>
-      </div>
-      <div class="stack">
-        <p>
-          Wir bereiten einen Individualantrag gegen Bestimmungen des
-          österreichischen Krypto-Meldepflichtgesetzes vor. Im Zentrum stehen
-          Grundrechte, Verhältnismäßigkeit und die Frage, ob gezielte
-          Ermittlungsinstrumente mildere Mittel wären.
-        </p>
-        <p>
-          Ein Individualantrag ist keine offene Sammelklage. Jede
-          antragstellende Person muss unmittelbar und aktuell betroffen sein und
-          darf keinen anderen zumutbaren Rechtsweg haben. Diesen Teil übernehmen
-          wir samt anwaltlicher Vertretung und Kosten.
-        </p>
-        <p>
-          Wir schöpfen dabei jedes rechtsstaatliche Mittel aus, das offensteht,
-          bis hinauf zum Europäischen Gerichtshof. Von dir brauchen wir dafür
-          derzeit keine Daten. Sollte ein Verfahrensschritt Angaben erfordern,
-          fragen wir gezielt danach und sagen, wofür. Auf Vorrat sammeln wir
-          nicht.
-        </p>
-        <a class="button primary" href="/individualantrag/"
-          >Wie weit wir gehen</a
-        >
-      </div>
-    </section>
-
-    <section class="split-section" aria-labelledby="vorbild-heading">
-      <div>
-        <p class="eyebrow">Der Präzedenzfall</p>
-        <h2 id="vorbild-heading">
-          Ein Überwachungsgesetz ist schon einmal gefallen.
-        </h2>
-      </div>
-      <div class="stack">
-        <p>
-          2012 brachte der AKVorrat, das heutige
-          <a href="https://epicenter.works">epicenter.works</a>, gemeinsam mit
-          11.130 Menschen die Vorratsdatenspeicherung vor den
-          Verfassungsgerichtshof. 2014 hob der VfGH die österreichische
-          Umsetzung auf.
-        </p>
-        <p>
-          Anlasslose Massenerfassung ist an den Grundrechten also schon einmal
-          gescheitert, und zwar auf genau dem Weg, den wir jetzt gehen: ein
-          Individualantrag beim Verfassungsgerichtshof. Dass dieser Weg begehbar
-          ist, hat epicenter.works vorgeführt. Wir bauen darauf auf.
-        </p>
-        <a
-          class="arrow-link"
-          href="https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20140627_12G00047_00/JFT_20140627_12G00047_00.html"
-          >VfGH 27.6.2014, G 47/2012 ua nachlesen →</a
-        >
-      </div>
-    </section>
-
-    <section class="split-section" aria-labelledby="credit-heading">
-      <div>
-        <p class="eyebrow">Credit, wo Credit gebührt</p>
-        <h2 id="credit-heading">
-          Bull Bitcoin hat den Stein ins Rollen gebracht.
-        </h2>
-      </div>
-      <div class="stack">
-        <p>
-          Mit DAC8.com und ihrem Verfahren in Frankreich hat Bull Bitcoin den
-          Widerstand gegen die anlasslose Krypto-Datenerfassung öffentlich und
-          juristisch angestoßen. Dafür gebührt ihnen klarer Credit.
-        </p>
-        <p>
-          Bitcoin Austria trägt diesen Impuls nach Österreich. Die Rechtswege
-          sind national, dieselbe Klage ist nicht überall möglich. Aber je mehr
-          Mitgliedstaaten dieselbe Frage stellen, desto schwerer lässt sie sich
-          aussitzen.
-        </p>
-        <a
-          class="arrow-link"
-          href="https://www.bullbitcoin.com/fr/blog/bull-bitcoin-saisit-le-conseil-detat-pour-faire-annuler-dac8-la-surveillance-de-masse-des-crypto-actifs"
-          >Bull Bitcoins Initiative und Verfahren →</a
-        >
-      </div>
-    </section>
-
-    <section class="source-strip" aria-labelledby="sources-heading">
-      <p class="eyebrow">Primärquellen</p>
-      <h2 id="sources-heading">Prüf unsere Aussagen selbst.</h2>
-      <ul class="link-list">
-        <li>
-          <a
-            href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064"
-            >Österreichisches Krypto-Meldepflichtgesetz</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32023L2226"
-            >Richtlinie (EU) 2023/2226 – DAC8</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://www.vfgh.gv.at/downloads/Formular-Individualantrag-Empfehlungen_final.pdf"
-            >VfGH-Empfehlungen zum Individualantrag</a
-          >
-        </li>
-      </ul>
-    </section>
-
-    <section aria-labelledby="mitmachen-heading">
-      <p class="eyebrow">Mitmachen</p>
-      <h2 id="mitmachen-heading">
-        Der Ausgang ist ungewiss. <span>Deine Beteiligung nicht.</span>
-      </h2>
-      <p class="section-intro">
-        Ob der VfGH unseren Antrag zulässt, entscheidet der VfGH. Was du dagegen
-        tun kannst, hängt davon nicht ab. Zwei Generatoren stehen bereit, einer
-        für die <a href="/beschwerde/">Beschwerde an die Datenschutzbehörde</a>,
-        einer für den <a href="/brief/">Brief an deine Abgeordneten</a>. Beide
-        laufen im Browser, deine Angaben bleiben auf deinem Gerät. Und es hilft,
-        wer die Rechtskosten mitträgt.
-      </p>
-      <div class="button-row">
-        <a class="button primary" href="/mitmachen/">Alle Beteiligungswege</a>
-        <a
-          class="button"
-          href="https://pay.bitcoin-austria.at/apps/Nbue7dfjRGGcNXcaQ3AqDy1FARY/pos"
-          >Jetzt spenden</a
-        >
-      </div>
-    </section>
-
-    <aside class="company-callout">
-      <p class="eyebrow">An das Ökosystem</p>
-      <h2>Wer an Krypto verdient, sollte seine Nutzer nicht allein lassen.</h2>
-      <p>
-        Wir suchen keine gekauften Logos. Wir suchen Mitverantwortung:
-        Finanzierung, juristische oder technische Expertise, Reichweite und eine
-        klare öffentliche Position.
-      </p>
-      <a class="button light" href="/unternehmen/"
-        >Als Unternehmen unterstützen</a
+      <a class="text-link" href="/hintergrund/#warum"
+        >Warum das alle angeht →</a
       >
-    </aside>
+    </section>
+
+    <section id="handeln" class="action-section" aria-labelledby="join-heading">
+      <p class="eyebrow">Handeln</p>
+      <h2 id="join-heading">Beschwer dich. Schreib deinen Abgeordneten.</h2>
+      <p class="section-intro">
+        Gesetze sind keine Naturgesetze. Wie weit Finanzdaten erfasst werden
+        dürfen, bleibt eine rechtliche und politische Frage.
+      </p>
+      <div class="action-grid">
+        <article>
+          <p class="step">01 · Datenschutzbehörde</p>
+          <h3>Beschwerde einbringen</h3>
+          <p>
+            Wenn deine Daten konkret verarbeitet werden und du deine
+            Datenschutzrechte verletzt siehst, kannst du persönlich Beschwerde
+            erheben. Die offiziellen Hinweise erklären, was dafür nötig ist.
+          </p>
+          <a class="button primary" href="/handeln/#beschwerde"
+            >Beschwerde vorbereiten</a
+          >
+        </article>
+        <article>
+          <p class="step">02 · Parlament</p>
+          <h3>Abgeordnete anschreiben</h3>
+          <p>
+            Sag deinen gewählten Vertreterinnen und Vertretern, warum du klare
+            Grenzen für Erfassung, Speicherung und Weiterverwendung erwartest.
+          </p>
+          <a class="button" href="/handeln/#abgeordnete">Brief vorbereiten</a>
+        </article>
+      </div>
+      <button class="share-link" type="button" data-share>
+        Seite teilen →
+      </button>
+      <p class="share-status" data-share-status aria-live="polite"></p>
+    </section>
+
+    <section class="position" aria-labelledby="position-heading">
+      <div>
+        <p class="eyebrow">Bitcoin Austria</p>
+        <h2 id="position-heading">
+          Eine Zukunft ohne Finanzüberwachung auf Vorrat ist möglich.
+        </h2>
+        <p class="section-intro">
+          Wir sind Bitcoiner und stellen uns gegen Massenüberwachung. Österreich
+          hat anlasslose Vorratsdatenspeicherung schon einmal vor den
+          Höchstgerichten zu Fall gebracht. Kein Siegesversprechen für DAC8 –
+          aber der Beweis, dass Gegenwehr wirkt. Finanzielle Privatsphäre ist
+          ein Grundrecht, kein Sonderwunsch unserer Szene.
+        </p>
+      </div>
+      <aside class="legal-note" aria-labelledby="legal-heading">
+        <p class="eyebrow">Rechtsweg</p>
+        <h3 id="legal-heading">
+          Das Gesetz gilt. Die Debatte ist nicht vorbei.
+        </h3>
+        <p>
+          Wir bauen einen konkreten österreichischen Fall auf und bereiten die
+          anwaltliche Prüfung vor. Ohne Siegesversprechen – aber mit belastbaren
+          Fakten und offenem Blick auf Gegenargumente.
+        </p>
+        <a class="text-link" href="/hintergrund/#rechtsweg"
+          >Stand und Strategie ansehen →</a
+        >
+      </aside>
+    </section>
   </article>
+
+  <script>
+    const shareButton =
+      document.querySelector<HTMLButtonElement>("[data-share]")
+    const shareStatus = document.querySelector<HTMLElement>(
+      "[data-share-status]",
+    )
+
+    shareButton?.addEventListener("click", async () => {
+      const data = {
+        title: "DAC8: Keine Finanzüberwachung auf Vorrat",
+        text: "Warum wir uns gegen anlasslose Erfassung von Finanzaktivität wehren.",
+        url: window.location.href,
+      }
+
+      if (navigator.share) {
+        await navigator.share(data).catch(() => {})
+        return
+      }
+
+      await navigator.clipboard.writeText(data.url)
+      if (shareStatus)
+        shareStatus.textContent = "Link kopiert. Danke fürs Teilen."
+    })
+  </script>
 </Layout>
