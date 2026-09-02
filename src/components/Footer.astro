@@ -3,20 +3,32 @@ import BitcoinAustriaLogo from "@/assets/bitcoin-austria-horizontal.svg"
 
 const sections = [
   {
-    title: "DAC8",
+    title: "Hintergrund",
     links: [
       { label: "Was ist DAC8?", href: "/hintergrund/#was-ist-dac8" },
       { label: "Warum das alle angeht", href: "/hintergrund/#warum" },
       { label: "Rechtsweg", href: "/hintergrund/#rechtsweg" },
-      { label: "Handeln", href: "/#handeln" },
+      { label: "Fragen & Transparenz", href: "/hintergrund/#faq" },
+      { label: "Primärquellen", href: "/hintergrund/#quellen" },
+    ],
+  },
+  {
+    title: "Handeln",
+    links: [
+      { label: "Beschwerde vorbereiten", href: "/handeln/#beschwerde" },
+      { label: "Abgeordnete anschreiben", href: "/handeln/#abgeordnete" },
+      { label: "Spenden", href: "/spenden/" },
     ],
   },
   {
     title: "Mehr",
     links: [
-      { label: "Primärquellen", href: "/hintergrund/#quellen" },
       { label: "Kontakt", href: "mailto:kontakt@dac8.org" },
-      { label: "GitHub", href: "https://github.com/bitcoinaustria/dac8.org" },
+      {
+        label: "Quellcode auf GitHub",
+        href: "https://github.com/bitcoinaustria/dac8.org",
+      },
+      { label: "Bitcoin Austria", href: "https://bitcoin-austria.at" },
     ],
   },
 ]
@@ -57,11 +69,15 @@ const sections = [
       <BitcoinAustriaLogo />
     </a>
     <div class="footer-meta">
+      <p>
+        Code und Texte:
+        <a href="https://github.com/bitcoinaustria/dac8.org/blob/main/LICENSE"
+          >MIT-Lizenz</a
+        >
+      </p>
       <ul class="legal-links" aria-label="Rechtliches">
-        <li><a href="https://bitcoin-austria.at/impressum">Impressum</a></li>
-        <li>
-          <a href="https://bitcoin-austria.at/datenschutz">Datenschutz</a>
-        </li>
+        <li><a href="/impressum/">Impressum</a></li>
+        <li><a href="/datenschutz/">Datenschutz</a></li>
       </ul>
     </div>
   </div>
@@ -69,7 +85,8 @@ const sections = [
 
 <style>
   footer {
-    padding: var(--space-2xl) var(--space-l) var(--space-l);
+    padding: var(--space-xl) 0 var(--space-l);
+    border-block-start: 2px solid var(--foreground);
   }
 
   .footer-main {
@@ -84,9 +101,10 @@ const sections = [
   }
 
   .footer-lead p {
-    max-inline-size: 46ch;
-    margin-block-start: var(--space-m);
+    max-inline-size: 40ch;
+    margin-block-start: var(--space-s);
     color: var(--muted-foreground);
+    text-wrap: pretty;
   }
 
   .footer-brand {
@@ -97,7 +115,7 @@ const sections = [
     text-decoration: none;
 
     span {
-      color: var(--primary);
+      color: var(--accent);
     }
   }
 
@@ -116,7 +134,7 @@ const sections = [
     color: var(--muted-foreground);
 
     &:hover {
-      color: var(--muted-foreground);
+      color: var(--foreground);
     }
 
     svg {
@@ -127,8 +145,8 @@ const sections = [
 
   nav {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-xl);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-l);
     align-content: start;
 
     @media (width < 40rem) {
@@ -144,9 +162,11 @@ const sections = [
 
   h2 {
     margin-block-end: var(--space-xs);
+    color: var(--accent);
     font-family: var(--font-sans);
     font-size: var(--step--1);
-    letter-spacing: 0.08em;
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
@@ -154,11 +174,12 @@ const sections = [
     margin-block-start: var(--space-2xs);
   }
 
-  a {
-    text-underline-offset: 0.2em;
+  nav a {
+    color: var(--foreground);
+    text-decoration: none;
 
     &:hover {
-      color: var(--primary);
+      color: var(--accent);
     }
   }
 
@@ -171,7 +192,6 @@ const sections = [
     padding-block-start: var(--space-m);
     border-block-start: 1px solid var(--border);
     color: var(--muted-foreground);
-    font-family: var(--font-sans);
     font-size: var(--step--1);
 
     @media (width < 40rem) {
@@ -185,5 +205,18 @@ const sections = [
     align-items: center;
     justify-content: flex-end;
     gap: var(--space-m);
+
+    p {
+      margin: 0;
+    }
+
+    a {
+      color: inherit;
+      text-underline-offset: 0.2em;
+
+      &:hover {
+        color: var(--foreground);
+      }
+    }
   }
 </style>

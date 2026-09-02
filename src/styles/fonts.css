@@ -2,6 +2,7 @@
   font-family: "IBM Plex Sans";
   src: url("../assets/fonts/IBMPlexSans-VariableFont_wdth,wght.woff2") format("woff2");
   font-weight: 100 700;
+  font-stretch: 85% 100%;
   font-style: normal;
   font-display: swap;
 }
@@ -10,6 +11,7 @@
   font-family: "IBM Plex Sans";
   src: url("../assets/fonts/IBMPlexSans-Italic-VariableFont_wdth,wght.woff2") format("woff2");
   font-weight: 100 700;
+  font-stretch: 85% 100%;
   font-style: italic;
   font-display: swap;
 }
@@ -54,15 +56,6 @@
   line-gap-override: 0%;
 }
 
-@font-face {
-  font-family: "STIX Two Math";
-  src: url("../assets/fonts/STIXTwoMath-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   --font-sans: "IBM Plex Sans", "IBM Plex Sans Fallback", sans-serif;
-  --font-math: "STIX Two Math", math;
 }

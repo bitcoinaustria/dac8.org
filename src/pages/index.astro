@@ -1,10 +1,15 @@
 ---
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
-import "@/styles/campaign.css"
 ---
 
-<Layout>
+<Layout
+  sections={[
+    { id: "einsatz", label: "Was auf dem Spiel steht" },
+    { id: "handeln", label: "Handeln" },
+    { id: "position", label: "Bitcoin Austria" },
+  ]}
+>
   <MetaPage
     slot="head"
     description="Bitcoin Austria stellt sich gegen Finanzüberwachung auf Vorrat. Erfahre, was Österreichs DAC8-Umsetzung erfasst und wie du dich wehren kannst."
@@ -12,13 +17,17 @@ import "@/styles/campaign.css"
 
   <article class="campaign landing">
     <header class="hero">
-      <p class="eyebrow">DAC8 · seit 2026 in Kraft</p>
-      <h1>Deine Finanzdaten. Dein Leben. Kein Profil auf Vorrat.</h1>
+      <p class="eyebrow">DAC8 · Krypto-Meldepflicht · Österreich seit 2026</p>
+      <h1>
+        Deine Finanzdaten. Dein Leben. <span>Kein Profil auf Vorrat.</span>
+      </h1>
       <p class="lead">
-        Österreichs DAC8-Umsetzung erfasst Krypto-Aktivität ohne konkreten
-        Verdacht. Wir nennen diese Logik, was sie ist: Finanzüberwachung auf
-        Vorrat. Steuerpflichten gezielt prüfen – nicht alle vorsorglich
-        durchleuchten.
+        Seit 2026 müssen Krypto-Anbieter in Österreich die Daten aller Kundinnen
+        und Kunden verarbeiten und meldepflichtige Nutzer jährlich dem Finanzamt
+        melden – ohne konkreten Verdacht. Wir nennen das
+        <strong>Finanzüberwachung auf Vorrat</strong>
+        und fordern klare Grenzen: Steuerpflichten gezielt prüfen, nicht alle
+        vorsorglich durchleuchten.
       </p>
       <nav class="hero-actions" aria-label="Direkteinstieg">
         <a class="button primary" href="#handeln">Was du tun kannst</a>
@@ -26,18 +35,26 @@ import "@/styles/campaign.css"
           >DAC8 kurz erklärt</a
         >
       </nav>
-      <p class="status-line">
-        Erste Meldung für 2026: bis 31. Juli 2027. Noch ist Zeit, Grenzen
-        einzufordern. Beschlossen heißt nicht unangreifbar.
-      </p>
+      <dl class="stamp" aria-label="Das Wichtigste in Kürze">
+        <dt>Wer</dt>
+        <dd>alle Kundinnen und Kunden meldepflichtiger Krypto-Anbieter</dd>
+        <dt>Was</dt>
+        <dd>Identität, Steuer-ID und Jahreswerte je Kryptowert</dd>
+        <dt>Wann</dt>
+        <dd>Gesetz seit 1. Jänner 2026 · erste Meldung bis 31. Juli 2027</dd>
+        <dd class="stamp-note">
+          Noch ist Zeit, Grenzen einzufordern. Beschlossen heißt nicht
+          unangreifbar.
+        </dd>
+      </dl>
     </header>
 
-    <section aria-labelledby="stakes-heading">
+    <section id="einsatz" aria-labelledby="stakes-heading">
       <p class="eyebrow">Was auf dem Spiel steht</p>
       <h2 id="stakes-heading">Mehr als ein Steuerdatensatz.</h2>
       <div class="signal-grid">
         <article>
-          <span>01</span>
+          <span class="index">01</span>
           <h3>Privatsphäre</h3>
           <p>
             Name, Adresse und Steuer-ID werden mit jährlicher Krypto-Aktivität
@@ -45,7 +62,7 @@ import "@/styles/campaign.css"
           </p>
         </article>
         <article>
-          <span>02</span>
+          <span class="index">02</span>
           <h3>Sicherheit</h3>
           <p>
             Mehr identitätsbezogene Finanzdaten vergrößern den möglichen Schaden
@@ -53,7 +70,7 @@ import "@/styles/campaign.css"
           </p>
         </article>
         <article>
-          <span>03</span>
+          <span class="index">03</span>
           <h3>Ausweitung</h3>
           <p>
             Das DAC-System wird laufend erweitert. Jeder neue Zweck und jedes
@@ -61,26 +78,26 @@ import "@/styles/campaign.css"
           </p>
         </article>
       </div>
-      <a class="text-link" href="/hintergrund/#warum"
-        >Warum das alle angeht →</a
-      >
+      <a class="text-link" href="/hintergrund/#warum">Warum das alle angeht</a>
     </section>
 
     <section id="handeln" class="action-section" aria-labelledby="join-heading">
       <p class="eyebrow">Handeln</p>
-      <h2 id="join-heading">Beschwer dich. Schreib deinen Abgeordneten.</h2>
+      <h2 id="join-heading">
+        Beschwer dich. Schreib deinen Abgeordneten. Trag mit.
+      </h2>
       <p class="section-intro">
         Gesetze sind keine Naturgesetze. Wie weit Finanzdaten erfasst werden
         dürfen, bleibt eine rechtliche und politische Frage.
       </p>
-      <div class="action-grid">
+      <div class="action-grid three">
         <article>
           <p class="step">01 · Datenschutzbehörde</p>
           <h3>Beschwerde einbringen</h3>
           <p>
-            Wenn deine Daten konkret verarbeitet werden und du deine
-            Datenschutzrechte verletzt siehst, kannst du persönlich Beschwerde
-            erheben. Die offiziellen Hinweise erklären, was dafür nötig ist.
+            Wenn ein Anbieter deine Daten konkret verarbeitet und du darin eine
+            Rechtsverletzung siehst, kannst du persönlich Beschwerde erheben.
+            Der Generator hilft beim Entwurf.
           </p>
           <a class="button primary" href="/handeln/#beschwerde"
             >Beschwerde vorbereiten</a
@@ -95,14 +112,24 @@ import "@/styles/campaign.css"
           </p>
           <a class="button" href="/handeln/#abgeordnete">Brief vorbereiten</a>
         </article>
+        <article>
+          <p class="step">03 · Unterstützen</p>
+          <h3>Die Arbeit finanzieren</h3>
+          <p>
+            Recherche, anwaltliche Prüfung und Gutachten kosten Geld. Spende in
+            Bitcoin über unseren eigenen BTCPay-Server oder in Euro per
+            Überweisung an Bitcoin Austria.
+          </p>
+          <a class="button" href="/spenden/">Spenden</a>
+        </article>
       </div>
-      <button class="share-link" type="button" data-share>
-        Seite teilen →
+      <button class="share-link text-link" type="button" data-share>
+        Seite teilen
       </button>
       <p class="share-status" data-share-status aria-live="polite"></p>
     </section>
 
-    <section class="position" aria-labelledby="position-heading">
+    <section id="position" class="position" aria-labelledby="position-heading">
       <div>
         <p class="eyebrow">Bitcoin Austria</p>
         <h2 id="position-heading">
@@ -127,7 +154,7 @@ import "@/styles/campaign.css"
           Fakten und offenem Blick auf Gegenargumente.
         </p>
         <a class="text-link" href="/hintergrund/#rechtsweg"
-          >Stand und Strategie ansehen →</a
+          >Stand und Strategie ansehen</a
         >
       </aside>
     </section>

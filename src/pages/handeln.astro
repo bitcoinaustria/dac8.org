@@ -1,10 +1,14 @@
 ---
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
-import "@/styles/campaign.css"
 ---
 
-<Layout>
+<Layout
+  sections={[
+    { id: "beschwerde", label: "Beschwerde vorbereiten" },
+    { id: "abgeordnete", label: "Brief an Abgeordnete" },
+  ]}
+>
   <MetaPage
     slot="head"
     title="Beschwerde und Brief vorbereiten"
@@ -14,7 +18,7 @@ import "@/styles/campaign.css"
   <article class="campaign tool-page">
     <header class="hero">
       <p class="eyebrow">Selbst handeln</p>
-      <h1>Deine Stimme. Dein Text.</h1>
+      <h1>Deine Stimme. <span>Dein Text.</span></h1>
       <p class="lead">
         Bereite einen persönlichen Entwurf vor. Nichts wird automatisch
         versendet, gespeichert oder an Bitcoin Austria übertragen.
@@ -22,14 +26,18 @@ import "@/styles/campaign.css"
       <nav class="hero-actions" aria-label="Werkzeug wählen">
         <a class="button primary" href="#beschwerde">Beschwerde vorbereiten</a>
         <a class="button" href="#abgeordnete">Brief vorbereiten</a>
+        <a class="button" href="/spenden/">Spenden</a>
         <button class="button" type="button" data-download-offline>
           Offline-Generator (.html)
         </button>
       </nav>
-      <p class="status-line">
-        Beide Werkzeuge laufen ausschließlich in deinem Browser. Die Vorschau
-        ist direkt bearbeitbar. Prüfe den Text vor dem Absenden.
-      </p>
+      <dl class="stamp" aria-label="So arbeiten die Werkzeuge">
+        <dt>Verarbeitung</dt>
+        <dd>ausschließlich in deinem Browser</dd>
+        <dt>Vorschau</dt>
+        <dd>direkt bearbeitbar, nichts wird gesendet</dd>
+        <dd class="stamp-note">Prüfe jeden Text, bevor du ihn absendest.</dd>
+      </dl>
     </header>
 
     <section
@@ -45,9 +53,11 @@ import "@/styles/campaign.css"
         Belege. Der Generator ordnet deine Angaben zu einem Entwurf.
       </p>
       <aside class="generator-note">
+        <strong>Gut zu wissen:</strong>
         Die Datenschutzbehörde übermittelt eine vollständige Beschwerde an den
-        genannten Gegner. Der Entwurf ist keine Rechtsberatung und wird nicht
-        automatisch eingebracht.
+        genannten Verantwortlichen. Der Entwurf ist keine Rechtsberatung und
+        wird nicht automatisch eingebracht. Eine Beschwerde stoppt die
+        Verarbeitung nicht von selbst.
       </aside>
 
       <div class="generator-workspace">
@@ -110,7 +120,7 @@ import "@/styles/campaign.css"
           </button>
         </form>
 
-        <div class="generator-output" data-complaint-output>
+        <div class="generator-output" data-complaint-output data-copy-scope>
           <div class="preview-head">
             <h3>Live-Vorschau</h3>
             <span>bearbeiten · kopieren · einfügen</span>
@@ -202,7 +212,7 @@ import "@/styles/campaign.css"
           </button>
         </form>
 
-        <div class="generator-output" data-letter-output>
+        <div class="generator-output" data-letter-output data-copy-scope>
           <div class="preview-head">
             <h3>Live-Vorschau</h3>
             <span>bearbeiten · kopieren · einfügen</span>
@@ -419,7 +429,7 @@ ${signature}`
           const textarea = document.getElementById(button.dataset.copy || "")
           const text = button.dataset.copyValue || textarea?.value || ""
           const status = button
-            .closest(".generator-output")
+            .closest("[data-copy-scope]")
             .querySelector("[data-copy-status]")
           try {
             if (!navigator.clipboard?.writeText) throw new Error()

@@ -106,22 +106,33 @@ const faqs = [
   {
     question: "Was passiert mit Daten auf dieser Website?",
     answer:
-      "Die Generatoren laufen lokal in deinem Browser; Formulareingaben werden nicht an Bitcoin Austria übertragen oder gespeichert. Vor dem Live-Gang müssen Hoster, Server-Logs und die endgültige Datenschutzerklärung konkret geprüft und benannt werden.",
+      "Die Generatoren laufen lokal in deinem Browser; Formulareingaben werden nicht an Bitcoin Austria übertragen oder gespeichert. Welche Verbindungsdaten beim Hoster technisch anfallen und wie wir Seitenaufrufe zählen, steht in der Datenschutzerklärung unter dac8.org/datenschutz.",
   },
 ]
 ---
 
-<Layout>
+<Layout
+  sections={[
+    { id: "was-ist-dac8", label: "Was ist DAC8?" },
+    { id: "warum", label: "Warum das alle angeht" },
+    { id: "ausblick", label: "Ausblick" },
+    { id: "forderungen", label: "Forderungen" },
+    { id: "handeln", label: "Handeln" },
+    { id: "rechtsweg", label: "Rechtsweg" },
+    { id: "faq", label: "Fragen & Transparenz" },
+    { id: "quellen", label: "Primärquellen" },
+  ]}
+>
   <MetaPage
     slot="head"
     title="Hintergrund zu DAC8"
     description="Fakten, Risiken, Forderungen, Rechtsweg und Primärquellen zu DAC8 und dem österreichischen Krypto-Meldepflichtgesetz."
   />
 
-  <article class="campaign">
+  <article class="campaign dossier">
     <header class="hero">
       <p class="eyebrow">Fakten · Risiken · Gegenwehr</p>
-      <h1>DAC8: Finanzüberwachung auf Vorrat.</h1>
+      <h1>DAC8: Finanzüberwachung <span>auf Vorrat.</span></h1>
       <p class="intro">
         Österreich verpflichtet Anbieter, Krypto-Aktivität ohne konkreten
         Verdacht massenhaft zu erfassen. Wir sind dagegen. Hier steht präzise,
@@ -129,17 +140,20 @@ const faqs = [
         aussehen kann.
       </p>
       <nav class="hero-actions" aria-label="Direkteinstieg">
-        <a class="primary" href="/#handeln">Was du tun kannst</a>
-        <a href="#was-ist-dac8">Mit den Fakten beginnen</a>
+        <a class="button primary" href="/handeln/">Was du tun kannst</a>
+        <a class="button" href="#was-ist-dac8">Mit den Fakten beginnen</a>
       </nav>
-      <aside class="status" aria-label="Aktueller Stand">
-        <p><strong>Gesetz in Kraft:</strong> seit 1. Jänner 2026</p>
-        <p><strong>Erste Meldung für 2026:</strong> bis 31. Juli 2027</p>
-        <p><strong>Recherche geprüft:</strong> 30. August 2026</p>
-        <p class="status-note">
+      <dl class="stamp" aria-label="Aktueller Stand">
+        <dt>Gesetz in Kraft</dt>
+        <dd>seit 1. Jänner 2026</dd>
+        <dt>Erste Meldung für 2026</dt>
+        <dd>spätestens 31. Juli 2027</dd>
+        <dt>Recherche geprüft</dt>
+        <dd>30. August 2026</dd>
+        <dd class="stamp-note">
           Beschlossen heißt nicht unangreifbar. Gegenwehr beginnt mit Klarheit.
-        </p>
-      </aside>
+        </dd>
+      </dl>
     </header>
 
     <section id="was-ist-dac8" aria-labelledby="was-heading">
@@ -322,7 +336,7 @@ const faqs = [
         eine rechtliche und politische Frage. Dafür stehen dir eigene
         demokratische und rechtliche Mittel offen.
       </p>
-      <ol class="actions">
+      <ol class="action-grid three">
         <li>
           <p class="step">01 · Datenschutz</p>
           <h3>Eigene Beschwerde einbringen</h3>
@@ -332,7 +346,7 @@ const faqs = [
             der Datenschutzbehörde einbringen. Benenne den Verantwortlichen, das
             betroffene Recht und den tatsächlichen Sachverhalt.
           </p>
-          <a class="action-button" href="/handeln/#beschwerde"
+          <a class="button" href="/handeln/#beschwerde"
             >Beschwerde vorbereiten</a
           >
         </li>
@@ -345,9 +359,7 @@ const faqs = [
             aber klare Grenzen für Erfassung, Speicherung und Weiterverwendung
             erwartest.
           </p>
-          <a class="action-button" href="/handeln/#abgeordnete"
-            >Brief vorbereiten</a
-          >
+          <a class="button" href="/handeln/#abgeordnete">Brief vorbereiten</a>
         </li>
         <li>
           <p class="step">03 · Öffentlichkeit</p>
@@ -357,11 +369,10 @@ const faqs = [
             glaubt, DAC8 betreffe sie nicht. Finanzielle Privatsphäre ist kein
             Spezialinteresse einer Szene.
           </p>
-          <button class="action-button" type="button" data-share>
-            Seite teilen
-          </button>
+          <button class="button" type="button" data-share>Seite teilen</button>
         </li>
       </ol>
+      <a class="text-link" href="/spenden/">Die Arbeit finanzieren</a>
       <aside class="clarification">
         <strong>Wichtig:</strong>
         Eine DSB-Beschwerde ist ein persönlicher, förmlicher Rechtsbehelf. Der
@@ -410,12 +421,13 @@ const faqs = [
         ><b>→</b><span>VfGH / EuGH</span>
       </div>
       <aside class="counsel">
-        <p class="eyebrow">Vorgesehene anwaltliche Begleitung</p>
-        <h3>Rechtsanwaltskanzlei [NAME], Wien</h3>
+        <p class="eyebrow">Anwaltliche Begleitung</p>
+        <h3>Noch nicht öffentlich benannt.</h3>
         <p>
-          Platzhalter im Mockup. Mandat, Kanzleiname und öffentliche Nennung
-          sind noch nicht bestätigt. Bis dahin behauptet diese Seite weder eine
-          Einbringung noch einen sicheren Verfahrensweg.
+          Wir bereiten die anwaltliche Prüfung vor. Solange Mandat und Nennung
+          nicht bestätigt sind, behauptet diese Seite weder eine Einbringung
+          noch einen sicheren Verfahrensweg. Auch eine Vorlage an den EuGH kann
+          nur das Gericht beschließen, nicht die Beschwerdeführerin.
         </p>
       </aside>
       <aside class="clarification">
@@ -547,10 +559,8 @@ const faqs = [
         Beschwerden einbringen und Abgeordnete in die Verantwortung nehmen.
       </p>
       <div class="closing-actions">
-        <button type="button" data-share>Seite teilen</button>
-        <a href="https://www.parlament.gv.at/recherchieren/personen/nationalrat"
-          >Abgeordnete finden</a
-        >
+        <button class="button" type="button" data-share>Seite teilen</button>
+        <a class="button" href="/handeln/#abgeordnete">Brief vorbereiten</a>
       </div>
     </aside>
   </article>
@@ -582,411 +592,3 @@ const faqs = [
     }
   </script>
 </Layout>
-
-<style>
-  .campaign {
-    --rule: 2px solid var(--border);
-    display: grid;
-    gap: var(--space-2xl);
-  }
-
-  .campaign > section {
-    scroll-margin-block-start: var(--space-xl);
-  }
-
-  .hero {
-    padding-block-end: var(--space-xl);
-    border-block-end: var(--rule);
-  }
-
-  .status {
-    display: grid;
-    gap: var(--space-2xs);
-    max-inline-size: 42rem;
-    margin-block-start: var(--space-xl);
-    padding: var(--space-m);
-    border: var(--rule);
-
-    p {
-      margin: 0;
-    }
-
-    .status-note {
-      margin-block-start: var(--space-xs);
-      padding-block-start: var(--space-xs);
-      border-block-start: 1px solid var(--border);
-      color: var(--primary);
-    }
-  }
-
-  .eyebrow,
-  .step,
-  .availability {
-    font-family: var(--font-sans);
-    font-size: var(--step--1);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .eyebrow,
-  .step {
-    color: var(--primary);
-  }
-
-  h1 {
-    max-inline-size: 18ch;
-    margin-block: var(--space-xs) var(--space-m);
-    font-size: clamp(2.5rem, 5vw, 4.75rem);
-    line-height: 1.03;
-    letter-spacing: -0.04em;
-  }
-
-  h2 {
-    max-inline-size: 23ch;
-    margin-block: var(--space-2xs) var(--space-s);
-    font-size: var(--step-3);
-    line-height: 1.1;
-  }
-
-  h3 {
-    font-size: var(--step-1);
-  }
-
-  .intro,
-  .section-intro {
-    max-inline-size: 62ch;
-    font-size: var(--step-1);
-    line-height: 1.65;
-    color: var(--muted-foreground);
-  }
-
-  .flow {
-    display: grid;
-    gap: var(--space-xs);
-    margin-block-start: var(--space-l);
-
-    p {
-      display: grid;
-      grid-template-columns: 2.5rem 1fr;
-      margin: 0;
-      padding: var(--space-s);
-      border: 1px solid var(--border);
-    }
-
-    span {
-      grid-row: 1 / 3;
-      color: var(--primary);
-      font-family: var(--font-sans);
-    }
-
-    @media (width >= 48rem) {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  .clarification,
-  .counsel {
-    max-inline-size: 62rem;
-    margin-block-start: var(--space-l);
-    padding: var(--space-m);
-    border-inline-start: 0.3rem solid var(--primary);
-    background: var(--muted);
-  }
-
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-    margin-block-start: var(--space-l);
-
-    a {
-      padding: 0.7em 1em;
-      border: 1px solid var(--border);
-      text-decoration: none;
-      font-family: var(--font-sans);
-      font-size: var(--step--1);
-    }
-
-    .primary {
-      border-color: var(--primary);
-      color: var(--primary-foreground);
-      background: var(--primary);
-    }
-  }
-
-  .numbered,
-  .actions {
-    padding: 0;
-    margin-block-start: var(--space-l);
-    list-style: none;
-    counter-reset: item;
-  }
-
-  .numbered li {
-    display: grid;
-    grid-template-columns: 2.5rem 1fr;
-    gap: 0 var(--space-s);
-    padding-block: var(--space-m);
-    border-block-start: var(--rule);
-    counter-increment: item;
-
-    &::before {
-      content: "0" counter(item);
-      grid-row: 1 / 3;
-      font-family: var(--font-sans);
-      color: var(--muted-foreground);
-    }
-
-    h3,
-    p {
-      grid-column: 2;
-    }
-
-    p {
-      margin-block-start: var(--space-2xs);
-      color: var(--muted-foreground);
-    }
-  }
-
-  .arguments {
-    display: grid;
-    gap: var(--space-l);
-    margin-block-start: var(--space-l);
-
-    section {
-      padding-block-start: var(--space-s);
-      border-block-start: var(--rule);
-    }
-
-    p {
-      margin-block-start: var(--space-2xs);
-      color: var(--muted-foreground);
-    }
-
-    @media (width >= 40rem) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  blockquote {
-    max-inline-size: 62rem;
-    margin: var(--space-xl) 0 0;
-    padding: var(--space-l);
-    border: var(--rule);
-
-    p {
-      margin: 0;
-      font-size: var(--step-2);
-      line-height: 1.45;
-    }
-
-    cite {
-      display: block;
-      margin-block-start: var(--space-m);
-      color: var(--primary);
-      font-family: var(--font-sans);
-      font-style: normal;
-    }
-  }
-
-  .public-case {
-    max-inline-size: 62ch;
-    margin-block-start: var(--space-l);
-    font-size: var(--step-1);
-  }
-
-  .demands {
-    display: grid;
-    gap: var(--space-xs);
-    margin-block-start: var(--space-l);
-    padding: 0;
-    list-style: none;
-
-    li {
-      padding: var(--space-s) var(--space-s) var(--space-s) 3rem;
-      border: 1px solid var(--border);
-      background: linear-gradient(
-        90deg,
-        color-mix(in oklab, var(--primary) 12%, transparent),
-        transparent 40%
-      );
-
-      &::before {
-        content: "✓";
-        margin-inline: -1.75rem 1rem;
-        color: var(--primary);
-        font-weight: var(--font-weight-medium);
-      }
-    }
-
-    @media (width >= 48rem) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  .actions {
-    display: grid;
-    gap: var(--space-m);
-
-    li {
-      padding: var(--space-m);
-      border: var(--rule);
-    }
-
-    h3 {
-      margin-block: var(--space-xs);
-    }
-
-    .availability,
-    .action-button {
-      display: inline-flex;
-      padding: 0.7em 1em;
-      margin-block-start: var(--space-m);
-      border: 1px solid var(--border);
-      font-family: var(--font-sans);
-      font-size: var(--step--1);
-      text-decoration: none;
-    }
-
-    .action-button {
-      color: var(--primary-foreground);
-      background: var(--primary);
-      cursor: pointer;
-    }
-
-    .availability {
-      color: var(--muted-foreground);
-      background: var(--muted);
-      cursor: not-allowed;
-    }
-
-    @media (width >= 48rem) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .share-status {
-    min-block-size: 1.5em;
-    margin-block-start: var(--space-xs);
-    color: var(--primary);
-  }
-
-  .legal-tracks {
-    display: grid;
-    gap: var(--space-m);
-    margin-block-start: var(--space-l);
-
-    section {
-      padding: var(--space-m);
-      border: var(--rule);
-    }
-
-    h3 {
-      margin-block: var(--space-xs);
-    }
-
-    @media (width >= 48rem) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  .route {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-xs);
-    margin-block-start: var(--space-l);
-    padding: var(--space-s);
-    border-block: var(--rule);
-    font-family: var(--font-sans);
-
-    b {
-      color: var(--primary);
-    }
-  }
-
-  .counsel h3 {
-    margin-block: var(--space-xs);
-  }
-
-  .faq-list {
-    margin-block-start: var(--space-l);
-    border-block-end: var(--rule);
-
-    details {
-      border-block-start: var(--rule);
-    }
-
-    summary {
-      padding-block: var(--space-s);
-      cursor: pointer;
-      font-weight: var(--font-weight-medium);
-    }
-
-    p {
-      max-inline-size: 62ch;
-      padding-block-end: var(--space-s);
-      color: var(--muted-foreground);
-    }
-  }
-
-  .sources {
-    ul {
-      margin-block-start: var(--space-m);
-    }
-
-    li + li {
-      margin-block-start: var(--space-2xs);
-    }
-
-    .research-note {
-      max-inline-size: 70ch;
-      margin-block-start: var(--space-l);
-      padding-block-start: var(--space-s);
-      border-block-start: 1px solid var(--border);
-      color: var(--muted-foreground);
-      font-size: var(--step--1);
-    }
-  }
-
-  .closing {
-    padding: var(--space-l);
-    color: var(--primary-foreground);
-    background: var(--primary);
-
-    h2 {
-      margin-block-start: 0;
-    }
-
-    p {
-      max-inline-size: 50ch;
-      margin-block-end: var(--space-m);
-    }
-
-    a,
-    button {
-      display: inline-flex;
-      padding: 0.75em 1em;
-      border: 1px solid currentColor;
-      color: inherit;
-      background: transparent;
-      font-family: var(--font-sans);
-      font-size: var(--step--1);
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .closing-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-xs);
-    }
-  }
-
-  button:focus-visible,
-  a:focus-visible,
-  summary:focus-visible {
-    outline: 0.2rem solid var(--primary);
-    outline-offset: 0.2rem;
-  }
-</style>

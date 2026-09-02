@@ -7,22 +7,20 @@ import "@/styles/typography-headings.css"
 import "@/styles/typography-inline.css"
 import "@/styles/typography-lists.css"
 import "@/styles/typography-block.css"
-import "@/styles/typography-tables.css"
-import "@/styles/typography-math.css"
-import "@/styles/callout.css"
 import "@/styles/layout.css"
 import "@/styles/icon-button.css"
 import "@/styles/bar.css"
 import "@/styles/shape.css"
+import "@/styles/campaign.css"
 
 import Footer from "@/components/Footer.astro"
 import MetaHead from "@/components/MetaHead.astro"
 import Sidebar from "@/components/Sidebar.astro"
-import { SITE } from "@/consts"
+import { SITE, type PageSection } from "@/consts"
 
-type Props = { crumbs?: { label: string; href: string }[] }
+type Props = { sections?: PageSection[] }
 
-const { crumbs } = Astro.props
+const { sections = [] } = Astro.props
 ---
 
 <html lang={SITE.locale} dir={SITE.dir}>
@@ -33,13 +31,8 @@ const { crumbs } = Astro.props
     <page-grid>
       <page-header>
         <page-nav>
-          <Sidebar crumbs={crumbs}
-            ><slot name="actions" slot="actions" /></Sidebar
-          >
+          <Sidebar sections={sections} />
         </page-nav>
-        {Astro.slots.has("toc") && (
-            <page-toc><slot name="toc" /></page-toc>
-          )}
       </page-header>
       <page-content>
         <main><slot /></main>
@@ -97,24 +90,10 @@ const { crumbs } = Astro.props
     }
   }
 
-  page-toc {
-    display: block;
-    min-width: 0;
-    grid-column: 10 / 13;
-    grid-row: 1;
-
-    @media screen and (width >= 64rem) {
-      position: fixed;
-      inset-block: var(--page-offset-top) var(--page-offset-bottom);
-      inset-inline-end: var(--grid-edge);
-      width: calc(3 * var(--grid-column-width) + 2 * var(--grid-gutter));
-    }
-  }
-
   page-content {
     display: flex;
     flex-direction: column;
-    grid-column: 3 / 10;
+    grid-column: 3 / 13;
     grid-row: 1;
     min-width: 0;
     margin-block-start: -0.1em;
@@ -129,6 +108,7 @@ const { crumbs } = Astro.props
       inline-size: 100%;
       max-inline-size: var(--measure);
       margin-inline: auto;
+      padding-block-start: var(--space-l);
     }
   }
 
@@ -136,26 +116,20 @@ const { crumbs } = Astro.props
     display: block;
     grid-column: 1 / -1;
     grid-row: 2;
-    margin-block-start: var(--space-xl);
+    margin-block-start: var(--space-2xl);
 
     @media (width < 64rem) {
       grid-row: auto;
     }
   }
 
-  @media (width >= 64rem) {
-    page-grid:not(:has(page-toc)) page-content {
-      grid-column: 3 / 13;
-    }
-  }
-
   @media (width >= 96rem) {
-    page-grid:not(:has(page-toc)) page-content {
+    page-content {
       grid-column: 1 / -1;
       padding-inline: var(--space-l);
     }
 
-    page-grid:not(:has(page-toc)) page-nav {
+    page-nav {
       inset-inline-start: var(--grid-gutter);
       width: calc(var(--grid-edge) - 2 * var(--grid-gutter));
     }

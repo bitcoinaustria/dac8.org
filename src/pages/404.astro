@@ -3,11 +3,21 @@ import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
 ---
 
-<Layout crumbs={[{ label: "404", href: "/404" }]}>
+<Layout>
   <MetaPage slot="head" title="Seite nicht gefunden" noindex />
-  <prose-content>
-    <h1>404</h1>
-    <p>Diese Seite gibt es nicht.</p>
-    <p><a href="/">Zurück zur Startseite</a></p>
-  </prose-content>
+  <article class="campaign">
+    <header class="hero">
+      <p class="eyebrow">Fehler 404</p>
+      <h1>Diese Seite <span>gibt es nicht.</span></h1>
+      <p class="lead">
+        Vielleicht ist der Link veraltet. Die wichtigsten Inhalte sind von hier
+        aus einen Klick entfernt.
+      </p>
+      <nav class="hero-actions" aria-label="Weiter">
+        <a class="button primary" href="/">Zur Startseite</a>
+        <a class="button" href="/hintergrund/">Hintergrund zu DAC8</a>
+        <a class="button" href="/handeln/">Handeln</a>
+      </nav>
+    </header>
+  </article>
 </Layout>

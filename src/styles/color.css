@@ -18,8 +18,11 @@
 
   --background:         var(--gray-1);
   --foreground:         var(--gray-12);
+  /* Markenrot für Flächen. Für Text eine je Modus lesbare Stufe, damit
+     Eyebrows, Ziffern und Links auch auf dunklem Grund Kontrast haben. */
   --primary:            var(--brand-red);
   --primary-foreground: #ffffff;
+  --accent:             light-dark(#c9000d, #ff5f66);
   --muted:              var(--gray-3);
   --muted-foreground:   var(--gray-11);
   --destructive:        var(--red-11);
@@ -46,4 +49,9 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
+}
+
+::selection {
+  color: var(--primary-foreground);
+  background: var(--primary);
 }
