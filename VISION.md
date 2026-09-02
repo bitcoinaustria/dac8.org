@@ -1,9 +1,10 @@
 # Vision
 
 dac8.org exists to challenge indiscriminate crypto-asset reporting and the
-durable financial surveillance it enables. Bitcoin Austria is preparing an
-individual application against provisions of Austria's Crypto-Asset Reporting
-Obligations Act, but Austria is the starting point rather than the boundary.
+durable financial surveillance it enables. Bitcoin Austria is preparing
+concrete Austrian cases along the data-protection route and examining every
+other supportable legal avenue. Austria is the starting point rather than the
+boundary.
 
 The campaign should help credible partners carry the work into other European
 countries. As those initiatives emerge, the website should become multilingual

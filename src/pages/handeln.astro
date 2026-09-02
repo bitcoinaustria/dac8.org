@@ -57,7 +57,10 @@ import Layout from "@/layouts/Layout.astro"
         Die Datenschutzbehörde übermittelt eine vollständige Beschwerde an den
         genannten Verantwortlichen. Der Entwurf ist keine Rechtsberatung und
         wird nicht automatisch eingebracht. Eine Beschwerde stoppt die
-        Verarbeitung nicht von selbst.
+        Verarbeitung nicht von selbst. Sie muss grundsätzlich binnen eines
+        Jahres ab Kenntnis und spätestens binnen drei Jahren ab dem
+        beanstandeten Ereignis eingebracht werden; bei laufender Verarbeitung
+        solltest du nicht ungeprüft von einem täglichen Fristneustart ausgehen.
       </aside>
 
       <div class="generator-workspace">
@@ -86,6 +89,10 @@ import Layout from "@/layouts/Layout.astro"
             <label class="field">
               <span>Anschrift des Anbieters</span>
               <input name="providerAddress" required>
+            </label>
+            <label class="field">
+              <span>Wann fand der beanstandete Vorgang statt?</span>
+              <input name="eventDate" type="date" required>
             </label>
             <label class="field">
               <span>Wann hast du davon erfahren?</span>
@@ -123,7 +130,7 @@ import Layout from "@/layouts/Layout.astro"
         <div class="generator-output" data-complaint-output data-copy-scope>
           <div class="preview-head">
             <h3>Live-Vorschau</h3>
-            <span>bearbeiten · kopieren · einfügen</span>
+            <span>Entwurf · Platzhalter vor Einreichung ersetzen</span>
           </div>
           <textarea
             id="complaint-text"
@@ -277,6 +284,7 @@ import Layout from "@/layouts/Layout.astro"
         "[Anschrift des Anbieters]",
       )
       const knowledgeDate = formatDate(read(complaintForm, "knowledgeDate"))
+      const eventDate = formatDate(read(complaintForm, "eventDate"))
       const facts = read(
         complaintForm,
         "facts",
@@ -310,7 +318,7 @@ ${providerAddress}
 Ich erachte mich durch die unten beschriebene Verarbeitung in meinem Recht auf Geheimhaltung gemäß § 1 DSG sowie in meinem Recht auf eine rechtmäßige und auf das notwendige Maß beschränkte Verarbeitung gemäß Art. 5 Abs. 1 lit. c und Art. 6 DSGVO verletzt.
 
 4. Sachverhalt
-Ich bin Kundin bzw. Kunde der beschwerdegegnerischen Partei. Am ${knowledgeDate} habe ich von folgender Verarbeitung meiner personenbezogenen Daten erfahren:
+Ich bin Kundin bzw. Kunde der beschwerdegegnerischen Partei. Der beanstandete Vorgang fand am ${eventDate} statt beziehungsweise begann an diesem Tag. Am ${knowledgeDate} habe ich davon erfahren:
 
 ${facts}
 
@@ -325,7 +333,7 @@ Ich ersuche die Datenschutzbehörde insbesondere zu prüfen, ob die konkrete Ver
 Ich beantrage die Feststellung, dass mich die oben beschriebene Verarbeitung in den genannten Rechten verletzt.
 
 7. Rechtzeitigkeit
-Ich habe am ${knowledgeDate} von der behaupteten Rechtsverletzung erfahren. Die Beschwerde wird innerhalb eines Jahres ab Kenntnis eingebracht.
+Ich habe am ${knowledgeDate} von der behaupteten Rechtsverletzung erfahren. Das beanstandete Ereignis fand am ${eventDate} statt beziehungsweise begann an diesem Tag. Die Beschwerde wird innerhalb eines Jahres ab Kenntnis und längstens innerhalb von drei Jahren ab dem beanstandeten Ereignis eingebracht.
 
 8. Beilagen und Belege
 ${evidence}
@@ -462,6 +470,9 @@ ${signature}`
         clone
           .querySelectorAll('link[rel="stylesheet"]')
           .forEach((link) => link.remove())
+        clone.querySelector("page-header")?.remove()
+        clone.querySelector("page-footer")?.remove()
+        clone.querySelector("[data-download-offline]")?.remove()
         const style = document.createElement("style")
         style.textContent = css
         clone.querySelector("head").append(style)
@@ -473,7 +484,7 @@ ${signature}`
         download.href = url
         download.download = "dac8-generator-offline.html"
         download.click()
-        URL.revokeObjectURL(url)
+        window.setTimeout(() => URL.revokeObjectURL(url), 1_000)
       })
   </script>
 </Layout>

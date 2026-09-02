@@ -119,6 +119,7 @@ const faqs = [
     { id: "forderungen", label: "Forderungen" },
     { id: "handeln", label: "Handeln" },
     { id: "rechtsweg", label: "Rechtsweg" },
+    { id: "partner", label: "Zusammenarbeiten" },
     { id: "faq", label: "Fragen & Transparenz" },
     { id: "quellen", label: "Primärquellen" },
   ]}
@@ -149,7 +150,7 @@ const faqs = [
         <dt>Erste Meldung für 2026</dt>
         <dd>spätestens 31. Juli 2027</dd>
         <dt>Recherche geprüft</dt>
-        <dd>30. August 2026</dd>
+        <dd>2. September 2026</dd>
         <dd class="stamp-note">
           Beschlossen heißt nicht unangreifbar. Gegenwehr beginnt mit Klarheit.
         </dd>
@@ -438,6 +439,23 @@ const faqs = [
       </aside>
     </section>
 
+    <section id="partner" aria-labelledby="partner-heading">
+      <p class="eyebrow">Europäische Zusammenarbeit</p>
+      <h2 id="partner-heading">Österreich ist der Anfang, nicht die Grenze.</h2>
+      <p class="section-intro">
+        Wir teilen Argumente, Primärquellen und praktische Erfahrung mit
+        Organisationen, Unternehmen sowie rechtlichen und technischen
+        Fachleuten, die DAC8 in ihrem Land belastbar prüfen wollen. Nationale
+        Verfahren brauchen eigene Tatsachen und eigene Rechtswege – sie lassen
+        sich nicht einfach aus Österreich kopieren.
+      </p>
+      <a
+        class="button"
+        href="mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"
+        >Zusammenarbeit anfragen</a
+      >
+    </section>
+
     <section id="faq" aria-labelledby="faq-heading">
       <p class="eyebrow">Fragen & Transparenz</p>
       <h2 id="faq-heading">FAQ</h2>
@@ -538,15 +556,21 @@ const faqs = [
           >
         </li>
         <li>
+          <a
+            href="https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Anlage=&Artikel=2&Gesetzesnummer=10001597&Paragraf=24"
+            >§ 24 DSG – Beschwerde und Fristen</a
+          >
+        </li>
+        <li>
           <a href="https://dsb.gv.at/eingabe-an-die-dsb/beschwerde"
             >Datenschutzbehörde – offizielle Beschwerdeinformation</a
           >
         </li>
       </ul>
       <p class="research-note">
-        Recherche- und Informationsstand: 30. August 2026. Keine Rechtsberatung.
-        Verfahrensstatus, Fristen und konkrete Betroffenheit müssen vor Nutzung
-        erneut geprüft werden.
+        Recherche- und Informationsstand: 2. September 2026. Keine
+        Rechtsberatung. Verfahrensstatus, Fristen und konkrete Betroffenheit
+        müssen vor Nutzung erneut geprüft werden.
       </p>
     </section>
 
@@ -566,29 +590,8 @@ const faqs = [
   </article>
 
   <script>
-    const shareButtons =
-      document.querySelectorAll<HTMLButtonElement>("[data-share]")
-    const shareStatus = document.querySelector<HTMLElement>(
-      "[data-share-status]",
-    )
+    import { initializeShareButtons } from "@/lib/share"
 
-    for (const button of shareButtons) {
-      button.addEventListener("click", async () => {
-        const data = {
-          title: "DAC8: Keine Finanzüberwachung auf Vorrat",
-          text: "Warum wir uns gegen anlasslose Erfassung von Finanzaktivität wehren.",
-          url: window.location.href,
-        }
-
-        if (navigator.share) {
-          await navigator.share(data).catch(() => {})
-          return
-        }
-
-        await navigator.clipboard.writeText(data.url)
-        if (shareStatus)
-          shareStatus.textContent = "Link kopiert. Danke fürs Teilen."
-      })
-    }
+    initializeShareButtons()
   </script>
 </Layout>

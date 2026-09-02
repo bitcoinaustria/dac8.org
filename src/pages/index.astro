@@ -161,27 +161,8 @@ import Layout from "@/layouts/Layout.astro"
   </article>
 
   <script>
-    const shareButton =
-      document.querySelector<HTMLButtonElement>("[data-share]")
-    const shareStatus = document.querySelector<HTMLElement>(
-      "[data-share-status]",
-    )
+    import { initializeShareButtons } from "@/lib/share"
 
-    shareButton?.addEventListener("click", async () => {
-      const data = {
-        title: "DAC8: Keine Finanzüberwachung auf Vorrat",
-        text: "Warum wir uns gegen anlasslose Erfassung von Finanzaktivität wehren.",
-        url: window.location.href,
-      }
-
-      if (navigator.share) {
-        await navigator.share(data).catch(() => {})
-        return
-      }
-
-      await navigator.clipboard.writeText(data.url)
-      if (shareStatus)
-        shareStatus.textContent = "Link kopiert. Danke fürs Teilen."
-    })
+    initializeShareButtons()
   </script>
 </Layout>
