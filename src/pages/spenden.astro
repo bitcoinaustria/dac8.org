@@ -16,7 +16,7 @@ const bankDetails = [
   { label: "Verwendungszweck", value: "DAC8" },
 ]
 
-const uses = [
+const fundingUses = [
   {
     title: "Anwaltliche Prüfung",
     text: "Ein belastbarer Fall braucht Juristinnen und Juristen, die Sachverhalt, Verantwortlichen und Rechtsweg sauber aufbauen – bevor irgendetwas eingebracht wird.",
@@ -27,7 +27,7 @@ const uses = [
   },
   {
     title: "Werkzeuge und Infrastruktur",
-    text: "Diese Website, die Generatoren für Beschwerde und Brief, der eigene BTCPay-Server – alles läuft ohne Tracker und ohne Dienstleister, die Daten mitlesen.",
+    text: "Diese Website, die lokal arbeitenden Generatoren und unser eigener BTCPay-Server kommen ohne Werbetracker aus. Technisch notwendige Verbindungs- und Zahlungsdaten beschreiben wir in der Datenschutzerklärung.",
   },
   {
     title: "Öffentlichkeit",
@@ -68,10 +68,10 @@ const uses = [
       <dl class="stamp" aria-label="Das Wichtigste zur Spende">
         <dt>Empfänger</dt>
         <dd>Bitcoin Austria, Verein (ZVR 828542896)</dd>
-        <dt>Verwendungszweck</dt>
-        <dd>DAC8</dd>
-        <dt>Zwischenhändler</dt>
-        <dd>keine – eigener BTCPay-Server, eigenes Vereinskonto</dd>
+        <dt>Bitcoin</dt>
+        <dd>eigener BTCPay-Server</dd>
+        <dt>Euro</dt>
+        <dd>eigenes Vereinskonto · Verwendungszweck DAC8</dd>
         <dd class="stamp-note">
           Eine Spende begründet keinen Anspruch auf Beteiligung oder einen
           bestimmten Ausgang.
@@ -88,8 +88,10 @@ const uses = [
           <h3>Über unseren BTCPay-Server</h3>
           <p>
             Lightning oder On-Chain, Betrag frei wählbar. Der Server gehört dem
-            Verein. Kein Zahlungsdienstleister ist zwischengeschaltet, und wir
-            erheben dabei keine personenbezogenen Daten.
+            Verein und fragt für die Spende weder Namen noch E-Mail-Adresse ab.
+            Technisch notwendige Verbindungs-, Rechnungs- und Zahlungsdaten
+            werden nach unserer <a href="/datenschutz/">Datenschutzerklärung</a>
+            verarbeitet.
           </p>
           <a class="button primary" href={btcpay} target="_blank" rel="noopener"
             >Mit Bitcoin spenden</a
@@ -159,7 +161,7 @@ const uses = [
         die alles zusammenhält.
       </p>
       <ol class="numbered">
-        {uses.map((use) => (
+        {fundingUses.map((use) => (
           <li>
             <h3>{use.title}</h3>
             <p>{use.text}</p>
