@@ -44,7 +44,7 @@ prose-content {
       color: var(--prose-marker);
     }
 
-    > blockquote, .expressive-code {
+    > blockquote {
       margin-block-start: 1em;
     }
 

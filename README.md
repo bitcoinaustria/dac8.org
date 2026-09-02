@@ -2,7 +2,8 @@
 
 dac8.org is a Bitcoin Austria campaign against indiscriminate crypto-asset data
 collection under DAC8 and Austria's Crypto-Asset Reporting Obligations Act. It
-supports a planned application to Austria's Constitutional Court and a broader,
+prepares concrete Austrian cases along the data-protection route (provider →
+Datenschutzbehörde → Bundesverwaltungsgericht) and supports a broader,
 multilingual European effort pursuing every available legal avenue.
 
 [Bull Bitcoin](https://www.bullbitcoin.com/blog/bull-bitcoin-petitions-frances-conseil-detat-to-strike-down-dac8-the-mass-surveillance-of-crypto-assets)

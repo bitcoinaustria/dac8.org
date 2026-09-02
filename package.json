@@ -1,5 +1,5 @@
 {
-  "name": "astro-erudite",
+  "name": "dac8.org",
   "type": "module",
   "version": "2.2.1",
   "packageManager": "pnpm@11.20.0",
@@ -15,27 +15,13 @@
     "format:check": "biome format ."
   },
   "dependencies": {
-    "@astrojs/markdown-satteri": "^0.3.2",
-    "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.3",
-    "@expressive-code/plugin-collapsible-sections": "^0.42.0",
-    "@expressive-code/plugin-line-numbers": "^0.42.0",
     "astro": "^7.0.2",
-    "github-slugger": "^2.0.0",
-    "hast-util-select": "^6.0.4",
-    "hast-util-to-html": "^9.0.5",
-    "hastscript": "^9.0.1",
-    "satteri": "^0.9.5",
-    "satteri-expressive-code": "^0.1.15",
-    "sharp": "^0.35.3",
-    "temml": "^0.13.3"
+    "sharp": "^0.35.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@biomejs/biome": "^2.5.1",
-    "@types/hast": "^3.0.5",
-    "@types/mdast": "^4.0.4",
-    "mdast-util-to-hast": "^13.2.1",
     "typescript": "^6.0.3",
     "wrangler": "4.122.0"
   }

@@ -65,9 +65,7 @@ prose-content {
       table,
       figure,
       hr,
-      details,
-      math-display,
-      .expressive-code
+      details
     ) {
     margin-block: 0 1em;
   }
