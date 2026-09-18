@@ -1,5 +1,6 @@
 ---
 import MetaPage from "@/components/MetaPage.astro"
+import ReportMock from "@/components/ReportMock.astro"
 import Layout from "@/layouts/Layout.astro"
 
 const researchDate = "16. September 2026"
@@ -11,11 +12,11 @@ const concerns = [
   },
   {
     title: "Ein Profil über Jahre.",
-    text: "Anders als bei Bankkonten werden je Kryptowert auch Stückzahlen und die Anzahl der Vorgänge gemeldet. Jahr für Jahr ergibt das ein Bild, wie aktiv jemand ist – auch wenn der aktuelle Bestand nicht dabei ist.",
+    text: "Anders als bei Bankkonten werden je Kryptowert auch Stückzahlen und die Zahl der Vorgänge gemeldet. Jahr für Jahr ergibt das ein Bild, wie aktiv jemand ist, auch wenn der aktuelle Bestand nicht dabei ist.",
   },
   {
     title: "Ein Datenleck ist nicht rückgängig zu machen.",
-    text: "Der Bericht enthält keine Wallet-Adressen. Gelangen Identität und Jahreswerte aber in falsche Hände, lassen sie sich mit der öffentlichen Blockchain verknüpfen. Was dort einmal zugeordnet ist, bleibt zugeordnet.",
+    text: "Die Meldung enthält keine Wallet-Adressen. Gelangen Identität und Jahreswerte aber in falsche Hände, lassen sie sich mit der öffentlichen Blockchain verknüpfen. Was dort einmal zugeordnet ist, bleibt zugeordnet.",
   },
   {
     title: "Der Zweck wächst mit.",
@@ -35,7 +36,7 @@ const faqs = [
   {
     question: "Bin ich betroffen, wenn ich Bitcoin besitze?",
     answer:
-      "Nur, wenn ein Krypto-Anbieter beteiligt ist, der in Österreich meldepflichtig ist – etwa eine Börse oder ein Broker mit Sitz in Österreich. Wer Bitcoin ausschließlich selbst verwahrt und keinen solchen Anbieter nutzt, wird durch DAC8 nicht gemeldet.",
+      "Nur, wenn ein Krypto-Anbieter beteiligt ist, der in Österreich meldepflichtig ist, etwa eine Börse oder ein Broker mit Sitz in Österreich. Wer Bitcoin ausschließlich selbst verwahrt und keinen solchen Anbieter nutzt, wird durch DAC8 nicht gemeldet.",
   },
   {
     question: "Wird meine eigene Wallet-Adresse gemeldet?",
@@ -46,7 +47,7 @@ const faqs = [
     question:
       "Ich tausche Bitcoin gegen einen anderen Kryptowert. Wird das gemeldet?",
     answer:
-      "Ja. Der Tausch wird mit Wert, Stückzahl und Anzahl auf beiden Seiten gemeldet – obwohl er in Österreich für Privatpersonen steuerlich meist kein Verkauf ist. Das ist einer der Punkte, an denen wir die Notwendigkeit einzelner Meldefelder prüfen lassen wollen.",
+      "Ja. Der Tausch wird mit Wert, Stückzahl und Anzahl auf beiden Seiten gemeldet, obwohl er in Österreich für Privatpersonen steuerlich meist kein Verkauf ist. Das ist einer der Punkte, an denen wir die Notwendigkeit einzelner Meldefelder prüfen lassen wollen.",
   },
   {
     question: "Ist DAC8 ein Vermögensregister?",
@@ -71,7 +72,7 @@ const faqs = [
   {
     question: "Seid ihr gegen Steuern oder gegen Geldwäschebekämpfung?",
     answer:
-      "Nein. Steuerpflichten gelten, und Finanzdaten können bei Ermittlungen helfen. Wir verlangen, dass Erfassung, Zugriff, Speicherdauer und Weiterverwendung nachweislich notwendig sind – und dass Betroffene Fehler korrigieren können.",
+      "Nein. Steuerpflichten gelten, und Finanzdaten können bei Ermittlungen helfen. Wir verlangen, dass Erfassung, Zugriff, Speicherdauer und Weiterverwendung nachweislich notwendig sind und dass Betroffene Fehler korrigieren können.",
   },
   {
     question: "Ist DAC8 rechtswidrig?",
@@ -85,74 +86,95 @@ const faqs = [
   },
 ]
 
-const sources = [
+const sourceGroups = [
   {
-    label: "Krypto-Meldepflichtgesetz, BGBl. I Nr. 96/2025",
-    href: "https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_2025_I_96/BGBLA_2025_I_96.pdf",
+    title: "Österreichisches Gesetz",
+    sources: [
+      {
+        label: "Krypto-Meldepflichtgesetz, BGBl. I Nr. 96/2025",
+        href: "https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_2025_I_96/BGBLA_2025_I_96.pdf",
+      },
+      {
+        label: "§ 18 Krypto-MPfG – welche Daten gemeldet werden",
+        href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=18",
+      },
+      {
+        label: "§ 20 Krypto-MPfG – Verarbeitung für alle Kunden, Löschung",
+        href: "https://www.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40273819/NOR40273819.pdf",
+      },
+      {
+        label: "§ 39 Krypto-MPfG – Aufbewahrung der Dokumentation",
+        href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=39",
+      },
+      {
+        label: "§ 5 GMSG – fünf Jahre bei Bankkonten",
+        href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009250&Paragraf=5",
+      },
+      {
+        label: "§ 24 DSG – Beschwerde und Fristen",
+        href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Anlage=&Artikel=2&Gesetzesnummer=10001597&Paragraf=24",
+      },
+    ],
   },
   {
-    label: "§ 18 Krypto-MPfG – welche Daten gemeldet werden",
-    href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=18",
+    title: "EU-Recht",
+    sources: [
+      {
+        label: "Richtlinie (EU) 2023/2226 (DAC8)",
+        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:32023L2226",
+      },
+      {
+        label: "Folgenabschätzung der EU-Kommission zu DAC8, SWD(2022) 401",
+        href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=SWD:2022:401:FIN",
+      },
+      {
+        label: "Richtlinie (EU) 2025/872 (DAC9)",
+        href: "https://eur-lex.europa.eu/eli/dir/2025/872/oj/deu",
+      },
+      {
+        label: "Kommissionsvorschlag COM(2026) 308 – Neufassung der Richtlinie",
+        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:52026PC0308",
+      },
+      {
+        label: "EU-Kommission – Überblick zum DAC-System",
+        href: "https://taxation-customs.ec.europa.eu/taxation/tax-transparency-cooperation/administrative-co-operation-and-mutual-assistance/directive-administrative-cooperation-dac_en",
+      },
+      {
+        label: "EU-Machbarkeitsstudie zu einem europäischen Vermögensregister",
+        href: "https://op.europa.eu/en/publication-detail/-/publication/050b047e-3ff5-11ef-865a-01aa75ed71a1",
+      },
+    ],
   },
   {
-    label: "§ 20 Krypto-MPfG – Verarbeitung für alle Kunden, Löschung",
-    href: "https://www.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40273819/NOR40273819.pdf",
+    title: "Gerichte",
+    sources: [
+      {
+        label:
+          "VfGH G 178/2024 – warum der Weg über die Datenschutzbehörde führt",
+        href: "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20260428_24G00178_00/JFT_20260428_24G00178_00.pdf",
+      },
+      {
+        label: "VfGH G 47/2012 ua – Aufhebung der Vorratsdatenspeicherung",
+        href: "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20140627_12G00047_00/JFT_20140627_12G00047_00.pdf",
+      },
+      {
+        label: "EuGH C-293/12 und C-594/12 – Vorratsdatenspeicherung",
+        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:62012CJ0293",
+      },
+    ],
   },
   {
-    label: "§ 39 Krypto-MPfG – Aufbewahrung der Dokumentation",
-    href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=39",
-  },
-  {
-    label: "§ 5 GMSG – fünf Jahre bei Bankkonten",
-    href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009250&Paragraf=5",
-  },
-  {
-    label: "Richtlinie (EU) 2023/2226 (DAC8)",
-    href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:32023L2226",
-  },
-  {
-    label: "Folgenabschätzung der EU-Kommission zu DAC8, SWD(2022) 401",
-    href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=SWD:2022:401:FIN",
-  },
-  {
-    label: "Richtlinie (EU) 2025/872 (DAC9)",
-    href: "https://eur-lex.europa.eu/eli/dir/2025/872/oj/deu",
-  },
-  {
-    label: "Kommissionsvorschlag COM(2026) 308 – Neufassung der Richtlinie",
-    href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:52026PC0308",
-  },
-  {
-    label: "EU-Kommission – Überblick zum DAC-System",
-    href: "https://taxation-customs.ec.europa.eu/taxation/tax-transparency-cooperation/administrative-co-operation-and-mutual-assistance/directive-administrative-cooperation-dac_en",
-  },
-  {
-    label: "EU-Machbarkeitsstudie zu einem europäischen Vermögensregister",
-    href: "https://op.europa.eu/en/publication-detail/-/publication/050b047e-3ff5-11ef-865a-01aa75ed71a1",
-  },
-  {
-    label: "VfGH G 178/2024 – warum der Weg über die Datenschutzbehörde führt",
-    href: "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20260428_24G00178_00/JFT_20260428_24G00178_00.pdf",
-  },
-  {
-    label: "EuGH C-293/12 und C-594/12 – Vorratsdatenspeicherung",
-    href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:62012CJ0293",
-  },
-  {
-    label: "VfGH G 47/2012 ua – Aufhebung der Vorratsdatenspeicherung",
-    href: "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20140627_12G00047_00/JFT_20140627_12G00047_00.pdf",
-  },
-  {
-    label: "epicenter.works – Geschichte der österreichischen Kampagne",
-    href: "https://epicenter.works/thema/vorratsdatenspeicherung",
-  },
-  {
-    label: "§ 24 DSG – Beschwerde und Fristen",
-    href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Anlage=&Artikel=2&Gesetzesnummer=10001597&Paragraf=24",
-  },
-  {
-    label: "Datenschutzbehörde – Informationen zur Beschwerde",
-    href: "https://dsb.gv.at/eingabe-an-die-dsb/beschwerde",
+    title: "Behörden und Zivilgesellschaft",
+    sources: [
+      {
+        label: "Datenschutzbehörde – Informationen zur Beschwerde",
+        href: "https://dsb.gv.at/eingabe-an-die-dsb/beschwerde",
+      },
+      {
+        label: "epicenter.works – Geschichte der österreichischen Kampagne",
+        href: "https://epicenter.works/thema/vorratsdatenspeicherung",
+      },
+    ],
   },
 ]
 ---
@@ -177,14 +199,15 @@ const sources = [
 
   <article class="campaign dossier">
     <header class="hero">
-      <h1>DAC8, <span>verständlich erklärt.</span></h1>
+      <h1>Was DAC8 verlangt. <span>Und was nicht.</span></h1>
       <p class="lead">
-        Was das Gesetz verlangt, was gemeldet wird, wo die Grenzen liegen und
-        wie wir dagegen vorgehen. Ohne Übertreibung, mit Quellen zum Nachlesen.
+        Was das Gesetz vorschreibt, was in der Meldung steht, wo die Grenzen
+        liegen und wie wir dagegen vorgehen. Ohne Übertreibung, mit Quellen zum
+        Nachlesen.
       </p>
       <nav class="hero-actions" aria-label="Direkteinstieg">
-        <a class="button primary" href="/handeln/">Was du tun kannst</a>
-        <a class="button" href="#gemeldet">Was gemeldet wird</a>
+        <a class="button primary" href="#gemeldet">Was gemeldet wird</a>
+        <a class="button" href="#rechtsweg">Wie wir vorgehen</a>
       </nav>
       <dl class="glance" aria-label="Aktueller Stand">
         <dt>Gesetz in Kraft</dt>
@@ -211,86 +234,112 @@ const sources = [
             >nutzt eine Börse oder einen Broker mit Meldepflicht in Österreich</span
           >
         </li>
-        <li>
+        <li class="accent">
           <strong>Der Anbieter</strong>
           <span
-            >sammelt Identität und Jahreswerte und meldet einmal im Jahr</span
+            >bereitet Identität und Jahreswerte für alle Kundinnen und Kunden
+            auf und meldet einmal im Jahr</span
           >
         </li>
         <li>
           <strong>Das Finanzamt</strong>
-          <span>empfängt die Meldung und wertet sie aus</span>
+          <span>empfängt die Meldung, wertet sie aus, speichert sie</span>
         </li>
         <li>
           <strong>Andere EU-Staaten</strong>
           <span>erhalten die Daten, wenn du dort steuerlich ansässig bist</span>
         </li>
       </ol>
-      <aside class="note">
+      <p class="callout">
         <strong>Der österreichische Zusatz:</strong>
         Bevor feststeht, wer überhaupt gemeldet wird, muss der Anbieter die
         Meldedaten für alle Kundinnen und Kunden, alle Transaktionen und alle
-        Kryptowerte aufbereiten. So steht es in § 20 Abs. 1 des Gesetzes. Das
-        ist der Punkt, an dem unsere Kritik ansetzt.
-      </aside>
+        Kryptowerte aufbereiten. Die Richtlinie verlangt das nicht.
+        <small>§ 20 Abs. 1 Krypto-MPfG. Hier setzt unsere Kritik an.</small>
+      </p>
     </section>
 
     <section id="gemeldet" aria-labelledby="gemeldet-heading">
-      <h2 id="gemeldet-heading">Was gemeldet wird – und was nicht</h2>
+      <h2 id="gemeldet-heading">Was gemeldet wird</h2>
       <p class="section-intro">
         Die Meldung ist kein Kontoauszug. Sie enthält Jahreswerte, keine
         einzelnen Transaktionen. Beides ist wichtig, um das Gesetz richtig
-        einzuschätzen.
+        einzuschätzen. So sieht sie aus:
       </p>
-      <div class="compare">
-        <div>
-          <h3>Das steht in der Meldung</h3>
-          <ul>
-            <li>Name, Anschrift, Steuerwohnsitz, Steuernummer, Geburtsdatum</li>
-            <li>
-              je Kryptowert: Jahreswerte, Stückzahlen und Anzahl der Vorgänge,
-              getrennt nach Kauf, Verkauf, Tausch und Übertragung
-            </li>
-            <li>
-              Wert und Stückzahl aller Übertragungen an Adressen, die keinem
-              bekannten Anbieter gehören – dazu zählt meist deine eigene Wallet
-            </li>
-            <li>
-              auch Vorgänge, die steuerlich meist keine Rolle spielen, etwa der
-              Tausch von Krypto gegen Krypto
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h3>Das steht nicht in der Meldung</h3>
-          <ul class="plain">
-            <li>Wallet-Adressen und Transaktionskennungen</li>
-            <li>einzelne Transaktionen, Zeitpunkte oder Gegenparteien</li>
-            <li>der aktuelle Bestand oder dein Gesamtvermögen</li>
-            <li>Vorgänge vor dem 1. Jänner 2026</li>
-          </ul>
-        </div>
+      <div class="with-report">
+        <ReportMock />
+        <ul class="facts">
+          <li>
+            <strong>Je Kryptowert drei Zahlen pro Vorgangsart</strong>
+            <p>
+              Wert in Euro, Stückzahl und Anzahl der Vorgänge, getrennt nach
+              Kauf, Verkauf, Tausch und Übertragung. Bei Bankkonten werden nur
+              Salden und Erträge gemeldet.
+            </p>
+          </li>
+          <li>
+            <strong>Deine eigene Wallet zählt als „unbekannte Adresse“</strong>
+            <p>
+              Überträgst du Bitcoin vom Anbieter auf eine Wallet, die du selbst
+              verwahrst, landet das im Sammelposten für Adressen, die keinem
+              bekannten Anbieter gehören. Als Wert und Stückzahl, ohne Adresse.
+            </p>
+          </li>
+          <li>
+            <strong>Auch steuerlich Unwichtiges wird gemeldet</strong>
+            <p>
+              Der Tausch von Krypto gegen Krypto ist für Privatpersonen in
+              Österreich meist kein steuerpflichtiger Vorgang. Gemeldet wird er
+              trotzdem, auf beiden Seiten.
+            </p>
+          </li>
+          <li>
+            <strong>Der Anbieter hat mehr</strong>
+            <p>
+              Aus Geldwäsche- und Kryptomarkt-Regeln führen Anbieter deutlich
+              detailliertere Aufzeichnungen, darunter Adressen und Zeitstempel.
+              Sie sind nicht Teil der Meldung, liegen aber beim selben Anbieter.
+            </p>
+          </li>
+        </ul>
       </div>
-      <ul class="facts">
+
+      <h3 class="subhead">Der Zeitplan</h3>
+      <ol class="timeline horizontal" aria-label="Zeitplan der ersten Meldung">
         <li>
-          <strong>Wie lange gespeichert wird</strong>
-          <p>
-            Der Anbieter löscht die gemeldeten Daten zehn Jahre nach dem
-            Meldejahr, für 2026 also Ende 2036. Auch die Dokumentation der
-            Melde- und Prüfschritte bleibt zehn Jahre. Bei Bankkonten sieht
-            Österreich fünf Jahre vor.
-          </p>
+          <time datetime="2026-01-01">1. Jänner 2026</time>
+          <span>Gesetz gilt. Der erste Meldezeitraum beginnt.</span>
         </li>
-        <li>
-          <strong>Was der Anbieter zusätzlich hat</strong>
-          <p>
-            Aus anderen Gesetzen, etwa den Regeln für Geldwäsche und
-            Kryptomärkte, führen Anbieter deutlich detailliertere
-            Aufzeichnungen, darunter Adressen und Zeitstempel. Sie sind nicht
-            Teil der DAC8-Meldung – aber sie liegen beim selben Anbieter.
-          </p>
+        <li class="future">
+          <time datetime="2027-07-31">31. Juli 2027</time>
+          <span>Der Anbieter meldet das Jahr 2026 ans Finanzamt.</span>
         </li>
-      </ul>
+        <li class="future">
+          <time datetime="2027-09-30">30. September 2027</time>
+          <span>Österreich tauscht die Daten mit anderen EU-Staaten aus.</span>
+        </li>
+        <li class="future accent">
+          <time datetime="2036-12-31">Ende 2036</time>
+          <span>Der Anbieter darf die Daten für 2026 erst jetzt löschen.</span>
+        </li>
+      </ol>
+
+      <h3 class="subhead">Zehn Jahre statt fünf</h3>
+      <p class="section-intro">
+        Für Bankkonten hat Österreich 2018 fünf Jahre festgelegt und das damals
+        als datenschutzrechtlich angemessen bezeichnet. Für Krypto wählte der
+        Gesetzgeber zehn, ohne den Unterschied zu begründen.
+      </p>
+      <dl class="bars" aria-label="Speicherdauer beim Anbieter im Vergleich">
+        <div>
+          <dt>Bankkonten (GMSG)</dt>
+          <dd><i style="--value: 5"></i><b>5 Jahre</b></dd>
+        </div>
+        <div class="accent">
+          <dt>Kryptowerte (Krypto-MPfG)</dt>
+          <dd><i style="--value: 10"></i><b>10 Jahre</b></dd>
+        </div>
+      </dl>
     </section>
 
     <section id="problem" aria-labelledby="problem-heading">
@@ -312,7 +361,7 @@ const sources = [
         Wir sind Bitcoiner und haben früh gelernt, was passiert, wenn
         Identitäten und Finanzdaten an einem Ort zusammenlaufen. Unser Maßstab
         gilt aber für alle: Der Staat soll die Daten bekommen, die er für einen
-        klaren Zweck nachweislich braucht – und Betroffene sollen Fehler
+        klaren Zweck nachweislich braucht. Und Betroffene sollen Fehler
         korrigieren und unzulässige Nutzung stoppen können.
       </p>
     </section>
@@ -326,33 +375,37 @@ const sources = [
       </p>
       <ul class="facts">
         <li>
-          <strong>DAC8 gilt heute.</strong>
+          <span class="tag live">Gilt heute</span>
+          <strong>DAC8</strong>
           <p>
             Gemeldet werden Identität und Jahreswerte ab 2026. Keine
             Wallet-Adressen, keine einzelnen Transaktionen.
           </p>
         </li>
         <li>
-          <strong>DAC9 hat mit Krypto nichts zu tun.</strong>
+          <span class="tag">Gilt, betrifft Krypto nicht</span>
+          <strong>DAC9</strong>
           <p>
-            Die Richtlinie betrifft die Mindestbesteuerung großer
+            Die Richtlinie regelt die Mindestbesteuerung großer
             Unternehmensgruppen, nicht private Nutzerinnen und Nutzer.
           </p>
         </li>
         <li>
-          <strong>DAC10 ist ein Vorschlag.</strong>
+          <span class="tag">Vorschlag seit Juni 2026</span>
+          <strong>„DAC10“</strong>
           <p>
-            Die im Juni 2026 vorgeschlagene Neufassung führt die bisherigen
-            Krypto-Felder fort. Sie verlangt weder Wallet-Adressen noch eine
-            Nachmeldung von Vorgängen vor 2026.
+            Die vorgeschlagene Neufassung führt die bisherigen Krypto-Felder
+            fort. Sie verlangt weder Wallet-Adressen noch eine Nachmeldung von
+            Vorgängen vor 2026.
           </p>
         </li>
         <li>
-          <strong>Der nächste Schritt wäre politisch.</strong>
+          <span class="tag">Bräuchte ein neues Gesetz</span>
+          <strong>Adressen, Einzeltransaktionen, Rückwirkung</strong>
           <p>
-            Adressen, Einzeltransaktionen oder rückwirkende Zeiträume bräuchten
-            neue Gesetze. Ist die Infrastruktur einmal da, wird jede Erweiterung
-            technisch leichter – und öffentliche Kontrolle wichtiger.
+            Nichts davon ist beschlossen. Ist die Infrastruktur einmal da, wird
+            jede Erweiterung aber technisch leichter, und öffentliche Kontrolle
+            wichtiger.
           </p>
         </li>
       </ul>
@@ -367,8 +420,10 @@ const sources = [
       </p>
       <ul class="checklist">
         <li>
-          <strong>Erst prüfen, wer meldepflichtig ist</strong>
-          – und erst dann Daten aufbereiten. Nicht umgekehrt.
+          <strong
+            >Erst prüfen, wer meldepflichtig ist, dann Daten aufbereiten.</strong
+          >
+          Nicht umgekehrt.
         </li>
         <li>
           <strong>Jedes Meldefeld muss seinen Nutzen belegen.</strong>
@@ -383,8 +438,8 @@ const sources = [
         </li>
         <li>
           <strong>Speicherfristen begründen.</strong>
-          Zehn Jahre statt der fünf bei Bankkonten brauchen eine Erklärung –
-          oder eine Korrektur.
+          Zehn Jahre statt der fünf bei Bankkonten brauchen eine Erklärung oder
+          eine Korrektur.
         </li>
         <li>
           <strong>Zweck, Zugriff und Weitergabe eng begrenzen</strong>
@@ -395,8 +450,8 @@ const sources = [
           müssen über alle Empfänger hinweg praktisch funktionieren.
         </li>
         <li>
-          <strong>Nutzen und Grundrechtsfolgen unabhängig evaluieren</strong>
-          – regelmäßig und öffentlich.
+          <strong>Nutzen und Grundrechtsfolgen unabhängig evaluieren,</strong>
+          regelmäßig und öffentlich.
         </li>
       </ul>
       <p class="prose">
@@ -421,7 +476,7 @@ const sources = [
           <strong>Anbieter</strong>
           <span>verarbeitet deine Daten für DAC8; du holst Auskunft ein</span>
         </li>
-        <li>
+        <li class="accent">
           <strong>Datenschutzbehörde</strong>
           <span>prüft deine Beschwerde gegen den Anbieter</span>
         </li>
@@ -463,7 +518,7 @@ const sources = [
           <strong>Was eine Beschwerde braucht</strong>
           <p>
             Einen konkreten Anbieter, eine Verarbeitung, die jetzt schon
-            stattfindet – etwa Selbstauskunft, Einstufung oder Speicherung – und
+            stattfindet, etwa Selbstauskunft, Einstufung oder Speicherung, und
             Belege dafür. Dass 2027 eine Meldung kommen wird, reicht allein
             nicht.
           </p>
@@ -505,13 +560,20 @@ const sources = [
         und offiziellen Dokumenten. Wo wir bewerten statt belegen, sagen wir
         das.
       </p>
-      <ul>
-        {sources.map((source) => (
-          <li>
-            <a href={source.href}>{source.label}</a>
-          </li>
+      <div class="source-groups">
+        {sourceGroups.map((group) => (
+          <div>
+            <h3>{group.title}</h3>
+            <ul>
+              {group.sources.map((source) => (
+                <li>
+                  <a href={source.href}>{source.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
         ))}
-      </ul>
+      </div>
       <p class="research-note">
         Stand der Recherche: {researchDate}. Keine Rechtsberatung. Fristen,
         Verfahrensstand und deine konkrete Betroffenheit musst du vor jedem

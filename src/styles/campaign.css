@@ -1,7 +1,10 @@
-/* Gestaltungssystem der Kampagnenseiten. Eine Datei für alle Seiten, damit
-   Start, Hintergrund, Handeln und Spenden dieselbe Sprache sprechen:
-   ruhige Flächen statt Linien, klare Überschriften, kurze Listen mit
-   fetten Einstiegen, tabellarische Ziffern für Daten und Paragrafen. */
+/* Gestaltungssystem der Kampagnenseiten.
+
+   Eine Datei für Start, Hintergrund, Handeln und Spenden. Grundidee: der
+   Inhalt wird nicht nur erzählt, sondern gezeigt – eine nachgebaute Meldung,
+   eine Zeitleiste, Kennzahlen, Stationen mit durchgehender Linie. Flächen
+   statt Striche, tabellarische Ziffern für Zahlen und Paragrafen, ein Rot
+   als Signal, nicht als Dekor. */
 
 /* ---------- Grundraster ------------------------------------------------ */
 
@@ -14,14 +17,21 @@
 }
 
 .campaign {
-  --panel: var(--muted);
-  --hairline: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  --panel: light-dark(#f3f3f2, #1c1c1c);
+  --panel-strong: light-dark(#ebebea, #242424);
+  --paper: light-dark(#ffffff, #161616);
+  --ink: var(--foreground);
+  --ink-2: color-mix(in oklab, var(--foreground) 78%, transparent);
+  --ink-3: var(--muted-foreground);
+  --line: color-mix(in oklab, var(--foreground) 14%, transparent);
   --radius: var(--radius-lg);
-  --measure-lead: 56ch;
-  --measure-text: 64ch;
+  --measure-lead: 58ch;
+  --measure-text: 66ch;
   display: grid;
   gap: var(--space-2xl-3xl);
   min-inline-size: 0;
+  font-size: var(--step-0);
+  line-height: 1.55;
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
@@ -30,7 +40,7 @@
   scroll-margin-block-start: var(--space-xl);
 }
 
-.campaign :where(h1, h2, h3, h4, p, ul, ol, dl, blockquote, figure) {
+.campaign :where(h1, h2, h3, h4, p, ul, ol, dl, dd, blockquote, figure) {
   margin: 0;
 }
 
@@ -38,66 +48,72 @@
 
 .campaign h1,
 .campaign h2 {
-  font-weight: 580;
+  font-weight: 600;
   font-stretch: 94%;
   text-wrap: balance;
-  font-feature-settings: "kern" 1;
 }
 
 .campaign h1 {
-  max-inline-size: 22ch;
-  margin-block-end: var(--space-m);
-  font-size: clamp(2.25rem, 1.35rem + 3.4vw, 3.75rem);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  max-inline-size: 20ch;
+  font-size: clamp(2.25rem, 1.4rem + 3.8vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.028em;
 }
 
-/* Der rote Teil einer H1 steht auf eigener Zeile – kein Farbwechsel mitten
-   im Satz. */
+/* Der rote Teil einer H1 steht auf eigener Zeile. */
 .campaign h1 span {
   display: block;
   color: var(--accent);
 }
 
 .campaign h2 {
-  max-inline-size: 28ch;
-  margin-block-end: var(--space-s);
-  font-size: clamp(1.6rem, 1.15rem + 1.6vw, 2.25rem);
-  line-height: 1.15;
-  letter-spacing: -0.015em;
+  max-inline-size: 26ch;
+  font-size: clamp(1.75rem, 1.2rem + 1.9vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .campaign h3 {
   font-size: var(--step-1);
-  font-weight: var(--font-weight-medium);
+  font-weight: 560;
   line-height: 1.3;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.012em;
 }
 
 .campaign h4 {
   font-size: var(--step-0);
-  font-weight: var(--font-weight-medium);
+  font-weight: 560;
   line-height: 1.35;
 }
 
-.campaign .lead,
+.campaign .lead {
+  max-inline-size: var(--measure-lead);
+  margin-block-start: var(--space-m);
+  color: var(--ink-2);
+  font-size: var(--step-2);
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
 .campaign .section-intro {
   max-inline-size: var(--measure-lead);
-  color: var(--muted-foreground);
+  margin-block-start: var(--space-s);
+  color: var(--ink-2);
   font-size: var(--step-1);
-  line-height: 1.55;
+  line-height: 1.45;
   text-wrap: pretty;
 }
 
 .campaign .lead strong,
 .campaign .section-intro strong {
-  color: var(--foreground);
-  font-weight: var(--font-weight-medium);
+  color: var(--ink);
+  font-weight: 560;
 }
 
 .campaign .prose {
   max-inline-size: var(--measure-text);
   margin-block-start: var(--space-l);
+  color: var(--ink-2);
   line-height: 1.6;
   text-wrap: pretty;
 }
@@ -107,7 +123,8 @@
 }
 
 .campaign .prose strong {
-  font-weight: var(--font-weight-medium);
+  color: var(--ink);
+  font-weight: 560;
 }
 
 .campaign p a,
@@ -135,26 +152,26 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .campaign .hero > * {
-    animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
 
   .campaign .hero > :nth-child(2) {
-    animation-delay: 50ms;
+    animation-delay: 40ms;
   }
 
   .campaign .hero > :nth-child(3) {
-    animation-delay: 100ms;
+    animation-delay: 80ms;
   }
 
   .campaign .hero > :nth-child(n + 4) {
-    animation-delay: 150ms;
+    animation-delay: 120ms;
   }
 }
 
 @keyframes rise {
   from {
     opacity: 0;
-    translate: 0 0.4rem;
+    translate: 0 0.35rem;
   }
 }
 
@@ -170,7 +187,51 @@
   margin-block-start: var(--space-l);
 }
 
-/* Auf einen Blick: das Wichtigste als kurze Tabelle in einer ruhigen Fläche. */
+/* Kennzahlen: drei große Werte, die den Fall in einer Zeile erzählen. */
+.campaign .keyfigures {
+  display: grid;
+  gap: var(--space-m) var(--space-l);
+  margin-block-start: var(--space-xl-2xl);
+}
+
+.campaign .keyfigures > div {
+  display: grid;
+  gap: var(--space-3xs);
+  padding-block-start: var(--space-s);
+  border-block-start: 2px solid var(--ink);
+}
+
+.campaign .keyfigures dd {
+  order: -1;
+  font-size: clamp(2rem, 1.3rem + 2.4vw, 3.25rem);
+  font-weight: 600;
+  font-stretch: 94%;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.campaign .keyfigures dd small {
+  display: inline-block;
+  margin-inline-start: 0.2em;
+  font-size: 0.45em;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  vertical-align: 0.1em;
+}
+
+.campaign .keyfigures dt {
+  color: var(--ink-2);
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.campaign .keyfigures dt strong {
+  color: var(--ink);
+  font-weight: 560;
+}
+
+/* Auf einen Blick: kurze Tabelle aus Begriff und Wert. */
 .campaign .glance {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
@@ -178,29 +239,27 @@
   inline-size: fit-content;
   max-inline-size: 100%;
   margin-block-start: var(--space-xl);
-  padding: var(--space-m) var(--space-l);
-  border-radius: var(--radius);
-  background: var(--panel);
-  font-size: var(--step--1);
+  padding-block-start: var(--space-s);
+  border-block-start: 2px solid var(--ink);
   line-height: 1.45;
 }
 
 .campaign .glance dt {
-  color: var(--muted-foreground);
+  color: var(--ink-3);
 }
 
 .campaign .glance dd {
-  margin: 0;
   max-inline-size: 48ch;
-  font-weight: var(--font-weight-medium);
+  font-weight: 560;
   text-wrap: pretty;
 }
 
 .campaign .glance .glance-note {
   grid-column: 1 / -1;
   margin-block-start: var(--space-2xs);
-  color: var(--accent);
-  font-weight: var(--font-weight-medium);
+  color: var(--ink-2);
+  font-weight: 400;
+  font-size: var(--step--1);
 }
 
 /* ---------- Buttons ---------------------------------------------------- */
@@ -210,15 +269,15 @@
   align-items: center;
   justify-content: center;
   gap: 0.5em;
-  min-block-size: 2.75rem;
-  padding: 0.6em 1.15em;
-  border: 1px solid color-mix(in oklab, var(--foreground) 35%, transparent);
+  min-block-size: 2.875rem;
+  padding: 0.65em 1.25em;
+  border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
   border-radius: var(--radius-md);
-  color: var(--foreground);
+  color: var(--ink);
   background: transparent;
   font: inherit;
-  font-size: var(--step--1);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--step-0);
+  font-weight: 560;
   line-height: 1.2;
   text-align: center;
   text-decoration: none;
@@ -230,9 +289,9 @@
 }
 
 .campaign .button:hover {
-  border-color: var(--foreground);
+  border-color: var(--ink);
   color: var(--background);
-  background: var(--foreground);
+  background: var(--ink);
 }
 
 .campaign .button.primary {
@@ -242,9 +301,9 @@
 }
 
 .campaign .button.primary:hover {
-  border-color: var(--foreground);
+  border-color: var(--ink);
   color: var(--background);
-  background: var(--foreground);
+  background: var(--ink);
 }
 
 .campaign .button[hidden] {
@@ -262,7 +321,7 @@
   color: var(--accent);
   background: transparent;
   font: inherit;
-  font-weight: var(--font-weight-medium);
+  font-weight: 560;
   text-decoration: none;
   cursor: pointer;
 }
@@ -286,10 +345,10 @@
 
 /* ---------- Listen zum Überfliegen ------------------------------------ */
 
-/* Fakten: fetter Einstieg, dann ein bis zwei erklärende Sätze. */
+/* Fakten: fetter Einstieg, dann ein bis zwei Sätze in voller Lesegröße. */
 .campaign .facts {
   display: grid;
-  gap: var(--space-m) var(--space-xl);
+  gap: var(--space-l) var(--space-xl);
   margin-block-start: var(--space-l);
   padding: 0;
   list-style: none;
@@ -303,61 +362,44 @@
 .campaign .facts strong,
 .campaign .facts h3 {
   display: block;
-  margin-block-end: var(--space-3xs);
-  font-size: var(--step-0);
-  font-weight: var(--font-weight-medium);
+  margin-block-end: var(--space-2xs);
+  font-size: var(--step-1);
+  font-weight: 560;
+  line-height: 1.3;
+  letter-spacing: -0.012em;
 }
 
 .campaign .facts p {
-  color: var(--muted-foreground);
+  color: var(--ink-2);
 }
 
-/* Zwei Spalten „gemeldet / nicht gemeldet“ oder ähnliche Gegenüberstellungen. */
-.campaign .compare {
-  display: grid;
-  gap: var(--space-m);
-  margin-block-start: var(--space-l);
+.campaign .facts p + p {
+  margin-block-start: var(--space-2xs);
 }
 
-.campaign .compare > * {
-  padding: var(--space-m) var(--space-l);
-  border-radius: var(--radius);
-  background: var(--panel);
-}
-
-.campaign .compare h3 {
-  margin-block-end: var(--space-s);
-}
-
-.campaign .compare ul {
-  display: grid;
-  gap: var(--space-2xs);
-  padding: 0;
-  list-style: none;
-}
-
-.campaign .compare li {
-  display: grid;
-  grid-template-columns: 1.25rem 1fr;
-  gap: var(--space-2xs);
-  text-wrap: pretty;
-}
-
-.campaign .compare li::before {
-  content: "•";
-  color: var(--accent);
-  font-weight: var(--font-weight-medium);
-}
-
-.campaign .compare .plain li::before {
-  color: var(--muted-foreground);
-}
-
-.campaign .compare small,
 .campaign .facts small {
   display: block;
-  color: var(--muted-foreground);
+  margin-block-start: var(--space-2xs);
+  color: var(--ink-3);
   font-size: var(--step--1);
+}
+
+/* Status-Marke vor einem Fakt: „gilt heute“, „Vorschlag“, „bräuchte ein
+   Gesetz“. Eine Aussage über den Stand, keine Kategorie-Etikette. */
+.campaign .tag {
+  display: inline-block;
+  margin-block-end: var(--space-2xs);
+  padding: 0.15em 0.6em;
+  border-radius: var(--radius-full);
+  background: var(--panel-strong);
+  color: var(--ink-2);
+  font-size: var(--step--1);
+  font-weight: 560;
+}
+
+.campaign .tag.live {
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 /* Forderungen: Haken statt Kästen. */
@@ -372,7 +414,8 @@
 .campaign .checklist li {
   position: relative;
   max-inline-size: var(--measure-text);
-  padding-inline-start: 1.75rem;
+  padding-inline-start: 2rem;
+  color: var(--ink-2);
   text-wrap: pretty;
 }
 
@@ -381,17 +424,69 @@
   position: absolute;
   inset-inline-start: 0;
   color: var(--accent);
-  font-weight: var(--font-weight-medium);
+  font-weight: 600;
 }
 
 .campaign .checklist strong {
-  font-weight: var(--font-weight-medium);
+  color: var(--ink);
+  font-weight: 560;
 }
 
-/* Datenweg und Rechtsweg: Stationen mit Pfeilen, keine Kästchen. */
+/* Zwischenüberschrift mit Abstand zum vorigen Block. */
+.campaign .subhead {
+  margin-block-start: var(--space-xl);
+}
+
+/* Hervorgehobene Aussage: ein Satz, der die Seite trägt. Roter Balken als
+   Marke für „hier setzt die Kritik an“, nicht als Trennlinie. */
+.campaign .callout {
+  max-inline-size: 60ch;
+  margin-block-start: var(--space-xl);
+  padding-inline-start: var(--space-m);
+  border-inline-start: 3px solid var(--primary);
+  font-size: var(--step-1);
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.campaign .callout strong {
+  font-weight: 560;
+}
+
+.campaign .callout small {
+  display: block;
+  margin-block-start: var(--space-2xs);
+  color: var(--ink-3);
+  font-size: var(--step--1);
+}
+
+/* Hinweise: weiche Fläche. */
+.campaign .note {
+  max-inline-size: 70ch;
+  margin-block-start: var(--space-l);
+  padding: var(--space-s) var(--space-m);
+  border-radius: var(--radius);
+  color: var(--ink-2);
+  background: var(--panel);
+  text-wrap: pretty;
+}
+
+.campaign .note strong {
+  color: var(--ink);
+  font-weight: 560;
+}
+
+.campaign .note h3 {
+  margin-block-end: var(--space-2xs);
+  color: var(--ink);
+}
+
+/* ---------- Stationen: Datenweg, Rechtsweg ---------------------------- */
+
 .campaign .flow {
+  --dot: 1.875rem;
   display: grid;
-  gap: var(--space-s);
+  gap: var(--space-m);
   margin-block-start: var(--space-l);
   padding: 0;
   list-style: none;
@@ -401,55 +496,339 @@
 .campaign .flow li {
   position: relative;
   display: grid;
-  grid-template-columns: 2rem 1fr;
-  gap: 0 var(--space-xs);
+  grid-template-columns: var(--dot) minmax(0, 1fr);
+  gap: var(--space-3xs) var(--space-s);
   counter-increment: station;
   line-height: 1.4;
 }
 
 .campaign .flow li::before {
   content: counter(station);
+  z-index: 1;
   display: inline-grid;
   place-items: center;
-  inline-size: 1.75rem;
-  block-size: 1.75rem;
+  inline-size: var(--dot);
+  block-size: var(--dot);
   border-radius: var(--radius-full);
+  color: var(--background);
+  background: var(--ink);
+  font-size: var(--step--1);
+  font-weight: 600;
+}
+
+.campaign .flow li.accent::before {
   color: var(--primary-foreground);
   background: var(--primary);
-  font-size: var(--step--1);
-  font-weight: var(--font-weight-medium);
+}
+
+/* Die Linie läuft von Station zu Station durch. */
+.campaign .flow li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  inset-block-start: var(--dot);
+  inset-block-end: calc(-1 * var(--space-m));
+  inset-inline-start: calc(var(--dot) / 2 - 1px);
+  border-inline-start: 2px solid var(--line);
 }
 
 .campaign .flow strong {
-  display: block;
-  font-weight: var(--font-weight-medium);
+  align-self: center;
+  font-weight: 560;
+  overflow-wrap: normal;
+  hyphens: auto;
 }
 
 .campaign .flow span {
   grid-column: 2;
-  color: var(--muted-foreground);
-  font-size: var(--step--1);
-}
-
-/* Hinweise: weiche Fläche statt Balken. */
-.campaign .note {
-  max-inline-size: 70ch;
-  margin-block-start: var(--space-l);
-  padding: var(--space-s) var(--space-m);
-  border-radius: var(--radius);
-  color: var(--muted-foreground);
-  background: var(--panel);
+  color: var(--ink-2);
   text-wrap: pretty;
 }
 
-.campaign .note strong {
-  color: var(--foreground);
-  font-weight: var(--font-weight-medium);
+/* ---------- Zeitleiste -------------------------------------------------- */
+
+.campaign .timeline {
+  --dot: 0.875rem;
+  display: grid;
+  gap: var(--space-m);
+  margin-block-start: var(--space-l);
+  padding: 0;
+  list-style: none;
 }
 
-.campaign .note h3 {
+.campaign .timeline li {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--dot) minmax(0, 1fr);
+  gap: var(--space-3xs) var(--space-s);
+  line-height: 1.4;
+}
+
+.campaign .timeline li::before {
+  content: "";
+  z-index: 1;
+  align-self: start;
+  margin-block-start: 0.3em;
+  inline-size: var(--dot);
+  block-size: var(--dot);
+  border-radius: var(--radius-full);
+  background: var(--ink);
+}
+
+.campaign .timeline li.accent::before {
+  background: var(--primary);
+}
+
+.campaign .timeline li.future::before {
+  background: var(--background);
+  box-shadow: inset 0 0 0 2px var(--ink);
+}
+
+.campaign .timeline li.future.accent::before {
+  box-shadow: inset 0 0 0 2px var(--primary);
+}
+
+.campaign .timeline li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  inset-block-start: calc(0.3em + var(--dot));
+  inset-block-end: calc(-1 * var(--space-m));
+  inset-inline-start: calc(var(--dot) / 2 - 1px);
+  border-inline-start: 2px solid var(--line);
+}
+
+.campaign .timeline time {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.campaign .timeline span {
+  grid-column: 2;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+/* ---------- Die Meldung, nachgebaut ---------------------------------- */
+
+/* Ein Dokument, kein Kasten: was der Anbieter einmal im Jahr ans Finanzamt
+   schickt. Werte sind erfunden und so gekennzeichnet. */
+.campaign .report {
+  --cell-gap: var(--space-2xs);
+  display: grid;
+  gap: var(--space-m);
+  max-inline-size: 44rem;
+  padding: var(--space-m) var(--space-m-l);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  box-shadow:
+    0 1px 2px color-mix(in oklab, var(--foreground) 6%, transparent),
+    0 12px 32px -20px color-mix(in oklab, var(--foreground) 25%, transparent);
+  font-size: var(--step--1);
+  line-height: 1.4;
+}
+
+.campaign .report-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2xs) var(--space-m);
+  padding-block-end: var(--space-s);
+  border-block-end: 1px solid var(--line);
+}
+
+.campaign .report-head strong {
+  font-size: var(--step-0);
+  font-weight: 600;
+}
+
+.campaign .report-head span {
+  color: var(--ink-3);
+}
+
+.campaign .report-id {
+  display: grid;
+  gap: var(--cell-gap);
+}
+
+.campaign .report-id > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: var(--space-s);
+}
+
+.campaign .report-id dt {
+  color: var(--ink-3);
+}
+
+.campaign .report-id dd {
+  font-weight: 560;
+}
+
+.campaign .report-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  border-block-start: 1px dashed var(--line);
+}
+
+.campaign .report-table caption {
+  padding-block: var(--space-s) var(--space-2xs);
+  font-size: var(--step-0);
+  font-weight: 600;
+  text-align: start;
+}
+
+.campaign .report-table caption span {
+  margin-inline-start: 0.5em;
+  color: var(--ink-3);
+  font-size: var(--step--1);
+  font-weight: 400;
+}
+
+.campaign .report-table th,
+.campaign .report-table td {
+  padding: 0.3em 0;
+  vertical-align: baseline;
+}
+
+.campaign .report-table thead th {
+  color: var(--ink-3);
+  font-weight: 400;
+  text-align: end;
+  white-space: nowrap;
+}
+
+.campaign .report-table tbody th {
+  padding-inline-end: var(--space-s);
+  color: var(--ink-2);
+  font-weight: 400;
+  text-align: start;
+}
+
+.campaign .report-table td {
+  inline-size: 5.5em;
+  font-weight: 560;
+  text-align: end;
+  white-space: nowrap;
+}
+
+.campaign .report-table td:nth-child(3) {
+  inline-size: 6.5em;
+}
+
+.campaign .report-table .none {
+  color: var(--ink-3);
+  font-weight: 400;
+}
+
+.campaign .report .mark {
+  margin-inline-start: 0.15em;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.campaign .visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.campaign .report-missing {
+  padding: var(--space-s) var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  color: var(--ink-2);
+}
+
+.campaign .report-missing h4 {
   margin-block-end: var(--space-2xs);
-  color: var(--foreground);
+  font-size: var(--step--1);
+  color: var(--ink);
+}
+
+.campaign .report-missing ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3xs) var(--space-m);
+  padding: 0;
+  list-style: none;
+}
+
+.campaign .report-missing li::before {
+  content: "–";
+  margin-inline-end: 0.4em;
+  color: var(--ink-3);
+}
+
+.campaign .report-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2xs) var(--space-m);
+  color: var(--ink-3);
+}
+
+.campaign .report-foot strong {
+  color: var(--ink);
+  font-weight: 560;
+}
+
+/* Fakten neben der Meldung. */
+.campaign .with-report {
+  display: grid;
+  gap: var(--space-l);
+  margin-block-start: var(--space-l);
+}
+
+.campaign .with-report .facts {
+  margin-block-start: 0;
+}
+
+/* ---------- Balkenvergleich Speicherdauer ------------------------------ */
+
+.campaign .bars {
+  display: grid;
+  gap: var(--space-s);
+  max-inline-size: 36rem;
+  margin-block-start: var(--space-m);
+}
+
+.campaign .bars > div {
+  display: grid;
+  grid-template-columns: minmax(7rem, 10rem) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.campaign .bars dt {
+  color: var(--ink-2);
+  text-wrap: balance;
+}
+
+.campaign .bars dd {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.campaign .bars i {
+  display: block;
+  inline-size: calc(var(--value) / 10 * 100%);
+  block-size: 0.875rem;
+  border-radius: 0 4px 4px 0;
+  background: var(--ink);
+}
+
+.campaign .bars .accent i {
+  background: var(--primary);
+}
+
+.campaign .bars b {
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 /* ---------- Handlungs- und Spendenkarten ----------------------------- */
@@ -465,32 +844,33 @@
 .campaign .cards > * {
   display: flex;
   flex-direction: column;
-  padding: var(--space-m) var(--space-l);
+  padding: var(--space-m) var(--space-m-l);
   border-radius: var(--radius);
   background: var(--panel);
 }
 
 .campaign .cards h3 {
   margin-block-end: var(--space-xs);
+  font-size: var(--step-2);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.campaign .cards .where {
+  flex: none;
+  margin-block-end: var(--space-s);
+  color: var(--ink-3);
 }
 
 .campaign .cards p {
   flex: 1;
-  color: var(--muted-foreground);
+  color: var(--ink-2);
   text-wrap: pretty;
 }
 
 .campaign .cards .button {
   align-self: flex-start;
   margin-block-start: var(--space-m);
-}
-
-.campaign .cards .kicker {
-  flex: none;
-  margin-block-end: var(--space-2xs);
-  color: var(--accent);
-  font-size: var(--step--1);
-  font-weight: var(--font-weight-medium);
 }
 
 /* Zwei Spalten: Haltung links, Stand rechts. */
@@ -500,7 +880,7 @@
 }
 
 .campaign .split .status {
-  padding: var(--space-m) var(--space-l);
+  padding: var(--space-m) var(--space-m-l);
   border-radius: var(--radius);
   background: var(--panel);
 }
@@ -511,17 +891,16 @@
 
 .campaign .status dl {
   display: grid;
-  gap: var(--space-xs);
+  gap: var(--space-s);
 }
 
 .campaign .status dt {
-  color: var(--muted-foreground);
+  color: var(--ink-3);
   font-size: var(--step--1);
 }
 
 .campaign .status dd {
-  margin: 0;
-  font-weight: var(--font-weight-medium);
+  font-weight: 560;
 }
 
 .campaign .status .text-link {
@@ -536,7 +915,7 @@
 }
 
 .campaign .tracks > * {
-  padding: var(--space-m) var(--space-l);
+  padding: var(--space-m) var(--space-m-l);
   border-radius: var(--radius);
   background: var(--panel);
 }
@@ -546,23 +925,22 @@
 }
 
 .campaign .tracks p {
-  color: var(--muted-foreground);
+  color: var(--ink-2);
   text-wrap: pretty;
 }
 
 /* ---------- FAQ und Quellen ------------------------------------------- */
 
 .campaign .faq-list {
+  display: grid;
+  gap: var(--space-2xs);
   max-inline-size: 72ch;
   margin-block-start: var(--space-l);
 }
 
 .campaign .faq-list details {
-  border-block-start: var(--hairline);
-}
-
-.campaign .faq-list details:last-child {
-  border-block-end: var(--hairline);
+  border-radius: var(--radius);
+  background: var(--panel);
 }
 
 .campaign .faq-list summary {
@@ -570,8 +948,8 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-m);
-  padding-block: var(--space-s);
-  font-weight: var(--font-weight-medium);
+  padding: var(--space-s) var(--space-m);
+  font-weight: 560;
   list-style: none;
   cursor: pointer;
 }
@@ -584,7 +962,8 @@
   content: "+";
   flex: none;
   color: var(--accent);
-  font-size: var(--step-1);
+  font-size: var(--step-2);
+  font-weight: 500;
   line-height: 1;
   transition: rotate 160ms ease;
 }
@@ -595,26 +974,33 @@
 
 .campaign .faq-list details p {
   max-inline-size: var(--measure-text);
-  padding-block-end: var(--space-m);
-  color: var(--muted-foreground);
+  padding: 0 var(--space-m) var(--space-m);
+  color: var(--ink-2);
   text-wrap: pretty;
+}
+
+.campaign .sources .source-groups {
+  display: grid;
+  gap: var(--space-l) var(--space-xl);
+  margin-block-start: var(--space-l);
+}
+
+.campaign .sources h3 {
+  margin-block-end: var(--space-xs);
+  font-size: var(--step-0);
 }
 
 .campaign .sources ul {
   display: grid;
-  gap: var(--space-2xs) var(--space-l);
-  margin-block-start: var(--space-l);
+  gap: var(--space-2xs);
   padding: 0;
   list-style: none;
   font-size: var(--step--1);
-}
-
-.campaign .sources li {
-  padding-inline-start: 1em;
-  text-indent: -1em;
+  line-height: 1.45;
 }
 
 .campaign .sources li a {
+  color: var(--ink-2);
   text-decoration: none;
 }
 
@@ -626,24 +1012,26 @@
 .campaign .research-note {
   max-inline-size: 70ch;
   margin-block-start: var(--space-l);
-  color: var(--muted-foreground);
+  color: var(--ink-3);
   font-size: var(--step--1);
 }
 
 .campaign .closing {
-  padding: var(--space-l);
+  padding: var(--space-l) var(--space-l-xl);
   border-radius: var(--radius);
   color: var(--primary-foreground);
   background: var(--primary);
 }
 
 .campaign .closing h2 {
-  max-inline-size: 30ch;
+  max-inline-size: 26ch;
 }
 
 .campaign .closing p {
   max-inline-size: 54ch;
-  margin-block-end: var(--space-m);
+  margin-block: var(--space-s) var(--space-m);
+  font-size: var(--step-1);
+  line-height: 1.45;
   text-wrap: pretty;
 }
 
@@ -691,8 +1079,8 @@
 }
 
 .campaign .field > span {
-  color: var(--muted-foreground);
-  font-weight: var(--font-weight-medium);
+  color: var(--ink-2);
+  font-weight: 560;
 }
 
 .campaign .field input,
@@ -702,8 +1090,8 @@
   padding: 0.65rem 0.75rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--ink);
+  background: var(--paper);
   font: inherit;
   transition: border-color 140ms ease;
 }
@@ -726,8 +1114,9 @@
 .campaign .generator-output {
   min-inline-size: 0;
   padding: var(--space-s-m);
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
+  background: var(--paper);
   scroll-margin-block-start: var(--space-xl);
 }
 
@@ -740,7 +1129,7 @@
 }
 
 .campaign .preview-head span {
-  color: var(--muted-foreground);
+  color: var(--ink-3);
   font-size: var(--step--1);
 }
 
@@ -751,7 +1140,7 @@
   padding: var(--space-s);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  color: var(--foreground);
+  color: var(--ink);
   background: var(--background);
   font: inherit;
   font-size: var(--step--1);
@@ -773,18 +1162,17 @@
 
 .campaign .bank-details {
   display: grid;
+  gap: var(--space-xs);
   margin-block-start: var(--space-m);
 }
 
 .campaign .bank-details > div {
   display: grid;
   gap: 0.1em;
-  padding-block: var(--space-xs);
-  border-block-start: var(--hairline);
 }
 
 .campaign .bank-details dt {
-  color: var(--muted-foreground);
+  color: var(--ink-3);
   font-size: var(--step--1);
 }
 
@@ -794,8 +1182,7 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-2xs) var(--space-s);
-  margin: 0;
-  font-weight: var(--font-weight-medium);
+  font-weight: 560;
   letter-spacing: 0.02em;
 }
 
@@ -803,8 +1190,8 @@
   padding: 0.2em 0.6em;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  color: var(--muted-foreground);
-  background: var(--background);
+  color: var(--ink-3);
+  background: var(--paper);
   font: inherit;
   font-size: var(--step--1);
   cursor: pointer;
@@ -814,8 +1201,8 @@
 }
 
 .campaign .copy-button:hover {
-  border-color: var(--foreground);
-  color: var(--foreground);
+  border-color: var(--ink);
+  color: var(--ink);
 }
 
 .campaign .cards .copy-status {
@@ -836,7 +1223,7 @@
 .legal-page h1 {
   margin-block: 0 var(--space-m);
   font-size: clamp(2rem, 1.4rem + 2.6vw, 3rem);
-  font-weight: var(--font-weight-medium);
+  font-weight: 600;
   font-stretch: 94%;
   line-height: 1.05;
   letter-spacing: -0.03em;
@@ -859,6 +1246,10 @@
 }
 
 @media (width >= 48rem) {
+  .campaign .keyfigures {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .campaign .facts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -867,11 +1258,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .campaign .compare,
-  .campaign .tracks {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
+  .campaign .tracks,
   .campaign .cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -880,26 +1267,59 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  /* Stationen nebeneinander, Linie läuft waagrecht durch die Punkte. */
   .campaign .flow.horizontal {
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-    gap: var(--space-m);
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: var(--space-l);
   }
 
   .campaign .flow.horizontal li {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-xs);
+  }
+
+  .campaign .flow.horizontal li::before {
+    margin-block-end: var(--space-2xs);
   }
 
   .campaign .flow.horizontal span {
     grid-column: 1;
+    font-size: var(--step--1);
   }
 
   .campaign .flow.horizontal li:not(:last-child)::after {
-    content: "→";
-    position: absolute;
-    inset-block-start: 0.2rem;
-    inset-inline-end: -0.3rem;
-    color: var(--muted-foreground);
+    inset-block: calc(var(--dot) / 2 - 1px) auto;
+    inset-inline-start: var(--dot);
+    inset-inline-end: calc(-1 * var(--space-l));
+    border-inline-start: 0;
+    border-block-start: 2px solid var(--line);
+  }
+
+  .campaign .timeline.horizontal {
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: var(--space-l);
+  }
+
+  .campaign .timeline.horizontal li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2xs);
+  }
+
+  .campaign .timeline.horizontal li::before {
+    margin-block: 0 var(--space-2xs);
+  }
+
+  .campaign .timeline.horizontal span {
+    grid-column: 1;
+    font-size: var(--step--1);
+  }
+
+  .campaign .timeline.horizontal li:not(:last-child)::after {
+    inset-block: calc(var(--dot) / 2 - 1px) auto;
+    inset-inline-start: var(--dot);
+    inset-inline-end: calc(-1 * var(--space-l));
+    border-inline-start: 0;
+    border-block-start: 2px solid var(--line);
   }
 
   .campaign .split {
@@ -907,7 +1327,7 @@
     align-items: start;
   }
 
-  .campaign .sources ul {
+  .campaign .sources .source-groups {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -926,6 +1346,21 @@
 
   .campaign .generator-output textarea {
     min-block-size: 32rem;
+  }
+}
+
+@media (width >= 64rem) {
+  .campaign .with-report {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: start;
+  }
+
+  .campaign .with-report .facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .campaign .with-report .report {
+    max-inline-size: none;
   }
 }
 
@@ -963,5 +1398,24 @@
 
   .campaign .glance dd {
     margin-block-end: var(--space-xs);
+  }
+
+  .campaign .report {
+    padding: var(--space-s) var(--space-s-m);
+  }
+
+  .campaign .report-id > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .campaign .report-table td {
+    inline-size: auto;
+    padding-inline-start: var(--space-2xs);
+  }
+
+  .campaign .bars > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3xs);
   }
 }

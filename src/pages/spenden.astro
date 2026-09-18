@@ -85,12 +85,14 @@ const fundingUses = [
       </p>
       <div class="cards">
         <article id="bitcoin" data-copy-scope>
-          <p class="kicker">Bitcoin</p>
-          <h3>Über unseren BTCPay-Server</h3>
+          <h3>Bitcoin</h3>
+          <p class="where">
+            über unseren BTCPay-Server, Lightning oder On-Chain
+          </p>
           <p>
-            Lightning oder On-Chain, Betrag frei wählbar. Der Server gehört dem
-            Verein und fragt weder Namen noch E-Mail-Adresse ab. Welche
-            technischen Daten dabei anfallen, steht in der
+            Betrag frei wählbar. Der Server gehört dem Verein und fragt weder
+            Namen noch E-Mail-Adresse ab. Welche technischen Daten dabei
+            anfallen, steht in der
             <a href="/datenschutz/">Datenschutzerklärung</a>.
           </p>
           <a class="button primary" href={btcpay} target="_blank" rel="noopener"
@@ -116,11 +118,11 @@ const fundingUses = [
         </article>
 
         <article id="euro" data-copy-scope>
-          <p class="kicker">Euro</p>
-          <h3>Per Überweisung</h3>
+          <h3>Euro</h3>
+          <p class="where">per Überweisung aufs Vereinskonto</p>
           <p>
-            Klassisch aufs Vereinskonto. Mit dem Verwendungszweck ordnen wir die
-            Spende der DAC8-Arbeit zu.
+            Mit dem Verwendungszweck DAC8 ordnen wir die Spende dieser Arbeit
+            zu.
           </p>
           <dl class="bank-details">
             {bankDetails.map((detail) => (
