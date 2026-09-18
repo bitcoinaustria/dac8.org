@@ -5,24 +5,30 @@ import Layout from "@/layouts/Layout.astro"
 
 <Layout
   sections={[
-    { id: "problem", label: "Worum es geht" },
+    { id: "problem", label: "Was auf dem Spiel steht" },
+    { id: "weg", label: "Was wir tun" },
     { id: "handeln", label: "Was du tun kannst" },
+    { id: "vision", label: "Wohin das führen soll" },
     { id: "position", label: "Wer dahintersteht" },
   ]}
 >
   <MetaPage
     slot="head"
-    description="Seit 2026 müssen Krypto-Anbieter in Österreich die Daten aller Kundinnen und Kunden für das Finanzamt aufbereiten. Bitcoin Austria bereitet den Rechtsweg vor und zeigt, was du selbst tun kannst."
+    description="Finanzielle Privatsphäre ist ein Grundrecht. Seit 2026 bereiten Krypto-Anbieter in Österreich die Daten aller Kundinnen und Kunden für das Finanzamt auf. Bitcoin Austria lässt das prüfen und zeigt, was du selbst tun kannst."
   />
 
   <article class="campaign landing">
     <header class="hero">
-      <h1>Steuern prüfen: ja. <span>Alle überwachen: nein.</span></h1>
+      <h1>
+        Finanzielle Privatsphäre ist ein Grundrecht.
+        <span>Wir lassen es prüfen.</span>
+      </h1>
       <p class="lead">
-        Seit 2026 bereiten Krypto-Anbieter in Österreich die Daten aller
+        Seit 2026 bereiten Krypto-Anbieter in Österreich die Finanzdaten aller
         Kundinnen und Kunden für das Finanzamt auf. Ohne Anlass, ohne Verdacht,
-        zehn Jahre gespeichert. Bitcoin Austria hält das für unverhältnismäßig
-        und bereitet den Rechtsweg vor.
+        zehn Jahre gespeichert. Ob ein Staat das darf, sollen Gerichte
+        entscheiden. Bitcoin Austria bereitet den Weg dorthin vor. Du kannst ihn
+        mitgehen.
       </p>
       <nav class="hero-actions" aria-label="Direkteinstieg">
         <a class="button primary" href="#handeln">Was du tun kannst</a>
@@ -55,12 +61,19 @@ import Layout from "@/layouts/Layout.astro"
     </header>
 
     <section id="problem" aria-labelledby="problem-heading">
-      <h2 id="problem-heading">Worum es geht</h2>
+      <h2 id="problem-heading">Was auf dem Spiel steht</h2>
       <p class="section-intro">
+        Wie du dein Geld verwendest, erzählt mehr über dich als fast jede andere
+        Information: wo du bist, wen du unterstützt, wovor du Angst hast, was
+        dir wichtig ist. Das Recht auf Privatleben und auf Schutz der eigenen
+        Daten steht in der EU-Grundrechtecharta und im österreichischen
+        Datenschutzgesetz. Es gilt auch für Geld.
+      </p>
+      <p class="prose">
         DAC8 ist eine EU-Richtlinie für den Austausch von Steuerdaten.
         Österreich hat sie mit dem Krypto-Meldepflichtgesetz umgesetzt und dabei
-        weiter gegriffen, als die Richtlinie verlangt. Vier Punkte, die wir für
-        problematisch halten:
+        weiter gegriffen, als die Richtlinie verlangt. Vier Punkte, an denen wir
+        das Gesetz messen lassen wollen:
       </p>
       <ul class="facts">
         <li>
@@ -101,12 +114,65 @@ import Layout from "@/layouts/Layout.astro"
       >
     </section>
 
+    <section id="weg" class="split" aria-labelledby="weg-heading">
+      <div>
+        <h2 id="weg-heading">Was wir tun</h2>
+        <p class="section-intro">
+          Wir behaupten nicht, dass DAC8 rechtswidrig ist. Wir sagen: Ein
+          Eingriff dieser Größe gehört vor ein Gericht. Und wir bauen den Fall,
+          der ihn dorthin bringt.
+        </p>
+        <p class="prose">
+          Der Weg führt über eine Datenschutzbeschwerde gegen einen konkreten
+          Anbieter, dann zur Datenschutzbehörde und zum
+          Bundesverwaltungsgericht. Von dort kann die Frage zum
+          Verfassungsgerichtshof und zum Europäischen Gerichtshof gelangen. Ob
+          sie das tut, entscheiden die Gerichte, nicht wir. Was wir tun können:
+          den Sachverhalt so sauber belegen, dass sie es tun sollten.
+        </p>
+        <p class="prose">
+          Österreich hat das schon einmal geschafft. Die Beschwerde gegen die
+          Vorratsdatenspeicherung von Telefondaten führte 2014 über den
+          Verfassungsgerichtshof zum Europäischen Gerichtshof, und beide Regeln
+          fielen. DAC8 ist ein anderer Fall mit offenem Ausgang. Aber er zeigt,
+          dass der Weg begehbar ist.
+        </p>
+        <a class="text-link" href="/hintergrund/#rechtsweg"
+          >Den Rechtsweg im Detail</a
+        >
+      </div>
+      <aside class="status" aria-labelledby="status-heading">
+        <h3 id="status-heading">Wo wir stehen</h3>
+        <dl>
+          <div>
+            <dt>Recherche</dt>
+            <dd>
+              Argumentation mit Primärquellen dokumentiert, laufend geprüft
+            </dd>
+          </div>
+          <div>
+            <dt>Anwaltliche Prüfung</dt>
+            <dd>in Vorbereitung, noch kein Mandat öffentlich</dd>
+          </div>
+          <div>
+            <dt>Verfahren</dt>
+            <dd>noch keine Beschwerde eingebracht</dd>
+          </div>
+          <div>
+            <dt>Nächster Schritt</dt>
+            <dd>Betroffene finden, deren Anbieter jetzt schon verarbeitet</dd>
+          </div>
+        </dl>
+      </aside>
+    </section>
+
     <section id="handeln" aria-labelledby="handeln-heading">
       <h2 id="handeln-heading">Was du tun kannst</h2>
       <p class="section-intro">
-        Das Gesetz ist beschlossen. Wie weit der Staat Finanzdaten sammeln darf,
-        entscheiden aber Gerichte und Parlament. Beide reagieren auf Menschen,
-        die sich melden.
+        Grundrechte haben keine Helden von außen. Sie haben Menschen, die einen
+        ersten Schritt machen: eine Auskunft anfordern, einen Brief schreiben,
+        einen Beitrag geben. Jeder dieser Schritte ist eine eigene Geschichte.
+        Jede zählt.
       </p>
       <ol class="cards three">
         <li>
@@ -145,52 +211,70 @@ import Layout from "@/layouts/Layout.astro"
       <p class="share-status" data-share-status aria-live="polite"></p>
     </section>
 
-    <section id="position" class="split" aria-labelledby="position-heading">
-      <div>
-        <h2 id="position-heading">Wer dahintersteht</h2>
-        <p class="section-intro">
-          dac8.org ist eine Initiative von Bitcoin Austria, dem gemeinnützigen
-          Bitcoin-Verein aus Wien, gegründet 2011.
-        </p>
-        <p class="prose">
-          Wir haben nichts gegen Steuern und nichts gegen gezielte Prüfungen.
-          Wir haben etwas dagegen, dass der Staat vorsorglich die Finanzdaten
-          aller Menschen sammelt, die einen Krypto-Anbieter nutzen. Österreich
-          hat die anlasslose Speicherung von Telefondaten schon einmal vor den
-          Höchstgerichten zu Fall gebracht. DAC8 ist ein anderer Fall, und wie
-          er ausgeht, ist offen. Aber er ist es wert, geführt zu werden.
-        </p>
-        <p class="prose">
-          DAC8 gilt in der ganzen EU. Organisationen, Unternehmen und Fachleute,
-          die das Gesetz in ihrem Land prüfen wollen, können sich bei uns
-          melden. Wir teilen Argumente, Quellen und Erfahrung:
-          <a href="mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"
-            >kontakt@dac8.org</a
-          >
-        </p>
-      </div>
-      <aside class="status" aria-labelledby="status-heading">
-        <h3 id="status-heading">Wo wir stehen</h3>
-        <dl>
-          <div>
-            <dt>Recherche</dt>
-            <dd>
-              Argumentation mit Primärquellen dokumentiert, laufend geprüft
-            </dd>
-          </div>
-          <div>
-            <dt>Anwaltliche Prüfung</dt>
-            <dd>in Vorbereitung, noch kein Mandat öffentlich</dd>
-          </div>
-          <div>
-            <dt>Verfahren</dt>
-            <dd>noch keine Beschwerde eingebracht</dd>
-          </div>
-        </dl>
-        <a class="text-link" href="/hintergrund/#rechtsweg"
-          >Den Rechtsweg verstehen</a
+    <section id="vision" aria-labelledby="vision-heading">
+      <h2 id="vision-heading">Wohin das führen soll</h2>
+      <p class="section-intro">
+        Ein Österreich, in dem das Finanzamt bekommt, was es nachweislich
+        braucht, und nicht mehr. In dem niemand zwischen einem Anbieter und
+        seiner Privatsphäre wählen muss. In dem jede neue Datensammlung
+        begründet, begrenzt und überprüfbar ist.
+      </p>
+      <ul class="facts">
+        <li>
+          <strong>Was ein Erfolg wäre</strong>
+          <p>
+            Ein Gericht prüft, ob die Erfassung aller Kundinnen und Kunden nötig
+            ist, ob jedes Meldefeld seinen Zweck erfüllt und ob zehn Jahre
+            Speicherung begründet sind. Fallen einzelne Pflichten, gilt der
+            Maßstab für jede künftige Sammlung von Finanzdaten.
+          </p>
+        </li>
+        <li>
+          <strong>Was wir uns nicht vormachen</strong>
+          <p>
+            Vielleicht bestätigen die Gerichte das Gesetz. Dann wissen wir, wo
+            die Grenze heute liegt, und tragen die Frage dorthin, wo Grenzen
+            verschoben werden: ins Parlament und in die Öffentlichkeit. Auch das
+            ist ein Ergebnis.
+          </p>
+        </li>
+        <li>
+          <strong>Warum es sich lohnt</strong>
+          <p>
+            Grundrechte gelten nicht, weil sie irgendwo stehen. Sie gelten, weil
+            jemand darauf besteht. Wer heute die Erfassung aller hinnimmt, wird
+            morgen die nächste Erweiterung hinnehmen. Wer heute fragt, setzt
+            einen Maßstab.
+          </p>
+        </li>
+        <li>
+          <strong>Nicht nur für Bitcoin</strong>
+          <p>
+            Wir kommen aus der Bitcoin-Community und haben früh gelernt, was
+            passiert, wenn Identität und Finanzdaten zusammenlaufen. Der
+            Maßstab, den wir einfordern, gilt für Konten, Karten und alles, was
+            noch kommt.
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <section id="position" aria-labelledby="position-heading">
+      <h2 id="position-heading">Wer dahintersteht</h2>
+      <p class="section-intro">
+        dac8.org ist eine Initiative von Bitcoin Austria, dem gemeinnützigen
+        Bitcoin-Verein aus Wien, gegründet 2011. Wir haben nichts gegen Steuern
+        und nichts gegen gezielte Prüfungen. Wir haben etwas dagegen, dass der
+        Staat vorsorglich die Finanzdaten aller sammelt.
+      </p>
+      <p class="prose">
+        DAC8 gilt in der ganzen EU. Organisationen, Unternehmen und Fachleute,
+        die das Gesetz in ihrem Land prüfen wollen, können sich bei uns melden.
+        Wir teilen Argumente, Quellen und Erfahrung:
+        <a href="mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"
+          >kontakt@dac8.org</a
         >
-      </aside>
+      </p>
     </section>
   </article>
 

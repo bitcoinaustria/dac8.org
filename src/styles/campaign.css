@@ -53,7 +53,7 @@
 }
 
 .campaign h1 {
-  max-inline-size: 20ch;
+  max-inline-size: 24ch;
   font-size: clamp(2.25rem, 1.4rem + 3.8vw, 4.25rem);
   line-height: 1.02;
   letter-spacing: -0.028em;
@@ -486,6 +486,7 @@
   --dot: 1.875rem;
   display: grid;
   gap: var(--space-m);
+  max-inline-size: var(--measure-text);
   margin-block-start: var(--space-l);
   padding: 0;
   list-style: none;
@@ -1024,34 +1025,6 @@
 
   .campaign .cards.three {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  /* Stationen nebeneinander, Linie läuft waagrecht durch die Punkte. */
-  .campaign .flow.horizontal {
-    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-    gap: var(--space-l);
-  }
-
-  .campaign .flow.horizontal li {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-xs);
-  }
-
-  .campaign .flow.horizontal li::before {
-    margin-block-end: var(--space-2xs);
-  }
-
-  .campaign .flow.horizontal span {
-    grid-column: 1;
-    font-size: var(--step--1);
-  }
-
-  .campaign .flow.horizontal li:not(:last-child)::after {
-    inset-block: calc(var(--dot) / 2 - 1px) auto;
-    inset-inline-start: var(--dot);
-    inset-inline-end: calc(-1 * var(--space-l));
-    border-inline-start: 0;
-    border-block-start: 2px solid var(--line);
   }
 
   .campaign .split {
