@@ -1,6 +1,5 @@
 ---
 import MetaPage from "@/components/MetaPage.astro"
-import ReportMock from "@/components/ReportMock.astro"
 import Layout from "@/layouts/Layout.astro"
 
 const researchDate = "16. September 2026"
@@ -260,86 +259,79 @@ const sourceGroups = [
     </section>
 
     <section id="gemeldet" aria-labelledby="gemeldet-heading">
-      <h2 id="gemeldet-heading">Was gemeldet wird</h2>
+      <h2 id="gemeldet-heading">Was gemeldet wird, und was nicht</h2>
       <p class="section-intro">
         Die Meldung ist kein Kontoauszug. Sie enthält Jahreswerte, keine
         einzelnen Transaktionen. Beides ist wichtig, um das Gesetz richtig
-        einzuschätzen. So sieht sie aus:
+        einzuschätzen.
       </p>
-      <div class="with-report">
-        <ReportMock />
-        <ul class="facts">
-          <li>
-            <strong>Je Kryptowert drei Zahlen pro Vorgangsart</strong>
-            <p>
-              Wert in Euro, Stückzahl und Anzahl der Vorgänge, getrennt nach
-              Kauf, Verkauf, Tausch und Übertragung. Bei Bankkonten werden nur
-              Salden und Erträge gemeldet.
-            </p>
-          </li>
-          <li>
-            <strong>Deine eigene Wallet zählt als „unbekannte Adresse“</strong>
-            <p>
-              Überträgst du Bitcoin vom Anbieter auf eine Wallet, die du selbst
-              verwahrst, landet das im Sammelposten für Adressen, die keinem
-              bekannten Anbieter gehören. Als Wert und Stückzahl, ohne Adresse.
-            </p>
-          </li>
-          <li>
-            <strong>Auch steuerlich Unwichtiges wird gemeldet</strong>
-            <p>
-              Der Tausch von Krypto gegen Krypto ist für Privatpersonen in
-              Österreich meist kein steuerpflichtiger Vorgang. Gemeldet wird er
-              trotzdem, auf beiden Seiten.
-            </p>
-          </li>
-          <li>
-            <strong>Der Anbieter hat mehr</strong>
-            <p>
-              Aus Geldwäsche- und Kryptomarkt-Regeln führen Anbieter deutlich
-              detailliertere Aufzeichnungen, darunter Adressen und Zeitstempel.
-              Sie sind nicht Teil der Meldung, liegen aber beim selben Anbieter.
-            </p>
-          </li>
-        </ul>
-      </div>
-
-      <h3 class="subhead">Der Zeitplan</h3>
-      <ol class="timeline horizontal" aria-label="Zeitplan der ersten Meldung">
-        <li>
-          <time datetime="2026-01-01">1. Jänner 2026</time>
-          <span>Gesetz gilt. Der erste Meldezeitraum beginnt.</span>
-        </li>
-        <li class="future">
-          <time datetime="2027-07-31">31. Juli 2027</time>
-          <span>Der Anbieter meldet das Jahr 2026 ans Finanzamt.</span>
-        </li>
-        <li class="future">
-          <time datetime="2027-09-30">30. September 2027</time>
-          <span>Österreich tauscht die Daten mit anderen EU-Staaten aus.</span>
-        </li>
-        <li class="future accent">
-          <time datetime="2036-12-31">Ende 2036</time>
-          <span>Der Anbieter darf die Daten für 2026 erst jetzt löschen.</span>
-        </li>
-      </ol>
-
-      <h3 class="subhead">Zehn Jahre statt fünf</h3>
-      <p class="section-intro">
-        Für Bankkonten hat Österreich 2018 fünf Jahre festgelegt und das damals
-        als datenschutzrechtlich angemessen bezeichnet. Für Krypto wählte der
-        Gesetzgeber zehn, ohne den Unterschied zu begründen.
-      </p>
-      <dl class="bars" aria-label="Speicherdauer beim Anbieter im Vergleich">
+      <div class="compare">
         <div>
-          <dt>Bankkonten (GMSG)</dt>
-          <dd><i style="--value: 5"></i><b>5 Jahre</b></dd>
+          <h3>Das steht in der Meldung</h3>
+          <ul>
+            <li>Name, Anschrift, Steuerwohnsitz, Steuernummer, Geburtsdatum</li>
+            <li>
+              je Kryptowert und Vorgangsart drei Zahlen: Wert in Euro,
+              Stückzahl, Anzahl der Vorgänge – getrennt nach Kauf, Verkauf,
+              Tausch und Übertragung
+            </li>
+            <li>
+              Wert und Stückzahl aller Übertragungen an Adressen, die keinem
+              bekannten Anbieter gehören. Dazu zählt in der Regel deine eigene
+              Wallet.
+            </li>
+            <li>
+              auch Vorgänge, die steuerlich meist keine Rolle spielen, etwa der
+              Tausch von Krypto gegen Krypto
+            </li>
+          </ul>
         </div>
-        <div class="accent">
-          <dt>Kryptowerte (Krypto-MPfG)</dt>
-          <dd><i style="--value: 10"></i><b>10 Jahre</b></dd>
+        <div class="absent">
+          <h3>Das steht nicht in der Meldung</h3>
+          <ul>
+            <li>Wallet-Adressen und Transaktionskennungen</li>
+            <li>einzelne Transaktionen, Zeitpunkte oder Gegenparteien</li>
+            <li>der aktuelle Bestand oder dein Gesamtvermögen</li>
+            <li>Vorgänge vor dem 1. Jänner 2026</li>
+          </ul>
         </div>
-      </dl>
+      </div>
+      <ul class="facts">
+        <li>
+          <strong>Mehr als bei Bankkonten</strong>
+          <p>
+            Bei Bankkonten meldet der Staat Salden und Erträge. Bei Krypto
+            kommen Stückzahlen und die Zahl der Vorgänge dazu. Jahr für Jahr
+            ergibt das ein Bild davon, wie aktiv jemand ist.
+          </p>
+        </li>
+        <li>
+          <strong>Zehn Jahre statt fünf</strong>
+          <p>
+            Der Anbieter darf die gemeldeten Daten erst zehn Jahre nach dem
+            Meldejahr löschen, für 2026 also Ende 2036. Für Bankkonten hat
+            Österreich 2018 fünf Jahre festgelegt und das damals als
+            datenschutzrechtlich angemessen bezeichnet. Den Unterschied
+            begründen die Gesetzesmaterialien nicht.
+          </p>
+        </li>
+        <li>
+          <strong>Wann was passiert</strong>
+          <p>
+            Der erste Meldezeitraum ist das Jahr 2026. Der Anbieter meldet es
+            bis 31. Juli 2027 ans Finanzamt, Österreich tauscht die Daten bis
+            30. September 2027 mit anderen EU-Staaten aus.
+          </p>
+        </li>
+        <li>
+          <strong>Was der Anbieter zusätzlich hat</strong>
+          <p>
+            Aus Geldwäsche- und Kryptomarkt-Regeln führen Anbieter deutlich
+            detailliertere Aufzeichnungen, darunter Adressen und Zeitstempel.
+            Sie sind nicht Teil der Meldung, liegen aber beim selben Anbieter.
+          </p>
+        </li>
+      </ul>
     </section>
 
     <section id="problem" aria-labelledby="problem-heading">

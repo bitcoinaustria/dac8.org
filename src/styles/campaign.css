@@ -1,10 +1,9 @@
 /* Gestaltungssystem der Kampagnenseiten.
 
-   Eine Datei für Start, Hintergrund, Handeln und Spenden. Grundidee: der
-   Inhalt wird nicht nur erzählt, sondern gezeigt – eine nachgebaute Meldung,
-   eine Zeitleiste, Kennzahlen, Stationen mit durchgehender Linie. Flächen
-   statt Striche, tabellarische Ziffern für Zahlen und Paragrafen, ein Rot
-   als Signal, nicht als Dekor. */
+   Eine Datei für Start, Hintergrund, Handeln und Spenden. Einfach und
+   textlich: große Überschriften, Fließtext in voller Größe, fette
+   Einstiege, kurze Listen, wenige Flächen. Tabellarische Ziffern für
+   Zahlen und Paragrafen, ein Rot als Signal, nicht als Dekor. */
 
 /* ---------- Grundraster ------------------------------------------------ */
 
@@ -544,291 +543,50 @@
   text-wrap: pretty;
 }
 
-/* ---------- Zeitleiste -------------------------------------------------- */
+/* ---------- Gegenüberstellung: gemeldet / nicht gemeldet ------------- */
 
-.campaign .timeline {
-  --dot: 0.875rem;
+.campaign .compare {
   display: grid;
-  gap: var(--space-m);
+  gap: var(--space-l) var(--space-xl);
   margin-block-start: var(--space-l);
+}
+
+.campaign .compare h3 {
+  margin-block-end: var(--space-s);
+}
+
+.campaign .compare ul {
+  display: grid;
+  gap: var(--space-xs);
   padding: 0;
   list-style: none;
 }
 
-.campaign .timeline li {
+.campaign .compare li {
   position: relative;
-  display: grid;
-  grid-template-columns: var(--dot) minmax(0, 1fr);
-  gap: var(--space-3xs) var(--space-s);
-  line-height: 1.4;
-}
-
-.campaign .timeline li::before {
-  content: "";
-  z-index: 1;
-  align-self: start;
-  margin-block-start: 0.3em;
-  inline-size: var(--dot);
-  block-size: var(--dot);
-  border-radius: var(--radius-full);
-  background: var(--ink);
-}
-
-.campaign .timeline li.accent::before {
-  background: var(--primary);
-}
-
-.campaign .timeline li.future::before {
-  background: var(--background);
-  box-shadow: inset 0 0 0 2px var(--ink);
-}
-
-.campaign .timeline li.future.accent::before {
-  box-shadow: inset 0 0 0 2px var(--primary);
-}
-
-.campaign .timeline li:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  inset-block-start: calc(0.3em + var(--dot));
-  inset-block-end: calc(-1 * var(--space-m));
-  inset-inline-start: calc(var(--dot) / 2 - 1px);
-  border-inline-start: 2px solid var(--line);
-}
-
-.campaign .timeline time {
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.campaign .timeline span {
-  grid-column: 2;
+  padding-inline-start: 1.5rem;
   color: var(--ink-2);
   text-wrap: pretty;
 }
 
-/* ---------- Die Meldung, nachgebaut ---------------------------------- */
-
-/* Ein Dokument, kein Kasten: was der Anbieter einmal im Jahr ans Finanzamt
-   schickt. Werte sind erfunden und so gekennzeichnet. */
-.campaign .report {
-  --cell-gap: var(--space-2xs);
-  display: grid;
-  gap: var(--space-m);
-  max-inline-size: 44rem;
-  padding: var(--space-m) var(--space-m-l);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--paper);
-  box-shadow:
-    0 1px 2px color-mix(in oklab, var(--foreground) 6%, transparent),
-    0 12px 32px -20px color-mix(in oklab, var(--foreground) 25%, transparent);
-  font-size: var(--step--1);
-  line-height: 1.4;
-}
-
-.campaign .report-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-2xs) var(--space-m);
-  padding-block-end: var(--space-s);
-  border-block-end: 1px solid var(--line);
-}
-
-.campaign .report-head strong {
-  font-size: var(--step-0);
-  font-weight: 600;
-}
-
-.campaign .report-head span {
-  color: var(--ink-3);
-}
-
-.campaign .report-id {
-  display: grid;
-  gap: var(--cell-gap);
-}
-
-.campaign .report-id > div {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-  gap: var(--space-s);
-}
-
-.campaign .report-id dt {
-  color: var(--ink-3);
-}
-
-.campaign .report-id dd {
-  font-weight: 560;
-}
-
-.campaign .report-table {
-  inline-size: 100%;
-  border-collapse: collapse;
-  border-block-start: 1px dashed var(--line);
-}
-
-.campaign .report-table caption {
-  padding-block: var(--space-s) var(--space-2xs);
-  font-size: var(--step-0);
-  font-weight: 600;
-  text-align: start;
-}
-
-.campaign .report-table caption span {
-  margin-inline-start: 0.5em;
-  color: var(--ink-3);
-  font-size: var(--step--1);
-  font-weight: 400;
-}
-
-.campaign .report-table th,
-.campaign .report-table td {
-  padding: 0.3em 0;
-  vertical-align: baseline;
-}
-
-.campaign .report-table thead th {
-  color: var(--ink-3);
-  font-weight: 400;
-  text-align: end;
-  white-space: nowrap;
-}
-
-.campaign .report-table tbody th {
-  padding-inline-end: var(--space-s);
-  color: var(--ink-2);
-  font-weight: 400;
-  text-align: start;
-}
-
-.campaign .report-table td {
-  inline-size: 5.5em;
-  font-weight: 560;
-  text-align: end;
-  white-space: nowrap;
-}
-
-.campaign .report-table td:nth-child(3) {
-  inline-size: 6.5em;
-}
-
-.campaign .report-table .none {
-  color: var(--ink-3);
-  font-weight: 400;
-}
-
-.campaign .report .mark {
-  margin-inline-start: 0.15em;
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.campaign .visually-hidden {
+.campaign .compare li::before {
+  content: "";
   position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-.campaign .report-missing {
-  padding: var(--space-s) var(--space-m);
-  border-radius: var(--radius-sm);
-  background: var(--panel);
-  color: var(--ink-2);
-}
-
-.campaign .report-missing h4 {
-  margin-block-end: var(--space-2xs);
-  font-size: var(--step--1);
-  color: var(--ink);
-}
-
-.campaign .report-missing ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3xs) var(--space-m);
-  padding: 0;
-  list-style: none;
-}
-
-.campaign .report-missing li::before {
-  content: "–";
-  margin-inline-end: 0.4em;
-  color: var(--ink-3);
-}
-
-.campaign .report-foot {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-2xs) var(--space-m);
-  color: var(--ink-3);
-}
-
-.campaign .report-foot strong {
-  color: var(--ink);
-  font-weight: 560;
-}
-
-/* Fakten neben der Meldung. */
-.campaign .with-report {
-  display: grid;
-  gap: var(--space-l);
-  margin-block-start: var(--space-l);
-}
-
-.campaign .with-report .facts {
-  margin-block-start: 0;
-}
-
-/* ---------- Balkenvergleich Speicherdauer ------------------------------ */
-
-.campaign .bars {
-  display: grid;
-  gap: var(--space-s);
-  max-inline-size: 36rem;
-  margin-block-start: var(--space-m);
-}
-
-.campaign .bars > div {
-  display: grid;
-  grid-template-columns: minmax(7rem, 10rem) minmax(0, 1fr);
-  align-items: center;
-  gap: var(--space-s);
-}
-
-.campaign .bars dt {
-  color: var(--ink-2);
-  text-wrap: balance;
-}
-
-.campaign .bars dd {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.campaign .bars i {
-  display: block;
-  inline-size: calc(var(--value) / 10 * 100%);
-  block-size: 0.875rem;
-  border-radius: 0 4px 4px 0;
-  background: var(--ink);
-}
-
-.campaign .bars .accent i {
+  inset-inline-start: 0;
+  inset-block-start: 0.55em;
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: var(--radius-full);
   background: var(--primary);
 }
 
-.campaign .bars b {
-  font-weight: 600;
-  white-space: nowrap;
+.campaign .compare .absent li::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--ink-3);
+}
+
+.campaign .compare + .facts {
+  margin-block-start: var(--space-xl);
 }
 
 /* ---------- Handlungs- und Spendenkarten ----------------------------- */
@@ -1258,6 +1016,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .campaign .compare,
   .campaign .tracks,
   .campaign .cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1295,33 +1054,6 @@
     border-block-start: 2px solid var(--line);
   }
 
-  .campaign .timeline.horizontal {
-    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
-    gap: var(--space-l);
-  }
-
-  .campaign .timeline.horizontal li {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-2xs);
-  }
-
-  .campaign .timeline.horizontal li::before {
-    margin-block: 0 var(--space-2xs);
-  }
-
-  .campaign .timeline.horizontal span {
-    grid-column: 1;
-    font-size: var(--step--1);
-  }
-
-  .campaign .timeline.horizontal li:not(:last-child)::after {
-    inset-block: calc(var(--dot) / 2 - 1px) auto;
-    inset-inline-start: var(--dot);
-    inset-inline-end: calc(-1 * var(--space-l));
-    border-inline-start: 0;
-    border-block-start: 2px solid var(--line);
-  }
-
   .campaign .split {
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
     align-items: start;
@@ -1346,21 +1078,6 @@
 
   .campaign .generator-output textarea {
     min-block-size: 32rem;
-  }
-}
-
-@media (width >= 64rem) {
-  .campaign .with-report {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-    align-items: start;
-  }
-
-  .campaign .with-report .facts {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .campaign .with-report .report {
-    max-inline-size: none;
   }
 }
 
@@ -1400,22 +1117,4 @@
     margin-block-end: var(--space-xs);
   }
 
-  .campaign .report {
-    padding: var(--space-s) var(--space-s-m);
-  }
-
-  .campaign .report-id > div {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-  }
-
-  .campaign .report-table td {
-    inline-size: auto;
-    padding-inline-start: var(--space-2xs);
-  }
-
-  .campaign .bars > div {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-3xs);
-  }
 }

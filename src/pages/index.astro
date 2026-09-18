@@ -1,6 +1,5 @@
 ---
 import MetaPage from "@/components/MetaPage.astro"
-import ReportMock from "@/components/ReportMock.astro"
 import Layout from "@/layouts/Layout.astro"
 ---
 
@@ -60,48 +59,45 @@ import Layout from "@/layouts/Layout.astro"
       <p class="section-intro">
         DAC8 ist eine EU-Richtlinie für den Austausch von Steuerdaten.
         Österreich hat sie mit dem Krypto-Meldepflichtgesetz umgesetzt und dabei
-        weiter gegriffen, als die Richtlinie verlangt. So sieht aus, was dein
-        Anbieter einmal im Jahr ans Finanzamt schickt:
+        weiter gegriffen, als die Richtlinie verlangt. Vier Punkte, die wir für
+        problematisch halten:
       </p>
-      <div class="with-report">
-        <ReportMock compact />
-        <ul class="facts">
-          <li>
-            <strong>Alle werden erfasst, nicht nur Verdächtige.</strong>
-            <p>
-              Der Anbieter muss die Meldedaten für alle Kundinnen und Kunden
-              aufbereiten, auch für jene, die am Ende gar nicht gemeldet werden.
-              Das steht so im österreichischen Gesetz, nicht in der Richtlinie.
-            </p>
-          </li>
-          <li>
-            <strong>Es entsteht ein Profil über Jahre.</strong>
-            <p>
-              Gemeldet werden nicht nur Werte, sondern je Kryptowert auch
-              Stückzahlen und die Zahl der Vorgänge. Jahr für Jahr ergibt das
-              ein Bild davon, wie aktiv jemand ist.
-            </p>
-          </li>
-          <li>
-            <strong>Ein Datenleck lässt sich nicht zurückholen.</strong>
-            <p>
-              Die Meldung enthält keine Wallet-Adressen. Gelangen Identität und
-              Jahreswerte aber in falsche Hände, lassen sie sich mit der
-              öffentlichen Blockchain verknüpfen. Dauerhaft.
-            </p>
-          </li>
-          <li>
-            <strong>Zehn Jahre statt fünf.</strong>
-            <p>
-              Bei Bankkonten löscht Österreich die gemeldeten Daten nach fünf
-              Jahren. Bei Krypto sind es zehn. Warum, sagen die
-              Gesetzesmaterialien nicht.
-            </p>
-          </li>
-        </ul>
-      </div>
+      <ul class="facts">
+        <li>
+          <strong>Alle werden erfasst, nicht nur Verdächtige.</strong>
+          <p>
+            Der Anbieter muss die Meldedaten für alle Kundinnen und Kunden
+            aufbereiten, auch für jene, die am Ende gar nicht gemeldet werden.
+            Das steht so im österreichischen Gesetz, nicht in der Richtlinie.
+          </p>
+        </li>
+        <li>
+          <strong>Es entsteht ein Profil über Jahre.</strong>
+          <p>
+            Gemeldet werden nicht nur Werte, sondern je Kryptowert auch
+            Stückzahlen und die Zahl der Vorgänge. Jahr für Jahr ergibt das ein
+            Bild davon, wie aktiv jemand ist.
+          </p>
+        </li>
+        <li>
+          <strong>Ein Datenleck lässt sich nicht zurückholen.</strong>
+          <p>
+            Die Meldung enthält keine Wallet-Adressen. Gelangen Identität und
+            Jahreswerte aber in falsche Hände, lassen sie sich mit der
+            öffentlichen Blockchain verknüpfen. Dauerhaft.
+          </p>
+        </li>
+        <li>
+          <strong>Zehn Jahre statt fünf.</strong>
+          <p>
+            Bei Bankkonten löscht Österreich die gemeldeten Daten nach fünf
+            Jahren. Bei Krypto sind es zehn. Warum, sagen die
+            Gesetzesmaterialien nicht.
+          </p>
+        </li>
+      </ul>
       <a class="text-link" href="/hintergrund/#gemeldet"
-        >Die Meldung im Detail, mit Quellen</a
+        >Was genau gemeldet wird, und was nicht</a
       >
     </section>
 
