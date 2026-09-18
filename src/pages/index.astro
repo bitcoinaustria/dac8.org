@@ -5,156 +5,183 @@ import Layout from "@/layouts/Layout.astro"
 
 <Layout
   sections={[
-    { id: "einsatz", label: "Was auf dem Spiel steht" },
-    { id: "handeln", label: "Handeln" },
-    { id: "position", label: "Bitcoin Austria" },
+    { id: "problem", label: "Worum es geht" },
+    { id: "handeln", label: "Was du tun kannst" },
+    { id: "position", label: "Wer dahintersteht" },
   ]}
 >
   <MetaPage
     slot="head"
-    description="Bitcoin Austria stellt sich gegen Finanzüberwachung auf Vorrat. Erfahre, was Österreichs DAC8-Umsetzung erfasst und wie du dich wehren kannst."
+    description="Seit 2026 müssen Krypto-Anbieter in Österreich die Daten aller Kundinnen und Kunden für das Finanzamt aufbereiten. Bitcoin Austria bereitet den Rechtsweg vor und zeigt, was du selbst tun kannst."
   />
 
   <article class="campaign landing">
     <header class="hero">
-      <p class="eyebrow">DAC8 · Krypto-Meldepflicht · Österreich seit 2026</p>
-      <h1>
-        Deine Finanzdaten. Dein Leben. <span>Kein Profil auf Vorrat.</span>
-      </h1>
+      <h1>Steuern prüfen: ja. <span>Alle überwachen: nein.</span></h1>
       <p class="lead">
         Seit 2026 müssen Krypto-Anbieter in Österreich die Daten aller Kundinnen
-        und Kunden verarbeiten und meldepflichtige Nutzer jährlich dem Finanzamt
-        melden – ohne konkreten Verdacht. Wir nennen das
-        <strong>Finanzüberwachung auf Vorrat</strong>
-        und fordern klare Grenzen: Steuerpflichten gezielt prüfen, nicht alle
-        vorsorglich durchleuchten.
+        und Kunden für das Finanzamt aufbereiten – ohne Anlass und ohne
+        Verdacht. Bitcoin Austria hält das für unverhältnismäßig, bereitet den
+        Rechtsweg vor und zeigt dir, was du selbst tun kannst.
       </p>
       <nav class="hero-actions" aria-label="Direkteinstieg">
         <a class="button primary" href="#handeln">Was du tun kannst</a>
-        <a class="button" href="/hintergrund/#was-ist-dac8"
-          >DAC8 kurz erklärt</a
-        >
+        <a class="button" href="/hintergrund/">DAC8 verständlich erklärt</a>
       </nav>
-      <dl class="stamp" aria-label="Das Wichtigste in Kürze">
+      <dl class="glance" aria-label="Das Wichtigste in Kürze">
         <dt>Wer</dt>
-        <dd>alle Kundinnen und Kunden meldepflichtiger Krypto-Anbieter</dd>
-        <dt>Was</dt>
-        <dd>Identität, Steuer-ID und Jahreswerte je Kryptowert</dd>
-        <dt>Wann</dt>
-        <dd>Gesetz seit 1. Jänner 2026 · erste Meldung bis 31. Juli 2027</dd>
-        <dd class="stamp-note">
-          Noch ist Zeit, Grenzen einzufordern. Beschlossen heißt nicht
-          unangreifbar.
+        <dd>
+          alle Kundinnen und Kunden von Krypto-Anbietern, die in Österreich
+          melden müssen
         </dd>
+        <dt>Was</dt>
+        <dd>
+          Name, Adresse, Steuernummer, Geburtsdatum und Jahreswerte je
+          Kryptowert
+        </dd>
+        <dt>Seit wann</dt>
+        <dd>Gesetz seit 1. Jänner 2026 · erste Meldung bis 31. Juli 2027</dd>
+        <dt>Wie lange</dt>
+        <dd>zehn Jahre Speicherung · bei Bankkonten sind es fünf</dd>
       </dl>
     </header>
 
-    <section id="einsatz" aria-labelledby="stakes-heading">
-      <p class="eyebrow">Was auf dem Spiel steht</p>
-      <h2 id="stakes-heading">Mehr als ein Steuerdatensatz.</h2>
-      <div class="signal-grid">
-        <article>
-          <span class="index">01</span>
-          <h3>Privatsphäre</h3>
+    <section id="problem" aria-labelledby="problem-heading">
+      <h2 id="problem-heading">Worum es geht</h2>
+      <p class="section-intro">
+        DAC8 ist eine EU-Richtlinie für den Austausch von Steuerdaten.
+        Österreich hat sie mit dem Krypto-Meldepflichtgesetz umgesetzt – und
+        dabei vier Entscheidungen getroffen, die wir für problematisch halten.
+      </p>
+      <ul class="facts">
+        <li>
+          <strong>Alle werden erfasst, nicht nur Verdächtige.</strong>
           <p>
-            Name, Adresse und Steuer-ID werden mit jährlicher Krypto-Aktivität
-            verbunden.
+            Der Anbieter muss die Meldedaten für alle Kundinnen und Kunden
+            aufbereiten – auch für jene, die am Ende gar nicht gemeldet werden.
+            Ein Anlass ist nicht nötig.
           </p>
-        </article>
-        <article>
-          <span class="index">02</span>
-          <h3>Sicherheit</h3>
+        </li>
+        <li>
+          <strong>Es entsteht ein Profil über Jahre.</strong>
           <p>
-            Mehr identitätsbezogene Finanzdaten vergrößern den möglichen Schaden
-            bei Fehlzugriff oder Datenleck.
+            Gemeldet werden nicht nur Werte, sondern je Kryptowert auch
+            Stückzahlen und wie oft gekauft, verkauft, getauscht oder übertragen
+            wurde. Jahr für Jahr ergibt das ein Aktivitätsprofil.
           </p>
-        </article>
-        <article>
-          <span class="index">03</span>
-          <h3>Ausweitung</h3>
+        </li>
+        <li>
+          <strong>Ein Datenleck lässt sich nicht rückgängig machen.</strong>
           <p>
-            Das DAC-System wird laufend erweitert. Jeder neue Zweck und jedes
-            neue Datenfeld braucht öffentliche Kontrolle.
+            Der Bericht enthält keine Wallet-Adressen. Gelangen Identität und
+            Jahreswerte aber in falsche Hände, können sie mit der öffentlichen
+            Blockchain verknüpft werden – dauerhaft.
           </p>
-        </article>
-      </div>
-      <a class="text-link" href="/hintergrund/#warum">Warum das alle angeht</a>
+        </li>
+        <li>
+          <strong>Zehn Jahre statt fünf.</strong>
+          <p>
+            Bei Bankkonten löscht Österreich die gemeldeten Daten nach fünf
+            Jahren. Bei Krypto sind es zehn. Warum, erklären die
+            Gesetzesmaterialien nicht.
+          </p>
+        </li>
+      </ul>
+      <a class="text-link" href="/hintergrund/#was-ist-dac8"
+        >Was genau gemeldet wird – und was nicht</a
+      >
     </section>
 
-    <section id="handeln" class="action-section" aria-labelledby="join-heading">
-      <p class="eyebrow">Handeln</p>
-      <h2 id="join-heading">
-        Beschwer dich. Schreib deinen Abgeordneten. Trag mit.
-      </h2>
+    <section id="handeln" aria-labelledby="handeln-heading">
+      <h2 id="handeln-heading">Was du tun kannst</h2>
       <p class="section-intro">
-        Gesetze sind keine Naturgesetze. Wie weit Finanzdaten erfasst werden
-        dürfen, bleibt eine rechtliche und politische Frage.
+        Das Gesetz ist beschlossen. Wie weit der Staat Finanzdaten sammeln darf,
+        entscheiden aber Gerichte und Parlament – und beide reagieren auf
+        Menschen, die sich melden.
       </p>
-      <div class="action-grid three">
-        <article>
-          <p class="step">01 · Datenschutzbehörde</p>
-          <h3>Beschwerde einbringen</h3>
+      <ol class="cards three">
+        <li>
+          <p class="kicker">Datenschutzbehörde</p>
+          <h3>Beschwerde vorbereiten</h3>
           <p>
-            Wenn ein Anbieter deine Daten konkret verarbeitet und du darin eine
-            Rechtsverletzung siehst, kannst du persönlich Beschwerde erheben.
-            Der Generator hilft beim Entwurf.
+            Wenn dein Anbieter deine Daten für DAC8 verarbeitet, kannst du das
+            bei der Datenschutzbehörde prüfen lassen. Unser Generator hilft beim
+            Entwurf, alles bleibt in deinem Browser.
           </p>
           <a class="button primary" href="/handeln/#beschwerde"
-            >Beschwerde vorbereiten</a
+            >Zum Generator</a
           >
-        </article>
-        <article>
-          <p class="step">02 · Parlament</p>
+        </li>
+        <li>
+          <p class="kicker">Parlament</p>
           <h3>Abgeordnete anschreiben</h3>
           <p>
-            Sag deinen gewählten Vertreterinnen und Vertretern, warum du klare
-            Grenzen für Erfassung, Speicherung und Weiterverwendung erwartest.
+            Sag deinen Abgeordneten, dass du Steuerprüfung unterstützt, aber
+            keine Erfassung aller Kundinnen und Kunden auf Vorrat. Ein kurzer
+            persönlicher Brief wirkt mehr als eine Vorlage.
           </p>
           <a class="button" href="/handeln/#abgeordnete">Brief vorbereiten</a>
-        </article>
-        <article>
-          <p class="step">03 · Unterstützen</p>
-          <h3>Die Arbeit finanzieren</h3>
+        </li>
+        <li>
+          <p class="kicker">Finanzierung</p>
+          <h3>Den Rechtsweg mittragen</h3>
           <p>
-            Recherche, anwaltliche Prüfung und Gutachten kosten Geld. Spende in
-            Bitcoin über unseren eigenen BTCPay-Server oder in Euro per
-            Überweisung an Bitcoin Austria.
+            Anwaltliche Prüfung, Gutachten und Recherche kosten Geld. Spenden
+            gehen an Bitcoin Austria – in Bitcoin über unseren eigenen Server
+            oder in Euro per Überweisung.
           </p>
           <a class="button" href="/spenden/">Spenden</a>
-        </article>
-      </div>
-      <button class="share-link text-link" type="button" data-share>
-        Seite teilen
-      </button>
+        </li>
+      </ol>
+      <button class="text-link" type="button" data-share>Seite teilen</button>
       <p class="share-status" data-share-status aria-live="polite"></p>
     </section>
 
-    <section id="position" class="position" aria-labelledby="position-heading">
+    <section id="position" class="split" aria-labelledby="position-heading">
       <div>
-        <p class="eyebrow">Bitcoin Austria</p>
-        <h2 id="position-heading">
-          Eine Zukunft ohne Finanzüberwachung auf Vorrat ist möglich.
-        </h2>
+        <h2 id="position-heading">Wer dahintersteht</h2>
         <p class="section-intro">
-          Wir sind Bitcoiner und stellen uns gegen Massenüberwachung. Österreich
-          hat anlasslose Vorratsdatenspeicherung schon einmal vor den
-          Höchstgerichten zu Fall gebracht. Kein Siegesversprechen für DAC8 –
-          aber der Beweis, dass Gegenwehr wirkt. Finanzielle Privatsphäre ist
-          ein Grundrecht, kein Sonderwunsch unserer Szene.
+          dac8.org ist eine Initiative von Bitcoin Austria, dem gemeinnützigen
+          Bitcoin-Verein aus Wien, gegründet 2011.
+        </p>
+        <p class="prose">
+          Wir haben nichts gegen Steuern und nichts gegen gezielte Prüfungen.
+          Wir haben etwas dagegen, dass der Staat vorsorglich die Finanzdaten
+          aller Menschen sammelt, die einen Krypto-Anbieter nutzen. Österreich
+          hat die anlasslose Vorratsdatenspeicherung von Telefondaten schon
+          einmal vor den Höchstgerichten zu Fall gebracht. DAC8 ist ein anderer
+          Fall, und wie er ausgeht, ist offen. Aber er ist es wert, geführt zu
+          werden.
+        </p>
+        <p class="prose">
+          DAC8 gilt in der ganzen EU. Organisationen, Unternehmen und Fachleute,
+          die das Gesetz in ihrem Land prüfen wollen, können sich bei uns
+          melden. Wir teilen Argumente, Quellen und Erfahrung:
+          <a href="mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"
+            >kontakt@dac8.org</a
+          >
         </p>
       </div>
-      <aside class="legal-note" aria-labelledby="legal-heading">
-        <p class="eyebrow">Rechtsweg</p>
-        <h3 id="legal-heading">
-          Das Gesetz gilt. Die Debatte ist nicht vorbei.
-        </h3>
-        <p>
-          Wir bauen einen konkreten österreichischen Fall auf und bereiten die
-          anwaltliche Prüfung vor. Ohne Siegesversprechen – aber mit belastbaren
-          Fakten und offenem Blick auf Gegenargumente.
-        </p>
+      <aside class="status" aria-labelledby="status-heading">
+        <h3 id="status-heading">Wo wir stehen</h3>
+        <dl>
+          <div>
+            <dt>Recherche</dt>
+            <dd>
+              Argumentation mit Primärquellen dokumentiert, laufend geprüft
+            </dd>
+          </div>
+          <div>
+            <dt>Anwaltliche Prüfung</dt>
+            <dd>in Vorbereitung, noch kein Mandat öffentlich</dd>
+          </div>
+          <div>
+            <dt>Verfahren</dt>
+            <dd>noch keine Beschwerde eingebracht</dd>
+          </div>
+        </dl>
         <a class="text-link" href="/hintergrund/#rechtsweg"
-          >Stand und Strategie ansehen</a
+          >Den Rechtsweg verstehen</a
         >
       </aside>
     </section>
