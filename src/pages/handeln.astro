@@ -17,26 +17,27 @@ import Layout from "@/layouts/Layout.astro"
 
   <article class="campaign tool-page">
     <header class="hero">
-      <p class="eyebrow">Selbst handeln</p>
-      <h1>Deine Stimme. <span>Dein Text.</span></h1>
+      <h1>Deine Stimme, <span>dein Text.</span></h1>
       <p class="lead">
-        Bereite einen persönlichen Entwurf vor. Nichts wird automatisch
-        versendet, gespeichert oder an Bitcoin Austria übertragen.
+        Zwei Werkzeuge für einen persönlichen Entwurf: eine Beschwerde an die
+        Datenschutzbehörde und ein Brief an deine Abgeordneten. Alles läuft in
+        deinem Browser. Nichts wird gesendet, gespeichert oder an Bitcoin
+        Austria übertragen.
       </p>
       <nav class="hero-actions" aria-label="Werkzeug wählen">
         <a class="button primary" href="#beschwerde">Beschwerde vorbereiten</a>
         <a class="button" href="#abgeordnete">Brief vorbereiten</a>
-        <a class="button" href="/spenden/">Spenden</a>
         <button class="button" type="button" data-download-offline>
-          Offline-Generator (.html)
+          Offline-Version speichern
         </button>
       </nav>
-      <dl class="stamp" aria-label="So arbeiten die Werkzeuge">
+      <dl class="glance" aria-label="So arbeiten die Werkzeuge">
         <dt>Verarbeitung</dt>
         <dd>ausschließlich in deinem Browser</dd>
         <dt>Vorschau</dt>
-        <dd>direkt bearbeitbar, nichts wird gesendet</dd>
-        <dd class="stamp-note">Prüfe jeden Text, bevor du ihn absendest.</dd>
+        <dd>direkt bearbeitbar, kopieren und selbst absenden</dd>
+        <dt>Wichtig</dt>
+        <dd>Lies jeden Text, bevor du ihn abschickst.</dd>
       </dl>
     </header>
 
@@ -45,23 +46,35 @@ import Layout from "@/layouts/Layout.astro"
       class="generator"
       aria-labelledby="complaint-heading"
     >
-      <p class="eyebrow">01 · Datenschutzbehörde</p>
-      <h2 id="complaint-heading">Beschwerde vorbereiten</h2>
+      <h2 id="complaint-heading">Beschwerde an die Datenschutzbehörde</h2>
       <p class="section-intro">
-        Für eine förmliche Beschwerde brauchst du einen konkreten
-        Verantwortlichen, einen tatsächlichen Sachverhalt und persönliche
-        Belege. Der Generator ordnet deine Angaben zu einem Entwurf.
+        Eine Beschwerde richtet sich gegen deinen konkreten Anbieter und gegen
+        etwas, das er jetzt schon mit deinen Daten macht – zum Beispiel eine
+        angeforderte Selbstauskunft, die Einstufung als meldepflichtig oder die
+        Speicherung deiner Daten für DAC8. Der Generator ordnet deine Angaben zu
+        einem Entwurf.
       </p>
-      <aside class="generator-note">
-        <strong>Gut zu wissen:</strong>
-        Die Datenschutzbehörde übermittelt eine vollständige Beschwerde an den
-        genannten Verantwortlichen. Der Entwurf ist keine Rechtsberatung und
-        wird nicht automatisch eingebracht. Eine Beschwerde stoppt die
-        Verarbeitung nicht von selbst. Sie muss grundsätzlich binnen eines
-        Jahres ab Kenntnis und spätestens binnen drei Jahren ab dem
-        beanstandeten Ereignis eingebracht werden; bei laufender Verarbeitung
-        solltest du nicht ungeprüft von einem täglichen Fristneustart ausgehen.
-      </aside>
+      <ul class="facts">
+        <li>
+          <strong>Was du brauchst</strong>
+          <p>
+            Den Namen und die Anschrift deines Anbieters, eine Beschreibung
+            dessen, was er verarbeitet, und Belege dafür – etwa eine E-Mail,
+            eine Datenschutzauskunft oder einen Screenshot. Eine Auskunft nach
+            Art. 15 DSGVO ist oft der beste erste Schritt.
+          </p>
+        </li>
+        <li>
+          <strong>Was du wissen solltest</strong>
+          <p>
+            Die Datenschutzbehörde leitet deine Beschwerde an den Anbieter
+            weiter. Eine Beschwerde stoppt die Verarbeitung nicht automatisch.
+            Sie muss innerhalb eines Jahres ab Kenntnis und spätestens drei
+            Jahre nach dem Vorgang eingebracht werden. Der Entwurf ist keine
+            Rechtsberatung.
+          </p>
+        </li>
+      </ul>
 
       <div class="generator-workspace">
         <form class="generator-form" data-complaint-form>
@@ -99,10 +112,10 @@ import Layout from "@/layouts/Layout.astro"
               <input name="knowledgeDate" type="date" required>
             </label>
             <label class="field wide">
-              <span>Was wird konkret verarbeitet?</span>
+              <span>Was macht der Anbieter jetzt schon mit deinen Daten?</span>
               <textarea
                 name="facts"
-                placeholder="Zum Beispiel: Hinweis des Anbieters, angeforderte Selbstauskunft, gespeicherte Identitäts- oder Transaktionsdaten."
+                placeholder="Zum Beispiel: Der Anbieter hat mich zur Selbstauskunft aufgefordert, mich als meldepflichtig eingestuft oder speichert laut Datenschutzauskunft meine Daten für das Krypto-MPfG."
                 required
               ></textarea>
             </label>
@@ -130,7 +143,7 @@ import Layout from "@/layouts/Layout.astro"
         <div class="generator-output" data-complaint-output data-copy-scope>
           <div class="preview-head">
             <h3>Live-Vorschau</h3>
-            <span>Entwurf · Platzhalter vor Einreichung ersetzen</span>
+            <span>Entwurf – Platzhalter vor dem Absenden ersetzen</span>
           </div>
           <textarea
             id="complaint-text"
@@ -167,12 +180,12 @@ import Layout from "@/layouts/Layout.astro"
       class="generator"
       aria-labelledby="letter-heading"
     >
-      <p class="eyebrow">02 · Parlament</p>
-      <h2 id="letter-heading">Brief an Abgeordnete vorbereiten</h2>
+      <h2 id="letter-heading">Brief an Abgeordnete</h2>
       <p class="section-intro">
-        Der Text fordert gezielte Steuerdurchsetzung und klare Grenzen für
-        Finanzdaten. Ergänze deinen persönlichen Grund – Serienbriefe ohne
-        eigene Stimme überzeugen selten.
+        Der Vorschlag richtet sich nicht gegen Steuern, sondern gegen die
+        anlasslose Erfassung von Finanzdaten, und fordert klare Grenzen dafür.
+        Ergänze in ein, zwei Sätzen, warum dir das persönlich wichtig ist. Ein
+        eigener Satz überzeugt mehr als jede Vorlage.
       </p>
 
       <div class="generator-workspace">
@@ -187,11 +200,11 @@ import Layout from "@/layouts/Layout.astro"
               </select>
             </label>
             <label class="field">
-              <span>Name der Abgeordneten oder des Abgeordneten</span>
+              <span>Name des Abgeordneten</span>
               <input name="recipient" placeholder="Optional">
             </label>
             <label class="field wide">
-              <span>E-Mail der Abgeordneten oder des Abgeordneten</span>
+              <span>E-Mail des Abgeordneten</span>
               <input name="recipientEmail" type="email" placeholder="Optional">
             </label>
             <label class="field">
@@ -222,7 +235,7 @@ import Layout from "@/layouts/Layout.astro"
         <div class="generator-output" data-letter-output data-copy-scope>
           <div class="preview-head">
             <h3>Live-Vorschau</h3>
-            <span>bearbeiten · kopieren · einfügen</span>
+            <span>bearbeiten, kopieren, absenden</span>
           </div>
           <textarea id="letter-text" aria-label="Briefentwurf"></textarea>
           <div class="output-actions">
@@ -383,11 +396,12 @@ ${salutation}
 
 seit 1. Jänner 2026 werden in Österreich im Zusammenhang mit DAC8 Identitätsdaten und Krypto-Aktivität verarbeitet. Für meldepflichtige Nutzer werden jährlich Werte, Einheiten und Transaktionszahlen je Kryptowert und Kategorie gemeldet. Österreich verpflichtet Anbieter darüber hinaus, die relevanten Informationen für alle Kunden, Transaktionen und Kryptowerte zu verarbeiten – unabhängig davon, ob am Ende tatsächlich eine Meldepflicht besteht.${personalParagraph}
 
-Ich unterstütze eine gezielte und wirksame Durchsetzung von Steuerpflichten. Ich lehne aber die anlasslose Massenerfassung legaler Finanzaktivität ab. Steuerprüfung darf nicht zur Finanzüberwachung auf Vorrat werden.
+Mir geht es dabei nicht um Steuern, sondern um Daten. Ich lehne die anlasslose Massenerfassung legaler Finanzaktivität ab, die alle Kunden unter Generalverdacht stellt. Steuerverwaltung darf nicht zur Finanzüberwachung auf Vorrat werden.
 
 Ich ersuche Sie daher, sich insbesondere für folgende Punkte einzusetzen:
 
 – eine parlamentarische Prüfung der österreichischen Alle-Kunden-Regel in § 20 Abs. 1 Krypto-MPfG,
+– eine Begründung oder Korrektur der zehnjährigen Speicherfrist, die doppelt so lang ist wie die fünf Jahre für Bankkonten nach § 5 GMSG,
 – keine Ausweitung auf Wallet-Adressen, einzelne Transaktionsdaten oder Zeiträume vor 2026 ohne neue öffentliche und grundrechtliche Prüfung,
 – klare und überprüfbare Grenzen für Zweck, Zugriff, Speicherung und Weiterverwendung,
 – wirksame Information, Auskunft und Korrektur für Betroffene,

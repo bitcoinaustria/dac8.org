@@ -1,7 +1,7 @@
 export const SITE = {
   title: "dac8.org",
   description:
-    "Klare Grenzen für DAC8 und staatliche Finanzdaten – eine Initiative von Bitcoin Austria.",
+    "Gegen die anlasslose Erfassung von Krypto-Finanzdaten – eine Initiative von Bitcoin Austria.",
   locale: "de-AT",
   dir: "ltr",
   defaultPageImage: "/static/opengraph-image.png",

@@ -19,19 +19,19 @@ const bankDetails = [
 const fundingUses = [
   {
     title: "Anwaltliche Prüfung",
-    text: "Ein belastbarer Fall braucht Juristinnen und Juristen, die Sachverhalt, Verantwortlichen und Rechtsweg sauber aufbauen – bevor irgendetwas eingebracht wird.",
+    text: "Sachverhalt, Anbieter und Rechtsweg sauber aufbauen, bevor etwas eingebracht wird.",
   },
   {
     title: "Gutachten und Recherche",
-    text: "Primärquellen lesen, Gesetzestexte gegen Behauptungen prüfen, Fachmeinungen einholen. Das ist der Teil, der die Kampagne glaubwürdig hält.",
+    text: "Behauptungen gegen Quellen prüfen und Fachmeinungen einholen.",
   },
   {
-    title: "Werkzeuge und Infrastruktur",
-    text: "Diese Website, die lokal arbeitenden Generatoren und unser eigener BTCPay-Server kommen ohne Werbetracker aus. Technisch notwendige Verbindungs- und Zahlungsdaten beschreiben wir in der Datenschutzerklärung.",
+    title: "Werkzeuge",
+    text: "Diese Website, die Generatoren und der eigene BTCPay-Server, alles ohne Tracker.",
   },
   {
     title: "Öffentlichkeit",
-    text: "Gespräche mit Abgeordneten, Medien und anderen Organisationen, damit Finanzüberwachung auf Vorrat nicht unwidersprochen zum Standard wird.",
+    text: "Gespräche mit Abgeordneten, Medien und anderen Organisationen.",
   },
 ]
 ---
@@ -39,8 +39,8 @@ const fundingUses = [
 <Layout
   sections={[
     { id: "wege", label: "Bitcoin oder Euro" },
-    { id: "verwendung", label: "Wofür" },
-    { id: "verein", label: "Bitcoin Austria" },
+    { id: "verwendung", label: "Wofür das Geld ist" },
+    { id: "verein", label: "Wer es bekommt" },
   ]}
 >
   <MetaPage
@@ -49,15 +49,12 @@ const fundingUses = [
     description="Unterstütze die Arbeit gegen Finanzüberwachung auf Vorrat: Spende in Bitcoin über den BTCPay-Server von Bitcoin Austria oder in Euro per Überweisung."
   />
 
-  <article class="campaign dossier">
+  <article class="campaign">
     <header class="hero">
-      <p class="eyebrow">Spenden · Bitcoin Austria</p>
       <h1>Gegenwehr kostet. <span>Trag mit.</span></h1>
       <p class="lead">
-        Recherche, anwaltliche Prüfung, Gutachten und diese Website kosten Geld.
-        Deine Spende geht direkt an <strong>Bitcoin Austria</strong>, den
-        gemeinnützigen Verein hinter dac8.org – in Bitcoin über unseren eigenen
-        Server oder in Euro per Überweisung.
+        Anwälte, Gutachten und Recherche kosten Geld. Deine Spende geht direkt
+        an Bitcoin Austria, den Verein hinter dac8.org.
       </p>
       <nav class="hero-actions" aria-label="Spendenweg wählen">
         <a class="button primary" href={btcpay} target="_blank" rel="noopener"
@@ -65,40 +62,23 @@ const fundingUses = [
         >
         <a class="button" href="#euro">Per Überweisung</a>
       </nav>
-      <dl class="stamp" aria-label="Das Wichtigste zur Spende">
-        <dt>Empfänger</dt>
-        <dd>Bitcoin Austria, Verein (ZVR 828542896)</dd>
-        <dt>Bitcoin</dt>
-        <dd>eigener BTCPay-Server</dd>
-        <dt>Euro</dt>
-        <dd>eigenes Vereinskonto · Verwendungszweck DAC8</dd>
-        <dd class="stamp-note">
-          Eine Spende begründet keinen Anspruch auf Beteiligung oder einen
-          bestimmten Ausgang.
-        </dd>
-      </dl>
     </header>
 
     <section id="wege" aria-labelledby="wege-heading">
-      <p class="eyebrow">Zwei Wege</p>
-      <h2 id="wege-heading">Bitcoin oder Euro. Beides kommt direkt an.</h2>
-      <div class="donate-grid">
-        <article class="donate-card" id="bitcoin" data-copy-scope>
-          <p class="step">Bitcoin</p>
-          <h3>Über unseren BTCPay-Server</h3>
+      <h2 id="wege-heading">Bitcoin oder Euro</h2>
+      <div class="cards">
+        <article id="bitcoin" data-copy-scope>
+          <h3>Bitcoin</h3>
+          <p class="where">Lightning oder On-Chain, Betrag frei wählbar</p>
           <p>
-            Lightning oder On-Chain, Betrag frei wählbar. Der Server gehört dem
-            Verein und fragt für die Spende weder Namen noch E-Mail-Adresse ab.
-            Technisch notwendige Verbindungs-, Rechnungs- und Zahlungsdaten
-            werden nach unserer <a href="/datenschutz/">Datenschutzerklärung</a>
-            verarbeitet.
+            Der Server gehört dem Verein und fragt weder Namen noch E-Mail ab.
           </p>
           <a class="button primary" href={btcpay} target="_blank" rel="noopener"
             >Mit Bitcoin spenden</a
           >
           <dl class="bank-details">
             <div>
-              <dt>Adresse für ein anderes Gerät</dt>
+              <dt>Link für ein anderes Gerät</dt>
               <dd>
                 <span>pay.bitcoin-austria.at</span>
                 <button
@@ -115,13 +95,9 @@ const fundingUses = [
           <p class="copy-status" data-copy-status aria-live="polite"></p>
         </article>
 
-        <article class="donate-card" id="euro" data-copy-scope>
-          <p class="step">Euro</p>
-          <h3>Per Überweisung</h3>
-          <p>
-            Klassisch aufs Vereinskonto. Mit dem Verwendungszweck ordnen wir die
-            Spende der DAC8-Arbeit zu.
-          </p>
+        <article id="euro" data-copy-scope>
+          <h3>Euro</h3>
+          <p class="where">Überweisung aufs Vereinskonto</p>
           <dl class="bank-details">
             {bankDetails.map((detail) => (
               <div>
@@ -143,60 +119,44 @@ const fundingUses = [
           <p class="copy-status" data-copy-status aria-live="polite"></p>
         </article>
       </div>
-      <aside class="clarification">
+      <p class="prose">
         <strong>Größerer Beitrag?</strong>
-        Wer gezielt Rechts- oder Gutachterkosten tragen will, schreibt uns
-        vorher kurz an
-        <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>. Dann klären wir
-        Zweckbindung und Abwicklung, bevor Geld fließt.
-      </aside>
+        Schreib uns vorher kurz an
+        <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>, dann klären wir
+        die Zweckbindung.
+      </p>
     </section>
 
     <section id="verwendung" aria-labelledby="verwendung-heading">
-      <p class="eyebrow">Wofür</p>
-      <h2 id="verwendung-heading">Vier Posten, kein Overhead-Apparat.</h2>
+      <h2 id="verwendung-heading">Wofür das Geld ist</h2>
       <p class="section-intro">
-        Die Kampagne wird ehrenamtlich getragen. Geld fließt dorthin, wo
-        Ehrenamt nicht reicht: in juristische Arbeit, Belege und die Technik,
-        die alles zusammenhält.
+        Die Kampagne ist ehrenamtlich. Geld fließt nur dorthin, wo Ehrenamt
+        nicht reicht.
       </p>
-      <ol class="numbered">
+      <ul class="facts">
         {fundingUses.map((use) => (
           <li>
-            <h3>{use.title}</h3>
+            <strong>{use.title}</strong>
             <p>{use.text}</p>
           </li>
         ))}
-      </ol>
+      </ul>
     </section>
 
-    <section id="verein" class="position" aria-labelledby="verein-heading">
-      <div>
-        <p class="eyebrow">Wer das Geld bekommt</p>
-        <h2 id="verein-heading">Bitcoin Austria. Seit 2011.</h2>
-        <p class="section-intro">
-          Bitcoin Austria ist Europas ältester Bitcoin-Verein, gegründet 2011 in
-          Wien. Der Verein ist gemeinnützig, nicht auf Gewinn ausgerichtet und
-          fördert Verständnis und Verbreitung von Bitcoin in Österreich.
-          dac8.org ist seine Initiative gegen anlasslose Finanzüberwachung –
-          nicht, weil es um Bitcoin geht, sondern weil der Maßstab für alle
-          gilt.
-        </p>
-        <a class="text-link" href="https://bitcoin-austria.at"
-          >Zur Vereinswebsite</a
-        >
-      </div>
-      <aside class="legal-note" aria-labelledby="transparenz-heading">
-        <p class="eyebrow">Transparenz</p>
-        <h3 id="transparenz-heading">Fragen zur Verwendung? Frag.</h3>
-        <p>
-          Bitcoin Austria – Verein zur Förderung von Bitcoin in Österreich,
-          ZVR-Zahl 828542896, Sitz in Wien. Vertretung und Postanschrift stehen
-          im Impressum. Wer wissen will, wofür Spenden verwendet wurden,
-          schreibt an <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>.
-        </p>
-        <a class="text-link" href="/impressum/">Zum Impressum</a>
-      </aside>
+    <section id="verein" aria-labelledby="verein-heading">
+      <h2 id="verein-heading">Wer das Geld bekommt</h2>
+      <p class="section-intro">
+        Bitcoin Austria, gemeinnütziger Verein, gegründet 2011 in Wien.
+        ZVR&#8209;Zahl 828542896.
+      </p>
+      <p class="prose">
+        Eine Spende begründet keinen Anspruch auf Beteiligung oder einen
+        bestimmten Ausgang. Fragen zur Verwendung beantworten wir unter
+        <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>.
+      </p>
+      <a class="text-link" href="https://bitcoin-austria.at"
+        >Zur Vereinswebsite</a
+      >
     </section>
   </article>
 

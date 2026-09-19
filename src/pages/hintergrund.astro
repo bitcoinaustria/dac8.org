@@ -2,110 +2,178 @@
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
 
-const facts = [
-  {
-    title: "Alle Kunden werden vorsorglich erfasst",
-    text: "Österreich verpflichtet meldepflichtige Krypto-Dienstleister, die relevanten Daten für alle Kunden, Transaktionen und Kryptowerte zu verarbeiten – unabhängig davon, ob eine Person am Ende tatsächlich meldepflichtig ist.",
-  },
-  {
-    title: "Was jährlich gemeldet wird",
-    text: "Für meldepflichtige Nutzer: Name, Anschrift, Steuerwohnsitz, Steuer-ID sowie Geburtsdatum und gegebenenfalls Geburtsort. Dazu kommen je Kryptowert und Kategorie aggregierte Werte, Einheiten und Transaktionszahlen.",
-  },
-  {
-    title: "Was DAC8 nicht meldet",
-    text: "Der Bericht enthält keine Wallet- oder DLT-Adressen, Transaktions-IDs, einzelnen Transaktionszeitpunkte, Gegenparteien oder rohe Transaktionshistorie. Bei Transfers an unbekannte externe Adressen werden Summen gemeldet, nicht die Adresse selbst. DAC8 meldet auch keinen aktuellen Kontostand und kein vollständiges Vermögen.",
-  },
-  {
-    title: "Keine Meldung von Transaktionen vor 2026",
-    text: "Der erste Meldezeitraum beginnt am 1. Jänner 2026. Vorherige Krypto-Transaktionen werden nach geltendem Recht nicht rückwirkend unter DAC8 gemeldet. Die erste Meldung für 2026 ist bis 31. Juli 2027 fällig; bestehende Kunden müssen aber für die Sorgfaltspflichten eingestuft werden.",
-  },
-  {
-    title: "Was die zehn Jahre wirklich bedeuten",
-    text: "Übermittelte Informationen zum Meldejahr 2026 sind nach § 20 Ende 2036 zu löschen; Dokumente über Melde- und Sorgfaltsschritte sind nach § 39 zehn Jahre aufzubewahren. Eine pauschale Pflicht, jede rohe Transaktion allein wegen DAC8 zehn Jahre zu speichern, steht so nicht im Gesetz. Andere Regeln zu Geldwäsche, MiCA oder Geldtransfers können daneben eigene Pflichten auslösen.",
-  },
-]
+const researchDate = "16. September 2026"
 
 const concerns = [
   {
-    title: "Generalverdacht statt Anlass",
-    text: "Österreich lässt die relevanten Informationen zunächst für alle Kunden und Transaktionen verarbeiten. Es braucht keinen konkreten Verdacht. Genau diese vorsorgliche Massenerfassung lehnen wir ab.",
+    title: "Alle, nicht nur Verdächtige.",
+    text: "Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, bevor überhaupt feststeht, wer gemeldet wird. Ein Anlass oder Verdacht ist nicht nötig. Genau diese Vorratslogik lehnen wir ab.",
   },
   {
-    title: "Die Verknüpfung macht den Unterschied",
-    text: "DAC8 selbst übermittelt keinen Wallet-Graphen. Werden seine Identitätsdaten aber mit Anbieteraufzeichnungen oder öffentlichen Blockchain-Daten verbunden, können wesentlich tiefere Rückschlüsse entstehen.",
+    title: "Ein Profil über Jahre.",
+    text: "Anders als bei Bankkonten werden je Kryptowert auch Stückzahlen und die Zahl der Vorgänge gemeldet. Jahr für Jahr ergibt das ein Bild, wie aktiv jemand ist, auch wenn der aktuelle Bestand nicht dabei ist.",
   },
   {
-    title: "Gespeicherte Daten wecken neue Begehrlichkeiten",
-    text: "Das DAC-System wurde wiederholt um neue Datenarten erweitert. Seit 2026 können ausgetauschte Informationen unter gesetzlichen Bedingungen auch für Geldwäschebekämpfung und Sanktionen verwendet werden. Darum sind enge Zweckgrenzen keine Nebensache.",
+    title: "Ein Datenleck ist nicht rückgängig zu machen.",
+    text: "Die Meldung enthält keine Wallet-Adressen. Gelangen Identität und Jahreswerte aber in falsche Hände, lassen sie sich mit der öffentlichen Blockchain verknüpfen. Was dort einmal zugeordnet ist, bleibt zugeordnet.",
   },
   {
-    title: "Fehler reisen mit",
-    text: "Falscher Steuerwohnsitz, doppelte Werte oder missverstandene Transfers können grenzüberschreitend weitergegeben werden. Je mehr Stellen beteiligt sind, desto wichtiger werden Auskunft, Korrektur und nachvollziehbare Löschung.",
+    title: "Der Zweck wächst mit.",
+    text: "Ausgetauschte Daten dürfen laut Richtlinie nicht nur für Steuern, sondern auch für Zoll, Geldwäschebekämpfung und unter Bedingungen für Sanktionen genutzt werden. Jeder neue Zweck braucht eine eigene, klare Grenze.",
   },
   {
-    title: "Nutzen ist kein Blankoscheck",
-    text: "Finanzdaten können Ermittlungen unterstützen. Daraus folgt nicht automatisch, dass jedes Feld, jede Person und zehn Jahre Speicherung erforderlich sind. Wirksamkeit und Grundrechtseingriff müssen gemeinsam geprüft werden.",
+    title: "Fehler reisen mit.",
+    text: "Ein falscher Steuerwohnsitz, eine falsche Bewertung oder ein missverstandener Transfer kann an andere Staaten weitergegeben werden. Je mehr Stellen beteiligt sind, desto schwerer wird die Korrektur.",
   },
   {
-    title: "Infrastruktur macht Ausbau leichter",
-    text: "Neue Felder, Empfänger oder rückwirkende Meldezeiträume würden eine neue Rechtsgrundlage brauchen. Wenn Standards und Schnittstellen einmal stehen, wird der nächste Ausbau technisch leichter – und politische Kontrolle umso wichtiger.",
+    title: "Zehn Jahre ohne Begründung.",
+    text: "Bei Bankkonten löscht Österreich die gemeldeten Daten nach fünf Jahren; die Materialien nannten das damals datenschutzrechtlich angemessen. Für Krypto sind es zehn Jahre. Warum, steht in den Gesetzesmaterialien nicht.",
   },
 ]
 
 const faqs = [
   {
-    question: "Wer steht hinter dac8.org?",
-    answer: "Eine Initiative des Vereins Bitcoin Austria.",
+    question: "Bin ich betroffen, wenn ich Bitcoin besitze?",
+    answer:
+      "Nur, wenn ein Krypto-Anbieter beteiligt ist, der in Österreich meldepflichtig ist, etwa eine Börse oder ein Broker mit Sitz in Österreich. Wer Bitcoin ausschließlich selbst verwahrt und keinen solchen Anbieter nutzt, wird durch DAC8 nicht gemeldet.",
   },
   {
-    question: "Bin ich automatisch betroffen, wenn ich Bitcoin halte?",
+    question: "Wird meine eigene Wallet-Adresse gemeldet?",
     answer:
-      "Nein. Entscheidend sind der konkrete Dienstleister, dessen Meldezuständigkeit und deine steuerliche Ansässigkeit. Reine Selbstverwahrung ohne beteiligten meldepflichtigen Dienstleister wird nicht automatisch durch DAC8 meldepflichtig.",
+      "Nein, Adressen sind nicht Teil der Meldung. Gemeldet wird aber die Summe aller Übertragungen an Adressen, die dem Anbieter nicht als Adresse eines anderen Anbieters bekannt sind. Darunter fällt in der Regel auch der Transfer auf deine eigene Wallet.",
   },
   {
-    question: "Wird meine externe Wallet-Adresse gemeldet?",
+    question:
+      "Ich tausche Bitcoin gegen einen anderen Kryptowert. Wird das gemeldet?",
     answer:
-      "Die Richtlinie verlangt für Transfers an externe Adressen aggregierte Werte und Einheiten. Die Adresse selbst gehört nicht zu den dort aufgezählten Meldedaten.",
+      "Ja. Der Tausch wird mit Wert, Stückzahl und Anzahl auf beiden Seiten gemeldet, obwohl er in Österreich für Privatpersonen steuerlich meist kein Verkauf ist. Das ist einer der Punkte, an denen wir die Notwendigkeit einzelner Meldefelder prüfen lassen wollen.",
   },
   {
-    question: "Ist DAC8 bereits ein vollständiges Vermögensregister?",
+    question: "Ist DAC8 ein Vermögensregister?",
     answer:
-      "Nein. DAC8 meldet jährliche Aktivitätsaggregate, keinen vollständigen Nettowert. Die Sorge ist präziser: Das Profil kann zusammen mit Kontenregistern, Anbieteraufzeichnungen und Blockchain-Analysen Teil einer immer aussagekräftigeren Vermögenskarte werden.",
+      "Nein. Gemeldet werden Jahreswerte der Aktivität, kein aktueller Bestand und kein Gesamtvermögen. Die Sorge ist eine andere: Zusammen mit Kontenregister, Anbieteraufzeichnungen und Blockchain-Analyse kann daraus Schicht für Schicht eine sehr genaue Vermögenskarte werden.",
   },
   {
-    question: "Werden Transaktionen vor 2026 rückwirkend gemeldet?",
+    question: "Werden Transaktionen vor 2026 nachgemeldet?",
     answer:
-      "Nein, nicht nach geltendem Recht. Der erste DAC8-Meldezeitraum beginnt am 1. Jänner 2026. Eine spätere rückwirkende Meldepflicht wäre politisch und technisch denkbar, bräuchte aber eine neue Rechtsgrundlage. Weder DAC9 noch der derzeitige DAC-Recast-Vorschlag enthalten eine solche Pflicht für Krypto-Transaktionen vor 2026.",
+      "Nein. Der erste Meldezeitraum beginnt am 1. Jänner 2026. Eine rückwirkende Meldepflicht bräuchte ein neues Gesetz. Weder DAC9 noch der aktuelle Vorschlag für eine Neufassung der Richtlinie sehen das vor.",
   },
   {
-    question: "Müssen Anbieter jede Rohtransaktion zehn Jahre speichern?",
+    question: "Müssen Anbieter jede Transaktion zehn Jahre speichern?",
     answer:
-      "Nicht allein aufgrund von DAC8. § 20 Krypto-MPfG sieht zehn Jahre für die übermittelten Informationen vor; § 39 verlangt zehn Jahre für Dokumente über die Melde- und Sorgfaltsschritte. Andere Gesetze – etwa Geldwäsche-, MiCA- oder Geldtransferregeln – können daneben granularere Aufzeichnungen verlangen. Die pauschale Aussage ‚jede Rohtransaktion zehn Jahre wegen DAC8‘ ist vom Gesetzeswortlaut nicht gedeckt.",
+      "Nicht wegen DAC8. Das Gesetz verlangt zehn Jahre für die gemeldeten Jahreswerte und für die Dokumentation der Melde- und Prüfschritte. Einzelne Transaktionsdaten heben Anbieter aus anderen Gründen auf, etwa nach Geldwäsche- oder MiCA-Regeln. Wir vermischen diese Pflichten bewusst nicht.",
   },
   {
-    question: "Bedeuten DAC9 und DAC10 automatisch mehr Krypto-Überwachung?",
+    question: "Bedeuten DAC9 und DAC10 noch mehr Krypto-Überwachung?",
     answer:
-      "Nein. DAC9 betrifft die Mindestbesteuerung großer Unternehmensgruppen, nicht zusätzliche Daten einzelner Krypto-Nutzer. Der im Juni 2026 vorgeschlagene DAC-Recast, oft DAC10 genannt, ist noch kein geltendes Recht und führt die bisherigen DAC8-Kryptofelder samt Startdatum fort. Er verlangt derzeit weder Wallet-Adressen noch die Nachmeldung von Transaktionen vor 2026. Das DAC-System wächst trotzdem weiter – deshalb prüfen wir jeden neuen Schritt statt nur auf seine Nummer zu zeigen.",
+      "Nicht automatisch. DAC9 betrifft die Mindestbesteuerung großer Unternehmensgruppen, nicht einzelne Krypto-Nutzer. Die im Juni 2026 vorgeschlagene Neufassung der Richtlinie, oft DAC10 genannt, ist noch kein geltendes Recht und führt die bisherigen Krypto-Felder fort. Wir schauen uns jeden Schritt einzeln an, statt auf die Nummer zu zeigen.",
   },
   {
-    question: "Geht es hier gegen Steuern oder Geldwäschebekämpfung?",
+    question: "Seid ihr gegen Steuern oder gegen Geldwäschebekämpfung?",
     answer:
-      "Nein. Steuerpflichten sind einzuhalten, und Finanzinformationen können bei Ermittlungen nützlich sein. Wir verlangen, dass Erfassung, Zugriff, Speicherdauer und Weiterverwendung nachweislich notwendig, wirksam und kontrollierbar sind.",
+      "Darum geht es hier nicht. Über Steuern lässt sich streiten, an anderer Stelle. Diese Kampagne richtet sich gegen die anlasslose Sammlung der Finanzdaten aller Kunden. Wir verlangen, dass Erfassung, Zugriff, Speicherdauer und Weiterverwendung nachweislich notwendig sind und dass Betroffene Fehler korrigieren können.",
   },
   {
-    question: "Ist DAC8 sicher rechtswidrig?",
+    question: "Ist DAC8 rechtswidrig?",
     answer:
-      "Wir halten die anlasslose österreichische Alle-Kunden-Verarbeitung für ein ernstes Grundrechtsproblem und wollen sie prüfen lassen. Ob Gerichte sie tatsächlich aufheben, ist offen. Eine klare politische Haltung braucht kein erfundenes Siegesversprechen.",
+      "Wir sind überzeugt, dass die österreichische Erfassung aller Kunden das Grundrecht auf Datenschutz verletzt. Entscheiden können das nur Gerichte, und es gibt Rechtsprechung, die dem automatischen Austausch von Steuerdaten grundsätzlich zustimmt. Deshalb sagen wir „wir sind überzeugt“ und nicht „es steht fest“. Genau diese Frage wollen wir klären lassen.",
   },
   {
-    question: "Wie funktioniert der Beschwerdegenerator?",
+    question: "Was passiert mit meinen Daten auf dieser Website?",
     answer:
-      "Der Generator läuft ausschließlich in deinem Browser und ordnet deine Angaben zu einem Entwurf. Du musst den konkreten Verantwortlichen, die tatsächliche Verarbeitung und persönliche Belege selbst angeben, den Text prüfen und die Beschwerde anschließend eigenständig einbringen.",
+      "Die Generatoren laufen vollständig in deinem Browser. Eingaben werden weder an Bitcoin Austria übertragen noch gespeichert. Welche technischen Daten beim Hosting anfallen, steht in der Datenschutzerklärung.",
+  },
+]
+
+const sourceGroups = [
+  {
+    title: "Österreichisches Gesetz",
+    sources: [
+      {
+        label: "Krypto-Meldepflichtgesetz, BGBl. I Nr. 96/2025",
+        href: "https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_2025_I_96/BGBLA_2025_I_96.pdf",
+      },
+      {
+        label: "§ 18 Krypto-MPfG – welche Daten gemeldet werden",
+        href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=18",
+      },
+      {
+        label: "§ 20 Krypto-MPfG – Verarbeitung für alle Kunden, Löschung",
+        href: "https://www.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40273819/NOR40273819.pdf",
+      },
+      {
+        label: "§ 39 Krypto-MPfG – Aufbewahrung der Dokumentation",
+        href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=39",
+      },
+      {
+        label: "§ 5 GMSG – fünf Jahre bei Bankkonten",
+        href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009250&Paragraf=5",
+      },
+      {
+        label: "§ 24 DSG – Beschwerde und Fristen",
+        href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Anlage=&Artikel=2&Gesetzesnummer=10001597&Paragraf=24",
+      },
+    ],
   },
   {
-    question: "Was passiert mit Daten auf dieser Website?",
-    answer:
-      "Die Generatoren laufen lokal in deinem Browser; Formulareingaben werden nicht an Bitcoin Austria übertragen oder gespeichert. Welche Verbindungsdaten beim Hoster technisch anfallen und wie wir Seitenaufrufe zählen, steht in der Datenschutzerklärung unter dac8.org/datenschutz.",
+    title: "EU-Recht",
+    sources: [
+      {
+        label: "Richtlinie (EU) 2023/2226 (DAC8)",
+        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:32023L2226",
+      },
+      {
+        label: "Folgenabschätzung der EU-Kommission zu DAC8, SWD(2022) 401",
+        href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=SWD:2022:401:FIN",
+      },
+      {
+        label: "Richtlinie (EU) 2025/872 (DAC9)",
+        href: "https://eur-lex.europa.eu/eli/dir/2025/872/oj/deu",
+      },
+      {
+        label: "Kommissionsvorschlag COM(2026) 308 – Neufassung der Richtlinie",
+        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:52026PC0308",
+      },
+      {
+        label: "EU-Kommission – Überblick zum DAC-System",
+        href: "https://taxation-customs.ec.europa.eu/taxation/tax-transparency-cooperation/administrative-co-operation-and-mutual-assistance/directive-administrative-cooperation-dac_en",
+      },
+      {
+        label: "EU-Machbarkeitsstudie zu einem europäischen Vermögensregister",
+        href: "https://op.europa.eu/en/publication-detail/-/publication/050b047e-3ff5-11ef-865a-01aa75ed71a1",
+      },
+    ],
+  },
+  {
+    title: "Gerichte",
+    sources: [
+      {
+        label:
+          "VfGH G 178/2024 – warum der Weg über die Datenschutzbehörde führt",
+        href: "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20260428_24G00178_00/JFT_20260428_24G00178_00.pdf",
+      },
+      {
+        label: "VfGH G 47/2012 ua – Aufhebung der Vorratsdatenspeicherung",
+        href: "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20140627_12G00047_00/JFT_20140627_12G00047_00.pdf",
+      },
+      {
+        label: "EuGH C-293/12 und C-594/12 – Vorratsdatenspeicherung",
+        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:62012CJ0293",
+      },
+    ],
+  },
+  {
+    title: "Behörden und Zivilgesellschaft",
+    sources: [
+      {
+        label: "Datenschutzbehörde – Informationen zur Beschwerde",
+        href: "https://dsb.gv.at/eingabe-an-die-dsb/beschwerde",
+      },
+      {
+        label: "epicenter.works – Geschichte der österreichischen Kampagne",
+        href: "https://epicenter.works/thema/vorratsdatenspeicherung",
+      },
+    ],
   },
 ]
 ---
@@ -113,351 +181,361 @@ const faqs = [
 <Layout
   sections={[
     { id: "was-ist-dac8", label: "Was ist DAC8?" },
-    { id: "warum", label: "Warum das alle angeht" },
-    { id: "ausblick", label: "Ausblick" },
-    { id: "forderungen", label: "Forderungen" },
-    { id: "handeln", label: "Handeln" },
-    { id: "rechtsweg", label: "Rechtsweg" },
-    { id: "partner", label: "Zusammenarbeiten" },
-    { id: "faq", label: "Fragen & Transparenz" },
-    { id: "quellen", label: "Primärquellen" },
+    { id: "gemeldet", label: "Was gemeldet wird" },
+    { id: "problem", label: "Was daran problematisch ist" },
+    { id: "ausblick", label: "Was noch kommen könnte" },
+    { id: "forderungen", label: "Was wir fordern" },
+    { id: "rechtsweg", label: "Wie wir vorgehen" },
+    { id: "faq", label: "Häufige Fragen" },
+    { id: "quellen", label: "Quellen" },
   ]}
 >
   <MetaPage
     slot="head"
     title="Hintergrund zu DAC8"
-    description="Fakten, Risiken, Forderungen, Rechtsweg und Primärquellen zu DAC8 und dem österreichischen Krypto-Meldepflichtgesetz."
+    description="Was DAC8 und das österreichische Krypto-Meldepflichtgesetz verlangen, was gemeldet wird, was daran problematisch ist und wie wir dagegen vorgehen. Mit Primärquellen."
   />
 
   <article class="campaign dossier">
     <header class="hero">
-      <p class="eyebrow">Fakten · Risiken · Gegenwehr</p>
-      <h1>DAC8: Finanzüberwachung <span>auf Vorrat.</span></h1>
-      <p class="intro">
-        Österreich verpflichtet Anbieter, Krypto-Aktivität ohne konkreten
-        Verdacht massenhaft zu erfassen. Wir sind dagegen. Hier steht präzise,
-        was tatsächlich gemeldet wird, wo die Grenzen liegen und wie Gegenwehr
-        aussehen kann.
+      <h1>Was DAC8 verlangt. <span>Und was nicht.</span></h1>
+      <p class="lead">
+        Was das Gesetz vorschreibt, was in der Meldung steht, wo die Grenzen
+        liegen und wie wir dagegen vorgehen. Ohne Übertreibung, mit Quellen zum
+        Nachlesen.
       </p>
       <nav class="hero-actions" aria-label="Direkteinstieg">
-        <a class="button primary" href="/handeln/">Was du tun kannst</a>
-        <a class="button" href="#was-ist-dac8">Mit den Fakten beginnen</a>
+        <a class="button primary" href="#gemeldet">Was gemeldet wird</a>
+        <a class="button" href="#rechtsweg">Wie wir vorgehen</a>
       </nav>
-      <dl class="stamp" aria-label="Aktueller Stand">
+      <dl class="glance" aria-label="Aktueller Stand">
         <dt>Gesetz in Kraft</dt>
         <dd>seit 1. Jänner 2026</dd>
-        <dt>Erste Meldung für 2026</dt>
-        <dd>spätestens 31. Juli 2027</dd>
-        <dt>Recherche geprüft</dt>
-        <dd>2. September 2026</dd>
-        <dd class="stamp-note">
-          Beschlossen heißt nicht unangreifbar. Gegenwehr beginnt mit Klarheit.
-        </dd>
+        <dt>Erste Meldung</dt>
+        <dd>für das Jahr 2026, spätestens am 31. Juli 2027</dd>
+        <dt>Stand der Recherche</dt>
+        <dd>{researchDate}</dd>
       </dl>
     </header>
 
     <section id="was-ist-dac8" aria-labelledby="was-heading">
-      <p class="eyebrow">Was das Gesetz tatsächlich macht</p>
-      <h2 id="was-heading">Nicht weniger behaupten. Nicht mehr.</h2>
+      <h2 id="was-heading">Was ist DAC8?</h2>
       <p class="section-intro">
-        DAC8 erweitert den automatischen Informationsaustausch der EU auf
-        Kryptowerte. Österreich setzt die Richtlinie mit dem
-        Krypto-Meldepflichtgesetz um. Der entscheidende österreichische Punkt:
-        Dienstleister müssen die späteren Meldedaten zunächst für alle Kunden,
-        Transaktionen und Kryptowerte verarbeiten – auch wenn nicht jede Person
-        am Ende gemeldet wird.
+        DAC8 ist eine EU-Richtlinie. Sie erweitert den automatischen Austausch
+        von Steuerdaten zwischen den EU-Staaten auf Kryptowerte. Österreich hat
+        sie mit dem Krypto-Meldepflichtgesetz umgesetzt, das seit 1. Jänner 2026
+        gilt.
       </p>
-      <ol class="numbered">
-        {facts.map((fact) => (
-          <li>
-            <h3>{fact.title}</h3>
-            <p>{fact.text}</p>
-          </li>
-        ))}
+      <ol class="flow" aria-label="Der Weg der Daten">
+        <li>
+          <strong>Du</strong>
+          <span
+            >nutzt eine Börse oder einen Broker mit Meldepflicht in Österreich</span
+          >
+        </li>
+        <li class="accent">
+          <strong>Der Anbieter</strong>
+          <span
+            >bereitet Identität und Jahreswerte für alle Kunden auf und meldet
+            einmal im Jahr</span
+          >
+        </li>
+        <li>
+          <strong>Das Finanzamt</strong>
+          <span>empfängt die Meldung, wertet sie aus, speichert sie</span>
+        </li>
+        <li>
+          <strong>Andere EU-Staaten</strong>
+          <span>erhalten die Daten, wenn du dort steuerlich ansässig bist</span>
+        </li>
       </ol>
-      <div class="flow" aria-label="Vereinfachter Datenweg">
-        <p>
-          <span>01</span><strong>Kunde</strong>
-          beim meldepflichtigen Anbieter
-        </p>
-        <p>
-          <span>02</span><strong>Dienstleister</strong>
-          verarbeitet und meldet
-        </p>
-        <p>
-          <span>03</span><strong>Finanzverwaltung</strong>
-          empfängt und prüft
-        </p>
-        <p>
-          <span>04</span><strong>Zuständige Staaten</strong>
-          tauschen Daten aus
-        </p>
-      </div>
-      <aside class="clarification">
-        <strong>Wichtig:</strong>
-        DAC8 übermittelt nicht jede Rohtransaktion. Österreich ordnet trotzdem
-        die vorsorgliche Verarbeitung für alle Kunden und Transaktionen an.
-        Genau diese Logik nennen wir Finanzüberwachung auf Vorrat.
-      </aside>
+      <p class="callout">
+        <strong>Der österreichische Zusatz:</strong>
+        Bevor feststeht, wer überhaupt gemeldet wird, muss der Anbieter die
+        Meldedaten für alle Kunden, alle Transaktionen und alle Kryptowerte
+        aufbereiten. Die Richtlinie verlangt das nicht.
+        <small>§ 20 Abs. 1 Krypto-MPfG. Hier setzt unsere Kritik an.</small>
+      </p>
     </section>
 
-    <section id="warum" aria-labelledby="warum-heading">
-      <p class="eyebrow">Warum das alle angeht</p>
-      <h2 id="warum-heading">Die Gefahr liegt in der Verknüpfung.</h2>
+    <section id="gemeldet" aria-labelledby="gemeldet-heading">
+      <h2 id="gemeldet-heading">Was gemeldet wird, und was nicht</h2>
       <p class="section-intro">
-        Ein einzelnes Jahresaggregat ist noch kein Vermögensregister. Doch
-        Identität, Wohnadresse, Aktivitätswerte, Anbieteraufzeichnungen und ein
-        öffentliches Ledger können gemeinsam ein sehr genaues Bild ergeben. Je
-        leichter solche Schichten verbunden werden, desto wichtiger werden
-        strenge Zweckgrenzen, kurze Speicherfristen und wirksame Kontrolle.
+        Die Meldung ist kein Kontoauszug. Sie enthält Jahreswerte, keine
+        einzelnen Transaktionen. Beides ist wichtig, um das Gesetz richtig
+        einzuschätzen.
       </p>
-      <div class="arguments">
-        {concerns.map((concern) => (
-          <section>
-            <h3>{concern.title}</h3>
-            <p>{concern.text}</p>
-          </section>
-        ))}
+      <div class="compare">
+        <div>
+          <h3>Das steht in der Meldung</h3>
+          <ul>
+            <li>Name, Anschrift, Steuerwohnsitz, Steuernummer, Geburtsdatum</li>
+            <li>
+              je Kryptowert und Vorgangsart drei Zahlen: Wert in Euro,
+              Stückzahl, Anzahl der Vorgänge – getrennt nach Kauf, Verkauf,
+              Tausch und Übertragung
+            </li>
+            <li>
+              Wert und Stückzahl aller Übertragungen an Adressen, die keinem
+              bekannten Anbieter gehören. Dazu zählt in der Regel deine eigene
+              Wallet.
+            </li>
+            <li>
+              auch Vorgänge, die steuerlich meist keine Rolle spielen, etwa der
+              Tausch von Krypto gegen Krypto
+            </li>
+          </ul>
+        </div>
+        <div class="absent">
+          <h3>Das steht nicht in der Meldung</h3>
+          <ul>
+            <li>Wallet-Adressen und Transaktionskennungen</li>
+            <li>einzelne Transaktionen, Zeitpunkte oder Gegenparteien</li>
+            <li>der aktuelle Bestand oder dein Gesamtvermögen</li>
+            <li>Vorgänge vor dem 1. Jänner 2026</li>
+          </ul>
+        </div>
       </div>
-      <blockquote>
-        <p>
-          Wir sind Bitcoiner. Wir haben früh gelernt: Wo Schlüssel, Identitäten
-          und Finanzdaten zusammengeführt werden, entstehen Macht und
-          Angriffsfläche. Diese Erfahrung bringen wir ein. Unser Maßstab gilt
-          aber für alle – auch für Menschen, die nie Bitcoin besessen haben.
-        </p>
-        <cite>Bitcoin Austria</cite>
-      </blockquote>
-      <p class="public-case">
-        Das ist kein Kampf gegen Steuerpflichten. Gezielte Steuerdurchsetzung
-        und Grundrechte sind vereinbar. Die Frage ist, ob der Staat nur jene
-        Daten erhält, die für einen klaren Zweck nachweislich notwendig sind –
-        und ob Betroffene Fehler korrigieren und rechtswidrige Nutzung stoppen
-        können.
+      <ul class="facts">
+        <li>
+          <strong>Mehr als bei Bankkonten</strong>
+          <p>
+            Bei Bankkonten meldet der Staat Salden und Erträge. Bei Krypto
+            kommen Stückzahlen und die Zahl der Vorgänge dazu. Jahr für Jahr
+            ergibt das ein Bild davon, wie aktiv jemand ist.
+          </p>
+        </li>
+        <li>
+          <strong>Zehn Jahre statt fünf</strong>
+          <p>
+            Der Anbieter darf die gemeldeten Daten erst zehn Jahre nach dem
+            Meldejahr löschen, für 2026 also Ende 2036. Für Bankkonten hat
+            Österreich 2018 fünf Jahre festgelegt und das damals als
+            datenschutzrechtlich angemessen bezeichnet. Den Unterschied
+            begründen die Gesetzesmaterialien nicht.
+          </p>
+        </li>
+        <li>
+          <strong>Wann was passiert</strong>
+          <p>
+            Der erste Meldezeitraum ist das Jahr 2026. Der Anbieter meldet es
+            bis 31. Juli 2027 ans Finanzamt, Österreich tauscht die Daten bis
+            30. September 2027 mit anderen EU-Staaten aus.
+          </p>
+        </li>
+        <li>
+          <strong>Was der Anbieter zusätzlich hat</strong>
+          <p>
+            Aus Geldwäsche- und Kryptomarkt-Regeln führen Anbieter deutlich
+            detailliertere Aufzeichnungen, darunter Adressen und Zeitstempel.
+            Sie sind nicht Teil der Meldung, liegen aber beim selben Anbieter.
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <section id="problem" aria-labelledby="problem-heading">
+      <h2 id="problem-heading">Was daran problematisch ist</h2>
+      <p class="section-intro">
+        Maßstab sind die Grundrechte auf Privatleben und auf Schutz der eigenen
+        Daten. Ein einzelner Jahreswert verletzt sie noch nicht. Problematisch
+        wird die Kombination: alle Kunden unter Generalverdacht, viele Jahre,
+        viele Empfänger, lange Speicherung.
+      </p>
+      <ul class="facts">
+        {concerns.map((concern) => (
+          <li>
+            <strong>{concern.title}</strong>
+            <p>{concern.text}</p>
+          </li>
+        ))}
+      </ul>
+      <p class="prose">
+        Wir sind Bitcoiner und haben früh gelernt, was passiert, wenn
+        Identitäten und Finanzdaten an einem Ort zusammenlaufen. Unser Maßstab
+        gilt aber für alle: Der Staat soll die Daten bekommen, die er für einen
+        klaren Zweck nachweislich braucht. Und Betroffene sollen Fehler
+        korrigieren und unzulässige Nutzung stoppen können.
       </p>
     </section>
 
     <section id="ausblick" aria-labelledby="ausblick-heading">
-      <p class="eyebrow">Heute beschlossen · morgen offen</p>
-      <h2 id="ausblick-heading">
-        Ausbau ist möglich. Rückwirkung gilt noch nicht.
-      </h2>
+      <h2 id="ausblick-heading">Was noch kommen könnte</h2>
       <p class="section-intro">
-        Das DAC-System wird regelmäßig verändert. Aber eine höhere Nummer ist
-        noch kein Beweis für mehr Krypto-Daten. Wir unterscheiden geltendes
-        Recht, aktuelle Vorschläge und das, was erst politisch verhindert werden
-        muss.
+        Das DAC-System wird regelmäßig erweitert. Eine höhere Nummer heißt aber
+        nicht automatisch mehr Krypto-Daten. Wir unterscheiden geltendes Recht,
+        Vorschläge und politische Möglichkeiten.
       </p>
-      <div class="arguments">
-        <section>
-          <h3>DAC8 gilt heute</h3>
+      <ul class="facts">
+        <li>
+          <span class="tag live">Gilt heute</span>
+          <strong>DAC8</strong>
           <p>
-            Gemeldet werden Identität und Jahresaggregate ab 1. Jänner 2026 –
-            keine Wallet-Adressen und keine einzelnen Transaktionsdatensätze.
+            Gemeldet werden Identität und Jahreswerte ab 2026. Keine
+            Wallet-Adressen, keine einzelnen Transaktionen.
           </p>
-        </section>
-        <section>
-          <h3>DAC9 ist kein Krypto-Ausbau</h3>
+        </li>
+        <li>
+          <span class="tag">Gilt, betrifft Krypto nicht</span>
+          <strong>DAC9</strong>
           <p>
-            DAC9 betrifft Steuerinformationen großer Unternehmensgruppen. Die
-            Richtlinie erweitert nicht die Meldedaten privater Krypto-Nutzer.
+            Die Richtlinie regelt die Mindestbesteuerung großer
+            Unternehmensgruppen, nicht private Nutzer.
           </p>
-        </section>
-        <section>
-          <h3>DAC10 ist noch ein Vorschlag</h3>
+        </li>
+        <li>
+          <span class="tag">Vorschlag seit Juni 2026</span>
+          <strong>„DAC10“</strong>
           <p>
-            Der DAC-Recast vom Juni 2026 führt die bisherigen Krypto-Felder und
-            das Startdatum fort. Er ordnet keine rückwirkende Meldung vor 2026
-            an.
+            Die vorgeschlagene Neufassung führt die bisherigen Krypto-Felder
+            fort. Sie verlangt weder Wallet-Adressen noch eine Nachmeldung von
+            Vorgängen vor 2026.
           </p>
-        </section>
-        <section>
-          <h3>Der nächste Schritt bleibt politisch</h3>
+        </li>
+        <li>
+          <span class="tag">Bräuchte ein neues Gesetz</span>
+          <strong>Adressen, Einzeltransaktionen, Rückwirkung</strong>
           <p>
-            Wallet-Adressen, Einzeltransaktionen oder rückwirkende Zeiträume
-            könnten nur durch neue Regeln hinzukommen. Wir wehren uns, bevor aus
-            einer Möglichkeit der nächste Standard wird.
+            Nichts davon ist beschlossen. Ist die Infrastruktur einmal da, wird
+            jede Erweiterung aber technisch leichter, und öffentliche Kontrolle
+            wichtiger.
           </p>
-        </section>
-      </div>
+        </li>
+      </ul>
     </section>
 
     <section id="forderungen" aria-labelledby="forderungen-heading">
-      <p class="eyebrow">Wofür wir eintreten</p>
-      <h2 id="forderungen-heading">
-        Eine bessere digitale Zukunft ist möglich.
-      </h2>
+      <h2 id="forderungen-heading">Was wir fordern</h2>
       <p class="section-intro">
-        Wer umfassende Finanzdaten verlangt, trägt die Begründungslast. Wir
-        fordern keine Sonderzone für Bitcoin, sondern rechtsstaatliche
-        Mindeststandards für jede staatliche Finanzdaten-Infrastruktur.
+        Wer umfassende Finanzdaten verlangt, muss begründen, warum. Wir wollen
+        keine Sonderregel für Bitcoin, sondern Mindeststandards für jede
+        staatliche Sammlung von Finanzdaten.
       </p>
-      <ul class="demands">
+      <ul class="checklist">
         <li>
-          Transaktionsprofile erst erstellen, wenn eine Person tatsächlich
-          meldepflichtig ist.
+          <strong
+            >Erst prüfen, wer meldepflichtig ist, dann Daten aufbereiten.</strong
+          >
+          Nicht umgekehrt.
         </li>
         <li>
-          Speicherfristen für jedes Datenfeld begründen und nie gemeldete Daten
-          zuverlässig löschen.
+          <strong>Jedes Meldefeld muss seinen Nutzen belegen.</strong>
+          Stückzahlen, Anzahl der Vorgänge und Transferfelder gehen über das
+          hinaus, was bei Bankkonten gemeldet wird. Welchen steuerlichen
+          Mehrwert sie bringen, ist offen.
         </li>
         <li>
-          Empfänger, Zugriffe und Weiterverwendung eng begrenzen und lückenlos
-          protokollieren.
+          <strong>Die eigene Wallet ist keine Zahlung an Dritte.</strong>
+          Übertragungen auf selbst verwahrte Adressen sollen erkennbar getrennt
+          behandelt werden.
         </li>
         <li>
-          Auskunft, Korrektur und Löschung über alle Empfänger hinweg praktisch
-          durchsetzbar machen.
+          <strong>Speicherfristen begründen.</strong>
+          Zehn Jahre statt der fünf bei Bankkonten brauchen eine Erklärung oder
+          eine Korrektur.
         </li>
         <li>
-          Zielgerichtete Anfragen nutzen, wo sie das gleiche Ergebnis mit
-          weniger Eingriff erreichen.
+          <strong>Zweck, Zugriff und Weitergabe eng begrenzen</strong>
+          und lückenlos protokollieren.
         </li>
         <li>
-          Nutzen, Kosten und Grundrechtsfolgen unabhängig und regelmäßig
-          evaluieren.
+          <strong>Auskunft, Korrektur und Löschung</strong>
+          müssen über alle Empfänger hinweg praktisch funktionieren.
+        </li>
+        <li>
+          <strong>Nutzen und Grundrechtsfolgen unabhängig evaluieren,</strong>
+          regelmäßig und öffentlich.
         </li>
       </ul>
-      <p class="public-case">
-        <strong>Gegenwehr wirkt:</strong>
-        Die von AKVorrat, heute epicenter.works, organisierte österreichische
-        Beschwerde führte über den VfGH zum EuGH. 2014 wurden die EU-Richtlinie
-        und die zentralen österreichischen Regeln zur Vorratsdatenspeicherung
-        aufgehoben. DAC8 ist ein anderer Fall und der Ausgang offen. Der Erfolg
-        zeigt trotzdem: Grundrechte verteidigen ist kein symbolischer Akt.
+      <p class="prose">
+        <strong>Gegenwehr wirkt.</strong>
+        Die von AKVorrat, heute epicenter.works, organisierte Beschwerde gegen
+        die Vorratsdatenspeicherung führte über den Verfassungsgerichtshof zum
+        Europäischen Gerichtshof. 2014 fielen die EU-Richtlinie und die
+        österreichischen Regeln. DAC8 ist ein anderer Fall mit offenem Ausgang.
+        Aber er zeigt: Grundrechte zu verteidigen ist kein symbolischer Akt.
       </p>
-    </section>
-
-    <section id="handeln" aria-labelledby="handeln-heading">
-      <p class="eyebrow">Handeln</p>
-      <h2 id="handeln-heading">Beschwer dich. Schreib deinen Abgeordneten.</h2>
-      <p class="section-intro">
-        DAC8 ist beschlossen. Wie weit Finanzdaten erfasst werden dürfen, bleibt
-        eine rechtliche und politische Frage. Dafür stehen dir eigene
-        demokratische und rechtliche Mittel offen.
-      </p>
-      <ol class="action-grid three">
-        <li>
-          <p class="step">01 · Datenschutz</p>
-          <h3>Eigene Beschwerde einbringen</h3>
-          <p>
-            Wenn ein konkreter Anbieter deine Daten verarbeitet und du darin
-            eine Rechtsverletzung siehst, kannst du selbst eine Beschwerde bei
-            der Datenschutzbehörde einbringen. Benenne den Verantwortlichen, das
-            betroffene Recht und den tatsächlichen Sachverhalt.
-          </p>
-          <a class="button" href="/handeln/#beschwerde"
-            >Beschwerde vorbereiten</a
-          >
-        </li>
-        <li>
-          <p class="step">02 · Demokratie</p>
-          <h3>Abgeordnete anschreiben</h3>
-          <p>
-            Schreib deinen gewählten Vertreterinnen und Vertretern mit eigenen
-            Worten. Sag ihnen, warum du gezielte Steuerdurchsetzung unterstützt,
-            aber klare Grenzen für Erfassung, Speicherung und Weiterverwendung
-            erwartest.
-          </p>
-          <a class="button" href="/handeln/#abgeordnete">Brief vorbereiten</a>
-        </li>
-        <li>
-          <p class="step">03 · Öffentlichkeit</p>
-          <h3>Fakten weitergeben</h3>
-          <p>
-            Teile diese Seite mit einem Bitcoiner – und mit einer Person, die
-            glaubt, DAC8 betreffe sie nicht. Finanzielle Privatsphäre ist kein
-            Spezialinteresse einer Szene.
-          </p>
-          <button class="button" type="button" data-share>Seite teilen</button>
-        </li>
-      </ol>
-      <a class="text-link" href="/spenden/">Die Arbeit finanzieren</a>
-      <aside class="clarification">
-        <strong>Wichtig:</strong>
-        Eine DSB-Beschwerde ist ein persönlicher, förmlicher Rechtsbehelf. Der
-        Generator erleichtert den Entwurf, ersetzt aber weder deine
-        tatsächlichen Angaben noch die Prüfung vor dem Absenden.
-      </aside>
-      <p class="share-status" data-share-status aria-live="polite"></p>
     </section>
 
     <section id="rechtsweg" aria-labelledby="rechtsweg-heading">
-      <p class="eyebrow">Rechtsweg</p>
-      <h2 id="rechtsweg-heading">Wir versprechen keinen schnellen Sieg.</h2>
+      <h2 id="rechtsweg-heading">Wie wir vorgehen</h2>
       <p class="section-intro">
-        Ein starker Fall beginnt nicht mit der größten Behauptung, sondern mit
-        der richtigen betroffenen Person, dem richtigen Verantwortlichen und der
-        vollständigen Gegenjudikatur. Für gewöhnliche Nutzer ist ein direkter
-        Individualantrag nach der aktuellen VfGH-Rechtsprechung besonders
-        riskant.
+        Ein guter Fall beginnt nicht mit der lautesten Behauptung, sondern mit
+        der richtigen Person, dem richtigen Anbieter und einem sauber belegten
+        Sachverhalt. Der Weg führt über die Datenschutzbehörde.
       </p>
-      <div class="legal-tracks">
+      <ol class="flow" aria-label="Der Rechtsweg">
+        <li>
+          <strong>Anbieter</strong>
+          <span>verarbeitet deine Daten für DAC8; du holst Auskunft ein</span>
+        </li>
+        <li class="accent">
+          <strong>Datenschutzbehörde</strong>
+          <span>prüft deine Beschwerde gegen den Anbieter</span>
+        </li>
+        <li>
+          <strong>Bundesverwaltungsgericht</strong>
+          <span
+            >entscheidet über die Beschwerde und kann Fragen an den EuGH richten</span
+          >
+        </li>
+        <li>
+          <strong>VfGH / EuGH</strong>
+          <span>prüfen das österreichische Gesetz bzw. die EU-Richtlinie</span>
+        </li>
+      </ol>
+      <div class="tracks">
         <section>
-          <p class="step">Spur A · Nutzer</p>
-          <h3>Konkrete Verarbeitung angreifen</h3>
+          <h3>Warum nicht direkt zum Verfassungsgerichtshof?</h3>
           <p>
-            Daten beim konkreten Anbieter erheben, eine präzise Beschwerde bei
-            der Datenschutzbehörde führen und die Sache zum
-            Bundesverwaltungsgericht bringen. Dort können österreichische
-            Normprüfung und eine Vorlage an den EuGH aus einem echten Fall
-            heraus beantragt werden.
+            Der Verfassungsgerichtshof hat 2026 entschieden, dass Betroffene
+            zuerst den zumutbaren Weg über die Datenschutzbehörde nehmen müssen.
+            Ein direkter Antrag eines einzelnen Nutzers würde mit hoher
+            Wahrscheinlichkeit daran scheitern. Der längere Weg ist deshalb der
+            tragfähige.
           </p>
         </section>
         <section>
-          <p class="step">Spur B · Anbieter</p>
-          <h3>Österreichische Mehrpflichten prüfen</h3>
+          <h3>Was ein Anbieter zusätzlich tun kann</h3>
           <p>
-            Ein in Österreich direkt verpflichteter Anbieter kann andere
-            Voraussetzungen für einen Individualantrag erfüllen. Dafür müssen
-            die zusätzlichen österreichischen Pflichten und Kosten sauber vom
-            EU-Mindeststandard, MiCA, TFR und Geldwäschepflichten getrennt
-            werden.
+            Ein Anbieter mit Sitz in Österreich ist von den zusätzlichen
+            österreichischen Pflichten direkt betroffen und kann unter anderen
+            Voraussetzungen selbst zum Verfassungsgerichtshof gehen. Dafür
+            müssen die österreichischen Zusatzpflichten sauber vom
+            EU-Mindeststandard getrennt werden.
           </p>
         </section>
       </div>
-      <div class="route" aria-label="Möglicher Nutzer-Rechtsweg">
-        <span>Anbieter</span><b>→</b><span>DSB</span><b>→</b><span>BVwG</span
-        ><b>→</b><span>VfGH / EuGH</span>
-      </div>
-      <aside class="counsel">
-        <p class="eyebrow">Anwaltliche Begleitung</p>
-        <h3>Noch nicht öffentlich benannt.</h3>
-        <p>
-          Wir bereiten die anwaltliche Prüfung vor. Solange Mandat und Nennung
-          nicht bestätigt sind, behauptet diese Seite weder eine Einbringung
-          noch einen sicheren Verfahrensweg. Auch eine Vorlage an den EuGH kann
-          nur das Gericht beschließen, nicht die Beschwerdeführerin.
-        </p>
+      <ul class="facts">
+        <li>
+          <strong>Was eine Beschwerde braucht</strong>
+          <p>
+            Einen konkreten Anbieter, eine Verarbeitung, die jetzt schon
+            stattfindet, etwa Selbstauskunft, Einstufung oder Speicherung, und
+            Belege dafür. Dass 2027 eine Meldung kommen wird, reicht allein
+            nicht.
+          </p>
+        </li>
+        <li>
+          <strong>Was eine Beschwerde nicht bewirkt</strong>
+          <p>
+            Sie stoppt die Verarbeitung nicht automatisch. Ob vor der ersten
+            Meldung im Juli 2027 eine Entscheidung vorliegt, ist nicht
+            gesichert. Und ob der EuGH befragt wird, entscheidet allein das
+            Gericht.
+          </p>
+        </li>
+      </ul>
+      <aside class="note">
+        <h3>Wo wir stehen</h3>
+        Wir bereiten die anwaltliche Prüfung vor. Solange kein Mandat bestätigt
+        ist, nennen wir keine Kanzlei und behaupten keinen Verfahrensstand.
+        Diese Seite wird aktualisiert, sobald sich etwas ändert.
       </aside>
-      <aside class="clarification">
-        <strong>Was der Generator bewusst nicht macht:</strong>
-        Er bestimmt weder automatisch den richtigen Verantwortlichen noch
-        behauptet er einen Sachverhalt für dich. Diese Angaben und deine Belege
-        müssen aus deinem konkreten Fall kommen.
-      </aside>
-    </section>
-
-    <section id="partner" aria-labelledby="partner-heading">
-      <p class="eyebrow">Europäische Zusammenarbeit</p>
-      <h2 id="partner-heading">Österreich ist der Anfang, nicht die Grenze.</h2>
-      <p class="section-intro">
-        Wir teilen Argumente, Primärquellen und praktische Erfahrung mit
-        Organisationen, Unternehmen sowie rechtlichen und technischen
-        Fachleuten, die DAC8 in ihrem Land belastbar prüfen wollen. Nationale
-        Verfahren brauchen eigene Tatsachen und eigene Rechtswege – sie lassen
-        sich nicht einfach aus Österreich kopieren.
-      </p>
-      <a
-        class="button"
-        href="mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"
-        >Zusammenarbeit anfragen</a
-      >
     </section>
 
     <section id="faq" aria-labelledby="faq-heading">
-      <p class="eyebrow">Fragen & Transparenz</p>
-      <h2 id="faq-heading">FAQ</h2>
+      <h2 id="faq-heading">Häufige Fragen</h2>
       <div class="faq-list">
         {faqs.map((faq) => (
           <details>
@@ -469,121 +547,44 @@ const faqs = [
     </section>
 
     <section id="quellen" class="sources" aria-labelledby="sources-heading">
-      <p class="eyebrow">Belege statt Behauptungen</p>
-      <h2 id="sources-heading">Selbst prüfen.</h2>
+      <h2 id="sources-heading">Quellen</h2>
       <p class="section-intro">
-        Unsere Aussagen beruhen auf geltendem Recht, offizieller Rechtsprechung
-        und institutionellen Unterlagen. Wo nur ein Risiko oder eine politische
-        Bewertung vorliegt, nennen wir es auch so.
+        Alles, was hier steht, beruht auf Gesetzestexten, Gerichtsentscheidungen
+        und offiziellen Dokumenten. Wo wir bewerten statt belegen, sagen wir
+        das.
       </p>
-      <ul>
-        <li>
-          <a
-            href="https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_2025_I_96/BGBLA_2025_I_96.pdf"
-            >Krypto-Meldepflichtgesetz, BGBl. I Nr. 96/2025</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:32023L2226"
-            >Richtlinie (EU) 2023/2226 (DAC8)</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=18"
-            >§ 18 Krypto-MPfG – Meldedaten</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://www.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40273819/NOR40273819.pdf"
-            >§ 20 Krypto-MPfG – Verarbeitung, Information und Löschung</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=39"
-            >§ 39 Krypto-MPfG – Aufbewahrung von Dokumenten</a
-          >
-        </li>
-        <li>
-          <a href="https://eur-lex.europa.eu/eli/dir/2025/872/oj/deu"
-            >Richtlinie (EU) 2025/872 (DAC9)</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:52026PC0308"
-            >Kommissionsvorschlag COM(2026) 308 – DAC-Recast</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://taxation-customs.ec.europa.eu/taxation/tax-transparency-cooperation/administrative-co-operation-and-mutual-assistance/directive-administrative-cooperation-dac_en"
-            >EU-Kommission – Überblick zum DAC-System und seinen
-            Verwendungszwecken</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://op.europa.eu/en/publication-detail/-/publication/050b047e-3ff5-11ef-865a-01aa75ed71a1"
-            >EU-Machbarkeitsstudie zu einem europäischen Vermögensregister</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20260428_24G00178_00/JFT_20260428_24G00178_00.pdf"
-            >VfGH G 178/2024 – Subsidiarität und DSB/BVwG-Rechtsweg</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:62012CJ0293"
-            >EuGH C-293/12 und C-594/12 – Vorratsdatenspeicherung</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20140627_12G00047_00/JFT_20140627_12G00047_00.pdf"
-            >VfGH G 47/2012 ua – Aufhebung in Österreich</a
-          >
-        </li>
-        <li>
-          <a href="https://epicenter.works/thema/vorratsdatenspeicherung"
-            >epicenter.works – Geschichte der österreichischen Kampagne</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Anlage=&Artikel=2&Gesetzesnummer=10001597&Paragraf=24"
-            >§ 24 DSG – Beschwerde und Fristen</a
-          >
-        </li>
-        <li>
-          <a href="https://dsb.gv.at/eingabe-an-die-dsb/beschwerde"
-            >Datenschutzbehörde – offizielle Beschwerdeinformation</a
-          >
-        </li>
-      </ul>
+      <div class="source-groups">
+        {sourceGroups.map((group) => (
+          <div>
+            <h3>{group.title}</h3>
+            <ul>
+              {group.sources.map((source) => (
+                <li>
+                  <a href={source.href}>{source.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
       <p class="research-note">
-        Recherche- und Informationsstand: 2. September 2026. Keine
-        Rechtsberatung. Verfahrensstatus, Fristen und konkrete Betroffenheit
-        müssen vor Nutzung erneut geprüft werden.
+        Stand der Recherche: {researchDate}. Keine Rechtsberatung. Fristen,
+        Verfahrensstand und deine konkrete Betroffenheit musst du vor jedem
+        Schritt selbst prüfen oder prüfen lassen.
       </p>
     </section>
 
     <aside class="closing">
-      <p class="eyebrow">Jetzt weitertragen</p>
       <h2>Grundrechte verteidigen sich nicht von selbst.</h2>
       <p>
-        Teile diese Seite, weil Massenüberwachung nicht normal werden darf. Der
-        Wind dreht sich nicht von selbst – sondern wenn Menschen widersprechen,
-        Beschwerden einbringen und Abgeordnete in die Verantwortung nehmen.
+        Bereite eine Beschwerde vor, schreib deinen Abgeordneten oder trag den
+        Rechtsweg finanziell mit. Jede dieser Handlungen macht sichtbar, dass
+        die Erfassung aller nicht einfach hingenommen wird.
       </p>
       <div class="closing-actions">
+        <a class="button" href="/handeln/">Was du tun kannst</a>
+        <a class="button" href="/spenden/">Spenden</a>
         <button class="button" type="button" data-share>Seite teilen</button>
-        <a class="button" href="/handeln/#abgeordnete">Brief vorbereiten</a>
       </div>
     </aside>
   </article>
