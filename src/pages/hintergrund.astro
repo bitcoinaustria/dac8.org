@@ -15,7 +15,7 @@ const concerns = [
   },
   {
     title: "Ein Datenleck ist nicht rückgängig zu machen.",
-    text: "Die Meldung enthält keine Wallet-Adressen. Gelangen Identität und Jahreswerte aber in falsche Hände, können zusätzliche Informationen eine Verknüpfung mit öffentlichen Blockchain-Daten ermöglichen. Ob das gelingt, hängt von den verfügbaren Daten ab.",
+    text: "Die Meldung enthält keine Wallet-Adressen. Identität und Jahreswerte können aber zusammen mit weiteren Informationen Rückschlüsse auf Vermögen und Blockchain-Aktivitäten ermöglichen. Ein Datenleck kann damit auch die persönliche Sicherheit gefährden.",
   },
   {
     title: "Der Zweck wächst mit.",
@@ -163,6 +163,26 @@ const sourceGroups = [
     ],
   },
   {
+    title: "Datenlecks und körperliche Angriffe",
+    sources: [
+      {
+        label:
+          "Gendarmerie nationale – Datenlecks als Faktor bei Krypto-Entführungen",
+        href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-1-2",
+      },
+      {
+        label:
+          "Gendarmerie nationale – Entführung von David Balland und seiner Partnerin, Januar 2025",
+        href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/criminalite-organisee-et-enquetes/2025/enlevement-de-david-balland-un-engagement-massif-et-complet-de-la-gendarmerie-nationale",
+      },
+      {
+        label:
+          "Jameson Lopp – Known Physical Bitcoin Attacks (Sammlung mit Quellenlinks)",
+        href: "https://github.com/jlopp/physical-bitcoin-attacks",
+      },
+    ],
+  },
+  {
     title: "Behörden und Zivilgesellschaft",
     sources: [
       {
@@ -201,8 +221,8 @@ const sourceGroups = [
       <h1>Was DAC8 verlangt. <span>Und was nicht.</span></h1>
       <p class="lead">
         Was das Gesetz vorschreibt, was in der Meldung steht, wo die Grenzen
-        liegen und wie wir dagegen vorgehen. Ohne Übertreibung, mit Quellen zum
-        Nachlesen.
+        liegen und wie wir dagegen vorgehen. Mit konkreten Forderungen und
+        Quellen zum Nachlesen.
       </p>
       <nav class="hero-actions" aria-label="Direkteinstieg">
         <a class="button primary" href="#gemeldet">Was gemeldet wird</a>
@@ -338,9 +358,10 @@ const sourceGroups = [
       <h2 id="problem-heading">Was daran problematisch ist</h2>
       <p class="section-intro">
         Maßstab sind die Grundrechte auf Privatleben und auf Schutz der eigenen
-        Daten. Ein einzelner Jahreswert verletzt sie noch nicht. Problematisch
-        wird die Kombination: alle Kunden unter Generalverdacht, viele Jahre,
-        viele Empfänger, lange Speicherung.
+        Daten. Die anlasslose Erfassung aller Kunden, der Austausch über viele
+        Empfänger und die lange Speicherung greifen in diese Rechte ein. Die
+        Risiken reichen von zweckwidriger Nutzung bis zur Gefährdung der
+        persönlichen Sicherheit.
       </p>
       <ul class="facts">
         {concerns.map((concern) => (
@@ -350,12 +371,27 @@ const sourceGroups = [
           </li>
         ))}
       </ul>
+      <h3>Finanzielle Privatsphäre schützt auch Menschen</h3>
       <p class="prose">
-        Wir sind Bitcoiner und haben früh gelernt, was passiert, wenn
-        Identitäten und Finanzdaten an einem Ort zusammenlaufen. Unser Maßstab
-        gilt aber für alle: Der Staat soll die Daten bekommen, die er für einen
-        klaren Zweck nachweislich braucht. Und Betroffene sollen Fehler
-        korrigieren und unzulässige Nutzung stoppen können.
+        Erpressung, Raub und Entführungen von Menschen mit Kryptowerten sind
+        dokumentiert. In Frankreich wurden im Januar 2025 Ledger-Mitgründer
+        David Balland und seine Partnerin entführt. Die
+        <a
+          href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-1-2"
+          >französische Gendarmerie</a
+        >
+        nennt große Datenlecks, die Identitäten, Vermögen und Wohnadressen
+        offenlegen, als einen Faktor hinter solchen Angriffen. Die Sammlung
+        <a href="https://github.com/jlopp/physical-bitcoin-attacks"
+          >Known Physical Bitcoin Attacks</a
+        >
+        dokumentiert weitere Fälle mit Quellenlinks.
+      </p>
+      <p class="prose">
+        Diese Fälle sind keine nachgewiesenen Folgen von DAC8. Sie zeigen aber,
+        was auf dem Spiel steht, wenn Identitäten und Finanzdaten in falsche
+        Hände geraten. Deshalb verlangen wir, schon die Erfassung auf das
+        Notwendige zu begrenzen.
       </p>
     </section>
 
@@ -452,8 +488,9 @@ const sourceGroups = [
         Die von AKVorrat, heute epicenter.works, organisierte Beschwerde gegen
         die Vorratsdatenspeicherung führte über den Verfassungsgerichtshof zum
         Europäischen Gerichtshof. 2014 fielen die EU-Richtlinie und die
-        österreichischen Regeln. DAC8 ist ein anderer Fall mit offenem Ausgang.
-        Aber er zeigt: Grundrechte zu verteidigen ist kein symbolischer Akt.
+        österreichischen Regeln. Dieser Erfolg lässt sich nicht einfach auf DAC8
+        übertragen. Er zeigt aber, dass rechtliche Gegenwehr konkrete Änderungen
+        erreichen kann. Daran knüpfen wir an.
       </p>
     </section>
 
