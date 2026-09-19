@@ -13,9 +13,12 @@ pnpm format:check
 pnpm build
 ```
 
-Every push to `main` runs the same gates and deploys the site through
-`.github/workflows/deploy.yml`. Do not run a manual Wrangler deployment without
-an explicit request; production changes should normally flow through `main`.
+Pull requests run the same gates in `.github/workflows/ci.yml`.
+
+Cloudflare Workers Builds owns deployment: it builds every push, publishes a
+preview URL per branch and commit, and deploys `main` to production. GitHub
+Actions never deploys. Do not run a manual Wrangler deployment without an
+explicit request; production changes should normally flow through `main`.
 
 Legal and regulatory claims must be supported by primary sources and match the
 actual procedural status. The campaign's credibility depends on never implying
