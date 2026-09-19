@@ -204,6 +204,12 @@ const current = NAVIGATION.find(
     content: "−";
   }
 
+  @media (width >= 64rem) {
+    .pages .section-navigation > summary::after {
+      display: none;
+    }
+  }
+
   .sections {
     display: flex;
     flex-direction: column;
