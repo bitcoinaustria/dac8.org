@@ -1,5 +1,6 @@
 ---
 import MetaPage from "@/components/MetaPage.astro"
+import CopyButton from "@/components/CopyButton.astro"
 import Layout from "@/layouts/Layout.astro"
 
 const btcpay =
@@ -66,57 +67,109 @@ const fundingUses = [
 
     <section id="wege" aria-labelledby="wege-heading">
       <h2 id="wege-heading">Bitcoin oder Euro</h2>
-      <div class="cards">
-        <article id="bitcoin" data-copy-scope>
-          <h3>Bitcoin</h3>
-          <p class="where">Lightning oder On-Chain, Betrag frei wählbar</p>
-          <p>
-            Der Server gehört dem Verein und fragt weder Namen noch E-Mail ab.
-          </p>
-          <a class="button primary" href={btcpay} target="_blank" rel="noopener"
-            >Mit Bitcoin spenden</a
-          >
-          <dl class="bank-details">
+      <div class="donation-options">
+        <article
+          id="bitcoin"
+          class="donation-card bitcoin-card"
+          data-copy-scope
+          aria-labelledby="bitcoin-heading"
+        >
+          <header class="donation-heading">
+            <span class="payment-symbol bitcoin-symbol" aria-hidden="true"
+              >₿</span
+            >
             <div>
-              <dt>Link für ein anderes Gerät</dt>
-              <dd>
-                <span>pay.bitcoin-austria.at</span>
-                <button
-                  class="copy-button"
-                  type="button"
-                  data-copy-value={btcpay}
-                  aria-label="Link zum BTCPay-Server kopieren"
-                >
-                  Link kopieren
-                </button>
-              </dd>
+              <h3 id="bitcoin-heading">Bitcoin</h3>
+              <p>Direkt an Bitcoin Austria</p>
             </div>
-          </dl>
-          <p class="copy-status" data-copy-status aria-live="polite"></p>
+          </header>
+          <div class="bitcoin-payment">
+            <ul class="payment-methods" aria-label="Zahlungsarten">
+              <li>Lightning</li>
+              <li>On-Chain</li>
+            </ul>
+            <p class="payment-description">
+              Du bestimmst den Betrag. Unser eigener BTCPay-Server fragt weder
+              Namen noch E-Mail ab.
+            </p>
+            <a
+              class="button primary donation-action"
+              href={btcpay}
+              target="_blank"
+              rel="noopener"
+            >
+              Mit Bitcoin spenden
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path
+                  d="M14 4h6v6M20 4 10 14M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"
+                />
+              </svg>
+            </a>
+          </div>
+          <div class="payment-link">
+            <div>
+              <p class="detail-label">Spendenlink teilen</p>
+              <span>pay.bitcoin-austria.at</span>
+            </div>
+            <CopyButton value={btcpay} label="Spendenlink" />
+          </div>
+          <p
+            class="payment-status"
+            data-copy-status
+            role="status"
+            aria-atomic="true"
+          ></p>
         </article>
 
-        <article id="euro" data-copy-scope>
-          <h3>Euro</h3>
-          <p class="where">Überweisung aufs Vereinskonto</p>
+        <article
+          id="euro"
+          class="donation-card euro-card"
+          data-copy-scope
+          aria-labelledby="euro-heading"
+        >
+          <header class="donation-heading">
+            <span class="payment-symbol" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m3 9 9-6 9 6H3ZM5 12v6m7-6v6m7-6v6M3 21h18" />
+              </svg>
+            </span>
+            <div>
+              <h3 id="euro-heading">Euro</h3>
+              <p>Überweisung aufs Vereinskonto</p>
+            </div>
+          </header>
           <dl class="bank-details">
             {bankDetails.map((detail) => (
-              <div>
+              <div class:list={{ "iban-detail": detail.label === "IBAN" }}>
                 <dt>{detail.label}</dt>
                 <dd>
                   <span>{detail.value}</span>
-                  <button
-                    class="copy-button"
-                    type="button"
-                    data-copy-value={detail.copy ?? detail.value}
-                    aria-label={`${detail.label} kopieren`}
-                  >
-                    Kopieren
-                  </button>
+                  <CopyButton value={detail.copy ?? detail.value} label={detail.label} />
                 </dd>
               </div>
             ))}
           </dl>
-          <p class="copy-status" data-copy-status aria-live="polite"></p>
+          <p
+            class="payment-status"
+            data-copy-status
+            role="status"
+            aria-atomic="true"
+          ></p>
         </article>
       </div>
       <p class="prose">
@@ -169,29 +222,48 @@ const fundingUses = [
       helper.style.opacity = "0"
       document.body.append(helper)
       helper.select()
-      const copied = document.execCommand("copy")
-      helper.remove()
-      return copied
+      try {
+        return document.execCommand("copy")
+      } finally {
+        helper.remove()
+      }
     }
 
     document
       .querySelectorAll<HTMLButtonElement>("[data-copy-value]")
       .forEach((button) => {
+        let resetTimer: ReturnType<typeof setTimeout>
         button.addEventListener("click", async () => {
           const text = button.dataset.copyValue ?? ""
+          const label = button.dataset.copyLabel ?? "Text"
           const status = button
             .closest("[data-copy-scope]")
             ?.querySelector<HTMLElement>("[data-copy-status]")
           if (!status) return
+          let copied = false
           try {
             if (!navigator.clipboard?.writeText) throw new Error()
             await navigator.clipboard.writeText(text)
-            status.textContent = "Kopiert."
+            copied = true
           } catch {
-            status.textContent = fallbackCopy(text)
-              ? "Kopiert."
-              : "Kopieren nicht möglich. Bitte den Text markieren."
+            try {
+              copied = fallbackCopy(text)
+            } catch {
+              copied = false
+            } finally {
+              button.focus({ preventScroll: true })
+            }
           }
+          clearTimeout(resetTimer)
+          button.dataset.copied = String(copied)
+          button.title = copied ? `${label} kopiert` : `${label} kopieren`
+          status.textContent = copied
+            ? `${label} kopiert.`
+            : "Kopieren nicht möglich. Bitte den Text markieren."
+          resetTimer = setTimeout(() => {
+            delete button.dataset.copied
+            button.title = `${label} kopieren`
+          }, 2000)
         })
       })
   </script>

@@ -922,59 +922,247 @@
 
 /* ---------- Spenden ---------------------------------------------------- */
 
-.campaign .bank-details {
+/* The payment grid responds to the content width beside the sidebar. */
+.campaign .donation-options {
   display: grid;
-  gap: var(--space-xs);
-  margin-block-start: var(--space-m);
+  gap: 1.25rem;
+  margin-block-start: var(--space-l);
+}
+
+.campaign .donation-card {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  padding: clamp(1.25rem, 3cqi, 2rem);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--paper);
+  scroll-margin-block-start: 5rem;
+}
+
+.campaign .bitcoin-card {
+  --ink: #fcfcfc;
+  --ink-2: #d0d0d0;
+  --ink-3: #b4b4b4;
+  --line: #414141;
+  --paper: #242424;
+  --accent: #ff9592;
+  color: var(--ink);
+  background: #202020;
+  border-color: #414141;
+}
+
+.campaign .donation-heading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-block-end: 1.5rem;
+}
+
+.campaign .donation-heading h3 {
+  font-size: 1.65rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.campaign .donation-heading p {
+  margin-block-start: 0.25rem;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+.campaign .payment-symbol {
+  display: grid;
+  place-items: center;
+  flex: 0 0 3rem;
+  block-size: 3rem;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--panel);
+}
+
+.campaign .payment-symbol svg {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+}
+
+.campaign .bitcoin-symbol {
+  border-color: transparent;
+  color: white;
+  background: var(--primary);
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.campaign .bitcoin-payment {
+  display: grid;
+  gap: 1.25rem;
+  margin-block: 0.5rem 2rem;
+}
+
+.campaign .payment-methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.campaign .payment-methods li {
+  padding: 0.2rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+
+.campaign .payment-description {
+  max-inline-size: 32ch;
+  color: var(--ink-2);
+}
+
+.campaign .donation-action {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  inline-size: 100%;
+}
+
+.campaign .donation-action svg {
+  flex: 0 0 1.125rem;
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+}
+
+.campaign .payment-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-block-start: 1.25rem;
+  margin-block-start: auto;
+  border-block-start: 1px solid var(--line);
+  font-size: 1rem;
+}
+
+.campaign .detail-label,
+.campaign .bank-details dt {
+  color: var(--ink-3);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.campaign .payment-link span {
+  display: block;
+  margin-block-start: 0.25rem;
+  font-weight: 500;
 }
 
 .campaign .bank-details > div {
-  display: grid;
-  gap: 0.1em;
+  position: relative;
+  padding: 0.85rem 3.5rem 0.85rem 0;
+  border-block-end: 1px solid var(--line);
 }
 
-.campaign .bank-details dt {
-  color: var(--ink-3);
-  font-size: var(--step--1);
+.campaign .bank-details > div:first-child {
+  padding-block-start: 0;
+}
+
+.campaign .bank-details > div:last-child {
+  border-block-end: 0;
 }
 
 .campaign .bank-details dd {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-2xs) var(--space-s);
-  font-weight: 560;
-  letter-spacing: 0.02em;
+  margin-block-start: 0.25rem;
+  font-size: 1.0625rem;
+  font-weight: 550;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+
+.campaign .bank-details .iban-detail {
+  margin-inline: -0.75rem;
+  padding-inline: 0.75rem 4.25rem;
+  border-block-end-color: transparent;
+  border-radius: 0.5rem;
+  background: var(--panel);
+}
+
+.campaign .bank-details .copy-button {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-start: 50%;
+  translate: 0 -50%;
+}
+
+.campaign .bank-details .iban-detail .copy-button {
+  inset-inline-end: 0.75rem;
 }
 
 .campaign .copy-button {
-  min-block-size: 2.75rem;
-  padding: 0.2em 0.6em;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  flex: 0 0 2.75rem;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
   color: var(--ink-3);
-  background: var(--paper);
-  font: inherit;
-  font-size: var(--step--1);
+  background: transparent;
   cursor: pointer;
-  transition:
-    color 140ms ease,
-    border-color 140ms ease;
 }
 
-.campaign .copy-button:hover {
-  border-color: var(--ink);
-  color: var(--ink);
+.campaign .copy-button svg {
+  grid-area: 1 / 1;
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
 }
 
-.campaign .cards .copy-status {
-  flex: none;
-  min-block-size: 0;
+.campaign .copy-button .copied-icon,
+.campaign .copy-button[data-copied="true"] .copy-icon {
+  visibility: hidden;
 }
 
-.campaign .cards .copy-status:not(:empty) {
-  margin-block-start: var(--space-s);
+.campaign .copy-button[data-copied="true"] .copied-icon {
+  visibility: visible;
+}
+
+.campaign .copy-button[data-copied="true"] {
+  color: var(--accent);
+  border-color: var(--line);
+}
+
+.campaign .copy-button:active {
+  transform: scale(0.96);
+}
+
+.campaign .copy-button:focus-visible {
+  outline-color: var(--accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .campaign .copy-button:hover {
+    border-color: var(--line);
+    color: var(--ink);
+    background: color-mix(in oklab, var(--ink) 6%, transparent);
+  }
+}
+
+.campaign .payment-status {
+  min-block-size: 1.5em;
+  margin-block-start: 0.75rem;
+  color: var(--ink-3);
+  font-size: 0.8125rem;
+}
+
+@container campaign (min-width: 44rem) {
+  .campaign .donation-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* ---------- Rechtstexte ------------------------------------------------ */
