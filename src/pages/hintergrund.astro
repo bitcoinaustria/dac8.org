@@ -15,7 +15,7 @@ const concerns = [
   },
   {
     title: "Ein Datenleck ist nicht rückgängig zu machen.",
-    text: "Die Meldung enthält keine Wallet-Adressen. Gelangen Identität und Jahreswerte aber in falsche Hände, lassen sie sich mit der öffentlichen Blockchain verknüpfen. Was dort einmal zugeordnet ist, bleibt zugeordnet.",
+    text: "Die Meldung enthält keine Wallet-Adressen. Gelangen Identität und Jahreswerte aber in falsche Hände, können zusätzliche Informationen eine Verknüpfung mit öffentlichen Blockchain-Daten ermöglichen. Ob das gelingt, hängt von den verfügbaren Daten ab.",
   },
   {
     title: "Der Zweck wächst mit.",
@@ -61,7 +61,7 @@ const faqs = [
   {
     question: "Müssen Anbieter jede Transaktion zehn Jahre speichern?",
     answer:
-      "Nicht wegen DAC8. Das Gesetz verlangt zehn Jahre für die gemeldeten Jahreswerte und für die Dokumentation der Melde- und Prüfschritte. Einzelne Transaktionsdaten heben Anbieter aus anderen Gründen auf, etwa nach Geldwäsche- oder MiCA-Regeln. Wir vermischen diese Pflichten bewusst nicht.",
+      "DAC8 verlangt keine pauschale zehnjährige Speicherung jeder einzelnen Transaktion. § 20 Abs. 4 Krypto-MPfG sieht die Löschung übermittelter Informationen zehn Jahre nach dem Meldezeitraum vor. § 39 verlangt gesondert zehn Jahre Aufbewahrung für die Dokumentation der Melde- und Sorgfaltspflichten. Für einzelne Transaktionsdaten können weitere Pflichten gelten, etwa aus Geldwäsche- oder MiCA-Regeln.",
   },
   {
     question: "Bedeuten DAC9 und DAC10 noch mehr Krypto-Überwachung?",
@@ -308,9 +308,9 @@ const sourceGroups = [
         <li>
           <strong>Zehn Jahre statt fünf</strong>
           <p>
-            Der Anbieter darf die gemeldeten Daten erst zehn Jahre nach dem
-            Meldejahr löschen, für 2026 also Ende 2036. Für Bankkonten hat
-            Österreich 2018 fünf Jahre festgelegt und das damals als
+            § 20 Abs. 4 Krypto-MPfG sieht die Löschung übermittelter
+            Informationen zehn Jahre nach dem Meldezeitraum vor. Für Bankkonten
+            hat Österreich 2018 fünf Jahre festgelegt und das damals als
             datenschutzrechtlich angemessen bezeichnet. Den Unterschied
             begründen die Gesetzesmaterialien nicht.
           </p>
@@ -460,9 +460,9 @@ const sourceGroups = [
     <section id="rechtsweg" aria-labelledby="rechtsweg-heading">
       <h2 id="rechtsweg-heading">Wie wir vorgehen</h2>
       <p class="section-intro">
-        Ein guter Fall beginnt nicht mit der lautesten Behauptung, sondern mit
-        der richtigen Person, dem richtigen Anbieter und einem sauber belegten
-        Sachverhalt. Der Weg führt über die Datenschutzbehörde.
+        Für eine Beschwerde brauchen wir eine betroffene Person, einen konkreten
+        Anbieter und Belege für die Datenverarbeitung. Der Weg beginnt bei der
+        Datenschutzbehörde.
       </p>
       <ol class="flow" aria-label="Der Rechtsweg">
         <li>
@@ -526,12 +526,6 @@ const sourceGroups = [
           </p>
         </li>
       </ul>
-      <aside class="note">
-        <h3>Wo wir stehen</h3>
-        Wir bereiten die anwaltliche Prüfung vor. Solange kein Mandat bestätigt
-        ist, nennen wir keine Kanzlei und behaupten keinen Verfahrensstand.
-        Diese Seite wird aktualisiert, sobald sich etwas ändert.
-      </aside>
     </section>
 
     <section id="faq" aria-labelledby="faq-heading">
@@ -575,11 +569,10 @@ const sourceGroups = [
     </section>
 
     <aside class="closing">
-      <h2>Grundrechte verteidigen sich nicht von selbst.</h2>
+      <h2>So kannst du unterstützen</h2>
       <p>
         Bereite eine Beschwerde vor, schreib deinen Abgeordneten oder trag den
-        Rechtsweg finanziell mit. Jede dieser Handlungen macht sichtbar, dass
-        die Erfassung aller nicht einfach hingenommen wird.
+        Rechtsweg finanziell mit.
       </p>
       <div class="closing-actions">
         <a class="button" href="/handeln/">Was du tun kannst</a>
