@@ -74,9 +74,11 @@ const current = NAVIGATION.find(
         </ul>
       </div>
       <div class="sidebar-bottom">
-        <LanguageSelector />
-        <div class="sidebar-foot">
+        <div class="sidebar-controls">
+          <LanguageSelector />
           <ThemeToggle />
+        </div>
+        <div class="sidebar-foot">
           <p>
             {en ? "An initiative by" : "Eine Initiative von"}
             <a href="https://bitcoin-austria.at">Bitcoin Austria</a>
@@ -113,6 +115,13 @@ const current = NAVIGATION.find(
   .sidebar-bottom {
     display: grid;
     gap: 0.75rem;
+  }
+  .sidebar-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs);
   }
   aside {
     position: sticky;
@@ -282,10 +291,6 @@ const current = NAVIGATION.find(
     display: grid;
     gap: var(--space-2xs);
 
-    button {
-      margin-inline-start: -0.5rem;
-    }
-
     p {
       margin: 0;
       color: var(--muted-foreground);
@@ -436,18 +441,13 @@ const current = NAVIGATION.find(
       font-size: 1rem;
     }
 
-    .sidebar-foot {
-      display: flex;
-      flex-direction: row-reverse;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-s);
-      padding-block-start: var(--space-s);
+    .sidebar-bottom {
+      padding-block-start: var(--space-xs);
       border-block-start: 1px solid var(--border);
+    }
 
-      p {
-        max-inline-size: 24ch;
-      }
+    .sidebar-foot p {
+      max-inline-size: 24ch;
     }
   }
   @media (width < 30rem) {
