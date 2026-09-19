@@ -393,23 +393,11 @@ const current = NAVIGATION.find(
           hyphens: auto;
         }
 
-        &::after {
-          flex: none;
-          content: "→";
-          color: var(--muted-foreground);
-          font-size: 1.25rem;
-        }
-
         &[aria-current="page"] {
           padding-inline-start: 0;
           box-shadow: none;
           color: var(--accent);
           font-weight: 600;
-
-          &::after {
-            content: "•";
-            color: inherit;
-          }
         }
       }
     }
