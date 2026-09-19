@@ -12,7 +12,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "format": "biome format --write .",
-    "format:check": "biome format ."
+    "format:check": "biome format .",
+    "test": "node scripts/test-campaign.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

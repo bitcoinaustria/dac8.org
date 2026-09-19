@@ -1,0 +1,226 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import MetaPage from "@/components/MetaPage.astro"
+import { campaignStatus } from "@/data/campaign"
+---
+
+<Layout
+  sections={[
+  { id: "problem", label: "What is at stake" },
+  { id: "weg", label: "What we are doing" },
+  { id: "handeln", label: "How you can help" },
+  { id: "vision", label: "What we want to achieve" },
+  { id: "position", label: "Who we are" },
+]}
+>
+  <MetaPage
+    slot="head"
+    description="Financial privacy is a fundamental right. Bitcoin Austria is preparing a legal challenge to indiscriminate financial data collection under DAC8."
+  />
+  <article class="campaign landing">
+    <header class="hero">
+      <h1>
+        Financial privacy is a fundamental right. <span>We defend it.</span>
+      </h1>
+      <p class="lead">
+        You use your money to pay for medical treatment, support relatives or
+        donate to a political cause. That is part of your private life.
+        Financial privacy protects your freedom to make those choices without
+        others scrutinising your personal life.
+      </p>
+      <p class="prose">
+        Since 2026, crypto-asset providers in Austria have had to prepare
+        financial data on all their customers for the tax authority, without any
+        specific suspicion. We believe this collection under DAC8 violates
+        fundamental rights and are preparing a legal challenge.
+      </p>
+      <nav class="hero-actions" aria-label="Get started">
+        <a class="button primary" href="/en/donate/">Support the case</a>
+        <a class="button" href="/en/background/">What DAC8 requires</a>
+      </nav>
+      <p class="campaign-status">
+        <a href="/en/updates/">Austria · {campaignStatus.en.label}</a>
+      </p>
+      <dl class="keyfigures" aria-label="Key facts">
+        <div>
+          <dt>
+            <strong>Customers</strong>
+            are covered, even if their data is not ultimately reported.
+          </dt>
+          <dd>All</dd>
+        </div>
+        <div>
+          <dt>
+            <strong>Retention by the provider</strong>
+            of documentation of reporting and due-diligence obligations.
+          </dt>
+          <dd>10 <small>years</small></dd>
+        </div>
+        <div>
+          <dt>
+            <strong>First report</strong>
+            to the tax authority, covering the 2026 reporting year.
+          </dt>
+          <dd>31 July 2027</dd>
+        </div>
+      </dl>
+    </header>
+    <section id="problem" aria-labelledby="problem-heading">
+      <h2 id="problem-heading">What is at stake</h2>
+      <p class="section-intro">
+        You can pay your taxes correctly and still want your finances to remain
+        private. Information about your money can reveal details about your
+        life. If it is shared, misunderstood or stolen, you bear the
+        consequences.
+      </p>
+      <p class="prose">
+        DAC8 is an EU directive on exchanging tax information. Reports contain
+        identities and annual crypto-asset aggregates, not a list of individual
+        payments. Over the years, even these aggregates create a financial
+        profile. We want the courts to examine these four issues in particular:
+      </p>
+      <ul class="facts">
+        <li>
+          <strong>Everyone is covered, not just suspects.</strong>
+          <p>
+            Providers must prepare reporting data for all customers, including
+            those who will not ultimately be reported. This requirement appears
+            in Austrian law, not in the directive.
+          </p>
+        </li>
+        <li>
+          <strong>A profile builds up over time.</strong>
+          <p>
+            For each crypto-asset, reports include units and transaction counts
+            as well as values. Year after year, this reveals how active someone
+            is.
+          </p>
+        </li>
+        <li>
+          <strong>A data breach cannot be undone.</strong>
+          <p>
+            Financial data in the wrong hands can make people targets for
+            extortion and robbery. Kidnappings involving crypto-asset holders
+            show that physical safety is also at stake.
+          </p>
+        </li>
+        <li>
+          <strong>Ten years instead of five.</strong>
+          <p>
+            Austrian law provides for reported crypto-asset data to be deleted
+            after ten years, compared with five for corresponding bank-account
+            data. The legislative materials do not explain the difference.
+          </p>
+        </li>
+      </ul>
+      <a class="text-link" href="/en/background/#gemeldet"
+        >What is reported, and what is not</a
+      >
+    </section>
+    <section id="weg" aria-labelledby="weg-heading">
+      <h2 id="weg-heading">What we are doing</h2>
+      <p class="section-intro">{campaignStatus.en.text}</p>
+      <p class="prose">
+        The route begins with a complaint against a specific provider before the
+        Austrian Data Protection Authority. Its decision can be challenged
+        before the Federal Administrative Court. Whether the Constitutional
+        Court or the Court of Justice of the European Union subsequently
+        considers the legal questions depends on the proceedings and the courts’
+        decisions.
+      </p>
+      <p class="prose">
+        The campaign against the retention of telephone and internet data is a
+        precedent for resistance: in 2014, the Court of Justice struck down the
+        directive and Austria’s Constitutional Court struck down the national
+        law. DAC8 involves different data and legal questions. That earlier
+        success nevertheless shows that even sweeping surveillance laws can be
+        changed.
+      </p>
+      <a class="text-link" href="/en/background/#rechtsweg"
+        >Our legal strategy in detail</a
+      >
+    </section>
+    <section id="handeln" aria-labelledby="handeln-heading">
+      <h2 id="handeln-heading">How you can help</h2>
+      <ul class="facts">
+        <li>
+          <strong>Help fund the case</strong>
+          <p>
+            Your donation primarily helps cover the costs of the proceedings.
+          </p>
+          <a class="button primary" href="/en/donate/">Donate</a>
+        </li>
+        <li>
+          <strong>Follow the case</strong>
+          <p>
+            How individuals can take part has not yet been determined. We will
+            publish news and next steps here and via RSS.
+          </p>
+          <a class="button" href="/en/updates/">Campaign updates</a>
+        </li>
+      </ul>
+      <button class="text-link" type="button" data-share>
+        Share this page
+      </button>
+      <p class="share-status" data-share-status aria-live="polite"></p>
+    </section>
+    <section id="vision" aria-labelledby="vision-heading">
+      <h2 id="vision-heading">What we want to achieve</h2>
+      <p class="section-intro">
+        A liberal democracy depends on freedom, privacy and the rule of law. For
+        us, a red line is crossed when the state collects everyone’s financial
+        data as a precaution, without specific suspicion. We want to roll back
+        this indiscriminate surveillance.
+      </p>
+      <p class="prose">
+        We consider targeted investigations based on specific suspicion
+        necessary: with a legal basis, limited scope and independent oversight.
+        Authorities must justify whose data they need and for what purpose. Mass
+        surveillance reverses this principle: everyone is covered without
+        specific suspicion against them.
+      </p>
+      <ul class="facts">
+        <li>
+          <strong>What we aim to achieve</strong>
+          <p>
+            Overturn disproportionate obligations, limit data collection and
+            secure effective protection for those affected. We seek judicial
+            scrutiny of the collection covering all customers, the reporting
+            fields and the retention periods.
+          </p>
+        </li>
+        <li>
+          <strong>Why we are confident</strong>
+          <p>
+            We believe effective limits can be secured. That is why we combine
+            concrete proceedings with political advocacy: in court and with the
+            representatives who can change these laws.
+          </p>
+        </li>
+      </ul>
+    </section>
+    <section id="position" aria-labelledby="position-heading">
+      <h2 id="position-heading">Who we are</h2>
+      <p class="section-intro">
+        dac8.org is an initiative by Bitcoin Austria, the nonprofit Bitcoin
+        association founded in Vienna in 2011. We are Bitcoiners and
+        cypherpunks. We see privacy as a prerequisite for a free society.
+      </p>
+      <p class="prose">
+        We oppose indiscriminate collection of financial data, not taxation. The
+        campaign concerns everyone covered by DAC8, regardless of which
+        crypto-assets they use.
+      </p>
+      <p class="prose">
+        Our campaign starts in Austria. DAC8 applies across the EU:
+        organisations, businesses and experts who want to challenge the law in
+        their country are welcome to contact us. We share arguments, sources and
+        experience: <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>
+      </p>
+    </section>
+  </article>
+  <script>
+    import { initializeShareButtons } from "@/lib/share"
+    initializeShareButtons()
+  </script>
+</Layout>

@@ -16,19 +16,24 @@ import "@/styles/campaign.css"
 import Footer from "@/components/Footer.astro"
 import MetaHead from "@/components/MetaHead.astro"
 import Sidebar from "@/components/Sidebar.astro"
-import { SITE, type PageSection } from "@/consts"
+import { type PageSection } from "@/consts"
+
+import { languageFor } from "@/lib/i18n"
+const language = languageFor(Astro.url.pathname)
 
 type Props = { sections?: PageSection[] }
 
 const { sections = [] } = Astro.props
 ---
 
-<html lang={SITE.locale} dir={SITE.dir}>
+<html lang={language === "en" ? "en" : "de-AT"} dir="ltr">
   <MetaHead>
     <slot name="head" />
   </MetaHead>
   <body>
-    <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
+    <a class="skip-link" href="#main-content"
+      >{language === "en" ? "Skip to content" : "Zum Inhalt springen"}</a
+    >
     <page-grid>
       <page-header>
         <page-nav>

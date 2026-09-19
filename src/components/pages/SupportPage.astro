@@ -1,0 +1,64 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import MetaPage from "@/components/MetaPage.astro"
+import { languageFor, pathFor } from "@/lib/i18n"
+const language = languageFor(Astro.url.pathname)
+const en = language === "en"
+---
+
+<Layout>
+  <MetaPage
+    slot="head"
+    title={en ? "Support the campaign" : "Die Kampagne unterstützen"}
+    description={en ? "Support the Austrian challenge to DAC8: help fund the case, share the campaign and follow its progress." : "Unterstütze unser Vorgehen gegen DAC8: Trage den Prozess finanziell mit, teile die Kampagne und verfolge das Verfahren."}
+  />
+  <article class="campaign">
+    <header class="hero">
+      <h1>
+        {en ? "Help defend " : "Hilf mit, "}
+        <span
+          >{en ? "financial privacy." : "Privatsphäre zu verteidigen."}</span
+        >
+      </h1>
+      <p class="lead">
+        {en ? "We are building the Austrian case against indiscriminate financial data collection. You can help fund the proceedings and bring the campaign to more people." : "Wir bauen das österreichische Verfahren gegen die anlasslose Erfassung von Finanzdaten auf. Du kannst den Prozess finanziell mittragen und die Kampagne bekannter machen."}
+      </p>
+      <nav
+        class="hero-actions"
+        aria-label={en ? "Support the campaign" : "Kampagne unterstützen"}
+      >
+        <a class="button primary" href={pathFor("donate", language)}
+          >{en ? "Support the case" : "Prozess unterstützen"}</a
+        >
+        <button class="button" type="button" data-share>
+          {en ? "Share the campaign" : "Kampagne teilen"}
+        </button>
+      </nav>
+      <p class="share-status" data-share-status aria-live="polite"></p>
+    </header>
+    <section aria-labelledby="participate-heading">
+      <h2 id="participate-heading">
+        {en ? "Taking part in the proceedings" : "Beteiligung am Verfahren"}
+      </h2>
+      <p class="section-intro">
+        {en ? "How individuals can take part has not yet been determined. We will publish the options and requirements as the case develops." : "Wie sich Privatpersonen am Verfahren beteiligen können, steht noch nicht fest. Wir veröffentlichen Möglichkeiten und Voraussetzungen, sobald sie konkret sind."}
+      </p>
+      <a class="text-link" href={pathFor("updates", language)}
+        >{en ? "Follow the case" : "Verfahren verfolgen"}</a
+      >
+    </section>
+    <section aria-labelledby="partners-heading">
+      <h2 id="partners-heading">
+        {en ? "Work with us" : "Mit uns zusammenarbeiten"}
+      </h2>
+      <p class="section-intro">
+        {en ? "This campaign currently focuses on Austria. Organisations and experts who want to challenge DAC8 in other countries are welcome to get in touch." : "Diese Kampagne richtet sich derzeit auf Österreich. Organisationen und Fachleute, die DAC8 in anderen Ländern angehen wollen, können sich bei uns melden."}
+      </p>
+      <a class="text-link" href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>
+    </section>
+  </article>
+  <script>
+    import { initializeShareButtons } from "@/lib/share"
+    initializeShareButtons()
+  </script>
+</Layout>

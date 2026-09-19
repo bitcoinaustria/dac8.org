@@ -1,6 +1,8 @@
 ---
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
+import { campaignStatus } from "@/data/campaign"
+import { sourceGroups } from "@/data/sources"
 
 const researchDate = "16. September 2026"
 
@@ -81,119 +83,7 @@ const faqs = [
   {
     question: "Was passiert mit meinen Daten auf dieser Website?",
     answer:
-      "Die Generatoren laufen vollständig in deinem Browser. Eingaben werden weder an Bitcoin Austria übertragen noch gespeichert. Welche technischen Daten beim Hosting anfallen, steht in der Datenschutzerklärung.",
-  },
-]
-
-const sourceGroups = [
-  {
-    title: "Österreichisches Gesetz",
-    sources: [
-      {
-        label: "Krypto-Meldepflichtgesetz, BGBl. I Nr. 96/2025",
-        href: "https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_2025_I_96/BGBLA_2025_I_96.pdf",
-      },
-      {
-        label: "§ 18 Krypto-MPfG – welche Daten gemeldet werden",
-        href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=18",
-      },
-      {
-        label: "§ 20 Krypto-MPfG – Verarbeitung für alle Kunden, Löschung",
-        href: "https://www.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40273819/NOR40273819.pdf",
-      },
-      {
-        label: "§ 39 Krypto-MPfG – Aufbewahrung der Dokumentation",
-        href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=39",
-      },
-      {
-        label: "§ 5 GMSG – fünf Jahre bei Bankkonten",
-        href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009250&Paragraf=5",
-      },
-      {
-        label: "§ 24 DSG – Beschwerde und Fristen",
-        href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Anlage=&Artikel=2&Gesetzesnummer=10001597&Paragraf=24",
-      },
-    ],
-  },
-  {
-    title: "EU-Recht",
-    sources: [
-      {
-        label: "Richtlinie (EU) 2023/2226 (DAC8)",
-        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:32023L2226",
-      },
-      {
-        label: "Folgenabschätzung der EU-Kommission zu DAC8, SWD(2022) 401",
-        href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=SWD:2022:401:FIN",
-      },
-      {
-        label: "Richtlinie (EU) 2025/872 (DAC9)",
-        href: "https://eur-lex.europa.eu/eli/dir/2025/872/oj/deu",
-      },
-      {
-        label: "Kommissionsvorschlag COM(2026) 308 – Neufassung der Richtlinie",
-        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:52026PC0308",
-      },
-      {
-        label: "EU-Kommission – Überblick zum DAC-System",
-        href: "https://taxation-customs.ec.europa.eu/taxation/tax-transparency-cooperation/administrative-co-operation-and-mutual-assistance/directive-administrative-cooperation-dac_en",
-      },
-      {
-        label: "EU-Machbarkeitsstudie zu einem europäischen Vermögensregister",
-        href: "https://op.europa.eu/en/publication-detail/-/publication/050b047e-3ff5-11ef-865a-01aa75ed71a1",
-      },
-    ],
-  },
-  {
-    title: "Gerichte",
-    sources: [
-      {
-        label:
-          "VfGH G 178/2024 – warum der Weg über die Datenschutzbehörde führt",
-        href: "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20260428_24G00178_00/JFT_20260428_24G00178_00.pdf",
-      },
-      {
-        label: "VfGH G 47/2012 ua – Aufhebung der Vorratsdatenspeicherung",
-        href: "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20140627_12G00047_00/JFT_20140627_12G00047_00.pdf",
-      },
-      {
-        label: "EuGH C-293/12 und C-594/12 – Vorratsdatenspeicherung",
-        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:62012CJ0293",
-      },
-    ],
-  },
-  {
-    title: "Datenlecks und körperliche Angriffe",
-    sources: [
-      {
-        label:
-          "Gendarmerie nationale – Datenlecks als Faktor bei Krypto-Entführungen",
-        href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-1-2",
-      },
-      {
-        label:
-          "Gendarmerie nationale – Entführung von David Balland und seiner Partnerin, Januar 2025",
-        href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/criminalite-organisee-et-enquetes/2025/enlevement-de-david-balland-un-engagement-massif-et-complet-de-la-gendarmerie-nationale",
-      },
-      {
-        label:
-          "Jameson Lopp – Known Physical Bitcoin Attacks (Sammlung mit Quellenlinks)",
-        href: "https://github.com/jlopp/physical-bitcoin-attacks",
-      },
-    ],
-  },
-  {
-    title: "Behörden und Zivilgesellschaft",
-    sources: [
-      {
-        label: "Datenschutzbehörde – Informationen zur Beschwerde",
-        href: "https://dsb.gv.at/eingabe-an-die-dsb/beschwerde",
-      },
-      {
-        label: "epicenter.works – Geschichte der österreichischen Kampagne",
-        href: "https://epicenter.works/thema/vorratsdatenspeicherung",
-      },
-    ],
+      "Für das Lesen und den RSS-Feed ist keine Anmeldung nötig. Welche technischen Daten beim Hosting anfallen und was bei Kontaktaufnahme oder Spenden verarbeitet wird, steht in der Datenschutzerklärung.",
   },
 ]
 ---
@@ -506,18 +396,20 @@ const sourceGroups = [
     <section id="rechtsweg" aria-labelledby="rechtsweg-heading">
       <h2 id="rechtsweg-heading">Wie wir vorgehen</h2>
       <p class="section-intro">
-        Für eine Beschwerde brauchen wir eine betroffene Person, einen konkreten
-        Anbieter und Belege für die Datenverarbeitung. Der Weg beginnt bei der
-        Datenschutzbehörde.
+        {campaignStatus.de.text}
+        Wie sich Privatpersonen beteiligen können, konkretisieren wir im
+        weiteren Verlauf.
       </p>
       <ol class="flow" aria-label="Der Rechtsweg">
         <li>
           <strong>Anbieter</strong>
-          <span>verarbeitet deine Daten für DAC8; du holst Auskunft ein</span>
+          <span
+            >verarbeitet Daten für DAC8; konkrete Vorgänge werden dokumentiert</span
+          >
         </li>
         <li class="accent">
           <strong>Datenschutzbehörde</strong>
-          <span>prüft deine Beschwerde gegen den Anbieter</span>
+          <span>prüft die Beschwerde gegen den Anbieter</span>
         </li>
         <li>
           <strong>Bundesverwaltungsgericht</strong>
@@ -617,8 +509,8 @@ const sourceGroups = [
     <aside class="closing">
       <h2>So kannst du unterstützen</h2>
       <p>
-        Bereite eine Beschwerde vor, schreib deinen Abgeordneten oder trag den
-        Rechtsweg finanziell mit.
+        Trage den Prozess finanziell mit und verfolge die nächsten Schritte
+        unserer Kampagne.
       </p>
       <div class="closing-actions">
         <a class="button" href="/handeln/">Was du tun kannst</a>

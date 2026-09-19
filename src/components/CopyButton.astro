@@ -1,4 +1,7 @@
 ---
+import { languageFor } from "@/lib/i18n"
+const en = languageFor(Astro.url.pathname) === "en"
+
 interface Props {
   value: string
   label: string
@@ -12,8 +15,8 @@ const { value, label } = Astro.props
   type="button"
   data-copy-value={value}
   data-copy-label={label}
-  aria-label={`${label} kopieren`}
-  title={`${label} kopieren`}
+  aria-label={en ? `Copy ${label}` : `${label} kopieren`}
+  title={en ? `Copy ${label}` : `${label} kopieren`}
 >
   <svg
     class="copy-icon"
@@ -39,3 +42,65 @@ const { value, label } = Astro.props
     <path d="m5 12 4 4L19 6" />
   </svg>
 </button>
+
+<script>
+  const en = document.documentElement.lang.startsWith("en")
+  const copyLabel = (label: string) =>
+    en ? `Copy ${label}` : `${label} kopieren`
+  const copiedLabel = (label: string) =>
+    en ? `${label} copied` : `${label} kopiert`
+  const fallbackCopy = (text: string) => {
+    const helper = document.createElement("textarea")
+    helper.value = text
+    helper.setAttribute("readonly", "")
+    helper.style.position = "fixed"
+    helper.style.opacity = "0"
+    document.body.append(helper)
+    helper.select()
+    try {
+      return document.execCommand("copy")
+    } finally {
+      helper.remove()
+    }
+  }
+
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-copy-value]")
+    .forEach((button) => {
+      let resetTimer: ReturnType<typeof setTimeout>
+      button.addEventListener("click", async () => {
+        const text = button.dataset.copyValue ?? ""
+        const label = button.dataset.copyLabel ?? "Text"
+        const status = button
+          .closest("[data-copy-scope]")
+          ?.querySelector<HTMLElement>("[data-copy-status]")
+        if (!status) return
+        let copied = false
+        try {
+          if (!navigator.clipboard?.writeText) throw new Error()
+          await navigator.clipboard.writeText(text)
+          copied = true
+        } catch {
+          try {
+            copied = fallbackCopy(text)
+          } catch {
+            copied = false
+          } finally {
+            button.focus({ preventScroll: true })
+          }
+        }
+        clearTimeout(resetTimer)
+        button.dataset.copied = String(copied)
+        button.title = copied ? copiedLabel(label) : copyLabel(label)
+        status.textContent = copied
+          ? `${copiedLabel(label)}.`
+          : en
+            ? "Could not copy. Please select the text."
+            : "Kopieren nicht möglich. Bitte den Text markieren."
+        resetTimer = setTimeout(() => {
+          delete button.dataset.copied
+          button.title = copyLabel(label)
+        }, 2000)
+      })
+    })
+</script>

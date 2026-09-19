@@ -1,4 +1,9 @@
 ---
+import { languageFor } from "@/lib/i18n"
+const label =
+  languageFor(Astro.url.pathname) === "en"
+    ? "Change colour scheme"
+    : "Farbschema wechseln"
 import MoonIcon from "@/assets/icons/moon.svg"
 import SunIcon from "@/assets/icons/sun.svg"
 ---
@@ -7,8 +12,8 @@ import SunIcon from "@/assets/icons/sun.svg"
   id="theme-toggle"
   data-icon-button
   type="button"
-  aria-label="Farbschema wechseln"
-  title="Farbschema wechseln"
+  aria-label={label}
+  title={label}
 >
   <light-icon><SunIcon /></light-icon>
   <dark-icon><MoonIcon /></dark-icon>

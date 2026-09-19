@@ -22,14 +22,19 @@ const copyUrl = async (url: string) => {
 }
 
 export const initializeShareButtons = () => {
+  const en = document.documentElement.lang.startsWith("en")
   const buttons = document.querySelectorAll<HTMLButtonElement>("[data-share]")
   const status = document.querySelector<HTMLElement>("[data-share-status]")
 
   for (const button of buttons) {
     button.addEventListener("click", async () => {
       const data = {
-        title: "DAC8: Keine Finanzüberwachung auf Vorrat",
-        text: "Warum wir uns gegen anlasslose Erfassung von Finanzaktivität wehren.",
+        title: en
+          ? "DAC8: Defend financial privacy"
+          : "DAC8: Keine Finanzüberwachung auf Vorrat",
+        text: en
+          ? "Why we challenge indiscriminate collection of financial data."
+          : "Warum wir uns gegen anlasslose Erfassung von Finanzaktivität wehren.",
         url: window.location.href,
       }
 
@@ -46,8 +51,12 @@ export const initializeShareButtons = () => {
       const copied = await copyUrl(data.url)
       if (status) {
         status.textContent = copied
-          ? "Link kopiert. Danke fürs Teilen."
-          : "Kopieren nicht möglich. Bitte die URL aus der Adresszeile kopieren."
+          ? en
+            ? "Link copied. Thank you for sharing."
+            : "Link kopiert. Danke fürs Teilen."
+          : en
+            ? "Could not copy. Please copy the URL from the address bar."
+            : "Kopieren nicht möglich. Bitte die URL aus der Adresszeile kopieren."
       }
     })
   }

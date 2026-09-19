@@ -1241,3 +1241,10 @@
     grid-column: auto;
   }
 }
+
+/* Keep the current campaign stage close to the primary action. */
+.campaign .campaign-status {
+  margin-block-start: var(--space-m);
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}

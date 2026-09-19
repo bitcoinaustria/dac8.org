@@ -1,0 +1,62 @@
+---
+import { languageFor, pageFor, pathFor } from "@/lib/i18n"
+const language = languageFor(Astro.url.pathname)
+const page = pageFor(Astro.url.pathname) ?? "home"
+---
+
+<div class="campaign-locale">
+  <span>{language === "en" ? "Austria" : "Österreich"}</span>
+  <div
+    class="languages"
+    role="group"
+    aria-label={language === "en" ? "Language" : "Sprache"}
+  >
+    <a
+      href={pathFor(page, "de")}
+      lang="de"
+      hreflang="de"
+      aria-label="Deutsch"
+      aria-current={language === "de" ? "true" : undefined}
+      >DE</a
+    >
+    <a
+      href={pathFor(page, "en")}
+      lang="en"
+      hreflang="en"
+      aria-label="English"
+      aria-current={language === "en" ? "true" : undefined}
+      >EN</a
+    >
+  </div>
+</div>
+<style>
+  .campaign-locale {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+  }
+  .languages {
+    display: flex;
+  }
+  a {
+    display: grid;
+    place-items: center;
+    min-inline-size: 2.75rem;
+    min-block-size: 2.75rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  a[aria-current] {
+    color: var(--foreground);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.35em;
+  }
+  a:hover {
+    color: var(--accent);
+  }
+</style>

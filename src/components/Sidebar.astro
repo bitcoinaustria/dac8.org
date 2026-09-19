@@ -1,7 +1,13 @@
 ---
 import ThemeToggle from "@/components/ThemeToggle.astro"
-import { NAVIGATION, SITE, type PageSection } from "@/consts"
+import LanguageSelector from "@/components/LanguageSelector.astro"
+import { languageFor, navigationFor, pathFor } from "@/lib/i18n"
+import { SITE, type PageSection } from "@/consts"
 import { normalizePath } from "@/lib/utils"
+
+const language = languageFor(Astro.url.pathname)
+const en = language === "en"
+const NAVIGATION = navigationFor(language)
 
 type Props = { sections?: PageSection[] }
 
@@ -15,7 +21,11 @@ const current = NAVIGATION.find(
 
 <aside data-bar>
   <sidebar-inner>
-    <a class="site-brand" href="/" aria-label={SITE.title}>
+    <a
+      class="site-brand"
+      href={pathFor("home", language)}
+      aria-label={SITE.title}
+    >
       dac8<span>.org</span>
     </a>
     <button
@@ -24,14 +34,17 @@ const current = NAVIGATION.find(
       aria-expanded="false"
       aria-controls="mobile-menu"
       aria-haspopup="dialog"
-      aria-label="Menü öffnen"
+      aria-label={en ? "Open menu" : "Menü öffnen"}
     >
-      <span>Menü</span>
+      <span>{en ? "Menu" : "Menü"}</span>
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M4 8h16M4 16h16" />
       </svg>
     </button>
-    <nav id="site-navigation" aria-label="Hauptnavigation">
+    <nav
+      id="site-navigation"
+      aria-label={en ? "Main navigation" : "Hauptnavigation"}
+    >
       <div class="navigation-links">
         <ul class="pages">
           {NAVIGATION.map((item) => (
@@ -41,7 +54,7 @@ const current = NAVIGATION.find(
                   <summary class="page-link" aria-current="page">
                     <span>{item.label}</span>
                   </summary>
-                  <ol class="sections" data-section-nav aria-label={`Abschnitte: ${item.label}`}>
+                  <ol class="sections" data-section-nav aria-label={`${en ? "Sections" : "Abschnitte"}: ${item.label}`}>
                     {sections.map((section) => (
                       <li>
                         <a href={`#${section.id}`} data-target={section.id}>
@@ -60,27 +73,34 @@ const current = NAVIGATION.find(
           ))}
         </ul>
       </div>
-      <div class="sidebar-foot">
-        <ThemeToggle />
-        <p>
-          Eine Initiative von
-          <a href="https://bitcoin-austria.at">Bitcoin Austria</a>
-        </p>
+      <div class="sidebar-bottom">
+        <LanguageSelector />
+        <div class="sidebar-foot">
+          <ThemeToggle />
+          <p>
+            {en ? "An initiative by" : "Eine Initiative von"}
+            <a href="https://bitcoin-austria.at">Bitcoin Austria</a>
+          </p>
+        </div>
       </div>
     </nav>
   </sidebar-inner>
-  <dialog id="mobile-menu" aria-label="Menü">
+  <dialog id="mobile-menu" aria-label={en ? "Menu" : "Menü"}>
     <div class="mobile-menu-header">
-      <a class="site-brand" href="/" aria-label={SITE.title}>
+      <a
+        class="site-brand"
+        href={pathFor("home", language)}
+        aria-label={SITE.title}
+      >
         dac8<span>.org</span>
       </a>
       <button
         class="menu-close"
         type="button"
-        aria-label="Menü schließen"
+        aria-label={en ? "Close menu" : "Menü schließen"}
         autofocus
       >
-        <span>Schließen</span>
+        <span>{en ? "Close" : "Schließen"}</span>
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="m6 6 12 12M18 6 6 18" />
         </svg>
@@ -90,6 +110,10 @@ const current = NAVIGATION.find(
 </aside>
 
 <style>
+  .sidebar-bottom {
+    display: grid;
+    gap: 0.75rem;
+  }
   aside {
     position: sticky;
     top: var(--page-offset-top);

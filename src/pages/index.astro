@@ -1,6 +1,7 @@
 ---
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
+import { campaignStatus } from "@/data/campaign"
 ---
 
 <Layout
@@ -32,13 +33,16 @@ import Layout from "@/layouts/Layout.astro"
       <p class="prose">
         Seit 2026 müssen Krypto-Anbieter in Österreich Finanzdaten aller Kunden
         für das Finanzamt aufbereiten, ohne konkreten Verdacht. Wir halten diese
-        Erfassung unter DAC8 für einen Grundrechtsverstoß und bringen sie vor
-        Gericht.
+        Erfassung unter DAC8 für einen Grundrechtsverstoß und bereiten ein
+        Verfahren dagegen vor.
       </p>
       <nav class="hero-actions" aria-label="Direkteinstieg">
-        <a class="button primary" href="#handeln">Was du tun kannst</a>
+        <a class="button primary" href="/spenden/">Prozess unterstützen</a>
         <a class="button" href="/hintergrund/">Was DAC8 verlangt</a>
       </nav>
+      <p class="campaign-status">
+        <a href="/aktuelles/">Österreich · {campaignStatus.de.label}</a>
+      </p>
       <dl class="keyfigures" aria-label="Das Wichtigste auf einen Blick">
         <div>
           <dt>
@@ -121,9 +125,7 @@ import Layout from "@/layouts/Layout.astro"
     <section id="weg" aria-labelledby="weg-heading">
       <h2 id="weg-heading">Was wir tun</h2>
       <p class="section-intro">
-        Wir gehen gegen die anlasslose Erfassung von Finanzdaten vor. Dafür
-        dokumentieren wir konkrete Fälle und unterstützen Betroffene auf dem
-        Rechtsweg.
+        {campaignStatus.de.text}
       </p>
       <p class="prose">
         Der Weg beginnt mit einer Beschwerde gegen einen konkreten Anbieter bei
@@ -147,38 +149,25 @@ import Layout from "@/layouts/Layout.astro"
 
     <section id="handeln" aria-labelledby="handeln-heading">
       <h2 id="handeln-heading">Was du tun kannst</h2>
-      <ol class="cards three">
+      <ul class="facts">
         <li>
-          <h3>Beschwerde vorbereiten</h3>
-          <p class="where">bei der Datenschutzbehörde</p>
+          <strong>Den Prozess mittragen</strong>
           <p>
-            Wenn dein Anbieter deine Daten für DAC8 verarbeitet, kannst du das
-            prüfen lassen. Unser Generator hilft beim Entwurf, alles bleibt in
-            deinem Browser.
+            Deine Spende hilft uns vor allem, die Kosten des Verfahrens zu
+            tragen.
           </p>
-          <a class="button primary" href="/handeln/#beschwerde"
-            >Zum Generator</a
-          >
+          <a class="button primary" href="/spenden/">Spenden</a>
         </li>
         <li>
-          <h3>Abgeordnete anschreiben</h3>
-          <p class="where">im Nationalrat</p>
+          <strong>Das Verfahren verfolgen</strong>
           <p>
-            Fordere klare Grenzen für die Erfassung von Finanzdaten. Ergänze den
-            Briefentwurf darum, wie dich DAC8 persönlich betrifft.
+            Wie sich Privatpersonen beteiligen können, steht noch nicht fest.
+            Neuigkeiten und nächste Schritte veröffentlichen wir hier und per
+            RSS.
           </p>
-          <a class="button" href="/handeln/#abgeordnete">Brief vorbereiten</a>
+          <a class="button" href="/aktuelles/">Aktuelles zum Verfahren</a>
         </li>
-        <li>
-          <h3>Den Rechtsweg mittragen</h3>
-          <p class="where">Spende an Bitcoin Austria</p>
-          <p>
-            Anwaltliche Prüfung, Gutachten und Recherche kosten Geld. In Bitcoin
-            über unseren eigenen Server oder in Euro per Überweisung.
-          </p>
-          <a class="button" href="/spenden/">Spenden</a>
-        </li>
-      </ol>
+      </ul>
       <button class="text-link" type="button" data-share>Seite teilen</button>
       <p class="share-status" data-share-status aria-live="polite"></p>
     </section>
@@ -233,9 +222,10 @@ import Layout from "@/layouts/Layout.astro"
         unabhängig davon, welche Kryptowerte sie nutzen.
       </p>
       <p class="prose">
-        DAC8 gilt in der ganzen EU. Organisationen, Unternehmen und Fachleute,
-        die das Gesetz in ihrem Land prüfen wollen, können sich bei uns melden.
-        Wir teilen Argumente, Quellen und Erfahrung:
+        Unsere Kampagne beginnt in Österreich. DAC8 gilt in der ganzen EU:
+        Organisationen, Unternehmen und Fachleute, die das Gesetz in ihrem Land
+        prüfen wollen, können sich bei uns melden. Wir teilen Argumente, Quellen
+        und Erfahrung:
         <a href="mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"
           >kontakt@dac8.org</a
         >

@@ -1,37 +1,64 @@
 ---
 import BitcoinAustriaLogo from "@/assets/bitcoin-austria-horizontal.svg"
 
+import { campaign, feedFor, languageFor, pathFor } from "@/lib/i18n"
+const language = languageFor(Astro.url.pathname)
+const en = language === "en"
+const background = pathFor("background", language)
 const sections = [
   {
-    title: "Hintergrund",
+    title: en ? "Background" : "Hintergrund",
     links: [
-      { label: "Was ist DAC8?", href: "/hintergrund/#was-ist-dac8" },
-      { label: "Was gemeldet wird", href: "/hintergrund/#gemeldet" },
-      { label: "Was wir fordern", href: "/hintergrund/#forderungen" },
-      { label: "Wie wir vorgehen", href: "/hintergrund/#rechtsweg" },
-      { label: "Häufige Fragen", href: "/hintergrund/#faq" },
-      { label: "Quellen", href: "/hintergrund/#quellen" },
-    ],
-  },
-  {
-    title: "Handeln",
-    links: [
-      { label: "Beschwerde vorbereiten", href: "/handeln/#beschwerde" },
-      { label: "Abgeordnete anschreiben", href: "/handeln/#abgeordnete" },
-      { label: "Spenden", href: "/spenden/" },
-    ],
-  },
-  {
-    title: "Mehr",
-    links: [
-      { label: "Wer dahintersteht", href: "/#position" },
       {
-        label: "Zusammenarbeit",
-        href: "mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8",
+        label: en ? "What is DAC8?" : "Was ist DAC8?",
+        href: `${background}#was-ist-dac8`,
       },
-      { label: "Kontakt", href: "mailto:kontakt@dac8.org" },
       {
-        label: "Quellcode auf GitHub",
+        label: en ? "What gets reported" : "Was gemeldet wird",
+        href: `${background}#gemeldet`,
+      },
+      {
+        label: en ? "Our demands" : "Was wir fordern",
+        href: `${background}#forderungen`,
+      },
+      {
+        label: en ? "Our legal strategy" : "Wie wir vorgehen",
+        href: `${background}#rechtsweg`,
+      },
+      { label: en ? "Sources" : "Quellen", href: `${background}#quellen` },
+    ],
+  },
+  {
+    title: en ? "Support" : "Unterstützen",
+    links: [
+      { label: en ? "Donate" : "Spenden", href: pathFor("donate", language) },
+      {
+        label: en ? "Get involved" : "Mitmachen",
+        href: pathFor("support", language),
+      },
+      {
+        label: en ? "Campaign updates" : "Aktuelles zum Verfahren",
+        href: pathFor("updates", language),
+      },
+      { label: en ? "RSS feed" : "RSS-Feed", href: feedFor(language) },
+      {
+        label: en
+          ? "Bitcoin Austria newsletter (DE)"
+          : "Bitcoin-Austria-Newsletter",
+        href: campaign.newsletter,
+      },
+    ],
+  },
+  {
+    title: en ? "More" : "Mehr",
+    links: [
+      {
+        label: en ? "Who we are" : "Wer dahintersteht",
+        href: `${pathFor("home", language)}#position`,
+      },
+      { label: en ? "Contact" : "Kontakt", href: "mailto:kontakt@dac8.org" },
+      {
+        label: en ? "Source code on GitHub" : "Quellcode auf GitHub",
         href: "https://github.com/bitcoinaustria/dac8.org",
       },
       { label: "Bitcoin Austria", href: "https://bitcoin-austria.at" },
@@ -43,14 +70,15 @@ const sections = [
 <footer>
   <div class="footer-main">
     <div class="footer-lead">
-      <a class="footer-brand" href="/">dac8<span>.org</span></a>
+      <a class="footer-brand" href={pathFor("home", language)}
+        >dac8<span>.org</span></a
+      >
       <p>
-        Gegen die anlasslose Erfassung von Krypto-Finanzdaten. Eine Initiative
-        des Vereins Bitcoin Austria.
+        {en ? "Against indiscriminate crypto-asset financial data collection. An initiative by Bitcoin Austria." : "Gegen die anlasslose Erfassung von Krypto-Finanzdaten. Eine Initiative des Vereins Bitcoin Austria."}
       </p>
     </div>
 
-    <nav aria-label="Weitere Navigation">
+    <nav aria-label={en ? "Further navigation" : "Weitere Navigation"}>
       {sections.map((section) => (
         <section>
           <h2>{section.title}</h2>
@@ -75,9 +103,20 @@ const sections = [
       <BitcoinAustriaLogo />
     </a>
     <div class="footer-meta">
-      <ul class="legal-links" aria-label="Rechtliches">
-        <li><a href="/impressum/">Impressum</a></li>
-        <li><a href="/datenschutz/">Datenschutz</a></li>
+      <ul
+        class="legal-links"
+        aria-label={en ? "Legal information" : "Rechtliches"}
+      >
+        <li>
+          <a href={pathFor("legal", language)}
+            >{en ? "Legal notice" : "Impressum"}</a
+          >
+        </li>
+        <li>
+          <a href={pathFor("privacy", language)}
+            >{en ? "Privacy" : "Datenschutz"}</a
+          >
+        </li>
       </ul>
     </div>
   </div>
