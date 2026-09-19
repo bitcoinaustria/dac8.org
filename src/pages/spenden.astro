@@ -75,33 +75,12 @@ const fundingUses = [
           aria-labelledby="bitcoin-heading"
         >
           <header class="donation-heading">
-            <span class="payment-symbol" aria-hidden="true">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M8 4h6a4 4 0 0 1 0 8H8m0 0h7a4 4 0 0 1 0 8H8M8 4v16M5 4h3M5 20h3M11 2v2m4-2v2M11 20v2m4-2v2"
-                />
-              </svg>
-            </span>
-            <div>
-              <h3 id="bitcoin-heading">Bitcoin</h3>
-              <p>Direkt an Bitcoin Austria</p>
-            </div>
+            <h3 id="bitcoin-heading">Mit Bitcoin</h3>
+            <p>Lightning oder On-Chain</p>
           </header>
           <div class="bitcoin-payment">
-            <ul class="payment-methods" aria-label="Zahlungsarten">
-              <li>Lightning</li>
-              <li>On-Chain</li>
-            </ul>
             <p class="payment-description">
-              Du bestimmst den Betrag. Unser eigener BTCPay-Server fragt weder
-              Namen noch E-Mail ab.
+              Wähle deinen Betrag auf unserem eigenen BTCPay-Server.
             </p>
             <a
               class="button primary donation-action"
@@ -124,6 +103,7 @@ const fundingUses = [
                 />
               </svg>
             </a>
+            <p class="payment-note">Ohne Angabe von Namen oder E-Mail.</p>
           </div>
           <div class="payment-link">
             <div>
@@ -147,24 +127,8 @@ const fundingUses = [
           aria-labelledby="euro-heading"
         >
           <header class="donation-heading">
-            <span class="payment-symbol" aria-hidden="true">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M4 10h12M4 14h9M19 5a7 7 0 0 0-5-2c-5 0-7 4-7 9s2 9 7 9a7 7 0 0 0 5-2"
-                />
-              </svg>
-            </span>
-            <div>
-              <h3 id="euro-heading">Euro</h3>
-              <p>Überweisung aufs Vereinskonto</p>
-            </div>
+            <h3 id="euro-heading">Per Überweisung</h3>
+            <p>In Euro auf unser Vereinskonto</p>
           </header>
           <dl class="bank-details">
             {bankDetails.map((detail) => (

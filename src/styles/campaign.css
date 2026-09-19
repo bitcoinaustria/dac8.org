@@ -939,9 +939,6 @@
 }
 
 .campaign .donation-heading {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
   margin-block-end: 1.5rem;
 }
 
@@ -959,41 +956,17 @@
   line-height: 1.4;
 }
 
-.campaign .payment-symbol {
-  display: grid;
-  place-items: center;
-  flex: 0 0 2.5rem;
-  block-size: 2.5rem;
-  color: var(--accent);
-}
-
-.campaign .payment-symbol svg {
-  inline-size: 2rem;
-  block-size: 2rem;
-}
-
 .campaign .bitcoin-payment {
   display: grid;
   gap: 1.25rem;
-  margin-block: 0.5rem 2rem;
+  margin-block-end: 2rem;
 }
 
-.campaign .payment-methods {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 0;
-  list-style: none;
-}
-
-.campaign .payment-methods li {
-  font-size: 0.9375rem;
-  color: var(--ink-2);
-}
-
-.campaign .payment-methods li + li::before {
-  content: "·";
-  margin-inline-end: 0.5rem;
+.campaign .payment-note {
+  margin-block-start: -0.5rem;
+  color: var(--ink-3);
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
 
 .campaign .payment-description {
