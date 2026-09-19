@@ -50,7 +50,7 @@ const sections = [
       </p>
     </div>
 
-    <nav aria-label="Footer">
+    <nav aria-label="Weitere Navigation">
       {sections.map((section) => (
         <section>
           <h2>{section.title}</h2>
@@ -75,12 +75,6 @@ const sections = [
       <BitcoinAustriaLogo />
     </a>
     <div class="footer-meta">
-      <p>
-        Code und Texte:
-        <a href="https://github.com/bitcoinaustria/dac8.org/blob/main/LICENSE"
-          >MIT-Lizenz</a
-        >
-      </p>
       <ul class="legal-links" aria-label="Rechtliches">
         <li><a href="/impressum/">Impressum</a></li>
         <li><a href="/datenschutz/">Datenschutz</a></li>
@@ -98,10 +92,10 @@ const sections = [
   .footer-main {
     display: grid;
     grid-template-columns: minmax(14rem, 1fr) minmax(0, 2fr);
-    gap: var(--space-xl) var(--space-3xl);
+    gap: var(--space-l) var(--space-xl);
     align-items: start;
 
-    @media (width < 64rem) {
+    @media (width < 72rem) {
       grid-template-columns: 1fr;
     }
   }
@@ -151,13 +145,9 @@ const sections = [
 
   nav {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
     gap: var(--space-l);
     align-content: start;
-
-    @media (width < 40rem) {
-      grid-template-columns: 1fr;
-    }
 
     ul {
       margin: 0;
@@ -176,11 +166,12 @@ const sections = [
     text-transform: uppercase;
   }
 
-  nav li + li {
-    margin-block-start: var(--space-2xs);
-  }
-
   nav a {
+    display: flex;
+    align-items: center;
+    min-block-size: 2.75rem;
+    padding-block: 0.35em;
+    line-height: 1.4;
     color: var(--foreground);
     text-decoration: none;
 
@@ -212,11 +203,10 @@ const sections = [
     justify-content: flex-end;
     gap: var(--space-m);
 
-    p {
-      margin: 0;
-    }
-
     a {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: 2.75rem;
       color: inherit;
       text-underline-offset: 0.2em;
 

@@ -21,18 +21,6 @@
 
   --grid-max-width: 75.94rem;
   --grid-gutter: var(--space-s-m);
-  --grid-columns: 12;
-  --grid-edge: max(
-    var(--grid-gutter),
-    (100% - var(--grid-max-width)) / 2 + var(--grid-gutter)
-  );
-  --grid-column-width: calc(
-    (
-        min(100%, var(--grid-max-width)) -
-          (var(--grid-columns) + 1) * var(--grid-gutter)
-      ) /
-      var(--grid-columns)
-  );
   --bar-gutter: var(--grid-gutter);
   --bar-border-image: linear-gradient(
       to right,
@@ -48,18 +36,10 @@
 
 html {
   scrollbar-gutter: stable;
+  scroll-padding-block-start: var(--space-m);
 
-  @media (width < 72rem) {
-    --bar-nav-height: calc(2rem + 2 * var(--space-2xs) + 2px);
-    --bar-toc-height: 0px;
-    scroll-padding-block-start: calc(
-      var(--bar-nav-height) +
-      var(--bar-toc-height) +
-      var(--space-2xs)
-    );
-
-    &:has(page-toc) {
-      --bar-toc-height: calc(1.5 * var(--step--1) + 2 * var(--space-2xs) + 2px);
-    }
+  @media (width < 64rem) {
+    --bar-nav-height: calc(2.75rem + 2 * var(--space-2xs));
+    scroll-padding-block-start: calc(var(--bar-nav-height) + var(--space-s));
   }
 }
