@@ -70,14 +70,25 @@ const fundingUses = [
       <div class="donation-options">
         <article
           id="bitcoin"
-          class="donation-card bitcoin-card"
+          class="donation-method"
           data-copy-scope
           aria-labelledby="bitcoin-heading"
         >
           <header class="donation-heading">
-            <span class="payment-symbol bitcoin-symbol" aria-hidden="true"
-              >₿</span
-            >
+            <span class="payment-symbol" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M8 4h6a4 4 0 0 1 0 8H8m0 0h7a4 4 0 0 1 0 8H8M8 4v16M5 4h3M5 20h3M11 2v2m4-2v2M11 20v2m4-2v2"
+                />
+              </svg>
+            </span>
             <div>
               <h3 id="bitcoin-heading">Bitcoin</h3>
               <p>Direkt an Bitcoin Austria</p>
@@ -131,7 +142,7 @@ const fundingUses = [
 
         <article
           id="euro"
-          class="donation-card euro-card"
+          class="donation-method"
           data-copy-scope
           aria-labelledby="euro-heading"
         >
@@ -141,11 +152,13 @@ const fundingUses = [
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="1.5"
+                stroke-width="1.6"
                 stroke-linecap="round"
                 stroke-linejoin="round"
               >
-                <path d="m3 9 9-6 9 6H3ZM5 12v6m7-6v6m7-6v6M3 21h18" />
+                <path
+                  d="M4 10h12M4 14h9M19 5a7 7 0 0 0-5-2c-5 0-7 4-7 9s2 9 7 9a7 7 0 0 0 5-2"
+                />
               </svg>
             </span>
             <div>
@@ -155,7 +168,7 @@ const fundingUses = [
           </header>
           <dl class="bank-details">
             {bankDetails.map((detail) => (
-              <div class:list={{ "iban-detail": detail.label === "IBAN" }}>
+              <div>
                 <dt>{detail.label}</dt>
                 <dd>
                   <span>{detail.value}</span>

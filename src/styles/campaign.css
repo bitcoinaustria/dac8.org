@@ -925,31 +925,17 @@
 /* The payment grid responds to the content width beside the sidebar. */
 .campaign .donation-options {
   display: grid;
-  gap: 1.25rem;
+  gap: 2.5rem clamp(2rem, 5cqi, 4rem);
   margin-block-start: var(--space-l);
 }
 
-.campaign .donation-card {
+.campaign .donation-method {
   display: flex;
   flex-direction: column;
   min-inline-size: 0;
-  padding: clamp(1.25rem, 3cqi, 2rem);
-  border: 1px solid var(--line);
-  border-radius: 1rem;
-  background: var(--paper);
+  padding-block-start: 1.5rem;
+  border-block-start: 1px solid var(--ink);
   scroll-margin-block-start: 5rem;
-}
-
-.campaign .bitcoin-card {
-  --ink: #fcfcfc;
-  --ink-2: #d0d0d0;
-  --ink-3: #b4b4b4;
-  --line: #414141;
-  --paper: #242424;
-  --accent: #ff9592;
-  color: var(--ink);
-  background: #202020;
-  border-color: #414141;
 }
 
 .campaign .donation-heading {
@@ -976,25 +962,14 @@
 .campaign .payment-symbol {
   display: grid;
   place-items: center;
-  flex: 0 0 3rem;
-  block-size: 3rem;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  background: var(--panel);
+  flex: 0 0 2.5rem;
+  block-size: 2.5rem;
+  color: var(--accent);
 }
 
 .campaign .payment-symbol svg {
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
-}
-
-.campaign .bitcoin-symbol {
-  border-color: transparent;
-  color: white;
-  background: var(--primary);
-  font-size: 2rem;
-  font-weight: 500;
-  line-height: 1;
+  inline-size: 2rem;
+  block-size: 2rem;
 }
 
 .campaign .bitcoin-payment {
@@ -1012,11 +987,13 @@
 }
 
 .campaign .payment-methods li {
-  padding: 0.2rem 0.65rem;
-  border: 1px solid var(--line);
-  border-radius: 2rem;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   color: var(--ink-2);
+}
+
+.campaign .payment-methods li + li::before {
+  content: "·";
+  margin-inline-end: 0.5rem;
 }
 
 .campaign .payment-description {
@@ -1043,7 +1020,6 @@
   justify-content: space-between;
   gap: 0.75rem;
   padding-block-start: 1.25rem;
-  margin-block-start: auto;
   border-block-start: 1px solid var(--line);
   font-size: 1rem;
 }
@@ -1083,23 +1059,11 @@
   font-variant-numeric: tabular-nums;
 }
 
-.campaign .bank-details .iban-detail {
-  margin-inline: -0.75rem;
-  padding-inline: 0.75rem 4.25rem;
-  border-block-end-color: transparent;
-  border-radius: 0.5rem;
-  background: var(--panel);
-}
-
 .campaign .bank-details .copy-button {
   position: absolute;
   inset-inline-end: 0;
   inset-block-start: 50%;
   translate: 0 -50%;
-}
-
-.campaign .bank-details .iban-detail .copy-button {
-  inset-inline-end: 0.75rem;
 }
 
 .campaign .copy-button {
