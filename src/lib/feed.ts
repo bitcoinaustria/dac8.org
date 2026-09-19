@@ -18,8 +18,8 @@ export const campaignFeed = (language: Language, site: URL) => {
   const entries = publishedUpdates()
   const title =
     language === "en"
-      ? "dac8.org — Austria: campaign updates"
-      : "dac8.org — Österreich: Neuigkeiten zum Verfahren"
+      ? "dac8.org: Austria: campaign updates"
+      : "dac8.org: Österreich: Neuigkeiten zum Verfahren"
   const description =
     language === "en"
       ? "Updates on Bitcoin Austria’s challenge to indiscriminate financial data collection."
