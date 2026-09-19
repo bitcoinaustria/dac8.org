@@ -1,0 +1,50 @@
+---
+import { languageFor, pathFor } from "@/lib/i18n"
+import { supporters } from "@/data/supporters"
+const language = languageFor(Astro.url.pathname)
+const en = language === "en"
+---
+
+<div class="partners">
+  <section aria-labelledby="legal-representation-heading">
+    <h3 id="legal-representation-heading">
+      {en ? "Legal representation" : "Rechtliche Vertretung"}
+    </h3>
+    <p class="prose">
+      {en ? "Bitcoin Austria is represented in the proceedings by " : "Die rechtliche Vertretung im Verfahren übernimmt "}
+      <a
+        href={en ? "https://www.cerhahempel.com/lawyers/oliver-voelkel" : "https://www.cerhahempel.com/de/juristen/oliver-voelkel"}
+        >Dr. Oliver Völkel, LL.M.</a
+      >,
+      {en ? "attorney at law and partner at CERHA HEMPEL in Vienna." : "Rechtsanwalt und Partner bei CERHA HEMPEL in Wien."}
+    </p>
+  </section>
+  {supporters.length > 0 && (
+    <section aria-labelledby="supporters-heading">
+      <h3 id="supporters-heading">{en ? "Supporting organisations" : "Unterstützende Organisationen"}</h3>
+      <ul>
+        {supporters.map(({ name, url }) => <li><a href={url}>{name}</a></li>)}
+      </ul>
+    </section>
+  )}
+  <a class="text-link" href={`${pathFor("support", language)}#organisationen`}>
+    {en ? "Support as an organisation" : "Als Organisation unterstützen"}
+  </a>
+</div>
+
+<style>
+  .partners {
+    margin-block-start: var(--space-l);
+    padding-block-start: var(--space-m);
+    border-block-start: 1px solid var(--border);
+    display: grid;
+    gap: var(--space-m);
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+    padding: 0;
+    list-style: none;
+  }
+</style>
