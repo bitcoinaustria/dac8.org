@@ -16,32 +16,12 @@ const bankDetails = [
   { label: "BIC", value: "GIBAATWWXXX" },
   { label: "Verwendungszweck", value: "DAC8" },
 ]
-
-const fundingUses = [
-  {
-    title: "Anwaltliche Prüfung",
-    text: "Konkrete Fälle und mögliche Rechtswege anwaltlich prüfen lassen.",
-  },
-  {
-    title: "Gutachten und Recherche",
-    text: "Primärquellen auswerten und fachliche Gutachten einholen.",
-  },
-  {
-    title: "Werkzeuge",
-    text: "Diese Website, die Generatoren und der eigene BTCPay-Server, alles ohne Tracker.",
-  },
-  {
-    title: "Öffentlichkeit",
-    text: "Gespräche mit Abgeordneten, Medien und anderen Organisationen.",
-  },
-]
 ---
 
 <Layout
   sections={[
     { id: "wege", label: "Bitcoin oder Euro" },
-    { id: "verwendung", label: "Wofür das Geld ist" },
-    { id: "verein", label: "Wer es bekommt" },
+    { id: "verwendung", label: "Verwendung" },
   ]}
 >
   <MetaPage
@@ -54,8 +34,8 @@ const fundingUses = [
     <header class="hero">
       <h1>Unterstütze <span>den Rechtsweg.</span></h1>
       <p class="lead">
-        Anwälte, Gutachten und Recherche kosten Geld. Deine Spende geht direkt
-        an Bitcoin Austria, den Verein hinter dac8.org.
+        Der Rechtsweg kostet Geld. Deine Spende geht direkt an Bitcoin Austria,
+        den Verein hinter dac8.org.
       </p>
       <nav class="hero-actions" aria-label="Spendenweg wählen">
         <a class="button primary" href={btcpay} target="_blank" rel="noopener"
@@ -149,44 +129,18 @@ const fundingUses = [
           ></p>
         </article>
       </div>
-      <p class="prose">
-        <strong>Größerer Beitrag?</strong>
-        Schreib uns vorher kurz an
-        <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>, dann klären wir
-        die Zweckbindung.
-      </p>
     </section>
 
     <section id="verwendung" aria-labelledby="verwendung-heading">
-      <h2 id="verwendung-heading">Wofür das Geld ist</h2>
+      <h2 id="verwendung-heading">Für den Prozess</h2>
       <p class="section-intro">
-        Wir arbeiten ehrenamtlich. Spenden helfen, die folgenden Kosten zu
-        decken.
-      </p>
-      <ul class="facts">
-        {fundingUses.map((use) => (
-          <li>
-            <strong>{use.title}</strong>
-            <p>{use.text}</p>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    <section id="verein" aria-labelledby="verein-heading">
-      <h2 id="verein-heading">Wer das Geld bekommt</h2>
-      <p class="section-intro">
-        Bitcoin Austria, gemeinnütziger Verein, gegründet 2011 in Wien.
-        ZVR&#8209;Zahl 828542896.
+        Mit deiner Spende finanzieren wir vor allem den Prozess gegen die
+        anlasslose Erfassung unserer Finanzdaten.
       </p>
       <p class="prose">
-        Eine Spende begründet keinen Anspruch auf Beteiligung oder einen
-        bestimmten Ausgang. Fragen zur Verwendung beantworten wir unter
+        Fragen zur Spende? Schreib uns an
         <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>.
       </p>
-      <a class="text-link" href="https://bitcoin-austria.at"
-        >Zur Vereinswebsite</a
-      >
     </section>
   </article>
 
