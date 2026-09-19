@@ -36,29 +36,29 @@ const current = NAVIGATION.find(
         <ul class="pages">
           {NAVIGATION.map((item) => (
             <li>
-              <a
-                href={item.href}
-                aria-current={item === current ? "page" : undefined}
-              >
-                <span>{item.label}</span>
-              </a>
+              {item === current && sections.length > 0 ? (
+                <details class="section-navigation" open>
+                  <summary class="page-link" aria-current="page">
+                    <span>{item.label}</span>
+                  </summary>
+                  <ol class="sections" data-section-nav aria-label={`Abschnitte: ${item.label}`}>
+                    {sections.map((section) => (
+                      <li>
+                        <a href={`#${section.id}`} data-target={section.id}>
+                          {section.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </details>
+              ) : (
+                <a class="page-link" href={item.href} aria-current={item === current ? "page" : undefined}>
+                  <span>{item.label}</span>
+                </a>
+              )}
             </li>
           ))}
         </ul>
-        {sections.length > 0 && (
-          <details class="section-navigation" open>
-            <summary id="section-navigation-label">Auf dieser Seite</summary>
-            <ol class="sections" data-section-nav aria-labelledby="section-navigation-label">
-              {sections.map((section) => (
-                <li>
-                  <a href={`#${section.id}`} data-target={section.id}>
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </details>
-        )}
       </div>
       <div class="sidebar-foot">
         <ThemeToggle />
@@ -157,9 +157,11 @@ const current = NAVIGATION.find(
     flex-direction: column;
     gap: var(--space-2xs);
 
-    > li > a {
+    .page-link {
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      gap: var(--space-xs);
       min-block-size: 2.75rem;
       padding-block: 0.25em;
       color: var(--muted-foreground);
@@ -182,32 +184,24 @@ const current = NAVIGATION.find(
     }
   }
 
-  .section-navigation {
-    margin-block-start: var(--space-m);
+  .section-navigation > summary {
+    list-style: none;
+    cursor: pointer;
 
-    > summary {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-block-size: 2.75rem;
-      color: var(--muted-foreground);
-      font-size: var(--step--1);
-      list-style: none;
-      cursor: pointer;
-
-      &::-webkit-details-marker {
-        display: none;
-      }
-
-      &::after {
-        content: "+";
-        font-size: 1.25rem;
-      }
+    &::-webkit-details-marker {
+      display: none;
     }
+  }
 
-    &[open] > summary::after {
-      content: "−";
-    }
+  .pages .section-navigation > summary::after {
+    flex: none;
+    content: "+";
+    font-size: 1.25rem;
+    font-weight: 400;
+  }
+
+  .pages .section-navigation[open] > summary::after {
+    content: "−";
   }
 
   .sections {
@@ -380,7 +374,7 @@ const current = NAVIGATION.find(
     .pages {
       gap: 0;
 
-      > li > a {
+      .page-link {
         justify-content: space-between;
         min-block-size: 3.5rem;
         padding: var(--space-xs) 0;
@@ -417,17 +411,6 @@ const current = NAVIGATION.find(
             color: inherit;
           }
         }
-      }
-    }
-
-    .section-navigation {
-      margin-block-start: var(--space-s);
-
-      > summary {
-        min-block-size: 3.25rem;
-        color: var(--foreground);
-        font-size: 1rem;
-        font-weight: 500;
       }
     }
 
