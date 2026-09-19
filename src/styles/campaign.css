@@ -24,7 +24,8 @@
   --ink-3: var(--muted-foreground);
   --line: color-mix(in oklab, var(--foreground) 14%, transparent);
   --radius: var(--radius-lg);
-  --measure-lead: 58ch;
+  --measure-lead: 55ch;
+  container: campaign / inline-size;
   --measure-text: 66ch;
   display: grid;
   gap: var(--space-2xl-3xl);
@@ -89,8 +90,8 @@
   max-inline-size: var(--measure-lead);
   margin-block-start: var(--space-m);
   color: var(--ink-2);
-  font-size: var(--step-2);
-  line-height: 1.4;
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  line-height: 1.5;
   text-wrap: pretty;
 }
 
@@ -1026,10 +1027,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .campaign .cards.three {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .campaign .split {
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
     align-items: start;
@@ -1093,4 +1090,29 @@
     margin-block-end: var(--space-xs);
   }
 
+}
+
+/* Action cards follow their content column, including beside the sidebar. */
+.campaign .cards.three {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@container campaign (width >= 38rem) {
+  .campaign .cards.three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .campaign .cards.three > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@container campaign (width >= 54rem) {
+  .campaign .cards.three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .campaign .cards.three > :last-child {
+    grid-column: auto;
+  }
 }

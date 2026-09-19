@@ -22,9 +22,14 @@ const current = NAVIGATION.find(
       class="menu-toggle"
       type="button"
       aria-expanded="false"
-      aria-controls="site-navigation"
+      aria-controls="mobile-menu"
+      aria-haspopup="dialog"
+      aria-label="Menü öffnen"
     >
-      Menü
+      <span>Menü</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 8h16M4 16h16" />
+      </svg>
     </button>
     <nav id="site-navigation" aria-label="Hauptnavigation">
       <div class="navigation-links">
@@ -35,14 +40,14 @@ const current = NAVIGATION.find(
                 href={item.href}
                 aria-current={item === current ? "page" : undefined}
               >
-                {item.label}
+                <span>{item.label}</span>
               </a>
             </li>
           ))}
         </ul>
         {sections.length > 0 && (
-          <div class="section-navigation">
-            <p id="section-navigation-label">Auf dieser Seite</p>
+          <details class="section-navigation" open>
+            <summary id="section-navigation-label">Auf dieser Seite</summary>
             <ol class="sections" data-section-nav aria-labelledby="section-navigation-label">
               {sections.map((section) => (
                 <li>
@@ -52,7 +57,7 @@ const current = NAVIGATION.find(
                 </li>
               ))}
             </ol>
-          </div>
+          </details>
         )}
       </div>
       <div class="sidebar-foot">
@@ -64,6 +69,24 @@ const current = NAVIGATION.find(
       </div>
     </nav>
   </sidebar-inner>
+  <dialog id="mobile-menu" aria-label="Menü">
+    <div class="mobile-menu-header">
+      <a class="site-brand" href="/" aria-label={SITE.title}>
+        dac8<span>.org</span>
+      </a>
+      <button
+        class="menu-close"
+        type="button"
+        aria-label="Menü schließen"
+        autofocus
+      >
+        <span>Schließen</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 6 12 12M18 6 6 18" />
+        </svg>
+      </button>
+    </div>
+  </dialog>
 </aside>
 
 <style>
@@ -150,15 +173,40 @@ const current = NAVIGATION.find(
       &[aria-current="page"] {
         color: var(--foreground);
       }
+
+      &[aria-current="page"] {
+        font-weight: 600;
+        box-shadow: inset 3px 0 var(--accent);
+        padding-inline-start: var(--space-xs);
+      }
     }
   }
 
   .section-navigation {
     margin-block-start: var(--space-m);
 
-    > p {
+    > summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-block-size: 2.75rem;
       color: var(--muted-foreground);
       font-size: var(--step--1);
+      list-style: none;
+      cursor: pointer;
+
+      &::-webkit-details-marker {
+        display: none;
+      }
+
+      &::after {
+        content: "+";
+        font-size: 1.25rem;
+      }
+    }
+
+    &[open] > summary::after {
+      content: "−";
     }
   }
 
@@ -231,22 +279,46 @@ const current = NAVIGATION.find(
     }
   }
 
-  .menu-toggle {
+  .menu-toggle,
+  .menu-close {
     display: none;
     align-items: center;
     justify-content: center;
+    gap: var(--space-xs);
     min-block-size: 2.75rem;
-    inline-size: 8rem;
+    min-inline-size: 2.75rem;
     flex-shrink: 0;
-    padding: var(--space-3xs) var(--space-xs);
-    border: 1px solid var(--foreground);
+    padding-inline: var(--space-xs);
+    border-radius: var(--radius-sm);
     color: var(--foreground);
-    background: transparent;
-    font-size: var(--step--1);
-    font-weight: var(--font-weight-medium);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
+
+    svg {
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+    }
+
+    &:hover {
+      background: var(--muted);
+    }
+  }
+
+  dialog {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: var(--foreground);
+    background: var(--background);
+
+    &::backdrop {
+      background: rgb(0 0 0 / 40%);
+    }
   }
 
   @media (width < 64rem) {
@@ -260,28 +332,13 @@ const current = NAVIGATION.find(
       min-block-size: 2.75rem;
     }
 
-    aside[data-menu-ready] .menu-toggle {
+    aside[data-menu-ready] .menu-toggle,
+    .menu-close {
       display: inline-flex;
     }
 
-    nav {
-      flex: none;
-      gap: var(--space-m);
-      margin: 0;
-      padding: var(--space-s) 0;
-    }
-
-    aside[data-menu-ready] nav {
+    aside[data-menu-ready] sidebar-inner > nav {
       display: none;
-      position: absolute;
-      z-index: 1;
-      inset-block-start: calc(100% + var(--space-2xs));
-      inset-inline: calc(-1 * var(--bar-gutter));
-      max-block-size: calc(100svh - var(--bar-nav-height) - var(--space-s));
-      padding: var(--space-s) var(--bar-gutter) var(--space-m);
-      border-block-end: 2px solid var(--foreground);
-      background: var(--background);
-      overscroll-behavior-y: contain;
     }
 
     aside:not([data-menu-ready]) sidebar-inner {
@@ -289,19 +346,113 @@ const current = NAVIGATION.find(
       align-items: stretch;
     }
 
+    dialog[open] {
+      display: flex;
+      flex-direction: column;
+      inset-block: 0;
+      inset-inline-start: auto;
+      inset-inline-end: 0;
+      inline-size: min(100%, 30rem);
+      max-inline-size: none;
+      block-size: 100dvh;
+      max-block-size: none;
+      overflow: hidden;
+    }
+
+    .mobile-menu-header {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: space-between;
+      padding: max(var(--space-2xs), env(safe-area-inset-top)) var(--bar-gutter)
+        var(--space-2xs);
+      border-block-end: 1px solid var(--border);
+    }
+
+    nav {
+      gap: var(--space-l);
+      margin: 0;
+      padding: var(--space-s) var(--bar-gutter)
+        max(var(--space-s), env(safe-area-inset-bottom));
+      overscroll-behavior-y: contain;
+    }
+
     .pages {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-2xs) var(--space-s);
+      gap: 0;
+
+      > li > a {
+        justify-content: space-between;
+        min-block-size: 3.5rem;
+        padding: var(--space-xs) 0;
+        border-block-end: 1px solid var(--border);
+        color: var(--foreground);
+        font-size: 1.75rem;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        text-transform: none;
+
+        gap: var(--space-xs);
+
+        span {
+          min-inline-size: 0;
+          overflow-wrap: anywhere;
+          hyphens: auto;
+        }
+
+        &::after {
+          flex: none;
+          content: "→";
+          color: var(--muted-foreground);
+          font-size: 1.25rem;
+        }
+
+        &[aria-current="page"] {
+          padding-inline-start: 0;
+          box-shadow: none;
+          color: var(--accent);
+          font-weight: 600;
+
+          &::after {
+            content: "•";
+            color: inherit;
+          }
+        }
+      }
+    }
+
+    .section-navigation {
+      margin-block-start: var(--space-s);
+
+      > summary {
+        min-block-size: 3.25rem;
+        color: var(--foreground);
+        font-size: 1rem;
+        font-weight: 500;
+      }
+    }
+
+    .sections a {
+      font-size: 1rem;
     }
 
     .sidebar-foot {
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-s);
       padding-block-start: var(--space-s);
       border-block-start: 1px solid var(--border);
-    }
 
-    sidebar-inner:has(.menu-toggle[aria-expanded="true"]) nav {
-      display: flex;
+      p {
+        max-inline-size: 24ch;
+      }
+    }
+  }
+  @media (width < 30rem) {
+    .menu-toggle span,
+    .menu-close span {
+      display: none;
     }
   }
 </style>
@@ -309,24 +460,53 @@ const current = NAVIGATION.find(
 <script>
   const menuToggle = document.querySelector<HTMLButtonElement>(".menu-toggle")
   const navigation = document.getElementById("site-navigation")
-
-  menuToggle?.closest("aside")?.setAttribute("data-menu-ready", "")
+  const menu = document.querySelector<HTMLDialogElement>("#mobile-menu")
+  const menuClose = menu?.querySelector<HTMLButtonElement>(".menu-close")
+  const navigationHome = navigation?.parentElement
+  const sectionNavigation = navigation?.querySelector<HTMLDetailsElement>(
+    ".section-navigation",
+  )
+  const mobile = matchMedia("(width < 64rem)")
 
   const closeMenu = () => {
-    if (!menuToggle) return
-    menuToggle.setAttribute("aria-expanded", "false")
-    menuToggle.textContent = "Menü"
+    if (!menu?.open) return
+    menu.close()
+    if (navigation) navigationHome?.append(navigation)
+    menuToggle?.setAttribute("aria-expanded", "false")
+    document.documentElement.removeAttribute("data-menu-open")
+    if (mobile.matches) menuToggle?.focus({ preventScroll: true })
   }
 
   menuToggle?.addEventListener("click", () => {
-    const open = menuToggle.getAttribute("aria-expanded") !== "true"
-    menuToggle.setAttribute("aria-expanded", String(open))
-    menuToggle.textContent = open ? "Schließen" : "Menü"
+    if (!menu || !navigation || !mobile.matches) return
+    if (sectionNavigation) sectionNavigation.open = false
+    menu.append(navigation)
+    menu.showModal()
+    navigation.scrollTop = 0
+    menuToggle.setAttribute("aria-expanded", "true")
+    document.documentElement.setAttribute("data-menu-open", "")
+  })
+
+  menuClose?.addEventListener("click", closeMenu)
+  menu?.addEventListener("cancel", (event) => {
+    event.preventDefault()
+    closeMenu()
+  })
+  menu?.addEventListener("click", (event) => {
+    if (event.target !== menu) return
+    const rect = menu.getBoundingClientRect()
+    if (
+      event.clientX < rect.left ||
+      event.clientX > rect.right ||
+      event.clientY < rect.top ||
+      event.clientY > rect.bottom
+    )
+      closeMenu()
   })
 
   navigation?.addEventListener("click", (event) => {
     const link = (event.target as Element).closest("a")
-    if (!link || menuToggle?.getAttribute("aria-expanded") !== "true") return
+    if (!link || !menu?.open) return
     closeMenu()
     if (link.hash && link.pathname === window.location.pathname) {
       const target = document.getElementById(link.hash.slice(1))
@@ -335,32 +515,13 @@ const current = NAVIGATION.find(
     }
   })
 
-  document.addEventListener("keydown", (event) => {
-    if (
-      event.key === "Escape" &&
-      menuToggle?.getAttribute("aria-expanded") === "true"
-    ) {
-      closeMenu()
-      menuToggle.focus()
-    }
-  })
-
-  document.addEventListener("click", (event) => {
-    if (!(event.target as Element).closest("sidebar-inner")) closeMenu()
-  })
-
-  menuToggle
-    ?.closest("sidebar-inner")
-    ?.addEventListener("focusout", (event) => {
-      if (
-        !(event.currentTarget as Element).contains(
-          (event as FocusEvent).relatedTarget as Node | null,
-        )
-      )
-        closeMenu()
-    })
-
-  matchMedia("(width < 64rem)").addEventListener("change", () => closeMenu())
+  const syncNavigation = () => {
+    closeMenu()
+    if (sectionNavigation) sectionNavigation.open = !mobile.matches
+  }
+  mobile.addEventListener("change", syncNavigation)
+  syncNavigation()
+  menuToggle?.closest("aside")?.setAttribute("data-menu-ready", "")
 
   // Abschnittsanzeige: aktuell ist der letzte Abschnitt, dessen Oberkante die
   // Lesezone (oberes Drittel) erreicht hat. Am Seitenende zählt der letzte,

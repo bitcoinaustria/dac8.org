@@ -43,3 +43,9 @@ html {
     scroll-padding-block-start: calc(var(--bar-nav-height) + var(--space-s));
   }
 }
+
+@media (width < 64rem) {
+  html[data-menu-open] {
+    overflow: hidden;
+  }
+}

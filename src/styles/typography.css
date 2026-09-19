@@ -18,21 +18,15 @@
   --measure: 40rem;
 }
 
-*,
-::before,
-::after,
-::backdrop,
-::file-selector-button {
-  letter-spacing: var(--tracking-tight);
-}
-
 body {
   font-family: var(--font-sans);
+  letter-spacing: normal;
   text-wrap: pretty;
 }
 
 :where(h1, h2, h3, h4, h5, h6) {
   text-wrap: balance;
+  letter-spacing: var(--tracking-tight);
 }
 
 a {
