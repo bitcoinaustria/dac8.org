@@ -1,4 +1,5 @@
 ---
+import ShareIcon from "@/assets/icons/share.svg"
 import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import { campaignStatus } from "@/data/campaign"
@@ -471,14 +472,13 @@ const faqs = [
         action, or seek advice.
       </p>
     </section>
-    <aside class="closing">
-      <h2>How you can help</h2>
-      <p>Help fund the case and follow the next steps in our campaign.</p>
+    <aside class="closing" aria-labelledby="support-heading">
+      <h2 id="support-heading">Support the case</h2>
       <div class="closing-actions">
-        <a class="button" href="/en/support/">How to support us</a
-        ><a class="button" href="/en/donate/">Donate</a
-        ><button class="button" type="button" data-share>
-          Share this page
+        <a class="button primary" href="/en/donate/">Donate</a>
+        <a class="button" href="/en/updates/">Updates</a>
+        <button class="text-link" type="button" data-share>
+          <ShareIcon />Share
         </button>
       </div>
       <p class="share-status" data-share-status aria-live="polite"></p>

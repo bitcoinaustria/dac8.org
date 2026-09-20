@@ -23,7 +23,7 @@ const entries = publishedUpdates()
         <span>{en ? "the case." : "das Verfahren."}</span>
       </h1>
       <p class="lead">
-        {en ? "Here we report on filings, decisions and the next steps in our Austrian campaign." : "Hier berichten wir über Einreichungen, Entscheidungen und die nächsten Schritte unserer österreichischen Kampagne."}
+        {en ? "Filings, decisions and next steps." : "Einreichungen, Entscheidungen und nächste Schritte."}
       </p>
     </header>
     <section aria-labelledby="status-heading">
@@ -47,17 +47,17 @@ const entries = publishedUpdates()
         {en ? "Stay informed" : "Auf dem Laufenden bleiben"}
       </h2>
       <p class="section-intro">
-        {en ? "Subscribe to our RSS feed for updates on the case. Add the feed address to your feed reader. No registration needed." : "Abonniere unseren RSS-Feed für Neuigkeiten zum Verfahren. Dafür fügst du die Feed-Adresse in deinen Feedreader ein – ohne Anmeldung."}
+        {en ? "Updates via RSS. No registration required." : "Neuigkeiten per RSS. Ohne Anmeldung."}
       </p>
       <div class="hero-actions">
         <a class="button primary" href={feedFor(language)}
           >{en ? "Open RSS feed" : "RSS-Feed öffnen"}</a
         >
       </div>
-      {entries.length === 0 && <p class="prose">{en ? "The feed is ready to subscribe to. The first update will appear when there is news about the case." : "Du kannst den Feed bereits abonnieren. Der erste Beitrag erscheint, sobald es Neuigkeiten zum Verfahren gibt."}</p>}
+      {entries.length === 0 && <p class="prose">{en ? "No updates published yet." : "Noch keine Meldungen veröffentlicht."}</p>}
       <p class="prose">
-        {en ? "For broader news from the association, subscribe to the " : "Weitere Neuigkeiten aus dem Verein gibt es im "}<a
-          href={campaign.newsletter}
+        {en ? "Association news: " : "Vereinsneuigkeiten: "}
+        <a href={campaign.newsletter}
           >{en ? "Bitcoin Austria newsletter" : "Bitcoin-Austria-Newsletter"}</a
         >{en ? " (in German)." : "."}
       </p>

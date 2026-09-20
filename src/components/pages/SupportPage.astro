@@ -1,4 +1,5 @@
 ---
+import ShareIcon from "@/assets/icons/share.svg"
 import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import { languageFor, pathFor } from "@/lib/i18n"
@@ -31,7 +32,8 @@ const en = language === "en"
           >{en ? "Support the case" : "Prozess unterstützen"}</a
         >
         <button class="button" type="button" data-share>
-          {en ? "Share the campaign" : "Kampagne teilen"}
+          <ShareIcon />
+          {en ? "Share" : "Teilen"}
         </button>
       </nav>
       <p class="share-status" data-share-status aria-live="polite"></p>

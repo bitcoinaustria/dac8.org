@@ -1,4 +1,5 @@
 ---
+import ShareIcon from "@/assets/icons/share.svg"
 import CampaignPartners from "@/components/CampaignPartners.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
@@ -64,7 +65,7 @@ import { campaignStatus } from "@/data/campaign"
             <strong>Erste Meldung</strong>
             ans Finanzamt für das Meldejahr 2026.
           </dt>
-          <dd>31. Juli 2027</dd>
+          <dd><time datetime="2027-07-31">31. Juli 2027</time></dd>
         </div>
       </dl>
     </header>
@@ -150,7 +151,7 @@ import { campaignStatus } from "@/data/campaign"
 
     <section id="handeln" aria-labelledby="handeln-heading">
       <h2 id="handeln-heading">Was du tun kannst</h2>
-      <ul class="facts">
+      <ul class="facts action-facts">
         <li>
           <strong>Den Prozess mittragen</strong>
           <p>
@@ -166,10 +167,12 @@ import { campaignStatus } from "@/data/campaign"
             Neuigkeiten und nächste Schritte veröffentlichen wir hier und per
             RSS.
           </p>
-          <a class="button" href="/aktuelles/">Aktuelles zum Verfahren</a>
+          <a class="button" href="/aktuelles/">Aktuelles</a>
         </li>
       </ul>
-      <button class="text-link" type="button" data-share>Seite teilen</button>
+      <button class="text-link" type="button" data-share>
+        <ShareIcon />Teilen
+      </button>
       <p class="share-status" data-share-status aria-live="polite"></p>
     </section>
 

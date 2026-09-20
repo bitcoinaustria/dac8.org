@@ -1,4 +1,5 @@
 ---
+import ShareIcon from "@/assets/icons/share.svg"
 import Layout from "@/layouts/Layout.astro"
 import CampaignPartners from "@/components/CampaignPartners.astro"
 import MetaPage from "@/components/MetaPage.astro"
@@ -62,7 +63,7 @@ import { campaignStatus } from "@/data/campaign"
             <strong>First report</strong>
             to the tax authority, covering the 2026 reporting year.
           </dt>
-          <dd>31 July 2027</dd>
+          <dd><time datetime="2027-07-31">31 July 2027</time></dd>
         </div>
       </dl>
     </header>
@@ -143,7 +144,7 @@ import { campaignStatus } from "@/data/campaign"
     </section>
     <section id="handeln" aria-labelledby="handeln-heading">
       <h2 id="handeln-heading">How you can help</h2>
-      <ul class="facts">
+      <ul class="facts action-facts">
         <li>
           <strong>Help fund the case</strong>
           <p>
@@ -157,11 +158,12 @@ import { campaignStatus } from "@/data/campaign"
             How individuals can take part has not yet been determined. We will
             publish news and next steps here and via RSS.
           </p>
-          <a class="button" href="/en/updates/">Campaign updates</a>
+          <a class="button" href="/en/updates/">Updates</a>
         </li>
       </ul>
       <button class="text-link" type="button" data-share>
-        Share this page
+        <ShareIcon />
+        Share
       </button>
       <p class="share-status" data-share-status aria-live="polite"></p>
     </section>

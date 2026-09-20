@@ -59,9 +59,7 @@ const bankDetails = [
             <p>Lightning or on-chain</p>
           </header>
           <div class="bitcoin-payment">
-            <p class="payment-description">
-              Choose your amount on our self-hosted BTCPay server.
-            </p>
+            <p class="payment-description">Choose any amount.</p>
             <a
               class="button primary donation-action"
               href={btcpay}
@@ -87,7 +85,7 @@ const bankDetails = [
           </div>
           <div class="payment-link">
             <div>
-              <p class="detail-label">Share the donation link</p>
+              <p class="detail-label">Donation link</p>
               <span>pay.bitcoin-austria.at</span>
             </div>
             <CopyButton value={btcpay} label="donation link" />
@@ -108,7 +106,7 @@ const bankDetails = [
         >
           <header class="donation-heading">
             <h3 id="euro-heading">Bank transfer</h3>
-            <p>In euros to our association’s account</p>
+            <p>In euros</p>
           </header>
           <dl class="bank-details">
             {bankDetails.map((detail) => (
@@ -138,7 +136,7 @@ const bankDetails = [
         of our financial data.
       </p>
       <p class="prose">
-        Questions about donating? Contact us at
+        Questions:
         <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>.
       </p>
     </section>
