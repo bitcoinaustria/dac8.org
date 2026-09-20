@@ -1,10 +1,12 @@
 ---
 import { SITE } from "@/consts"
 import { pageTitle } from "@/lib/content"
+import { seo, ogImagePath } from "@/data/seo"
 
 import { languageFor, pageFor, pathFor, feedFor } from "@/lib/i18n"
 const language = languageFor(Astro.url.pathname)
 const page = pageFor(Astro.url.pathname)
+const metadata = seo[page ?? "home"][language]
 
 type Props = {
   title?: string
@@ -13,18 +15,61 @@ type Props = {
 }
 
 const {
-  title,
-  description = language === "en"
-    ? "Against indiscriminate crypto-asset financial data collection. An initiative by Bitcoin Austria."
-    : SITE.description,
+  title = metadata.title,
+  description = metadata.description,
   noindex = false,
 } = Astro.props
 
 const base = Astro.site ?? new URL(Astro.url.origin)
-const ogTitle = title ?? SITE.title
-const fullTitle = title ? pageTitle(title) : SITE.title
-const canonical = new URL(Astro.url.pathname, base)
-const ogImage = new URL(SITE.defaultPageImage, base)
+const ogTitle = title
+const fullTitle = pageTitle(title)
+const canonical = new URL(
+  page ? pathFor(page, language) : Astro.url.pathname,
+  base,
+)
+const ogImage = new URL(ogImagePath(page ?? "home", language), base)
+const imageAlt = `${metadata.imageLines.join(" ")} dac8.org`
+const websiteId = new URL("/#website", base).href
+const publisher = {
+  "@type": "Organization",
+  "@id": "https://bitcoin-austria.at/#organization",
+  name: "Bitcoin Austria",
+  url: "https://bitcoin-austria.at/",
+  sameAs: ["https://x.com/bitcoin_at"],
+}
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    ...(page === "home"
+      ? [
+          {
+            "@type": "WebSite",
+            "@id": websiteId,
+            name: SITE.title,
+            url: new URL("/", base).href,
+            inLanguage: ["de-AT", "en"],
+            publisher,
+          },
+        ]
+      : []),
+    {
+      "@type": "WebPage",
+      "@id": `${canonical.href}#webpage`,
+      url: canonical.href,
+      name: fullTitle,
+      description,
+      inLanguage: language === "en" ? "en" : "de-AT",
+      isPartOf: { "@id": websiteId },
+      publisher,
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: ogImage.href,
+        width: 1200,
+        height: 630,
+      },
+    },
+  ],
+}
 ---
 
 <title>{fullTitle}</title>
@@ -42,6 +87,8 @@ const ogImage = new URL(SITE.defaultPageImage, base)
   href={feedFor(language)}
 >
 {noindex && <meta name="robots" content="noindex, nofollow" />}
+{!noindex && <meta name="robots" content="max-image-preview:large" />}
+{!noindex && page && <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData).replaceAll("<", "\\u003c")} />}
 
 <meta property="og:title" content={ogTitle}>
 <meta property="og:description" content={description}>
@@ -49,14 +96,19 @@ const ogImage = new URL(SITE.defaultPageImage, base)
 <meta property="og:type" content="website">
 <meta property="og:site_name" content={SITE.title}>
 <meta property="og:locale" content={language === "en" ? "en_GB" : "de_AT"}>
+<meta
+  property="og:locale:alternate"
+  content={language === "en" ? "de_AT" : "en_GB"}
+>
 <meta property="og:image" content={ogImage}>
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content={ogTitle}>
+<meta property="og:image:alt" content={imageAlt}>
 
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@bitcoin_at">
 <meta name="twitter:title" content={ogTitle}>
 <meta name="twitter:description" content={description}>
 <meta name="twitter:image" content={ogImage}>
-<meta name="twitter:image:alt" content={ogTitle}>
+<meta name="twitter:image:alt" content={imageAlt}>

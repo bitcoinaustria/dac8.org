@@ -55,3 +55,20 @@ Astro documents. Source URLs are shared in `src/data/sources.ts`.
 
 Run `pnpm test` for language routing and RSS regression checks, then
 `pnpm format:check` and `pnpm build` before publication.
+
+## Search and sharing previews
+
+`src/data/seo.ts` holds the localized titles, descriptions and sharing headlines
+for every page in `src/lib/i18n.ts`. Keep these aligned with the public copy and
+the actual procedural status. `MetaPage.astro` generates canonical URLs,
+reciprocal language links, Open Graph/Twitter metadata and JSON-LD from these
+entries. URLs always use the production origin from `astro.config.ts`.
+
+The build renders a 1200 × 630 PNG for each page and language under
+`/og/{de|en}/{page}.png`. The renderer uses Sharp and the bundled IBM Plex Sans
+font (SIL Open Font License), with no remote rendering service. Headlines have
+up to three explicit lines; a build fails if a line exceeds the available space.
+Check edited cards at small preview sizes as well as full resolution.
+
+After `pnpm build`, run `pnpm test:seo` to check the generated HTML, language
+links, structured data, PNG files, sitemap and legacy redirects.

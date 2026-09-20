@@ -6,5 +6,10 @@ export default defineConfig({
   compressHTML: true,
   server: { port: Number(process.env.PORT) || 4321 },
   prefetch: { prefetchAll: true },
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      filter: (page) =>
+        !new URL(page).pathname.startsWith("/og/") && !page.endsWith("/404/"),
+    }),
+  ],
 })

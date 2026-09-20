@@ -1,18 +1,19 @@
 # Alte Seiten der ersten Kampagnenfassung (August 2026). Inhalte leben jetzt
 # unter /hintergrund/ und /handeln/.
-/beschwerde        /handeln/#beschwerde        301
-/beschwerde/       /handeln/#beschwerde        301
-/brief             /handeln/#abgeordnete       301
-/brief/            /handeln/#abgeordnete       301
-/mitmachen         /handeln/                   301
-/mitmachen/        /handeln/                   301
-/was-ist-dac8      /hintergrund/#was-ist-dac8  301
-/was-ist-dac8/     /hintergrund/#was-ist-dac8  301
-/argumente         /hintergrund/#warum         301
-/argumente/        /hintergrund/#warum         301
-/individualantrag  /hintergrund/#rechtsweg     301
-/individualantrag/ /hintergrund/#rechtsweg     301
-/unternehmen       /hintergrund/#partner       301
-/unternehmen/      /hintergrund/#partner       301
-/offline/beschwerde.html /handeln/             301
-/offline/brief.html      /handeln/             301
+/beschwerde                  /handeln/                     301
+/beschwerde/                 /handeln/                     301
+/brief                       /handeln/                     301
+/brief/                      /handeln/                     301
+/mitmachen                   /handeln/                     301
+/mitmachen/                  /handeln/                     301
+/was-ist-dac8                /hintergrund/#was-ist-dac8    301
+/was-ist-dac8/               /hintergrund/#was-ist-dac8    301
+/argumente                   /hintergrund/#problem         301
+/argumente/                  /hintergrund/#problem         301
+/individualantrag            /hintergrund/#rechtsweg       301
+/individualantrag/           /hintergrund/#rechtsweg       301
+/unternehmen                 /handeln/#organisationen      301
+/unternehmen/                /handeln/#organisationen      301
+/offline/beschwerde.html     /handeln/                     301
+/offline/brief.html          /handeln/                     301
+/static/opengraph-image.png  /og/de/home.png               301
