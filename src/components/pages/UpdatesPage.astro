@@ -29,9 +29,6 @@ const entries = publishedUpdates()
     <section aria-labelledby="status-heading">
       <h2 id="status-heading">{status.label}</h2>
       <p class="section-intro">{status.text}</p>
-      <p class="prose">
-        {en ? "We will explain how individuals can take part as the proceedings develop." : "Wie sich Privatpersonen beteiligen können, konkretisieren wir im weiteren Verlauf."}
-      </p>
     </section>
     {entries.length > 0 && <section aria-labelledby="updates-heading">
       <h2 id="updates-heading">{en ? "Updates" : "Neuigkeiten"}</h2>

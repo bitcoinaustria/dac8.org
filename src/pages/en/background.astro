@@ -52,12 +52,12 @@ const faqs = [
   {
     question: "Are exchanges of bitcoin for another crypto-asset reported?",
     answer:
-      "Yes. Value, units and transaction counts are reported on both sides, even though in Austria such an exchange usually does not constitute a taxable disposal for individuals. We want the necessity of these reporting fields examined.",
+      "Yes. Value, units and transaction counts are reported on both sides, even though in Austria such an exchange usually does not constitute a taxable disposal for individuals.",
   },
   {
     question: "Is DAC8 an asset registry?",
     answer:
-      "No. It reports annual activity aggregates, not current balances or total wealth. Our concern is that combining these with account registries, provider records and blockchain analysis could gradually create a detailed map of a person’s assets.",
+      "No. It reports annual activity aggregates, not current balances or total wealth. Combined with account registries, provider records and blockchain analysis, they could nevertheless reveal a detailed picture of a person’s assets.",
   },
   {
     question: "Will transactions before 2026 be reported retroactively?",
@@ -77,7 +77,7 @@ const faqs = [
   {
     question: "Do DAC9 and DAC10 mean more crypto surveillance?",
     answer:
-      "Not automatically. DAC9 concerns minimum taxation of large corporate groups, not individual crypto users. The recast proposed in June 2026, often called DAC10, is not yet law and retains the existing crypto reporting fields. We assess each change on its merits.",
+      "Not automatically. DAC9 concerns minimum taxation of large corporate groups, not individual crypto users. The recast proposed in June 2026, often called DAC10, is not yet law and retains the existing crypto reporting fields.",
   },
   {
     question: "Are you against taxation or anti-money-laundering measures?",
@@ -87,7 +87,7 @@ const faqs = [
   {
     question: "Is DAC8 unlawful?",
     answer:
-      "We believe Austria’s collection covering all customers violates the fundamental right to data protection. Only courts can decide this, and case law also supports automatic exchange of tax information in principle. This is the question we want the courts to resolve.",
+      "We believe Austria’s collection covering all customers violates fundamental rights and seek judicial review. Case law also permits automatic exchange of tax information in principle. Whether these specific obligations are proportionate is for the courts to decide.",
   },
   {
     question: "What happens to my data on this website?",
@@ -119,8 +119,7 @@ const faqs = [
       <h1>What DAC8 requires. <span>And what it does not.</span></h1>
       <p class="lead">
         What the law requires, what the reports contain, where the limits lie
-        and how we are challenging it. With specific demands and sources you can
-        check.
+        and how we are challenging it.
       </p>
       <nav class="hero-actions" aria-label="Get started">
         <a class="button primary" href="#gemeldet">What gets reported</a
@@ -171,15 +170,15 @@ const faqs = [
         Before it is established who will be reported, the provider must prepare
         reporting data for all customers, all transactions and all
         crypto-assets. The directive does not require this.<small
-          >Section 20(1) Krypto-MPfG. This is a central focus of our challenge.</small
+          >Section 20(1) Krypto-MPfG.</small
         >
       </p>
     </section>
     <section id="gemeldet" aria-labelledby="gemeldet-heading">
       <h2 id="gemeldet-heading">What gets reported, and what does not</h2>
       <p class="section-intro">
-        The report is not an account statement. It contains annual aggregates,
-        not individual transactions. Both points matter when assessing the law.
+        The report contains identities and annual aggregates, not individual
+        transactions.
       </p>
       <div class="compare">
         <div>
@@ -272,49 +271,39 @@ const faqs = [
       </ul>
       <h3 id="zahlungsprofile">When payments reveal everyday life</h3>
       <p class="prose">
-        Paying with bitcoin or other cryptocurrencies leaves traces, depending
-        on the technology. Bitcoin’s on-chain transactions remain public. When a
-        provider links your name to an address, further payment flows may become
-        traceable. With additional information about recipients, purchases,
-        donations and recurring payments can reveal habits and personal
-        relationships.
-      </p>
-      <p class="prose">
+        Paying with cryptocurrencies can leave traces of everyday life.
+        Bitcoin’s on-chain transactions remain public. When a provider links
+        your name to an address, further payments may become attributable to
+        you. With information about recipients, purchases, donations and
+        recurring payments can reveal habits and relationships.
         <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
           >Research on online shopping payments</a
         >
-        shows how purchase data can be linked to blockchain transactions and
-        people. What can be inferred depends on the available data; incorrect
-        attribution can also cause harm. The annual report alone does not
-        provide such a payment history. Detailed links retained by providers
-        over many years are a particular source of risk.
+        shows how purchase data can be linked to these transactions.
       </p>
-      <h3>Financial privacy also protects people</h3>
+      <h3>Data breaches put people at risk</h3>
       <p class="prose">
-        Stolen data can be used to select victims. The
+        Stored links between identities and financial data are a valuable target
+        for attackers. Long retention obligations keep these records available
+        for years. In the wrong hands, they can be used for fraud, extortion or
+        selecting victims.
+      </p>
+      <p class="prose">
+        The
         <a
           href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
           >French Gendarmerie</a
         >
-        reports that criminals use leaked customer data from crypto tax service
-        Waltio to identify targets, sometimes misjudging their actual holdings.
-        Even the assumption that someone owns substantial crypto assets can put
-        them and their family at risk.
-      </p>
-      <p class="prose">
-        Waltio is a private service; this is not a proven DAC8 breach. It makes
-        the consequences of such data collections tangible: extortion, robbery
-        and physical violence. Limiting collection, shortening retention and
-        strictly controlling access are part of protecting people.
+        reports that criminals use stolen customer data from crypto tax service
+        Waltio to select targets. It describes kidnappings and physical
+        violence. Even a mistaken assumption that someone owns substantial
+        crypto assets can put them and their family at risk. Data minimisation
+        and shorter retention periods also protect personal safety.
       </p>
     </section>
     <section id="ausblick" aria-labelledby="ausblick-heading">
       <h2 id="ausblick-heading">What might come next</h2>
-      <p class="section-intro">
-        The DAC framework is regularly expanded. A higher number does not
-        automatically mean more crypto data. We distinguish current law,
-        proposals and political possibilities.
-      </p>
+      <p class="section-intro">The DAC framework is regularly expanded.</p>
       <ul class="facts">
         <li>
           <span class="tag live">Applies now</span><strong>DAC8</strong>
@@ -406,9 +395,8 @@ const faqs = [
         The challenge to data retention organised by AKVorrat, now
         epicenter.works, reached the Court of Justice through Austria’s
         Constitutional Court. In 2014, both the EU directive and Austrian rules
-        fell. That success cannot simply be transferred to DAC8, but it shows
-        that legal challenges can achieve concrete change. We build on that
-        experience.
+        fell. That success shows that even sweeping surveillance laws can be
+        changed.
       </p>
     </section>
     <section id="rechtsweg" aria-labelledby="rechtsweg-heading">
@@ -446,8 +434,7 @@ const faqs = [
             In 2026, Austria’s Constitutional Court held that affected
             individuals must first take the available and reasonable route
             through the Data Protection Authority. A direct application by an
-            individual user would be highly likely to fail on this issue. The
-            longer route is therefore the viable one.
+            individual user would be highly likely to fail on this issue.
           </p>
         </section>
         <section>
@@ -487,18 +474,11 @@ const faqs = [
     </section>
     <section id="quellen" class="sources" aria-labelledby="sources-heading">
       <h2 id="sources-heading">Sources</h2>
-      <p class="section-intro">
-        Our account is based on legislation, court decisions and official
-        documents. We distinguish our assessments from established facts. Some
-        sources are in German or French.
-      </p>
       <div class="source-groups">
         {sources.map(group => <div><h3>{group.title}</h3><ul>{group.sources.map(source => <li><a href={source.href}>{source.label}</a></li>)}</ul></div>)}
       </div>
       <p class="research-note">
-        Research last updated: {researchDate}. This is not legal advice. Check
-        deadlines, procedural status and your own circumstances before taking
-        action, or seek advice.
+        Research last updated: {researchDate}. Not individual legal advice.
       </p>
     </section>
     <aside class="closing" aria-labelledby="support-heading">

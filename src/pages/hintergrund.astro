@@ -49,12 +49,12 @@ const faqs = [
     question:
       "Ich tausche Bitcoin gegen einen anderen Kryptowert. Wird das gemeldet?",
     answer:
-      "Ja. Der Tausch wird mit Wert, Stückzahl und Anzahl auf beiden Seiten gemeldet, obwohl er in Österreich für Privatpersonen steuerlich meist kein Verkauf ist. Das ist einer der Punkte, an denen wir die Notwendigkeit einzelner Meldefelder prüfen lassen wollen.",
+      "Ja. Der Tausch wird mit Wert, Stückzahl und Anzahl auf beiden Seiten gemeldet, obwohl er in Österreich für Privatpersonen steuerlich meist kein Verkauf ist.",
   },
   {
     question: "Ist DAC8 ein Vermögensregister?",
     answer:
-      "Nein. Gemeldet werden Jahreswerte der Aktivität, kein aktueller Bestand und kein Gesamtvermögen. Die Sorge ist eine andere: Zusammen mit Kontenregister, Anbieteraufzeichnungen und Blockchain-Analyse kann daraus Schicht für Schicht eine sehr genaue Vermögenskarte werden.",
+      "Nein. Gemeldet werden Jahreswerte der Aktivität, kein aktueller Bestand und kein Gesamtvermögen. Zusammen mit Kontenregister, Anbieteraufzeichnungen und Blockchain-Analyse können sie aber ein detailliertes Bild der Vermögensverhältnisse ergeben.",
   },
   {
     question: "Werden Transaktionen vor 2026 nachgemeldet?",
@@ -74,7 +74,7 @@ const faqs = [
   {
     question: "Bedeuten DAC9 und DAC10 noch mehr Krypto-Überwachung?",
     answer:
-      "Nicht automatisch. DAC9 betrifft die Mindestbesteuerung großer Unternehmensgruppen, nicht einzelne Krypto-Nutzer. Die im Juni 2026 vorgeschlagene Neufassung der Richtlinie, oft DAC10 genannt, ist noch kein geltendes Recht und führt die bisherigen Krypto-Felder fort. Wir schauen uns jeden Schritt einzeln an, statt auf die Nummer zu zeigen.",
+      "Nicht automatisch. DAC9 betrifft die Mindestbesteuerung großer Unternehmensgruppen, nicht einzelne Krypto-Nutzer. Die im Juni 2026 vorgeschlagene Neufassung der Richtlinie, oft DAC10 genannt, ist noch kein geltendes Recht und führt die bisherigen Krypto-Felder fort.",
   },
   {
     question: "Seid ihr gegen Steuern oder gegen Geldwäschebekämpfung?",
@@ -84,7 +84,7 @@ const faqs = [
   {
     question: "Ist DAC8 rechtswidrig?",
     answer:
-      "Wir sind überzeugt, dass die österreichische Erfassung aller Kunden das Grundrecht auf Datenschutz verletzt. Entscheiden können das nur Gerichte, und es gibt Rechtsprechung, die dem automatischen Austausch von Steuerdaten grundsätzlich zustimmt. Deshalb sagen wir „wir sind überzeugt“ und nicht „es steht fest“. Genau diese Frage wollen wir klären lassen.",
+      "Wir halten die österreichische Erfassung aller Kunden für grundrechtswidrig und wollen sie gerichtlich prüfen lassen. Es gibt auch Rechtsprechung, die den automatischen Austausch von Steuerdaten grundsätzlich zulässt. Ob die konkreten Pflichten verhältnismäßig sind, müssen die Gerichte entscheiden.",
   },
   {
     question: "Was passiert mit meinen Daten auf dieser Website?",
@@ -117,8 +117,7 @@ const faqs = [
       <h1>Was DAC8 verlangt. <span>Und was nicht.</span></h1>
       <p class="lead">
         Was das Gesetz vorschreibt, was in der Meldung steht, wo die Grenzen
-        liegen und wie wir dagegen vorgehen. Mit konkreten Forderungen und
-        Quellen zum Nachlesen.
+        liegen und wie wir dagegen vorgehen.
       </p>
       <nav class="hero-actions" aria-label="Direkteinstieg">
         <a class="button primary" href="#gemeldet">Was gemeldet wird</a>
@@ -170,16 +169,15 @@ const faqs = [
         Bevor feststeht, wer überhaupt gemeldet wird, muss der Anbieter die
         Meldedaten für alle Kunden, alle Transaktionen und alle Kryptowerte
         aufbereiten. Die Richtlinie verlangt das nicht.
-        <small>§ 20 Abs. 1 Krypto-MPfG. Hier setzt unsere Kritik an.</small>
+        <small>§ 20 Abs. 1 Krypto-MPfG.</small>
       </p>
     </section>
 
     <section id="gemeldet" aria-labelledby="gemeldet-heading">
       <h2 id="gemeldet-heading">Was gemeldet wird, und was nicht</h2>
       <p class="section-intro">
-        Die Meldung ist kein Kontoauszug. Sie enthält Jahreswerte, keine
-        einzelnen Transaktionen. Beides ist wichtig, um das Gesetz richtig
-        einzuschätzen.
+        Die Meldung enthält Identität und Jahreswerte, keine einzelnen
+        Transaktionen.
       </p>
       <div class="compare">
         <div>
@@ -278,53 +276,42 @@ const faqs = [
       </ul>
       <h3 id="zahlungsprofile">Wenn Zahlungen deinen Alltag offenlegen</h3>
       <p class="prose">
-        Wer mit Bitcoin oder anderen Kryptowährungen bezahlt, hinterlässt je
-        nach Technik Spuren. Bei Bitcoin sind On-Chain-Transaktionen dauerhaft
-        öffentlich. Verbindet ein Anbieter deinen Namen mit einer Adresse,
-        können sich daraus weitere Zahlungswege erschließen. Mit zusätzlichen
-        Informationen über Empfänger können Einkäufe, Spenden und wiederkehrende
-        Zahlungen Rückschlüsse auf Gewohnheiten und persönliche Beziehungen
-        ermöglichen.
-      </p>
-      <p class="prose">
+        Wer mit Kryptowährungen bezahlt, kann Spuren seines Alltags
+        hinterlassen. Bei Bitcoin bleiben On-Chain-Transaktionen öffentlich.
+        Verbindet ein Anbieter deinen Namen mit einer Adresse, können weitere
+        Zahlungen zugeordnet werden. Mit Informationen über die Empfänger lassen
+        Einkäufe, Spenden und regelmäßige Zahlungen Rückschlüsse auf
+        Gewohnheiten und Beziehungen zu.
         <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
           >Forschung zu Zahlungen in Onlineshops</a
         >
-        zeigt, wie Kaufdaten mit Blockchain-Transaktionen und Personen verknüpft
-        werden können. Der Aussagegehalt hängt von den verfügbaren Daten ab;
-        auch Fehlzuordnungen können schaden. Die Jahresmeldung allein liefert
-        keine solche Zahlungshistorie. Das Risiko liegt besonders in den
-        detaillierten, lange gespeicherten Zuordnungen beim Anbieter.
+        zeigt, wie Kaufdaten mit solchen Transaktionen verknüpft werden können.
       </p>
-      <h3>Finanzielle Privatsphäre schützt auch Menschen</h3>
+      <h3>Datenlecks gefährden Menschen</h3>
       <p class="prose">
-        Gestohlene Daten können zur Auswahl von Opfern dienen. Die
+        Gespeicherte Verbindungen zwischen Identität und Finanzdaten sind ein
+        lohnendes Ziel für Angreifer. Lange Aufbewahrungspflichten halten diese
+        Daten über Jahre verfügbar. Gelangen sie in falsche Hände, können sie
+        für Betrug, Erpressung oder die Auswahl von Opfern genutzt werden.
+      </p>
+      <p class="prose">
+        Die
         <a
           href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
           >französische Gendarmerie</a
         >
-        berichtet, dass Täter geleakte Kundendaten des Krypto-Steuerdienstes
-        Waltio nutzen, um Angriffsziele zu identifizieren. Dabei schätzen sie
-        das tatsächliche Vermögen teilweise falsch ein. Schon die Annahme,
+        berichtet, dass Täter gestohlene Kundendaten des Krypto-Steuerdienstes
+        Waltio zur Auswahl von Angriffszielen nutzen. Sie beschreibt
+        Entführungen und körperliche Gewalt. Schon die teils falsche Annahme,
         jemand besitze größere Kryptobestände, kann ihn und seine Angehörigen
-        gefährden.
-      </p>
-      <p class="prose">
-        Waltio ist ein privater Dienst; der Fall ist kein nachgewiesenes
-        DAC8-Leck. Er macht die Folgen solcher Datensammlungen greifbar:
-        Erpressung, Raub und körperliche Gewalt. Deshalb gehören begrenzte
-        Erfassung, kurze Speicherfristen und streng kontrollierte Zugriffe zum
-        Schutz der Betroffenen.
+        gefährden. Datensparsamkeit und kurze Speicherfristen schützen deshalb
+        auch die persönliche Sicherheit.
       </p>
     </section>
 
     <section id="ausblick" aria-labelledby="ausblick-heading">
       <h2 id="ausblick-heading">Was noch kommen könnte</h2>
-      <p class="section-intro">
-        Das DAC-System wird regelmäßig erweitert. Eine höhere Nummer heißt aber
-        nicht automatisch mehr Krypto-Daten. Wir unterscheiden geltendes Recht,
-        Vorschläge und politische Möglichkeiten.
-      </p>
+      <p class="section-intro">Das DAC-System wird regelmäßig erweitert.</p>
       <ul class="facts">
         <li>
           <span class="tag live">Gilt heute</span>
@@ -420,9 +407,8 @@ const faqs = [
         Die von AKVorrat, heute epicenter.works, organisierte Beschwerde gegen
         die Vorratsdatenspeicherung führte über den Verfassungsgerichtshof zum
         Europäischen Gerichtshof. 2014 fielen die EU-Richtlinie und die
-        österreichischen Regeln. Dieser Erfolg lässt sich nicht einfach auf DAC8
-        übertragen. Er zeigt aber, dass rechtliche Gegenwehr konkrete Änderungen
-        erreichen kann. Daran knüpfen wir an.
+        österreichischen Regeln. Der Erfolg zeigt, dass sich auch weitreichende
+        Überwachungsgesetze ändern lassen.
       </p>
     </section>
 
@@ -462,8 +448,7 @@ const faqs = [
             Der Verfassungsgerichtshof hat 2026 entschieden, dass Betroffene
             zuerst den zumutbaren Weg über die Datenschutzbehörde nehmen müssen.
             Ein direkter Antrag eines einzelnen Nutzers würde mit hoher
-            Wahrscheinlichkeit daran scheitern. Der längere Weg ist deshalb der
-            tragfähige.
+            Wahrscheinlichkeit daran scheitern.
           </p>
         </section>
         <section>
@@ -513,11 +498,6 @@ const faqs = [
 
     <section id="quellen" class="sources" aria-labelledby="sources-heading">
       <h2 id="sources-heading">Quellen</h2>
-      <p class="section-intro">
-        Alles, was hier steht, beruht auf Gesetzestexten, Gerichtsentscheidungen
-        und offiziellen Dokumenten. Wo wir bewerten statt belegen, sagen wir
-        das.
-      </p>
       <div class="source-groups">
         {sourceGroups.map((group) => (
           <div>
@@ -533,9 +513,7 @@ const faqs = [
         ))}
       </div>
       <p class="research-note">
-        Stand der Recherche: {researchDate}. Keine Rechtsberatung. Fristen,
-        Verfahrensstand und deine konkrete Betroffenheit musst du vor jedem
-        Schritt selbst prüfen oder prüfen lassen.
+        Stand der Recherche: {researchDate}. Keine individuelle Rechtsberatung.
       </p>
     </section>
 
