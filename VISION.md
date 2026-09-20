@@ -19,6 +19,7 @@ timelines that the campaign cannot control.
 
 The audience includes affected individuals and businesses, legal and technical
 experts, partner organizations, supporters, and anyone who needs a verifiable
-account of what DAC8 requires. The campaign opposes indiscriminate surveillance,
-not taxation. Legal credibility, accurate procedural status, and primary-source
+account of what DAC8 requires. The campaign defends financial privacy and opposes
+indiscriminate surveillance. It takes no position on taxation or anti-money-laundering
+policy. Legal credibility, accurate procedural status, and primary-source
 evidence take priority over rhetorical reach.
