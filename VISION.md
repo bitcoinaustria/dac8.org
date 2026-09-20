@@ -19,7 +19,13 @@ timelines that the campaign cannot control.
 
 The audience includes affected individuals and businesses, legal and technical
 experts, partner organizations, supporters, and anyone who needs a verifiable
-account of what DAC8 requires. The campaign defends financial privacy and opposes
-indiscriminate surveillance. It takes no position on taxation or anti-money-laundering
-policy. Legal credibility, accurate procedural status, and primary-source
-evidence take priority over rhetorical reach.
+account of what DAC8 requires. The campaign defends financial privacy and autonomy
+and rejects mass surveillance. The state must justify intrusions into private
+life; invoking money laundering or tax evasion does not replace that justification.
+Investigations should target specific suspicions of crime, with a legal basis
+and independent oversight. Uninvolved people must be protected from the risks of
+indiscriminate data collection, including breaches, false suspicion and abuse.
+The campaign does not endorse taxation or anti-money-laundering policy. Express
+these principles through the purpose of each page rather than repeating a
+manifesto or adding defensive disclaimers. Legal credibility, accurate procedural
+status, and primary-source evidence take priority over rhetorical reach.
