@@ -35,7 +35,7 @@ const concerns = [
   },
   {
     title: "Ten years without an explanation.",
-    text: "Austria deletes reported bank-account data after five years, a period the legislative materials considered appropriate for data protection. For crypto-assets it is ten years. The materials do not explain why.",
+    text: "Providers delete reported crypto-asset data ten years after the reporting period. For corresponding bank-account data, it is five years. The legislative materials do not explain the difference.",
   },
 ]
 const faqs = [
@@ -65,14 +65,14 @@ const faqs = [
       "No. The first reporting period starts on 1 January 2026. A retroactive obligation would require a new law. Neither DAC9 nor the current proposal to recast the directive provides for this.",
   },
   {
-    question: "Must providers store every transaction for ten years?",
+    question: "Will my data be deleted when I close my account?",
     answer:
-      "Different duties cover different records. Section 39 Krypto-MPfG requires documented reporting and due-diligence steps to be kept for ten years after the reporting period; it does not expressly cover every wallet address. Independently, section 21 FM-GwG requires necessary identification and transaction records to be kept for ten years after the business relationship ends or an occasional transaction. MiCA sets five years for covered records, extended to seven on a timely authority request. The applicable duty depends on the record and service.",
+      "Not immediately. Under Austria’s Financial Markets Anti-Money Laundering Act, providers must retain necessary identification and transaction records for ten years after the business relationship ends.",
   },
   {
     question: "Can every cryptocurrency payment be traced?",
     answer:
-      "No. A known Bitcoin address can reveal further on-chain payments, but not automatically every payment or its purpose. Reliable attribution and additional information are needed. Individual Lightning payments are not recorded on the public blockchain. Transfers between someone’s own wallets or transactions involving several users can also be misattributed.",
+      "No. A known Bitcoin address can reveal further payments on the blockchain. It is not always possible to reliably identify who made them or why. Individual Lightning payments are not recorded on the public blockchain.",
   },
   {
     question: "Do DAC9 and DAC10 mean more crypto surveillance?",
@@ -82,12 +82,12 @@ const faqs = [
   {
     question: "Are you against taxation or anti-money-laundering measures?",
     answer:
-      "We support tackling tax evasion and money laundering through targeted investigations with rule-of-law safeguards. Authorities should obtain the data they demonstrably need in a specific case. Collecting everyone’s data as a precaution goes further. Its additional value compared with less intrusive means must be demonstrated. A legitimate goal does not justify every means.",
+      "No. Authorities should investigate tax evasion and money laundering in targeted cases and obtain the data they need. We oppose collecting data on all customers as a precaution, without specific suspicion.",
   },
   {
     question: "Is DAC8 unlawful?",
     answer:
-      "We believe Austria’s collection covering all customers violates fundamental rights and seek judicial review. Case law also permits automatic exchange of tax information in principle. Whether these specific obligations are proportionate is for the courts to decide.",
+      "We believe Austria’s collection covering all customers violates fundamental rights and seek judicial review. Whether these specific obligations are proportionate is for the courts to decide.",
   },
   {
     question: "What happens to my data on this website?",
@@ -118,8 +118,8 @@ const faqs = [
     <header class="hero">
       <h1>What DAC8 requires. <span>And what it does not.</span></h1>
       <p class="lead">
-        What the law requires, what the reports contain, where the limits lie
-        and how we are challenging it.
+        What data about you gets reported, what your provider keeps and why we
+        are challenging it.
       </p>
       <nav class="hero-actions" aria-label="Get started">
         <a class="button primary" href="#gemeldet">What gets reported</a
@@ -130,8 +130,6 @@ const faqs = [
         <dd>since 1 January 2026</dd>
         <dt>First report</dt>
         <dd>for 2026, due by 31 July 2027</dd>
-        <dt>Research last updated</dt>
-        <dd>{researchDate}</dd>
       </dl>
     </header>
     <section id="was-ist-dac8" aria-labelledby="was-heading">
@@ -215,24 +213,6 @@ const faqs = [
       </div>
       <ul class="facts">
         <li>
-          <strong>More than bank-account reporting</strong>
-          <p>
-            Bank-account reporting covers balances and income. Crypto reporting
-            adds units and transaction counts, building a picture of activity
-            over time.
-          </p>
-        </li>
-        <li>
-          <strong>Ten years instead of five</strong>
-          <p>
-            Section 20(4) Krypto-MPfG provides for transmitted information to be
-            deleted by the provider ten years after the reporting period. For
-            bank accounts, Austria set five years in 2018 and described this as
-            appropriate for data protection. The legislative materials do not
-            justify the difference.
-          </p>
-        </li>
-        <li>
           <strong>The timetable</strong>
           <p>
             The first reporting period is 2026. Providers report to the tax
@@ -243,17 +223,16 @@ const faqs = [
         <li>
           <strong>What the provider retains</strong>
           <p>
-            Depending on the service, provider records also include wallet
-            addresses, transaction identifiers and timestamps linked to
-            customers. These are outside the annual DAC8 report.
+            Your provider can link your name to wallet addresses and individual
+            transactions. These details are outside the annual DAC8 report but
+            may remain in its records, depending on the service.
             <a
               href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&amp;Gesetzesnummer=20009769"
               >Section 21 FM-GwG</a
             >
-            independently requires necessary identification and transaction
-            records to be kept for ten years after the business relationship
-            ends or an occasional transaction. Retention does not give the tax
-            authority automatic access to these detailed records.
+            requires, independently of DAC8, necessary identification and
+            transaction records to be kept for ten years after the business
+            relationship ends or an occasional transaction.
           </p>
         </li>
       </ul>
@@ -261,10 +240,9 @@ const faqs = [
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">Why it is a problem</h2>
       <p class="section-intro">
-        The standard is the fundamental right to private life and protection of
-        personal data. Indiscriminate collection covering all customers,
-        exchange among many recipients and lengthy retention interfere with
-        these rights. Risks range from misuse to threats to personal safety.
+        Your data is prepared and stored for years even without suspicion. This
+        intrudes on your private life and exposes you to errors, breaches and
+        misuse.
       </p>
       <ul class="facts">
         {concerns.map(concern => <li><strong>{concern.title}</strong><p>{concern.text}</p></li>)}
@@ -275,11 +253,10 @@ const faqs = [
         Bitcoin’s on-chain transactions remain public. When a provider links
         your name to an address, further payments may become attributable to
         you. With information about recipients, purchases, donations and
-        recurring payments can reveal habits and relationships.
+        recurring payments can
         <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
-          >Research on online shopping payments</a
-        >
-        shows how purchase data can be linked to these transactions.
+          >reveal habits and relationships</a
+        >.
       </p>
       <h3>Data breaches put people at risk</h3>
       <p class="prose">
@@ -303,91 +280,55 @@ const faqs = [
     </section>
     <section id="ausblick" aria-labelledby="ausblick-heading">
       <h2 id="ausblick-heading">What might come next</h2>
-      <p class="section-intro">The DAC framework is regularly expanded.</p>
-      <ul class="facts">
-        <li>
-          <span class="tag live">Applies now</span><strong>DAC8</strong>
-          <p>
-            Identities and annual aggregates are reported from 2026. No wallet
-            addresses or individual transactions.
-          </p>
-        </li>
-        <li>
-          <span class="tag">In force; not about crypto</span
-          ><strong>DAC9</strong>
-          <p>
-            The directive concerns minimum taxation of large corporate groups,
-            not individual users.
-          </p>
-        </li>
-        <li>
-          <span class="tag">Proposed in June 2026</span><strong>“DAC10”</strong>
-          <p>
-            The proposed recast retains the existing crypto fields. It requires
-            neither wallet addresses nor retroactive reporting of activities
-            before 2026.
-          </p>
-        </li>
-        <li>
-          <span class="tag">Would require a new law</span
-          ><strong>Addresses, individual transactions, retroactivity</strong>
-          <p>
-            None of these has been enacted. Once infrastructure exists, however,
-            expansion becomes technically easier and public scrutiny more
-            important.
-          </p>
-        </li>
-      </ul>
+      <p class="section-intro">
+        Reporting infrastructure can be expanded later. That is why we want
+        effective limits on data collection now.
+      </p>
+      <p class="prose">
+        Requiring reports of wallet addresses, individual transactions or
+        activities before 2026 would need a change in the law. None of this has
+        been enacted, and the current proposal to recast the directive does not
+        provide for it either.
+      </p>
     </section>
     <section id="forderungen" aria-labelledby="forderungen-heading">
       <h2 id="forderungen-heading">Our demands</h2>
       <p class="section-intro">
-        Authorities must be able to investigate specific suspicions. We support
-        targeted investigations with a legal basis, independent oversight and
-        clear limits on access and retention. That is consistent with our
-        understanding of liberal democracy.
-      </p>
-      <p class="prose">
-        In a targeted investigation, a concrete reason determines whose data is
-        relevant. Indiscriminate mass surveillance collects everyone’s data as a
-        precaution. People with no involvement bear the risks of breaches and
-        abuse too. The state must demonstrate why this additional interference
-        is necessary and use less intrusive measures wherever they serve the
-        same purpose.
+        In a liberal democracy, authorities should be able to investigate
+        specific suspicions, with a legal basis and independent oversight.
+        Uninvolved people should not have their lives scrutinised as a
+        precaution.
       </p>
       <ul class="checklist">
         <li>
-          <strong
-            >Determine who is reportable first, then prepare the data.</strong
-          >
-          Not the other way round.
+          <strong>Determine whose data must be reported first.</strong>
+          No precautionary preparation of data for all customers.
         </li>
         <li>
-          <strong>Every reporting field must demonstrate its value.</strong>
-          Units, transaction counts and transfer fields go beyond bank-account
-          reporting. Their added tax value remains an open question.
+          <strong>Collect only necessary data.</strong>
+          The additional value of units and transaction counts must be
+          demonstrated.
         </li>
         <li>
           <strong>Your own wallet is not a payment to someone else.</strong>
           Transfers to self-custodied addresses should be treated distinctly.
         </li>
         <li>
-          <strong>Justify retention periods.</strong>
-          Ten years instead of five needs an explanation or a correction.
+          <strong>Keep data no longer than necessary.</strong>
+          Ten years instead of five needs a clear justification.
         </li>
         <li>
-          <strong>Strictly limit purpose, access and onward disclosure</strong>
-          and maintain complete logs.
+          <strong>Strictly limit purpose, access and onward disclosure.</strong>
+          Access must be traceable and subject to independent oversight.
         </li>
         <li>
-          <strong>Access, correction and deletion rights</strong>
-          must work in practice across all recipients.
+          <strong>Your rights must work in practice.</strong>
+          You must be able to access your data, correct errors and have
+          unlawfully stored data deleted by every recipient.
         </li>
         <li>
-          <strong
-            >Independently evaluate benefits and fundamental-rights impacts,</strong
-          >
-          regularly and publicly.
+          <strong>Independently review benefits and risks.</strong>
+          Regularly and publicly, so unnecessary intrusions can be ended.
         </li>
       </ul>
       <p class="prose">
@@ -403,14 +344,11 @@ const faqs = [
       <h2 id="rechtsweg-heading">Our legal strategy</h2>
       <p class="section-intro">
         {campaignStatus.en.text}
-        How individuals can take part will be clarified as the case develops.
       </p>
       <ol class="flow" aria-label="The legal route">
         <li>
           <strong>Provider</strong
-          ><span
-            >processes data for DAC8; specific processing is documented</span
-          >
+          ><span>we document how a provider processes data for DAC8</span>
         </li>
         <li class="accent">
           <strong>Data Protection Authority</strong
@@ -418,53 +356,27 @@ const faqs = [
         </li>
         <li>
           <strong>Federal Administrative Court</strong
-          ><span
-            >reviews the complaint and can refer questions to the CJEU</span
-          >
+          ><span>can review the Data Protection Authority’s decision</span>
         </li>
         <li>
           <strong>Constitutional Court / CJEU</strong
-          ><span>review national law or the EU directive, respectively</span>
+          ><span
+            >can review national law or the EU directive, respectively</span
+          >
         </li>
       </ol>
-      <div class="tracks">
-        <section>
-          <h3>Why not go straight to the Constitutional Court?</h3>
-          <p>
-            In 2026, Austria’s Constitutional Court held that affected
-            individuals must first take the available and reasonable route
-            through the Data Protection Authority. A direct application by an
-            individual user would be highly likely to fail on this issue.
-          </p>
-        </section>
-        <section>
-          <h3>What a provider can also do</h3>
-          <p>
-            An Austrian provider is directly affected by the additional Austrian
-            obligations and may, under different conditions, apply to the
-            Constitutional Court itself. This requires clearly separating
-            Austrian additions from the EU minimum standard.
-          </p>
-        </section>
-      </div>
-      <ul class="facts">
-        <li>
-          <strong>What a complaint needs</strong>
-          <p>
-            A specific provider, processing that is already happening (such as
-            self-certification, classification or storage) and evidence. The
-            prospect of a report in 2027 alone is not enough.
-          </p>
-        </li>
-        <li>
-          <strong>What a complaint does not do</strong>
-          <p>
-            It does not automatically stop processing. A decision before the
-            first report in July 2027 is not assured. Whether to refer questions
-            to the CJEU is for the court to decide.
-          </p>
-        </li>
-      </ul>
+      <p class="prose">
+        The court decides whether to refer questions to the CJEU. The complaint
+        does not automatically stop data collection; the duration of the
+        proceedings is not yet known.
+      </p>
+      <p class="prose">
+        Whether and how individuals can take part will be clarified as the case
+        develops. In the meantime, you can
+        <a href="/en/donate/">help fund the case</a>
+        and
+        <a href="/en/updates/">follow its progress</a>.
+      </p>
     </section>
     <section id="faq" aria-labelledby="faq-heading">
       <h2 id="faq-heading">Questions and answers</h2>

@@ -30,7 +30,7 @@ const concerns = [
   },
   {
     title: "Zehn Jahre ohne Begründung.",
-    text: "Bei Bankkonten löscht Österreich die gemeldeten Daten nach fünf Jahren; die Materialien nannten das damals datenschutzrechtlich angemessen. Für Krypto sind es zehn Jahre. Warum, steht in den Gesetzesmaterialien nicht.",
+    text: "Übermittelte Kryptodaten werden beim Anbieter erst zehn Jahre nach dem Meldezeitraum gelöscht. Bei entsprechenden Bankkontendaten sind es fünf Jahre. Die Gesetzesmaterialien begründen diesen Unterschied nicht.",
   },
 ]
 
@@ -62,14 +62,14 @@ const faqs = [
       "Nein. Der erste Meldezeitraum beginnt am 1. Jänner 2026. Eine rückwirkende Meldepflicht bräuchte ein neues Gesetz. Weder DAC9 noch der aktuelle Vorschlag für eine Neufassung der Richtlinie sehen das vor.",
   },
   {
-    question: "Müssen Anbieter jede Transaktion zehn Jahre speichern?",
+    question: "Werden meine Daten gelöscht, wenn ich mein Konto schließe?",
     answer:
-      "Die Pflichten betreffen unterschiedliche Unterlagen. § 39 Krypto-MPfG verlangt zehn Jahre Aufbewahrung der dokumentierten Melde- und Sorgfaltsschritte nach Ende des Meldezeitraums; er nennt nicht pauschal jede Wallet-Adresse. Unabhängig davon verlangt § 21 FM-GwG zehn Jahre für notwendige Identifizierungs- und Transaktionsunterlagen, gerechnet ab Ende der Geschäftsbeziehung oder einer gelegentlichen Transaktion. MiCA sieht für die erfassten Aufzeichnungen fünf Jahre vor, auf rechtzeitiges Behördenverlangen bis zu sieben. Welche Pflicht greift, hängt vom Datensatz und der Dienstleistung ab.",
+      "Nicht sofort. Nach dem österreichischen Finanzmarkt-Geldwäschegesetz muss der Anbieter notwendige Identifizierungs- und Transaktionsunterlagen noch zehn Jahre nach Ende der Geschäftsbeziehung aufbewahren.",
   },
   {
     question: "Lässt sich jede Zahlung mit Kryptowährungen nachverfolgen?",
     answer:
-      "Nein. Eine bekannte Bitcoin-Adresse kann weitere On-Chain-Zahlungen erschließen, aber nicht automatisch jede Zahlung oder ihren Zweck. Dafür braucht es verlässliche Zuordnungen und zusätzliche Informationen. Einzelne Lightning-Zahlungen stehen nicht auf der öffentlichen Blockchain. Auch Eigenüberträge oder gemeinsam verwendete Transaktionen können falsch zugeordnet werden.",
+      "Nein. Eine bekannte Bitcoin-Adresse kann weitere Zahlungen auf der Blockchain sichtbar machen. Wem sie gehören und wofür sie bestimmt sind, lässt sich daraus nicht immer sicher erkennen. Einzelne Lightning-Zahlungen stehen nicht auf der öffentlichen Blockchain.",
   },
   {
     question: "Bedeuten DAC9 und DAC10 noch mehr Krypto-Überwachung?",
@@ -79,12 +79,12 @@ const faqs = [
   {
     question: "Seid ihr gegen Steuern oder gegen Geldwäschebekämpfung?",
     answer:
-      "Wir unterstützen die Bekämpfung von Steuerhinterziehung und Geldwäsche durch gezielte, rechtsstaatlich kontrollierte Ermittlungen. Dafür sollen Behörden die Daten erhalten, die sie in einem konkreten Fall nachweislich brauchen. Die vorsorgliche Erfassung aller Kunden geht darüber hinaus. Wir verlangen, dass ihr zusätzlicher Nutzen gegenüber weniger eingreifenden Mitteln belegt wird. Ein legitimes Ziel rechtfertigt nicht jedes Mittel.",
+      "Nein. Behörden sollen Steuerhinterziehung und Geldwäsche gezielt verfolgen und dafür die erforderlichen Daten erhalten. Wir wenden uns dagegen, vorsorglich alle Kunden zu erfassen, ohne konkreten Verdacht.",
   },
   {
     question: "Ist DAC8 rechtswidrig?",
     answer:
-      "Wir halten die österreichische Erfassung aller Kunden für grundrechtswidrig und wollen sie gerichtlich prüfen lassen. Es gibt auch Rechtsprechung, die den automatischen Austausch von Steuerdaten grundsätzlich zulässt. Ob die konkreten Pflichten verhältnismäßig sind, müssen die Gerichte entscheiden.",
+      "Wir halten die österreichische Erfassung aller Kunden für grundrechtswidrig und wollen sie gerichtlich prüfen lassen. Ob die konkreten Pflichten verhältnismäßig sind, müssen die Gerichte entscheiden.",
   },
   {
     question: "Was passiert mit meinen Daten auf dieser Website?",
@@ -116,8 +116,8 @@ const faqs = [
     <header class="hero">
       <h1>Was DAC8 verlangt. <span>Und was nicht.</span></h1>
       <p class="lead">
-        Was das Gesetz vorschreibt, was in der Meldung steht, wo die Grenzen
-        liegen und wie wir dagegen vorgehen.
+        Welche Daten über dich gemeldet werden, was beim Anbieter gespeichert
+        bleibt und warum wir dagegen vorgehen.
       </p>
       <nav class="hero-actions" aria-label="Direkteinstieg">
         <a class="button primary" href="#gemeldet">Was gemeldet wird</a>
@@ -128,8 +128,6 @@ const faqs = [
         <dd>seit 1. Jänner 2026</dd>
         <dt>Erste Meldung</dt>
         <dd>für das Jahr 2026, spätestens am 31. Juli 2027</dd>
-        <dt>Stand der Recherche</dt>
-        <dd>{researchDate}</dd>
       </dl>
     </header>
 
@@ -212,24 +210,6 @@ const faqs = [
       </div>
       <ul class="facts">
         <li>
-          <strong>Mehr als bei Bankkonten</strong>
-          <p>
-            Bei Bankkonten meldet der Staat Salden und Erträge. Bei Krypto
-            kommen Stückzahlen und die Zahl der Vorgänge dazu. Jahr für Jahr
-            ergibt das ein Bild davon, wie aktiv jemand ist.
-          </p>
-        </li>
-        <li>
-          <strong>Zehn Jahre statt fünf</strong>
-          <p>
-            § 20 Abs. 4 Krypto-MPfG sieht die Löschung übermittelter
-            Informationen beim Anbieter zehn Jahre nach dem Meldezeitraum vor.
-            Für Bankkonten hat Österreich 2018 fünf Jahre festgelegt und das
-            damals als datenschutzrechtlich angemessen bezeichnet. Den
-            Unterschied begründen die Gesetzesmaterialien nicht.
-          </p>
-        </li>
-        <li>
           <strong>Wann was passiert</strong>
           <p>
             Der erste Meldezeitraum ist das Jahr 2026. Der Anbieter meldet es
@@ -240,18 +220,17 @@ const faqs = [
         <li>
           <strong>Was beim Anbieter bleibt</strong>
           <p>
-            Je nach Dienstleistung enthalten Anbieteraufzeichnungen auch
-            Wallet-Adressen, Transaktionskennungen und Zeitpunkte mit
-            Kundenbezug. Sie gehören nicht zur jährlichen DAC8-Meldung.
+            Dein Anbieter kann deinen Namen mit Wallet-Adressen und einzelnen
+            Transaktionen verknüpfen. Diese Details gehören nicht zur jährlichen
+            DAC8-Meldung, bleiben aber je nach Dienstleistung gespeichert.
             <a
               href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&amp;Gesetzesnummer=20009769"
               >§ 21 FM-GwG</a
             >
-            verlangt unabhängig davon zehn Jahre Aufbewahrung notwendiger
-            Identifizierungs- und Transaktionsunterlagen, ab Ende der
-            Geschäftsbeziehung oder einer gelegentlichen Transaktion. Daraus
-            folgt kein automatischer Zugriff des Finanzamts auf diese
-            Detaildaten.
+            verlangt unabhängig von DAC8, notwendige Identifizierungs- und
+            Transaktionsunterlagen noch zehn Jahre nach Ende der
+            Geschäftsbeziehung oder einer gelegentlichen Transaktion
+            aufzubewahren.
           </p>
         </li>
       </ul>
@@ -260,11 +239,9 @@ const faqs = [
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">Was daran problematisch ist</h2>
       <p class="section-intro">
-        Maßstab sind die Grundrechte auf Privatleben und auf Schutz der eigenen
-        Daten. Die anlasslose Erfassung aller Kunden, der Austausch über viele
-        Empfänger und die lange Speicherung greifen in diese Rechte ein. Die
-        Risiken reichen von zweckwidriger Nutzung bis zur Gefährdung der
-        persönlichen Sicherheit.
+        Auch ohne Verdacht werden deine Daten aufbereitet und über Jahre
+        gespeichert. Das greift in dein Privatleben ein und setzt dich den
+        Risiken von Fehlern, Datenlecks und Missbrauch aus.
       </p>
       <ul class="facts">
         {concerns.map((concern) => (
@@ -280,12 +257,11 @@ const faqs = [
         hinterlassen. Bei Bitcoin bleiben On-Chain-Transaktionen öffentlich.
         Verbindet ein Anbieter deinen Namen mit einer Adresse, können weitere
         Zahlungen zugeordnet werden. Mit Informationen über die Empfänger lassen
-        Einkäufe, Spenden und regelmäßige Zahlungen Rückschlüsse auf
-        Gewohnheiten und Beziehungen zu.
+        Einkäufe, Spenden und regelmäßige Zahlungen
         <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
-          >Forschung zu Zahlungen in Onlineshops</a
+          >Rückschlüsse auf Gewohnheiten und Beziehungen</a
         >
-        zeigt, wie Kaufdaten mit solchen Transaktionen verknüpft werden können.
+        zu.
       </p>
       <h3>Datenlecks gefährden Menschen</h3>
       <p class="prose">
@@ -311,73 +287,35 @@ const faqs = [
 
     <section id="ausblick" aria-labelledby="ausblick-heading">
       <h2 id="ausblick-heading">Was noch kommen könnte</h2>
-      <p class="section-intro">Das DAC-System wird regelmäßig erweitert.</p>
-      <ul class="facts">
-        <li>
-          <span class="tag live">Gilt heute</span>
-          <strong>DAC8</strong>
-          <p>
-            Gemeldet werden Identität und Jahreswerte ab 2026. Keine
-            Wallet-Adressen, keine einzelnen Transaktionen.
-          </p>
-        </li>
-        <li>
-          <span class="tag">Gilt, betrifft Krypto nicht</span>
-          <strong>DAC9</strong>
-          <p>
-            Die Richtlinie regelt die Mindestbesteuerung großer
-            Unternehmensgruppen, nicht private Nutzer.
-          </p>
-        </li>
-        <li>
-          <span class="tag">Vorschlag seit Juni 2026</span>
-          <strong>„DAC10“</strong>
-          <p>
-            Die vorgeschlagene Neufassung führt die bisherigen Krypto-Felder
-            fort. Sie verlangt weder Wallet-Adressen noch eine Nachmeldung von
-            Vorgängen vor 2026.
-          </p>
-        </li>
-        <li>
-          <span class="tag">Bräuchte ein neues Gesetz</span>
-          <strong>Adressen, Einzeltransaktionen, Rückwirkung</strong>
-          <p>
-            Nichts davon ist beschlossen. Ist die Infrastruktur einmal da, wird
-            jede Erweiterung aber technisch leichter, und öffentliche Kontrolle
-            wichtiger.
-          </p>
-        </li>
-      </ul>
+      <p class="section-intro">
+        Eine Meldeinfrastruktur lässt sich später erweitern. Deshalb wollen wir
+        der Datensammlung jetzt wirksame Grenzen setzen.
+      </p>
+      <p class="prose">
+        Eine Pflicht zur Meldung von Wallet-Adressen, einzelnen Transaktionen
+        oder Vorgängen vor 2026 bräuchte eine Gesetzesänderung. Das ist derzeit
+        nicht beschlossen. Auch der aktuelle Vorschlag zur Neufassung der
+        Richtlinie sieht dies nicht vor.
+      </p>
     </section>
 
     <section id="forderungen" aria-labelledby="forderungen-heading">
       <h2 id="forderungen-heading">Was wir fordern</h2>
       <p class="section-intro">
-        Behörden sollen konkreten Verdachtsfällen nachgehen können. Dafür
-        befürworten wir gezielte Ermittlungen mit gesetzlicher Grundlage,
-        unabhängiger Kontrolle und klaren Grenzen für Zugriff und Speicherung.
-        Das entspricht unserem Verständnis einer liberalen Demokratie.
-      </p>
-      <p class="prose">
-        Bei gezielten Ermittlungen bestimmt ein konkreter Anlass, wessen Daten
-        relevant sind. Bei anlassloser Massenüberwachung werden die Daten aller
-        vorsorglich erfasst. Damit tragen auch Unbeteiligte die Risiken von
-        Datenlecks und Missbrauch. Wir wollen, dass der Staat die Notwendigkeit
-        dieses zusätzlichen Eingriffs belegt und weniger eingreifende Mittel
-        nutzt, wo sie denselben Zweck erfüllen.
+        In einer liberalen Demokratie sollen Behörden bei konkretem Verdacht
+        gezielt ermitteln können, mit gesetzlicher Grundlage und unabhängiger
+        Kontrolle. Wer unbeteiligt ist, sollte nicht vorsorglich durchleuchtet
+        werden.
       </p>
       <ul class="checklist">
         <li>
-          <strong
-            >Erst prüfen, wer meldepflichtig ist, dann Daten aufbereiten.</strong
-          >
-          Nicht umgekehrt.
+          <strong>Erst klären, wessen Daten gemeldet werden müssen.</strong>
+          Keine vorsorgliche Aufbereitung für alle Kunden.
         </li>
         <li>
-          <strong>Jedes Meldefeld muss seinen Nutzen belegen.</strong>
-          Stückzahlen, Anzahl der Vorgänge und Transferfelder gehen über das
-          hinaus, was bei Bankkonten gemeldet wird. Welchen steuerlichen
-          Mehrwert sie bringen, ist offen.
+          <strong>Nur notwendige Daten erfassen.</strong>
+          Der zusätzliche Nutzen von Stückzahlen und Transaktionszahlen muss
+          belegt werden.
         </li>
         <li>
           <strong>Die eigene Wallet ist keine Zahlung an Dritte.</strong>
@@ -385,21 +323,22 @@ const faqs = [
           behandelt werden.
         </li>
         <li>
-          <strong>Speicherfristen begründen.</strong>
-          Zehn Jahre statt der fünf bei Bankkonten brauchen eine Erklärung oder
-          eine Korrektur.
+          <strong>Daten nicht länger als nötig speichern.</strong>
+          Zehn Jahre statt fünf brauchen eine nachvollziehbare Begründung.
         </li>
         <li>
-          <strong>Zweck, Zugriff und Weitergabe eng begrenzen</strong>
-          und lückenlos protokollieren.
+          <strong>Zweck, Zugriff und Weitergabe eng begrenzen.</strong>
+          Zugriffe müssen nachvollziehbar sein und unabhängig kontrolliert
+          werden.
         </li>
         <li>
-          <strong>Auskunft, Korrektur und Löschung</strong>
-          müssen über alle Empfänger hinweg praktisch funktionieren.
+          <strong>Deine Rechte müssen praktisch funktionieren.</strong>
+          Du musst Auskunft erhalten, Fehler korrigieren und unrechtmäßig
+          gespeicherte Daten bei allen Empfängern löschen lassen können.
         </li>
         <li>
-          <strong>Nutzen und Grundrechtsfolgen unabhängig evaluieren,</strong>
-          regelmäßig und öffentlich.
+          <strong>Nutzen und Risiken unabhängig überprüfen.</strong>
+          Regelmäßig und öffentlich, damit unnötige Eingriffe beendet werden.
         </li>
       </ul>
       <p class="prose">
@@ -416,14 +355,12 @@ const faqs = [
       <h2 id="rechtsweg-heading">Wie wir vorgehen</h2>
       <p class="section-intro">
         {campaignStatus.de.text}
-        Wie sich Privatpersonen beteiligen können, konkretisieren wir im
-        weiteren Verlauf.
       </p>
       <ol class="flow" aria-label="Der Rechtsweg">
         <li>
           <strong>Anbieter</strong>
           <span
-            >verarbeitet Daten für DAC8; konkrete Vorgänge werden dokumentiert</span
+            >wir dokumentieren, wie ein Anbieter Daten für DAC8 verarbeitet</span
           >
         </li>
         <li class="accent">
@@ -432,56 +369,27 @@ const faqs = [
         </li>
         <li>
           <strong>Bundesverwaltungsgericht</strong>
-          <span
-            >entscheidet über die Beschwerde und kann Fragen an den EuGH richten</span
-          >
+          <span>kann die Entscheidung der Datenschutzbehörde überprüfen</span>
         </li>
         <li>
           <strong>VfGH / EuGH</strong>
-          <span>prüfen das österreichische Gesetz bzw. die EU-Richtlinie</span>
+          <span
+            >können das österreichische Gesetz bzw. die EU-Richtlinie prüfen</span
+          >
         </li>
       </ol>
-      <div class="tracks">
-        <section>
-          <h3>Warum nicht direkt zum Verfassungsgerichtshof?</h3>
-          <p>
-            Der Verfassungsgerichtshof hat 2026 entschieden, dass Betroffene
-            zuerst den zumutbaren Weg über die Datenschutzbehörde nehmen müssen.
-            Ein direkter Antrag eines einzelnen Nutzers würde mit hoher
-            Wahrscheinlichkeit daran scheitern.
-          </p>
-        </section>
-        <section>
-          <h3>Was ein Anbieter zusätzlich tun kann</h3>
-          <p>
-            Ein Anbieter mit Sitz in Österreich ist von den zusätzlichen
-            österreichischen Pflichten direkt betroffen und kann unter anderen
-            Voraussetzungen selbst zum Verfassungsgerichtshof gehen. Dafür
-            müssen die österreichischen Zusatzpflichten sauber vom
-            EU-Mindeststandard getrennt werden.
-          </p>
-        </section>
-      </div>
-      <ul class="facts">
-        <li>
-          <strong>Was eine Beschwerde braucht</strong>
-          <p>
-            Einen konkreten Anbieter, eine Verarbeitung, die jetzt schon
-            stattfindet, etwa Selbstauskunft, Einstufung oder Speicherung, und
-            Belege dafür. Dass 2027 eine Meldung kommen wird, reicht allein
-            nicht.
-          </p>
-        </li>
-        <li>
-          <strong>Was eine Beschwerde nicht bewirkt</strong>
-          <p>
-            Sie stoppt die Verarbeitung nicht automatisch. Ob vor der ersten
-            Meldung im Juli 2027 eine Entscheidung vorliegt, ist nicht
-            gesichert. Und ob der EuGH befragt wird, entscheidet allein das
-            Gericht.
-          </p>
-        </li>
-      </ul>
+      <p class="prose">
+        Über eine Vorlage an den EuGH entscheidet das Gericht. Die Beschwerde
+        stoppt die Datenerfassung nicht automatisch; wie lange das Verfahren
+        dauert, steht noch nicht fest.
+      </p>
+      <p class="prose">
+        Ob und wie sich Privatpersonen beteiligen können, klären wir im weiteren
+        Verlauf. Bis dahin kannst du den
+        <a href="/spenden/">Prozess mit einer Spende unterstützen</a>
+        und die
+        <a href="/aktuelles/">nächsten Schritte verfolgen</a>.
+      </p>
     </section>
 
     <section id="faq" aria-labelledby="faq-heading">
