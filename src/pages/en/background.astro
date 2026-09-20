@@ -4,7 +4,7 @@ import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import { campaignStatus } from "@/data/campaign"
 import { sourceGroups } from "@/data/sources"
-const researchDate = "16 September 2026"
+const researchDate = "20 September 2026"
 const sources = sourceGroups.map((group) => ({
   title: group.titleEn,
   sources: group.sources.map((source) => ({
@@ -23,7 +23,7 @@ const concerns = [
   },
   {
     title: "A data breach cannot be undone.",
-    text: "The report does not contain wallet addresses. But identities and annual aggregates, combined with other information, can reveal wealth and blockchain activity. A breach can therefore put personal safety at risk.",
+    text: "A provider breach can expose the link between your name and blockchain transactions. Once that link spreads, it is hard to take back. It can reveal further payments and make people targets.",
   },
   {
     title: "The purpose keeps expanding.",
@@ -47,7 +47,7 @@ const faqs = [
   {
     question: "Will my own wallet address be reported?",
     answer:
-      "No. Addresses are not part of the report. However, the aggregate of transfers to addresses not known to the provider as belonging to another provider is reported. This generally includes transfers to your own wallet.",
+      "No. Wallet addresses are not part of the annual DAC8 report. But the value and units transferred to addresses not known to belong to another provider are reported. This generally includes your own wallet. The address and its link to you may still remain in the provider’s records.",
   },
   {
     question: "Are exchanges of bitcoin for another crypto-asset reported?",
@@ -67,7 +67,12 @@ const faqs = [
   {
     question: "Must providers store every transaction for ten years?",
     answer:
-      "DAC8 does not impose a blanket ten-year retention period for every transaction. Section 20(4) Krypto-MPfG provides for transmitted information to be deleted ten years after the reporting period. Section 39 separately requires ten years’ retention of documentation of reporting and due-diligence obligations. Other rules, such as anti-money-laundering or MiCA obligations, may apply to individual transaction records.",
+      "Different duties cover different records. Section 39 Krypto-MPfG requires documented reporting and due-diligence steps to be kept for ten years after the reporting period; it does not expressly cover every wallet address. Independently, section 21 FM-GwG requires necessary identification and transaction records to be kept for ten years after the business relationship ends or an occasional transaction. MiCA sets five years for covered records, extended to seven on a timely authority request. The applicable duty depends on the record and service.",
+  },
+  {
+    question: "Can every cryptocurrency payment be traced?",
+    answer:
+      "No. A known Bitcoin address can reveal further on-chain payments, but not automatically every payment or its purpose. Reliable attribution and additional information are needed. Individual Lightning payments are not recorded on the public blockchain. Transfers between someone’s own wallets or transactions involving several users can also be misattributed.",
   },
   {
     question: "Do DAC9 and DAC10 mean more crypto surveillance?",
@@ -222,10 +227,10 @@ const faqs = [
           <strong>Ten years instead of five</strong>
           <p>
             Section 20(4) Krypto-MPfG provides for transmitted information to be
-            deleted ten years after the reporting period. For bank accounts,
-            Austria set five years in 2018 and described this as appropriate for
-            data protection. The legislative materials do not justify the
-            difference.
+            deleted by the provider ten years after the reporting period. For
+            bank accounts, Austria set five years in 2018 and described this as
+            appropriate for data protection. The legislative materials do not
+            justify the difference.
           </p>
         </li>
         <li>
@@ -237,11 +242,19 @@ const faqs = [
           </p>
         </li>
         <li>
-          <strong>Other records held by the provider</strong>
+          <strong>What the provider retains</strong>
           <p>
-            Anti-money-laundering and crypto-market rules require more detailed
-            records, including addresses and timestamps. These are not part of
-            the report but are held by the same provider.
+            Depending on the service, provider records also include wallet
+            addresses, transaction identifiers and timestamps linked to
+            customers. These are outside the annual DAC8 report.
+            <a
+              href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&amp;Gesetzesnummer=20009769"
+              >Section 21 FM-GwG</a
+            >
+            independently requires necessary identification and transaction
+            records to be kept for ten years after the business relationship
+            ends or an occasional transaction. Retention does not give the tax
+            authority automatic access to these detailed records.
           </p>
         </li>
       </ul>
@@ -257,26 +270,42 @@ const faqs = [
       <ul class="facts">
         {concerns.map(concern => <li><strong>{concern.title}</strong><p>{concern.text}</p></li>)}
       </ul>
-      <h3>Financial privacy also protects people</h3>
+      <h3 id="zahlungsprofile">When payments reveal everyday life</h3>
       <p class="prose">
-        Extortion, robbery and kidnappings of crypto-asset holders are
-        documented. In France, Ledger co-founder David Balland and his partner
-        were kidnapped in January 2025. The
-        <a
-          href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-1-2"
-          >French Gendarmerie</a
-        >
-        identifies major data breaches exposing identities, wealth and home
-        addresses as one factor behind such attacks.
-        <a href="https://github.com/jlopp/physical-bitcoin-attacks"
-          >Known Physical Bitcoin Attacks</a
-        >
-        documents further cases with links to sources.
+        Paying with bitcoin or other cryptocurrencies leaves traces, depending
+        on the technology. Bitcoin’s on-chain transactions remain public. When a
+        provider links your name to an address, further payment flows may become
+        traceable. With additional information about recipients, purchases,
+        donations and recurring payments can reveal habits and personal
+        relationships.
       </p>
       <p class="prose">
-        These cases are not proven consequences of DAC8. They show what is at
-        stake when identities and financial information fall into the wrong
-        hands. That is why we demand limits on collection itself.
+        <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
+          >Research on online shopping payments</a
+        >
+        shows how purchase data can be linked to blockchain transactions and
+        people. What can be inferred depends on the available data; incorrect
+        attribution can also cause harm. The annual report alone does not
+        provide such a payment history. Detailed links retained by providers
+        over many years are a particular source of risk.
+      </p>
+      <h3>Financial privacy also protects people</h3>
+      <p class="prose">
+        Stolen data can be used to select victims. The
+        <a
+          href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
+          >French Gendarmerie</a
+        >
+        reports that criminals use leaked customer data from crypto tax service
+        Waltio to identify targets, sometimes misjudging their actual holdings.
+        Even the assumption that someone owns substantial crypto assets can put
+        them and their family at risk.
+      </p>
+      <p class="prose">
+        Waltio is a private service; this is not a proven DAC8 breach. It makes
+        the consequences of such data collections tangible: extortion, robbery
+        and physical violence. Limiting collection, shortening retention and
+        strictly controlling access are part of protecting people.
       </p>
     </section>
     <section id="ausblick" aria-labelledby="ausblick-heading">

@@ -80,6 +80,14 @@
   letter-spacing: -0.012em;
 }
 
+.campaign.dossier > section > h3 {
+  margin-block-start: var(--space-l);
+}
+
+.campaign.dossier > section > h3 + .prose {
+  margin-block-start: var(--space-xs);
+}
+
 .campaign h4 {
   font-size: var(--step-0);
   font-weight: 560;

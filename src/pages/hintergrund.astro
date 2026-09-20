@@ -5,7 +5,7 @@ import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
 import { sourceGroups } from "@/data/sources"
 
-const researchDate = "16. September 2026"
+const researchDate = "20. September 2026"
 
 const concerns = [
   {
@@ -18,7 +18,7 @@ const concerns = [
   },
   {
     title: "Ein Datenleck ist nicht rückgängig zu machen.",
-    text: "Die Meldung enthält keine Wallet-Adressen. Identität und Jahreswerte können aber zusammen mit weiteren Informationen Rückschlüsse auf Vermögen und Blockchain-Aktivitäten ermöglichen. Ein Datenleck kann damit auch die persönliche Sicherheit gefährden.",
+    text: "Ein Leck beim Anbieter kann die Verbindung zwischen deinem Namen und Blockchain-Vorgängen offenlegen. Eine einmal verbreitete Zuordnung lässt sich kaum zurückholen. Sie kann weitere Zahlungen erschließen und Menschen zur Zielscheibe machen.",
   },
   {
     title: "Der Zweck wächst mit.",
@@ -43,7 +43,7 @@ const faqs = [
   {
     question: "Wird meine eigene Wallet-Adresse gemeldet?",
     answer:
-      "Nein, Adressen sind nicht Teil der Meldung. Gemeldet wird aber die Summe aller Übertragungen an Adressen, die dem Anbieter nicht als Adresse eines anderen Anbieters bekannt sind. Darunter fällt in der Regel auch der Transfer auf deine eigene Wallet.",
+      "Nein, Wallet-Adressen sind nicht Teil der jährlichen DAC8-Meldung. Gemeldet werden aber Wert und Stückzahl von Übertragungen an Adressen, die dem Anbieter nicht als Adresse eines anderen Anbieters bekannt sind. Darunter fällt in der Regel auch deine eigene Wallet. Die Adresse und ihr Bezug zu dir können trotzdem in den Aufzeichnungen des Anbieters gespeichert bleiben.",
   },
   {
     question:
@@ -64,7 +64,12 @@ const faqs = [
   {
     question: "Müssen Anbieter jede Transaktion zehn Jahre speichern?",
     answer:
-      "DAC8 verlangt keine pauschale zehnjährige Speicherung jeder einzelnen Transaktion. § 20 Abs. 4 Krypto-MPfG sieht die Löschung übermittelter Informationen zehn Jahre nach dem Meldezeitraum vor. § 39 verlangt gesondert zehn Jahre Aufbewahrung für die Dokumentation der Melde- und Sorgfaltspflichten. Für einzelne Transaktionsdaten können weitere Pflichten gelten, etwa aus Geldwäsche- oder MiCA-Regeln.",
+      "Die Pflichten betreffen unterschiedliche Unterlagen. § 39 Krypto-MPfG verlangt zehn Jahre Aufbewahrung der dokumentierten Melde- und Sorgfaltsschritte nach Ende des Meldezeitraums; er nennt nicht pauschal jede Wallet-Adresse. Unabhängig davon verlangt § 21 FM-GwG zehn Jahre für notwendige Identifizierungs- und Transaktionsunterlagen, gerechnet ab Ende der Geschäftsbeziehung oder einer gelegentlichen Transaktion. MiCA sieht für die erfassten Aufzeichnungen fünf Jahre vor, auf rechtzeitiges Behördenverlangen bis zu sieben. Welche Pflicht greift, hängt vom Datensatz und der Dienstleistung ab.",
+  },
+  {
+    question: "Lässt sich jede Zahlung mit Kryptowährungen nachverfolgen?",
+    answer:
+      "Nein. Eine bekannte Bitcoin-Adresse kann weitere On-Chain-Zahlungen erschließen, aber nicht automatisch jede Zahlung oder ihren Zweck. Dafür braucht es verlässliche Zuordnungen und zusätzliche Informationen. Einzelne Lightning-Zahlungen stehen nicht auf der öffentlichen Blockchain. Auch Eigenüberträge oder gemeinsam verwendete Transaktionen können falsch zugeordnet werden.",
   },
   {
     question: "Bedeuten DAC9 und DAC10 noch mehr Krypto-Überwachung?",
@@ -220,10 +225,10 @@ const faqs = [
           <strong>Zehn Jahre statt fünf</strong>
           <p>
             § 20 Abs. 4 Krypto-MPfG sieht die Löschung übermittelter
-            Informationen zehn Jahre nach dem Meldezeitraum vor. Für Bankkonten
-            hat Österreich 2018 fünf Jahre festgelegt und das damals als
-            datenschutzrechtlich angemessen bezeichnet. Den Unterschied
-            begründen die Gesetzesmaterialien nicht.
+            Informationen beim Anbieter zehn Jahre nach dem Meldezeitraum vor.
+            Für Bankkonten hat Österreich 2018 fünf Jahre festgelegt und das
+            damals als datenschutzrechtlich angemessen bezeichnet. Den
+            Unterschied begründen die Gesetzesmaterialien nicht.
           </p>
         </li>
         <li>
@@ -235,11 +240,20 @@ const faqs = [
           </p>
         </li>
         <li>
-          <strong>Was der Anbieter zusätzlich hat</strong>
+          <strong>Was beim Anbieter bleibt</strong>
           <p>
-            Aus Geldwäsche- und Kryptomarkt-Regeln führen Anbieter deutlich
-            detailliertere Aufzeichnungen, darunter Adressen und Zeitstempel.
-            Sie sind nicht Teil der Meldung, liegen aber beim selben Anbieter.
+            Je nach Dienstleistung enthalten Anbieteraufzeichnungen auch
+            Wallet-Adressen, Transaktionskennungen und Zeitpunkte mit
+            Kundenbezug. Sie gehören nicht zur jährlichen DAC8-Meldung.
+            <a
+              href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&amp;Gesetzesnummer=20009769"
+              >§ 21 FM-GwG</a
+            >
+            verlangt unabhängig davon zehn Jahre Aufbewahrung notwendiger
+            Identifizierungs- und Transaktionsunterlagen, ab Ende der
+            Geschäftsbeziehung oder einer gelegentlichen Transaktion. Daraus
+            folgt kein automatischer Zugriff des Finanzamts auf diese
+            Detaildaten.
           </p>
         </li>
       </ul>
@@ -262,27 +276,45 @@ const faqs = [
           </li>
         ))}
       </ul>
-      <h3>Finanzielle Privatsphäre schützt auch Menschen</h3>
+      <h3 id="zahlungsprofile">Wenn Zahlungen deinen Alltag offenlegen</h3>
       <p class="prose">
-        Erpressung, Raub und Entführungen von Menschen mit Kryptowerten sind
-        dokumentiert. In Frankreich wurden im Januar 2025 Ledger-Mitgründer
-        David Balland und seine Partnerin entführt. Die
-        <a
-          href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-1-2"
-          >französische Gendarmerie</a
-        >
-        nennt große Datenlecks, die Identitäten, Vermögen und Wohnadressen
-        offenlegen, als einen Faktor hinter solchen Angriffen. Die Sammlung
-        <a href="https://github.com/jlopp/physical-bitcoin-attacks"
-          >Known Physical Bitcoin Attacks</a
-        >
-        dokumentiert weitere Fälle mit Quellenlinks.
+        Wer mit Bitcoin oder anderen Kryptowährungen bezahlt, hinterlässt je
+        nach Technik Spuren. Bei Bitcoin sind On-Chain-Transaktionen dauerhaft
+        öffentlich. Verbindet ein Anbieter deinen Namen mit einer Adresse,
+        können sich daraus weitere Zahlungswege erschließen. Mit zusätzlichen
+        Informationen über Empfänger können Einkäufe, Spenden und wiederkehrende
+        Zahlungen Rückschlüsse auf Gewohnheiten und persönliche Beziehungen
+        ermöglichen.
       </p>
       <p class="prose">
-        Diese Fälle sind keine nachgewiesenen Folgen von DAC8. Sie zeigen aber,
-        was auf dem Spiel steht, wenn Identitäten und Finanzdaten in falsche
-        Hände geraten. Deshalb verlangen wir, schon die Erfassung auf das
-        Notwendige zu begrenzen.
+        <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
+          >Forschung zu Zahlungen in Onlineshops</a
+        >
+        zeigt, wie Kaufdaten mit Blockchain-Transaktionen und Personen verknüpft
+        werden können. Der Aussagegehalt hängt von den verfügbaren Daten ab;
+        auch Fehlzuordnungen können schaden. Die Jahresmeldung allein liefert
+        keine solche Zahlungshistorie. Das Risiko liegt besonders in den
+        detaillierten, lange gespeicherten Zuordnungen beim Anbieter.
+      </p>
+      <h3>Finanzielle Privatsphäre schützt auch Menschen</h3>
+      <p class="prose">
+        Gestohlene Daten können zur Auswahl von Opfern dienen. Die
+        <a
+          href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
+          >französische Gendarmerie</a
+        >
+        berichtet, dass Täter geleakte Kundendaten des Krypto-Steuerdienstes
+        Waltio nutzen, um Angriffsziele zu identifizieren. Dabei schätzen sie
+        das tatsächliche Vermögen teilweise falsch ein. Schon die Annahme,
+        jemand besitze größere Kryptobestände, kann ihn und seine Angehörigen
+        gefährden.
+      </p>
+      <p class="prose">
+        Waltio ist ein privater Dienst; der Fall ist kein nachgewiesenes
+        DAC8-Leck. Er macht die Folgen solcher Datensammlungen greifbar:
+        Erpressung, Raub und körperliche Gewalt. Deshalb gehören begrenzte
+        Erfassung, kurze Speicherfristen und streng kontrollierte Zugriffe zum
+        Schutz der Betroffenen.
       </p>
     </section>
 

@@ -35,6 +35,13 @@ export const sourceGroups = [
         labelEn: "Section 24 DSG: complaints and deadlines",
         href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Anlage=&Artikel=2&Gesetzesnummer=10001597&Paragraf=24",
       },
+      {
+        label:
+          "§ 21 FM-GwG: Aufbewahrung von Identifizierungs- und Transaktionsunterlagen",
+        labelEn:
+          "Section 21 FM-GwG: retention of identification and transaction records",
+        href: "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009769",
+      },
     ],
   },
   {
@@ -45,6 +52,18 @@ export const sourceGroups = [
         label: "Richtlinie (EU) 2023/2226 (DAC8)",
         labelEn: "Directive (EU) 2023/2226 (DAC8)",
         href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:32023L2226",
+      },
+      {
+        label: "MiCA, Art. 68 Abs. 9: Aufbewahrungsfristen",
+        labelEn: "MiCA, Article 68(9): retention periods",
+        href: "https://eur-lex.europa.eu/eli/reg/2023/1114/oj/eng",
+      },
+      {
+        label:
+          "Verordnung (EU) 2025/1140: Anbieteraufzeichnungen mit Blockchain-Bezug",
+        labelEn:
+          "Regulation (EU) 2025/1140: provider records linked to blockchain data",
+        href: "https://eur-lex.europa.eu/eli/reg_del/2025/1140/oj/eng",
       },
       {
         label: "Folgenabschätzung der EU-Kommission zu DAC8, SWD(2022) 401",
@@ -98,9 +117,35 @@ export const sourceGroups = [
     ],
   },
   {
+    title: "Zahlungsprofile",
+    titleEn: "Payment profiles",
+    sources: [
+      {
+        label:
+          "Goldfeder et al. (2018): Verknüpfung von Webkäufen, Identitäten und Blockchain-Daten",
+        labelEn:
+          "Goldfeder et al. (2018): linking web purchases, identities and blockchain data",
+        href: "https://petsymposium.org/popets/2018/popets-2018-0038.php",
+      },
+      {
+        label:
+          "Kappos et al. (2021): Möglichkeiten und Grenzen der Beobachtung von Lightning-Zahlungen",
+        labelEn:
+          "Kappos et al. (2021): possibilities and limits of observing Lightning payments",
+        href: "https://arxiv.org/abs/2003.12470",
+      },
+    ],
+  },
+  {
     title: "Datenlecks und körperliche Angriffe",
     titleEn: "Data breaches and physical attacks",
     sources: [
+      {
+        label:
+          "Gendarmerie nationale: Waltio-Datenleck und Auswahl von Angriffszielen",
+        labelEn: "French Gendarmerie: the Waltio leak and target selection",
+        href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2",
+      },
       {
         label:
           "Gendarmerie nationale – Datenlecks als Faktor bei Krypto-Entführungen",
