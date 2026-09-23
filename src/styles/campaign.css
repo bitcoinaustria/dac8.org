@@ -1370,3 +1370,17 @@
 .campaign .hero-context + .keyfigures {
   margin-block-start: var(--space-l);
 }
+
+/* Mehrere Absätze in einer Karte: nur der letzte dehnt sich, damit die
+   Buttons nebeneinanderliegender Karten auf einer Linie bleiben. */
+.campaign .cards p:not(:last-of-type) {
+  flex: none;
+}
+
+.campaign .cards p + p {
+  margin-block-start: var(--space-xs);
+}
+
+.campaign .participation-note {
+  margin-block-start: var(--space-m);
+}
