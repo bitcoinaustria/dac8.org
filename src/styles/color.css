@@ -22,7 +22,7 @@
      Eyebrows, Ziffern und Links auch auf dunklem Grund Kontrast haben. */
   --primary:            var(--brand-red);
   --primary-foreground: #ffffff;
-  --accent:             light-dark(#c9000d, #ff5f66);
+  --accent:             light-dark(#c9000d, #ff3b45);
   --muted:              var(--gray-3);
   --muted-foreground:   var(--gray-11);
   --destructive:        var(--red-11);
