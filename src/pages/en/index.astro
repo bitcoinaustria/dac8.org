@@ -2,6 +2,8 @@
 import ShareIcon from "@/assets/icons/share.svg"
 import Layout from "@/layouts/Layout.astro"
 import CampaignPartners from "@/components/CampaignPartners.astro"
+import CampaignStatus from "@/components/CampaignStatus.astro"
+import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import { campaignStatus } from "@/data/campaign"
 ---
@@ -18,6 +20,7 @@ import { campaignStatus } from "@/data/campaign"
   <MetaPage slot="head" />
   <article class="campaign landing">
     <header class="hero">
+      <CampaignStatus language="en" />
       <h1>
         Financial privacy is a fundamental right. <span>Let’s defend it.</span>
       </h1>
@@ -27,18 +30,15 @@ import { campaignStatus } from "@/data/campaign"
         Financial privacy protects your freedom to make those choices without
         others scrutinising your personal life.
       </p>
-      <p class="prose">
-        Since 2026, crypto-asset providers in Austria have had to prepare
-        financial data on all their customers for the tax authority, without any
-        specific suspicion. We believe this collection under DAC8 violates
-        fundamental rights and are preparing a legal challenge.
-      </p>
       <nav class="hero-actions" aria-label="Get started">
         <a class="button primary" href="/en/donate/">Support the case</a>
         <a class="button" href="/en/background/">What DAC8 requires</a>
       </nav>
-      <p class="campaign-status">
-        <a href="/en/updates/">Austria · {campaignStatus.en.label}</a>
+      <p class="prose hero-context">
+        Since 2026, crypto-asset providers in Austria have had to prepare
+        financial data on all their customers for the tax authority, without any
+        specific suspicion. We believe this collection under DAC8 violates
+        fundamental rights and are preparing a legal challenge.
       </p>
       <dl class="keyfigures" aria-label="Key facts">
         <div>
@@ -120,6 +120,7 @@ import { campaignStatus } from "@/data/campaign"
     <section id="weg" aria-labelledby="weg-heading">
       <h2 id="weg-heading">What we are doing</h2>
       <p class="section-intro">{campaignStatus.en.text}</p>
+      <LegalRoute language="en" />
       <p class="prose">
         The campaign against the retention of telephone and internet data is a
         precedent for resistance: in 2014, the Court of Justice struck down the

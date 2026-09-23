@@ -1,6 +1,7 @@
 ---
 import ShareIcon from "@/assets/icons/share.svg"
 import Layout from "@/layouts/Layout.astro"
+import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import { campaignStatus } from "@/data/campaign"
 import { sourceGroups } from "@/data/sources"
@@ -337,26 +338,7 @@ const faqs = [
       <p class="section-intro">
         {campaignStatus.en.text}
       </p>
-      <ol class="flow" aria-label="The legal route">
-        <li>
-          <strong>Provider</strong
-          ><span>we document how a provider processes data for DAC8</span>
-        </li>
-        <li class="accent">
-          <strong>Data Protection Authority</strong
-          ><span>examines the complaint against the provider</span>
-        </li>
-        <li>
-          <strong>Federal Administrative Court</strong
-          ><span>can review the Data Protection Authority’s decision</span>
-        </li>
-        <li>
-          <strong>Constitutional Court / CJEU</strong
-          ><span
-            >can review national law or the EU directive, respectively</span
-          >
-        </li>
-      </ol>
+      <LegalRoute language="en" />
       <p class="prose">
         The court decides whether to refer questions to the CJEU. The complaint
         does not automatically stop data collection; the duration of the

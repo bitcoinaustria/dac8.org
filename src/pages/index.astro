@@ -1,6 +1,8 @@
 ---
 import ShareIcon from "@/assets/icons/share.svg"
 import CampaignPartners from "@/components/CampaignPartners.astro"
+import CampaignStatus from "@/components/CampaignStatus.astro"
+import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
@@ -19,6 +21,7 @@ import { campaignStatus } from "@/data/campaign"
 
   <article class="campaign landing">
     <header class="hero">
+      <CampaignStatus language="de" />
       <h1>
         Finanzielle Privatsphäre ist ein Grundrecht.
         <span>Verteidigen wir sie.</span>
@@ -29,18 +32,15 @@ import { campaignStatus } from "@/data/campaign"
         Finanzielle Privatsphäre schützt deine Freiheit, solche Entscheidungen
         zu treffen, ohne dass andere dein Privatleben durchleuchten.
       </p>
-      <p class="prose">
-        Seit 2026 müssen Krypto-Anbieter in Österreich Finanzdaten aller Kunden
-        für das Finanzamt aufbereiten, ohne konkreten Verdacht. Wir halten diese
-        Erfassung unter DAC8 für einen Grundrechtsverstoß und bereiten ein
-        Verfahren dagegen vor.
-      </p>
       <nav class="hero-actions" aria-label="Direkteinstieg">
         <a class="button primary" href="/spenden/">Prozess unterstützen</a>
         <a class="button" href="/hintergrund/">Was DAC8 verlangt</a>
       </nav>
-      <p class="campaign-status">
-        <a href="/aktuelles/">Österreich · {campaignStatus.de.label}</a>
+      <p class="prose hero-context">
+        Seit 2026 müssen Krypto-Anbieter in Österreich Finanzdaten aller Kunden
+        für das Finanzamt aufbereiten, ohne konkreten Verdacht. Wir halten diese
+        Erfassung unter DAC8 für einen Grundrechtsverstoß und bereiten ein
+        Verfahren dagegen vor.
       </p>
       <dl class="keyfigures" aria-label="Das Wichtigste auf einen Blick">
         <div>
@@ -127,6 +127,7 @@ import { campaignStatus } from "@/data/campaign"
       <p class="section-intro">
         {campaignStatus.de.text}
       </p>
+      <LegalRoute language="de" />
       <p class="prose">
         Die Kampagne gegen die Vorratsdatenspeicherung von Telefon- und
         Internetdaten ist ein Vorbild: 2014 hob der Europäische Gerichtshof die

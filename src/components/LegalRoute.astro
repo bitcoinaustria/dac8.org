@@ -1,0 +1,32 @@
+---
+import { currentStage, legalRoute } from "@/data/campaign"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+const en = language === "en"
+const stations = legalRoute[language]
+const stateOf = (index: number) =>
+  index < currentStage ? "done" : index === currentStage ? "current" : "next"
+---
+
+<ol class="flow route" aria-label={en ? "The legal route" : "Der Rechtsweg"}>
+  {stations.map((station, index) => (
+      <li
+        class={stateOf(index)}
+        data-possible={index === stations.length - 1 ? "" : undefined}
+        aria-current={index === currentStage ? "step" : undefined}
+      >
+        <strong>
+          {station.title}
+          {index === currentStage && (
+            <span class="tag live">{en ? "Now" : "Jetzt"}</span>
+          )}
+        </strong>
+        <span>{station.text}</span>
+      </li>
+    ))}
+</ol>

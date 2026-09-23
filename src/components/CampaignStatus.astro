@@ -1,0 +1,16 @@
+---
+import { campaignStatus } from "@/data/campaign"
+import { type Language, pathFor } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+const en = language === "en"
+---
+
+<a class="status-line" href={pathFor("updates", language)}>
+  {en ? "Austria" : "Österreich"}
+  · <span>{campaignStatus[language].label}</span>
+</a>

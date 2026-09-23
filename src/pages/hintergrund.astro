@@ -1,5 +1,6 @@
 ---
 import ShareIcon from "@/assets/icons/share.svg"
+import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
@@ -348,28 +349,7 @@ const faqs = [
       <p class="section-intro">
         {campaignStatus.de.text}
       </p>
-      <ol class="flow" aria-label="Der Rechtsweg">
-        <li>
-          <strong>Anbieter</strong>
-          <span
-            >wir dokumentieren, wie ein Anbieter Daten für DAC8 verarbeitet</span
-          >
-        </li>
-        <li class="accent">
-          <strong>Datenschutzbehörde</strong>
-          <span>prüft die Beschwerde gegen den Anbieter</span>
-        </li>
-        <li>
-          <strong>Bundesverwaltungsgericht</strong>
-          <span>kann die Entscheidung der Datenschutzbehörde überprüfen</span>
-        </li>
-        <li>
-          <strong>VfGH / EuGH</strong>
-          <span
-            >können das österreichische Gesetz bzw. die EU-Richtlinie prüfen</span
-          >
-        </li>
-      </ol>
+      <LegalRoute language="de" />
       <p class="prose">
         Über eine Vorlage an den EuGH entscheidet das Gericht. Die Beschwerde
         stoppt die Datenerfassung nicht automatisch; wie lange das Verfahren

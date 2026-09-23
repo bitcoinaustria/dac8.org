@@ -587,7 +587,7 @@
   hyphens: auto;
 }
 
-.campaign .flow span {
+.campaign .flow li > span {
   grid-column: 2;
   color: var(--ink-2);
   text-wrap: pretty;
@@ -1274,9 +1274,99 @@
   }
 }
 
-/* Keep the current campaign stage close to the primary action. */
-.campaign .campaign-status {
-  margin-block-start: var(--space-m);
+/* Verfahrensstand über der Schlagzeile: gesetzt wie die Navigation, damit er
+   als Einordnung liest und nicht als Hinweis oder Eilmeldung. */
+.campaign .status-line {
+  inline-size: fit-content;
+  margin-block-end: var(--space-s);
   color: var(--ink-3);
-  font-size: 0.9375rem;
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.campaign .status-line span {
+  color: var(--ink);
+}
+
+.campaign .status-line:hover span {
+  color: var(--accent);
+}
+
+/* Rechtsweg mit Stand: erledigt, jetzt, noch offen. Die letzte Station ist
+   gestrichelt angebunden, weil über Vorlagen die Gerichte entscheiden. */
+.campaign .route li.current::before {
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.campaign .route li.next::before {
+  color: var(--ink-2);
+  background: var(--background);
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--ink) 28%, transparent);
+}
+
+.campaign .route li.next > strong {
+  color: var(--ink-2);
+}
+
+.campaign .route li:has(+ [data-possible])::after {
+  border-inline-start-style: dashed;
+}
+
+.campaign .route .tag {
+  margin: 0 0 0 0.6em;
+  padding-block: 0.05em;
+  vertical-align: 0.1em;
+}
+
+.campaign .route + .prose {
+  margin-block-start: var(--space-l);
+}
+
+/* Leerer Zustand einer Liste: sagt, was hier erscheinen wird. */
+.campaign .empty-state {
+  max-inline-size: var(--measure-text);
+  margin-block-start: var(--space-l);
+  padding: var(--space-m) var(--space-m-l);
+  border: 1px dashed color-mix(in oklab, var(--ink) 22%, transparent);
+  border-radius: var(--radius);
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.campaign .empty-state strong {
+  display: block;
+  margin-block-end: var(--space-3xs);
+  color: var(--ink);
+  font-weight: 560;
+}
+
+/* Kennzahlen am Handy: kompakter, damit die drei Werte nicht einen ganzen
+   Bildschirm füllen. */
+@container campaign (width < 46rem) {
+  .campaign .keyfigures {
+    gap: var(--space-s);
+  }
+
+  .campaign .keyfigures > div {
+    gap: var(--space-3xs);
+    padding-block-start: var(--space-xs);
+    border-block-start-width: 1px;
+  }
+
+  .campaign .keyfigures dd {
+    font-size: 1.75rem;
+  }
+}
+
+/* Einordnung im Hero: steht nach den Buttons und leitet zu den Kennzahlen. */
+.campaign .hero-context {
+  margin-block-start: var(--space-xl);
+}
+
+.campaign .hero-context + .keyfigures {
+  margin-block-start: var(--space-l);
 }
