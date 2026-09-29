@@ -1,5 +1,5 @@
 ---
-import ShareIcon from "@/assets/icons/share.svg"
+import AffectedCheck from "@/components/AffectedCheck.astro"
 import Artwork from "@/components/Artwork.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
@@ -126,6 +126,7 @@ const faqs = [
         <dt>Erste Meldung</dt>
         <dd>für das Jahr 2026, spätestens am 31. Juli 2027</dd>
       </dl>
+      <AffectedCheck language="de" />
     </header>
 
     <section id="was-ist-dac8" aria-labelledby="was-heading">
@@ -174,6 +175,7 @@ const faqs = [
         Die Meldung enthält Identität und Jahreswerte, keine einzelnen
         Transaktionen.
       </p>
+      <Artwork id="reportAssets" language="de" size="wide" zoom />
       <div class="compare">
         <div>
           <h3>Das steht in der Meldung</h3>
@@ -427,23 +429,5 @@ const faqs = [
         Stand der Recherche: {researchDate}. Keine individuelle Rechtsberatung.
       </p>
     </section>
-
-    <aside class="closing" aria-labelledby="support-heading">
-      <h2 id="support-heading">Den Prozess unterstützen</h2>
-      <div class="closing-actions">
-        <a class="button primary" href="/spenden/">Spenden</a>
-        <a class="button" href="/aktuelles/">Aktuelles</a>
-        <button class="text-link" type="button" data-share>
-          <ShareIcon />Teilen
-        </button>
-      </div>
-      <p class="share-status" data-share-status aria-live="polite"></p>
-    </aside>
   </article>
-
-  <script>
-    import { initializeShareButtons } from "@/lib/share"
-
-    initializeShareButtons()
-  </script>
 </Layout>

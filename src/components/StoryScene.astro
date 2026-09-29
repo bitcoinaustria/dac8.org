@@ -1,0 +1,30 @@
+---
+import Artwork from "@/components/Artwork.astro"
+import type { ArtworkId } from "@/data/artwork"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  art: ArtworkId
+  language: Language
+  title: string
+  // "wide" puts the text above a full-width illustration, for the report
+  // specimen that needs its width to stay legible.
+  wide?: boolean
+  zoom?: boolean
+}
+
+const { art, language, title, wide = false, zoom = false } = Astro.props
+---
+
+<div class:list={["scene", { "scene-wide": wide }]}>
+  <div class="scene-text">
+    <h3>{title}</h3>
+    <slot />
+  </div>
+  <Artwork
+    id={art}
+    language={language}
+    size={wide ? "wide" : "scene"}
+    zoom={zoom}
+  />
+</div>

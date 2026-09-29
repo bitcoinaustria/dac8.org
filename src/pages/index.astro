@@ -1,23 +1,15 @@
 ---
-import ShareIcon from "@/assets/icons/share.svg"
 import Artwork from "@/components/Artwork.astro"
 import CampaignPartners from "@/components/CampaignPartners.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
+import StoryScene from "@/components/StoryScene.astro"
 import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
 ---
 
-<Layout
-  sections={[
-    { id: "problem", label: "Was auf dem Spiel steht" },
-    { id: "weg", label: "Was wir tun" },
-    { id: "handeln", label: "Was du tun kannst" },
-    { id: "vision", label: "Wohin das führen soll" },
-    { id: "position", label: "Wer dahintersteht" },
-  ]}
->
+<Layout>
   <MetaPage slot="head" />
 
   <article class="campaign landing">
@@ -71,59 +63,84 @@ import { campaignStatus } from "@/data/campaign"
 
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">Was auf dem Spiel steht</h2>
-      <div class="art-split">
-        <div>
-          <p class="section-intro">
-            Dein Privatleben verdient Schutz, auch wenn es um Geld geht. Wer
-            Informationen über dein Geld hat, kann Rückschlüsse auf dein Leben
-            ziehen. Werden sie weitergegeben, missverstanden oder gestohlen,
-            trägst du die Folgen.
+      <p class="section-intro">
+        Dein Privatleben verdient Schutz, auch wenn es um Geld geht. Wer
+        Informationen über dein Geld hat, kann Rückschlüsse auf dein Leben
+        ziehen. Werden sie weitergegeben, missverstanden oder gestohlen, trägst
+        du die Folgen.
+      </p>
+      <div class="story">
+        <StoryScene
+          art="accountToRecord"
+          language="de"
+          title="Dein Konto wird zur Akte."
+        >
+          <p>
+            Du kaufst Kryptowerte bei einer Börse oder einem Broker mit
+            Meldepflicht in Österreich. Seit 2026 bereitet der Anbieter daraus
+            deine Identität und Jahreswerte für das Finanzamt auf.
           </p>
-          <p class="prose">
-            DAC8 ist eine EU-Richtlinie für den Austausch von Steuerdaten.
-            Gemeldet werden Identität und Jahreswerte zu Kryptowerten, keine
-            Liste deiner einzelnen Zahlungen. Auch daraus entsteht über die
-            Jahre ein finanzielles Profil.
-          </p>
-        </div>
-        <Artwork id="leakedTarget" language="de" />
-      </div>
-      <ul class="facts">
-        <li>
-          <strong>Alle werden erfasst, nicht nur Verdächtige.</strong>
+        </StoryScene>
+        <StoryScene
+          art="massCapture"
+          language="de"
+          title="Alle erfasst. Ohne Verdacht."
+        >
           <p>
             Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, auch
             für jene, die am Ende gar nicht gemeldet werden. Das steht so im
             österreichischen Gesetz, nicht in der Richtlinie.
           </p>
-        </li>
-        <li>
-          <strong>Es entsteht ein Profil über Jahre.</strong>
+        </StoryScene>
+        <StoryScene
+          art="reportAssets"
+          language="de"
+          title="Was wird gemeldet?"
+          wide
+          zoom
+        >
           <p>
-            Jahresmeldungen zeigen, wie aktiv jemand ist. Beim Anbieter können
-            zusätzlich Name, Wallet-Adressen und einzelne Vorgänge verbunden
-            bleiben. Wer mit Kryptowährungen bezahlt, kann dadurch auch Teile
-            seines Alltags offenlegen.
+            Einmal im Jahr: Name, Anschrift, Steuerwohnsitz, Steuernummer und
+            Geburtsdatum, dazu je Kryptowert und Vorgangsart Wert in Euro,
+            Stückzahl und Anzahl der Vorgänge. Nicht dabei sind Wallet-Adressen,
+            einzelne Transaktionen und dein aktueller Bestand.
           </p>
-        </li>
-        <li>
-          <strong>Ein Datenleck ist nicht rückgängig zu machen.</strong>
+        </StoryScene>
+        <StoryScene
+          art="yearsOnFile"
+          language="de"
+          title="Jedes Jahr mehr über dich."
+        >
           <p>
-            Gestohlene Kundendaten können Menschen zur Zielscheibe für
-            Erpressung und Raub machen. In Frankreich nutzen Täter laut
-            Gendarmerie geleakte Daten eines Krypto-Steuerdienstes, um Opfer
-            auszuwählen. Auch falsche Annahmen über ihr Vermögen gefährden sie.
+            Jahresmeldungen zeigen, wie aktiv jemand ist. Für übermittelte
+            Kryptodaten sieht das Gesetz eine Löschung nach zehn Jahren vor, für
+            entsprechende Bankkontendaten nach fünf.
           </p>
-        </li>
-        <li>
-          <strong>Zehn Jahre statt fünf.</strong>
+        </StoryScene>
+        <StoryScene
+          art="dataHack"
+          language="de"
+          title="Ein Datenleck. Persönliche Folgen."
+        >
           <p>
-            Für übermittelte Kryptodaten sieht das Gesetz eine Löschung nach
-            zehn Jahren vor, für entsprechende Bankkontendaten nach fünf. Eine
-            Begründung für den Unterschied fehlt in den Gesetzesmaterialien.
+            Ein Leck beim Anbieter kann die Verbindung zwischen deinem Namen und
+            Blockchain-Vorgängen offenlegen. Eine einmal verbreitete Zuordnung
+            lässt sich kaum zurückholen.
           </p>
-        </li>
-      </ul>
+        </StoryScene>
+        <StoryScene
+          art="rankedPortrait"
+          language="de"
+          title="Nach Vermögen sortiert. Als Ziel markiert."
+        >
+          <p>
+            Aus Summe und Anzahl der Käufe lässt sich grob schätzen, wie viel
+            Geld jemand in Krypto bewegt, ob die Schätzung stimmt oder nicht. In
+            Frankreich nutzen Täter laut Gendarmerie geleakte Daten eines
+            Krypto-Steuerdienstes, um Opfer auszuwählen.
+          </p>
+        </StoryScene>
+      </div>
       <a class="text-link" href="/hintergrund/#gemeldet"
         >Was genau gemeldet wird, und was nicht</a
       >
@@ -131,9 +148,20 @@ import { campaignStatus } from "@/data/campaign"
 
     <section id="weg" aria-labelledby="weg-heading">
       <h2 id="weg-heading">Was wir tun</h2>
-      <p class="section-intro">
-        {campaignStatus.de.text}
-      </p>
+      <div class="art-split even">
+        <div>
+          <p class="section-intro">
+            {campaignStatus.de.text}
+          </p>
+          <p class="prose">
+            Wir halten die österreichische Erfassung aller Kunden für
+            grundrechtswidrig und wollen sie gerichtlich prüfen lassen. Ob die
+            konkreten Pflichten verhältnismäßig sind, müssen die Gerichte
+            entscheiden.
+          </p>
+        </div>
+        <Artwork id="collectionChallenge" language="de" />
+      </div>
       <LegalRoute language="de" />
       <div class="precedent">
         <p class="precedent-year" aria-hidden="true">2014</p>
@@ -145,35 +173,37 @@ import { campaignStatus } from "@/data/campaign"
           Überwachungsgesetze ändern lassen.
         </p>
       </div>
-      <a class="text-link" href="/hintergrund/#rechtsweg"
-        >Den Rechtsweg im Detail</a
-      >
+      <a class="text-link" href="/aktuelles/">Zum Stand des Verfahrens</a>
     </section>
 
     <section id="handeln" aria-labelledby="handeln-heading">
       <h2 id="handeln-heading">Was du tun kannst</h2>
-      <ul class="facts action-facts">
-        <li>
-          <strong>Den Prozess mittragen</strong>
-          <p>
-            Deine Spende hilft uns vor allem, die Kosten des Verfahrens zu
-            tragen.
-          </p>
-          <a class="button primary" href="/spenden/">Spenden</a>
-        </li>
-        <li>
-          <strong>Das Verfahren verfolgen</strong>
-          <p>
-            Neuigkeiten und nächste Schritte veröffentlichen wir hier und per
-            RSS.
-          </p>
-          <a class="button" href="/aktuelles/">Aktuelles</a>
-        </li>
-      </ul>
-      <button class="text-link" type="button" data-share>
-        <ShareIcon />Teilen
-      </button>
-      <p class="share-status" data-share-status aria-live="polite"></p>
+      <div class="art-split even reverse">
+        <ul class="facts action-facts stack">
+          <li>
+            <strong>Den Prozess mittragen</strong>
+            <p>
+              Deine Spende hilft uns vor allem, die Kosten des Verfahrens zu
+              tragen.
+            </p>
+            <a class="button primary" href="/spenden/">Spenden</a>
+          </li>
+          <li>
+            <strong>Das Verfahren verfolgen</strong>
+            <p>
+              Neuigkeiten und nächste Schritte veröffentlichen wir hier und per
+              RSS.
+            </p>
+            <a class="button" href="/aktuelles/">Zum Verfahren</a>
+          </li>
+          <li>
+            <strong>Die Kampagne teilen</strong>
+            <p>Fertige Grafiken zu jedem Schritt, auf Deutsch und Englisch.</p>
+            <a class="button" href="/handeln/#teilen">Grafiken zum Teilen</a>
+          </li>
+        </ul>
+        <Artwork id="collectiveDefense" language="de" />
+      </div>
     </section>
 
     <section id="vision" aria-labelledby="vision-heading">
@@ -240,10 +270,4 @@ import { campaignStatus } from "@/data/campaign"
       <CampaignPartners />
     </section>
   </article>
-
-  <script>
-    import { initializeShareButtons } from "@/lib/share"
-
-    initializeShareButtons()
-  </script>
 </Layout>

@@ -1,23 +1,34 @@
 ---
 import { Picture } from "astro:assets"
-import { type Artwork, artwork, type ArtworkId } from "@/data/artwork"
+import { type Artwork, artwork, type ArtworkId, imageFor } from "@/data/artwork"
 import type { Language } from "@/lib/i18n"
 
 interface Props {
   id: ArtworkId
   language: Language
-  // "hero" sits beside the headline, "side" beside text, "wide" spans the
-  // content column with its caption alongside.
-  size?: "hero" | "side" | "wide"
+  // "hero" sits beside the headline, "scene" carries a story step, "side"
+  // stands beside text, "wide" spans the content with its caption alongside.
+  size?: "hero" | "scene" | "side" | "wide"
+  // Link the full-resolution file from the caption, for detailed specimens.
+  zoom?: boolean
   priority?: boolean
 }
 
-const { id, language, size = "side", priority = false } = Astro.props
-const { image, [language]: text }: Artwork = artwork[id]
+const {
+  id,
+  language,
+  size = "side",
+  zoom = false,
+  priority = false,
+} = Astro.props
+const entry: Artwork = artwork[id]
+const image = imageFor(entry, language)
+const text = entry[language]
 const sizes = {
-  hero: "(min-width: 64rem) 21rem, (min-width: 40rem) 24rem, 90vw",
-  side: "(min-width: 64rem) 27rem, (min-width: 40rem) 32rem, 90vw",
-  wide: "(min-width: 64rem) 40rem, 100vw",
+  hero: "(min-width: 64rem) 24rem, (min-width: 40rem) 24rem, 90vw",
+  scene: "(min-width: 64rem) 44rem, 92vw",
+  side: "(min-width: 64rem) 36rem, 92vw",
+  wide: "(min-width: 64rem) 58rem, 100vw",
 }[size]
 const widths = [360, 540, 720, 960, 1280, 1600].filter(
   (width) => width < image.width,
@@ -38,6 +49,11 @@ const widths = [360, 540, 720, 960, 1280, 1600].filter(
     <figcaption>
       {text.title && <strong>{text.title}</strong>}
       {text.caption}
+      {zoom && (
+        <a class="artwork-zoom-link" href={image.src}>
+          {language === "en" ? "Full size" : "In voller Größe"}
+        </a>
+      )}
     </figcaption>
   )}
 </figure>

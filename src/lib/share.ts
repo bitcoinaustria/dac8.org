@@ -21,12 +21,18 @@ const copyUrl = async (url: string) => {
   }
 }
 
+// Called once per page from the layout. Each share button reports into the
+// status line of its own container ([data-share-scope]).
 export const initializeShareButtons = () => {
   const en = document.documentElement.lang.startsWith("en")
   const buttons = document.querySelectorAll<HTMLButtonElement>("[data-share]")
-  const status = document.querySelector<HTMLElement>("[data-share-status]")
 
   for (const button of buttons) {
+    const status =
+      button
+        .closest("[data-share-scope]")
+        ?.querySelector<HTMLElement>("[data-share-status]") ??
+      document.querySelector<HTMLElement>("[data-share-status]")
     button.addEventListener("click", async () => {
       const data = {
         title: en

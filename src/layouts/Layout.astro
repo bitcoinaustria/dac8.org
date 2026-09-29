@@ -9,18 +9,20 @@ import "@/styles/typography-lists.css"
 import "@/styles/typography-block.css"
 import "@/styles/layout.css"
 import "@/styles/icon-button.css"
-import "@/styles/bar.css"
 import "@/styles/shape.css"
 import "@/styles/campaign.css"
 
+import ActionBar from "@/components/ActionBar.astro"
 import Footer from "@/components/Footer.astro"
 import MetaHead from "@/components/MetaHead.astro"
-import Sidebar from "@/components/Sidebar.astro"
+import SiteHeader from "@/components/SiteHeader.astro"
 import { type PageSection } from "@/consts"
 
 import { languageFor } from "@/lib/i18n"
 const language = languageFor(Astro.url.pathname)
 
+// Sections render as the chapter bar under the header; pass them only on
+// long pages.
 type Props = { sections?: PageSection[] }
 
 const { sections = [] } = Astro.props
@@ -34,97 +36,35 @@ const { sections = [] } = Astro.props
     <a class="skip-link" href="#main-content"
       >{language === "en" ? "Skip to content" : "Zum Inhalt springen"}</a
     >
-    <page-grid>
-      <page-header>
-        <page-nav>
-          <Sidebar sections={sections} />
-        </page-nav>
-      </page-header>
-      <page-content>
-        <main id="main-content" tabindex="-1"><slot /></main>
-      </page-content>
-      <page-footer><Footer /></page-footer>
-    </page-grid>
+    <SiteHeader sections={sections} />
+    <main id="main-content" tabindex="-1"><slot /></main>
+    <Footer />
+    <ActionBar />
+    <script>
+      import { initializeShareButtons } from "@/lib/share"
+
+      initializeShareButtons()
+    </script>
   </body>
 </html>
 
 <style>
-  page-grid {
-    position: relative;
-    isolation: isolate;
-    display: grid;
-    grid-template-columns: 13rem minmax(0, 1fr);
-    gap: var(--grid-gutter);
-    max-width: var(--grid-max-width);
-    min-height: 100svh;
+  main {
+    display: block;
+    max-inline-size: var(--page-max);
+    min-block-size: 60svh;
     margin-inline: auto;
-    padding-inline: var(--grid-gutter);
-    padding-block-start: var(--page-offset-top);
+    padding: var(--space-xl) var(--grid-gutter) var(--space-2xl);
+  }
 
-    @media (width < 64rem) {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr;
-      padding-block-start: 0;
+  /* Platz für die mobile Aktionsleiste am unteren Rand. */
+  @media (width < 64rem) {
+    body {
+      padding-block-end: calc(3.75rem + env(safe-area-inset-bottom));
     }
-  }
-
-  page-header {
-    display: block;
-    grid-column: 1;
-    grid-row: 1;
-    min-width: 0;
-
-    @media (width < 64rem) {
-      display: block;
-      grid-column: 1 / -1;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      min-width: 0;
-      margin-inline: calc(-1 * var(--grid-gutter));
-
-      &:has(aside:not([data-menu-ready])) {
-        position: static;
-      }
-    }
-  }
-
-  page-nav {
-    display: block;
-    min-width: 0;
-    block-size: 100%;
-  }
-
-  page-content {
-    display: flex;
-    flex-direction: column;
-    grid-column: 2;
-    grid-row: 1;
-    min-width: 0;
-    margin-block-start: -0.1em;
 
     main {
-      flex: 1;
-    }
-
-    @media (width < 64rem) {
-      grid-column: 1 / -1;
-      grid-row: auto;
-      inline-size: 100%;
-      max-inline-size: var(--measure);
-      margin-inline: auto;
       padding-block-start: var(--space-l);
-    }
-  }
-
-  page-footer {
-    display: block;
-    grid-column: 1 / -1;
-    grid-row: 2;
-    margin-block-start: var(--space-2xl);
-
-    @media (width < 64rem) {
-      grid-row: auto;
     }
   }
 

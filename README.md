@@ -27,10 +27,26 @@ The site does not build from the submodule. Illustrations in use are copied
 from the lab's transparent cutouts (`knowledge/dac8-*-cutout.png`) into
 `src/assets/artwork/` as WebP masters; Astro generates the responsive AVIF and
 WebP files at build time. `src/data/artwork.ts` holds the German and English
-alt texts and captions, and `src/components/Artwork.astro` renders them. The
+alt texts and captions, and `src/components/Artwork.astro` renders them. Motifs
+with text labels have a German and an English render (`*-en.webp`). The
 cutouts have no background, so the same file works in light and dark mode.
 People, addresses and amounts in the profiles are invented; captions must keep
 the distinction between combined or leaked records and the annual DAC8 report.
+
+The share graphics on the support page come from the lab's share kit
+(`knowledge/share-kit/`): square and story formats per scene and language,
+exported as JPEG to `public/share/` and listed in `src/data/share.ts`. Their
+headlines match the story scenes on the home page.
+
+## Site structure
+
+A top bar carries the main navigation (Start, Dossier, Verfahren, Mitmachen),
+the procedural status and a permanent donate button; on mobile a bottom bar
+keeps donating and sharing within reach. The home page tells the case as a
+story in scenes (`src/components/StoryScene.astro`). The background page is the
+complete dossier with a chapter bar and a short "Am I affected?" check whose
+answers restate the FAQ (`src/components/AffectedCheck.astro`). The footer
+closes every page with the campaign statement, two actions and the status.
 
 ## Development
 

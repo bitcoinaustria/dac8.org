@@ -1,4 +1,5 @@
 ---
+import Artwork from "@/components/Artwork.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
@@ -22,6 +23,7 @@ const entries = publishedUpdates()
       <p class="lead">
         {en ? "Filings, decisions and next steps." : "Einreichungen, Entscheidungen und nächste Schritte."}
       </p>
+      <Artwork id="collectionChallenge" language={language} size="hero" />
     </header>
     <section aria-labelledby="status-heading">
       <h2 id="status-heading">{status.label}</h2>

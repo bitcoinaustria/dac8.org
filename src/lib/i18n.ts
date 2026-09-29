@@ -30,25 +30,19 @@ export const pageFor = (pathname: string): Page | undefined => {
 }
 export const feedFor = (language: Language) =>
   language === "en" ? "/en/feed.xml" : "/feed.xml"
+// Main navigation. Donating is a separate, always visible action.
 export const navigationFor = (language: Language) => [
   {
     href: pathFor("home", language),
     label: language === "en" ? "Home" : "Start",
   },
+  { href: pathFor("background", language), label: "Dossier" },
   {
-    href: pathFor("background", language),
-    label: language === "en" ? "Background" : "Hintergrund",
+    href: pathFor("updates", language),
+    label: language === "en" ? "Proceedings" : "Verfahren",
   },
   {
     href: pathFor("support", language),
-    label: language === "en" ? "Support" : "Unterstützen",
-  },
-  {
-    href: pathFor("donate", language),
-    label: language === "en" ? "Donate" : "Spenden",
-  },
-  {
-    href: pathFor("updates", language),
-    label: language === "en" ? "Updates" : "Aktuelles",
+    label: language === "en" ? "Get involved" : "Mitmachen",
   },
 ]

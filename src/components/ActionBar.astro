@@ -1,0 +1,75 @@
+---
+import ShareIcon from "@/assets/icons/share.svg"
+import { languageFor, pathFor } from "@/lib/i18n"
+import { normalizePath } from "@/lib/utils"
+
+const language = languageFor(Astro.url.pathname)
+const en = language === "en"
+const donate = pathFor("donate", language)
+const onDonatePage =
+  (normalizePath(new URL(donate, Astro.url).pathname) || "/") ===
+  (normalizePath(Astro.url.pathname) || "/")
+---
+
+<div class="action-bar" data-share-scope>
+  {!onDonatePage && (
+    <a class="button primary" href={donate}>
+      {en ? "Donate" : "Spenden"}
+    </a>
+  )}
+  <button class="button" type="button" data-share>
+    <ShareIcon />
+    {en ? "Share" : "Teilen"}
+  </button>
+  <p class="share-status" data-share-status aria-live="polite"></p>
+</div>
+
+<style>
+  /* Nur mobil: die zwei Handlungen immer in Daumenreichweite. */
+  .action-bar {
+    display: none;
+  }
+
+  @media (width < 64rem) {
+    .action-bar {
+      position: fixed;
+      z-index: 9;
+      inset-inline: 0;
+      inset-block-end: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2xs);
+      padding: var(--space-2xs) var(--grid-gutter)
+        max(var(--space-2xs), env(safe-area-inset-bottom));
+      border-block-start: 1px solid var(--border);
+      background: color-mix(in oklab, var(--background) 94%, transparent);
+      backdrop-filter: blur(12px);
+    }
+
+    .action-bar .button {
+      flex: 1;
+      min-block-size: 2.75rem;
+      padding-block: 0.5em;
+    }
+
+    .action-bar .button svg {
+      inline-size: 1.1em;
+      block-size: 1.1em;
+    }
+
+    .share-status {
+      flex-basis: 100%;
+      margin: 0;
+      color: var(--accent);
+      font-size: var(--step--1);
+    }
+
+    .share-status:empty {
+      display: none;
+    }
+
+    :global(html[data-menu-open]) .action-bar {
+      display: none;
+    }
+  }
+</style>

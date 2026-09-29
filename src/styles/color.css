@@ -28,6 +28,13 @@
   --destructive:        var(--red-11);
   --border:             var(--gray-6);
   --ring:               var(--brand-red);
+  /* Gefräste Metallkante aus den Illustrationen: Kapitel, Kennzahlen, Footer. */
+  --metal-rule: linear-gradient(
+    90deg,
+    light-dark(#5d656c, #7d858c),
+    light-dark(#c4c9cd, #c9ced2) 45%,
+    light-dark(#5d656c, #7d858c)
+  );
 
   color-scheme: light dark;
 }

@@ -1,0 +1,583 @@
+---
+import LanguageSelector from "@/components/LanguageSelector.astro"
+import ThemeToggle from "@/components/ThemeToggle.astro"
+import { SITE, type PageSection } from "@/consts"
+import { campaignStatus } from "@/data/campaign"
+import { languageFor, navigationFor, pathFor } from "@/lib/i18n"
+import { normalizePath } from "@/lib/utils"
+
+type Props = { sections?: PageSection[] }
+
+const { sections = [] } = Astro.props
+const language = languageFor(Astro.url.pathname)
+const en = language === "en"
+const navigation = navigationFor(language)
+const pathname = normalizePath(Astro.url.pathname) || "/"
+const current = navigation.find(
+  ({ href }) =>
+    (normalizePath(new URL(href, Astro.url).pathname) || "/") === pathname,
+)
+const donate = pathFor("donate", language)
+const onDonatePage =
+  (normalizePath(new URL(donate, Astro.url).pathname) || "/") === pathname
+---
+
+<header class="site-header" data-site-header>
+  <div class="site-bar">
+    <a
+      class="site-brand"
+      href={pathFor("home", language)}
+      aria-label={SITE.title}
+    >
+      dac8<span>.org</span>
+    </a>
+    <nav
+      id="site-navigation"
+      aria-label={en ? "Main navigation" : "Hauptnavigation"}
+    >
+      <ul class="pages">
+        {navigation.map((item) => (
+          <li>
+            <a
+              class="page-link"
+              href={item.href}
+              aria-current={item === current ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="nav-extras">
+        <a class="status-pill" href={pathFor("updates", language)}>
+          <span class="status-dot" aria-hidden="true"></span>
+          {en ? "Austria" : "Österreich"}
+          · {campaignStatus[language].label}
+        </a>
+        <div class="controls">
+          <LanguageSelector />
+          <ThemeToggle />
+        </div>
+        <p class="nav-foot">
+          {en ? "An initiative by" : "Eine Initiative von"}
+          <a href="https://bitcoin-austria.at">Bitcoin Austria</a>
+        </p>
+      </div>
+    </nav>
+    <a
+      class="button primary donate-button"
+      href={donate}
+      aria-current={onDonatePage ? "page" : undefined}
+    >
+      {en ? "Donate" : "Spenden"}
+    </a>
+    <button
+      class="menu-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-haspopup="dialog"
+      aria-label={en ? "Open menu" : "Menü öffnen"}
+    >
+      <span>{en ? "Menu" : "Menü"}</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 8h16M4 16h16" />
+      </svg>
+    </button>
+  </div>
+  {sections.length > 0 && (
+    <nav
+      class="chapter-bar"
+      data-section-nav
+      aria-label={en ? "Chapters on this page" : "Kapitel dieser Seite"}
+    >
+      <ol>
+        {sections.map((section) => (
+          <li>
+            <a href={`#${section.id}`} data-target={section.id}>
+              {section.label}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )}
+  <dialog id="mobile-menu" aria-label={en ? "Menu" : "Menü"}>
+    <div class="mobile-menu-header">
+      <a
+        class="site-brand"
+        href={pathFor("home", language)}
+        aria-label={SITE.title}
+      >
+        dac8<span>.org</span>
+      </a>
+      <button
+        class="menu-close"
+        type="button"
+        aria-label={en ? "Close menu" : "Menü schließen"}
+        autofocus
+      >
+        <span>{en ? "Close" : "Schließen"}</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 6 12 12M18 6 6 18" />
+        </svg>
+      </button>
+    </div>
+  </dialog>
+</header>
+
+<style>
+  /* Schlanke Kopfleiste statt Seitenleiste: Die ganze Breite gehört dem
+     Inhalt und den Illustrationen. Spenden bleibt immer sichtbar. */
+  .site-header {
+    position: sticky;
+    z-index: 10;
+    inset-block-start: 0;
+    background: color-mix(in oklab, var(--background) 92%, transparent);
+    backdrop-filter: blur(12px);
+    border-block-end: 1px solid var(--border);
+  }
+
+  .site-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    max-inline-size: var(--page-max);
+    min-block-size: var(--bar-height);
+    margin-inline: auto;
+    padding-inline: var(--grid-gutter);
+  }
+
+  .site-brand {
+    display: flex;
+    align-items: center;
+    flex: none;
+    min-block-size: 2.75rem;
+    color: var(--foreground);
+    font-size: var(--step-1);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: -0.03em;
+    text-decoration: none;
+
+    span {
+      color: var(--accent);
+    }
+  }
+
+  nav#site-navigation {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: var(--space-m);
+    min-inline-size: 0;
+  }
+
+  ul,
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pages {
+    display: flex;
+    gap: var(--space-3xs);
+  }
+
+  .page-link {
+    display: flex;
+    align-items: center;
+    min-block-size: 2.75rem;
+    padding-inline: var(--space-xs);
+    border-radius: var(--radius-md);
+    color: var(--muted-foreground);
+    font-size: var(--step--1);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    text-transform: uppercase;
+
+    &:hover {
+      color: var(--foreground);
+    }
+
+    &[aria-current="page"] {
+      color: var(--foreground);
+      box-shadow: inset 0 -2px var(--accent);
+      border-radius: 0;
+    }
+  }
+
+  .nav-extras {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    margin-inline-start: auto;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    min-block-size: 2.75rem;
+    color: var(--muted-foreground);
+    font-size: var(--step--1);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--foreground);
+    }
+  }
+
+  /* Kleiner Token wie die Stationen des Rechtswegs. */
+  .status-dot {
+    inline-size: 0.625rem;
+    block-size: 0.625rem;
+    border: 1px solid light-dark(#b6000c, #fa5963);
+    border-radius: var(--radius-full);
+    background: linear-gradient(155deg, #e3000f, #be000c);
+    box-shadow: inset 0 1px 0 #ffffff30;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs);
+  }
+
+  .nav-foot {
+    display: none;
+  }
+
+  .donate-button {
+    flex: none;
+    min-block-size: 2.5rem;
+    padding-block: 0.5em;
+  }
+
+  .menu-toggle,
+  .menu-close {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    min-block-size: 2.75rem;
+    min-inline-size: 2.75rem;
+    flex-shrink: 0;
+    padding-inline: var(--space-xs);
+    border-radius: var(--radius-sm);
+    color: var(--foreground);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+
+    svg {
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+    }
+
+    &:hover {
+      background: var(--muted);
+    }
+  }
+
+  /* Kapitelleiste der langen Seiten: waagrecht, scrollbar, die aktuelle
+     Stelle rot unterstrichen. */
+  .chapter-bar {
+    border-block-start: 1px solid var(--border);
+
+    ol {
+      display: flex;
+      gap: var(--space-2xs);
+      max-inline-size: var(--page-max);
+      margin-inline: auto;
+      padding-inline: var(--grid-gutter);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    a {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-block-size: var(--chapter-height);
+      padding-inline: var(--space-xs);
+      color: var(--muted-foreground);
+      font-size: var(--step--1);
+      text-decoration: none;
+      white-space: nowrap;
+
+      &:hover {
+        color: var(--foreground);
+      }
+
+      &[aria-current="location"] {
+        color: var(--foreground);
+        box-shadow: inset 0 -2px var(--accent);
+      }
+    }
+
+    li:first-child a {
+      padding-inline-start: 0;
+    }
+  }
+
+  dialog {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: var(--foreground);
+    background: var(--background);
+
+    &::backdrop {
+      background: rgb(0 0 0 / 40%);
+    }
+  }
+
+  @media (width < 80rem) {
+    .status-pill {
+      display: none;
+    }
+  }
+
+  @media (width < 64rem) {
+    .site-header[data-menu-ready] .site-bar > nav#site-navigation {
+      display: none;
+    }
+
+    .site-header[data-menu-ready] .menu-toggle,
+    .menu-close {
+      display: inline-flex;
+    }
+
+    .site-header[data-menu-ready] .site-bar {
+      justify-content: space-between;
+    }
+
+    /* Mobil übernimmt die Aktionsleiste am unteren Rand das Spenden. */
+    .site-header[data-menu-ready] .donate-button {
+      display: none;
+    }
+
+    .site-header:not([data-menu-ready]) .site-bar {
+      flex-wrap: wrap;
+      padding-block: var(--space-2xs);
+    }
+
+    dialog[open] {
+      display: flex;
+      flex-direction: column;
+      inset-block: 0;
+      inset-inline-start: auto;
+      inset-inline-end: 0;
+      inline-size: min(100%, 30rem);
+      max-inline-size: none;
+      block-size: 100dvh;
+      max-block-size: none;
+      overflow: hidden;
+    }
+
+    .mobile-menu-header {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: space-between;
+      padding: max(var(--space-2xs), env(safe-area-inset-top))
+        var(--grid-gutter) var(--space-2xs);
+      border-block-end: 1px solid var(--border);
+    }
+
+    dialog nav#site-navigation {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-l);
+      padding: var(--space-s) var(--grid-gutter)
+        max(var(--space-s), env(safe-area-inset-bottom));
+      overflow-y: auto;
+      overscroll-behavior-y: contain;
+    }
+
+    dialog .pages {
+      flex-direction: column;
+      gap: 0;
+    }
+
+    dialog .page-link {
+      min-block-size: 3.5rem;
+      padding: var(--space-xs) 0;
+      border-block-end: 1px solid var(--border);
+      border-radius: 0;
+      color: var(--foreground);
+      font-size: 1.75rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      text-transform: none;
+
+      &[aria-current="page"] {
+        box-shadow: none;
+        color: var(--accent);
+        font-weight: 600;
+      }
+    }
+
+    dialog .nav-extras {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-s);
+      margin-inline-start: 0;
+    }
+
+    dialog .status-pill {
+      display: inline-flex;
+    }
+
+    dialog .controls {
+      justify-content: space-between;
+      padding-block-start: var(--space-xs);
+      border-block-start: 1px solid var(--border);
+    }
+
+    dialog .nav-foot {
+      display: block;
+      margin: 0;
+      color: var(--muted-foreground);
+      font-size: var(--step--1);
+
+      a {
+        color: inherit;
+      }
+    }
+  }
+
+  @media (width < 30rem) {
+    .menu-toggle span,
+    .menu-close span {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>("[data-site-header]")
+  const menuToggle = header?.querySelector<HTMLButtonElement>(".menu-toggle")
+  const navigation = document.getElementById("site-navigation")
+  const menu = document.querySelector<HTMLDialogElement>("#mobile-menu")
+  const menuClose = menu?.querySelector<HTMLButtonElement>(".menu-close")
+  const navigationHome = navigation?.parentElement
+  const navigationNext = navigation?.nextElementSibling
+  const mobile = matchMedia("(width < 64rem)")
+
+  const closeMenu = () => {
+    if (!menu?.open) return
+    menu.close()
+    if (navigation)
+      navigationHome?.insertBefore(navigation, navigationNext ?? null)
+    menuToggle?.setAttribute("aria-expanded", "false")
+    document.documentElement.removeAttribute("data-menu-open")
+    if (mobile.matches) menuToggle?.focus({ preventScroll: true })
+  }
+
+  menuToggle?.addEventListener("click", () => {
+    if (!menu || !navigation || !mobile.matches) return
+    menu.append(navigation)
+    menu.showModal()
+    navigation.scrollTop = 0
+    menuToggle.setAttribute("aria-expanded", "true")
+    document.documentElement.setAttribute("data-menu-open", "")
+  })
+
+  menuClose?.addEventListener("click", closeMenu)
+  menu?.addEventListener("cancel", (event) => {
+    event.preventDefault()
+    closeMenu()
+  })
+  menu?.addEventListener("click", (event) => {
+    if (event.target !== menu) return
+    const rect = menu.getBoundingClientRect()
+    if (
+      event.clientX < rect.left ||
+      event.clientX > rect.right ||
+      event.clientY < rect.top ||
+      event.clientY > rect.bottom
+    )
+      closeMenu()
+  })
+  navigation?.addEventListener("click", (event) => {
+    if ((event.target as Element).closest("a") && menu?.open) closeMenu()
+  })
+  mobile.addEventListener("change", closeMenu)
+  header?.setAttribute("data-menu-ready", "")
+
+  // Kapitelanzeige: aktuell ist das letzte Kapitel, dessen Oberkante die
+  // Lesezone (oberes Drittel) erreicht hat. Am Seitenende zählt das letzte,
+  // nach einem Klick sofort das angeklickte, ohne auf das Scrollen zu warten.
+  const sectionLinks = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>("[data-section-nav] a"),
+  )
+  const targets = sectionLinks
+    .map((link) => document.getElementById(link.dataset.target ?? ""))
+    .filter((el): el is HTMLElement => el !== null)
+
+  if (targets.length > 0) {
+    let frame = 0
+    let pinned: string | null = null
+
+    let marked: string | null = null
+    const mark = (id: string | null) => {
+      if (id === marked) return
+      marked = id
+      for (const link of sectionLinks) {
+        if (id && link.dataset.target === id) {
+          link.setAttribute("aria-current", "location")
+          // Die Leiste scrollt waagrecht mit, die Seite bleibt, wo sie ist.
+          const bar = link.closest("ol")
+          bar?.scrollTo({ left: link.offsetLeft - 16, behavior: "smooth" })
+        } else {
+          link.removeAttribute("aria-current")
+        }
+      }
+    }
+
+    const update = () => {
+      frame = 0
+      if (pinned) {
+        const target = document.getElementById(pinned)
+        const top = target?.getBoundingClientRect().top ?? 0
+        if (Math.abs(top) < window.innerHeight * 0.35) pinned = null
+        else return
+      }
+      const threshold = window.innerHeight * 0.35
+      const atBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 2
+      let active: HTMLElement | null = null
+      if (atBottom) {
+        active = targets[targets.length - 1]
+      } else {
+        for (const target of targets) {
+          if (target.getBoundingClientRect().top <= threshold) active = target
+        }
+      }
+      mark(active?.id ?? null)
+    }
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+
+    for (const link of sectionLinks) {
+      link.addEventListener("click", () => {
+        pinned = link.dataset.target ?? null
+        mark(pinned)
+      })
+    }
+    window.addEventListener("scroll", schedule, { passive: true })
+    window.addEventListener("resize", schedule)
+    window.addEventListener("hashchange", schedule)
+    update()
+  }
+</script>
