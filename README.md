@@ -17,6 +17,12 @@ reviewed and updated independently. The corpus is maintained with
 [LLM Wiki](https://llm-wiki.net/); setup and workflow are documented inside the
 submodule.
 
+## Artwork lab
+
+The private `artwork-lab/` submodule contains the Blender sources and reusable
+web/social graphics. See `artwork-lab/knowledge/README.md` for the DAC8 collection
+and exports. Access to the artwork repository is required to initialize it.
+
 ## Development
 
 Astro 7 requires Node.js 22.13+ and pnpm 11.20:
