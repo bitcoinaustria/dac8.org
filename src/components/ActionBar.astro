@@ -6,7 +6,7 @@ const language = languageFor(Astro.url.pathname)
 const en = language === "en"
 ---
 
-<div class="action-bar" data-share-scope>
+<div class="action-bar" data-action-bar data-share-scope>
   <a class="button primary" href={donateFor(language)}>
     {en ? "Donate" : "Spenden"}
   </a>
@@ -18,7 +18,9 @@ const en = language === "en"
 </div>
 
 <style>
-  /* Nur mobil: die zwei Handlungen immer in Daumenreichweite. */
+  /* Nur mobil: die zwei Handlungen in Daumenreichweite, sobald der Hero mit
+     seinen eigenen Buttons aus dem Bild ist, und bis der Footer sie wieder
+     anbietet. */
   .action-bar {
     display: none;
   }
@@ -37,6 +39,11 @@ const en = language === "en"
       border-block-start: 1px solid var(--border);
       background: color-mix(in oklab, var(--background) 94%, transparent);
       backdrop-filter: blur(12px);
+      transition: translate 220ms ease;
+    }
+
+    .action-bar[data-hidden] {
+      translate: 0 110%;
     }
 
     .action-bar .button {
@@ -65,4 +72,31 @@ const en = language === "en"
       display: none;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .action-bar {
+      transition: none;
+    }
+  }
 </style>
+
+<script>
+  // Ohne JavaScript bleibt die Leiste immer sichtbar.
+  const bar = document.querySelector<HTMLElement>("[data-action-bar]")
+  const start = document.querySelector("main .hero, main h1")
+  const end = document.querySelector("footer:has(.sign-off)")
+  if (bar && "IntersectionObserver" in window) {
+    const visible = new Map<Element, boolean>()
+    const update = () => {
+      const hidden = [...visible.values()].some(Boolean)
+      bar.toggleAttribute("data-hidden", hidden)
+      bar.inert = hidden
+    }
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries)
+        visible.set(entry.target, entry.isIntersecting)
+      update()
+    })
+    for (const target of [start, end]) if (target) observer.observe(target)
+  }
+</script>

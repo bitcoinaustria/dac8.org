@@ -390,7 +390,7 @@ const faqs = [
     <section id="faq" aria-labelledby="faq-heading">
       <h2 id="faq-heading">Questions and answers</h2>
       <div class="faq-list">
-        {faqs.map(faq => <details><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}
+        {faqs.map(faq => <details name="faq"><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}
       </div>
     </section>
     <section id="quellen" class="sources" aria-labelledby="sources-heading">

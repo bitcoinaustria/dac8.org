@@ -394,9 +394,7 @@
 
 /* ---------- Listen zum Überfliegen ------------------------------------ */
 
-/* Fakten: fetter Einstieg, dann ein bis zwei Sätze in voller Lesegröße.
-   Jede Kachel beginnt an einer feinen Kante, damit die Einstiege beim
-   Überfliegen auf einer Linie stehen. */
+/* Fakten: fetter Einstieg, dann ein bis zwei Sätze in voller Lesegröße. */
 .campaign .facts {
   display: grid;
   gap: var(--space-l) var(--space-xl);
@@ -407,9 +405,6 @@
 
 .campaign .facts li {
   max-inline-size: var(--measure-text);
-  padding-block-start: var(--space-s);
-  background: linear-gradient(90deg, var(--line), transparent) top / 100% 1px
-    no-repeat;
   text-wrap: pretty;
 }
 
@@ -422,8 +417,6 @@
 
 .campaign .facts .facts-figure {
   align-self: center;
-  padding-block-start: 0;
-  background: none;
 }
 
 .campaign .facts-figure .artwork {
@@ -1787,32 +1780,6 @@
   white-space: pre;
 }
 
-/* ---------- Kapitel ---------------------------------------------------- */
-
-/* Jeder Abschnitt beginnt mit einer Metallkante. Auf den langen Seiten
-   kommt eine Kapitelnummer dazu: Orientierung beim Scrollen, kein Inhalt;
-   Screenreader überspringen sie. */
-.campaign {
-  counter-reset: chapter;
-}
-
-.campaign > section {
-  counter-increment: chapter;
-  padding-block-start: var(--space-m);
-  background: var(--metal-rule) top / 100% 1px no-repeat;
-}
-
-.campaign:is(.landing, .dossier) > section > h2::before {
-  content: counter(chapter, decimal-leading-zero) / "";
-  display: block;
-  margin-block-end: var(--space-s);
-  color: var(--ink-3);
-  font-size: var(--step--1);
-  font-weight: 560;
-  letter-spacing: 0.08em;
-  font-variant-numeric: tabular-nums;
-}
-
 /* ---------- Stationen quer ------------------------------------------- */
 
 /* Ab mittlerer Breite laufen Datenweg und Rechtsweg von links nach rechts:
@@ -1936,8 +1903,6 @@
   gap: var(--space-2xs) var(--space-l);
   max-inline-size: 52rem;
   margin-block-start: var(--space-xl);
-  padding-block-start: var(--space-m);
-  background: var(--metal-rule) top / 100% 1px no-repeat;
 }
 
 .campaign .precedent .prose {
