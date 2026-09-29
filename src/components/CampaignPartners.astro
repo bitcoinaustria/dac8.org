@@ -33,12 +33,26 @@ const en = language === "en"
 </div>
 
 <style>
+  /* Satinierte Karte wie die Handlungskarten: die Vertretung ist ein
+     Beleg, kein Fließtext. */
   .partners {
-    margin-block-start: var(--space-l);
-    padding-block-start: var(--space-m);
-    border-block-start: 1px solid var(--border);
     display: grid;
+    align-content: start;
     gap: var(--space-m);
+    margin-block-start: var(--space-l);
+    padding: var(--space-m) var(--space-m-l);
+    border: 1px solid var(--material-edge-soft);
+    border-radius: var(--radius-lg);
+    background: var(--material-face);
+    box-shadow: inset 0 1px 0 var(--material-shine);
+  }
+
+  .partners :global(.prose) {
+    margin-block-start: var(--space-xs);
+  }
+
+  .partners :global(.text-link) {
+    margin-block-start: 0;
   }
   ul {
     display: flex;

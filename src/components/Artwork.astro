@@ -1,0 +1,52 @@
+---
+import { Picture } from "astro:assets"
+import { type Artwork, artwork, type ArtworkId } from "@/data/artwork"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  id: ArtworkId
+  language: Language
+  // "hero" floats freely beside the headline; "side" and "wide" stand in a
+  // dark display case beside text or across the content column.
+  size?: "hero" | "side" | "wide"
+  // Set false to show a side illustration without its display case, so that
+  // dark cases do not follow each other.
+  frame?: boolean
+  priority?: boolean
+}
+
+const {
+  id,
+  language,
+  size = "side",
+  frame = size !== "hero",
+  priority = false,
+} = Astro.props
+const { image, [language]: text }: Artwork = artwork[id]
+const sizes = {
+  hero: "(min-width: 64rem) 21rem, (min-width: 40rem) 24rem, 90vw",
+  side: "(min-width: 64rem) 27rem, (min-width: 40rem) 32rem, 90vw",
+  wide: "(min-width: 64rem) 40rem, 100vw",
+}[size]
+const widths = [360, 540, 720, 960, 1280, 1600].filter(
+  (width) => width < image.width,
+)
+---
+
+<figure class:list={["artwork", `artwork-${size}`, { vitrine: frame }]}>
+  <Picture
+    src={image}
+    alt={text.alt}
+    formats={["avif", "webp"]}
+    fallbackFormat="webp"
+    widths={[...widths, image.width]}
+    sizes={sizes}
+    priority={priority}
+  />
+  {text.caption && (
+    <figcaption>
+      {text.title && <strong>{text.title}</strong>}
+      {text.caption}
+    </figcaption>
+  )}
+</figure>

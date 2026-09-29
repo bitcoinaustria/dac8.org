@@ -1,5 +1,6 @@
 ---
 import ShareIcon from "@/assets/icons/share.svg"
+import Artwork from "@/components/Artwork.astro"
 import Layout from "@/layouts/Layout.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
@@ -207,18 +208,27 @@ const faqs = [
           </ul>
         </div>
       </div>
-      <ul class="facts">
+      <h3>The timetable</h3>
+      <ol class="timeline" aria-label="Timetable of the first report">
         <li>
-          <strong>The timetable</strong>
-          <p>
-            The first reporting period is 2026. Providers report to the tax
-            authority by 31 July 2027. Austria exchanges the information with
-            other EU countries by 30 September 2027.
-          </p>
+          <strong>2026</strong>
+          <span>The first reporting period</span>
         </li>
         <li>
-          <strong>What the provider retains</strong>
-          <p>
+          <strong>By 31 July 2027</strong>
+          <span>Providers report 2026 to the tax authority.</span>
+        </li>
+        <li>
+          <strong>By 30 September 2027</strong>
+          <span
+            >Austria exchanges the information with other EU countries.</span
+          >
+        </li>
+      </ol>
+      <div class="art-split even">
+        <div>
+          <h3>What the provider retains</h3>
+          <p class="prose">
             Your provider can link your name to wallet addresses and individual
             transactions. These details are outside the annual DAC8 report but
             may remain in its records, depending on the service.
@@ -230,8 +240,9 @@ const faqs = [
             transaction records to be kept for ten years after the business
             relationship ends or an occasional transaction.
           </p>
-        </li>
-      </ul>
+        </div>
+        <Artwork id="linkedIdentity" language="en" />
+      </div>
     </section>
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">Why it is a problem</h2>
@@ -240,39 +251,54 @@ const faqs = [
         intrudes on your private life and exposes you to errors, breaches and
         misuse.
       </p>
-      <ul class="facts">
+      <ul class="facts concerns">
         {concerns.map(concern => <li><strong>{concern.title}</strong><p>{concern.text}</p></li>)}
+        <li class="facts-figure">
+          <Artwork id="retentionArchive" language="en" frame={false} />
+        </li>
       </ul>
-      <h3 id="zahlungsprofile">When payments reveal everyday life</h3>
-      <p class="prose">
-        Paying with cryptocurrencies can leave traces of everyday life.
-        Bitcoin’s on-chain transactions remain public. When a provider links
-        your name to an address, further payments may become attributable to
-        you. With information about recipients, purchases, donations and
-        recurring payments can
-        <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
-          >reveal habits and relationships</a
-        >.
-      </p>
-      <h3>Data breaches put people at risk</h3>
-      <p class="prose">
-        Stored links between identities and financial data are a valuable target
-        for attackers. Long retention obligations keep these records available
-        for years. In the wrong hands, they can be used for fraud, extortion or
-        selecting victims.
-      </p>
-      <p class="prose">
-        The
-        <a
-          href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
-          >French Gendarmerie</a
-        >
-        reports that criminals use stolen customer data from crypto tax service
-        Waltio to select targets. It describes kidnappings and physical
-        violence. Even a mistaken assumption that someone owns substantial
-        crypto assets can put them and their family at risk. Data minimisation
-        and shorter retention periods also protect personal safety.
-      </p>
+      <Artwork id="wealthProfile" language="en" size="wide" />
+      <div class="art-split even">
+        <div>
+          <h3 id="zahlungsprofile">When payments reveal everyday life</h3>
+          <p class="prose">
+            Paying with cryptocurrencies can leave traces of everyday life.
+            Bitcoin’s on-chain transactions remain public. When a provider links
+            your name to an address, further payments may become attributable to
+            you. With information about recipients, purchases, donations and
+            recurring payments can
+            <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
+              >reveal habits and relationships</a
+            >.
+          </p>
+        </div>
+        <Artwork id="spendingProfile" language="en" frame={false} />
+      </div>
+      <div class="art-split even reverse">
+        <div>
+          <h3>Data breaches put people at risk</h3>
+          <p class="prose">
+            Stored links between identities and financial data are a valuable
+            target for attackers. Long retention obligations keep these records
+            available for years. In the wrong hands, they can be used for fraud,
+            extortion or selecting victims.
+          </p>
+          <p class="prose">
+            The
+            <a
+              href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
+              >French Gendarmerie</a
+            >
+            reports that criminals use stolen customer data from crypto tax
+            service Waltio to select targets. It describes kidnappings and
+            physical violence. Even a mistaken assumption that someone owns
+            substantial crypto assets can put them and their family at risk.
+            Data minimisation and shorter retention periods also protect
+            personal safety.
+          </p>
+        </div>
+        <Artwork id="wrenchAttack" language="en" />
+      </div>
     </section>
     <section id="ausblick" aria-labelledby="ausblick-heading">
       <h2 id="ausblick-heading">What might come next</h2>
@@ -328,14 +354,17 @@ const faqs = [
           Regularly and publicly, so unnecessary intrusions can be ended.
         </li>
       </ul>
-      <p class="prose">
-        <strong>Resistance can work.</strong>
-        The challenge to data retention organised by AKVorrat, now
-        epicenter.works, reached the Court of Justice through Austria’s
-        Constitutional Court. In 2014, both the EU directive and Austrian rules
-        fell. That success shows that even sweeping surveillance laws can be
-        changed.
-      </p>
+      <div class="precedent">
+        <p class="precedent-year" aria-hidden="true">2014</p>
+        <p class="prose">
+          <strong>Resistance can work.</strong>
+          The challenge to data retention organised by AKVorrat, now
+          epicenter.works, reached the Court of Justice through Austria’s
+          Constitutional Court. In 2014, both the EU directive and Austrian
+          rules fell. That success shows that even sweeping surveillance laws
+          can be changed.
+        </p>
+      </div>
     </section>
     <section id="rechtsweg" aria-labelledby="rechtsweg-heading">
       <h2 id="rechtsweg-heading">Our legal strategy</h2>
@@ -371,7 +400,7 @@ const faqs = [
         Research last updated: {researchDate}. Not individual legal advice.
       </p>
     </section>
-    <aside class="closing" aria-labelledby="support-heading">
+    <aside class="closing band" aria-labelledby="support-heading">
       <h2 id="support-heading">Support the case</h2>
       <div class="closing-actions">
         <a class="button primary" href="/en/donate/">Donate</a>

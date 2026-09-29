@@ -23,6 +23,16 @@ The private `artwork-lab/` submodule contains the Blender sources and reusable
 web/social graphics. See `artwork-lab/knowledge/README.md` for the DAC8 collection
 and exports. Access to the artwork repository is required to initialize it.
 
+The site does not build from the submodule. Illustrations in use are copied
+from the lab's transparent cutouts (`knowledge/dac8-*-cutout.png`) into
+`src/assets/artwork/` as WebP masters; Astro generates the responsive AVIF and
+WebP files at build time. `src/data/artwork.ts` holds the German and English
+alt texts and captions. The cutouts have no background: in the hero they float
+on the page, in sections `src/components/Artwork.astro` places them in a dark
+graphite display case, so one file works in light and dark mode. People,
+addresses and amounts in the profiles are invented; captions must keep the
+distinction between combined or leaked records and the annual DAC8 report.
+
 ## Development
 
 Astro 7 requires Node.js 22.13+ and pnpm 11.20:

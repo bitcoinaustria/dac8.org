@@ -1,5 +1,6 @@
 ---
 import ShareIcon from "@/assets/icons/share.svg"
+import Artwork from "@/components/Artwork.astro"
 import CampaignPartners from "@/components/CampaignPartners.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
@@ -36,6 +37,7 @@ import { campaignStatus } from "@/data/campaign"
         <a class="button primary" href="/spenden/">Prozess unterstützen</a>
         <a class="button" href="/hintergrund/">Was DAC8 verlangt</a>
       </nav>
+      <Artwork id="privacyExposed" language="de" size="hero" priority />
       <p class="prose hero-context">
         Seit 2026 müssen Krypto-Anbieter in Österreich Finanzdaten aller Kunden
         für das Finanzamt aufbereiten, ohne konkreten Verdacht. Wir halten diese
@@ -69,18 +71,23 @@ import { campaignStatus } from "@/data/campaign"
 
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">Was auf dem Spiel steht</h2>
-      <p class="section-intro">
-        Dein Privatleben verdient Schutz, auch wenn es um Geld geht. Wer
-        Informationen über dein Geld hat, kann Rückschlüsse auf dein Leben
-        ziehen. Werden sie weitergegeben, missverstanden oder gestohlen, trägst
-        du die Folgen.
-      </p>
-      <p class="prose">
-        DAC8 ist eine EU-Richtlinie für den Austausch von Steuerdaten. Gemeldet
-        werden Identität und Jahreswerte zu Kryptowerten, keine Liste deiner
-        einzelnen Zahlungen. Auch daraus entsteht über die Jahre ein
-        finanzielles Profil.
-      </p>
+      <div class="art-split">
+        <div>
+          <p class="section-intro">
+            Dein Privatleben verdient Schutz, auch wenn es um Geld geht. Wer
+            Informationen über dein Geld hat, kann Rückschlüsse auf dein Leben
+            ziehen. Werden sie weitergegeben, missverstanden oder gestohlen,
+            trägst du die Folgen.
+          </p>
+          <p class="prose">
+            DAC8 ist eine EU-Richtlinie für den Austausch von Steuerdaten.
+            Gemeldet werden Identität und Jahreswerte zu Kryptowerten, keine
+            Liste deiner einzelnen Zahlungen. Auch daraus entsteht über die
+            Jahre ein finanzielles Profil.
+          </p>
+        </div>
+        <Artwork id="leakedTarget" language="de" />
+      </div>
       <ul class="facts">
         <li>
           <strong>Alle werden erfasst, nicht nur Verdächtige.</strong>
@@ -128,19 +135,22 @@ import { campaignStatus } from "@/data/campaign"
         {campaignStatus.de.text}
       </p>
       <LegalRoute language="de" />
-      <p class="prose">
-        Die Kampagne gegen die Vorratsdatenspeicherung von Telefon- und
-        Internetdaten ist ein Vorbild: 2014 hob der Europäische Gerichtshof die
-        Richtlinie auf, der Verfassungsgerichtshof das österreichische Gesetz.
-        Der Erfolg zeigt, dass sich auch weitreichende Überwachungsgesetze
-        ändern lassen.
-      </p>
+      <div class="precedent">
+        <p class="precedent-year" aria-hidden="true">2014</p>
+        <p class="prose">
+          Die Kampagne gegen die Vorratsdatenspeicherung von Telefon- und
+          Internetdaten ist ein Vorbild: 2014 hob der Europäische Gerichtshof
+          die Richtlinie auf, der Verfassungsgerichtshof das österreichische
+          Gesetz. Der Erfolg zeigt, dass sich auch weitreichende
+          Überwachungsgesetze ändern lassen.
+        </p>
+      </div>
       <a class="text-link" href="/hintergrund/#rechtsweg"
         >Den Rechtsweg im Detail</a
       >
     </section>
 
-    <section id="handeln" aria-labelledby="handeln-heading">
+    <section id="handeln" class="band" aria-labelledby="handeln-heading">
       <h2 id="handeln-heading">Was du tun kannst</h2>
       <ul class="facts action-facts">
         <li>
@@ -168,8 +178,11 @@ import { campaignStatus } from "@/data/campaign"
 
     <section id="vision" aria-labelledby="vision-heading">
       <h2 id="vision-heading">Wohin das führen soll</h2>
+      <p class="statement">
+        Privatsphäre braucht keine Rechtfertigung.
+        <span>Staatliche Eingriffe schon.</span>
+      </p>
       <p class="section-intro">
-        Privatsphäre braucht keine Rechtfertigung. Staatliche Eingriffe schon.
         Eine liberale Demokratie braucht Grenzen staatlicher Macht. Werden die
         Finanzdaten aller vorsorglich erfasst, ist für uns eine rote Linie
         überschritten.
@@ -210,21 +223,25 @@ import { campaignStatus } from "@/data/campaign"
         Cypherpunks. Für uns ist Privatsphäre eine Voraussetzung für eine freie
         Gesellschaft.
       </p>
-      <p class="prose">
-        Wir stehen für finanzielle Selbstbestimmung und gegen Massenüberwachung.
-        Die Kampagne gilt allen, die von DAC8 erfasst werden, unabhängig davon,
-        welche Kryptowerte sie nutzen.
-      </p>
-      <p class="prose">
-        Unsere Kampagne beginnt in Österreich. DAC8 gilt in der ganzen EU:
-        Organisationen, Unternehmen und Fachleute, die das Gesetz in ihrem Land
-        prüfen wollen, können sich bei uns melden. Wir teilen Argumente, Quellen
-        und Erfahrung:
-        <a href="mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"
-          >kontakt@dac8.org</a
-        >
-      </p>
-      <CampaignPartners />
+      <div class="split">
+        <div>
+          <p class="prose">
+            Wir stehen für finanzielle Selbstbestimmung und gegen
+            Massenüberwachung. Die Kampagne gilt allen, die von DAC8 erfasst
+            werden, unabhängig davon, welche Kryptowerte sie nutzen.
+          </p>
+          <p class="prose">
+            Unsere Kampagne beginnt in Österreich. DAC8 gilt in der ganzen EU:
+            Organisationen, Unternehmen und Fachleute, die das Gesetz in ihrem
+            Land prüfen wollen, können sich bei uns melden. Wir teilen
+            Argumente, Quellen und Erfahrung:
+            <a href="mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"
+              >kontakt@dac8.org</a
+            >
+          </p>
+        </div>
+        <CampaignPartners />
+      </div>
     </section>
   </article>
 
