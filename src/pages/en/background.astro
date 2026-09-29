@@ -254,7 +254,7 @@ const faqs = [
       <ul class="facts concerns">
         {concerns.map(concern => <li><strong>{concern.title}</strong><p>{concern.text}</p></li>)}
         <li class="facts-figure">
-          <Artwork id="retentionArchive" language="en" frame={false} />
+          <Artwork id="retentionArchive" language="en" />
         </li>
       </ul>
       <Artwork id="wealthProfile" language="en" size="wide" />
@@ -272,7 +272,7 @@ const faqs = [
             >.
           </p>
         </div>
-        <Artwork id="spendingProfile" language="en" frame={false} />
+        <Artwork id="spendingProfile" language="en" />
       </div>
       <div class="art-split even reverse">
         <div>
@@ -400,7 +400,7 @@ const faqs = [
         Research last updated: {researchDate}. Not individual legal advice.
       </p>
     </section>
-    <aside class="closing band" aria-labelledby="support-heading">
+    <aside class="closing" aria-labelledby="support-heading">
       <h2 id="support-heading">Support the case</h2>
       <div class="closing-actions">
         <a class="button primary" href="/en/donate/">Donate</a>

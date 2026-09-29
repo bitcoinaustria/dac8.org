@@ -6,22 +6,13 @@ import type { Language } from "@/lib/i18n"
 interface Props {
   id: ArtworkId
   language: Language
-  // "hero" floats freely beside the headline; "side" and "wide" stand in a
-  // dark display case beside text or across the content column.
+  // "hero" sits beside the headline, "side" beside text, "wide" spans the
+  // content column with its caption alongside.
   size?: "hero" | "side" | "wide"
-  // Set false to show a side illustration without its display case, so that
-  // dark cases do not follow each other.
-  frame?: boolean
   priority?: boolean
 }
 
-const {
-  id,
-  language,
-  size = "side",
-  frame = size !== "hero",
-  priority = false,
-} = Astro.props
+const { id, language, size = "side", priority = false } = Astro.props
 const { image, [language]: text }: Artwork = artwork[id]
 const sizes = {
   hero: "(min-width: 64rem) 21rem, (min-width: 40rem) 24rem, 90vw",
@@ -33,7 +24,7 @@ const widths = [360, 540, 720, 960, 1280, 1600].filter(
 )
 ---
 
-<figure class:list={["artwork", `artwork-${size}`, { vitrine: frame }]}>
+<figure class:list={["artwork", `artwork-${size}`]}>
   <Picture
     src={image}
     alt={text.alt}

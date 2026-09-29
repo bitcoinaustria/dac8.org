@@ -18,8 +18,7 @@ type ArtworkText = {
 export type Artwork = { image: ImageMetadata } & Record<Language, ArtworkText>
 
 // Transparent renders from the artwork lab (knowledge/dac8-*-cutout.png).
-// They carry no background, so they work on the page and in the dark display
-// case in both themes.
+// They carry no background, so the page colour shows through in both themes.
 // The people, addresses and amounts are invented. The profiles show what
 // combined or leaked records can reveal, not the fields of the DAC8 report;
 // captions keep that distinction beside the image.

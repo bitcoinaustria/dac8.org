@@ -24,17 +24,11 @@
   --ink-3: var(--muted-foreground);
   --line: color-mix(in oklab, var(--foreground) 14%, transparent);
   --radius: var(--radius-lg);
-  /* Material der Illustrationen: Titankante, Lichtkante, satinierte Fläche.
-     Nur an Markern, Kanten und wenigen Flächen, nie im Fließtext. */
+  /* Material der Illustrationen: Titankante und Lichtkante. Nur an Markern
+     und Kanten, nie als Fläche. */
   --material-edge: light-dark(#a4abb1, #596168);
-  --material-edge-soft: light-dark(#d2d6d9, #3a4046);
   --material-shine: light-dark(#ffffff, #ffffff24);
   --material-shade: light-dark(#15202b18, #00000060);
-  --material-face: linear-gradient(
-    155deg,
-    light-dark(#ffffff, #25292d),
-    light-dark(#eef0f1, #1a1d20)
-  );
   --measure-lead: 55ch;
   container: campaign / inline-size;
   --measure-text: 66ch;
@@ -543,21 +537,12 @@
 }
 
 /* Hervorgehobene Aussage: ein Satz, der die Seite trägt. Roter Balken als
-   Marke für „hier setzt die Kritik an“, nicht als Trennlinie; darauf eine
-   leicht getönte Glasfläche wie die Abdeckungen der Illustrationen. */
+   Marke für „hier setzt die Kritik an“, nicht als Trennlinie. */
 .campaign .callout {
   max-inline-size: 60ch;
   margin-block-start: var(--space-xl);
-  padding: var(--space-s) var(--space-m);
-  border: 1px solid var(--material-edge-soft);
+  padding-inline-start: var(--space-m);
   border-inline-start: 3px solid var(--primary);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  background: linear-gradient(
-    110deg,
-    light-dark(#e9edef99, #30363b66),
-    light-dark(#ffffff40, #171a1d33)
-  );
-  box-shadow: inset 0 1px 0 var(--material-shine);
   font-size: var(--step-1);
   line-height: 1.45;
   text-wrap: pretty;
@@ -684,51 +669,46 @@
   margin-block-start: var(--space-l);
 }
 
-/* Zwei Tafeln: Die Meldung als satinierte Fläche, das Fehlende gestrichelt. */
+/* Zwei Spalten wie ein Datenblatt: eine Metallkante über der Meldung, eine
+   feine Linie über dem, was fehlt; jeder Punkt eine Zeile zwischen
+   Haarlinien. Keine Flächen. */
 .campaign .compare > div {
-  padding: var(--space-m) var(--space-m-l);
-  border: 1px solid var(--material-edge-soft);
-  border-radius: var(--radius);
-  background: var(--material-face);
-  box-shadow: inset 0 1px 0 var(--material-shine);
+  padding-block-start: var(--space-s);
+  background: var(--metal-rule) top / 100% 2px no-repeat;
 }
 
 .campaign .compare > .absent {
-  border-style: dashed;
-  border-color: color-mix(in oklab, var(--ink) 24%, transparent);
-  background: color-mix(in oklab, var(--ink) 2.5%, transparent);
-  box-shadow: none;
-}
-
-@container campaign (width < 30rem) {
-  .campaign .compare > div {
-    padding-inline: 1rem;
-  }
+  background: linear-gradient(var(--line), var(--line)) top / 100% 1px
+    no-repeat;
 }
 
 .campaign .compare h3 {
-  margin-block-end: var(--space-s);
+  margin-block-end: var(--space-2xs);
 }
 
 .campaign .compare ul {
   display: grid;
-  gap: var(--space-xs);
   padding: 0;
   list-style: none;
 }
 
 .campaign .compare li {
   position: relative;
+  padding-block: var(--space-xs);
   padding-inline-start: 1.5rem;
   color: var(--ink-2);
   text-wrap: pretty;
+}
+
+.campaign .compare li + li {
+  border-block-start: 1px solid var(--line);
 }
 
 .campaign .compare li::before {
   content: "";
   position: absolute;
   inset-inline-start: 0;
-  inset-block-start: 0.55em;
+  inset-block-start: calc(var(--space-xs) + 0.55em);
   inline-size: 0.5rem;
   block-size: 0.5rem;
   border-radius: var(--radius-full);
@@ -754,15 +734,12 @@
   list-style: none;
 }
 
-/* Satinierte Fläche mit feiner Kontur und Lichtkante, ohne Schweben. */
 .campaign .cards > * {
   display: flex;
   flex-direction: column;
   padding: var(--space-m) var(--space-m-l);
-  border: 1px solid var(--material-edge-soft);
   border-radius: var(--radius);
-  background: var(--material-face);
-  box-shadow: inset 0 1px 0 var(--material-shine);
+  background: var(--panel);
 }
 
 .campaign .cards h3 {
@@ -932,7 +909,7 @@
   font-size: var(--step--1);
 }
 
-.campaign .closing:not(.band) {
+.campaign .closing {
   padding-block-start: var(--space-l);
   border-block-start: 1px solid var(--line);
 }
@@ -1504,10 +1481,10 @@
 
 /* ---------- Illustrationen --------------------------------------------- */
 
-/* Freigestellte Renderings ohne eigenen Hintergrund. Im Hero schweben sie
-   frei auf der Seite; in den Abschnitten stehen sie in einer Vitrine aus
-   Graphit und Glas, wie Objekte in einem Schaukasten. Die Vitrine ist in
-   beiden Farbschemata dunkel, weil die Metallkanten dort am besten tragen. */
+/* Freigestellte Renderings ohne eigenen Hintergrund, frei auf der Seite wie
+   im Kontaktbogen des Bildlabors. Die Seitenfarbe scheint durch, deshalb
+   tragen sie hell wie dunkel ohne zweite Fassung. Kein Rahmen, keine Fläche;
+   die Höhe ist gedeckelt, damit hohe Motive den Text nicht verdrängen. */
 .campaign .artwork {
   --art-height: 22rem;
   display: grid;
@@ -1524,52 +1501,6 @@
   max-block-size: var(--art-height);
 }
 
-.campaign .vitrine {
-  position: relative;
-  isolation: isolate;
-  padding: var(--space-m);
-  border: 1px solid #30353a;
-  border-radius: 0.75rem;
-  background:
-    radial-gradient(
-      120% 80% at 50% 0%,
-      light-dark(#383d42, #2a2e33),
-      transparent 70%
-    ),
-    linear-gradient(
-      170deg,
-      light-dark(#26292d, #1c1f22),
-      light-dark(#121416, #101214)
-    );
-  box-shadow:
-    inset 0 1px 0 #ffffff1c,
-    0 1px 2px var(--material-shade);
-}
-
-/* Die Glasscheibe: ein schmaler Lichtreflex quer über den Kasten. */
-.campaign .vitrine::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    112deg,
-    transparent 38%,
-    #ffffff08 46%,
-    #ffffff03 52%,
-    transparent 60%
-  );
-  pointer-events: none;
-}
-
-/* Vererbte Textfarbe ist schon aufgelöst; deshalb Farbe und Schema neu
-   setzen, damit light-dark() darin die dunkle Stufe wählt. */
-.campaign .vitrine > * {
-  color-scheme: dark;
-  color: var(--ink);
-}
-
 .campaign .artwork figcaption {
   justify-self: stretch;
   max-inline-size: 52ch;
@@ -1579,12 +1510,6 @@
   text-wrap: pretty;
 }
 
-.campaign .vitrine figcaption {
-  max-inline-size: none;
-  padding-block-start: var(--space-s);
-  border-block-start: 1px solid #ffffff14;
-}
-
 .campaign .artwork figcaption strong {
   display: block;
   margin-block-end: var(--space-3xs);
@@ -1592,9 +1517,10 @@
   font-weight: 560;
 }
 
-/* Breite Vitrine: das Motiv links, das Museumsschild rechts unten. */
+/* Breit: das Motiv links, die Bildunterschrift wie ein Museumsschild rechts
+   unten daneben. */
 .campaign .artwork-wide {
-  --art-height: 24rem;
+  --art-height: 26rem;
 }
 
 @container campaign (width >= 52rem) {
@@ -1602,16 +1528,11 @@
     grid-template-columns: minmax(0, 1fr) 15rem;
     align-items: end;
     gap: var(--space-l);
-    padding: var(--space-l);
-  }
-
-  .campaign .artwork-wide figcaption {
-    padding-block-start: var(--space-s);
   }
 }
 
-/* Text und Vitrine nebeneinander, sobald die Spalte breit genug ist.
-   Darunter folgt die Vitrine dem Text. */
+/* Text und Illustration nebeneinander, sobald die Spalte breit genug ist.
+   Darunter folgt das Bild dem Text. */
 .campaign .art-split {
   display: grid;
   align-items: start;
@@ -1636,7 +1557,7 @@
 }
 
 .campaign .art-split .artwork-side {
-  --art-height: 18rem;
+  --art-height: 19rem;
 }
 
 @container campaign (width >= 52rem) {
@@ -1644,19 +1565,27 @@
     grid-template-columns: minmax(0, 1fr) minmax(17rem, 23rem);
   }
 
-  /* Gleich breit für Profile mit lesbaren Beschriftungen. */
+  /* Gleich breit für Profile mit lesbaren Beschriftungen; Text und Motiv
+     stehen auf gemeinsamer Mitte. */
   .campaign .art-split.even {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    margin-block-start: var(--space-xl);
   }
 
-  /* Vitrine links, Text rechts: bricht die Folge gleich gebauter Blöcke. */
+  /* Motiv links, Text rechts: bricht die Folge gleich gebauter Blöcke. */
   .campaign .art-split.reverse > .artwork {
     grid-row: 1;
     grid-column: 1;
   }
 
   .campaign .art-split.even .artwork-side {
-    --art-height: 20rem;
+    --art-height: 21rem;
+  }
+
+  /* Aufeinanderfolgende Bildblöcke brauchen mehr Luft als Text zu Text. */
+  .campaign :is(.artwork-wide, .art-split.even) + .art-split.even {
+    margin-block-start: var(--space-2xl);
   }
 }
 
@@ -1895,33 +1824,4 @@
 
 .campaign .statement + .art-split {
   margin-block-start: var(--space-l);
-}
-
-/* ---------- Aktionsband ------------------------------------------------ */
-
-/* Ein Abschnitt, der zum Handeln auffordert, steht als ruhiges dunkles Band.
-   Ohne Glasreflex und Tiefe, damit er nicht wie ein weiteres Exponat wirkt;
-   seine Stärke kommt aus Überschrift und rotem Button. */
-.campaign .band {
-  padding: var(--space-l) var(--space-m-l);
-  border: 1px solid #30353a;
-  border-radius: 0.75rem;
-  background: #202326;
-}
-
-.campaign .band > * {
-  color-scheme: dark;
-  color: var(--ink);
-}
-
-.campaign .band .share-status:empty {
-  display: none;
-}
-
-.campaign > section.band > h2::before {
-  color: #9aa1a7;
-}
-
-.campaign .band .facts li {
-  background-image: linear-gradient(90deg, #ffffff30, #ffffff10);
 }
