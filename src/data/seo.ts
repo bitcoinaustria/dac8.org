@@ -40,13 +40,13 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "Die Kampagne gegen DAC8 unterstützen",
       description:
-        "Hilf mit, finanzielle Privatsphäre zu verteidigen: Spende mit Bitcoin oder Euro für das Verfahren, teile die Kampagne oder unterstütze als Organisation.",
+        "Hilf mit, finanzielle Privatsphäre zu verteidigen: Spende für das Verfahren, schreib deinen Abgeordneten, teile die Kampagne oder unterstütze als Organisation.",
       imageLines: ["Hilf mit,", "Privatsphäre zu", "verteidigen."],
     },
     en: {
       title: "Support the campaign against DAC8",
       description:
-        "Help defend financial privacy: donate bitcoin or euros to the legal challenge, share the campaign or support it as an organisation.",
+        "Help defend financial privacy: donate to the legal challenge, write to your MPs, share the campaign or support it as an organisation.",
       imageLines: ["Help defend", "financial privacy."],
     },
   },

@@ -2,6 +2,7 @@
 import ShareIcon from "@/assets/icons/share.svg"
 import Artwork from "@/components/Artwork.astro"
 import DonationOptions from "@/components/DonationOptions.astro"
+import LetterGenerator from "@/components/LetterGenerator.astro"
 import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import { btcpay } from "@/data/donation"
@@ -15,6 +16,7 @@ const other = en ? "de" : "en"
 <Layout
   sections={[
     { id: "spenden", label: en ? "Donate" : "Spenden" },
+    { id: "abgeordnete", label: en ? "Write to MPs" : "Abgeordnete anschreiben" },
     { id: "teilen", label: en ? "Share" : "Teilen" },
     {
       id: "organisationen",
@@ -32,7 +34,7 @@ const other = en ? "de" : "en"
         >
       </h1>
       <p class="lead">
-        {en ? "Help us challenge mass surveillance of our finances: fund the case and share the campaign." : "Hilf uns, der Massenüberwachung unserer Finanzen Grenzen zu setzen: Trage den Prozess mit und teile die Kampagne."}
+        {en ? "Help us challenge mass surveillance of our finances: fund the case, write to your MPs and share the campaign." : "Hilf uns, der Massenüberwachung unserer Finanzen Grenzen zu setzen: Trage den Prozess mit, schreib deinen Abgeordneten und teile die Kampagne."}
       </p>
       <nav
         class="hero-actions"
@@ -71,6 +73,15 @@ const other = en ? "de" : "en"
         {en ? "Your donation primarily funds the case against indiscriminate collection of our financial data. Questions: " : "Mit deiner Spende finanzieren wir vor allem den Prozess gegen die anlasslose Erfassung unserer Finanzdaten. Fragen zur Spende: "}
         <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>.
       </p>
+    </section>
+    <section id="abgeordnete" aria-labelledby="letter-heading">
+      <h2 id="letter-heading">
+        {en ? "Write to your MPs" : "Schreib deinen Abgeordneten"}
+      </h2>
+      <p class="section-intro">
+        {en ? "The rule that covers all customers is in Austrian law, and the National Council can change it. A personal letter shows members of parliament that people care. The letter is in German by default, the working language of the Austrian parliament." : "Die Regel, die alle Kunden erfasst, steht im österreichischen Gesetz. Der Nationalrat kann sie ändern. Ein persönlicher Brief zeigt Abgeordneten, dass das Thema Menschen bewegt."}
+      </p>
+      <LetterGenerator language={language} />
     </section>
     <section id="teilen" aria-labelledby="share-heading">
       <h2 id="share-heading">

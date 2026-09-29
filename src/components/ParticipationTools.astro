@@ -6,27 +6,24 @@ import Layout from "@/layouts/Layout.astro"
 <Layout
   sections={[
     { id: "beschwerde", label: "Beschwerde vorbereiten" },
-    { id: "abgeordnete", label: "Brief an Abgeordnete" },
   ]}
 >
   <MetaPage
     slot="head"
-    title="Beschwerde und Brief vorbereiten"
-    description="Erstelle lokal im Browser einen persönlichen Entwurf für eine Datenschutzbeschwerde oder einen Brief an Abgeordnete."
+    title="Beschwerde vorbereiten"
+    description="Erstelle lokal im Browser einen persönlichen Entwurf für eine Datenschutzbeschwerde."
   />
 
   <article class="campaign tool-page">
     <header class="hero">
       <h1>Deine Stimme, <span>dein Text.</span></h1>
       <p class="lead">
-        Zwei Werkzeuge für einen persönlichen Entwurf: eine Beschwerde an die
-        Datenschutzbehörde und ein Brief an deine Abgeordneten. Alles läuft in
-        deinem Browser. Nichts wird gesendet, gespeichert oder an Bitcoin
-        Austria übertragen.
+        Ein Werkzeug für einen persönlichen Entwurf einer Beschwerde an die
+        Datenschutzbehörde. Alles läuft in deinem Browser. Nichts wird gesendet,
+        gespeichert oder an Bitcoin Austria übertragen.
       </p>
       <nav class="hero-actions" aria-label="Werkzeug wählen">
         <a class="button primary" href="#beschwerde">Beschwerde vorbereiten</a>
-        <a class="button" href="#abgeordnete">Brief vorbereiten</a>
         <button class="button" type="button" data-download-offline>
           Offline-Version speichern
         </button>
@@ -174,102 +171,11 @@ import Layout from "@/layouts/Layout.astro"
         </div>
       </div>
     </section>
-
-    <section
-      id="abgeordnete"
-      class="generator"
-      aria-labelledby="letter-heading"
-    >
-      <h2 id="letter-heading">Brief an Abgeordnete</h2>
-      <p class="section-intro">
-        Der Brief fordert klare Grenzen für die anlasslose Erfassung von
-        Finanzdaten. Ergänze in ein, zwei Sätzen, wie dich DAC8 betrifft und
-        warum dir finanzielle Privatsphäre wichtig ist.
-      </p>
-
-      <div class="generator-workspace">
-        <form class="generator-form" data-letter-form>
-          <div class="form-grid">
-            <label class="field">
-              <span>Anrede</span>
-              <select name="salutation">
-                <option>Sehr geehrte Frau</option>
-                <option>Sehr geehrter Herr</option>
-                <option>Guten Tag</option>
-              </select>
-            </label>
-            <label class="field">
-              <span>Name des Abgeordneten</span>
-              <input name="recipient" placeholder="Optional">
-            </label>
-            <label class="field wide">
-              <span>E-Mail des Abgeordneten</span>
-              <input name="recipientEmail" type="email" placeholder="Optional">
-            </label>
-            <label class="field">
-              <span>Dein Name</span>
-              <input name="sender" autocomplete="name" placeholder="Optional">
-            </label>
-            <label class="field">
-              <span>Dein Wohnort oder Bundesland</span>
-              <input
-                name="location"
-                autocomplete="address-level1"
-                placeholder="Optional"
-              >
-            </label>
-            <label class="field wide">
-              <span>Warum ist dir das persönlich wichtig?</span>
-              <textarea
-                name="personal"
-                placeholder="Wie betrifft dich DAC8? Was sollen deine Abgeordneten ändern?"
-              ></textarea>
-            </label>
-          </div>
-          <button class="button primary" type="submit" formnovalidate>
-            Vorschau neu erzeugen
-          </button>
-        </form>
-
-        <div class="generator-output" data-letter-output data-copy-scope>
-          <div class="preview-head">
-            <h3>Live-Vorschau</h3>
-            <span>bearbeiten, kopieren, absenden</span>
-          </div>
-          <textarea id="letter-text" aria-label="Briefentwurf"></textarea>
-          <div class="output-actions">
-            <button
-              class="button"
-              type="button"
-              data-copy-value="DAC8 und Krypto-MPfG – keine Finanzüberwachung auf Vorrat"
-            >
-              Betreff kopieren
-            </button>
-            <button
-              class="button primary"
-              type="button"
-              data-copy="letter-text"
-            >
-              Text kopieren
-            </button>
-            <a class="button" data-mailto hidden>E-Mail öffnen</a>
-            <a
-              class="button"
-              href="https://www.parlament.gv.at/recherchieren/personen/nationalrat"
-              >Abgeordnete finden</a
-            >
-          </div>
-          <p class="copy-status" data-copy-status aria-live="polite"></p>
-        </div>
-      </div>
-    </section>
   </article>
 
   <script is:inline data-generator-script>
     const complaintSubject =
       "Beschwerde gemäß Art. 77 DSGVO in Verbindung mit § 24 DSG – Verarbeitung im Zusammenhang mit DAC8 / Krypto-MPfG"
-    const letterSubject =
-      "DAC8 und Krypto-MPfG – keine Finanzüberwachung auf Vorrat"
     const read = (form, name, fallback = "") =>
       String(new FormData(form).get(name) || "").trim() || fallback
     const formatDate = (value) =>
@@ -371,64 +277,6 @@ ${name}`
       complaintEdited = true
     })
     renderComplaint()
-
-    const letterForm = document.querySelector("[data-letter-form]")
-    const letterText = document.querySelector("#letter-text")
-    const mailto = document.querySelector("[data-mailto]")
-    let letterEdited = false
-
-    const buildLetter = () => {
-      const salutationChoice = read(letterForm, "salutation")
-      const recipient = read(letterForm, "recipient")
-      const sender = read(letterForm, "sender", "[Dein Name]")
-      const location = read(letterForm, "location")
-      const personal = read(letterForm, "personal")
-      const salutation = recipient
-        ? `${salutationChoice} ${recipient},`
-        : "Sehr geehrte Damen und Herren,"
-      const personalParagraph = personal ? `\n\n${personal}` : ""
-      const signature = [sender, location].filter(Boolean).join("\n")
-
-      return `Betreff: ${letterSubject}
-
-${salutation}
-
-seit 1. Jänner 2026 werden in Österreich im Zusammenhang mit DAC8 Identitätsdaten und Krypto-Aktivität verarbeitet. Für meldepflichtige Nutzer werden jährlich Werte, Einheiten und Transaktionszahlen je Kryptowert und Kategorie gemeldet. Österreich verpflichtet Anbieter darüber hinaus, die relevanten Informationen für alle Kunden, Transaktionen und Kryptowerte zu verarbeiten – unabhängig davon, ob am Ende tatsächlich eine Meldepflicht besteht.${personalParagraph}
-
-Mir geht es dabei nicht um Steuern, sondern um Daten. Ich lehne die anlasslose Massenerfassung legaler Finanzaktivität ab, die alle Kunden unter Generalverdacht stellt. Steuerverwaltung darf nicht zur Finanzüberwachung auf Vorrat werden.
-
-Ich ersuche Sie daher, sich insbesondere für folgende Punkte einzusetzen:
-
-– eine parlamentarische Prüfung der österreichischen Alle-Kunden-Regel in § 20 Abs. 1 Krypto-MPfG,
-– eine Begründung oder Korrektur der zehnjährigen Speicherfrist, die doppelt so lang ist wie die fünf Jahre für Bankkonten nach § 5 GMSG,
-– keine Ausweitung auf Wallet-Adressen, einzelne Transaktionsdaten oder Zeiträume vor 2026 ohne neue öffentliche und grundrechtliche Prüfung,
-– klare und überprüfbare Grenzen für Zweck, Zugriff, Speicherung und Weiterverwendung,
-– wirksame Information, Auskunft und Korrektur für Betroffene,
-– eine unabhängige Evaluierung von Notwendigkeit, Wirksamkeit und Sicherheitsfolgen.
-
-Bitte teilen Sie mir mit, wie Sie diese Fragen beurteilen und welche parlamentarischen Schritte Sie unterstützen.
-
-Mit freundlichen Grüßen
-${signature}`
-    }
-
-    const renderLetter = (force = false) => {
-      if (force) letterEdited = false
-      if (!letterEdited) letterText.value = buildLetter()
-      const email = read(letterForm, "recipientEmail")
-      mailto.hidden = !email
-      mailto.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(letterSubject)}`
-    }
-
-    letterForm.addEventListener("input", () => renderLetter())
-    letterForm.addEventListener("submit", (event) => {
-      event.preventDefault()
-      renderLetter(true)
-    })
-    letterText.addEventListener("input", () => {
-      letterEdited = true
-    })
-    renderLetter()
 
     const fallbackCopy = (text) => {
       const helper = document.createElement("textarea")

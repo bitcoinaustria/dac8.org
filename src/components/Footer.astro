@@ -42,6 +42,10 @@ const sections = [
     links: [
       { label: en ? "Donate" : "Spenden", href: donateFor(language) },
       {
+        label: en ? "Write to MPs" : "Brief an Abgeordnete",
+        href: `${pathFor("participate", language)}#abgeordnete`,
+      },
+      {
         label: en ? "Share graphics" : "Grafiken zum Teilen",
         href: shareKitFor(language),
       },

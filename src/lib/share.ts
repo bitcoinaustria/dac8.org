@@ -11,7 +11,7 @@ const fallbackCopy = (text: string) => {
   return copied
 }
 
-const copyUrl = async (url: string) => {
+export const copyText = async (url: string) => {
   try {
     if (!navigator.clipboard?.writeText) throw new Error()
     await navigator.clipboard.writeText(url)
@@ -54,7 +54,7 @@ export const initializeShareButtons = () => {
         }
       }
 
-      const copied = await copyUrl(data.url)
+      const copied = await copyText(data.url)
       if (status) {
         status.textContent = copied
           ? en

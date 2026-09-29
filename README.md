@@ -88,10 +88,14 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   `/en/feed.xml` expose RSS 2.0 feeds from the same data. Empty feeds are valid;
   do not create placeholder milestones or imply a filing has happened.
 - The newsletter link points to Bitcoin Austria's existing newsletter form.
-- The previous individual complaint/letter generators are preserved in
-  `src/components/ParticipationTools.astro`, but are not exposed as a public
-  route while individual participation remains undefined. Review their content
-  and translate their interface before bringing them back into the campaign.
+- The letter to members of the National Council is on the participation page
+  (`src/components/LetterGenerator.astro`, texts in `src/data/letter.ts`). It
+  runs entirely in the browser; its demands restate the dossier's "Was wir
+  fordern" list, so change both together.
+- The earlier individual complaint generator is preserved in
+  `src/components/ParticipationTools.astro`, but is not exposed as a public
+  route while individual participation in the proceedings remains undefined.
+  Review its content and translate its interface before bringing it back.
 
 Run `pnpm test` for language routing and RSS regression checks, then
 `pnpm format:check` and `pnpm build` before publication.
