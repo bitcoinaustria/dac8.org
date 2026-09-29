@@ -24,7 +24,7 @@ export const campaignFeed = (language: Language, site: URL) => {
     language === "en"
       ? "Updates on Bitcoin Austria’s challenge to indiscriminate financial data collection."
       : "Neuigkeiten zum Vorgehen von Bitcoin Austria gegen die anlasslose Erfassung von Finanzdaten."
-  const link = new URL(pathFor("updates", language), site).href
+  const link = new URL(pathFor("proceedings", language), site).href
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
 <title>${escapeXml(title)}</title><link>${escapeXml(link)}</link><description>${escapeXml(description)}</description><language>${language}</language>

@@ -6,12 +6,13 @@ export const campaign = {
   newsletter: "https://bitcoin-austria.at/#newsletter",
 } as const
 
+// URLs follow the navigation labels. Donating is a section of the
+// participation page, reachable everywhere through donateFor().
 export const routes = {
   home: { de: "/", en: "/en/" },
-  background: { de: "/hintergrund/", en: "/en/background/" },
-  support: { de: "/handeln/", en: "/en/support/" },
-  donate: { de: "/spenden/", en: "/en/donate/" },
-  updates: { de: "/aktuelles/", en: "/en/updates/" },
+  dossier: { de: "/dossier/", en: "/en/dossier/" },
+  proceedings: { de: "/verfahren/", en: "/en/proceedings/" },
+  participate: { de: "/mitmachen/", en: "/en/get-involved/" },
   legal: { de: "/impressum/", en: "/en/legal/" },
   privacy: { de: "/datenschutz/", en: "/en/privacy/" },
 } as const
@@ -28,6 +29,10 @@ export const pageFor = (pathname: string): Page | undefined => {
     ),
   )
 }
+export const donateFor = (language: Language) =>
+  `${pathFor("participate", language)}#spenden`
+export const shareKitFor = (language: Language) =>
+  `${pathFor("participate", language)}#teilen`
 export const feedFor = (language: Language) =>
   language === "en" ? "/en/feed.xml" : "/feed.xml"
 // Main navigation. Donating is a separate, always visible action.
@@ -36,13 +41,13 @@ export const navigationFor = (language: Language) => [
     href: pathFor("home", language),
     label: language === "en" ? "Home" : "Start",
   },
-  { href: pathFor("background", language), label: "Dossier" },
+  { href: pathFor("dossier", language), label: "Dossier" },
   {
-    href: pathFor("updates", language),
+    href: pathFor("proceedings", language),
     label: language === "en" ? "Proceedings" : "Verfahren",
   },
   {
-    href: pathFor("support", language),
+    href: pathFor("participate", language),
     label: language === "en" ? "Get involved" : "Mitmachen",
   },
 ]

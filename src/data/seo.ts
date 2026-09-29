@@ -30,7 +30,7 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       ],
     },
   },
-  background: {
+  dossier: {
     de: {
       title: "DAC8 erklärt: Meldepflichten, Risiken und Rechtsweg",
       description:
@@ -44,35 +44,21 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       imageLines: ["What DAC8 requires.", "And what it doesn’t."],
     },
   },
-  support: {
+  participate: {
     de: {
       title: "Die Kampagne gegen DAC8 unterstützen",
       description:
-        "Hilf mit, finanzielle Privatsphäre zu verteidigen: Spende, teile die Kampagne oder unterstütze als Organisation. Verfolge die nächsten Schritte im Verfahren.",
+        "Hilf mit, finanzielle Privatsphäre zu verteidigen: Spende mit Bitcoin oder Euro für das Verfahren, teile die Kampagne oder unterstütze als Organisation.",
       imageLines: ["Finanzielle Privatsphäre", "braucht Unterstützung."],
     },
     en: {
       title: "Support the campaign against DAC8",
       description:
-        "Help defend financial privacy: donate, share the campaign or support it as an organisation. Follow the next steps in Bitcoin Austria’s legal challenge.",
+        "Help defend financial privacy: donate bitcoin or euros to the legal challenge, share the campaign or support it as an organisation.",
       imageLines: ["Help defend", "financial privacy."],
     },
   },
-  donate: {
-    de: {
-      title: "Spenden für das Verfahren gegen DAC8",
-      description:
-        "Unterstütze das Verfahren gegen DAC8 mit Bitcoin oder Euro. Deine Spende an Bitcoin Austria hilft vor allem, die Kosten des Verfahrens zu tragen.",
-      imageLines: ["Gegen DAC8 vorgehen.", "Den Prozess mittragen."],
-    },
-    en: {
-      title: "Donate to the legal challenge against DAC8",
-      description:
-        "Support the legal challenge against DAC8 with bitcoin or euros. Your donation to Bitcoin Austria primarily helps cover the costs of the proceedings.",
-      imageLines: ["Challenge DAC8.", "Help fund the case."],
-    },
-  },
-  updates: {
+  proceedings: {
     de: {
       title: "DAC8-Verfahren: Aktuelles und nächste Schritte",
       description:

@@ -7,7 +7,7 @@ interface Props {
 
 const { language } = Astro.props
 const en = language === "en"
-const reported = `${pathFor("background", language)}#gemeldet`
+const reported = `${pathFor("dossier", language)}#gemeldet`
 
 // The answers restate the vetted FAQ entries on who is affected and on own
 // wallets. Keep them in sync with the FAQ when either changes.

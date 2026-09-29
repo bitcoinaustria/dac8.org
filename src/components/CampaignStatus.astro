@@ -10,7 +10,7 @@ const { language } = Astro.props
 const en = language === "en"
 ---
 
-<a class="status-line" href={pathFor("updates", language)}>
+<a class="status-line" href={pathFor("proceedings", language)}>
   {en ? "Austria" : "Österreich"}
   · <span>{campaignStatus[language].label}</span>
 </a>

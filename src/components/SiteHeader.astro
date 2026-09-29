@@ -3,7 +3,7 @@ import LanguageSelector from "@/components/LanguageSelector.astro"
 import ThemeToggle from "@/components/ThemeToggle.astro"
 import { SITE, type PageSection } from "@/consts"
 import { campaignStatus } from "@/data/campaign"
-import { languageFor, navigationFor, pathFor } from "@/lib/i18n"
+import { donateFor, languageFor, navigationFor, pathFor } from "@/lib/i18n"
 import { normalizePath } from "@/lib/utils"
 
 type Props = { sections?: PageSection[] }
@@ -17,9 +17,6 @@ const current = navigation.find(
   ({ href }) =>
     (normalizePath(new URL(href, Astro.url).pathname) || "/") === pathname,
 )
-const donate = pathFor("donate", language)
-const onDonatePage =
-  (normalizePath(new URL(donate, Astro.url).pathname) || "/") === pathname
 ---
 
 <header class="site-header" data-site-header>
@@ -49,7 +46,7 @@ const onDonatePage =
         ))}
       </ul>
       <div class="nav-extras">
-        <a class="status-pill" href={pathFor("updates", language)}>
+        <a class="status-pill" href={pathFor("proceedings", language)}>
           <span class="status-dot" aria-hidden="true"></span>
           {en ? "Austria" : "Österreich"}
           · {campaignStatus[language].label}
@@ -64,11 +61,7 @@ const onDonatePage =
         </p>
       </div>
     </nav>
-    <a
-      class="button primary donate-button"
-      href={donate}
-      aria-current={onDonatePage ? "page" : undefined}
-    >
+    <a class="button primary donate-button" href={donateFor(language)}>
       {en ? "Donate" : "Spenden"}
     </a>
     <button

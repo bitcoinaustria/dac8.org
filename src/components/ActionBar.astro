@@ -1,22 +1,15 @@
 ---
 import ShareIcon from "@/assets/icons/share.svg"
-import { languageFor, pathFor } from "@/lib/i18n"
-import { normalizePath } from "@/lib/utils"
+import { donateFor, languageFor } from "@/lib/i18n"
 
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
-const donate = pathFor("donate", language)
-const onDonatePage =
-  (normalizePath(new URL(donate, Astro.url).pathname) || "/") ===
-  (normalizePath(Astro.url.pathname) || "/")
 ---
 
 <div class="action-bar" data-share-scope>
-  {!onDonatePage && (
-    <a class="button primary" href={donate}>
-      {en ? "Donate" : "Spenden"}
-    </a>
-  )}
+  <a class="button primary" href={donateFor(language)}>
+    {en ? "Donate" : "Spenden"}
+  </a>
   <button class="button" type="button" data-share>
     <ShareIcon />
     {en ? "Share" : "Teilen"}

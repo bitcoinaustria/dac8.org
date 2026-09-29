@@ -69,8 +69,8 @@ for (const language of ["de", "en"]) {
   const xml = await campaignFeed(language, site).text()
   const base =
     language === "en"
-      ? "https://dac8.org/en/updates/"
-      : "https://dac8.org/aktuelles/"
+      ? "https://dac8.org/en/proceedings/"
+      : "https://dac8.org/verfahren/"
   assert.equal((xml.match(/<item>/g) ?? []).length, 2)
   assert.ok(!xml.includes("#future"))
   assert.ok(xml.indexOf("#newer") < xml.indexOf("#older"))

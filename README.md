@@ -40,13 +40,22 @@ headlines match the story scenes on the home page.
 
 ## Site structure
 
-A top bar carries the main navigation (Start, Dossier, Verfahren, Mitmachen),
-the procedural status and a permanent donate button; on mobile a bottom bar
-keeps donating and sharing within reach. The home page tells the case as a
-story in scenes (`src/components/StoryScene.astro`). The background page is the
-complete dossier with a chapter bar and a short "Am I affected?" check whose
-answers restate the FAQ (`src/components/AffectedCheck.astro`). The footer
-closes every page with the campaign statement, two actions and the status.
+Four pages per language, with URLs that follow the navigation labels:
+
+| Page | German | English |
+| --- | --- | --- |
+| Start: the case told as a story in scenes | `/` | `/en/` |
+| Dossier: the complete reference, FAQ and sources | `/dossier/` | `/en/dossier/` |
+| Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
+| Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
+
+A top bar carries the navigation, the procedural status and a permanent donate
+button that leads to `#spenden` on the participation page; on mobile a bottom
+bar keeps donating and sharing within reach. `/spenden` and `/en/donate` are
+short redirects for print and QR codes. The home page scenes use
+`src/components/StoryScene.astro`; the dossier's "Am I affected?" check
+(`src/components/AffectedCheck.astro`) restates the FAQ. The footer closes every
+page with the campaign statement, two actions and the status.
 
 ## Development
 
@@ -60,22 +69,22 @@ pnpm dev
 
 ## Languages and campaign updates
 
-The active campaign concerns **Austria**. German pages keep their existing URLs;
-English equivalents live under `/en/`. `src/lib/i18n.ts` maps equivalent pages,
+The active campaign concerns **Austria**. English equivalents of the German
+pages live under `/en/`. `src/lib/i18n.ts` maps equivalent pages,
 navigation and feeds. Language selection does not change jurisdiction. Add a
 region selector only when another country has an actual campaign with its own
 content and procedural context. No browser-language redirects or preference
 storage are used.
 
 Keep both language versions in sync when changing public claims. Navigation,
-support and updates pages share components; long editorial pages remain explicit
-Astro documents. Source URLs are shared in `src/data/sources.ts`.
+the participation and proceedings pages share components; the home page and the
+dossier remain explicit Astro documents per language. Source URLs are shared in `src/data/sources.ts`.
 
 - Update `src/data/campaign.ts` when the procedural status changes.
 - Add confirmed public milestones to `src/data/updates.ts`, with a stable ID,
   publication timestamp including timezone, both translations and an optional
   source URL. Future-dated entries stay hidden until a build after that date.
-- `/aktuelles/` and `/en/updates/` render the updates; `/feed.xml` and
+- `/verfahren/` and `/en/proceedings/` render the updates; `/feed.xml` and
   `/en/feed.xml` expose RSS 2.0 feeds from the same data. Empty feeds are valid;
   do not create placeholder milestones or imply a filing has happened.
 - The newsletter link points to Bitcoin Austria's existing newsletter form.
@@ -102,4 +111,4 @@ up to three explicit lines; a build fails if a line exceeds the available space.
 Check edited cards at small preview sizes as well as full resolution.
 
 After `pnpm build`, run `pnpm test:seo` to check the generated HTML, language
-links, structured data, PNG files, sitemap and legacy redirects.
+links, structured data, PNG files, sitemap and short redirects.

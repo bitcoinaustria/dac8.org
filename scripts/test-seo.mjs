@@ -28,7 +28,7 @@ function collect(directory = "") {
   }
 }
 collect()
-assert.equal(pages.size, 14, "Expected seven pages in both languages")
+assert.equal(pages.size, 12, "Expected six pages in both languages")
 const titles = new Set()
 const descriptions = new Set()
 const imagePaths = new Set()
@@ -127,7 +127,7 @@ for (const [path, html] of pages) {
     assert.equal(site["@id"], page.isPartOf["@id"])
   }
 }
-assert.equal(imagePaths.size, 14, "Every page has a localized sharing image")
+assert.equal(imagePaths.size, 12, "Every page has a localized sharing image")
 const sitemap = read("sitemap-0.xml")
 const locations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(
   ([, url]) => url,
@@ -153,5 +153,5 @@ for (const line of read("_redirects").split("\n")) {
     )
 }
 console.log(
-  "Passed: 14 pages and sharing images, unique metadata, canonical URLs, reciprocal hreflang, JSON-LD, sitemap, robots and legacy redirects.",
+  "Passed: 12 pages and sharing images, unique metadata, canonical URLs, reciprocal hreflang, JSON-LD, sitemap, robots and short redirects.",
 )

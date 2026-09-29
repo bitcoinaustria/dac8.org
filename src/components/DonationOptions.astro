@@ -1,0 +1,108 @@
+---
+import CopyButton from "@/components/CopyButton.astro"
+import { btcpay } from "@/data/donation"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+const en = language === "en"
+
+const bankDetails = [
+  { label: en ? "Recipient" : "Empfänger", value: "Bitcoin Austria" },
+  {
+    label: "IBAN",
+    value: "AT94 2011 1857 7690 6800",
+    copy: "AT942011185776906800",
+  },
+  { label: "BIC", value: "GIBAATWWXXX" },
+  { label: en ? "Payment reference" : "Verwendungszweck", value: "DAC8" },
+]
+---
+
+<div class="donation-options">
+  <article
+    id="bitcoin"
+    class="donation-method"
+    data-copy-scope
+    aria-labelledby="bitcoin-heading"
+  >
+    <header class="donation-heading">
+      <h3 id="bitcoin-heading">{en ? "Bitcoin" : "Mit Bitcoin"}</h3>
+      <p>{en ? "Lightning or on-chain" : "Lightning oder On-Chain"}</p>
+    </header>
+    <div class="bitcoin-payment">
+      <p class="payment-description">
+        {en ? "Choose any amount." : "Betrag frei wählbar."}
+      </p>
+      <a
+        class="button primary donation-action"
+        href={btcpay}
+        target="_blank"
+        rel="noopener"
+      >
+        {en ? "Donate bitcoin" : "Mit Bitcoin spenden"}
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path
+            d="M14 4h6v6M20 4 10 14M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"
+          />
+        </svg>
+      </a>
+      <p class="payment-note">
+        {en ? "No name or email address required." : "Ohne Angabe von Namen oder E-Mail."}
+      </p>
+    </div>
+    <div class="payment-link">
+      <div>
+        <p class="detail-label">{en ? "Donation link" : "Spendenlink"}</p>
+        <span>pay.bitcoin-austria.at</span>
+      </div>
+      <CopyButton value={btcpay} label={en ? "donation link" : "Spendenlink"} />
+    </div>
+    <p
+      class="payment-status"
+      data-copy-status
+      role="status"
+      aria-atomic="true"
+    ></p>
+  </article>
+
+  <article
+    id="euro"
+    class="donation-method"
+    data-copy-scope
+    aria-labelledby="euro-heading"
+  >
+    <header class="donation-heading">
+      <h3 id="euro-heading">{en ? "Bank transfer" : "Per Überweisung"}</h3>
+      <p>{en ? "In euros" : "In Euro"}</p>
+    </header>
+    <dl class="bank-details">
+      {bankDetails.map((detail) => (
+          <div>
+            <dt>{detail.label}</dt>
+            <dd>
+              <span>{detail.value}</span>
+              <CopyButton value={detail.copy ?? detail.value} label={detail.label} />
+            </dd>
+          </div>
+        ))}
+    </dl>
+    <p
+      class="payment-status"
+      data-copy-status
+      role="status"
+      aria-atomic="true"
+    ></p>
+  </article>
+</div>

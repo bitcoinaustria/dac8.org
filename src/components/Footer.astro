@@ -3,10 +3,17 @@ import BitcoinAustriaLogo from "@/assets/bitcoin-austria-horizontal.svg"
 import ShareIcon from "@/assets/icons/share.svg"
 import { campaignStatus } from "@/data/campaign"
 
-import { campaign, feedFor, languageFor, pathFor } from "@/lib/i18n"
+import {
+  campaign,
+  donateFor,
+  feedFor,
+  languageFor,
+  pathFor,
+  shareKitFor,
+} from "@/lib/i18n"
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
-const background = pathFor("background", language)
+const background = pathFor("dossier", language)
 const sections = [
   {
     title: "Dossier",
@@ -33,18 +40,18 @@ const sections = [
   {
     title: en ? "Get involved" : "Mitmachen",
     links: [
-      { label: en ? "Donate" : "Spenden", href: pathFor("donate", language) },
+      { label: en ? "Donate" : "Spenden", href: donateFor(language) },
       {
         label: en ? "Share graphics" : "Grafiken zum Teilen",
-        href: `${pathFor("support", language)}#teilen`,
+        href: shareKitFor(language),
       },
       {
         label: en ? "For organisations" : "Für Organisationen",
-        href: `${pathFor("support", language)}#organisationen`,
+        href: `${pathFor("participate", language)}#organisationen`,
       },
       {
         label: en ? "The proceedings" : "Das Verfahren",
-        href: pathFor("updates", language),
+        href: pathFor("proceedings", language),
       },
       { label: en ? "RSS feed" : "RSS-Feed", href: feedFor(language) },
       {
@@ -80,10 +87,10 @@ const sections = [
       <span>{en ? "Let’s defend it." : "Verteidigen wir sie."}</span>
     </p>
     <div class="sign-off-actions">
-      <a class="button primary" href={pathFor("donate", language)}
+      <a class="button primary" href={donateFor(language)}
         >{en ? "Support the case" : "Prozess unterstützen"}</a
       >
-      <a class="button" href={pathFor("updates", language)}
+      <a class="button" href={pathFor("proceedings", language)}
         >{en ? "Follow the case" : "Verfahren verfolgen"}</a
       >
       <button class="text-link" type="button" data-share>
@@ -91,7 +98,7 @@ const sections = [
       </button>
     </div>
     <p class="share-status" data-share-status aria-live="polite"></p>
-    <a class="sign-off-status" href={pathFor("updates", language)}>
+    <a class="sign-off-status" href={pathFor("proceedings", language)}>
       <span class="status-dot" aria-hidden="true"></span>
       {en ? "Austria" : "Österreich"}
       · {campaignStatus[language].label}

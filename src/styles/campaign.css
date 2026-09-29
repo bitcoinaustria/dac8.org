@@ -1,6 +1,6 @@
 /* Gestaltungssystem der Kampagnenseiten.
 
-   Eine Datei für Start, Hintergrund, Handeln und Spenden. Einfach und
+   Eine Datei für Start, Dossier, Verfahren und Mitmachen. Einfach und
    textlich: große Überschriften, Fließtext in voller Größe, fette
    Einstiege, kurze Listen, wenige Flächen. Tabellarische Ziffern für
    Zahlen und Paragrafen, ein Rot als Signal, nicht als Dekor. */
@@ -1773,7 +1773,7 @@
   font-size: var(--step--1);
 }
 
-.campaign .share-downloads a {
+.campaign .share-grid .share-downloads a {
   display: inline-flex;
   align-items: center;
   min-block-size: 2.75rem;
@@ -1782,7 +1782,7 @@
   text-decoration: none;
 }
 
-.campaign .share-downloads a::before {
+.campaign .share-grid .share-downloads a::before {
   content: "↓ ";
   white-space: pre;
 }

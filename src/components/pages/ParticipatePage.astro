@@ -1,8 +1,10 @@
 ---
 import ShareIcon from "@/assets/icons/share.svg"
 import Artwork from "@/components/Artwork.astro"
+import DonationOptions from "@/components/DonationOptions.astro"
 import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
+import { btcpay } from "@/data/donation"
 import { shareFile, shareScenes } from "@/data/share"
 import { languageFor, pathFor } from "@/lib/i18n"
 const language = languageFor(Astro.url.pathname)
@@ -10,7 +12,16 @@ const en = language === "en"
 const other = en ? "de" : "en"
 ---
 
-<Layout>
+<Layout
+  sections={[
+    { id: "spenden", label: en ? "Donate" : "Spenden" },
+    { id: "teilen", label: en ? "Share" : "Teilen" },
+    {
+      id: "organisationen",
+      label: en ? "For organisations" : "Für Organisationen",
+    },
+  ]}
+>
   <MetaPage slot="head" />
   <article class="campaign">
     <header class="hero" data-share-scope>
@@ -27,8 +38,11 @@ const other = en ? "de" : "en"
         class="hero-actions"
         aria-label={en ? "Support the campaign" : "Kampagne unterstützen"}
       >
-        <a class="button primary" href={pathFor("donate", language)}
-          >{en ? "Support the case" : "Prozess unterstützen"}</a
+        <a class="button primary" href={btcpay} target="_blank" rel="noopener"
+          >{en ? "Donate bitcoin" : "Mit Bitcoin spenden"}</a
+        >
+        <a class="button" href="#euro"
+          >{en ? "Bank transfer" : "Per Überweisung"}</a
         >
         <button class="button" type="button" data-share>
           <ShareIcon />
@@ -42,11 +56,22 @@ const other = en ? "de" : "en"
           >{en ? "Taking part in the proceedings: " : "Beteiligung am Verfahren: "}</strong
         >
         {en ? "How individuals can take part has not yet been determined. We will publish the options and requirements as the case develops." : "Wie sich Privatpersonen am Verfahren beteiligen können, steht noch nicht fest. Wir veröffentlichen Möglichkeiten und Voraussetzungen, sobald sie konkret sind."}
-        <a href={pathFor("updates", language)}
+        <a href={pathFor("proceedings", language)}
           >{en ? "Follow the case" : "Verfahren verfolgen"}</a
         >
       </p>
     </header>
+    <section id="spenden" aria-labelledby="donate-heading">
+      <h2 id="donate-heading">{en ? "Donate" : "Spenden"}</h2>
+      <p class="section-intro">
+        {en ? "Legal proceedings cost money. Your donation goes directly to Bitcoin Austria, the association behind dac8.org." : "Der Rechtsweg kostet Geld. Deine Spende geht direkt an Bitcoin Austria, den Verein hinter dac8.org."}
+      </p>
+      <DonationOptions language={language} />
+      <p class="prose">
+        {en ? "Your donation primarily funds the case against indiscriminate collection of our financial data. Questions: " : "Mit deiner Spende finanzieren wir vor allem den Prozess gegen die anlasslose Erfassung unserer Finanzdaten. Fragen zur Spende: "}
+        <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>.
+      </p>
+    </section>
     <section id="teilen" aria-labelledby="share-heading">
       <h2 id="share-heading">
         {en ? "Share the campaign" : "Teile die Kampagne"}
@@ -79,18 +104,18 @@ const other = en ? "de" : "en"
       </ul>
       <a
         class="text-link"
-        href={`${pathFor("support", other)}#teilen`}
+        href={`${pathFor("participate", other)}#teilen`}
         lang={other}
       >
         {en ? "Die Grafiken auf Deutsch" : "The graphics in English"}
       </a>
     </section>
-    <section aria-labelledby="organisations-heading">
+    <section id="organisationen" aria-labelledby="organisations-heading">
       <h2 id="organisations-heading">
         {en ? "For organisations and experts" : "Für Organisationen und Fachleute"}
       </h2>
       <div class="cards">
-        <article id="organisationen">
+        <article>
           <h3>
             {en ? "Support as an organisation" : "Als Organisation unterstützen"}
           </h3>
