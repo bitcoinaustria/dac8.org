@@ -2,7 +2,9 @@ import type { Language } from "@/lib/i18n"
 
 // Ready-made social graphics from the artwork lab's share kit
 // (knowledge/share-kit/{de,en}/scene-*/{square,story}.png), exported as JPEG to
-// public/share/. The headlines match the scenes of the home page.
+// public/share/. They follow the home page story and the legal route. The
+// ranking scene is left out until its baked headline is re-exported as
+// "Sortierbar nach Vermögen. Gefährlich in falschen Händen."
 export const shareScenes: {
   id: string
   title: Record<Language, string>
@@ -37,13 +39,6 @@ export const shareScenes: {
     title: {
       de: "Ein Datenleck. Persönliche Folgen.",
       en: "A data leak. Personal consequences.",
-    },
-  },
-  {
-    id: "scene-06-risk",
-    title: {
-      de: "Nach Vermögen sortiert. Als Ziel markiert.",
-      en: "Ranked by wealth. Marked as a target.",
     },
   },
   {

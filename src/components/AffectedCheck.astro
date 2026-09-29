@@ -17,20 +17,20 @@ const options = en
         value: "provider",
         label: "Yes",
         answer:
-          "Then your provider prepares your data for DAC8, even if you are not ultimately reported. The report contains your identity and annual aggregates, not wallet addresses or individual payments.",
+          "Then your data falls under DAC8. The report contains your identity and annual aggregates, not wallet addresses or individual payments. Providers with Austrian reporting obligations must prepare data on all customers, even those who are not ultimately reported.",
         link: { href: reported, label: "What is reported" },
       },
       {
         value: "self",
         label: "No, only my own wallet",
         answer:
-          "DAC8 does not report people who exclusively hold bitcoin in self-custody and do not use such a provider. If you buy from a provider and transfer to your own wallet, the provider generally reports the value and units of that transfer, not the address.",
+          "DAC8 does not report people who exclusively hold bitcoin in self-custody and do not use such a provider. If you buy from a provider and transfer to your own wallet, the annual report generally includes the total value and units of such transfers, without the address. The provider may still keep the address on file.",
       },
       {
         value: "unsure",
         label: "Not sure",
         answer:
-          "What matters is whether a crypto-asset provider subject to Austrian reporting obligations is involved, such as an exchange or broker based in Austria. If in doubt, ask your provider.",
+          "What matters is whether a crypto-asset provider is involved, such as an exchange or broker. If in doubt, ask your provider whether it reports under DAC8.",
       },
     ]
   : [
@@ -38,20 +38,20 @@ const options = en
         value: "provider",
         label: "Ja",
         answer:
-          "Dann bereitet dein Anbieter deine Daten für DAC8 auf, auch wenn du am Ende nicht gemeldet wirst. Gemeldet werden Identität und Jahreswerte, keine Wallet-Adressen und keine einzelnen Zahlungen.",
+          "Dann fallen deine Daten unter DAC8. Gemeldet werden Identität und Jahreswerte, keine Wallet-Adressen und keine einzelnen Zahlungen. Anbieter mit Meldepflicht in Österreich müssen die Daten aller Kunden aufbereiten, auch wenn du am Ende nicht gemeldet wirst.",
         link: { href: reported, label: "Was gemeldet wird" },
       },
       {
         value: "self",
         label: "Nein, nur eigene Wallet",
         answer:
-          "Wer Bitcoin ausschließlich selbst verwahrt und keinen solchen Anbieter nutzt, wird durch DAC8 nicht gemeldet. Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, meldet dieser in der Regel Wert und Stückzahl der Übertragung, nicht die Adresse.",
+          "Wer Bitcoin ausschließlich selbst verwahrt und keinen solchen Anbieter nutzt, wird durch DAC8 nicht gemeldet. Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, fließen Wert und Stückzahl solcher Übertragungen in der Regel als Jahreswerte in die Meldung ein, ohne Adresse. Die Adresse kann beim Anbieter gespeichert bleiben.",
       },
       {
         value: "unsure",
         label: "Weiß ich nicht",
         answer:
-          "Entscheidend ist, ob ein Krypto-Anbieter beteiligt ist, der in Österreich meldepflichtig ist, etwa eine Börse oder ein Broker mit Sitz in Österreich. Frag im Zweifel bei deinem Anbieter nach.",
+          "Entscheidend ist, ob ein Krypto-Anbieter beteiligt ist, etwa eine Börse oder ein Broker. Frag im Zweifel bei deinem Anbieter nach, ob er nach DAC8 meldet.",
       },
     ]
 ---
@@ -62,7 +62,7 @@ const options = en
       <span class="check-title"
         >{en ? "Am I affected?" : "Bin ich betroffen?"}</span
       >
-      {en ? "Do you use an exchange or broker with reporting obligations in Austria?" : "Nutzt du eine Börse oder einen Broker mit Meldepflicht in Österreich?"}
+      {en ? "Do you use an exchange, broker or other crypto-asset provider?" : "Nutzt du eine Börse, einen Broker oder einen anderen Krypto-Anbieter?"}
     </legend>
     <div class="check-options">
       {options.map((option) => (

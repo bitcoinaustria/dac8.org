@@ -84,13 +84,13 @@ export const artwork = {
   reportAssets: {
     image: { de: reportAssets, en: reportAssetsEn },
     de: {
-      alt: "Illustration: Musterblatt einer Jahresmeldung 2026 für Max Mustermann mit Name, Anschrift, Steuerwohnsitz, maskierter Steuernummer, Geburtsdatum und Angaben zum meldenden Anbieter. Daneben je ein Blatt für Bitcoin, Ether und Litecoin mit Gesamtwert, Stückzahl und Anzahl je Vorgangsart.",
+      alt: "Illustration: Musterblatt einer Jahresmeldung 2026 für Max Mustermann mit Name, Anschrift, Steuerwohnsitz, maskierter Steuernummer, Geburtsdatum und Angaben zum meldenden Anbieter. Daneben je ein Blatt für Bitcoin, Ether und Litecoin mit Gesamtwert, Stückzahl und meist der Anzahl je Vorgangsart.",
       title: "Musterblatt der Jahresmeldung",
       caption:
         "Für eine natürliche Person, kein amtliches Formular. Ohne Wallet-Adressen, einzelne Transaktionen oder Kontostand.",
     },
     en: {
-      alt: "Illustration: specimen of a 2026 annual report on Max Mustermann with name, address, residence, masked tax number, date of birth and the reporting provider’s details. Beside it, one sheet each for Bitcoin, Ether and Litecoin with total value, units and count per transaction category.",
+      alt: "Illustration: specimen of a 2026 annual report on Max Mustermann with name, address, tax residence, masked tax identification number, date of birth and the reporting provider’s details. Beside it, one sheet each for Bitcoin, Ether and Litecoin with total value, units and, for most categories, the count per transaction category.",
       title: "Specimen of the annual report",
       caption:
         "For a natural person, not an official form. No wallet addresses, individual transactions or balance.",
@@ -112,9 +112,11 @@ export const artwork = {
     image: { de: dataHack, en: dataHackEn },
     de: {
       alt: "Illustration: Aus einem gesprungenen Glasarchiv mit der Aufschrift Personendaten führt ein roter Pfeil zu einem Blatt „Datenleck, offengelegt“ mit Name, Wiener Anschrift, 7,2 BTC und Familienstand von Max Mustermann.",
+      caption: "Verknüpfte Anbieterdaten, keine Felder der DAC8-Meldung.",
     },
     en: {
       alt: "Illustration: a red arrow leads from a cracked glass archive labelled personal data to a sheet marked data leak, exposed, with Max Mustermann’s name, Vienna address, 7.2 BTC and family status.",
+      caption: "Linked provider records, not fields of the DAC8 report.",
     },
   },
   rankedPortrait: {
@@ -131,14 +133,14 @@ export const artwork = {
   collectionChallenge: {
     image: { de: collectionChallenge, en: collectionChallengeEn },
     de: {
-      alt: "Illustration: Eine Lupe liegt auf der Akte von Max Mustermann in einer Kartei mit der Aufschrift Datensammlung. Daneben ein unterschriebenes Blatt „Beschwerde“ gegen die anlasslose Erfassung der Jahreswerte.",
+      alt: "Illustration: Eine Lupe liegt auf der Akte von Max Mustermann in einer Kartei mit der Aufschrift Datensammlung. Daneben ein Blatt „Beschwerde“ gegen die anlasslose Erfassung der Jahreswerte.",
       caption:
-        "Die Beschwerde richtet sich gegen die anlasslose Erfassung. Über das Ergebnis entscheiden Behörde und Gerichte.",
+        "Die geplante Beschwerde richtet sich gegen die anlasslose Erfassung. Über das Ergebnis entscheiden Behörde und Gerichte.",
     },
     en: {
-      alt: "Illustration: a magnifying glass rests on Max Mustermann’s file in a card index labelled data collection. Beside it, a signed complaint against the blanket collection of annual totals.",
+      alt: "Illustration: a magnifying glass rests on Max Mustermann’s file in a card index labelled data collection. Beside it, a complaint against the blanket collection of annual totals.",
       caption:
-        "The complaint targets the blanket collection. The authority and the courts decide the outcome.",
+        "The planned complaint targets the blanket collection. The authority and the courts decide the outcome.",
     },
   },
   collectiveDefense: {

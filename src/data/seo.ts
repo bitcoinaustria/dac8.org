@@ -41,7 +41,7 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       title: "Die Kampagne gegen DAC8 unterstützen",
       description:
         "Hilf mit, finanzielle Privatsphäre zu verteidigen: Spende mit Bitcoin oder Euro für das Verfahren, teile die Kampagne oder unterstütze als Organisation.",
-      imageLines: ["Gemeinsam", "Privatsphäre", "verteidigen."],
+      imageLines: ["Hilf mit,", "Privatsphäre zu", "verteidigen."],
     },
     en: {
       title: "Support the campaign against DAC8",
@@ -55,13 +55,13 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       title: "DAC8-Verfahren: Aktuelles und nächste Schritte",
       description:
         "Der aktuelle Stand des von Bitcoin Austria vorbereiteten DAC8-Verfahrens in Österreich. Neuigkeiten und nächste Schritte, auch per RSS.",
-      imageLines: ["Das Verfahren", "gegen DAC8."],
+      imageLines: ["Das Verfahren", "gegen DAC8.", "In Vorbereitung."],
     },
     en: {
       title: "DAC8 legal challenge: updates and next steps",
       description:
         "Follow Bitcoin Austria’s legal challenge to DAC8 in Austria: the current status, campaign updates and next steps. Also available via RSS.",
-      imageLines: ["The case", "against DAC8."],
+      imageLines: ["The case", "against DAC8.", "In preparation."],
     },
   },
   legal: {
