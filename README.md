@@ -106,8 +106,11 @@ entries. URLs always use the production origin from `astro.config.ts`.
 
 The build renders a 1200 × 630 PNG for each page and language under
 `/og/{de|en}/{page}.png`. The renderer uses Sharp and the bundled IBM Plex Sans
-font (SIL Open Font License), with no remote rendering service. Headlines have
-up to three explicit lines; a build fails if a line exceeds the available space.
+font (SIL Open Font License), with no remote rendering service. The four main
+pages show their lead illustration on the right, mapped in
+`src/pages/og/[language]/[page].png.ts`; the legal pages stay text-only.
+Headlines have up to three explicit lines; a build fails if a line exceeds the
+available space, which is narrower beside an illustration.
 Check edited cards at small preview sizes as well as full resolution.
 
 After `pnpm build`, run `pnpm test:seo` to check the generated HTML, language

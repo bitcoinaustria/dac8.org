@@ -13,21 +13,13 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       title: "Gegen DAC8. Für finanzielle Privatsphäre",
       description:
         "Finanzielle Privatsphäre ist ein Grundrecht. Bitcoin Austria bereitet ein Verfahren gegen die anlasslose Erfassung von Krypto-Finanzdaten unter DAC8 vor.",
-      imageLines: [
-        "Finanzielle Privatsphäre",
-        "ist ein Grundrecht.",
-        "Verteidigen wir sie.",
-      ],
+      imageLines: ["Finanzielle", "Privatsphäre.", "Verteidigen wir sie."],
     },
     en: {
       title: "Against DAC8. For financial privacy",
       description:
         "Financial privacy is a fundamental right. Bitcoin Austria is preparing a legal challenge to indiscriminate financial data collection under DAC8.",
-      imageLines: [
-        "Financial privacy",
-        "is a fundamental right.",
-        "Let’s defend it.",
-      ],
+      imageLines: ["Financial privacy.", "Let’s defend it."],
     },
   },
   dossier: {
@@ -49,7 +41,7 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       title: "Die Kampagne gegen DAC8 unterstützen",
       description:
         "Hilf mit, finanzielle Privatsphäre zu verteidigen: Spende mit Bitcoin oder Euro für das Verfahren, teile die Kampagne oder unterstütze als Organisation.",
-      imageLines: ["Finanzielle Privatsphäre", "braucht Unterstützung."],
+      imageLines: ["Gemeinsam", "Privatsphäre", "verteidigen."],
     },
     en: {
       title: "Support the campaign against DAC8",
@@ -63,13 +55,13 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       title: "DAC8-Verfahren: Aktuelles und nächste Schritte",
       description:
         "Der aktuelle Stand des von Bitcoin Austria vorbereiteten DAC8-Verfahrens in Österreich. Neuigkeiten und nächste Schritte, auch per RSS.",
-      imageLines: ["Das Verfahren", "gegen DAC8.", "Aktuelles und Ausblick."],
+      imageLines: ["Das Verfahren", "gegen DAC8."],
     },
     en: {
       title: "DAC8 legal challenge: updates and next steps",
       description:
         "Follow Bitcoin Austria’s legal challenge to DAC8 in Austria: the current status, campaign updates and next steps. Also available via RSS.",
-      imageLines: ["The case against DAC8.", "Updates and next steps."],
+      imageLines: ["The case", "against DAC8."],
     },
   },
   legal: {
