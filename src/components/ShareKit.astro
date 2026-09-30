@@ -1,4 +1,14 @@
 ---
+import CheckIcon from "@/assets/icons/check.svg"
+import PrevIcon from "@/assets/icons/chevron-left.svg"
+import NextIcon from "@/assets/icons/chevron-right.svg"
+import CloseIcon from "@/assets/icons/close.svg"
+import CopyIcon from "@/assets/icons/copy.svg"
+import DownloadIcon from "@/assets/icons/download.svg"
+import ExternalIcon from "@/assets/icons/external.svg"
+import SquareIcon from "@/assets/icons/format-square.svg"
+import StoryIcon from "@/assets/icons/format-story.svg"
+import ShareIcon from "@/assets/icons/share.svg"
 import { shareFile, shareScenes } from "@/data/share"
 import type { Language } from "@/lib/i18n"
 
@@ -11,30 +21,55 @@ const en = language === "en"
 const fileName = (id: string, format: string) =>
   `dac8-${id}-${language}-${format}.jpg`
 const formats = [
-  { id: "story", label: "Story", width: 1080, height: 1920 },
-  { id: "square", label: en ? "Square" : "Quadrat", width: 1080, height: 1080 },
+  { id: "story", label: "Story", width: 1080, height: 1920, Icon: StoryIcon },
+  {
+    id: "square",
+    label: en ? "Square" : "Quadrat",
+    width: 1080,
+    height: 1080,
+    Icon: SquareIcon,
+  },
 ] as const
+const t = {
+  dialog: en ? "Share graphic" : "Grafik zum Teilen",
+  format: en ? "Format" : "Format",
+  download: en ? "Download" : "Herunterladen",
+  copy: en ? "Copy image" : "Bild kopieren",
+  share: en ? "Share" : "Teilen",
+  tab: en ? "Open in new tab" : "In neuem Tab öffnen",
+  close: en ? "Close" : "Schließen",
+  prev: en ? "Previous graphic" : "Vorherige Grafik",
+  next: en ? "Next graphic" : "Nächste Grafik",
+  copied: en
+    ? "Image copied. Paste it wherever you want to post it."
+    : "Bild kopiert. Füge es ein, wo du es posten willst.",
+  failed: en
+    ? "Copying does not work in this browser. Please download the image."
+    : "Kopieren geht in diesem Browser nicht. Lade das Bild bitte herunter.",
+}
 ---
 
 <!--
   The previews are the full-size files, so "Copy image" from the context menu
   copies what gets posted. Without JavaScript a click opens the file in the
-  browser; with it, a dialog offers download, copy and (on phones) sharing.
+  browser; with it, a full-screen lightbox pages through all scenes and offers
+  download, copy and (on phones) sharing.
 -->
 <ul class="share-kit" data-share-kit>
   {shareScenes.map((scene) => (
-    <li>
+    <li
+      data-title={scene.title[language]}
+      data-story={shareFile(language, scene.id, "story")}
+      data-square={shareFile(language, scene.id, "square")}
+      data-story-file={fileName(scene.id, "story")}
+      data-square-file={fileName(scene.id, "square")}
+    >
       <div class="share-formats">
         {formats.map((format) => (
           <figure class={`share-${format.id}`}>
             <a
               href={shareFile(language, scene.id, format.id)}
               data-share-open={format.id}
-              data-title={scene.title[language]}
-              data-story={shareFile(language, scene.id, "story")}
-              data-square={shareFile(language, scene.id, "square")}
-              data-story-file={fileName(scene.id, "story")}
-              data-square-file={fileName(scene.id, "square")}
             >
               <img
                 src={shareFile(language, scene.id, format.id)}
@@ -50,6 +85,7 @@ const formats = [
                 href={shareFile(language, scene.id, format.id)}
                 download={fileName(scene.id, format.id)}
               >
+                <DownloadIcon />
                 {format.label}
               </a>
             </figcaption>
@@ -61,81 +97,116 @@ const formats = [
   ))}
 </ul>
 
-<dialog
-  class="share-preview"
-  data-share-preview
-  aria-labelledby="share-preview-title"
->
-  <div class="share-preview-bar">
-    <h3 id="share-preview-title" data-preview-title></h3>
-    <div
-      class="share-preview-formats"
-      role="group"
-      aria-label={en ? "Format" : "Format"}
-    >
-      {formats.map((format) => (
-        <button type="button" data-preview-format={format.id} aria-pressed="false">
-          {format.label}
-        </button>
-      ))}
+<dialog class="lightbox" data-lightbox aria-label={t.dialog}>
+  <div class="lightbox-bar">
+    <p class="lightbox-title">
+      <span data-lb-count></span>
+      <strong data-lb-title></strong>
+    </p>
+    <div class="lightbox-tools">
+      <div class="lightbox-formats" role="group" aria-label={t.format}>
+        {formats.map(({ id, label, Icon }) => (
+          <button
+            type="button"
+            data-lb-format={id}
+            aria-pressed="false"
+            aria-label={label}
+            title={label}
+          >
+            <Icon />
+          </button>
+        ))}
+      </div>
+      <a data-lb-download download aria-label={t.download} title={t.download}>
+        <DownloadIcon />
+      </a>
+      <button
+        type="button"
+        data-lb-copy
+        hidden
+        aria-label={t.copy}
+        title={t.copy}
+      >
+        <CopyIcon />
+        <CheckIcon />
+      </button>
+      <button
+        type="button"
+        data-lb-share
+        hidden
+        aria-label={t.share}
+        title={t.share}
+      >
+        <ShareIcon />
+      </button>
+      <a
+        data-lb-tab
+        target="_blank"
+        rel="noopener"
+        aria-label={t.tab}
+        title={t.tab}
+      >
+        <ExternalIcon />
+      </a>
+      <button type="button" data-lb-close aria-label={t.close} title={t.close}>
+        <CloseIcon />
+      </button>
     </div>
-    <button class="share-preview-close" type="button" data-preview-close>
-      {en ? "Close" : "Schließen"}
-    </button>
   </div>
-  <div class="share-preview-image">
-    <img data-preview-image alt="">
-  </div>
-  <div class="share-preview-actions">
-    <a class="button primary" data-preview-download download>
-      {en ? "Download" : "Herunterladen"}
-    </a>
-    <button class="button" type="button" data-preview-copy hidden>
-      {en ? "Copy image" : "Bild kopieren"}
+  <div class="lightbox-stage" data-lb-stage>
+    <button
+      class="lightbox-nav"
+      type="button"
+      data-lb-step="-1"
+      aria-label={t.prev}
+      title={t.prev}
+    >
+      <PrevIcon />
     </button>
-    <button class="button" type="button" data-preview-share hidden>
-      {en ? "Share" : "Teilen"}
+    <img data-lb-image alt="">
+    <button
+      class="lightbox-nav"
+      type="button"
+      data-lb-step="1"
+      aria-label={t.next}
+      title={t.next}
+    >
+      <NextIcon />
     </button>
-    <a class="text-link" data-preview-tab target="_blank" rel="noopener">
-      {en ? "Open in new tab" : "In neuem Tab öffnen"}
-    </a>
   </div>
   <p
-    class="share-status"
-    data-preview-status
+    class="lightbox-status"
+    data-lb-status
     aria-live="polite"
-    data-copied={en ? "Image copied. Paste it wherever you want to post it." : "Bild kopiert. Füge es ein, wo du es posten willst."}
-    data-failed={en ? "Copying does not work in this browser. Please download the image." : "Kopieren geht in diesem Browser nicht. Lade das Bild bitte herunter."}
+    data-copied={t.copied}
+    data-failed={t.failed}
   ></p>
 </dialog>
 
 <script>
   type Format = "story" | "square"
 
-  const dialog = document.querySelector<HTMLDialogElement>(
-    "[data-share-preview]",
-  )
+  const dialog = document.querySelector<HTMLDialogElement>("[data-lightbox]")
   const kit = document.querySelector<HTMLElement>("[data-share-kit]")
 
   if (dialog && kit && typeof dialog.showModal === "function") {
-    const title = dialog.querySelector<HTMLElement>("[data-preview-title]")!
-    const image = dialog.querySelector<HTMLImageElement>(
-      "[data-preview-image]",
-    )!
-    const download = dialog.querySelector<HTMLAnchorElement>(
-      "[data-preview-download]",
-    )!
-    const tab = dialog.querySelector<HTMLAnchorElement>("[data-preview-tab]")!
-    const copy = dialog.querySelector<HTMLButtonElement>("[data-preview-copy]")!
-    const share = dialog.querySelector<HTMLButtonElement>(
-      "[data-preview-share]",
-    )!
-    const status = dialog.querySelector<HTMLElement>("[data-preview-status]")!
-    const formatButtons = dialog.querySelectorAll<HTMLButtonElement>(
-      "[data-preview-format]",
-    )
-    let source: HTMLAnchorElement | undefined
+    const $ = <T extends Element>(selector: string) =>
+      dialog.querySelector<T>(selector)!
+    const scenes = [...kit.querySelectorAll<HTMLElement>(":scope > li")]
+    const image = $<HTMLImageElement>("[data-lb-image]")
+    const title = $<HTMLElement>("[data-lb-title]")
+    const count = $<HTMLElement>("[data-lb-count]")
+    const download = $<HTMLAnchorElement>("[data-lb-download]")
+    const tab = $<HTMLAnchorElement>("[data-lb-tab]")
+    const copy = $<HTMLButtonElement>("[data-lb-copy]")
+    const share = $<HTMLButtonElement>("[data-lb-share]")
+    const status = $<HTMLElement>("[data-lb-status]")
+    const formatButtons =
+      dialog.querySelectorAll<HTMLButtonElement>("[data-lb-format]")
+    let index = 0
+    let format: Format = "story"
     let file: Promise<File> | undefined
+    let statusTimer: number | undefined
 
     // Browsers only accept PNG on the clipboard, so the JPEG is redrawn.
     const canCopy =
@@ -152,29 +223,51 @@ const formats = [
     copy.hidden = !canCopy
     share.hidden = !canShareFiles
 
-    const fetchFile = (url: string, name: string) =>
-      fetch(url)
-        .then((response) => response.blob())
-        .then((blob) => new File([blob], name, { type: "image/jpeg" }))
+    const say = (text: string) => {
+      status.textContent = text
+      status.dataset.visible = ""
+      window.clearTimeout(statusTimer)
+      statusTimer = window.setTimeout(() => {
+        delete status.dataset.visible
+        delete copy.dataset.done
+      }, 2600)
+    }
 
-    const show = (format: Format) => {
-      if (!source) return
-      const url = source.dataset[format]!
-      const name = source.dataset[`${format}File`]!
+    const show = () => {
+      const scene = scenes[index].dataset
+      const url = scene[format]!
+      const name = scene[`${format}File`]!
       image.src = url
-      image.alt = source.dataset.title ?? ""
+      image.alt = scene.title ?? ""
+      image.dataset.format = format
+      title.textContent = scene.title ?? ""
+      count.textContent = `${index + 1} / ${scenes.length}`
       download.href = url
       download.download = name
       tab.href = url
-      status.textContent = ""
+      delete copy.dataset.done
       // Fetched ahead so sharing still counts as part of the tap.
-      file = canShareFiles ? fetchFile(url, name) : undefined
+      file = canShareFiles
+        ? fetch(url)
+            .then((response) => response.blob())
+            .then((blob) => new File([blob], name, { type: "image/jpeg" }))
+        : undefined
       for (const button of formatButtons) {
         button.setAttribute(
           "aria-pressed",
-          String(button.dataset.previewFormat === format),
+          String(button.dataset.lbFormat === format),
         )
       }
+      // Warm the neighbours so paging feels instant.
+      for (const step of [-1, 1]) {
+        const next = scenes[(index + step + scenes.length) % scenes.length]
+        new Image().src = next.dataset[format]!
+      }
+    }
+
+    const step = (by: number) => {
+      index = (index + by + scenes.length) % scenes.length
+      show()
     }
 
     kit.addEventListener("click", (event) => {
@@ -183,30 +276,57 @@ const formats = [
       )
       if (!link || event.metaKey || event.ctrlKey || event.shiftKey) return
       event.preventDefault()
-      source = link
-      title.textContent = link.dataset.title ?? ""
-      show(link.dataset.shareOpen as Format)
+      index = scenes.indexOf(link.closest("li")!)
+      format = link.dataset.shareOpen as Format
+      show()
       dialog.showModal()
     })
 
     for (const button of formatButtons) {
+      button.addEventListener("click", () => {
+        format = button.dataset.lbFormat as Format
+        show()
+      })
+    }
+    for (const button of dialog.querySelectorAll<HTMLButtonElement>(
+      "[data-lb-step]",
+    )) {
       button.addEventListener("click", () =>
-        show(button.dataset.previewFormat as Format),
+        step(Number(button.dataset.lbStep)),
       )
     }
+    $("[data-lb-close]").addEventListener("click", () => dialog.close())
 
-    dialog
-      .querySelector("[data-preview-close]")!
-      .addEventListener("click", () => dialog.close())
-    // A click on the backdrop closes the preview.
+    dialog.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") step(-1)
+      else if (event.key === "ArrowRight") step(1)
+    })
+    // A click next to the image closes the lightbox.
     dialog.addEventListener("click", (event) => {
-      if (event.target === dialog) dialog.close()
+      const target = event.target as Element
+      if (target === dialog || target.matches("[data-lb-stage]")) dialog.close()
+    })
+    // Swipe sideways to page on touch screens.
+    let touchX: number | undefined
+    const stage = $<HTMLElement>("[data-lb-stage]")
+    stage.addEventListener(
+      "touchstart",
+      (event) => {
+        touchX = event.touches[0].clientX
+      },
+      { passive: true },
+    )
+    stage.addEventListener("touchend", (event) => {
+      if (touchX === undefined) return
+      const dx = event.changedTouches[0].clientX - touchX
+      touchX = undefined
+      if (Math.abs(dx) > 48) step(dx < 0 ? 1 : -1)
     })
 
     copy.addEventListener("click", async () => {
       const png = new Promise<Blob>((resolve, reject) => {
-        const canvas = document.createElement("canvas")
-        const done = () => {
+        const draw = () => {
+          const canvas = document.createElement("canvas")
           canvas.width = image.naturalWidth
           canvas.height = image.naturalHeight
           canvas.getContext("2d")!.drawImage(image, 0, 0)
@@ -215,17 +335,18 @@ const formats = [
             "image/png",
           )
         }
-        if (image.complete) done()
-        else image.addEventListener("load", done, { once: true })
+        if (image.complete) draw()
+        else image.addEventListener("load", draw, { once: true })
       })
       try {
         // Safari needs the ClipboardItem within the click, with a promise.
         await navigator.clipboard.write([
           new ClipboardItem({ "image/png": png }),
         ])
-        status.textContent = status.dataset.copied ?? ""
+        copy.dataset.done = ""
+        say(status.dataset.copied ?? "")
       } catch {
-        status.textContent = status.dataset.failed ?? ""
+        say(status.dataset.failed ?? "")
       }
     })
 

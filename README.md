@@ -53,8 +53,9 @@ the home page scene) and its "Im Bild" `note` into the free space
 them under the same `/share/` URLs. It fails if the text leaves too little
 room for the picture. `src/components/ShareKit.astro` shows both formats per
 scene at full size, so "Copy image" in the context menu copies the real file;
-a click opens a preview with download, copy and, where the browser can share
-files, sharing.
+a click opens a full-screen lightbox that pages through all scenes (arrows,
+arrow keys, swipe), switches format and offers download, copy and, where the
+browser can share files, sharing as icon buttons.
 
 ## Site structure
 
