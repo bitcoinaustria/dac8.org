@@ -77,13 +77,13 @@ export const artwork = {
       alt: "Illustration: Musterblatt einer Jahresmeldung 2026 für Max Mustermann mit Name, Anschrift, Steuerwohnsitz, maskierter Steuernummer, Geburtsdatum und Angaben zum meldenden Anbieter. Daneben je ein Blatt für Bitcoin, Ether und Litecoin mit Gesamtwert, Stückzahl und meist der Anzahl je Vorgangsart.",
       title: "Musterblatt der Jahresmeldung",
       caption:
-        "Für eine natürliche Person, kein amtliches Formular. Ohne Wallet-Adressen, einzelne Transaktionen oder Kontostand.",
+        "Für eine natürliche Person, kein amtliches Formular. Wallet-Adressen und einzelne Transaktionen bleiben beim Anbieter.",
     },
     en: {
       alt: "Illustration: specimen of a 2026 annual report on Max Mustermann with name, address, tax residence, masked tax identification number, date of birth and the reporting provider’s details. Beside it, one sheet each for Bitcoin, Ether and Litecoin with total value, units and, for most categories, the count per transaction category.",
       title: "Specimen of the annual report",
       caption:
-        "For a natural person, not an official form. No wallet addresses, individual transactions or balance.",
+        "For a natural person, not an official form. Wallet addresses and individual transactions stay with the provider.",
     },
   },
   yearsOnFile: {
@@ -91,33 +91,36 @@ export const artwork = {
     de: {
       alt: "Illustration: Drei Stapel mit Jahresakten von Max Mustermann, beschriftet 2026 (1. Jahr), 2030 (5. Jahr) und 2035 (10. Jahr), werden von links nach rechts höher.",
       caption:
-        "Illustration wachsender Jahresmeldungen, kein zentrales Register.",
+        "Jedes Jahr kommt eine Meldung dazu. Beim Anbieter bleibt jede zehn Jahre.",
     },
     en: {
       alt: "Illustration: three stacks of annual files on Max Mustermann, labelled 2026 (year 1), 2030 (year 5) and 2035 (year 10), grow taller from left to right.",
-      caption: "Accumulating annual reports, not a central register.",
+      caption:
+        "A new report is added every year. The provider keeps each one for ten years.",
     },
   },
   dataHack: {
     image: { de: dataHack, en: dataHackEn },
     de: {
       alt: "Illustration: Aus einem gesprungenen Glasarchiv mit der Aufschrift Personendaten führt ein roter Pfeil zu einem Blatt „Datenleck, offengelegt“ mit Name, Wiener Anschrift, 7,2 BTC und Familienstand von Max Mustermann.",
-      caption: "Verknüpfte Anbieterdaten, keine Felder der DAC8-Meldung.",
+      caption:
+        "Was ein Leck beim Anbieter offenlegen kann: verknüpfte Daten, die weit über die Meldung hinausgehen.",
     },
     en: {
       alt: "Illustration: a red arrow leads from a cracked glass archive labelled personal data to a sheet marked data leak, exposed, with Max Mustermann’s name, Vienna address, 7.2 BTC and family status.",
-      caption: "Linked provider records, not fields of the DAC8 report.",
+      caption:
+        "What a provider breach can expose: linked data that goes far beyond the report.",
     },
   },
   rankedPortrait: {
     image: { de: rankedPortrait, en: rankedPortraitEn },
     de: {
       alt: "Illustration: Ein Schraubenschlüssel neben einer Zielliste für Wien mit verknüpften Vermögensdaten. Rot markiert ist Platz 07, Max Mustermann mit 7,2 BTC; darunter Anschrift, Familienstand und ein Porträtfoto.",
-      caption: "Verknüpfte und geleakte Daten, keine Felder der DAC8-Meldung.",
+      caption: "Eine Zielliste aus verknüpften, geleakten Daten.",
     },
     en: {
       alt: "Illustration: a wrench beside a target list for Vienna with linked wealth data. Number 07, Max Mustermann with 7.2 BTC, is highlighted in red, with his address, family status and a portrait photo below.",
-      caption: "Linked and leaked data, not fields of the DAC8 report.",
+      caption: "A target list built from linked, leaked data.",
     },
   },
   collectionChallenge: {
@@ -148,13 +151,13 @@ export const artwork = {
       alt: "Illustration: Eine Identitätskarte von Max Mustermann ist mit roten Leitungen verbunden mit einem Bankkonto über 12.400 Euro, einer Wallet A mit 4,1 BTC und einer Hardware-Wallet B mit 3,1 BTC.",
       title: "Verknüpfte Identität",
       caption:
-        "Nicht Teil der Jahresmeldung, beim Anbieter aber möglich: Name, Bankkonto und Wallets bleiben miteinander verknüpft.",
+        "Was beim Anbieter zusammenläuft: dein Name, dein Bankkonto und deine Wallet-Adressen.",
     },
     en: {
       alt: "Illustration: an identity card for Max Mustermann is connected by red lines to a bank account holding 12,400 euros, wallet A with 4.1 BTC and hardware wallet B with 3.1 BTC.",
       title: "Linked identity",
       caption:
-        "Not part of the annual report, but possible at the provider: your name, bank account and wallets remain linked.",
+        "What comes together at the provider: your name, your bank account and your wallet addresses.",
     },
   },
   retentionArchive: {
@@ -178,13 +181,13 @@ export const artwork = {
       alt: "Illustration: Ein Vermögensprofil von Max Mustermann, Musterstraße 7, 1010 Wien, mit zugerechneten Beständen von 7,2 BTC, 18 Unzen Gold und 64.000 Euro. Eine rote Karte führt ihn als Rang 07 einer Zielliste für Wien. Daneben ein offener Tresor mit Standortmarkierung.",
       title: "Das Vermögensprofil",
       caption:
-        "DAC8 ist kein Vermögensregister. Zusammen mit Kontenregister, Anbieteraufzeichnungen und Blockchain-Analyse kann aber ein Profil entstehen, nach dem sich Menschen sortieren lassen.",
+        "So kann es aussehen, wenn Jahresmeldungen mit Kontenregister, Anbieteraufzeichnungen und Blockchain-Analyse zusammenkommen: ein Profil, nach dem sich Menschen sortieren lassen.",
     },
     en: {
       alt: "Illustration: a wealth profile for Max Mustermann, Musterstraße 7, 1010 Vienna, with attributed holdings of 7.2 BTC, 18 ounces of gold and 64,000 euros. A red card lists him as number 07 on a target list for Vienna. Beside it, an open safe with a location marker.",
       title: "The wealth profile",
       caption:
-        "DAC8 is not a wealth register. Combined with account registries, provider records and blockchain analysis, however, it can produce a profile by which people can be ranked.",
+        "What it can look like when annual reports are combined with account registries, provider records and blockchain analysis: a profile by which people can be ranked.",
     },
   },
   spendingProfile: {
@@ -193,13 +196,13 @@ export const artwork = {
       alt: "Illustration: Ein Zahlungsprofil von Max Mustermann für einen Monat: 240 Euro für Gesundheit, 600 Euro für Familie und 120 Euro für Spenden, zusammen 960 Euro.",
       title: "Das Zahlungsprofil",
       caption:
-        "Nicht aus der Jahresmeldung, sondern aus verknüpften Zahlungen: Wer Adressen und Empfänger kennt, kann Ausgaben nach Lebensbereichen ordnen.",
+        "Aus verknüpften Zahlungen: Wer Adressen und Empfänger kennt, kann Ausgaben nach Lebensbereichen ordnen.",
     },
     en: {
       alt: "Illustration: a one-month spending profile for Max Mustermann: 240 euros on health, 600 euros on family and 120 euros on donations, 960 euros in total.",
       title: "The spending profile",
       caption:
-        "Not from the annual report, but from linked payments: anyone who knows the addresses and recipients can sort spending by area of life.",
+        "From linked payments: anyone who knows the addresses and recipients can sort spending by area of life.",
     },
   },
   wrenchAttack: {

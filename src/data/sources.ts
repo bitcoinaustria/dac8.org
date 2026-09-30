@@ -54,6 +54,20 @@ export const sourceGroups = [
         href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:32023L2226",
       },
       {
+        label:
+          "Verordnung (EU) 2023/1113 – Angaben zu Absender und Empfänger bei Krypto-Übertragungen",
+        labelEn:
+          "Regulation (EU) 2023/1113: originator and beneficiary information for crypto-asset transfers",
+        href: "https://eur-lex.europa.eu/eli/reg/2023/1113/oj",
+      },
+      {
+        label:
+          "Richtlinie (EU) 2024/1640, Art. 16 – Kontenregister und ihre EU-weite Vernetzung",
+        labelEn:
+          "Directive (EU) 2024/1640, Article 16: account registries and their EU-wide interconnection",
+        href: "https://eur-lex.europa.eu/eli/dir/2024/1640/oj",
+      },
+      {
         label: "MiCA, Art. 68 Abs. 9: Aufbewahrungsfristen",
         labelEn: "MiCA, Article 68(9): retention periods",
         href: "https://eur-lex.europa.eu/eli/reg/2023/1114/oj/eng",
@@ -137,14 +151,68 @@ export const sourceGroups = [
     ],
   },
   {
-    title: "Datenlecks und körperliche Angriffe",
-    titleEn: "Data breaches and physical attacks",
+    title: "Datenlecks, Angriffe und Betrug",
+    titleEn: "Data breaches, attacks and fraud",
     sources: [
+      {
+        label:
+          "Watchlist Internet – Phishing im Namen von FinanzOnline fragt nach Krypto-Beständen",
+        labelEn:
+          "Watchlist Internet: phishing in FinanzOnline’s name asks for crypto holdings",
+        href: "https://www.watchlist-internet.at/news/phishing-falle-finanzonline-krypto/",
+      },
+      {
+        label:
+          "Abramova und Böhme (Universität Innsbruck, 2023): Folgen des Ledger-Datenlecks für Betroffene",
+        labelEn:
+          "Abramova and Böhme (University of Innsbruck, 2023): the aftermath of the Ledger data breach",
+        href: "https://www.usenix.org/system/files/usenixsecurity23-abramova.pdf",
+      },
+      {
+        label: "Waltio – Sicherheitsvorfall beim Krypto-Steuerdienst",
+        labelEn: "Waltio: security incident at the crypto tax service",
+        href: "https://help.waltio.com/en/articles/13482134-questions-answers-security-incident",
+      },
+      {
+        label:
+          "Französische Finanzverwaltung – Zugriffe auf das Kontenregister FICOBA, Februar 2026",
+        labelEn:
+          "French tax administration: unauthorised access to the FICOBA account register, February 2026",
+        href: "https://www.impots.gouv.fr/actualite/acces-illegitimes-au-fichier-national-des-comptes-bancaires-ficoba",
+      },
+      {
+        label:
+          "Französisches Wirtschaftsministerium – Datendiebstahl aus dem Steuersystem, August 2026",
+        labelEn:
+          "French Economy Ministry: data theft from the tax system, August 2026",
+        href: "https://presse.economie.gouv.fr/acces-illegitime-au-systeme-dinformation-de-la-direction-generale-des-finances-publiques/",
+      },
+      {
+        label:
+          "Disziplinarkommission beim BMF – tausende private Abfragen im Steuersystem",
+        labelEn:
+          "Austrian Finance Ministry disciplinary board: thousands of private queries in the tax system",
+        href: "https://www.ris.bka.gv.at/Dokumente/Dok/DKT_BMF_20160930_01069_7_DK_14_01072_7_DK_15_00/DKT_BMF_20160930_01069_7_DK_14_01072_7_DK_15_00.html",
+      },
+      {
+        label:
+          "Französisches Innenministerium – Schutz privater Krypto-Besitzer",
+        labelEn:
+          "French Interior Ministry: protecting private crypto-asset holders",
+        href: "https://www.interieur.gouv.fr/actualites/actualites-du-ministere/crypto-actifs-proteger-particuliers",
+      },
       {
         label:
           "Gendarmerie nationale: Waltio-Datenleck und Auswahl von Angriffszielen",
         labelEn: "French Gendarmerie: the Waltio leak and target selection",
         href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2",
+      },
+      {
+        label:
+          "Coinbase, Form 8-K – Kundendaten von bestochenen Support-Mitarbeitern kopiert, Mai 2025",
+        labelEn:
+          "Coinbase, Form 8-K: customer data copied by bribed support staff, May 2025",
+        href: "https://www.sec.gov/Archives/edgar/data/1679788/000167978825000094/coin-20250514.htm",
       },
       {
         label:

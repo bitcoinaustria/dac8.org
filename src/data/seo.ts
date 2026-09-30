@@ -26,14 +26,14 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "DAC8 erklärt: Meldepflichten, Risiken und Rechtsweg",
       description:
-        "Was DAC8 in Österreich verlangt, welche Krypto-Daten gemeldet und gespeichert werden und warum wir dagegen vorgehen. Mit Primärquellen.",
-      imageLines: ["Was DAC8 verlangt.", "Und was nicht."],
+        "Was DAC8 in Österreich verlangt, welche Krypto-Daten Jahr für Jahr gemeldet werden, was sich beim Anbieter ansammelt und warum wir dagegen vorgehen. Mit Primärquellen.",
+      imageLines: ["Was DAC8 verlangt.", "Und was daraus wird."],
     },
     en: {
       title: "DAC8 explained: reporting, risks and legal challenge",
       description:
-        "What DAC8 requires in Austria, which crypto-asset data is reported and retained, and why we are challenging it. With primary sources.",
-      imageLines: ["What DAC8 requires.", "And what it doesn’t."],
+        "What DAC8 requires in Austria, which crypto-asset data is reported every year, what builds up at your provider and why we are challenging it. With primary sources.",
+      imageLines: ["What DAC8 requires.", "And where it leads."],
     },
   },
   participate: {
