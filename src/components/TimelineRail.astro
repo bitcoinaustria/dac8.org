@@ -38,7 +38,7 @@ const entries = historyFor(language).filter(
   /* Schmal scrollt nur die Schiene, nie die Seite. */
   .timeline-rail {
     contain: inline-size;
-    margin-block-start: var(--space-xl);
+    margin-block-start: calc(var(--space-xl) - var(--space-2xs));
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scrollbar-width: thin;
@@ -50,7 +50,8 @@ const entries = historyFor(language).filter(
     grid-auto-columns: minmax(5rem, 1fr);
     grid-auto-flow: column;
     margin: 0;
-    padding: 0 0 var(--space-2xs);
+    /* Oben Luft für den vergrößerten Token: die Scroll-Box schneidet sonst. */
+    padding: var(--space-2xs) 0;
     list-style: none;
   }
 
