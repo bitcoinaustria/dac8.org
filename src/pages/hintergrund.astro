@@ -1,5 +1,6 @@
 ---
 import ShareIcon from "@/assets/icons/share.svg"
+import Artwork from "@/components/Artwork.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
@@ -204,18 +205,25 @@ const faqs = [
           </ul>
         </div>
       </div>
-      <ul class="facts">
+      <h3>Wann was passiert</h3>
+      <ol class="timeline" aria-label="Zeitplan der ersten Meldung">
         <li>
-          <strong>Wann was passiert</strong>
-          <p>
-            Der erste Meldezeitraum ist das Jahr 2026. Der Anbieter meldet es
-            bis 31. Juli 2027 ans Finanzamt, Österreich tauscht die Daten bis
-            30. September 2027 mit anderen EU-Staaten aus.
-          </p>
+          <strong>2026</strong>
+          <span>Der erste Meldezeitraum</span>
         </li>
         <li>
-          <strong>Was beim Anbieter bleibt</strong>
-          <p>
+          <strong>bis 31. Juli 2027</strong>
+          <span>Der Anbieter meldet das Jahr 2026 ans Finanzamt.</span>
+        </li>
+        <li>
+          <strong>bis 30. September 2027</strong>
+          <span>Österreich tauscht die Daten mit anderen EU-Staaten aus.</span>
+        </li>
+      </ol>
+      <div class="art-split even">
+        <div>
+          <h3>Was beim Anbieter bleibt</h3>
+          <p class="prose">
             Dein Anbieter kann deinen Namen mit Wallet-Adressen und einzelnen
             Transaktionen verknüpfen. Diese Details gehören nicht zur jährlichen
             DAC8-Meldung, bleiben aber je nach Dienstleistung gespeichert.
@@ -228,8 +236,9 @@ const faqs = [
             Geschäftsbeziehung oder einer gelegentlichen Transaktion
             aufzubewahren.
           </p>
-        </li>
-      </ul>
+        </div>
+        <Artwork id="linkedIdentity" language="de" />
+      </div>
     </section>
 
     <section id="problem" aria-labelledby="problem-heading">
@@ -239,46 +248,61 @@ const faqs = [
         gespeichert. Das greift in dein Privatleben ein und setzt dich den
         Risiken von Fehlern, Datenlecks und Missbrauch aus.
       </p>
-      <ul class="facts">
+      <ul class="facts concerns">
         {concerns.map((concern) => (
           <li>
             <strong>{concern.title}</strong>
             <p>{concern.text}</p>
           </li>
         ))}
+        <li class="facts-figure">
+          <Artwork id="retentionArchive" language="de" />
+        </li>
       </ul>
-      <h3 id="zahlungsprofile">Wenn Zahlungen deinen Alltag offenlegen</h3>
-      <p class="prose">
-        Wer mit Kryptowährungen bezahlt, kann Spuren seines Alltags
-        hinterlassen. Bei Bitcoin bleiben On-Chain-Transaktionen öffentlich.
-        Verbindet ein Anbieter deinen Namen mit einer Adresse, können weitere
-        Zahlungen zugeordnet werden. Mit Informationen über die Empfänger lassen
-        Einkäufe, Spenden und regelmäßige Zahlungen
-        <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
-          >Rückschlüsse auf Gewohnheiten und Beziehungen</a
-        >
-        zu.
-      </p>
-      <h3>Datenlecks gefährden Menschen</h3>
-      <p class="prose">
-        Gespeicherte Verbindungen zwischen Identität und Finanzdaten sind ein
-        lohnendes Ziel für Angreifer. Lange Aufbewahrungspflichten halten diese
-        Daten über Jahre verfügbar. Gelangen sie in falsche Hände, können sie
-        für Betrug, Erpressung oder die Auswahl von Opfern genutzt werden.
-      </p>
-      <p class="prose">
-        Die
-        <a
-          href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
-          >französische Gendarmerie</a
-        >
-        berichtet, dass Täter gestohlene Kundendaten des Krypto-Steuerdienstes
-        Waltio zur Auswahl von Angriffszielen nutzen. Sie beschreibt
-        Entführungen und körperliche Gewalt. Schon die teils falsche Annahme,
-        jemand besitze größere Kryptobestände, kann ihn und seine Angehörigen
-        gefährden. Datensparsamkeit und kurze Speicherfristen schützen deshalb
-        auch die persönliche Sicherheit.
-      </p>
+      <Artwork id="wealthProfile" language="de" size="wide" />
+      <div class="art-split even">
+        <div>
+          <h3 id="zahlungsprofile">Wenn Zahlungen deinen Alltag offenlegen</h3>
+          <p class="prose">
+            Wer mit Kryptowährungen bezahlt, kann Spuren seines Alltags
+            hinterlassen. Bei Bitcoin bleiben On-Chain-Transaktionen öffentlich.
+            Verbindet ein Anbieter deinen Namen mit einer Adresse, können
+            weitere Zahlungen zugeordnet werden. Mit Informationen über die
+            Empfänger lassen Einkäufe, Spenden und regelmäßige Zahlungen
+            <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
+              >Rückschlüsse auf Gewohnheiten und Beziehungen</a
+            >
+            zu.
+          </p>
+        </div>
+        <Artwork id="spendingProfile" language="de" />
+      </div>
+      <div class="art-split even reverse">
+        <div>
+          <h3>Datenlecks gefährden Menschen</h3>
+          <p class="prose">
+            Gespeicherte Verbindungen zwischen Identität und Finanzdaten sind
+            ein lohnendes Ziel für Angreifer. Lange Aufbewahrungspflichten
+            halten diese Daten über Jahre verfügbar. Gelangen sie in falsche
+            Hände, können sie für Betrug, Erpressung oder die Auswahl von Opfern
+            genutzt werden.
+          </p>
+          <p class="prose">
+            Die
+            <a
+              href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
+              >französische Gendarmerie</a
+            >
+            berichtet, dass Täter gestohlene Kundendaten des
+            Krypto-Steuerdienstes Waltio zur Auswahl von Angriffszielen nutzen.
+            Sie beschreibt Entführungen und körperliche Gewalt. Schon die teils
+            falsche Annahme, jemand besitze größere Kryptobestände, kann ihn und
+            seine Angehörigen gefährden. Datensparsamkeit und kurze
+            Speicherfristen schützen deshalb auch die persönliche Sicherheit.
+          </p>
+        </div>
+        <Artwork id="wrenchAttack" language="de" />
+      </div>
     </section>
 
     <section id="ausblick" aria-labelledby="ausblick-heading">
@@ -338,14 +362,17 @@ const faqs = [
           Regelmäßig und öffentlich, damit unnötige Eingriffe beendet werden.
         </li>
       </ul>
-      <p class="prose">
-        <strong>Gegenwehr wirkt.</strong>
-        Die von AKVorrat, heute epicenter.works, organisierte Beschwerde gegen
-        die Vorratsdatenspeicherung führte über den Verfassungsgerichtshof zum
-        Europäischen Gerichtshof. 2014 fielen die EU-Richtlinie und die
-        österreichischen Regeln. Der Erfolg zeigt, dass sich auch weitreichende
-        Überwachungsgesetze ändern lassen.
-      </p>
+      <div class="precedent">
+        <p class="precedent-year" aria-hidden="true">2014</p>
+        <p class="prose">
+          <strong>Gegenwehr wirkt.</strong>
+          Die von AKVorrat, heute epicenter.works, organisierte Beschwerde gegen
+          die Vorratsdatenspeicherung führte über den Verfassungsgerichtshof zum
+          Europäischen Gerichtshof. 2014 fielen die EU-Richtlinie und die
+          österreichischen Regeln. Der Erfolg zeigt, dass sich auch
+          weitreichende Überwachungsgesetze ändern lassen.
+        </p>
+      </div>
     </section>
 
     <section id="rechtsweg" aria-labelledby="rechtsweg-heading">

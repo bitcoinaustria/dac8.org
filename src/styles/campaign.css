@@ -24,6 +24,11 @@
   --ink-3: var(--muted-foreground);
   --line: color-mix(in oklab, var(--foreground) 14%, transparent);
   --radius: var(--radius-lg);
+  /* Material der Illustrationen: Titankante und Lichtkante. Nur an Markern
+     und Kanten, nie als Fläche. */
+  --material-edge: light-dark(#a4abb1, #596168);
+  --material-shine: light-dark(#ffffff, #ffffff24);
+  --material-shade: light-dark(#15202b18, #00000060);
   --measure-lead: 55ch;
   container: campaign / inline-size;
   --measure-text: 66ch;
@@ -202,12 +207,15 @@
   margin-block-start: var(--space-xl-2xl);
 }
 
+/* Die obere Kante ist gefrästes Metall statt einer schwarzen Linie; die
+   Zahlen selbst stehen direkt auf der Seite. */
 .campaign .keyfigures > div {
+  --rule: 2px;
   display: grid;
   align-content: start;
   gap: var(--space-xs);
   padding-block-start: var(--space-s);
-  border-block-start: 2px solid var(--ink);
+  background: var(--metal-rule) top / 100% var(--rule) no-repeat;
 }
 
 .campaign .keyfigures dd {
@@ -259,7 +267,7 @@
   max-inline-size: 100%;
   margin-block-start: var(--space-xl);
   padding-block-start: var(--space-s);
-  border-block-start: 2px solid var(--ink);
+  background: var(--metal-rule) top / 100% 2px no-repeat;
   line-height: 1.45;
 }
 
@@ -393,7 +401,9 @@
 
 /* ---------- Listen zum Überfliegen ------------------------------------ */
 
-/* Fakten: fetter Einstieg, dann ein bis zwei Sätze in voller Lesegröße. */
+/* Fakten: fetter Einstieg, dann ein bis zwei Sätze in voller Lesegröße.
+   Jede Kachel beginnt an einer feinen Kante, damit die Einstiege beim
+   Überfliegen auf einer Linie stehen. */
 .campaign .facts {
   display: grid;
   gap: var(--space-l) var(--space-xl);
@@ -404,7 +414,28 @@
 
 .campaign .facts li {
   max-inline-size: var(--measure-text);
+  padding-block-start: var(--space-s);
+  background: linear-gradient(90deg, var(--line), transparent) top / 100% 1px
+    no-repeat;
   text-wrap: pretty;
+}
+
+/* Die Kritikpunkte: mehr Luft zwischen den Zeilen, weil sie die dichteste
+   Textstrecke sind. Die Illustration füllt die freie letzte Zelle neben
+   „Zehn Jahre ohne Begründung“. */
+.campaign .facts.concerns {
+  row-gap: clamp(2rem, 3vw, 3rem);
+}
+
+.campaign .facts .facts-figure {
+  align-self: center;
+  padding-block-start: 0;
+  background: none;
+}
+
+.campaign .facts-figure .artwork {
+  --art-height: 15rem;
+  margin-block-start: 0;
 }
 
 .campaign .facts strong,
@@ -450,10 +481,11 @@
   color: var(--primary-foreground);
 }
 
-/* Forderungen: Haken statt Kästen. */
+/* Forderungen: Haken als kleine Token wie die Stationen, ab mittlerer
+   Breite zweispaltig. */
 .campaign .checklist {
   display: grid;
-  gap: var(--space-s);
+  gap: var(--space-m) var(--space-xl);
   margin-block-start: var(--space-l);
   padding: 0;
   list-style: none;
@@ -462,17 +494,36 @@
 .campaign .checklist li {
   position: relative;
   max-inline-size: var(--measure-text);
-  padding-inline-start: 2rem;
+  padding-inline-start: 2.25rem;
   color: var(--ink-2);
   text-wrap: pretty;
 }
 
 .campaign .checklist li::before {
-  content: "✓";
+  content: "✓" / "";
   position: absolute;
+  inset-block-start: 0.1em;
   inset-inline-start: 0;
-  color: var(--accent);
+  display: grid;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border: 1px solid var(--material-edge);
+  border-radius: var(--radius-full);
+  color: #f7f8f9;
+  background: linear-gradient(155deg, #4b5056, #25282d);
+  box-shadow:
+    inset 0 1px 0 #ffffff38,
+    0 1px 2px var(--material-shade);
+  font-size: 0.75rem;
   font-weight: 600;
+  line-height: 1;
+}
+
+@container campaign (width >= 46rem) {
+  .campaign .checklist {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .campaign .checklist strong {
@@ -532,7 +583,7 @@
 /* ---------- Stationen: Datenweg, Rechtsweg ---------------------------- */
 
 .campaign .flow {
-  --dot: 1.875rem;
+  --dot: 2rem;
   display: grid;
   gap: var(--space-m);
   max-inline-size: var(--measure-text);
@@ -551,6 +602,9 @@
   line-height: 1.4;
 }
 
+/* Stationen als kleine Token wie die Knöpfe der Renderings: Graphitkern,
+   schmale Titankante, eine obere Lichtkante. Statisch, ohne Glanz oder
+   Bewegung, weil sie nicht klickbar sind. */
 .campaign .flow li::before {
   content: counter(station);
   z-index: 1;
@@ -558,26 +612,40 @@
   place-items: center;
   inline-size: var(--dot);
   block-size: var(--dot);
+  border: 1px solid var(--material-edge);
   border-radius: var(--radius-full);
-  color: var(--background);
-  background: var(--ink);
-  font-size: var(--step--1);
+  color: #f7f8f9;
+  background: linear-gradient(155deg, #4b5056, #25282d);
+  box-shadow:
+    inset 0 1px 0 #ffffff38,
+    inset 0 -1px 0 #00000035,
+    0 1px 2px var(--material-shade);
+  font-size: 0.875rem;
   font-weight: 600;
+  line-height: 1;
 }
 
-.campaign .flow li.accent::before {
-  color: var(--primary-foreground);
-  background: var(--primary);
+/* Die hervorgehobene Station bleibt eindeutig rot. */
+.campaign .flow li.accent::before,
+.campaign .route li.current::before {
+  border-color: light-dark(#b6000c, #fa5963);
+  color: #ffffff;
+  background: linear-gradient(155deg, #e3000f, #be000c);
+  box-shadow:
+    inset 0 1px 0 #ffffff30,
+    inset 0 -1px 0 #71000860,
+    0 1px 2px var(--material-shade);
 }
 
-/* Die Linie läuft von Station zu Station durch. */
+/* Die Linie läuft von Station zu Station durch, als schmale Nut. */
 .campaign .flow li:not(:last-child)::after {
   content: "";
   position: absolute;
   inset-block-start: var(--dot);
   inset-block-end: calc(-1 * var(--space-m));
   inset-inline-start: calc(var(--dot) / 2 - 1px);
-  border-inline-start: 2px solid var(--line);
+  border-inline-start: 2px solid light-dark(#c6cbcf, #454b51);
+  box-shadow: 1px 0 0 light-dark(#ffffff, #ffffff08);
 }
 
 .campaign .flow strong {
@@ -601,29 +669,46 @@
   margin-block-start: var(--space-l);
 }
 
+/* Zwei Spalten wie ein Datenblatt: eine Metallkante über der Meldung, eine
+   feine Linie über dem, was fehlt; jeder Punkt eine Zeile zwischen
+   Haarlinien. Keine Flächen. */
+.campaign .compare > div {
+  padding-block-start: var(--space-s);
+  background: var(--metal-rule) top / 100% 2px no-repeat;
+}
+
+.campaign .compare > .absent {
+  background: linear-gradient(var(--line), var(--line)) top / 100% 1px
+    no-repeat;
+}
+
 .campaign .compare h3 {
-  margin-block-end: var(--space-s);
+  margin-block-end: var(--space-2xs);
 }
 
 .campaign .compare ul {
   display: grid;
-  gap: var(--space-xs);
   padding: 0;
   list-style: none;
 }
 
 .campaign .compare li {
   position: relative;
+  padding-block: var(--space-xs);
   padding-inline-start: 1.5rem;
   color: var(--ink-2);
   text-wrap: pretty;
+}
+
+.campaign .compare li + li {
+  border-block-start: 1px solid var(--line);
 }
 
 .campaign .compare li::before {
   content: "";
   position: absolute;
   inset-inline-start: 0;
-  inset-block-start: 0.55em;
+  inset-block-start: calc(var(--space-xs) + 0.55em);
   inline-size: 0.5rem;
   block-size: 0.5rem;
   border-radius: var(--radius-full);
@@ -1295,17 +1380,19 @@
   color: var(--accent);
 }
 
-/* Rechtsweg mit Stand: erledigt, jetzt, noch offen. Die letzte Station ist
-   gestrichelt angebunden, weil über Vorlagen die Gerichte entscheiden. */
-.campaign .route li.current::before {
-  color: var(--primary-foreground);
-  background: var(--primary);
-}
-
+/* Rechtsweg mit Stand: erledigt, jetzt, noch offen. Offene Stationen sind
+   Glas statt Graphit. Die letzte Station ist gestrichelt angebunden, weil
+   über Vorlagen die Gerichte entscheiden. */
 .campaign .route li.next::before {
-  color: var(--ink-2);
-  background: var(--background);
-  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--ink) 28%, transparent);
+  color: light-dark(#202428, #eef0f2);
+  background: linear-gradient(
+    155deg,
+    light-dark(#ffffff, #292d31),
+    light-dark(#e8ecee, #181b1e)
+  );
+  box-shadow:
+    inset 0 1px 0 var(--material-shine),
+    inset 0 0 0 2px light-dark(#ffffff80, #ffffff06);
 }
 
 .campaign .route li.next > strong {
@@ -1314,6 +1401,13 @@
 
 .campaign .route li:has(+ [data-possible])::after {
   border-inline-start-style: dashed;
+  box-shadow: none;
+}
+
+/* „Jetzt“ bleibt lesbar, ohne mit dem roten Token zu konkurrieren. */
+.campaign .route .tag.live {
+  color: var(--ink);
+  background: var(--panel-strong);
 }
 
 .campaign .route .tag {
@@ -1352,9 +1446,9 @@
   }
 
   .campaign .keyfigures > div {
+    --rule: 1px;
     gap: var(--space-3xs);
     padding-block-start: var(--space-xs);
-    border-block-start-width: 1px;
   }
 
   .campaign .keyfigures dd {
@@ -1383,4 +1477,351 @@
 
 .campaign .participation-note {
   margin-block-start: var(--space-m);
+}
+
+/* ---------- Illustrationen --------------------------------------------- */
+
+/* Freigestellte Renderings ohne eigenen Hintergrund, frei auf der Seite wie
+   im Kontaktbogen des Bildlabors. Die Seitenfarbe scheint durch, deshalb
+   tragen sie hell wie dunkel ohne zweite Fassung. Kein Rahmen, keine Fläche;
+   die Höhe ist gedeckelt, damit hohe Motive den Text nicht verdrängen. */
+.campaign .artwork {
+  --art-height: 22rem;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-s);
+  margin-block-start: var(--space-xl);
+}
+
+.campaign .artwork img {
+  display: block;
+  inline-size: auto;
+  max-inline-size: 100%;
+  block-size: auto;
+  max-block-size: var(--art-height);
+}
+
+.campaign .artwork figcaption {
+  justify-self: stretch;
+  max-inline-size: 52ch;
+  color: var(--ink-3);
+  font-size: var(--step--1);
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.campaign .artwork figcaption strong {
+  display: block;
+  margin-block-end: var(--space-3xs);
+  color: var(--ink);
+  font-weight: 560;
+}
+
+/* Breit: das Motiv links, die Bildunterschrift wie ein Museumsschild rechts
+   unten daneben. */
+.campaign .artwork-wide {
+  --art-height: 26rem;
+}
+
+@container campaign (width >= 52rem) {
+  .campaign .artwork-wide {
+    grid-template-columns: minmax(0, 1fr) 15rem;
+    align-items: end;
+    gap: var(--space-l);
+  }
+}
+
+/* Text und Illustration nebeneinander, sobald die Spalte breit genug ist.
+   Darunter folgt das Bild dem Text. */
+.campaign .art-split {
+  display: grid;
+  align-items: start;
+  gap: var(--space-l) var(--space-xl);
+  margin-block-start: var(--space-l);
+}
+
+.campaign .art-split > .artwork {
+  margin-block-start: 0;
+}
+
+.campaign .art-split > div > :first-child {
+  margin-block-start: 0;
+}
+
+.campaign .art-split h3 + .prose {
+  margin-block-start: var(--space-xs);
+}
+
+.campaign h2 + .art-split {
+  margin-block-start: var(--space-s);
+}
+
+.campaign .art-split .artwork-side {
+  --art-height: 19rem;
+}
+
+@container campaign (width >= 52rem) {
+  .campaign .art-split {
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 23rem);
+  }
+
+  /* Gleich breit für Profile mit lesbaren Beschriftungen; Text und Motiv
+     stehen auf gemeinsamer Mitte. */
+  .campaign .art-split.even {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    margin-block-start: var(--space-xl);
+  }
+
+  /* Motiv links, Text rechts: bricht die Folge gleich gebauter Blöcke. */
+  .campaign .art-split.reverse > .artwork {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .campaign .art-split.even .artwork-side {
+    --art-height: 21rem;
+  }
+
+  /* Aufeinanderfolgende Bildblöcke brauchen mehr Luft als Text zu Text. */
+  .campaign :is(.artwork-wide, .art-split.even) + .art-split.even {
+    margin-block-start: var(--space-2xl);
+  }
+}
+
+/* Start: Schlagzeile über die volle Breite, die Illustration rechts neben
+   Lead und Buttons. Schmal steht sie nach den Buttons. */
+.campaign .artwork-hero {
+  --art-height: 17rem;
+}
+
+@container campaign (width >= 56rem) {
+  .campaign .hero:has(> .artwork) {
+    grid-template-columns: minmax(0, 1fr) minmax(15rem, 21rem);
+    column-gap: var(--space-xl);
+  }
+
+  .campaign .hero:has(> .artwork) > * {
+    grid-column: 1 / -1;
+  }
+
+  .campaign .hero:has(> .artwork) > :is(.lead, .hero-actions) {
+    grid-column: 1;
+  }
+
+  .campaign .hero > .artwork {
+    --art-height: 20rem;
+    grid-column: 2;
+    grid-row: 3 / span 2;
+    align-self: center;
+    margin-block-start: 0;
+  }
+}
+
+/* ---------- Kapitel ---------------------------------------------------- */
+
+/* Jeder Abschnitt beginnt mit einer Metallkante. Auf den langen Seiten
+   kommt eine Kapitelnummer dazu: Orientierung beim Scrollen, kein Inhalt;
+   Screenreader überspringen sie. */
+.campaign {
+  --metal-rule: linear-gradient(
+    90deg,
+    light-dark(#5d656c, #7d858c),
+    light-dark(#c4c9cd, #c9ced2) 45%,
+    light-dark(#5d656c, #7d858c)
+  );
+  counter-reset: chapter;
+}
+
+.campaign > section {
+  counter-increment: chapter;
+  padding-block-start: var(--space-m);
+  background: var(--metal-rule) top / 100% 1px no-repeat;
+}
+
+.campaign:is(.landing, .dossier) > section > h2::before {
+  content: counter(chapter, decimal-leading-zero) / "";
+  display: block;
+  margin-block-end: var(--space-s);
+  color: var(--ink-3);
+  font-size: var(--step--1);
+  font-weight: 560;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Stationen quer ------------------------------------------- */
+
+/* Ab mittlerer Breite laufen Datenweg und Rechtsweg von links nach rechts:
+   Token auf einer Schiene, darunter Titel und Erklärung. */
+@container campaign (width >= 46rem) {
+  .campaign .flow {
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    gap: var(--space-m);
+    max-inline-size: none;
+  }
+
+  .campaign .flow li {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: var(--space-xs);
+  }
+
+  .campaign .flow li > :is(strong, span) {
+    grid-column: 1;
+  }
+
+  .campaign .flow li > strong {
+    align-self: start;
+    margin-block-start: var(--space-2xs);
+  }
+
+  .campaign .flow li:not(:last-child)::after {
+    inset-block: calc(var(--dot) / 2 - 1px) auto;
+    inset-inline: calc(var(--dot) + var(--space-2xs))
+      calc(-1 * var(--space-m) + var(--space-2xs));
+    border-inline-start: 0;
+    border-block-start: 2px solid light-dark(#c6cbcf, #454b51);
+    box-shadow: 0 1px 0 light-dark(#ffffff, #ffffff08);
+  }
+
+  .campaign .route li:has(+ [data-possible])::after {
+    border-block-start-style: dashed;
+  }
+}
+
+/* ---------- Zeitleiste ------------------------------------------------- */
+
+.campaign .timeline {
+  display: grid;
+  gap: var(--space-m);
+  margin-block-start: var(--space-m);
+  padding: 0;
+  list-style: none;
+}
+
+.campaign .timeline li {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--space-3xs);
+  padding-inline-start: 1.75rem;
+}
+
+.campaign .timeline li::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.45em;
+  inset-inline-start: 0;
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+  border: 1px solid var(--material-edge);
+  border-radius: var(--radius-full);
+  background: linear-gradient(155deg, #4b5056, #25282d);
+  box-shadow: inset 0 1px 0 #ffffff38;
+}
+
+.campaign .timeline li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  inset-block: calc(0.45em + 0.875rem) calc(-1 * var(--space-m));
+  inset-inline-start: calc(0.4375rem - 1px);
+  border-inline-start: 2px solid light-dark(#c6cbcf, #454b51);
+}
+
+.campaign .timeline strong {
+  font-size: var(--step-1);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.campaign .timeline span {
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+@container campaign (width >= 40rem) {
+  .campaign .timeline {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .campaign .timeline li {
+    padding-block-start: 1.5rem;
+    padding-inline-start: 0;
+  }
+
+  .campaign .timeline li::before {
+    inset-block-start: 0;
+  }
+
+  .campaign .timeline li:not(:last-child)::after {
+    inset-block: calc(0.4375rem - 1px) auto;
+    inset-inline: 1.375rem calc(-1 * var(--space-m) + 0.5rem);
+    border-inline-start: 0;
+    border-block-start: 2px solid light-dark(#c6cbcf, #454b51);
+  }
+}
+
+/* ---------- Präzedenzfall ---------------------------------------------- */
+
+/* Das Jahr steht in gefrästem Metall neben dem Absatz, der es erzählt. */
+.campaign .precedent {
+  display: grid;
+  align-items: start;
+  gap: var(--space-2xs) var(--space-l);
+  max-inline-size: 52rem;
+  margin-block-start: var(--space-xl);
+  padding-block-start: var(--space-m);
+  background: var(--metal-rule) top / 100% 1px no-repeat;
+}
+
+.campaign .precedent .prose {
+  margin-block-start: 0;
+}
+
+.campaign .precedent-year {
+  inline-size: fit-content;
+  background: linear-gradient(
+    170deg,
+    light-dark(#8e969d, #e3e6e8),
+    light-dark(#3c4248, #7d858c)
+  );
+  background-clip: text;
+  color: transparent;
+  font-size: clamp(3rem, 2rem + 4vw, 4.75rem);
+  font-weight: 600;
+  font-stretch: 94%;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+}
+
+@container campaign (width >= 40rem) {
+  .campaign .precedent {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}
+
+/* ---------- Leitsatz --------------------------------------------------- */
+
+.campaign .statement {
+  max-inline-size: 20ch;
+  margin-block-start: var(--space-s);
+  font-size: clamp(1.875rem, 1.2rem + 2.6vw, 3rem);
+  font-weight: 600;
+  font-stretch: 94%;
+  line-height: 1.06;
+  letter-spacing: -0.026em;
+  text-wrap: balance;
+}
+
+.campaign .statement span {
+  display: block;
+  color: var(--accent);
+}
+
+.campaign .statement + .art-split {
+  margin-block-start: var(--space-l);
 }

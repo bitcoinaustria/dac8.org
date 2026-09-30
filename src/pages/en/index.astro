@@ -1,6 +1,7 @@
 ---
 import ShareIcon from "@/assets/icons/share.svg"
 import Layout from "@/layouts/Layout.astro"
+import Artwork from "@/components/Artwork.astro"
 import CampaignPartners from "@/components/CampaignPartners.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
@@ -34,6 +35,7 @@ import { campaignStatus } from "@/data/campaign"
         <a class="button primary" href="/en/donate/">Support the case</a>
         <a class="button" href="/en/background/">What DAC8 requires</a>
       </nav>
+      <Artwork id="privacyExposed" language="en" size="hero" priority />
       <p class="prose hero-context">
         Since 2026, crypto-asset providers in Austria have had to prepare
         financial data on all their customers for the tax authority, without any
@@ -66,17 +68,22 @@ import { campaignStatus } from "@/data/campaign"
     </header>
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">What is at stake</h2>
-      <p class="section-intro">
-        Your private life deserves protection, including your finances.
-        Information about your money can reveal details about your life. If it
-        is shared, misunderstood or stolen, you bear the consequences.
-      </p>
-      <p class="prose">
-        DAC8 is an EU directive on exchanging tax information. Reports contain
-        identities and annual crypto-asset aggregates, not a list of individual
-        payments. Over the years, even these aggregates create a financial
-        profile.
-      </p>
+      <div class="art-split">
+        <div>
+          <p class="section-intro">
+            Your private life deserves protection, including your finances.
+            Information about your money can reveal details about your life. If
+            it is shared, misunderstood or stolen, you bear the consequences.
+          </p>
+          <p class="prose">
+            DAC8 is an EU directive on exchanging tax information. Reports
+            contain identities and annual crypto-asset aggregates, not a list of
+            individual payments. Over the years, even these aggregates create a
+            financial profile.
+          </p>
+        </div>
+        <Artwork id="leakedTarget" language="en" />
+      </div>
       <ul class="facts">
         <li>
           <strong>Everyone is covered, not just suspects.</strong>
@@ -121,13 +128,16 @@ import { campaignStatus } from "@/data/campaign"
       <h2 id="weg-heading">What we are doing</h2>
       <p class="section-intro">{campaignStatus.en.text}</p>
       <LegalRoute language="en" />
-      <p class="prose">
-        The campaign against the retention of telephone and internet data is a
-        precedent for resistance: in 2014, the Court of Justice struck down the
-        directive and Austria’s Constitutional Court struck down the national
-        law. That success shows that even sweeping surveillance laws can be
-        changed.
-      </p>
+      <div class="precedent">
+        <p class="precedent-year" aria-hidden="true">2014</p>
+        <p class="prose">
+          The campaign against the retention of telephone and internet data is a
+          precedent for resistance: in 2014, the Court of Justice struck down
+          the directive and Austria’s Constitutional Court struck down the
+          national law. That success shows that even sweeping surveillance laws
+          can be changed.
+        </p>
+      </div>
       <a class="text-link" href="/en/background/#rechtsweg"
         >Our legal strategy in detail</a
       >
@@ -156,10 +166,13 @@ import { campaignStatus } from "@/data/campaign"
     </section>
     <section id="vision" aria-labelledby="vision-heading">
       <h2 id="vision-heading">What we want to achieve</h2>
+      <p class="statement">
+        Privacy needs no justification.
+        <span>State interference does.</span>
+      </p>
       <p class="section-intro">
-        Privacy needs no justification. State interference does. A liberal
-        democracy needs limits on state power. Collecting everyone’s financial
-        data as a precaution crosses a red line for us.
+        A liberal democracy needs limits on state power. Collecting everyone’s
+        financial data as a precaution crosses a red line for us.
       </p>
       <p class="prose">
         We oppose mass surveillance. Specific suspicions of crime should be
@@ -203,7 +216,8 @@ import { campaignStatus } from "@/data/campaign"
         Our campaign starts in Austria. DAC8 applies across the EU:
         organisations, businesses and experts who want to challenge the law in
         their country are welcome to contact us. We share arguments, sources and
-        experience: <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>
+        experience:
+        <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>
       </p>
       <CampaignPartners />
     </section>
