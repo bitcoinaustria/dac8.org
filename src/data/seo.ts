@@ -12,28 +12,28 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "Gegen DAC8. Für finanzielle Privatsphäre",
       description:
-        "Finanzielle Privatsphäre ist ein Grundrecht. Bitcoin Austria bereitet ein Verfahren gegen die anlasslose Erfassung von Krypto-Finanzdaten unter DAC8 vor.",
-      imageLines: ["Finanzielle", "Privatsphäre.", "Verteidigen wir sie."],
+        "DAC8 erfasst die Finanzdaten aller Krypto-Kunden, Jahr für Jahr und ohne Verdacht. Bitcoin Austria bereitet ein Verfahren gegen diese finanzielle Massenüberwachung vor.",
+      imageLines: ["DAC8 erfasst jeden", "Krypto-Kunden.", "Wir wehren uns."],
     },
     en: {
       title: "Against DAC8. For financial privacy",
       description:
-        "Financial privacy is a fundamental right. Bitcoin Austria is preparing a legal challenge to indiscriminate financial data collection under DAC8.",
-      imageLines: ["Financial privacy.", "Let’s defend it."],
+        "DAC8 records the financial data of every crypto customer, every year and without suspicion. Bitcoin Austria is preparing a legal challenge to this mass surveillance.",
+      imageLines: ["DAC8 records every", "crypto customer.", "We fight back."],
     },
   },
   dossier: {
     de: {
       title: "DAC8 erklärt: Meldepflichten, Risiken und Rechtsweg",
       description:
-        "Was DAC8 in Österreich verlangt, welche Krypto-Daten gemeldet und gespeichert werden und warum wir dagegen vorgehen. Mit Primärquellen.",
-      imageLines: ["Was DAC8 verlangt.", "Und was nicht."],
+        "Was DAC8 in Österreich verlangt, welche Krypto-Daten Jahr für Jahr gemeldet werden, was sich beim Anbieter ansammelt und warum wir dagegen vorgehen. Mit Primärquellen.",
+      imageLines: ["Was DAC8 verlangt.", "Und was daraus wird."],
     },
     en: {
       title: "DAC8 explained: reporting, risks and legal challenge",
       description:
-        "What DAC8 requires in Austria, which crypto-asset data is reported and retained, and why we are challenging it. With primary sources.",
-      imageLines: ["What DAC8 requires.", "And what it doesn’t."],
+        "What DAC8 requires in Austria, which crypto-asset data is reported every year, what builds up at your provider and why we are challenging it. With primary sources.",
+      imageLines: ["What DAC8 requires.", "And where it leads."],
     },
   },
   participate: {
@@ -48,6 +48,20 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       description:
         "Help defend financial privacy: donate to the legal challenge, write to your MPs, share the campaign or support it as an organisation.",
       imageLines: ["Help defend", "financial privacy."],
+    },
+  },
+  attacks: {
+    de: {
+      title: "Angriffsarchiv: Gewalt gegen Krypto-Besitzer weltweit",
+      description:
+        "Überfälle, Entführungen und Folter von Menschen, die Kryptowerte besitzen oder besitzen sollen, weltweit, jeweils mit dem ursprünglichen Bericht. Bei Weitem nicht vollständig.",
+      imageLines: ["Überfallen,", "entführt,", "gefangen gehalten."],
+    },
+    en: {
+      title: "Attack archive: violence against crypto holders worldwide",
+      description:
+        "Robberies, kidnappings and torture of people who hold crypto-assets, or are believed to, worldwide, each with the original report. Far from complete.",
+      imageLines: ["Robbed,", "kidnapped,", "held captive."],
     },
   },
   proceedings: {

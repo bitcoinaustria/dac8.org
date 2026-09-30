@@ -7,7 +7,13 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!**/*.svg", "!dac8-wiki/**", "!artwork-lab/**"]
+    "includes": [
+      "**",
+      "!**/*.svg",
+      "!dac8-wiki/**",
+      "!artwork-lab/**",
+      "!src/data/attacks.json"
+    ]
   },
   "html": {
     "experimentalFullSupportEnabled": true,

@@ -11,47 +11,72 @@ const reported = `${pathFor("dossier", language)}#gemeldet`
 
 // The answers restate the vetted FAQ entries on who is affected and on own
 // wallets. Keep them in sync with the FAQ when either changes.
+const faq = `${pathFor("dossier", language)}#faq`
 const options = en
   ? [
       {
         value: "provider",
         label: "Yes",
-        answer:
-          "Then your data falls under DAC8. The report contains your identity and annual aggregates, not wallet addresses or individual payments. Providers with Austrian reporting obligations must prepare data on all customers, even those who are not ultimately reported.",
+        verdict: "Then you are affected.",
+        points: [
+          "Every year, your provider prepares your identity, tax identification number and annual totals for the tax authority.",
+          "Providers with Austrian reporting obligations do this for all customers, even those who are not ultimately reported.",
+          "They also keep your ID, wallet addresses and individual transactions, currently for up to ten years after you leave.",
+        ],
         link: { href: reported, label: "What is reported" },
       },
       {
         value: "self",
         label: "No, only my own wallet",
-        answer:
-          "DAC8 does not report people who exclusively hold bitcoin in self-custody and do not use such a provider. If you buy from a provider and transfer to your own wallet, the annual report generally includes the total value and units of such transfers, without the address. The provider may still keep the address on file.",
+        verdict: "Then DAC8 does not report you.",
+        points: [
+          "This applies as long as you only self-custody and never buy or sell through a provider.",
+          "If you buy from a provider and transfer to your own wallet, the value and units of those transfers appear in that provider’s annual report. The provider keeps the address.",
+        ],
+        link: { href: faq, label: "Questions and answers" },
       },
       {
         value: "unsure",
         label: "Not sure",
-        answer:
-          "What matters is whether a crypto-asset provider is involved, such as an exchange or broker. If in doubt, ask your provider whether it reports under DAC8.",
+        verdict: "It depends on where you buy crypto-assets.",
+        points: [
+          "Exchanges, brokers and apps that buy or hold crypto-assets for you count as providers, including banks with a crypto offer.",
+          "Your provider has to tell you before it reports for the first time. If in doubt, ask it whether it reports under DAC8.",
+        ],
+        link: { href: reported, label: "What is reported" },
       },
     ]
   : [
       {
         value: "provider",
         label: "Ja",
-        answer:
-          "Dann fallen deine Daten unter DAC8. Gemeldet werden Identität und Jahreswerte, keine Wallet-Adressen und keine einzelnen Zahlungen. Anbieter mit Meldepflicht in Österreich müssen die Daten aller Kunden aufbereiten, auch wenn du am Ende nicht gemeldet wirst.",
+        verdict: "Dann bist du betroffen.",
+        points: [
+          "Dein Anbieter bereitet jedes Jahr deine Identität, Steuernummer und Jahreswerte für das Finanzamt auf.",
+          "Anbieter mit Meldepflicht in Österreich tun das für alle Kunden, auch für jene, die am Ende nicht gemeldet werden.",
+          "Zusätzlich speichert er Ausweis, Wallet-Adressen und einzelne Transaktionen, derzeit bis zehn Jahre nach Ende der Kundenbeziehung.",
+        ],
         link: { href: reported, label: "Was gemeldet wird" },
       },
       {
         value: "self",
         label: "Nein, nur eigene Wallet",
-        answer:
-          "Wer Bitcoin ausschließlich selbst verwahrt und keinen solchen Anbieter nutzt, wird durch DAC8 nicht gemeldet. Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, fließen Wert und Stückzahl solcher Übertragungen in der Regel als Jahreswerte in die Meldung ein, ohne Adresse. Die Adresse kann beim Anbieter gespeichert bleiben.",
+        verdict: "Dann meldet DAC8 dich nicht.",
+        points: [
+          "Das gilt, solange du ausschließlich selbst verwahrst und nie über einen Anbieter kaufst oder verkaufst.",
+          "Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, stehen Wert und Stückzahl dieser Übertragungen in seiner Jahresmeldung. Die Adresse speichert er.",
+        ],
+        link: { href: faq, label: "Häufige Fragen" },
       },
       {
         value: "unsure",
         label: "Weiß ich nicht",
-        answer:
-          "Entscheidend ist, ob ein Krypto-Anbieter beteiligt ist, etwa eine Börse oder ein Broker. Frag im Zweifel bei deinem Anbieter nach, ob er nach DAC8 meldet.",
+        verdict: "Das hängt davon ab, wo du Kryptowerte kaufst.",
+        points: [
+          "Als Anbieter gelten Börsen, Broker und Apps, bei denen du Kryptowerte kaufst oder verwahren lässt, auch Banken mit Krypto-Angebot.",
+          "Dein Anbieter muss dich informieren, bevor er erstmals meldet. Frag im Zweifel nach, ob er nach DAC8 meldet.",
+        ],
+        link: { href: reported, label: "Was gemeldet wird" },
       },
     ]
 ---
@@ -75,15 +100,13 @@ const options = en
   </fieldset>
   <div class="check-answers" aria-live="polite">
     {options.map((option) => (
-      <p data-answer={option.value}>
-        {option.answer}
-        {option.link && (
-          <>
-            {" "}
-            <a href={option.link.href}>{option.link.label}</a>
-          </>
-        )}
-      </p>
+      <div data-answer={option.value}>
+        <p class="check-verdict">{option.verdict}</p>
+        <ul>
+          {option.points.map((point) => <li>{point}</li>)}
+        </ul>
+        <a class="text-link" href={option.link.href}>{option.link.label}</a>
+      </div>
     ))}
   </div>
   <p class="check-note">
@@ -111,18 +134,19 @@ const options = en
     display: grid;
     gap: var(--space-3xs);
     padding: 0;
+    color: var(--ink-2);
     font-size: var(--step-1);
-    font-weight: 560;
     line-height: 1.35;
     text-wrap: balance;
   }
 
+  /* Die Frage als Überschrift, keine Etikette in Versalien. */
   .check-title {
-    color: var(--ink-3);
-    font-size: var(--step--1);
-    font-weight: 560;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    color: var(--ink);
+    font-size: var(--step-2);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
   }
 
   .check-options {
@@ -173,18 +197,40 @@ const options = en
     outline-offset: 0.2rem;
   }
 
-  .check-answers p {
+  /* Die Auskunft: eine fette Aussage, darunter zwei bis drei kurze Punkte
+     und ein Link zum Weiterlesen. */
+  .check-answers > div {
+    display: grid;
+    gap: var(--space-2xs);
     max-inline-size: var(--measure-text);
+  }
+
+  .check-answers > div[hidden] {
+    display: none;
+  }
+
+  .check-verdict {
+    font-size: var(--step-1);
+    font-weight: 560;
+    line-height: 1.3;
+  }
+
+  .check-answers ul {
+    display: grid;
+    gap: var(--space-2xs);
+    padding-inline-start: 1.2em;
+    list-style: disc;
     color: var(--ink-2);
     text-wrap: pretty;
   }
 
-  .check-answers p[hidden] {
-    display: none;
+  .check-answers ul li::marker {
+    color: var(--primary);
   }
 
-  .check-answers a {
-    font-weight: 560;
+  .check-answers .text-link {
+    justify-self: start;
+    margin-block-start: 0;
   }
 
   .check-note {

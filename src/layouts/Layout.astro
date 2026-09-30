@@ -22,10 +22,10 @@ import { languageFor } from "@/lib/i18n"
 const language = languageFor(Astro.url.pathname)
 
 // Sections render as the chapter bar under the header; pass them only on
-// long pages.
-type Props = { sections?: PageSection[] }
+// long pages. Full-bleed pages such as the attack map use the whole width.
+type Props = { sections?: PageSection[]; fullBleed?: boolean }
 
-const { sections = [] } = Astro.props
+const { sections = [], fullBleed = false } = Astro.props
 ---
 
 <html lang={language === "en" ? "en" : "de-AT"} dir="ltr">
@@ -37,7 +37,13 @@ const { sections = [] } = Astro.props
       >{language === "en" ? "Skip to content" : "Zum Inhalt springen"}</a
     >
     <SiteHeader sections={sections} />
-    <main id="main-content" tabindex="-1"><slot /></main>
+    <main
+      id="main-content"
+      class:list={{ "full-bleed": fullBleed }}
+      tabindex="-1"
+    >
+      <slot />
+    </main>
     <Footer />
     <ActionBar />
     <script>
@@ -55,6 +61,11 @@ const { sections = [] } = Astro.props
     min-block-size: 60svh;
     margin-inline: auto;
     padding: var(--space-xl) var(--grid-gutter) var(--space-2xl);
+  }
+
+  main.full-bleed {
+    max-inline-size: none;
+    padding: 0;
   }
 
   /* Platz für die mobile Aktionsleiste am unteren Rand. */

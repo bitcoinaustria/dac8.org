@@ -10,28 +10,28 @@ export const sourceGroups = [
         href: "https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_2025_I_96/BGBLA_2025_I_96.pdf",
       },
       {
-        label: "§ 18 Krypto-MPfG – welche Daten gemeldet werden",
+        label: "§ 18 Krypto-MPfG: welche Daten gemeldet werden",
         labelEn: "Section 18 Krypto-MPfG: reporting fields",
         href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=18",
       },
       {
-        label: "§ 20 Krypto-MPfG – Verarbeitung für alle Kunden, Löschung",
+        label: "§ 20 Krypto-MPfG: Verarbeitung für alle Kunden, Löschung",
         labelEn:
           "Section 20 Krypto-MPfG: processing for all customers and deletion",
         href: "https://www.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40273819/NOR40273819.pdf",
       },
       {
-        label: "§ 39 Krypto-MPfG – Aufbewahrung der Dokumentation",
+        label: "§ 39 Krypto-MPfG: Aufbewahrung der Dokumentation",
         labelEn: "Section 39 Krypto-MPfG: documentation retention",
         href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=39",
       },
       {
-        label: "§ 5 GMSG – fünf Jahre bei Bankkonten",
+        label: "§ 5 GMSG: fünf Jahre bei Bankkonten",
         labelEn: "Section 5 GMSG: five years for bank-account data",
         href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009250&Paragraf=5",
       },
       {
-        label: "§ 24 DSG – Beschwerde und Fristen",
+        label: "§ 24 DSG: Beschwerde und Fristen",
         labelEn: "Section 24 DSG: complaints and deadlines",
         href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Anlage=&Artikel=2&Gesetzesnummer=10001597&Paragraf=24",
       },
@@ -52,6 +52,20 @@ export const sourceGroups = [
         label: "Richtlinie (EU) 2023/2226 (DAC8)",
         labelEn: "Directive (EU) 2023/2226 (DAC8)",
         href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:32023L2226",
+      },
+      {
+        label:
+          "Verordnung (EU) 2023/1113: Angaben zu Absender und Empfänger bei Krypto-Übertragungen",
+        labelEn:
+          "Regulation (EU) 2023/1113: originator and beneficiary information for crypto-asset transfers",
+        href: "https://eur-lex.europa.eu/eli/reg/2023/1113/oj",
+      },
+      {
+        label:
+          "Richtlinie (EU) 2024/1640, Art. 16: Kontenregister und ihre EU-weite Vernetzung",
+        labelEn:
+          "Directive (EU) 2024/1640, Article 16: account registries and their EU-wide interconnection",
+        href: "https://eur-lex.europa.eu/eli/dir/2024/1640/oj",
       },
       {
         label: "MiCA, Art. 68 Abs. 9: Aufbewahrungsfristen",
@@ -76,12 +90,12 @@ export const sourceGroups = [
         href: "https://eur-lex.europa.eu/eli/dir/2025/872/oj/deu",
       },
       {
-        label: "Kommissionsvorschlag COM(2026) 308 – Neufassung der Richtlinie",
+        label: "Kommissionsvorschlag COM(2026) 308: Neufassung der Richtlinie",
         labelEn: "Commission proposal COM(2026) 308: recast of the directive",
         href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:52026PC0308",
       },
       {
-        label: "EU-Kommission – Überblick zum DAC-System",
+        label: "EU-Kommission: Überblick zum DAC-System",
         labelEn: "European Commission: overview of the DAC framework",
         href: "https://taxation-customs.ec.europa.eu/taxation/tax-transparency-cooperation/administrative-co-operation-and-mutual-assistance/directive-administrative-cooperation-dac_en",
       },
@@ -98,19 +112,19 @@ export const sourceGroups = [
     sources: [
       {
         label:
-          "VfGH G 178/2024 – warum der Weg über die Datenschutzbehörde führt",
+          "VfGH G 178/2024: warum der Weg über die Datenschutzbehörde führt",
         labelEn:
           "Constitutional Court G 178/2024: the route through the Data Protection Authority",
         href: "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20260428_24G00178_00/JFT_20260428_24G00178_00.pdf",
       },
       {
-        label: "VfGH G 47/2012 ua – Aufhebung der Vorratsdatenspeicherung",
+        label: "VfGH G 47/2012 ua: Aufhebung der Vorratsdatenspeicherung",
         labelEn:
           "Constitutional Court G 47/2012 and others: overturning data retention",
         href: "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20140627_12G00047_00/JFT_20140627_12G00047_00.pdf",
       },
       {
-        label: "EuGH C-293/12 und C-594/12 – Vorratsdatenspeicherung",
+        label: "EuGH C-293/12 und C-594/12: Vorratsdatenspeicherung",
         labelEn: "CJEU C-293/12 and C-594/12: data retention",
         href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:62012CJ0293",
       },
@@ -137,9 +151,56 @@ export const sourceGroups = [
     ],
   },
   {
-    title: "Datenlecks und körperliche Angriffe",
-    titleEn: "Data breaches and physical attacks",
+    title: "Datenlecks, Angriffe und Betrug",
+    titleEn: "Data breaches, attacks and fraud",
     sources: [
+      {
+        label:
+          "Watchlist Internet: Phishing im Namen von FinanzOnline fragt nach Krypto-Beständen",
+        labelEn:
+          "Watchlist Internet: phishing in FinanzOnline’s name asks for crypto holdings",
+        href: "https://www.watchlist-internet.at/news/phishing-falle-finanzonline-krypto/",
+      },
+      {
+        label:
+          "Abramova und Böhme (Universität Innsbruck, 2023): Folgen des Ledger-Datenlecks für Betroffene",
+        labelEn:
+          "Abramova and Böhme (University of Innsbruck, 2023): the aftermath of the Ledger data breach",
+        href: "https://www.usenix.org/system/files/usenixsecurity23-abramova.pdf",
+      },
+      {
+        label: "Waltio: Sicherheitsvorfall beim Krypto-Steuerdienst",
+        labelEn: "Waltio: security incident at the crypto tax service",
+        href: "https://help.waltio.com/en/articles/13482134-questions-answers-security-incident",
+      },
+      {
+        label:
+          "Französische Finanzverwaltung: Zugriffe auf das Kontenregister FICOBA, Februar 2026",
+        labelEn:
+          "French tax administration: unauthorised access to the FICOBA account register, February 2026",
+        href: "https://www.impots.gouv.fr/actualite/acces-illegitimes-au-fichier-national-des-comptes-bancaires-ficoba",
+      },
+      {
+        label:
+          "Französisches Wirtschaftsministerium: Datendiebstahl aus dem Steuersystem, August 2026",
+        labelEn:
+          "French Economy Ministry: data theft from the tax system, August 2026",
+        href: "https://presse.economie.gouv.fr/acces-illegitime-au-systeme-dinformation-de-la-direction-generale-des-finances-publiques/",
+      },
+      {
+        label:
+          "Disziplinarkommission beim BMF: tausende private Abfragen im Steuersystem",
+        labelEn:
+          "Austrian Finance Ministry disciplinary board: thousands of private queries in the tax system",
+        href: "https://www.ris.bka.gv.at/Dokumente/Dok/DKT_BMF_20160930_01069_7_DK_14_01072_7_DK_15_00/DKT_BMF_20160930_01069_7_DK_14_01072_7_DK_15_00.html",
+      },
+      {
+        label:
+          "Französisches Innenministerium: Schutz privater Krypto-Besitzer",
+        labelEn:
+          "French Interior Ministry: protecting private crypto-asset holders",
+        href: "https://www.interieur.gouv.fr/actualites/actualites-du-ministere/crypto-actifs-proteger-particuliers",
+      },
       {
         label:
           "Gendarmerie nationale: Waltio-Datenleck und Auswahl von Angriffszielen",
@@ -148,21 +209,28 @@ export const sourceGroups = [
       },
       {
         label:
-          "Gendarmerie nationale – Datenlecks als Faktor bei Krypto-Entführungen",
+          "Coinbase, Form 8-K: Kundendaten von bestochenen Support-Mitarbeitern kopiert, Mai 2025",
+        labelEn:
+          "Coinbase, Form 8-K: customer data copied by bribed support staff, May 2025",
+        href: "https://www.sec.gov/Archives/edgar/data/1679788/000167978825000094/coin-20250514.htm",
+      },
+      {
+        label:
+          "Gendarmerie nationale: Datenlecks als Faktor bei Krypto-Entführungen",
         labelEn:
           "French Gendarmerie: data breaches as a factor in crypto-related kidnappings",
         href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-1-2",
       },
       {
         label:
-          "Gendarmerie nationale – Entführung von David Balland und seiner Partnerin, Januar 2025",
+          "Gendarmerie nationale: Entführung von David Balland und seiner Partnerin, Januar 2025",
         labelEn:
           "French Gendarmerie: kidnapping of David Balland and his partner, January 2025",
         href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/criminalite-organisee-et-enquetes/2025/enlevement-de-david-balland-un-engagement-massif-et-complet-de-la-gendarmerie-nationale",
       },
       {
         label:
-          "Jameson Lopp – Known Physical Bitcoin Attacks (Sammlung mit Quellenlinks)",
+          "Jameson Lopp: Known Physical Bitcoin Attacks (Sammlung mit Quellenlinks)",
         labelEn:
           "Jameson Lopp: Known Physical Bitcoin Attacks (collection with sources)",
         href: "https://github.com/jlopp/physical-bitcoin-attacks",
@@ -174,12 +242,12 @@ export const sourceGroups = [
     titleEn: "Authorities and civil society",
     sources: [
       {
-        label: "Datenschutzbehörde – Informationen zur Beschwerde",
+        label: "Datenschutzbehörde: Informationen zur Beschwerde",
         labelEn: "Austrian Data Protection Authority: complaint information",
         href: "https://dsb.gv.at/eingabe-an-die-dsb/beschwerde",
       },
       {
-        label: "epicenter.works – Geschichte der österreichischen Kampagne",
+        label: "epicenter.works: Geschichte der österreichischen Kampagne",
         labelEn: "epicenter.works: history of the Austrian campaign",
         href: "https://epicenter.works/thema/vorratsdatenspeicherung",
       },

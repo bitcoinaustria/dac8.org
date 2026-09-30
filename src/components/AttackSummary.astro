@@ -1,0 +1,76 @@
+---
+import {
+  attacks,
+  countIn,
+  euCountries,
+  formatDate,
+  latestDate,
+  latestYear,
+} from "@/lib/attacks"
+import { type Language, pathFor } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+const en = language === "en"
+
+const years = [latestYear - 2, latestYear - 1, latestYear]
+const throughShort = latestDate ? formatDate(latestDate, language, false) : ""
+const euNow = countIn(latestYear, euCountries)
+const euBefore = countIn(latestYear - 1, euCountries)
+const franceNow = countIn(latestYear, ["FR"])
+// France's Interior Minister counted 77 cases in the first half of 2026.
+const showFrance = latestYear === 2026 && franceNow < 77
+---
+
+<div class="attacks" id="angriffe">
+  <h3>{en ? "Known attacks worldwide" : "Bekannte Angriffe weltweit"}</h3>
+  <div class="columns">
+    <p class="section-intro">
+      {en
+          ? `${attacks.length} physical attacks on holders of bitcoin and other crypto-assets are publicly known, and the number keeps rising. In the EU there have already been ${euNow} this year, after ${euBefore} in all of ${latestYear - 1}.`
+          : `${attacks.length} körperliche Angriffe auf Besitzer von Bitcoin und anderen Kryptowerten sind öffentlich bekannt, und es werden laufend mehr. In der EU sind es ${latestYear} schon ${euNow}, nach ${euBefore} im ganzen Jahr ${latestYear - 1}.`}
+    </p>
+    <p class="prose">
+      {en
+          ? "The list is incomplete: most victims stay silent, and many cases never become public."
+          : "Die Liste ist unvollständig: Die meisten Opfer schweigen, und viele Fälle werden nie öffentlich."}
+      {showFrance &&
+          (en
+            ? ` France’s Interior Minister alone counted 77 abductions, sequestrations and extortions or attempts in the first half of ${latestYear}; the collection has ${franceNow} French cases for the whole year so far.`
+            : ` Allein Frankreichs Innenminister zählte im ersten Halbjahr ${latestYear} 77 Entführungen, Freiheitsberaubungen und Erpressungen oder Versuche; die Sammlung kennt für Frankreich bisher ${franceNow} im ganzen Jahr.`)}
+    </p>
+  </div>
+  <dl class="keyfigures">
+    {years.map((year) => (
+        <div>
+          <dt>
+            <strong>{year}</strong>
+            {year === latestYear
+              ? en
+                ? ` known attacks up to ${throughShort}`
+                : ` bekannte Angriffe bis ${throughShort}`
+              : en
+                ? " known attacks"
+                : " bekannte Angriffe"}
+          </dt>
+          <dd>{countIn(year)}</dd>
+        </div>
+      ))}
+  </dl>
+  <a class="button primary" href={pathFor("attacks", language)}
+    >{en ? "Open the attack archive" : "Zum Angriffsarchiv"}</a
+  >
+</div>
+
+<style>
+  .attacks {
+    margin-block-start: var(--space-2xl);
+  }
+
+  .keyfigures {
+    margin-block: var(--space-xl);
+  }
+</style>

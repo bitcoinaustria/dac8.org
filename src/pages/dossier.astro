@@ -1,5 +1,6 @@
 ---
 import AffectedCheck from "@/components/AffectedCheck.astro"
+import AttackSummary from "@/components/AttackSummary.astro"
 import Artwork from "@/components/Artwork.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
@@ -7,28 +8,28 @@ import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
 import { sourceGroups } from "@/data/sources"
 
-const researchDate = "20. September 2026"
+const researchDate = "30. September 2026"
 
 const concerns = [
   {
-    title: "Alle, nicht nur Verdächtige.",
-    text: "Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, bevor feststeht, wer gemeldet wird. Ohne Anlass, ohne Verdacht. Genau diese Vorratslogik lehnen wir ab.",
+    title: "Alle Kunden, ohne Verdacht.",
+    text: "Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, bevor feststeht, wer überhaupt gemeldet wird. Diese Datensammlung auf Vorrat lehnen wir ab.",
   },
   {
-    title: "Ein Profil über Jahre.",
-    text: "Anders als bei Bankkonten werden je Kryptowert auch Stückzahlen und die Zahl der Vorgänge gemeldet. Jahr für Jahr zeigt das, wie aktiv jemand ist.",
+    title: "Eine Akte ohne Enddatum.",
+    text: "Die Meldung kommt jedes Jahr, und beim Anbieter bleibt jede zehn Jahre. Ab 2036 liegt dort über jeden, der Kunde bleibt, laufend ein ganzes Jahrzehnt. Anders als bei Bankkonten gehören Stückzahlen und die Zahl der Vorgänge dazu: Über die Jahre zeigt das, wie viel jemand bewegt und wie sich das verändert.",
   },
   {
     title: "Sortierbar nach Vermögen.",
-    text: "Aus Summe und Anzahl der Käufe lässt sich grob schätzen, wie viel Geld jemand in Krypto bewegt, ob die Schätzung stimmt oder nicht. In falschen Händen lassen sich so Menschen herausfiltern, die vermögend wirken.",
+    text: "Aus Summe und Anzahl der Käufe lässt sich grob schätzen, wie viel Geld jemand in Krypto bewegt. Wer die Daten in die Hände bekommt, kann so Menschen herausfiltern, die vermögend wirken, auch wenn die Schätzung falsch ist.",
   },
   {
-    title: "Ein Datenleck ist nicht rückgängig zu machen.",
-    text: "Ein Leck beim Anbieter kann die Verbindung zwischen deinem Namen und Blockchain-Vorgängen offenlegen. Eine verbreitete Zuordnung lässt sich kaum zurückholen und kann weitere Zahlungen erschließen.",
+    title: "Der Anbieter wird zum Honeypot.",
+    text: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist ein Angriff. Ein Leck beim Anbieter kann deinen Namen mit der Blockchain verbinden. Wer diese Zuordnung einmal hat, kann damit auch weitere Zahlungen verfolgen.",
   },
   {
     title: "Der Zweck wächst mit.",
-    text: "Laut Richtlinie dürfen die Daten auch für Zoll, Geldwäschebekämpfung und unter Bedingungen für Sanktionen genutzt werden. Jeder neue Zweck braucht eine eigene, klare Grenze.",
+    text: "Laut Richtlinie dürfen die Daten auch für Zoll, Geldwäschebekämpfung und unter Bedingungen für Sanktionen genutzt werden. Wir fordern für jeden dieser Zwecke eine eigene, klare Grenze.",
   },
   {
     title: "Fehler reisen mit.",
@@ -36,7 +37,150 @@ const concerns = [
   },
   {
     title: "Zehn Jahre ohne Begründung.",
-    text: "Übermittelte Kryptodaten werden beim Anbieter erst zehn Jahre nach dem Meldezeitraum gelöscht, entsprechende Bankkontendaten nach fünf. Die Gesetzesmaterialien begründen den Unterschied nicht.",
+    text: "Der Anbieter löscht übermittelte Kryptodaten erst zehn Jahre nach dem Meldezeitraum, entsprechende Bankkontendaten nach fünf. Die Gesetzesmaterialien begründen den Unterschied nicht.",
+  },
+]
+
+// Belegte Fälle, in denen verlorene oder missbrauchte Daten den Schaden erst
+// möglich gemacht haben. Fälle ohne diesen Zusammenhang gehören nicht hierher.
+const leaks = [
+  {
+    title: "Ledger 2020: Die Adressen von 272.000 Wallet-Käufern.",
+    text: "Aus dem Onlineshop des Hardware-Wallet-Herstellers gelangten Namen, Anschriften und Telefonnummern ins Netz. Es folgten Phishing-Mails, SMS und Briefe an die Wohnadresse, die nach der Wiederherstellungsphrase fragten. In einer Umfrage der Universität Innsbruck berichteten 93 von 104 Betroffenen von Betrugsversuchen, 33 von Erpressungsdrohungen.",
+    sources: [
+      {
+        label: "Ledger",
+        href: "https://www.ledger.com/message-ledgers-ceo-data-leak",
+      },
+      {
+        label: "Abramova und Böhme",
+        href: "https://www.usenix.org/system/files/usenixsecurity23-abramova.pdf",
+      },
+    ],
+  },
+  {
+    title: "Kroll 2023: Die Guthaben von Krypto-Gläubigern.",
+    text: "Über die gekaperte Handynummer eines Mitarbeiters griffen Angreifer beim Insolvenzdienstleister der FTX-Pleite auf Namen, Anschriften und Guthaben von Gläubigern dreier Krypto-Firmen zu. Kroll warnte vor Betrügern, die dazu auffordern, eine Wallet zu verbinden oder die Wiederherstellungsphrase einzugeben.",
+    sources: [
+      {
+        label: "Kroll",
+        href: "https://ftxquestions.kroll.com/docs/Kroll_Notice_to_FTX_Claimants_4879-3276-7625-2.pdf",
+      },
+    ],
+  },
+  {
+    title:
+      "Fractal ID 2024: Ausweis, Wohnadresse und Wallet in einem Datensatz.",
+    text: "Mit dem wiederverwendeten Passwort eines Administrators holte ein Angreifer beim Berliner Identifizierungsdienst die Daten von rund 6.300 Nutzern: Namen, Ausweisbilder, Wohnadressen und Wallet-Adressen. Danach verlangten die Angreifer Lösegeld.",
+    sources: [
+      {
+        label: "Fractal ID",
+        href: "http://web.archive.org/web/20240726003733/https://web.fractal.id/fractal-id-data-breach-post-mortem/",
+      },
+    ],
+  },
+  {
+    title: "Coinbase 2025: Betrogen mit echten Kundendaten.",
+    text: "Bestochene Support-Mitarbeiter kopierten Kundendaten bis hin zu Ausweisbildern und Kontoständen. Betrüger gaben sich danach als Coinbase aus und brachten Kunden dazu, ihnen Geld zu überweisen. Coinbase schätzt die Kosten samt Entschädigungen auf 180 bis 400 Millionen Dollar. Auch in Österreich nahm danach das Phishing in Coinbases Namen zu.",
+    sources: [
+      {
+        label: "Coinbase (Form 8-K)",
+        href: "https://www.sec.gov/Archives/edgar/data/1679788/000167978825000094/coin-20250514.htm",
+      },
+      {
+        label: "Watchlist Internet",
+        href: "https://www.watchlist-internet.at/news/datenleck-bei-coinbase-phishing",
+      },
+    ],
+  },
+  {
+    title: "Waltio 2026: Steuerdaten als Zielliste.",
+    text: "Beim französischen Krypto-Steuerdienst gelangten E-Mail-Adressen, Gewinne und Verluste sowie Jahresendbestände der Kunden in fremde Hände. Laut Gendarmerie nutzen Täter die Daten, um Opfer für Gewalttaten auszuwählen, und irren sich dabei teils über deren tatsächliche Bestände.",
+    sources: [
+      {
+        label: "Waltio",
+        href: "https://help.waltio.com/en/articles/13482134-questions-answers-security-incident",
+      },
+      {
+        label: "Gendarmerie",
+        href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2",
+      },
+    ],
+  },
+  {
+    title: "Frankreich 2026: Die Finanzverwaltung verliert zweimal.",
+    text: "Mit gestohlenen Zugangsdaten von Beamten zogen Angreifer im Februar 1,2 Millionen Datensätze aus dem nationalen Kontenregister, mit IBAN, Namen und Anschrift. Im Sommer folgten Einkommens-, Adress- und Grundbesitzdaten von 678.000 Menschen und Unternehmen aus dem Steuersystem.",
+    sources: [
+      {
+        label: "Kontenregister",
+        href: "https://www.impots.gouv.fr/actualite/acces-illegitimes-au-fichier-national-des-comptes-bancaires-ficoba",
+      },
+      {
+        label: "Steuersystem",
+        href: "https://presse.economie.gouv.fr/acces-illegitime-au-systeme-dinformation-de-la-direction-generale-des-finances-publiques/",
+      },
+    ],
+  },
+  {
+    title: "Österreich: Tausende private Abfragen im Steuersystem.",
+    text: "Ein Finanzbeamter griff sechs Jahre lang ohne dienstlichen Grund mehrere tausend Mal auf Steuerdaten zu, darunter von mehr als 1.000 Menschen aus seinem Heimatort. 2024 registrierte das Bundesamt zur Korruptionsbekämpfung im öffentlichen Dienst 116 neue Fälle unbefugter Datenabfragen und -weitergaben.",
+    sources: [
+      {
+        label: "Disziplinarkommission beim BMF",
+        href: "https://www.ris.bka.gv.at/Dokumente/Dok/DKT_BMF_20160930_01069_7_DK_14_01072_7_DK_15_00/DKT_BMF_20160930_01069_7_DK_14_01072_7_DK_15_00.html",
+      },
+      {
+        label: "BAK-Jahresbericht 2024",
+        href: "https://www.bak.gv.at/Downloads/files/Jahresberichte/BAK_Jahresbericht_2024_bf_20250422.pdf",
+      },
+    ],
+  },
+]
+
+const attacks = [
+  {
+    title: "Frankreich 2026: 68.000 Euro unter Waffengewalt.",
+    text: "Bewaffnete Täter halten einen Mann in seinem Haus fest und zwingen ihn, Kryptowerte im Wert von rund 68.000 Euro zu überweisen. Die Gendarmerie ordnet den Fall einer Serie zu, in der Täter Wallet-Besitzer ins Visier nehmen, deren persönliche Daten offenbar gehackt wurden.",
+    sources: [
+      {
+        label: "Gendarmerie",
+        href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/criminalite-organisee-et-enquetes/2026/crypto-rapt-en-haute-garonne-trois-nouvelles-interpellations-par-les-enqueteurs-de-la-section-de-recherches-de-toulouse",
+      },
+    ],
+  },
+  {
+    title: "USA 2022: Ein Polizist liefert die Adresse.",
+    text: "Ein Detective erschleicht sich einen Ortungsbeschluss und verschafft einem Auftraggeber die Adresse eines Mannes, der viel Krypto besitzen soll. Wenig später versuchen drei Bewaffnete, in dessen Haus einzudringen, und fliehen erst, als das Opfer schießt.",
+    sources: [
+      {
+        label: "US-Justizministerium",
+        href: "https://www.justice.gov/usao-cdca/pr/crypto-godfather-and-lasd-detective-agree-plead-guilty-violating-civil-rights-business",
+      },
+    ],
+  },
+  {
+    title: "Niederlande 2026: Gerichtsdaten für Erpressung.",
+    text: "Eine Gerichtsmitarbeiterin verkaufte vertrauliche Daten aus dem Justizsystem und erpresste mit solchen Daten selbst einen Mann, unter Drohungen gegen seine Familie. Er zahlte mehr als 92.000 Euro. Sie bekam vier Jahre Haft.",
+    sources: [
+      {
+        label: "Rechtbank Overijssel",
+        href: "https://www.rechtspraak.nl/organisatie-en-contact/organisatie/rechtbanken/rechtbank-overijssel/nieuws/2026/05/oud-medewerker-rechtbank-amsterdam-krijgt-vier-jaar-cel-voor-het-verkopen-van-vertrouwelijke-gegevens-en-afpersing",
+      },
+    ],
+  },
+  {
+    title: "Frankreich 2026: 77 Fälle in sechs Monaten.",
+    text: "Inzwischen geraten auch Privatleute ins Visier, die Kryptowerte besitzen oder nur besitzen sollen. Im ersten Halbjahr 2026 zählte der Innenminister 77 Entführungen, Freiheitsberaubungen und Erpressungen oder Versuche, nach 45 im ganzen Jahr 2025.",
+    sources: [
+      {
+        label: "Innenministerium",
+        href: "https://www.interieur.gouv.fr/actualites/actualites-du-ministere/crypto-actifs-proteger-particuliers",
+      },
+      {
+        label: "Journal du Coin",
+        href: "https://journalducoin.com/actualites/crypto-rapt-france-plan-action-laurent-nunez",
+      },
+    ],
   },
 ]
 
@@ -49,7 +193,7 @@ const faqs = [
   {
     question: "Wird meine eigene Wallet-Adresse gemeldet?",
     answer:
-      "Nein, Wallet-Adressen sind nicht Teil der jährlichen DAC8-Meldung. Gemeldet werden aber Wert und Stückzahl von Übertragungen an Adressen, die dem Anbieter nicht als Adresse eines anderen Anbieters bekannt sind. Darunter fällt in der Regel auch deine eigene Wallet. Die Adresse und ihr Bezug zu dir können trotzdem in den Aufzeichnungen des Anbieters gespeichert bleiben.",
+      "Nein, Wallet-Adressen sind nicht Teil der jährlichen DAC8-Meldung. Gemeldet werden aber Wert und Stückzahl von Übertragungen an Adressen, die dem Anbieter nicht als Adresse eines anderen Anbieters bekannt sind. Darunter fällt in der Regel auch deine eigene Wallet. Die Adresse und ihr Bezug zu dir bleiben aber in den Aufzeichnungen des Anbieters gespeichert.",
   },
   {
     question:
@@ -58,9 +202,9 @@ const faqs = [
       "Ja. Der Tausch wird mit Wert, Stückzahl und Anzahl auf beiden Seiten gemeldet, obwohl er in Österreich für Privatpersonen steuerlich meist kein Verkauf ist.",
   },
   {
-    question: "Ist DAC8 ein Vermögensregister?",
+    question: "Lässt sich aus DAC8-Daten mein Vermögen ablesen?",
     answer:
-      "Nein. Gemeldet werden Jahreswerte der Aktivität, kein aktueller Bestand und kein Gesamtvermögen. Zusammen mit Kontenregister, Anbieteraufzeichnungen und Blockchain-Analyse können sie aber ein detailliertes Bild der Vermögensverhältnisse ergeben.",
+      "Nicht direkt. Gemeldet werden Jahreswerte, kein aktueller Bestand und kein Gesamtvermögen. Über die Jahre zeigen sie aber, wie viel du bewegst. Zusammen mit Kontenregister, Anbieteraufzeichnungen und Blockchain-Analyse können sie ein detailliertes Bild der Vermögensverhältnisse ergeben.",
   },
   {
     question: "Werden Transaktionen vor 2026 nachgemeldet?",
@@ -68,9 +212,14 @@ const faqs = [
       "Nein. Der erste Meldezeitraum beginnt am 1. Jänner 2026. Eine rückwirkende Meldepflicht bräuchte ein neues Gesetz. Weder DAC9 noch der aktuelle Vorschlag für eine Neufassung der Richtlinie sehen das vor.",
   },
   {
-    question: "Werden meine Daten gelöscht, wenn ich mein Konto schließe?",
+    question: "Wie lange bleiben meine Daten gespeichert?",
     answer:
-      "Nicht sofort. Nach dem österreichischen Finanzmarkt-Geldwäschegesetz muss der Anbieter notwendige Identifizierungs- und Transaktionsunterlagen noch zehn Jahre nach Ende der Geschäftsbeziehung aufbewahren.",
+      "Lange, und es kommt jedes Jahr etwas dazu. Beim Anbieter wird jede Jahresmeldung erst zehn Jahre nach dem Meldezeitraum gelöscht. Identifizierungs- und Transaktionsunterlagen muss er nach dem Finanzmarkt-Geldwäschegesetz derzeit bis zehn Jahre nach Ende der Geschäftsbeziehung aufbewahren; schließt du dein Konto, beginnt diese Frist erst. Für Kopien, die Steuerbehörden anderer EU-Staaten erhalten, nennt die Richtlinie keine feste Höchstfrist, nur mindestens fünf Jahre.",
+  },
+  {
+    question: "Wie erkenne ich Phishing mit der Meldepflicht?",
+    answer:
+      "Das Finanzamt fragt nicht per E-Mail oder SMS nach deinen Krypto-Beständen. Niemand, der seriös ist, verlangt, dass du eine Wallet verbindest oder deine Wiederherstellungsphrase eingibst. Die Daten für DAC8 meldet dein Anbieter selbst. Sprich zurückhaltend über deine Bestände, auch im Bekanntenkreis und in sozialen Medien.",
   },
   {
     question: "Lässt sich jede Zahlung mit Kryptowährungen nachverfolgen?",
@@ -97,13 +246,14 @@ const faqs = [
 
 <Layout
   sections={[
-    { id: "was-ist-dac8", label: "Was ist DAC8?" },
-    { id: "gemeldet", label: "Was gemeldet wird" },
-    { id: "problem", label: "Was problematisch ist" },
-    { id: "ausblick", label: "Was noch kommen könnte" },
-    { id: "forderungen", label: "Was wir fordern" },
-    { id: "rechtsweg", label: "Wie wir vorgehen" },
-    { id: "faq", label: "Häufige Fragen" },
+    { id: "was-ist-dac8", label: "DAC8" },
+    { id: "gemeldet", label: "Meldung" },
+    { id: "problem", label: "Kritik" },
+    { id: "faelle", label: "Fälle" },
+    { id: "ausblick", label: "Größeres Bild" },
+    { id: "forderungen", label: "Forderungen" },
+    { id: "rechtsweg", label: "Rechtsweg" },
+    { id: "faq", label: "Fragen" },
     { id: "quellen", label: "Quellen" },
   ]}
 >
@@ -112,10 +262,10 @@ const faqs = [
   <article class="campaign dossier">
     <header class="hero">
       <div class="hero-text">
-        <h1>Was DAC8 verlangt. <span>Und was nicht.</span></h1>
+        <h1>Was DAC8 verlangt. <span>Und was daraus wird.</span></h1>
         <p class="lead">
-          Welche Daten über dich gemeldet werden, was beim Anbieter gespeichert
-          bleibt und warum wir dagegen vorgehen.
+          Welche Daten über dich gemeldet werden, was sich beim Anbieter über
+          die Jahre ansammelt und warum wir dagegen vorgehen.
         </p>
         <nav class="hero-actions" aria-label="Direkteinstieg">
           <a class="button primary" href="#gemeldet">Was gemeldet wird</a>
@@ -150,7 +300,7 @@ const faqs = [
           <strong>Der Anbieter</strong>
           <span
             >bereitet Identität und Jahreswerte für alle Kunden auf und meldet
-            einmal im Jahr</span
+            jedes Jahr aufs Neue</span
           >
         </li>
         <li>
@@ -166,16 +316,18 @@ const faqs = [
         <strong>Der österreichische Zusatz:</strong>
         Bevor feststeht, wer überhaupt gemeldet wird, muss der Anbieter die
         Meldedaten für alle Kunden, alle Transaktionen und alle Kryptowerte
-        aufbereiten. Die Richtlinie verlangt das nicht.
+        aufbereiten. Das geht über die Richtlinie hinaus.
         <small>§ 20 Abs. 1 Krypto-MPfG.</small>
       </p>
     </section>
 
     <section id="gemeldet" aria-labelledby="gemeldet-heading">
-      <h2 id="gemeldet-heading">Was gemeldet wird, und was nicht</h2>
+      <h2 id="gemeldet-heading">
+        Was gemeldet wird und was beim Anbieter bleibt
+      </h2>
       <p class="section-intro">
-        Die Meldung enthält Identität und Jahreswerte, keine einzelnen
-        Transaktionen.
+        Die Meldung enthält Identität und Jahreswerte. Die Einzelheiten bleiben
+        beim Anbieter.
       </p>
       <Artwork id="reportAssets" language="de" size="wide" zoom />
       <div class="compare">
@@ -185,7 +337,7 @@ const faqs = [
             <li>Name, Anschrift, Steuerwohnsitz, Steuernummer, Geburtsdatum</li>
             <li>
               je Kryptowert und Vorgangsart Wert in Euro, Stückzahl und meist
-              die Anzahl der Vorgänge – getrennt nach Kauf, Verkauf, Tausch und
+              die Anzahl der Vorgänge, getrennt nach Kauf, Verkauf, Tausch und
               Übertragung
             </li>
             <li>
@@ -197,15 +349,19 @@ const faqs = [
               auch Vorgänge, die steuerlich meist keine Rolle spielen, etwa der
               Tausch von Krypto gegen Krypto
             </li>
+            <li>Jahr für Jahr aufs Neue, beginnend mit 2026</li>
           </ul>
         </div>
         <div class="absent">
-          <h3>Das steht nicht in der Meldung</h3>
+          <h3>Nicht in der Meldung, aber beim Anbieter</h3>
           <ul>
-            <li>Wallet-Adressen und Transaktionskennungen</li>
-            <li>einzelne Transaktionen, Zeitpunkte oder Gegenparteien</li>
-            <li>der aktuelle Bestand oder dein Gesamtvermögen</li>
-            <li>Vorgänge vor dem 1. Jänner 2026</li>
+            <li>dein Ausweis und die Unterlagen aus der Identifizierung</li>
+            <li>Wallet-Adressen, auch die deiner eigenen Wallet</li>
+            <li>
+              einzelne Transaktionen mit Zeitpunkt und Betrag, bei Übertragungen
+              auch Angaben zu Absender und Empfänger
+            </li>
+            <li>dein Kontostand beim Anbieter</li>
           </ul>
         </div>
       </div>
@@ -226,19 +382,19 @@ const faqs = [
       </ol>
       <div class="art-split even">
         <div>
-          <h3>Was beim Anbieter bleibt</h3>
+          <h3>Beim Anbieter wächst ein Datenschatz</h3>
           <p class="prose">
-            Dein Anbieter kann deinen Namen mit Wallet-Adressen und einzelnen
-            Transaktionen verknüpfen. Diese Details gehören nicht zur jährlichen
-            DAC8-Meldung, bleiben aber je nach Dienstleistung gespeichert.
+            Dein Anbieter verknüpft deinen Namen mit Wallet-Adressen und
+            einzelnen Transaktionen. Mit DAC8 kommen Steuernummer,
+            Steuerwohnsitz und aufbereitete Jahreswerte dazu.
             <a
               href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&amp;Gesetzesnummer=20009769"
               >§ 21 FM-GwG</a
             >
-            verlangt unabhängig von DAC8, notwendige Identifizierungs- und
-            Transaktionsunterlagen noch zehn Jahre nach Ende der
-            Geschäftsbeziehung oder einer gelegentlichen Transaktion
-            aufzubewahren.
+            verlangt derzeit, Identifizierungs- und Transaktionsunterlagen bis
+            zehn Jahre nach Ende der Geschäftsbeziehung aufzubewahren. Die Frist
+            läuft erst ab deiner Kündigung. Solche Bestände gehen immer wieder
+            verloren, wie die <a href="#faelle">Fälle weiter unten</a> zeigen.
           </p>
         </div>
         <Artwork id="linkedIdentity" language="de" />
@@ -248,9 +404,11 @@ const faqs = [
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">Was daran problematisch ist</h2>
       <p class="section-intro">
-        Auch ohne Verdacht werden deine Daten aufbereitet und über Jahre
-        gespeichert. Das greift in dein Privatleben ein und setzt dich den
-        Risiken von Fehlern, Datenlecks und Missbrauch aus.
+        Jedes Jahr kommt eine Meldung dazu, beim Anbieter sammelt sich noch mehr
+        an, und alles bleibt über Jahre gespeichert, ohne dass je ein Verdacht
+        bestand. Daraus entsteht ein Finanzprofil, das weit über jede einzelne
+        Meldung hinausgeht, und mit ihm das Risiko von Fehlern, Datenlecks und
+        Missbrauch.
       </p>
       <ul class="facts concerns">
         {concerns.map((concern) => (
@@ -268,11 +426,11 @@ const faqs = [
         <div>
           <h3 id="zahlungsprofile">Wenn Zahlungen deinen Alltag offenlegen</h3>
           <p class="prose">
-            Wer mit Kryptowährungen bezahlt, kann Spuren seines Alltags
-            hinterlassen. Bei Bitcoin bleiben On-Chain-Transaktionen öffentlich.
-            Verbindet ein Anbieter deinen Namen mit einer Adresse, können
-            weitere Zahlungen zugeordnet werden. Mit Informationen über die
-            Empfänger lassen Einkäufe, Spenden und regelmäßige Zahlungen
+            Zahlst du mit Bitcoin, hinterlässt du Spuren deines Alltags, denn
+            On-Chain-Transaktionen bleiben öffentlich. Verbindet ein Anbieter
+            deinen Namen mit einer Adresse, kann jemand weitere Zahlungen dir
+            zuordnen. Mit Informationen über die Empfänger lassen Einkäufe,
+            Spenden und regelmäßige Zahlungen
             <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
               >Rückschlüsse auf Gewohnheiten und Beziehungen</a
             >
@@ -281,43 +439,111 @@ const faqs = [
         </div>
         <Artwork id="spendingProfile" language="de" />
       </div>
+    </section>
+
+    <section id="faelle" aria-labelledby="faelle-heading">
+      <h2 id="faelle-heading">Was schon passiert ist</h2>
+      <p class="section-intro">
+        Anbieter und Behörden verlieren immer wieder Daten über Vermögen.
+        Betrüger und Gewalttäter nutzen sie.
+      </p>
+      <h3>Wenn Anbieter und Behörden Daten verlieren</h3>
+      <ul class="facts">
+        {leaks.map((item) => (
+          <li>
+            <strong>{item.title}</strong>
+            <p>{item.text}</p>
+            <small>
+              {item.sources.length > 1 ? "Quellen:" : "Quelle:"}{" "}
+              {item.sources.map((source, index) => [
+                index > 0 && ", ",
+                <a href={source.href}>{source.label}</a>,
+              ])}
+            </small>
+          </li>
+        ))}
+        <li class="facts-figure">
+          <Artwork id="dataHack" language="de" />
+        </li>
+      </ul>
       <div class="art-split even reverse">
         <div>
-          <h3>Datenlecks gefährden Menschen</h3>
+          <h3>Vom Datenleck zur Wohnungstür</h3>
           <p class="prose">
-            Gespeicherte Verbindungen zwischen Identität und Finanzdaten sind
-            ein lohnendes Ziel für Angreifer, und lange Aufbewahrungspflichten
-            halten sie über Jahre verfügbar. Die
-            <a
-              href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
-              >französische Gendarmerie</a
-            >
-            berichtet, dass Täter gestohlene Kundendaten des
-            Krypto-Steuerdienstes Waltio zur Auswahl von Angriffszielen nutzen,
-            und beschreibt Entführungen und körperliche Gewalt. Schon die
-            falsche Annahme, jemand besitze viel Krypto, kann ihn und seine
-            Angehörigen gefährden. Datensparsamkeit und kurze Speicherfristen
-            schützen deshalb auch die persönliche Sicherheit.
+            Ein Datenleck liefert Tätern, was sie sonst mühsam auskundschaften
+            müssten: wer Krypto besitzt und wo er wohnt. Lange
+            Aufbewahrungspflichten halten diese Daten über Jahre bereit. Schon
+            die falsche Annahme, jemand besitze viel Krypto, kann ihn und seine
+            Angehörigen gefährden. Deshalb fordern wir Datensparsamkeit und
+            kurze Speicherfristen.
           </p>
         </div>
         <Artwork id="wrenchAttack" language="de" />
       </div>
+      <ul class="facts">
+        {attacks.map((item) => (
+          <li>
+            <strong>{item.title}</strong>
+            <p>{item.text}</p>
+            <small>
+              {item.sources.length > 1 ? "Quellen:" : "Quelle:"}{" "}
+              {item.sources.map((source, index) => [
+                index > 0 && ", ",
+                <a href={source.href}>{source.label}</a>,
+              ])}
+            </small>
+          </li>
+        ))}
+      </ul>
+      <AttackSummary language="de" />
     </section>
 
     <section id="ausblick" aria-labelledby="ausblick-heading">
-      <h2 id="ausblick-heading">Was noch kommen könnte</h2>
+      <h2 id="ausblick-heading">Ein Baustein finanzieller Überwachung</h2>
       <div class="columns">
         <p class="section-intro">
-          Eine Meldeinfrastruktur lässt sich später erweitern. Deshalb wollen
-          wir der Datensammlung jetzt wirksame Grenzen setzen.
+          Schritt für Schritt bauen die EU und Österreich eine Infrastruktur,
+          die Finanzdaten ohne Verdacht erfasst, lange speichert und immer enger
+          verknüpft. DAC8 ist ein Teil davon.
         </p>
         <p class="prose">
-          Eine Pflicht zur Meldung von Wallet-Adressen, einzelnen Transaktionen
-          oder Vorgängen vor 2026 bräuchte eine Gesetzesänderung. Das ist
-          derzeit nicht beschlossen. Auch der aktuelle Vorschlag zur Neufassung
-          der Richtlinie sieht dies nicht vor.
+          Wallet-Adressen, einzelne Transaktionen und Vorgänge vor 2026 muss
+          derzeit niemand melden, und auch der Vorschlag zur Neufassung der
+          Richtlinie sieht das nicht vor. Eine bestehende Infrastruktur kann der
+          Gesetzgeber aber jederzeit erweitern. Wir wollen ihr deshalb jetzt
+          Grenzen setzen.
         </p>
       </div>
+      <ol class="flow" aria-label="Die Bausteine">
+        <li>
+          <strong>Bei der Kontoeröffnung</strong>
+          <span
+            >identifiziert dich der Anbieter mit Ausweis. Die Unterlagen bleiben
+            derzeit bis zehn Jahre nach Ende der Kundenbeziehung.</span
+          >
+        </li>
+        <li>
+          <strong>Bei jeder Übertragung</strong>
+          <span
+            >erfasst er Absender und Empfänger, auch bei Übertragungen auf deine
+            eigene Wallet.</span
+          >
+        </li>
+        <li class="accent">
+          <strong>Jedes Jahr</strong>
+          <span
+            >bereitet er Steuernummer und Jahreswerte aller Kunden für die
+            DAC8-Meldung auf.</span
+          >
+        </li>
+        <li>
+          <strong>Bis 2029</strong>
+          <span
+            >werden die Kontenregister EU-weit vernetzt, dann auch mit
+            Krypto-Konten.</span
+          >
+        </li>
+      </ol>
     </section>
 
     <section id="forderungen" aria-labelledby="forderungen-heading">
@@ -365,12 +591,11 @@ const faqs = [
       <div class="precedent">
         <p class="precedent-year" aria-hidden="true">2014</p>
         <p class="prose">
-          <strong>Gegenwehr wirkt.</strong>
+          <strong>Schon einmal fiel ein Überwachungsgesetz.</strong>
           Die von AKVorrat, heute epicenter.works, organisierte Beschwerde gegen
           die Vorratsdatenspeicherung führte über den Verfassungsgerichtshof zum
-          Europäischen Gerichtshof. 2014 fielen die EU-Richtlinie und die
-          österreichischen Regeln. Der Erfolg zeigt, dass sich auch
-          weitreichende Überwachungsgesetze ändern lassen.
+          Europäischen Gerichtshof. 2014 hob der EuGH die EU-Richtlinie auf, der
+          VfGH die österreichischen Regeln.
         </p>
       </div>
     </section>
@@ -383,18 +608,18 @@ const faqs = [
       <LegalRoute language="de" />
       <ul class="facts">
         <li>
-          <strong>Was die Beschwerde nicht tut</strong>
+          <strong>Was du erwarten kannst</strong>
           <p>
-            Sie stoppt die Datenerfassung nicht automatisch. Über eine Vorlage
-            an den EuGH entscheidet das Gericht; wie lange das Verfahren dauert,
-            steht noch nicht fest.
+            Die Datenerfassung läuft während des Verfahrens weiter. Ob der Fall
+            zum EuGH kommt, entscheidet das Gericht, und wie lange das dauert,
+            wissen wir noch nicht.
           </p>
         </li>
         <li>
           <strong>Wie du dich beteiligen kannst</strong>
           <p>
-            Ob und wie sich Privatpersonen beteiligen können, klären wir im
-            weiteren Verlauf. Bis dahin kannst du den
+            Die Möglichkeiten für Privatpersonen klären wir noch. Bis dahin
+            kannst du den
             <a href="/mitmachen/#spenden"
               >Prozess mit einer Spende unterstützen</a
             >
