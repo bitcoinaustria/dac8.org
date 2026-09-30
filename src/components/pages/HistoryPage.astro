@@ -1,0 +1,256 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import MetaPage from "@/components/MetaPage.astro"
+import TimelineRail from "@/components/TimelineRail.astro"
+import { historyEras, historyFor, historyResearchDate } from "@/data/history"
+import { languageFor, pathFor } from "@/lib/i18n"
+const language = languageFor(Astro.url.pathname)
+const en = language === "en"
+const entries = historyFor(language)
+const eras = historyEras[language]
+const statusLabel = {
+  context: en ? "Context" : "Umfeld",
+  past: en ? "In force" : "In Kraft",
+  repealed: en ? "Repealed" : "Aufgehoben",
+  current: en ? "Applies since 2026" : "Gilt seit 2026",
+  proposed: en ? "Proposal" : "Vorschlag",
+} as const
+---
+
+<Layout
+  sections={[
+    ...eras.map((era) => ({ id: era.id, label: era.label })),
+    { id: "gemeinsam", label: en ? "Common rules" : "Gemeinsame Regeln" },
+  ]}
+>
+  <MetaPage slot="head" />
+  <article class="campaign history">
+    <header class="hero">
+      <div class="hero-text">
+        <h1>
+          {en ? "How we got to DAC8. " : "Wie es zu DAC8 kam. "}
+          <span>{en ? "And what comes next." : "Und was noch kommt."}</span>
+        </h1>
+        <p class="lead">
+          {en
+            ? "EU tax authorities started out asking each other about specific cases. Today, banks, platforms and crypto-asset providers report on their customers every year. DAC8 is the eighth step. The ninth has been adopted, and a recast of the whole system has been proposed."
+            : "Am Anfang fragten Steuerbehörden einander zu einzelnen Fällen. Heute melden Banken, Plattformen und Krypto-Anbieter jedes Jahr Daten über ihre Kunden. DAC8 ist die achte Stufe. Die neunte ist beschlossen, eine Neufassung des ganzen Systems vorgeschlagen."}
+        </p>
+      </div>
+    </header>
+
+    <TimelineRail language={language} />
+
+    {eras.map((era) => (
+      <section id={era.id} aria-labelledby={`${era.id}-heading`}>
+        <h2 id={`${era.id}-heading`}>{era.title}</h2>
+        <p class="section-intro">{era.intro}</p>
+        <ol class="chronicle">
+          {entries
+            .filter((entry) => entry.era === era.id)
+            .map((entry) => (
+              <li
+                id={entry.id}
+                class={entry.status}
+              >
+                <p class="chronicle-date">
+                  <time datetime={entry.date}>{entry.when}</time>
+                  <span class="tag">{statusLabel[entry.status]}</span>
+                </p>
+                <h3>{entry.title}</h3>
+                <p class="prose">{entry.text}</p>
+                {entry.details.length > 0 && (
+                  <dl class="chronicle-facts">
+                    {entry.details.map((detail) => (
+                      <>
+                        <dt>{detail.label}</dt>
+                        <dd>{detail.text}</dd>
+                      </>
+                    ))}
+                  </dl>
+                )}
+                <p class="chronicle-sources">
+                  {entry.sources.map((source, index) => (
+                    <>
+                      {index > 0 && " · "}
+                      <a href={source.href}>{source.label}</a>
+                    </>
+                  ))}
+                </p>
+              </li>
+            ))}
+        </ol>
+      </section>
+    ))}
+
+    <section id="gemeinsam" aria-labelledby="gemeinsam-heading">
+      <h2 id="gemeinsam-heading">
+        {en ? "What applies to every step" : "Was für alle Stufen gilt"}
+      </h2>
+      <p class="section-intro">
+        {en
+          ? "Every step amends the same 2011 directive. The exchange channels, official secrecy and the rules on what the data may be used for apply to all categories alike."
+          : "Jede Stufe ändert dieselbe Richtlinie von 2011. Übermittlungswege, Amtsgeheimnis und die Regeln, wofür die Daten verwendet werden dürfen, gelten für alle Kategorien gemeinsam."}
+      </p>
+      <p class="prose">
+        {en
+          ? "Originally, exchanged information could be used for taxes, tax recovery, social security contributions and tax penalty proceedings; any other use needed the sending country’s consent. DAC8 added the fight against money laundering and terrorist financing and, without consent, EU sanctions. This applies to bank-account, salary, pension and platform data as well."
+          : "Ursprünglich durften ausgetauschte Informationen für Steuern, deren Beitreibung, Sozialversicherungsbeiträge und Steuerstrafverfahren verwendet werden; für alles andere brauchte es die Zustimmung des Herkunftsstaats. DAC8 hat die Bekämpfung von Geldwäsche und Terrorismusfinanzierung und, ohne Zustimmung, EU-Sanktionen hinzugefügt. Das gilt auch für Konto-, Lohn-, Pensions- und Plattformdaten."}
+      </p>
+      <p class="chronicle-sources">
+        {en ? "Article 16 of Directive 2011/16/EU, as amended by Article 1(7) of " : "Art. 16 der Richtlinie 2011/16/EU, geändert durch Art. 1 Nr. 7 der "}
+        <a
+          href={en ? "https://eur-lex.europa.eu/eli/dir/2023/2226/oj/eng" : "https://eur-lex.europa.eu/eli/dir/2023/2226/oj/deu"}
+          >{en ? "Directive (EU) 2023/2226" : "Richtlinie (EU) 2023/2226"}</a
+        >.
+      </p>
+      <nav
+        class="hero-actions"
+        aria-label={en ? "Continue reading" : "Weiterlesen"}
+      >
+        <a
+          class="button primary"
+          href={`${pathFor("dossier", language)}#gemeldet`}
+          >{en ? "What DAC8 reports" : "Was DAC8 meldet"}</a
+        >
+        <a class="button" href={`${pathFor("dossier", language)}#quellen`}
+          >{en ? "All sources" : "Alle Quellen"}</a
+        >
+      </nav>
+      <p class="research-note">
+        {en
+          ? `Independent research by Bitcoin Austria, status: ${historyResearchDate.en}. We check every entry against primary sources but cannot guarantee that it is correct or complete. Later changes to the law may not be reflected yet. Not legal advice.`
+          : `Unabhängige Recherche von Bitcoin Austria, Stand: ${historyResearchDate.de}. Wir prüfen jeden Eintrag an Primärquellen, übernehmen aber keine Gewähr für Richtigkeit und Vollständigkeit. Spätere Rechtsänderungen sind womöglich noch nicht berücksichtigt. Keine Rechtsberatung.`}
+      </p>
+    </section>
+  </article>
+</Layout>
+
+<style>
+  .campaign > :global(.timeline-rail) {
+    margin-block-start: calc(var(--band-gap) * -0.5);
+  }
+
+  /* Stationen im Detail: senkrechte Nut links, Token je Eintrag. */
+  .chronicle {
+    --dot: 1rem;
+    display: grid;
+    gap: var(--space-xl);
+    max-inline-size: calc(var(--measure-text) + 3rem);
+    margin-block-start: var(--space-xl);
+    padding: 0;
+    list-style: none;
+  }
+
+  .chronicle > li {
+    position: relative;
+    padding-inline-start: calc(var(--dot) + var(--space-m));
+    scroll-margin-block-start: calc(var(--space-2xl) + var(--space-xl));
+  }
+
+  .chronicle > li::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    inset-block-start: 0.2rem;
+    inset-inline-start: 0;
+    inline-size: var(--dot);
+    block-size: var(--dot);
+    border: 1px solid var(--material-edge);
+    border-radius: var(--radius-full);
+    background: linear-gradient(155deg, #4b5056, #25282d);
+    box-shadow:
+      inset 0 1px 0 #ffffff38,
+      0 1px 2px var(--material-shade);
+  }
+
+  .chronicle > li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    inset-block-start: calc(0.2rem + var(--dot));
+    inset-block-end: calc(-1 * var(--space-xl) - 0.2rem);
+    inset-inline-start: calc(var(--dot) / 2 - 1px);
+    border-inline-start: 2px solid light-dark(#c6cbcf, #454b51);
+  }
+
+  .chronicle > .context::before {
+    background: var(--background);
+    box-shadow: none;
+  }
+
+  .chronicle > .current::before {
+    border-color: light-dark(#b6000c, #fa5963);
+    background: linear-gradient(155deg, #e3000f, #be000c);
+  }
+
+  .chronicle > .proposed::before {
+    background: linear-gradient(
+      155deg,
+      light-dark(#ffffff, #292d31),
+      light-dark(#e8ecee, #181b1e)
+    );
+  }
+
+  .chronicle > .proposed::after,
+  .chronicle > li:has(+ .proposed)::after {
+    border-inline-start-style: dashed;
+  }
+
+  .chronicle > li:target > h3 {
+    color: var(--accent);
+  }
+
+  .chronicle-date {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+    color: var(--ink-3);
+  }
+
+  .chronicle-date .tag {
+    margin: 0;
+  }
+
+  .chronicle h3 {
+    margin-block-start: var(--space-3xs);
+  }
+
+  .chronicle .prose {
+    margin-block-start: var(--space-xs);
+  }
+
+  .chronicle-facts {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--space-3xs) var(--space-s);
+    max-inline-size: var(--measure-text);
+    margin-block-start: var(--space-s);
+    font-size: 0.9375rem;
+  }
+
+  .chronicle-facts dt {
+    color: var(--ink-3);
+  }
+
+  .chronicle-facts dd {
+    color: var(--ink-2);
+  }
+
+  @container campaign (width < 34rem) {
+    .chronicle-facts {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .chronicle-facts dd + dt {
+      margin-block-start: var(--space-2xs);
+    }
+  }
+
+  .chronicle-sources {
+    max-inline-size: var(--measure-text);
+    margin-block-start: var(--space-s);
+    color: var(--ink-3);
+    font-size: 0.875rem;
+  }
+</style>

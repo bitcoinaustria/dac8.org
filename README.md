@@ -50,7 +50,7 @@ headlines match the story scenes on the home page.
 
 ## Site structure
 
-Four pages per language, with URLs that follow the navigation labels:
+Four main pages per language, with URLs that follow the navigation labels:
 
 | Page | German | English |
 | --- | --- | --- |
@@ -58,6 +58,7 @@ Four pages per language, with URLs that follow the navigation labels:
 | Dossier: the complete reference, FAQ and sources | `/dossier/` | `/en/dossier/` |
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
+| Geschichte: DAC timeline since 1977, linked from dossier, home and footer | `/geschichte/` | `/en/history/` |
 
 A top bar carries the navigation and a permanent donate button that leads to
 `#spenden` on the participation page; on mobile a bottom bar keeps donating and
@@ -94,6 +95,12 @@ the participation and proceedings pages share components; the home page and the
 dossier remain explicit Astro documents per language. Source URLs are shared in `src/data/sources.ts`.
 
 - Update `src/data/campaign.ts` when the procedural status changes.
+- The history page (`/geschichte/`, `/en/history/`) renders `src/data/history.ts`,
+  a chronology from Directive 77/799/EEC to the pending DAC recast. Its claims
+  are verified in the wiki reference `dac-history-timeline`. Update
+  `historyResearchDate` in the same file with every content change; the page
+  shows it as the research status. The home page shows a selection of the
+  same stations (`homeSteps`) through `src/components/TimelineRail.astro`.
 - Add confirmed public milestones to `src/data/updates.ts`, with a stable ID,
   publication timestamp including timezone, both translations and an optional
   source URL. Future-dated entries stay hidden until a build after that date.

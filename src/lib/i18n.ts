@@ -11,6 +11,7 @@ export const campaign = {
 export const routes = {
   home: { de: "/", en: "/en/" },
   dossier: { de: "/dossier/", en: "/en/dossier/" },
+  history: { de: "/geschichte/", en: "/en/history/" },
   proceedings: { de: "/verfahren/", en: "/en/proceedings/" },
   participate: { de: "/mitmachen/", en: "/en/get-involved/" },
   legal: { de: "/impressum/", en: "/en/legal/" },

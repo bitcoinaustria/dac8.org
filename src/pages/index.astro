@@ -5,8 +5,10 @@ import CampaignStatus from "@/components/CampaignStatus.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import StoryScene from "@/components/StoryScene.astro"
+import TimelineRail from "@/components/TimelineRail.astro"
 import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
+import { homeSteps } from "@/data/history"
 ---
 
 <Layout>
@@ -269,6 +271,19 @@ import { campaignStatus } from "@/data/campaign"
           </div>
         </div>
       </div>
+    </section>
+
+    <section id="geschichte" aria-labelledby="geschichte-heading">
+      <h2 id="geschichte-heading">Wie es dazu kam</h2>
+      <p class="section-intro">
+        DAC8 ist die achte Stufe einer EU-Richtlinie, deren Vorläufer von 1977
+        stammt. Aus der Amtshilfe im Einzelfall sind jährliche Meldungen über
+        Löhne, Bankkonten, Plattformverkäufe und Kryptowerte geworden.
+      </p>
+      <TimelineRail language="de" steps={homeSteps} />
+      <a class="text-link" href="/geschichte/"
+        >Die ganze Geschichte seit 1977</a
+      >
     </section>
 
     <section id="position" aria-labelledby="position-heading">

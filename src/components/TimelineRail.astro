@@ -1,0 +1,166 @@
+---
+import { historyFor } from "@/data/history"
+import { type Language, pathFor } from "@/lib/i18n"
+
+// One token per station on a groove, each linking to its entry on the
+// history page. `steps` limits the rail to a selection, e.g. on the home page.
+interface Props {
+  language: Language
+  steps?: string[]
+}
+
+const { language, steps } = Astro.props
+const en = language === "en"
+const onHistoryPage = steps === undefined
+const base = onHistoryPage ? "" : pathFor("history", language)
+const entries = historyFor(language).filter(
+  (entry) => !steps || steps.includes(entry.id),
+)
+---
+
+<nav
+  class="timeline-rail"
+  aria-label={en ? "Timeline at a glance" : "Zeitleiste im Überblick"}
+>
+  <ol>
+    {entries.map((entry) => (
+      <li class={entry.status}>
+        <a href={`${base}#${entry.id}`}>
+          <span class="rail-year">{entry.year}</span>
+          <span class="rail-label">{entry.short}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  /* Schmal scrollt nur die Schiene, nie die Seite. */
+  .timeline-rail {
+    contain: inline-size;
+    margin-block-start: var(--space-xl);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+
+  ol {
+    --dot: 1rem;
+    display: grid;
+    grid-auto-columns: minmax(5rem, 1fr);
+    grid-auto-flow: column;
+    margin: 0;
+    padding: 0 0 var(--space-2xs);
+    list-style: none;
+  }
+
+  li {
+    position: relative;
+  }
+
+  /* Die Nut läuft durch alle Stationen; zum Vorschlag hin gestrichelt. */
+  li::after {
+    content: "";
+    position: absolute;
+    inset-block-start: calc(var(--dot) / 2 - 1px);
+    inset-inline: 0;
+    border-block-start: 2px solid light-dark(#c6cbcf, #454b51);
+    box-shadow: 0 1px 0 light-dark(#ffffff, #ffffff08);
+  }
+
+  li:first-child::after {
+    inset-inline-start: 50%;
+  }
+
+  li:last-child::after {
+    inset-inline-end: 50%;
+  }
+
+  li.proposed::after {
+    border-block-start-style: dashed;
+    box-shadow: none;
+  }
+
+  /* Stärker als die Fließtextlinks in campaign.css. */
+  .timeline-rail a {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3xs);
+    padding-inline: var(--space-3xs);
+    color: var(--ink-2);
+    text-align: center;
+    text-decoration: none;
+  }
+
+  /* Token wie im Rechtsweg: Graphitkern, Titankante, Lichtkante. */
+  a::before {
+    content: "";
+    inline-size: var(--dot);
+    block-size: var(--dot);
+    margin-block-end: var(--space-3xs);
+    border: 1px solid var(--material-edge);
+    border-radius: var(--radius-full);
+    background: linear-gradient(155deg, #4b5056, #25282d);
+    box-shadow:
+      inset 0 1px 0 #ffffff38,
+      0 1px 2px var(--material-shade);
+    transition: scale 0.15s ease;
+  }
+
+  a:hover {
+    color: var(--accent);
+  }
+
+  a:hover::before {
+    scale: 1.3;
+  }
+
+  .rail-year {
+    color: var(--ink-3);
+    font-size: 0.8125rem;
+  }
+
+  .rail-label {
+    font-size: 0.875rem;
+    font-weight: 560;
+    line-height: 1.2;
+    overflow-wrap: normal;
+  }
+
+  /* Umfeld außerhalb der Richtlinie: hohler Ring statt Token. */
+  .context a::before {
+    background: var(--background);
+    box-shadow: none;
+  }
+
+  .context .rail-label {
+    font-weight: 450;
+  }
+
+  .current a::before {
+    border-color: light-dark(#b6000c, #fa5963);
+    background: linear-gradient(155deg, #e3000f, #be000c);
+  }
+
+  .current .rail-label {
+    color: var(--accent);
+  }
+
+  /* Vorschlag: Glas statt Graphit. */
+  .proposed a::before {
+    background: linear-gradient(
+      155deg,
+      light-dark(#ffffff, #292d31),
+      light-dark(#e8ecee, #181b1e)
+    );
+    box-shadow: inset 0 1px 0 var(--material-shine);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    a::before {
+      transition: none;
+    }
+  }
+</style>

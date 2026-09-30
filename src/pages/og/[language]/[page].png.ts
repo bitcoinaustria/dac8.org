@@ -26,7 +26,7 @@ export const getStaticPaths: GetStaticPaths = () =>
         params: { language, page },
         props: {
           lines: metadata.imageLines,
-          accent: page === "home" || file !== undefined,
+          accent: page === "home" || page === "history" || file !== undefined,
           artwork: file && `src/assets/artwork/${file}`,
         },
       }

@@ -84,6 +84,10 @@ const faqs = [
     question: "Do DAC9 and DAC10 mean more crypto surveillance?",
     answer:
       "Not automatically. DAC9 concerns minimum taxation of large corporate groups, not individual crypto users. The recast proposed in June 2026, often called DAC10, is not yet law and retains the existing crypto reporting fields.",
+    link: {
+      href: "/en/history/#dac9",
+      label: "DAC9 and the recast at a glance",
+    },
   },
   {
     question: "Is DAC8 unlawful?",
@@ -139,6 +143,12 @@ const faqs = [
         between EU countries to crypto-assets. Austria implemented it through
         the Crypto-Asset Reporting Obligations Act (Krypto-MPfG), which has
         applied since 1 January 2026.
+      </p>
+      <p class="prose">
+        DAC8 is the eighth step of Directive 2011/16/EU, whose predecessor dates
+        from 1977. Earlier steps covered bank accounts (DAC2) and online
+        platforms (DAC7), among others.
+        <a href="/en/history/">How we got to DAC8</a>
       </p>
       <ol class="flow" aria-label="Where the data goes">
         <li>
@@ -313,6 +323,10 @@ const faqs = [
           has been enacted, and the current proposal to recast the directive
           does not provide for it either.
         </p>
+        <p class="prose">
+          Which steps have been adopted and what the recast would change is
+          shown in the <a href="/en/history/#ausblick">history of the DAC</a>.
+        </p>
       </div>
     </section>
     <section id="forderungen" aria-labelledby="forderungen-heading">
@@ -396,7 +410,7 @@ const faqs = [
     <section id="faq" class="faq" aria-labelledby="faq-heading">
       <h2 id="faq-heading">Questions and answers</h2>
       <div class="faq-list">
-        {faqs.map(faq => <details name="faq"><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}
+        {faqs.map(faq => <details name="faq"><summary>{faq.question}</summary><p>{faq.answer} {faq.link && <a href={faq.link.href}>{faq.link.label}</a>}</p></details>)}
       </div>
     </section>
     <section id="quellen" class="sources" aria-labelledby="sources-heading">
@@ -406,6 +420,8 @@ const faqs = [
       </div>
       <p class="research-note">
         Research last updated: {researchDate}. Not individual legal advice.
+        Sources on the development from 1977 to the recast are in the
+        <a href="/en/history/">history of the DAC</a>.
       </p>
     </section>
   </article>

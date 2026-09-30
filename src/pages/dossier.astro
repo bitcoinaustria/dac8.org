@@ -81,6 +81,10 @@ const faqs = [
     question: "Bedeuten DAC9 und DAC10 noch mehr Krypto-Überwachung?",
     answer:
       "Nicht automatisch. DAC9 betrifft die Mindestbesteuerung großer Unternehmensgruppen, nicht einzelne Krypto-Nutzer. Die im Juni 2026 vorgeschlagene Neufassung der Richtlinie, oft DAC10 genannt, ist noch kein geltendes Recht und führt die bisherigen Krypto-Felder fort.",
+    link: {
+      href: "/geschichte/#dac9",
+      label: "DAC9 und die Neufassung im Überblick",
+    },
   },
   {
     question: "Ist DAC8 rechtswidrig?",
@@ -138,6 +142,12 @@ const faqs = [
         von Steuerdaten zwischen den EU-Staaten auf Kryptowerte. Österreich hat
         sie mit dem Krypto-Meldepflichtgesetz umgesetzt, das seit 1. Jänner 2026
         gilt.
+      </p>
+      <p class="prose">
+        DAC8 ist die achte Stufe der Richtlinie 2011/16/EU, deren Vorläufer von
+        1977 stammt. Davor kamen unter anderem Bankkonten (DAC2) und
+        Online-Plattformen (DAC7).
+        <a href="/geschichte/">Wie es zu DAC8 kam</a>
       </p>
       <ol class="flow" aria-label="Der Weg der Daten">
         <li>
@@ -317,6 +327,11 @@ const faqs = [
           derzeit nicht beschlossen. Auch der aktuelle Vorschlag zur Neufassung
           der Richtlinie sieht dies nicht vor.
         </p>
+        <p class="prose">
+          Welche Stufen schon beschlossen sind und was die Neufassung ändern
+          würde, zeigt die
+          <a href="/geschichte/#ausblick">Geschichte der DAC</a>.
+        </p>
       </div>
     </section>
 
@@ -410,7 +425,10 @@ const faqs = [
         {faqs.map((faq) => (
           <details name="faq">
             <summary>{faq.question}</summary>
-            <p>{faq.answer}</p>
+            <p>
+              {faq.answer}
+              {faq.link && <a href={faq.link.href}>{faq.link.label}</a>}
+            </p>
           </details>
         ))}
       </div>
@@ -434,6 +452,8 @@ const faqs = [
       </div>
       <p class="research-note">
         Stand der Recherche: {researchDate}. Keine individuelle Rechtsberatung.
+        Quellen zur Entwicklung von 1977 bis zur Neufassung stehen in der
+        <a href="/geschichte/">Geschichte der DAC</a>.
       </p>
     </section>
   </article>
