@@ -14,31 +14,44 @@ import { campaignStatus } from "@/data/campaign"
 
   <article class="campaign landing">
     <header class="hero">
-      <CampaignStatus language="de" />
-      <h1>
-        Finanzielle Privatsphäre ist ein Grundrecht.
-        <span>Verteidigen wir sie.</span>
-      </h1>
-      <p class="lead">
-        Mit deinem Geld bezahlst du Behandlungen, unterstützt Angehörige oder
-        spendest für eine politische Sache. Das ist Teil deines Privatlebens.
-        Finanzielle Privatsphäre schützt deine Freiheit, solche Entscheidungen
-        zu treffen, ohne dass andere dein Privatleben durchleuchten.
-      </p>
-      <nav class="hero-actions" aria-label="Direkteinstieg">
-        <a class="button primary" href="/mitmachen/#spenden"
-          >Prozess unterstützen</a
+      <div class="hero-text">
+        <CampaignStatus language="de" />
+        <h1>
+          Finanzielle Privatsphäre ist ein Grundrecht.
+          <span>Verteidigen wir sie.</span>
+        </h1>
+        <p class="lead">
+          Mit deinem Geld bezahlst du Behandlungen, unterstützt Angehörige oder
+          spendest für eine politische Sache. Finanzielle Privatsphäre schützt
+          deine Freiheit, das zu tun, ohne dass andere dein Privatleben
+          durchleuchten.
+        </p>
+        <nav class="hero-actions" aria-label="Direkteinstieg">
+          <a class="button primary" href="/mitmachen/#spenden"
+            >Prozess unterstützen</a
+          >
+          <a class="button" href="/dossier/">Was DAC8 verlangt</a>
+        </nav>
+      </div>
+      <Artwork
+        id="spendingProfile"
+        language="de"
+        size="hero"
+        priority
+        caption="Was verknüpfte Zahlungen verraten. Keine Felder der DAC8-Meldung."
+      />
+    </header>
+
+    <section class="brief" aria-label="DAC8 in Österreich">
+      <p class="brief-text">
+        Seit 2026 müssen Krypto-Anbieter in Österreich die Finanzdaten aller
+        Kunden für das Finanzamt aufbereiten, ohne konkreten Verdacht.
+        <strong
+          >Wir halten das für einen Grundrechtsverstoß und bereiten ein
+          Verfahren dagegen vor.</strong
         >
-        <a class="button" href="/dossier/">Was DAC8 verlangt</a>
-      </nav>
-      <Artwork id="privacyExposed" language="de" size="hero" priority />
-      <p class="prose hero-context">
-        Seit 2026 müssen Krypto-Anbieter in Österreich Finanzdaten aller Kunden
-        für das Finanzamt aufbereiten, ohne konkreten Verdacht. Wir halten diese
-        Erfassung unter DAC8 für einen Grundrechtsverstoß und bereiten ein
-        Verfahren dagegen vor.
       </p>
-      <dl class="keyfigures" aria-label="Das Wichtigste auf einen Blick">
+      <dl class="keyfigures">
         <div>
           <dt>
             <strong>Kunden</strong>
@@ -61,16 +74,10 @@ import { campaignStatus } from "@/data/campaign"
           <dd><time datetime="2027-07-31">31. Juli 2027</time></dd>
         </div>
       </dl>
-    </header>
+    </section>
 
     <section id="problem" aria-labelledby="problem-heading">
-      <h2 id="problem-heading">Was auf dem Spiel steht</h2>
-      <p class="section-intro">
-        Dein Privatleben verdient Schutz, auch wenn es um Geld geht. Wer
-        Informationen über dein Geld hat, kann Rückschlüsse auf dein Leben
-        ziehen. Werden sie weitergegeben, missverstanden oder gestohlen, trägst
-        du die Folgen.
-      </p>
+      <h2 id="problem-heading">Was DAC8 mit deinen Daten macht</h2>
       <div class="story">
         <StoryScene
           art="accountToRecord"
@@ -98,13 +105,14 @@ import { campaignStatus } from "@/data/campaign"
           art="reportAssets"
           language="de"
           title="Was wird gemeldet?"
+          note="Im Bild: ein Musterblatt für eine natürliche Person, kein amtliches Formular."
           wide
           zoom
         >
           <p>
-            Einmal im Jahr: Name, Anschrift, Steuerwohnsitz, Steuernummer und
-            Geburtsdatum, dazu je Kryptowert und Vorgangsart Wert in Euro,
-            Stückzahl und meist die Anzahl der Vorgänge. Nicht dabei sind
+            Einmal im Jahr Name, Anschrift, Steuerwohnsitz, Steuernummer und
+            Geburtsdatum, dazu je Kryptowert und Vorgangsart der Wert in Euro,
+            die Stückzahl und meist die Anzahl der Vorgänge. Nicht dabei sind
             Wallet-Adressen, einzelne Transaktionen und dein aktueller Bestand.
           </p>
         </StoryScene>
@@ -112,6 +120,7 @@ import { campaignStatus } from "@/data/campaign"
           art="yearsOnFile"
           language="de"
           title="Jedes Jahr mehr über dich."
+          note="Im Bild: wachsende Jahresmeldungen, kein zentrales Register."
         >
           <p>
             Jahresmeldungen zeigen, wie aktiv jemand ist. Beim Anbieter werden
@@ -119,10 +128,20 @@ import { campaignStatus } from "@/data/campaign"
             gelöscht, entsprechende Bankkontendaten nach fünf.
           </p>
         </StoryScene>
+      </div>
+      <a class="text-link" href="/dossier/#gemeldet"
+        >Was genau gemeldet wird, und was nicht</a
+      >
+    </section>
+
+    <section id="risiko" aria-labelledby="risiko-heading">
+      <h2 id="risiko-heading">Was daraus werden kann</h2>
+      <div class="story pair">
         <StoryScene
           art="dataHack"
           language="de"
           title="Ein Datenleck. Persönliche Folgen."
+          note="Im Bild: verknüpfte Anbieterdaten, keine Felder der DAC8-Meldung."
         >
           <p>
             Ein Leck beim Anbieter kann die Verbindung zwischen deinem Namen und
@@ -134,148 +153,147 @@ import { campaignStatus } from "@/data/campaign"
           art="rankedPortrait"
           language="de"
           title="Sortierbar nach Vermögen. Gefährlich in falschen Händen."
+          note="Im Bild: verknüpfte und geleakte Daten, keine Felder der DAC8-Meldung."
         >
           <p>
             Aus Summe und Anzahl der Käufe lässt sich grob schätzen, wie viel
-            Geld jemand in Krypto bewegt, ob die Schätzung stimmt oder nicht. In
-            falschen Händen kann daraus eine Zielliste werden: In Frankreich
-            nutzen Täter laut Gendarmerie gestohlene Kundendaten eines
-            Krypto-Steuerdienstes, um Opfer auszuwählen.
+            Geld jemand in Krypto bewegt. In Frankreich wählen Täter laut
+            Gendarmerie ihre Opfer mit gestohlenen Kundendaten eines
+            Krypto-Steuerdienstes aus.
           </p>
         </StoryScene>
       </div>
-      <a class="text-link" href="/dossier/#gemeldet"
-        >Was genau gemeldet wird, und was nicht</a
+      <a class="text-link" href="/dossier/#problem"
+        >Was daran problematisch ist</a
       >
     </section>
 
     <section id="weg" aria-labelledby="weg-heading">
-      <h2 id="weg-heading">Was wir tun</h2>
       <div class="art-split even">
         <div>
+          <h2 id="weg-heading">Was wir tun</h2>
           <p class="section-intro">
-            {campaignStatus.de.text}
+            <strong
+              >Wir sind überzeugt, dass die anlasslose Erfassung aller Kunden
+              gegen Grundrechte verstößt.</strong
+            >
           </p>
           <p class="prose">
-            Wir halten die österreichische Erfassung aller Kunden für
-            grundrechtswidrig und wollen sie gerichtlich prüfen lassen. Ob die
-            konkreten Pflichten verhältnismäßig sind, müssen die Gerichte
-            entscheiden.
+            {campaignStatus.de.text}
+            Über das Ergebnis entscheiden Behörde und Gerichte.
           </p>
         </div>
-        <Artwork id="collectionChallenge" language="de" />
+        <Artwork id="collectionChallenge" language="de" caption={false} />
       </div>
       <LegalRoute language="de" />
-      <div class="precedent">
-        <p class="precedent-year" aria-hidden="true">2014</p>
-        <p class="prose">
-          Die Kampagne gegen die Vorratsdatenspeicherung von Telefon- und
-          Internetdaten ist ein Vorbild: 2014 hob der Europäische Gerichtshof
-          die Richtlinie auf, der Verfassungsgerichtshof das österreichische
-          Gesetz. Der Erfolg zeigt, dass sich auch weitreichende
-          Überwachungsgesetze ändern lassen.
-        </p>
-      </div>
       <a class="text-link" href="/verfahren/">Zum Stand des Verfahrens</a>
     </section>
 
     <section id="handeln" aria-labelledby="handeln-heading">
       <h2 id="handeln-heading">Was du tun kannst</h2>
-      <ul class="facts action-facts">
-        <li>
-          <strong>Den Prozess mittragen</strong>
-          <p>
-            Deine Spende hilft uns vor allem, die Kosten des Verfahrens zu
-            tragen.
-          </p>
-          <a class="button primary" href="/mitmachen/#spenden">Spenden</a>
-        </li>
-        <li>
-          <strong>Das Verfahren verfolgen</strong>
-          <p>
-            Neuigkeiten und nächste Schritte veröffentlichen wir hier und per
-            RSS.
-          </p>
-          <a class="button" href="/verfahren/">Zum Verfahren</a>
-        </li>
-        <li>
-          <strong>Deinen Abgeordneten schreiben</strong>
-          <p>
-            Ein Brief an den Nationalrat, vorbereitet in deinem Browser, von dir
-            abgeschickt.
-          </p>
-          <a class="button" href="/mitmachen/#abgeordnete">Brief schreiben</a>
-        </li>
-        <li>
-          <strong>Die Kampagne teilen</strong>
-          <p>Fertige Grafiken zur Geschichte, auf Deutsch und Englisch.</p>
-          <a class="button" href="/mitmachen/#teilen">Grafiken zum Teilen</a>
-        </li>
-      </ul>
+      <div class="act">
+        <div class="act-lead">
+          <Artwork id="collectiveDefense" language="de" caption={false} />
+          <div>
+            <h3>Den Prozess mittragen</h3>
+            <p>
+              Deine Spende hilft uns vor allem, die Kosten des Verfahrens zu
+              tragen.
+            </p>
+            <a class="button primary" href="/mitmachen/#spenden">Spenden</a>
+          </div>
+        </div>
+        <ul class="act-list">
+          <li>
+            <a href="/mitmachen/#abgeordnete">
+              <strong>Deinen Abgeordneten schreiben</strong>
+              <span
+                >Ein Brief an den Nationalrat, vorbereitet in deinem Browser,
+                von dir abgeschickt.</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="/verfahren/">
+              <strong>Das Verfahren verfolgen</strong>
+              <span
+                >Neuigkeiten und nächste Schritte veröffentlichen wir hier und
+                per RSS.</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="/mitmachen/#teilen">
+              <strong>Die Kampagne teilen</strong>
+              <span
+                >Fertige Grafiken zur Geschichte, auf Deutsch und Englisch.</span
+              >
+            </a>
+          </li>
+        </ul>
+      </div>
     </section>
 
-    <section id="vision" aria-labelledby="vision-heading">
-      <h2 id="vision-heading">Wohin das führen soll</h2>
-      <p class="statement">
+    <section id="vision" class="vision" aria-labelledby="vision-heading">
+      <h2 id="vision-heading" class="statement">
         Privatsphäre braucht keine Rechtfertigung.
         <span>Staatliche Eingriffe schon.</span>
-      </p>
+      </h2>
       <p class="section-intro">
-        Eine liberale Demokratie braucht Grenzen staatlicher Macht. Werden die
-        Finanzdaten aller vorsorglich erfasst, ist für uns eine rote Linie
-        überschritten.
+        Eine liberale Demokratie braucht Grenzen staatlicher Macht. Bei
+        konkretem Verdacht auf eine Straftat sollen Behörden gezielt ermitteln,
+        auf gesetzlicher Grundlage und unter unabhängiger Kontrolle. Die
+        Finanzdaten aller auf Vorrat zu erfassen, überschreitet für uns eine
+        rote Linie.
       </p>
-      <p class="prose">
-        Wir lehnen Massenüberwachung ab. Bei konkretem Verdacht auf eine
-        Straftat sollen Behörden gezielt ermitteln, auf gesetzlicher Grundlage
-        und unter unabhängiger Kontrolle. Unbeteiligte dürfen nicht durch
-        vorsorgliche Datensammlungen den Risiken von Datenlecks, Fehlverdacht
-        und Missbrauch ausgesetzt werden.
-      </p>
-      <ul class="facts">
-        <li>
-          <strong>Was wir erreichen wollen</strong>
-          <p>
-            Unverhältnismäßige Pflichten aufheben, die Datensammlung begrenzen
-            und wirksamen Schutz für Betroffene durchsetzen. Dafür lassen wir
-            die Erfassung aller Kunden, die Meldefelder und die Speicherfristen
-            gerichtlich prüfen.
-          </p>
-        </li>
-        <li>
-          <strong>Warum wir zuversichtlich sind</strong>
-          <p>
-            Wir sind überzeugt, dass sich wirksame Grenzen durchsetzen lassen.
-            Dafür verbinden wir konkrete Verfahren mit politischer Arbeit: vor
-            Gericht und bei den Abgeordneten, die diese Gesetze ändern können.
-          </p>
-        </li>
-      </ul>
+      <div class="vision-points">
+        <div>
+          <h3>Was wir erreichen wollen</h3>
+          <ul class="checklist">
+            <li>Unverhältnismäßige Pflichten aufheben</li>
+            <li>Die Datensammlung begrenzen</li>
+            <li>Wirksamen Schutz für Betroffene durchsetzen</li>
+          </ul>
+        </div>
+        <div class="precedent">
+          <h3>Warum wir zuversichtlich sind</h3>
+          <p class="precedent-year" aria-hidden="true">2014</p>
+          <div>
+            <p>
+              2014 hob der Europäische Gerichtshof die Richtlinie zur
+              Vorratsdatenspeicherung auf, der Verfassungsgerichtshof das
+              österreichische Gesetz. Wir verbinden deshalb konkrete Verfahren
+              mit politischer Arbeit: vor Gericht und bei den Abgeordneten, die
+              diese Gesetze ändern können.
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="position" aria-labelledby="position-heading">
       <h2 id="position-heading">Wer dahintersteht</h2>
-      <p class="section-intro">
-        dac8.org ist eine Initiative von Bitcoin Austria, dem gemeinnützigen
-        Bitcoin-Verein aus Wien, gegründet 2011. Wir sind Bitcoiner und
-        Cypherpunks. Für uns ist Privatsphäre eine Voraussetzung für eine freie
-        Gesellschaft.
-      </p>
-      <p class="prose">
-        Wir stehen für finanzielle Selbstbestimmung und gegen Massenüberwachung.
-        Die Kampagne gilt allen, die von DAC8 erfasst werden, unabhängig davon,
-        welche Kryptowerte sie nutzen.
-      </p>
-      <p class="prose">
-        Unsere Kampagne beginnt in Österreich. DAC8 gilt in der ganzen EU:
-        Organisationen, Unternehmen und Fachleute, die das Gesetz in ihrem Land
-        prüfen wollen, können sich bei uns melden. Wir teilen Argumente, Quellen
-        und Erfahrung:
-        <a href="mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"
-          >kontakt@dac8.org</a
-        >
-      </p>
-      <CampaignPartners />
+      <div class="about">
+        <div>
+          <p class="section-intro">
+            dac8.org ist eine Initiative von Bitcoin Austria, dem gemeinnützigen
+            Bitcoin-Verein aus Wien, gegründet 2011. Wir sind Bitcoiner und
+            Cypherpunks. Für uns ist Privatsphäre eine Voraussetzung für eine
+            freie Gesellschaft.
+          </p>
+          <p class="prose">
+            Die Kampagne gilt allen, die von DAC8 erfasst werden, unabhängig
+            davon, welche Kryptowerte sie nutzen. Sie beginnt in Österreich,
+            DAC8 gilt aber in der ganzen EU: Wer das Gesetz in seinem Land
+            angehen will, kann sich bei uns melden. Wir teilen Argumente,
+            Quellen und Erfahrung:
+            <a href="mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"
+              >kontakt@dac8.org</a
+            >
+          </p>
+        </div>
+        <CampaignPartners />
+      </div>
     </section>
   </article>
 </Layout>

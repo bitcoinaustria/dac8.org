@@ -13,30 +13,43 @@ import { campaignStatus } from "@/data/campaign"
   <MetaPage slot="head" />
   <article class="campaign landing">
     <header class="hero">
-      <CampaignStatus language="en" />
-      <h1>
-        Financial privacy is a fundamental right. <span>Let’s defend it.</span>
-      </h1>
-      <p class="lead">
-        You use your money to pay for medical treatment, support relatives or
-        donate to a political cause. That is part of your private life.
-        Financial privacy protects your freedom to make those choices without
-        others scrutinising your personal life.
-      </p>
-      <nav class="hero-actions" aria-label="Get started">
-        <a class="button primary" href="/en/get-involved/#spenden"
-          >Support the case</a
-        >
-        <a class="button" href="/en/dossier/">What DAC8 requires</a>
-      </nav>
-      <Artwork id="privacyExposed" language="en" size="hero" priority />
-      <p class="prose hero-context">
+      <div class="hero-text">
+        <CampaignStatus language="en" />
+        <h1>
+          Financial privacy is a fundamental right.
+          <span>Let’s defend it.</span>
+        </h1>
+        <p class="lead">
+          You use your money to pay for medical treatment, support relatives or
+          donate to a political cause. Financial privacy protects your freedom
+          to do so without others scrutinising your personal life.
+        </p>
+        <nav class="hero-actions" aria-label="Get started">
+          <a class="button primary" href="/en/get-involved/#spenden"
+            >Support the case</a
+          >
+          <a class="button" href="/en/dossier/">What DAC8 requires</a>
+        </nav>
+      </div>
+      <Artwork
+        id="spendingProfile"
+        language="en"
+        size="hero"
+        priority
+        caption="What linked payments reveal. Not fields of the DAC8 report."
+      />
+    </header>
+    <section class="brief" aria-label="DAC8 in Austria">
+      <p class="brief-text">
         Since 2026, crypto-asset providers in Austria have had to prepare
         financial data on all their customers for the tax authority, without any
-        specific suspicion. We believe this collection under DAC8 violates
-        fundamental rights and are preparing a legal challenge.
+        specific suspicion.
+        <strong
+          >We believe this violates fundamental rights and are preparing a legal
+          challenge.</strong
+        >
       </p>
-      <dl class="keyfigures" aria-label="Key facts">
+      <dl class="keyfigures">
         <div>
           <dt>
             <strong>Customers</strong>
@@ -59,14 +72,9 @@ import { campaignStatus } from "@/data/campaign"
           <dd><time datetime="2027-07-31">31 July 2027</time></dd>
         </div>
       </dl>
-    </header>
+    </section>
     <section id="problem" aria-labelledby="problem-heading">
-      <h2 id="problem-heading">What is at stake</h2>
-      <p class="section-intro">
-        Your private life deserves protection, including your finances.
-        Information about your money can reveal details about your life. If it
-        is shared, misunderstood or stolen, you bear the consequences.
-      </p>
+      <h2 id="problem-heading">What DAC8 does with your data</h2>
       <div class="story">
         <StoryScene
           art="accountToRecord"
@@ -94,6 +102,7 @@ import { campaignStatus } from "@/data/campaign"
           art="reportAssets"
           language="en"
           title="What gets reported?"
+          note="Pictured: a specimen for a natural person, not an official form."
           wide
           zoom
         >
@@ -109,6 +118,7 @@ import { campaignStatus } from "@/data/campaign"
           art="yearsOnFile"
           language="en"
           title="More about you. Every year."
+          note="Pictured: accumulating annual reports, not a central register."
         >
           <p>
             Annual reports reveal activity. Providers delete reported
@@ -116,10 +126,19 @@ import { campaignStatus } from "@/data/campaign"
             corresponding bank-account data, it is five.
           </p>
         </StoryScene>
+      </div>
+      <a class="text-link" href="/en/dossier/#gemeldet"
+        >What is reported, and what is not</a
+      >
+    </section>
+    <section id="risiko" aria-labelledby="risiko-heading">
+      <h2 id="risiko-heading">What it can lead to</h2>
+      <div class="story pair">
         <StoryScene
           art="dataHack"
           language="en"
           title="A data leak. Personal consequences."
+          note="Pictured: linked provider records, not fields of the DAC8 report."
         >
           <p>
             A provider breach can expose the link between your name and
@@ -131,134 +150,134 @@ import { campaignStatus } from "@/data/campaign"
           art="rankedPortrait"
           language="en"
           title="Sortable by wealth. Dangerous in the wrong hands."
+          note="Pictured: linked and leaked data, not fields of the DAC8 report."
         >
           <p>
             Total value and number of purchases give a rough estimate of how
-            much money someone moves in crypto, whether or not the estimate is
-            right. In the wrong hands, this can become a target list: according
-            to France’s Gendarmerie, criminals use stolen customer data from a
-            crypto tax service to select victims.
+            much money someone moves in crypto. In France, according to the
+            Gendarmerie, criminals select victims using stolen customer data
+            from a crypto tax service.
           </p>
         </StoryScene>
       </div>
-      <a class="text-link" href="/en/dossier/#gemeldet"
-        >What is reported, and what is not</a
-      >
+      <a class="text-link" href="/en/dossier/#problem">Why it is a problem</a>
     </section>
     <section id="weg" aria-labelledby="weg-heading">
-      <h2 id="weg-heading">What we are doing</h2>
       <div class="art-split even">
         <div>
-          <p class="section-intro">{campaignStatus.en.text}</p>
+          <h2 id="weg-heading">What we are doing</h2>
+          <p class="section-intro">
+            <strong
+              >We are convinced that the blanket collection of all customers’
+              data violates fundamental rights.</strong
+            >
+          </p>
           <p class="prose">
-            We believe Austria’s collection covering all customers violates
-            fundamental rights and seek judicial review. Whether these specific
-            obligations are proportionate is for the courts to decide.
+            {campaignStatus.en.text}
+            The authority and the courts decide the outcome.
           </p>
         </div>
-        <Artwork id="collectionChallenge" language="en" />
+        <Artwork id="collectionChallenge" language="en" caption={false} />
       </div>
       <LegalRoute language="en" />
-      <div class="precedent">
-        <p class="precedent-year" aria-hidden="true">2014</p>
-        <p class="prose">
-          The campaign against the retention of telephone and internet data is a
-          precedent for resistance: in 2014, the Court of Justice struck down
-          the directive and Austria’s Constitutional Court struck down the
-          national law. That success shows that even sweeping surveillance laws
-          can be changed.
-        </p>
-      </div>
       <a class="text-link" href="/en/proceedings/">Where the case stands</a>
     </section>
     <section id="handeln" aria-labelledby="handeln-heading">
       <h2 id="handeln-heading">How you can help</h2>
-      <ul class="facts action-facts">
-        <li>
-          <strong>Help fund the case</strong>
-          <p>
-            Your donation primarily helps cover the costs of the proceedings.
-          </p>
-          <a class="button primary" href="/en/get-involved/#spenden">Donate</a>
-        </li>
-        <li>
-          <strong>Follow the case</strong>
-          <p>We publish news and next steps here and via RSS.</p>
-          <a class="button" href="/en/proceedings/">Proceedings</a>
-        </li>
-        <li>
-          <strong>Write to your MPs</strong>
-          <p>
-            A letter to the National Council, drafted in your browser and sent
-            by you.
-          </p>
-          <a class="button" href="/en/get-involved/#abgeordnete"
-            >Write a letter</a
-          >
-        </li>
-        <li>
-          <strong>Share the campaign</strong>
-          <p>Ready-made graphics on the story, in German and English.</p>
-          <a class="button" href="/en/get-involved/#teilen">Share graphics</a>
-        </li>
-      </ul>
+      <div class="act">
+        <div class="act-lead">
+          <Artwork id="collectiveDefense" language="en" caption={false} />
+          <div>
+            <h3>Help fund the case</h3>
+            <p>
+              Your donation primarily helps cover the costs of the proceedings.
+            </p>
+            <a class="button primary" href="/en/get-involved/#spenden"
+              >Donate</a
+            >
+          </div>
+        </div>
+        <ul class="act-list">
+          <li>
+            <a href="/en/get-involved/#abgeordnete">
+              <strong>Write to your MPs</strong>
+              <span
+                >A letter to the National Council, drafted in your browser and
+                sent by you.</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="/en/proceedings/">
+              <strong>Follow the case</strong>
+              <span>We publish news and next steps here and via RSS.</span>
+            </a>
+          </li>
+          <li>
+            <a href="/en/get-involved/#teilen">
+              <strong>Share the campaign</strong>
+              <span
+                >Ready-made graphics on the story, in German and English.</span
+              >
+            </a>
+          </li>
+        </ul>
+      </div>
     </section>
-    <section id="vision" aria-labelledby="vision-heading">
-      <h2 id="vision-heading">What we want to achieve</h2>
-      <p class="statement">
+    <section id="vision" class="vision" aria-labelledby="vision-heading">
+      <h2 id="vision-heading" class="statement">
         Privacy needs no justification.
         <span>State interference does.</span>
-      </p>
+      </h2>
       <p class="section-intro">
-        A liberal democracy needs limits on state power. Collecting everyone’s
-        financial data as a precaution crosses a red line for us.
+        A liberal democracy needs limits on state power. Specific suspicions of
+        crime should be investigated in a targeted way, with a legal basis and
+        independent oversight. Collecting everyone’s financial data as a
+        precaution crosses a red line for us.
       </p>
-      <p class="prose">
-        We oppose mass surveillance. Specific suspicions of crime should be
-        investigated in a targeted way, with a legal basis and independent
-        oversight. Uninvolved people must not be exposed to breaches, false
-        suspicion and abuse through precautionary data collection.
-      </p>
-      <ul class="facts">
-        <li>
-          <strong>What we aim to achieve</strong>
-          <p>
-            Overturn disproportionate obligations, limit data collection and
-            secure effective protection for those affected. We seek judicial
-            scrutiny of the collection covering all customers, the reporting
-            fields and the retention periods.
-          </p>
-        </li>
-        <li>
-          <strong>Why we are confident</strong>
-          <p>
-            We believe effective limits can be secured. That is why we combine
-            concrete proceedings with political advocacy: in court and with the
-            representatives who can change these laws.
-          </p>
-        </li>
-      </ul>
+      <div class="vision-points">
+        <div>
+          <h3>What we aim to achieve</h3>
+          <ul class="checklist">
+            <li>Overturn disproportionate obligations</li>
+            <li>Limit data collection</li>
+            <li>Secure effective protection for those affected</li>
+          </ul>
+        </div>
+        <div class="precedent">
+          <h3>Why we are confident</h3>
+          <p class="precedent-year" aria-hidden="true">2014</p>
+          <div>
+            <p>
+              In 2014, the Court of Justice struck down the data retention
+              directive and Austria’s Constitutional Court struck down the
+              national law. That is why we combine concrete proceedings with
+              political advocacy: in court and with the representatives who can
+              change these laws.
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
     <section id="position" aria-labelledby="position-heading">
       <h2 id="position-heading">Who we are</h2>
-      <p class="section-intro">
-        dac8.org is an initiative by Bitcoin Austria, the nonprofit Bitcoin
-        association founded in Vienna in 2011. We are Bitcoiners and
-        cypherpunks. We see privacy as a prerequisite for a free society.
-      </p>
-      <p class="prose">
-        We stand for financial autonomy and against mass surveillance. The
-        campaign concerns everyone covered by DAC8, regardless of which
-        crypto-assets they use.
-      </p>
-      <p class="prose">
-        Our campaign starts in Austria. DAC8 applies across the EU:
-        organisations, businesses and experts who want to challenge the law in
-        their country are welcome to contact us. We share arguments, sources and
-        experience:
-        <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>
-      </p>
-      <CampaignPartners />
+      <div class="about">
+        <div>
+          <p class="section-intro">
+            dac8.org is an initiative by Bitcoin Austria, the nonprofit Bitcoin
+            association founded in Vienna in 2011. We are Bitcoiners and
+            cypherpunks. We see privacy as a prerequisite for a free society.
+          </p>
+          <p class="prose">
+            The campaign concerns everyone covered by DAC8, regardless of which
+            crypto-assets they use. It starts in Austria, but DAC8 applies
+            across the EU: if you want to challenge the law in your country, get
+            in touch. We share arguments, sources and experience:
+            <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>
+          </p>
+        </div>
+        <CampaignPartners />
+      </div>
     </section>
   </article>
 </Layout>

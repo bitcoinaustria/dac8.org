@@ -16,13 +16,29 @@ const entries = publishedUpdates()
   <MetaPage slot="head" />
   <article class="campaign">
     <header class="hero">
-      <h1>
-        {en ? "Follow " : "Verfolge "}
-        <span>{en ? "the case." : "das Verfahren."}</span>
-      </h1>
-      <p class="lead">
-        {en ? "Filings, decisions and next steps." : "Einreichungen, Entscheidungen und nächste Schritte."}
-      </p>
+      <div class="hero-text">
+        <h1>
+          {en ? "Follow " : "Verfolge "}
+          <span>{en ? "the case." : "das Verfahren."}</span>
+        </h1>
+        <p class="lead">
+          {en ? "Filings, decisions and next steps. Via RSS, no registration required." : "Einreichungen, Entscheidungen und nächste Schritte. Per RSS, ohne Anmeldung."}
+        </p>
+        <nav
+          class="hero-actions"
+          aria-label={en ? "Stay informed" : "Auf dem Laufenden bleiben"}
+        >
+          <a class="button primary" href={feedFor(language)}
+            >{en ? "Open RSS feed" : "RSS-Feed öffnen"}</a
+          >
+        </nav>
+        <p class="hero-note">
+          {en ? "Association news: " : "Vereinsneuigkeiten: "}
+          <a href={campaign.newsletter}
+            >{en ? "Bitcoin Austria newsletter" : "Bitcoin-Austria-Newsletter"}</a
+          >{en ? " (in German)." : "."}
+        </p>
+      </div>
       <Artwork id="collectionChallenge" language={language} size="hero" />
     </header>
     <section aria-labelledby="status-heading">
@@ -45,25 +61,6 @@ const entries = publishedUpdates()
         <p class="prose">{entry.translations[language].text}</p>
         {entry.source && <a class="text-link" href={entry.source}>{en ? "Read the document" : "Zum Dokument"}</a>}
       </article>)}
-    </section>
-    <section aria-labelledby="subscribe-heading">
-      <h2 id="subscribe-heading">
-        {en ? "Stay informed" : "Auf dem Laufenden bleiben"}
-      </h2>
-      <p class="section-intro">
-        {en ? "Updates via RSS. No registration required." : "Neuigkeiten per RSS. Ohne Anmeldung."}
-      </p>
-      <div class="hero-actions">
-        <a class="button primary" href={feedFor(language)}
-          >{en ? "Open RSS feed" : "RSS-Feed öffnen"}</a
-        >
-      </div>
-      <p class="prose">
-        {en ? "Association news: " : "Vereinsneuigkeiten: "}
-        <a href={campaign.newsletter}
-          >{en ? "Bitcoin Austria newsletter" : "Bitcoin-Austria-Newsletter"}</a
-        >{en ? " (in German)." : "."}
-      </p>
     </section>
   </article>
 </Layout>

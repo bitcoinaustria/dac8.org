@@ -90,23 +90,25 @@ const sections = [
       {en ? "Financial privacy is a fundamental right." : "Finanzielle Privatsphäre ist ein Grundrecht."}
       <span>{en ? "Let’s defend it." : "Verteidigen wir sie."}</span>
     </p>
-    <div class="sign-off-actions">
-      <a class="button primary" href={donateFor(language)}
-        >{en ? "Support the case" : "Prozess unterstützen"}</a
-      >
-      <a class="button" href={pathFor("proceedings", language)}
-        >{en ? "Follow the case" : "Verfahren verfolgen"}</a
-      >
-      <button class="text-link" type="button" data-share>
-        <ShareIcon />{en ? "Share" : "Teilen"}
-      </button>
+    <div class="sign-off-side">
+      <div class="sign-off-actions">
+        <a class="button primary" href={donateFor(language)}
+          >{en ? "Support the case" : "Prozess unterstützen"}</a
+        >
+        <a class="button" href={pathFor("proceedings", language)}
+          >{en ? "Follow the case" : "Verfahren verfolgen"}</a
+        >
+        <button class="text-link" type="button" data-share>
+          <ShareIcon />{en ? "Share" : "Teilen"}
+        </button>
+      </div>
+      <p class="share-status" data-share-status aria-live="polite"></p>
+      <a class="sign-off-status" href={pathFor("proceedings", language)}>
+        <span class="status-dot" aria-hidden="true"></span>
+        {en ? "Austria" : "Österreich"}
+        · {campaignStatus[language].label}
+      </a>
     </div>
-    <p class="share-status" data-share-status aria-live="polite"></p>
-    <a class="sign-off-status" href={pathFor("proceedings", language)}>
-      <span class="status-dot" aria-hidden="true"></span>
-      {en ? "Austria" : "Österreich"}
-      · {campaignStatus[language].label}
-    </a>
   </div>
 
   <div class="footer-main">
@@ -184,27 +186,32 @@ const sections = [
 
 <style>
   /* Der Footer ist der Schluss der Seite: ein Satz, zwei Handlungen, der
-     Stand des Verfahrens. Darunter die kompakte Linkliste. */
+     Stand des Verfahrens, auf einer dunklen Fläche in beiden Modi. Darunter
+     die kompakte Linkliste. */
   footer {
     max-inline-size: var(--page-max);
     margin-inline: auto;
-    padding: var(--space-2xl) var(--grid-gutter) var(--space-l);
-    background:
-      var(--metal-rule) top / calc(100% - 2 * var(--grid-gutter)) 1px no-repeat;
-    background-position-x: center;
+    padding: var(--space-l) var(--grid-gutter) var(--space-l);
   }
 
   .sign-off {
+    /* Lokale Farben, damit Buttons und Links der Fläche folgen. */
+    --ink: #f4f5f6;
+    --background: #16181a;
+    --accent: #ff5a62;
     display: grid;
     justify-items: start;
     gap: var(--space-m);
-    padding-block-end: var(--space-2xl);
+    padding: var(--space-l-xl) var(--space-m-l);
+    border-radius: var(--radius-xl);
+    color: var(--ink);
+    background: light-dark(#16181a, #1f2225);
   }
 
   .sign-off-title {
     max-inline-size: 22ch;
     margin: 0;
-    font-size: clamp(2rem, 1.3rem + 3vw, 3.5rem);
+    font-size: clamp(2rem, 1.3rem + 2.6vw, 3.25rem);
     font-weight: 600;
     font-stretch: 94%;
     line-height: 1.04;
@@ -222,6 +229,27 @@ const sections = [
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-xs) var(--space-s);
+    margin-block-start: var(--space-2xs);
+  }
+
+  .sign-off-side {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-m);
+  }
+
+  /* Breit: der Satz links, Handlungen und Stand rechts unten, damit die
+     Fläche nicht halb leer bleibt. */
+  @media (width >= 64rem) {
+    .sign-off {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      column-gap: var(--space-2xl);
+    }
+
+    .sign-off-actions {
+      margin-block-start: 0;
+    }
   }
 
   .sign-off .text-link {
@@ -242,7 +270,7 @@ const sections = [
     display: inline-flex;
     align-items: center;
     gap: 0.5em;
-    color: var(--muted-foreground);
+    color: #b9bdc1;
     font-size: var(--step--1);
     font-weight: 500;
     letter-spacing: 0.08em;
@@ -250,22 +278,21 @@ const sections = [
     text-transform: uppercase;
 
     &:hover {
-      color: var(--foreground);
+      color: var(--ink);
     }
   }
 
   .status-dot {
     inline-size: 0.625rem;
     block-size: 0.625rem;
-    border: 1px solid light-dark(#b6000c, #fa5963);
+    border: 1px solid #fa5963;
     border-radius: var(--radius-full);
     background: linear-gradient(155deg, #e3000f, #be000c);
     box-shadow: inset 0 1px 0 #ffffff30;
   }
 
   .footer-main {
-    padding-block-start: var(--space-xl);
-    border-block-start: 1px solid var(--border);
+    padding-block-start: var(--space-2xl);
   }
 
   .footer-main {

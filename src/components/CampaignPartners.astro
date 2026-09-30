@@ -36,17 +36,29 @@ const en = language === "en"
 </div>
 
 <style>
+  /* Neben „Wer dahintersteht“: eine weiche Fläche mit der Vertretung und
+     dem Weg für Organisationen. */
   .partners {
-    margin-block-start: var(--space-l);
-    padding-block-start: var(--space-m);
-    border-block-start: 1px solid var(--border);
     display: grid;
     gap: var(--space-m);
+    padding: var(--space-m-l);
+    border-radius: var(--radius-xl);
+    background: var(--panel);
   }
+
+  .partners .prose {
+    margin-block-start: var(--space-xs);
+  }
+
+  .partners .text-link {
+    margin-block-start: 0;
+  }
+
   ul {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-m);
+    margin-block-start: var(--space-xs);
     padding: 0;
     list-style: none;
   }

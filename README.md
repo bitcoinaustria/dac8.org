@@ -27,7 +27,12 @@ The site does not build from the submodule. Illustrations in use are copied
 from the lab's transparent cutouts (`knowledge/dac8-*-cutout.png`) into
 `src/assets/artwork/` as WebP masters; Astro generates the responsive AVIF and
 WebP files at build time. `src/data/artwork.ts` holds the German and English
-alt texts and captions, and `src/components/Artwork.astro` renders them. Labels
+alt texts and captions, and `src/components/Artwork.astro` renders them; its
+`caption` prop replaces the caption or hides it where the surrounding text
+already says what the picture shows. Use motifs that explain themselves, with
+readable labels such as Finanzakte, Datenleck or Zielliste, and place each
+beside the headline that names it; purely decorative motifs stay in the lab.
+Labels
 in the renders cast no shadow (`visible_shadow=False` in the lab's
 `build_site.py` `label()`); a soft shadow behind glass made small text look
 blurred. Motifs
@@ -35,6 +40,8 @@ with text labels have a German and an English render (`*-en.webp`). The
 cutouts have no background, so the same file works in light and dark mode.
 People, addresses and amounts in the profiles are invented; captions must keep
 the distinction between combined or leaked records and the annual DAC8 report.
+Story scenes carry that distinction in their `note` ("Im Bild: …") under the
+text instead of a caption under the image.
 
 The share graphics on the support page come from the lab's share kit
 (`knowledge/share-kit/`): square and story formats per scene and language,
@@ -52,13 +59,16 @@ Four pages per language, with URLs that follow the navigation labels:
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
 
-A top bar carries the navigation, the procedural status and a permanent donate
-button that leads to `#spenden` on the participation page; on mobile a bottom
-bar keeps donating and sharing within reach. `/spenden` and `/en/donate` are
-short redirects for print and QR codes. The home page scenes use
-`src/components/StoryScene.astro`; the dossier's "Am I affected?" check
-(`src/components/AffectedCheck.astro`) restates the FAQ. The footer closes every
-page with the campaign statement, two actions and the status.
+A top bar carries the navigation and a permanent donate button that leads to
+`#spenden` on the participation page; on mobile a bottom bar keeps donating and
+sharing within reach. `/spenden` and `/en/donate` are short redirects for print
+and QR codes. The home page is a sequence of bands, each with one statement and
+at most one illustration: the hero, a short DAC8 brief with three key figures,
+two story chapters (`src/components/StoryScene.astro`), what we do, what you
+can do, the guiding statement and who we are. The dossier's "Am I affected?"
+check (`src/components/AffectedCheck.astro`) restates the FAQ. The footer
+closes every page with the campaign statement, two actions and the status on a
+dark band.
 
 ## Development
 

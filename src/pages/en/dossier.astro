@@ -17,31 +17,31 @@ const sources = sourceGroups.map((group) => ({
 const concerns = [
   {
     title: "Everyone, not just suspects.",
-    text: "Providers must prepare reporting data for all customers before it is even clear who will be reported. No specific reason or suspicion is required. We reject this precautionary collection.",
+    text: "Providers must prepare reporting data for all customers before it is clear who will be reported. No reason, no suspicion. We reject this precautionary logic.",
   },
   {
     title: "A profile over the years.",
-    text: "Unlike bank-account reporting, crypto-asset reports include units and transaction counts. Year after year, this reveals activity even though current balances are not reported.",
+    text: "Unlike bank-account reporting, crypto-asset reports include units and transaction counts. Year after year, this shows how active someone is.",
   },
   {
     title: "Sortable by wealth.",
-    text: "Total value and number of purchases give the average purchase size: a small monthly savings plan looks very different from a few large purchases. This lets anyone holding the data roughly estimate how much money each reported person moves in crypto, whether or not the estimate is right. In the wrong hands, it can be used to single out people who appear wealthy.",
+    text: "Total value and number of purchases give a rough estimate of how much money someone moves in crypto, whether or not the estimate is right. In the wrong hands, this can single out people who appear wealthy.",
   },
   {
     title: "A data breach cannot be undone.",
-    text: "A provider breach can expose the link between your name and blockchain transactions. Once that link spreads, it is hard to take back. It can reveal further payments and make people targets.",
+    text: "A provider breach can expose the link between your name and blockchain transactions. Once that link spreads, it is hard to take back and can reveal further payments.",
   },
   {
     title: "The purpose keeps expanding.",
-    text: "Under the directive, exchanged data may be used for customs, anti-money-laundering purposes and, under certain conditions, sanctions as well as taxation. Each new purpose needs its own clear limits.",
+    text: "Under the directive, the data may also be used for customs, anti-money-laundering purposes and, under certain conditions, sanctions. Each new purpose needs its own clear limits.",
   },
   {
     title: "Errors travel too.",
-    text: "An incorrect tax residence, valuation or interpretation of a transfer can be passed to other countries. The more bodies involved, the harder it becomes to correct the record.",
+    text: "An incorrect tax residence, valuation or reading of a transfer can be passed to other countries. The more bodies involved, the harder the correction.",
   },
   {
     title: "Ten years without an explanation.",
-    text: "Providers delete reported crypto-asset data ten years after the reporting period. For corresponding bank-account data, it is five years. The legislative materials do not explain the difference.",
+    text: "Providers delete reported crypto-asset data ten years after the reporting period, corresponding bank-account data after five. The legislative materials do not explain the difference.",
   },
 ]
 const faqs = [
@@ -88,7 +88,7 @@ const faqs = [
   {
     question: "Is DAC8 unlawful?",
     answer:
-      "We believe Austria’s collection covering all customers violates fundamental rights and seek judicial review. Whether these specific obligations are proportionate is for the courts to decide.",
+      "We are convinced that Austria’s collection covering all customers violates fundamental rights, and we are taking the question through the Data Protection Authority to the courts. Whether these specific obligations are proportionate is for the courts to decide.",
   },
   {
     question: "What happens to my data on this website?",
@@ -113,21 +113,23 @@ const faqs = [
   <MetaPage slot="head" />
   <article class="campaign dossier">
     <header class="hero">
-      <h1>What DAC8 requires. <span>And what it does not.</span></h1>
-      <p class="lead">
-        What data about you gets reported, what your provider keeps and why we
-        are challenging it.
-      </p>
-      <nav class="hero-actions" aria-label="Get started">
-        <a class="button primary" href="#gemeldet">What gets reported</a
-        ><a class="button" href="#rechtsweg">Our legal strategy</a>
-      </nav>
-      <dl class="glance" aria-label="Current position">
-        <dt>Law in force</dt>
-        <dd>since 1 January 2026</dd>
-        <dt>First report</dt>
-        <dd>for 2026, due by 31 July 2027</dd>
-      </dl>
+      <div class="hero-text">
+        <h1>What DAC8 requires. <span>And what it does not.</span></h1>
+        <p class="lead">
+          What data about you gets reported, what your provider keeps and why we
+          are challenging it.
+        </p>
+        <nav class="hero-actions" aria-label="Get started">
+          <a class="button primary" href="#gemeldet">What gets reported</a
+          ><a class="button" href="#rechtsweg">Our legal strategy</a>
+        </nav>
+        <dl class="glance" aria-label="Current position">
+          <dt>Law in force</dt>
+          <dd>since 1 January 2026</dd>
+          <dt>First report</dt>
+          <dd>for 2026, due by 31 July 2027</dd>
+        </dl>
+      </div>
       <AffectedCheck language="en" />
     </header>
     <section id="was-ist-dac8" aria-labelledby="was-heading">
@@ -281,22 +283,18 @@ const faqs = [
           <h3>Data breaches put people at risk</h3>
           <p class="prose">
             Stored links between identities and financial data are a valuable
-            target for attackers. Long retention obligations keep these records
-            available for years. In the wrong hands, they can be used for fraud,
-            extortion or selecting victims.
-          </p>
-          <p class="prose">
-            The
+            target for attackers, and long retention obligations keep them
+            available for years. The
             <a
               href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
               >French Gendarmerie</a
             >
             reports that criminals use stolen customer data from crypto tax
-            service Waltio to select targets. It describes kidnappings and
-            physical violence. Even a mistaken assumption that someone owns
-            substantial crypto assets can put them and their family at risk.
-            Data minimisation and shorter retention periods also protect
-            personal safety.
+            service Waltio to select targets, and describes kidnappings and
+            physical violence. Even a mistaken assumption that someone owns a
+            lot of crypto can put them and their family at risk. Data
+            minimisation and shorter retention periods also protect personal
+            safety.
           </p>
         </div>
         <Artwork id="wrenchAttack" language="en" />
@@ -304,16 +302,18 @@ const faqs = [
     </section>
     <section id="ausblick" aria-labelledby="ausblick-heading">
       <h2 id="ausblick-heading">What might come next</h2>
-      <p class="section-intro">
-        Reporting infrastructure can be expanded later. That is why we want
-        effective limits on data collection now.
-      </p>
-      <p class="prose">
-        Requiring reports of wallet addresses, individual transactions or
-        activities before 2026 would need a change in the law. None of this has
-        been enacted, and the current proposal to recast the directive does not
-        provide for it either.
-      </p>
+      <div class="columns">
+        <p class="section-intro">
+          Reporting infrastructure can be expanded later. That is why we want
+          effective limits on data collection now.
+        </p>
+        <p class="prose">
+          Requiring reports of wallet addresses, individual transactions or
+          activities before 2026 would need a change in the law. None of this
+          has been enacted, and the current proposal to recast the directive
+          does not provide for it either.
+        </p>
+      </div>
     </section>
     <section id="forderungen" aria-labelledby="forderungen-heading">
       <h2 id="forderungen-heading">Our demands</h2>
@@ -321,8 +321,7 @@ const faqs = [
         The state must justify why an intrusion into your private life is
         necessary. Invoking money laundering or tax evasion does not replace
         that justification. We call for targeted investigations based on
-        specific suspicion and effective protection for uninvolved people. A
-        stated policy goal is no licence for mass surveillance.
+        specific suspicion and effective protection for uninvolved people.
       </p>
       <ul class="checklist">
         <li>
@@ -374,20 +373,27 @@ const faqs = [
         {campaignStatus.en.text}
       </p>
       <LegalRoute language="en" />
-      <p class="prose">
-        The court decides whether to refer questions to the CJEU. The complaint
-        does not automatically stop data collection; the duration of the
-        proceedings is not yet known.
-      </p>
-      <p class="prose">
-        Whether and how individuals can take part will be clarified as the case
-        develops. In the meantime, you can
-        <a href="/en/get-involved/#spenden">help fund the case</a>
-        and
-        <a href="/en/proceedings/">follow its progress</a>.
-      </p>
+      <ul class="facts">
+        <li>
+          <strong>What the complaint does not do</strong>
+          <p>
+            It does not automatically stop data collection. The court decides
+            whether to refer questions to the CJEU; the duration of the
+            proceedings is not yet known.
+          </p>
+        </li>
+        <li>
+          <strong>How you can take part</strong>
+          <p>
+            Whether and how individuals can take part will be clarified as the
+            case develops. In the meantime, you can
+            <a href="/en/get-involved/#spenden">help fund the case</a>
+            and <a href="/en/proceedings/">follow its progress</a>.
+          </p>
+        </li>
+      </ul>
     </section>
-    <section id="faq" aria-labelledby="faq-heading">
+    <section id="faq" class="faq" aria-labelledby="faq-heading">
       <h2 id="faq-heading">Questions and answers</h2>
       <div class="faq-list">
         {faqs.map(faq => <details name="faq"><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}

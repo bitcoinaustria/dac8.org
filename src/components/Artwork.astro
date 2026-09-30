@@ -12,6 +12,9 @@ interface Props {
   // Link the full-resolution file from the caption, for detailed specimens.
   zoom?: boolean
   priority?: boolean
+  // Replace the caption from the artwork data, or hide it where the
+  // surrounding text already says what the picture shows.
+  caption?: string | false
 }
 
 const {
@@ -20,12 +23,18 @@ const {
   size = "side",
   zoom = false,
   priority = false,
+  caption,
 } = Astro.props
 const entry: Artwork = artwork[id]
 const image = imageFor(entry, language)
 const text = entry[language]
+const title = caption === undefined ? text.title : undefined
+const note = caption === false ? undefined : (caption ?? text.caption)
+// The box keeps the image's proportions before it has loaded, so figures and
+// captions do not collapse while lazy images arrive.
+const ratio = (image.width / image.height).toFixed(4)
 const sizes = {
-  hero: "(min-width: 64rem) 24rem, (min-width: 40rem) 24rem, 90vw",
+  hero: "(min-width: 64rem) 36rem, 92vw",
   scene: "(min-width: 64rem) 44rem, 92vw",
   side: "(min-width: 64rem) 36rem, 92vw",
   wide: "(min-width: 64rem) 58rem, 100vw",
@@ -35,7 +44,7 @@ const widths = [360, 540, 720, 960, 1280, 1600].filter(
 )
 ---
 
-<figure class:list={["artwork", `artwork-${size}`]}>
+<figure class:list={["artwork", `artwork-${size}`]} style={`--ratio: ${ratio}`}>
   <Picture
     src={image}
     alt={text.alt}
@@ -45,10 +54,10 @@ const widths = [360, 540, 720, 960, 1280, 1600].filter(
     sizes={sizes}
     priority={priority}
   />
-  {text.caption && (
+  {note && (
     <figcaption>
-      {text.title && <strong>{text.title}</strong>}
-      {text.caption}
+      {title && <strong>{title}</strong>}
+      {note}
       {zoom && (
         <a class="artwork-zoom-link" href={image.src}>
           {language === "en" ? "Full size" : "In voller Größe"}
