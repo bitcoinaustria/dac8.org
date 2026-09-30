@@ -17,8 +17,8 @@ const sources = sourceGroups.map((group) => ({
 }))
 const concerns = [
   {
-    title: "Everyone, not just suspects.",
-    text: "Providers must prepare reporting data for all customers before it is clear who will be reported. No reason, no suspicion. We reject this precautionary logic.",
+    title: "All customers, no suspicion.",
+    text: "Providers must prepare reporting data for all customers before it is clear who will be reported at all. We reject this stockpiling of data.",
   },
   {
     title: "A file with no end date.",
@@ -26,15 +26,15 @@ const concerns = [
   },
   {
     title: "Sortable by wealth.",
-    text: "Total value and number of purchases give a rough estimate of how much money someone moves in crypto, whether or not the estimate is right. In the wrong hands, this can single out people who appear wealthy.",
+    text: "Total value and number of purchases give a rough estimate of how much money someone moves in crypto. Anyone who gets hold of the data can use it to single out people who appear wealthy, even when the estimate is wrong.",
   },
   {
     title: "The provider becomes a honeypot.",
-    text: "The more data sits in one place, and the longer it stays there, the more an attack pays off. A provider breach can tie your name to the blockchain. That link cannot be taken back and can reveal further payments.",
+    text: "The more data sits in one place, and the longer it stays there, the more an attack pays off. A provider breach can tie your name to the blockchain. Whoever has that link can also use it to trace further payments.",
   },
   {
     title: "The purpose keeps expanding.",
-    text: "Under the directive, the data may also be used for customs, anti-money-laundering purposes and, under certain conditions, sanctions. Each new purpose needs its own clear limits.",
+    text: "Under the directive, the data may also be used for customs, anti-money-laundering purposes and, under certain conditions, sanctions. We call for clear limits on each of these purposes.",
   },
   {
     title: "Errors travel too.",
@@ -42,7 +42,7 @@ const concerns = [
   },
   {
     title: "Ten years without an explanation.",
-    text: "Providers delete reported crypto-asset data ten years after the reporting period, corresponding bank-account data after five. The legislative materials do not explain the difference.",
+    text: "Providers delete reported crypto-asset data only ten years after the reporting period, and corresponding bank-account data after five. The legislative materials do not explain the difference.",
   },
 ]
 // Documented cases in which lost or misused data made the harm possible.
@@ -74,7 +74,7 @@ const leaks = [
   },
   {
     title: "Fractal ID, 2024: ID, home address and wallet in one record.",
-    text: "Using an administrator’s reused password, an attacker took the data of around 6,300 users from the Berlin identity verification service: names, ID images, home addresses and wallet addresses. A ransom demand followed.",
+    text: "Using an administrator’s reused password, an attacker took the data of around 6,300 users from the Berlin identity verification service: names, ID images, home addresses and wallet addresses. The attackers then demanded a ransom.",
     sources: [
       {
         label: "Fractal ID",
@@ -248,14 +248,14 @@ const faqs = [
 
 <Layout
   sections={[
-  { id: "was-ist-dac8", label: "What is DAC8?" },
-  { id: "gemeldet", label: "What gets reported" },
-  { id: "problem", label: "Why it is a problem" },
-  { id: "faelle", label: "What has already happened" },
-  { id: "ausblick", label: "The bigger picture" },
-  { id: "forderungen", label: "Our demands" },
-  { id: "rechtsweg", label: "Our legal strategy" },
-  { id: "faq", label: "Questions and answers" },
+  { id: "was-ist-dac8", label: "DAC8" },
+  { id: "gemeldet", label: "The report" },
+  { id: "problem", label: "Concerns" },
+  { id: "faelle", label: "Cases" },
+  { id: "ausblick", label: "Bigger picture" },
+  { id: "forderungen", label: "Demands" },
+  { id: "rechtsweg", label: "Legal route" },
+  { id: "faq", label: "Questions" },
   { id: "quellen", label: "Sources" },
 ]}
 >
@@ -316,7 +316,7 @@ const faqs = [
         <strong>Austria’s additional requirement:</strong>
         Before it is established who will be reported, the provider must prepare
         reporting data for all customers, all transactions and all
-        crypto-assets. The directive does not require this.<small
+        crypto-assets. This goes beyond the directive.<small
           >Section 20(1) Krypto-MPfG.</small
         >
       </p>
@@ -397,8 +397,8 @@ const faqs = [
             >
             currently requires identification and transaction records to be kept
             for up to ten years after the business relationship ends. The clock
-            only starts when you leave. How often such stores are lost is shown
-            by the <a href="#faelle">cases further down</a>.
+            only starts when you leave. Such stores are lost again and again, as
+            the <a href="#faelle">cases further down</a> show.
           </p>
         </div>
         <Artwork id="linkedIdentity" language="en" />
@@ -407,10 +407,10 @@ const faqs = [
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">Why it is a problem</h2>
       <p class="section-intro">
-        The problem is not a single report. A new one is added every year, even
-        more builds up at the provider, and all of it is stored for years
-        without any suspicion. The result is a financial profile far beyond the
-        report, with the risk of errors, breaches and misuse.
+        A new report is added every year, even more builds up at the provider,
+        and all of it is stored for years without any suspicion. The result is a
+        financial profile that goes far beyond any single report, and with it
+        the risk of errors, breaches and misuse.
       </p>
       <ul class="facts concerns">
         {concerns.map(concern => <li><strong>{concern.title}</strong><p>{concern.text}</p></li>)}
@@ -423,11 +423,11 @@ const faqs = [
         <div>
           <h3 id="zahlungsprofile">When payments reveal everyday life</h3>
           <p class="prose">
-            Paying with cryptocurrencies can leave traces of everyday life.
-            Bitcoin’s on-chain transactions remain public. When a provider links
-            your name to an address, further payments may become attributable to
-            you. With information about recipients, purchases, donations and
-            recurring payments can
+            Paying with bitcoin leaves traces of your everyday life, because
+            on-chain transactions remain public. When a provider links your name
+            to an address, further payments may become attributable to you. With
+            information about recipients, purchases, donations and recurring
+            payments can
             <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
               >reveal habits and relationships</a
             >.
@@ -439,9 +439,8 @@ const faqs = [
     <section id="faelle" aria-labelledby="faelle-heading">
       <h2 id="faelle-heading">What has already happened</h2>
       <p class="section-intro">
-        Wherever data on people’s wealth is collected, it is lost sooner or
-        later, by providers and authorities alike. Phishing, fraud and violence
-        follow.
+        Providers and authorities lose data on people’s wealth again and again.
+        Fraudsters and violent criminals use it.
       </p>
       <h3>When providers and authorities lose data</h3>
       <ul class="facts">
@@ -470,8 +469,8 @@ const faqs = [
             hard to find out: who holds crypto and where they live. Long
             retention obligations keep this data available for years. Even a
             mistaken assumption that someone owns a lot of crypto can put them
-            and their family at risk. Data minimisation and shorter retention
-            periods also protect personal safety.
+            and their family at risk. That is why we call for data minimisation
+            and short retention periods.
           </p>
         </div>
         <Artwork id="wrenchAttack" language="en" />
@@ -499,15 +498,15 @@ const faqs = [
       </h2>
       <div class="columns">
         <p class="section-intro">
-          DAC8 does not stand alone. Step by step, an infrastructure is taking
-          shape that collects financial data without suspicion, stores it for
-          years and links it ever more closely.
+          Step by step, the EU and Austria are building an infrastructure that
+          collects financial data without suspicion, stores it for years and
+          links it ever more closely. DAC8 is one part of it.
         </p>
         <p class="prose">
-          Reporting of wallet addresses, individual transactions or activities
-          before 2026 has not been enacted, nor is it in the proposal to recast
-          the directive. But infrastructure can be expanded later. That is why
-          we want effective limits on it now.
+          No one currently has to report wallet addresses, individual
+          transactions or activities before 2026, and the proposal to recast the
+          directive does not provide for it either. But lawmakers can expand
+          existing infrastructure at any time. We want to limit it now.
         </p>
       </div>
       <ol class="flow" aria-label="The building blocks">
@@ -584,12 +583,11 @@ const faqs = [
       <div class="precedent">
         <p class="precedent-year" aria-hidden="true">2014</p>
         <p class="prose">
-          <strong>Resistance can work.</strong>
+          <strong>A surveillance law has fallen before.</strong>
           The challenge to data retention organised by AKVorrat, now
           epicenter.works, reached the Court of Justice through Austria’s
           Constitutional Court. In 2014, both the EU directive and Austrian
-          rules fell. That success shows that even sweeping surveillance laws
-          can be changed.
+          rules fell.
         </p>
       </div>
     </section>
@@ -601,18 +599,18 @@ const faqs = [
       <LegalRoute language="en" />
       <ul class="facts">
         <li>
-          <strong>What the complaint does not do</strong>
+          <strong>What to expect</strong>
           <p>
-            It does not automatically stop data collection. The court decides
-            whether to refer questions to the CJEU; the duration of the
-            proceedings is not yet known.
+            Data collection continues during the proceedings. The court decides
+            whether the case goes to the CJEU, and we do not yet know how long
+            it will take.
           </p>
         </li>
         <li>
           <strong>How you can take part</strong>
           <p>
-            Whether and how individuals can take part will be clarified as the
-            case develops. In the meantime, you can
+            We are still working out how individuals can take part. In the
+            meantime, you can
             <a href="/en/get-involved/#spenden">help fund the case</a>
             and <a href="/en/proceedings/">follow its progress</a>.
           </p>

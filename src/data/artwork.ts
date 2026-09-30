@@ -63,12 +63,12 @@ export const artwork = {
     de: {
       alt: "Illustration: Ein dichtes Feld gleicher Personenkarten läuft unter einer gemeinsamen Scannerleiste hindurch.",
       caption:
-        "Aufbereitet werden die Daten aller Kunden. Übermittelt werden nur die Daten meldepflichtiger Personen.",
+        "Der Anbieter bereitet die Daten aller Kunden auf und übermittelt jene der meldepflichtigen Personen.",
     },
     en: {
       alt: "Illustration: a dense field of identical personal record cards passes under one shared scanner bar.",
       caption:
-        "Providers prepare data on all customers. Only data on reportable persons is transmitted.",
+        "Providers prepare data on all customers and transmit the data on reportable persons.",
     },
   },
   reportAssets: {
@@ -128,12 +128,12 @@ export const artwork = {
     de: {
       alt: "Illustration: Eine Lupe liegt auf der Akte von Max Mustermann in einer Kartei mit der Aufschrift Datensammlung. Daneben ein Blatt „Beschwerde“ gegen die anlasslose Erfassung der Jahreswerte.",
       caption:
-        "Die geplante Beschwerde richtet sich gegen die anlasslose Erfassung. Über das Ergebnis entscheiden Behörde und Gerichte.",
+        "Die geplante Beschwerde richtet sich gegen die anlasslose Erfassung aller Kunden.",
     },
     en: {
       alt: "Illustration: a magnifying glass rests on Max Mustermann’s file in a card index labelled data collection. Beside it, a complaint against the blanket collection of annual totals.",
       caption:
-        "The planned complaint targets the blanket collection. The authority and the courts decide the outcome.",
+        "The planned complaint targets the blanket collection of all customers’ data.",
     },
   },
   collectiveDefense: {
@@ -166,13 +166,13 @@ export const artwork = {
       alt: "Illustration: Eine weit herausgezogene Archivschublade voller Akten mit Jahresreitern, vorne die Akte von Max Mustermann.",
       title: "Auf Vorrat gespeichert",
       caption:
-        "Vorsorglich gesammelte Daten bleiben über Jahre gespeichert, auch wenn nie ein Verdacht bestand.",
+        "Der Anbieter hebt vorsorglich gesammelte Daten jahrelang auf, auch wenn nie ein Verdacht bestand.",
     },
     en: {
       alt: "Illustration: an archive drawer pulled far out, full of files with year tabs, Max Mustermann’s file at the front.",
       title: "Kept on file",
       caption:
-        "Data collected as a precaution stays on file for years, even when there was never any suspicion.",
+        "Providers keep data collected as a precaution for years, even when there was never any suspicion.",
     },
   },
   wealthProfile: {

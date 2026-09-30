@@ -288,6 +288,24 @@ const current = navigation.find(
     li:first-child a {
       padding-inline-start: 0;
     }
+
+    ol[data-more-start] {
+      --fade-start: 2.5rem;
+    }
+
+    ol[data-more-end] {
+      --fade-end: 2.5rem;
+    }
+
+    ol:is([data-more-start], [data-more-end]) {
+      mask-image: linear-gradient(
+        to right,
+        transparent,
+        #000 var(--fade-start, 0),
+        #000 calc(100% - var(--fade-end, 0)),
+        transparent
+      );
+    }
   }
 
   dialog {
@@ -487,9 +505,21 @@ const current = navigation.find(
       for (const link of sectionLinks) {
         if (id && link.dataset.target === id) {
           link.setAttribute("aria-current", "location")
-          // Die Leiste scrollt waagrecht mit, die Seite bleibt, wo sie ist.
+          // Die Leiste scrollt waagrecht mit und hält das aktive Kapitel in
+          // der Mitte; die Seite bleibt, wo sie ist.
           const bar = link.closest("ol")
-          bar?.scrollTo({ left: link.offsetLeft - 16, behavior: "smooth" })
+          if (bar) {
+            const barBox = bar.getBoundingClientRect()
+            const linkBox = link.getBoundingClientRect()
+            bar.scrollTo({
+              left:
+                bar.scrollLeft +
+                linkBox.left -
+                barBox.left -
+                (barBox.width - linkBox.width) / 2,
+              behavior: "smooth",
+            })
+          }
         } else {
           link.removeAttribute("aria-current")
         }
@@ -521,6 +551,19 @@ const current = navigation.find(
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update)
     }
+
+    // Blendet die Ränder der Leiste aus, solange dort weitere Kapitel
+    // liegen, damit abgeschnittene Einträge als scrollbar erkennbar sind.
+    const bar = sectionLinks[0]?.closest("ol")
+    const fade = () => {
+      if (!bar) return
+      const end = bar.scrollWidth - bar.clientWidth
+      bar.toggleAttribute("data-more-start", bar.scrollLeft > 4)
+      bar.toggleAttribute("data-more-end", bar.scrollLeft < end - 4)
+    }
+    bar?.addEventListener("scroll", fade, { passive: true })
+    window.addEventListener("resize", fade)
+    fade()
 
     for (const link of sectionLinks) {
       link.addEventListener("click", () => {

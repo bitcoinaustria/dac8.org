@@ -833,6 +833,12 @@ const strings = en
     font: inherit;
   }
 
+  /* Leaflet focuses the map on every click; the site's red focus ring would
+     frame the whole map. The toolbar keeps visible focus for keyboard use. */
+  .atlas .leaflet-container:is(:focus, :focus-visible) {
+    outline: none;
+  }
+
   .atlas .atlas-probe {
     display: none;
   }

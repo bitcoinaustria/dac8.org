@@ -12,8 +12,8 @@ const researchDate = "30. September 2026"
 
 const concerns = [
   {
-    title: "Alle, nicht nur Verdächtige.",
-    text: "Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, bevor feststeht, wer gemeldet wird. Ohne Anlass, ohne Verdacht. Genau diese Vorratslogik lehnen wir ab.",
+    title: "Alle Kunden, ohne Verdacht.",
+    text: "Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, bevor feststeht, wer überhaupt gemeldet wird. Diese Datensammlung auf Vorrat lehnen wir ab.",
   },
   {
     title: "Eine Akte ohne Enddatum.",
@@ -21,15 +21,15 @@ const concerns = [
   },
   {
     title: "Sortierbar nach Vermögen.",
-    text: "Aus Summe und Anzahl der Käufe lässt sich grob schätzen, wie viel Geld jemand in Krypto bewegt, ob die Schätzung stimmt oder nicht. In falschen Händen lassen sich so Menschen herausfiltern, die vermögend wirken.",
+    text: "Aus Summe und Anzahl der Käufe lässt sich grob schätzen, wie viel Geld jemand in Krypto bewegt. Wer die Daten in die Hände bekommt, kann so Menschen herausfiltern, die vermögend wirken, auch wenn die Schätzung falsch ist.",
   },
   {
     title: "Der Anbieter wird zum Honeypot.",
-    text: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist ein Angriff. Ein Leck beim Anbieter kann deinen Namen mit der Blockchain verbinden. Diese Zuordnung lässt sich nicht zurückholen und kann weitere Zahlungen erschließen.",
+    text: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist ein Angriff. Ein Leck beim Anbieter kann deinen Namen mit der Blockchain verbinden. Wer diese Zuordnung einmal hat, kann damit auch weitere Zahlungen verfolgen.",
   },
   {
     title: "Der Zweck wächst mit.",
-    text: "Laut Richtlinie dürfen die Daten auch für Zoll, Geldwäschebekämpfung und unter Bedingungen für Sanktionen genutzt werden. Jeder neue Zweck braucht eine eigene, klare Grenze.",
+    text: "Laut Richtlinie dürfen die Daten auch für Zoll, Geldwäschebekämpfung und unter Bedingungen für Sanktionen genutzt werden. Wir fordern für jeden dieser Zwecke eine eigene, klare Grenze.",
   },
   {
     title: "Fehler reisen mit.",
@@ -37,7 +37,7 @@ const concerns = [
   },
   {
     title: "Zehn Jahre ohne Begründung.",
-    text: "Übermittelte Kryptodaten werden beim Anbieter erst zehn Jahre nach dem Meldezeitraum gelöscht, entsprechende Bankkontendaten nach fünf. Die Gesetzesmaterialien begründen den Unterschied nicht.",
+    text: "Der Anbieter löscht übermittelte Kryptodaten erst zehn Jahre nach dem Meldezeitraum, entsprechende Bankkontendaten nach fünf. Die Gesetzesmaterialien begründen den Unterschied nicht.",
   },
 ]
 
@@ -71,7 +71,7 @@ const leaks = [
   {
     title:
       "Fractal ID 2024: Ausweis, Wohnadresse und Wallet in einem Datensatz.",
-    text: "Mit dem wiederverwendeten Passwort eines Administrators holte ein Angreifer beim Berliner Identifizierungsdienst die Daten von rund 6.300 Nutzern: Namen, Ausweisbilder, Wohnadressen und Wallet-Adressen. Danach wurde Lösegeld gefordert.",
+    text: "Mit dem wiederverwendeten Passwort eines Administrators holte ein Angreifer beim Berliner Identifizierungsdienst die Daten von rund 6.300 Nutzern: Namen, Ausweisbilder, Wohnadressen und Wallet-Adressen. Danach verlangten die Angreifer Lösegeld.",
     sources: [
       {
         label: "Fractal ID",
@@ -246,14 +246,14 @@ const faqs = [
 
 <Layout
   sections={[
-    { id: "was-ist-dac8", label: "Was ist DAC8?" },
-    { id: "gemeldet", label: "Was gemeldet wird" },
-    { id: "problem", label: "Was problematisch ist" },
-    { id: "faelle", label: "Was schon passiert ist" },
-    { id: "ausblick", label: "Das größere Bild" },
-    { id: "forderungen", label: "Was wir fordern" },
-    { id: "rechtsweg", label: "Wie wir vorgehen" },
-    { id: "faq", label: "Häufige Fragen" },
+    { id: "was-ist-dac8", label: "DAC8" },
+    { id: "gemeldet", label: "Meldung" },
+    { id: "problem", label: "Kritik" },
+    { id: "faelle", label: "Fälle" },
+    { id: "ausblick", label: "Größeres Bild" },
+    { id: "forderungen", label: "Forderungen" },
+    { id: "rechtsweg", label: "Rechtsweg" },
+    { id: "faq", label: "Fragen" },
     { id: "quellen", label: "Quellen" },
   ]}
 >
@@ -316,7 +316,7 @@ const faqs = [
         <strong>Der österreichische Zusatz:</strong>
         Bevor feststeht, wer überhaupt gemeldet wird, muss der Anbieter die
         Meldedaten für alle Kunden, alle Transaktionen und alle Kryptowerte
-        aufbereiten. Die Richtlinie verlangt das nicht.
+        aufbereiten. Das geht über die Richtlinie hinaus.
         <small>§ 20 Abs. 1 Krypto-MPfG.</small>
       </p>
     </section>
@@ -337,7 +337,7 @@ const faqs = [
             <li>Name, Anschrift, Steuerwohnsitz, Steuernummer, Geburtsdatum</li>
             <li>
               je Kryptowert und Vorgangsart Wert in Euro, Stückzahl und meist
-              die Anzahl der Vorgänge – getrennt nach Kauf, Verkauf, Tausch und
+              die Anzahl der Vorgänge, getrennt nach Kauf, Verkauf, Tausch und
               Übertragung
             </li>
             <li>
@@ -393,8 +393,8 @@ const faqs = [
             >
             verlangt derzeit, Identifizierungs- und Transaktionsunterlagen bis
             zehn Jahre nach Ende der Geschäftsbeziehung aufzubewahren. Die Frist
-            beginnt also erst, wenn du kündigst. Wie oft solche Bestände
-            verloren gehen, zeigen die <a href="#faelle">Fälle weiter unten</a>.
+            läuft erst ab deiner Kündigung. Solche Bestände gehen immer wieder
+            verloren, wie die <a href="#faelle">Fälle weiter unten</a> zeigen.
           </p>
         </div>
         <Artwork id="linkedIdentity" language="de" />
@@ -404,10 +404,11 @@ const faqs = [
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">Was daran problematisch ist</h2>
       <p class="section-intro">
-        Das Problem ist nicht die einzelne Meldung. Jedes Jahr kommt eine dazu,
-        beim Anbieter sammelt sich noch mehr an, und alles bleibt ohne Verdacht
-        über Jahre gespeichert. So entsteht ein Finanzprofil weit über die
-        Meldung hinaus, mit dem Risiko von Fehlern, Datenlecks und Missbrauch.
+        Jedes Jahr kommt eine Meldung dazu, beim Anbieter sammelt sich noch mehr
+        an, und alles bleibt über Jahre gespeichert, ohne dass je ein Verdacht
+        bestand. Daraus entsteht ein Finanzprofil, das weit über jede einzelne
+        Meldung hinausgeht, und mit ihm das Risiko von Fehlern, Datenlecks und
+        Missbrauch.
       </p>
       <ul class="facts concerns">
         {concerns.map((concern) => (
@@ -425,11 +426,11 @@ const faqs = [
         <div>
           <h3 id="zahlungsprofile">Wenn Zahlungen deinen Alltag offenlegen</h3>
           <p class="prose">
-            Wer mit Kryptowährungen bezahlt, kann Spuren seines Alltags
-            hinterlassen. Bei Bitcoin bleiben On-Chain-Transaktionen öffentlich.
-            Verbindet ein Anbieter deinen Namen mit einer Adresse, können
-            weitere Zahlungen zugeordnet werden. Mit Informationen über die
-            Empfänger lassen Einkäufe, Spenden und regelmäßige Zahlungen
+            Zahlst du mit Bitcoin, hinterlässt du Spuren deines Alltags, denn
+            On-Chain-Transaktionen bleiben öffentlich. Verbindet ein Anbieter
+            deinen Namen mit einer Adresse, kann jemand weitere Zahlungen dir
+            zuordnen. Mit Informationen über die Empfänger lassen Einkäufe,
+            Spenden und regelmäßige Zahlungen
             <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
               >Rückschlüsse auf Gewohnheiten und Beziehungen</a
             >
@@ -443,9 +444,8 @@ const faqs = [
     <section id="faelle" aria-labelledby="faelle-heading">
       <h2 id="faelle-heading">Was schon passiert ist</h2>
       <p class="section-intro">
-        Wo Daten über Vermögen gesammelt werden, gehen sie früher oder später
-        verloren, bei Anbietern wie bei Behörden. Dann folgen Phishing, Betrug
-        und Gewalt.
+        Anbieter und Behörden verlieren immer wieder Daten über Vermögen.
+        Betrüger und Gewalttäter nutzen sie.
       </p>
       <h3>Wenn Anbieter und Behörden Daten verlieren</h3>
       <ul class="facts">
@@ -474,8 +474,8 @@ const faqs = [
             müssten: wer Krypto besitzt und wo er wohnt. Lange
             Aufbewahrungspflichten halten diese Daten über Jahre bereit. Schon
             die falsche Annahme, jemand besitze viel Krypto, kann ihn und seine
-            Angehörigen gefährden. Datensparsamkeit und kurze Speicherfristen
-            schützen deshalb auch die persönliche Sicherheit.
+            Angehörigen gefährden. Deshalb fordern wir Datensparsamkeit und
+            kurze Speicherfristen.
           </p>
         </div>
         <Artwork id="wrenchAttack" language="de" />
@@ -502,16 +502,16 @@ const faqs = [
       <h2 id="ausblick-heading">Ein Baustein finanzieller Überwachung</h2>
       <div class="columns">
         <p class="section-intro">
-          DAC8 steht nicht allein. Schritt für Schritt entsteht eine
-          Infrastruktur, die Finanzdaten ohne Verdacht erfasst, lange speichert
-          und immer besser verknüpft.
+          Schritt für Schritt bauen die EU und Österreich eine Infrastruktur,
+          die Finanzdaten ohne Verdacht erfasst, lange speichert und immer enger
+          verknüpft. DAC8 ist ein Teil davon.
         </p>
         <p class="prose">
-          Eine Pflicht zur Meldung von Wallet-Adressen, einzelnen Transaktionen
-          oder Vorgängen vor 2026 ist derzeit nicht beschlossen, auch nicht im
-          Vorschlag zur Neufassung der Richtlinie. Eine Infrastruktur lässt sich
-          aber später erweitern. Deshalb wollen wir ihr jetzt wirksame Grenzen
-          setzen.
+          Wallet-Adressen, einzelne Transaktionen und Vorgänge vor 2026 muss
+          derzeit niemand melden, und auch der Vorschlag zur Neufassung der
+          Richtlinie sieht das nicht vor. Eine bestehende Infrastruktur kann der
+          Gesetzgeber aber jederzeit erweitern. Wir wollen ihr deshalb jetzt
+          Grenzen setzen.
         </p>
       </div>
       <ol class="flow" aria-label="Die Bausteine">
@@ -591,12 +591,11 @@ const faqs = [
       <div class="precedent">
         <p class="precedent-year" aria-hidden="true">2014</p>
         <p class="prose">
-          <strong>Gegenwehr wirkt.</strong>
+          <strong>Schon einmal fiel ein Überwachungsgesetz.</strong>
           Die von AKVorrat, heute epicenter.works, organisierte Beschwerde gegen
           die Vorratsdatenspeicherung führte über den Verfassungsgerichtshof zum
-          Europäischen Gerichtshof. 2014 fielen die EU-Richtlinie und die
-          österreichischen Regeln. Der Erfolg zeigt, dass sich auch
-          weitreichende Überwachungsgesetze ändern lassen.
+          Europäischen Gerichtshof. 2014 hob der EuGH die EU-Richtlinie auf, der
+          VfGH die österreichischen Regeln.
         </p>
       </div>
     </section>
@@ -609,18 +608,18 @@ const faqs = [
       <LegalRoute language="de" />
       <ul class="facts">
         <li>
-          <strong>Was die Beschwerde nicht tut</strong>
+          <strong>Was du erwarten kannst</strong>
           <p>
-            Sie stoppt die Datenerfassung nicht automatisch. Über eine Vorlage
-            an den EuGH entscheidet das Gericht; wie lange das Verfahren dauert,
-            steht noch nicht fest.
+            Die Datenerfassung läuft während des Verfahrens weiter. Ob der Fall
+            zum EuGH kommt, entscheidet das Gericht, und wie lange das dauert,
+            wissen wir noch nicht.
           </p>
         </li>
         <li>
           <strong>Wie du dich beteiligen kannst</strong>
           <p>
-            Ob und wie sich Privatpersonen beteiligen können, klären wir im
-            weiteren Verlauf. Bis dahin kannst du den
+            Die Möglichkeiten für Privatpersonen klären wir noch. Bis dahin
+            kannst du den
             <a href="/mitmachen/#spenden"
               >Prozess mit einer Spende unterstützen</a
             >
