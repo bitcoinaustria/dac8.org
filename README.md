@@ -59,27 +59,32 @@ browser can share files, sharing as icon buttons.
 
 ## Site structure
 
-Four pages per language, with URLs that follow the navigation labels:
+Five main pages per language, with URLs that follow the navigation labels:
 
 | Page | German | English |
 | --- | --- | --- |
 | Start: the case told as a story in scenes | `/` | `/en/` |
 | Dossier: the complete reference, FAQ and sources | `/dossier/` | `/en/dossier/` |
+| Angriffe: archive of known physical attacks, map and list | `/angriffe/` | `/en/attacks/` |
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
+| Geschichte: DAC timeline since 1977 as cards per era, with what tax authorities receive today; linked from dossier, home and footer | `/geschichte/` | `/en/history/` |
 
 A top bar carries the navigation and a permanent donate button that leads to
 `#spenden` on the participation page; on mobile a bottom bar keeps donating and
 sharing within reach. `/spenden` and `/en/donate` are short redirects for print
 and QR codes. The home page is a sequence of bands, each with one statement and
 at most one illustration: the hero, a short DAC8 brief with three key figures,
-two story chapters (`src/components/StoryScene.astro`), documented data
-leaks and what followed them, what we do, what you can do, the guiding
-statement and who we are. The full case list with sources is in the dossier
-(`#faelle`). A case belongs there only if lost or misused data made the harm
-possible, and it needs a public source. The dossier's "Am I affected?" check (`src/components/AffectedCheck.astro`)
-restates the FAQ. The footer closes every page with the campaign statement,
-two actions and the status on a dark band.
+the first story chapter (`src/components/StoryScene.astro`) on what DAC8 does
+with your data, how it came about (a timeline selection linking to the history
+page), the second story chapter on what can follow, documented data leaks and
+what followed them, what we do, what you can do, the guiding statement and who
+we are. The full case list with sources is in the dossier (`#faelle`). A case
+belongs there only if lost or misused data made the harm possible, and it needs
+a public source. The dossier's "Am I affected?" check
+(`src/components/AffectedCheck.astro`) restates the FAQ. The footer closes
+every page with the campaign statement, two actions and the status on a dark
+band.
 
 ## Map of known physical attacks
 
@@ -130,6 +135,12 @@ the participation and proceedings pages share components; the home page and the
 dossier remain explicit Astro documents per language. Source URLs are shared in `src/data/sources.ts`.
 
 - Update `src/data/campaign.ts` when the procedural status changes.
+- The history page (`/geschichte/`, `/en/history/`) renders `src/data/history.ts`,
+  a chronology from Directive 77/799/EEC to the pending DAC recast. Its claims
+  are verified in the wiki reference `dac-history-timeline`. Update
+  `historyResearchDate` in the same file with every content change; the page
+  shows it as the research status. The home page shows a selection of the
+  same stations (`homeSteps`) through `src/components/TimelineRail.astro`.
 - Add confirmed public milestones to `src/data/updates.ts`, with a stable ID,
   publication timestamp including timezone, both translations and an optional
   source URL. Future-dated entries stay hidden until a build after that date.

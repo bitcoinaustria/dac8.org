@@ -36,6 +36,20 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       imageLines: ["What DAC8 requires.", "And where it leads."],
     },
   },
+  history: {
+    de: {
+      title: "Wie es zu DAC8 kam: die EU-Steueramtshilfe seit 1977",
+      description:
+        "Von der Amtshilfe 1977 bis zu jährlichen Meldepflichten für Banken, Plattformen und Krypto-Anbieter: DAC1 bis DAC9, die Neufassung und Österreich. Mit Primärquellen.",
+      imageLines: ["Wie es zu DAC8 kam.", "Und was noch kommt."],
+    },
+    en: {
+      title: "How we got to DAC8: EU tax cooperation since 1977",
+      description:
+        "From exchange on request in 1977 to annual reporting duties for banks, platforms and crypto-asset providers: DAC1 to DAC9, the recast and Austria. With primary sources.",
+      imageLines: ["How we got to DAC8.", "And what comes next."],
+    },
+  },
   participate: {
     de: {
       title: "Die Kampagne gegen DAC8 unterstützen",
