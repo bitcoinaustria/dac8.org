@@ -1,12 +1,13 @@
 ---
 import AffectedCheck from "@/components/AffectedCheck.astro"
+import AttackSummary from "@/components/AttackSummary.astro"
 import Artwork from "@/components/Artwork.astro"
 import Layout from "@/layouts/Layout.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import { campaignStatus } from "@/data/campaign"
 import { sourceGroups } from "@/data/sources"
-const researchDate = "20 September 2026"
+const researchDate = "30 September 2026"
 const sources = sourceGroups.map((group) => ({
   title: group.titleEn,
   sources: group.sources.map((source) => ({
@@ -16,24 +17,24 @@ const sources = sourceGroups.map((group) => ({
 }))
 const concerns = [
   {
-    title: "Everyone, not just suspects.",
-    text: "Providers must prepare reporting data for all customers before it is clear who will be reported. No reason, no suspicion. We reject this precautionary logic.",
+    title: "All customers, no suspicion.",
+    text: "Providers must prepare reporting data for all customers before it is clear who will be reported at all. We reject this stockpiling of data.",
   },
   {
-    title: "A profile over the years.",
-    text: "Unlike bank-account reporting, crypto-asset reports include units and transaction counts. Year after year, this shows how active someone is.",
+    title: "A file with no end date.",
+    text: "The report comes every year, and the provider keeps each one for ten years. From 2036, a full decade will always be on file for anyone who remains a customer. Unlike bank-account reporting, it includes units and transaction counts: over the years, this shows how much someone moves and how that changes.",
   },
   {
     title: "Sortable by wealth.",
-    text: "Total value and number of purchases give a rough estimate of how much money someone moves in crypto, whether or not the estimate is right. In the wrong hands, this can single out people who appear wealthy.",
+    text: "Total value and number of purchases give a rough estimate of how much money someone moves in crypto. Anyone who gets hold of the data can use it to single out people who appear wealthy, even when the estimate is wrong.",
   },
   {
-    title: "A data breach cannot be undone.",
-    text: "A provider breach can expose the link between your name and blockchain transactions. Once that link spreads, it is hard to take back and can reveal further payments.",
+    title: "The provider becomes a honeypot.",
+    text: "The more data sits in one place, and the longer it stays there, the more an attack pays off. A provider breach can tie your name to the blockchain. Whoever has that link can also use it to trace further payments.",
   },
   {
     title: "The purpose keeps expanding.",
-    text: "Under the directive, the data may also be used for customs, anti-money-laundering purposes and, under certain conditions, sanctions. Each new purpose needs its own clear limits.",
+    text: "Under the directive, the data may also be used for customs, anti-money-laundering purposes and, under certain conditions, sanctions. We call for clear limits on each of these purposes.",
   },
   {
     title: "Errors travel too.",
@@ -41,9 +42,151 @@ const concerns = [
   },
   {
     title: "Ten years without an explanation.",
-    text: "Providers delete reported crypto-asset data ten years after the reporting period, corresponding bank-account data after five. The legislative materials do not explain the difference.",
+    text: "Providers delete reported crypto-asset data only ten years after the reporting period, and corresponding bank-account data after five. The legislative materials do not explain the difference.",
   },
 ]
+// Documented cases in which lost or misused data made the harm possible.
+// Cases without that link do not belong here.
+const leaks = [
+  {
+    title: "Ledger, 2020: the addresses of 272,000 wallet buyers.",
+    text: "Names, postal addresses and phone numbers leaked from the hardware wallet maker’s online shop. Phishing emails, text messages and letters to home addresses followed, asking for the recovery phrase. In a University of Innsbruck survey, 93 of 104 affected customers reported scam attempts and 33 reported extortion threats.",
+    sources: [
+      {
+        label: "Ledger",
+        href: "https://www.ledger.com/message-ledgers-ceo-data-leak",
+      },
+      {
+        label: "Abramova and Böhme",
+        href: "https://www.usenix.org/system/files/usenixsecurity23-abramova.pdf",
+      },
+    ],
+  },
+  {
+    title: "Kroll, 2023: the balances of crypto creditors.",
+    text: "Through an employee’s hijacked phone number, attackers at the FTX bankruptcy’s claims agent accessed the names, addresses and balances of creditors of three crypto companies. Kroll warned of fraudsters asking people to connect a wallet or enter their recovery phrase.",
+    sources: [
+      {
+        label: "Kroll",
+        href: "https://ftxquestions.kroll.com/docs/Kroll_Notice_to_FTX_Claimants_4879-3276-7625-2.pdf",
+      },
+    ],
+  },
+  {
+    title: "Fractal ID, 2024: ID, home address and wallet in one record.",
+    text: "Using an administrator’s reused password, an attacker took the data of around 6,300 users from the Berlin identity verification service: names, ID images, home addresses and wallet addresses. The attackers then demanded a ransom.",
+    sources: [
+      {
+        label: "Fractal ID",
+        href: "http://web.archive.org/web/20240726003733/https://web.fractal.id/fractal-id-data-breach-post-mortem/",
+      },
+    ],
+  },
+  {
+    title: "Coinbase, 2025: defrauded with real customer data.",
+    text: "Bribed support staff copied customer data, down to ID images and balances. Fraudsters then posed as Coinbase and persuaded customers to send them money. Coinbase estimates the costs, including reimbursements, at 180 to 400 million dollars. Phishing in Coinbase’s name then also rose in Austria.",
+    sources: [
+      {
+        label: "Coinbase (Form 8-K)",
+        href: "https://www.sec.gov/Archives/edgar/data/1679788/000167978825000094/coin-20250514.htm",
+      },
+      {
+        label: "Watchlist Internet",
+        href: "https://www.watchlist-internet.at/news/datenleck-bei-coinbase-phishing",
+      },
+    ],
+  },
+  {
+    title: "Waltio, 2026: tax data as a target list.",
+    text: "At the French crypto tax service, customers’ email addresses, gains and losses and year-end balances fell into the wrong hands. According to the Gendarmerie, criminals use the data to select victims of violent crime, sometimes misjudging what they actually hold.",
+    sources: [
+      {
+        label: "Waltio",
+        href: "https://help.waltio.com/en/articles/13482134-questions-answers-security-incident",
+      },
+      {
+        label: "Gendarmerie",
+        href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2",
+      },
+    ],
+  },
+  {
+    title: "France, 2026: the tax administration is breached twice.",
+    text: "Using officials’ stolen credentials, attackers extracted 1.2 million records from the national bank-account register in February, with IBAN, name and address. In the summer, income, address and property data on 678,000 individuals and businesses followed from the tax system.",
+    sources: [
+      {
+        label: "account register",
+        href: "https://www.impots.gouv.fr/actualite/acces-illegitimes-au-fichier-national-des-comptes-bancaires-ficoba",
+      },
+      {
+        label: "tax system",
+        href: "https://presse.economie.gouv.fr/acces-illegitime-au-systeme-dinformation-de-la-direction-generale-des-finances-publiques/",
+      },
+    ],
+  },
+  {
+    title: "Austria: thousands of private queries in the tax system.",
+    text: "For six years, a tax official accessed tax records several thousand times without any official reason, including those of more than 1,000 people from his home town. In 2024, Austria’s anti-corruption office registered 116 new cases of unauthorised data queries and disclosures in the public sector.",
+    sources: [
+      {
+        label: "Finance Ministry disciplinary board",
+        href: "https://www.ris.bka.gv.at/Dokumente/Dok/DKT_BMF_20160930_01069_7_DK_14_01072_7_DK_15_00/DKT_BMF_20160930_01069_7_DK_14_01072_7_DK_15_00.html",
+      },
+      {
+        label: "BAK annual report 2024",
+        href: "https://www.bak.gv.at/Downloads/files/Jahresberichte/BAK_Jahresbericht_2024_bf_20250422.pdf",
+      },
+    ],
+  },
+]
+
+const attacks = [
+  {
+    title: "France, 2026: 68,000 euros at gunpoint.",
+    text: "Armed attackers hold a man in his home and force him to transfer crypto-assets worth around 68,000 euros. The Gendarmerie places the case in a series in which criminals target wallet holders whose personal data had apparently been hacked.",
+    sources: [
+      {
+        label: "Gendarmerie",
+        href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/criminalite-organisee-et-enquetes/2026/crypto-rapt-en-haute-garonne-trois-nouvelles-interpellations-par-les-enqueteurs-de-la-section-de-recherches-de-toulouse",
+      },
+    ],
+  },
+  {
+    title: "USA, 2022: a police officer supplies the address.",
+    text: "A detective obtains a location warrant under false pretences and gives a client the address of a man believed to hold a lot of crypto. Soon after, three armed men try to force their way into his home and only flee when the victim fires a shot.",
+    sources: [
+      {
+        label: "US Department of Justice",
+        href: "https://www.justice.gov/usao-cdca/pr/crypto-godfather-and-lasd-detective-agree-plead-guilty-violating-civil-rights-business",
+      },
+    ],
+  },
+  {
+    title: "Netherlands, 2026: court data used for extortion.",
+    text: "A court employee sold confidential data from the justice system and used such data herself to extort a man, threatening his family. He paid more than 92,000 euros. She was sentenced to four years in prison.",
+    sources: [
+      {
+        label: "Rechtbank Overijssel",
+        href: "https://www.rechtspraak.nl/organisatie-en-contact/organisatie/rechtbanken/rechtbank-overijssel/nieuws/2026/05/oud-medewerker-rechtbank-amsterdam-krijgt-vier-jaar-cel-voor-het-verkopen-van-vertrouwelijke-gegevens-en-afpersing",
+      },
+    ],
+  },
+  {
+    title: "France, 2026: 77 cases in six months.",
+    text: "Private individuals who hold crypto-assets, or are believed to, are now also being targeted. In the first half of 2026, the Interior Minister counted 77 abductions, sequestrations and extortions or attempts, against 45 in all of 2025.",
+    sources: [
+      {
+        label: "Interior Ministry",
+        href: "https://www.interieur.gouv.fr/actualites/actualites-du-ministere/crypto-actifs-proteger-particuliers",
+      },
+      {
+        label: "Journal du Coin",
+        href: "https://journalducoin.com/actualites/crypto-rapt-france-plan-action-laurent-nunez",
+      },
+    ],
+  },
+]
+
 const faqs = [
   {
     question: "Am I affected just because I own bitcoin?",
@@ -53,7 +196,7 @@ const faqs = [
   {
     question: "Will my own wallet address be reported?",
     answer:
-      "No. Wallet addresses are not part of the annual DAC8 report. But the value and units transferred to addresses not known to belong to another provider are reported. This generally includes your own wallet. The address and its link to you may still remain in the provider’s records.",
+      "No. Wallet addresses are not part of the annual DAC8 report. But the value and units transferred to addresses not known to belong to another provider are reported. This generally includes your own wallet. The address and its link to you do, however, remain in the provider’s records.",
   },
   {
     question: "Are exchanges of bitcoin for another crypto-asset reported?",
@@ -61,9 +204,9 @@ const faqs = [
       "Yes. Value, units and transaction counts are reported on both sides, even though in Austria such an exchange usually does not constitute a taxable disposal for individuals.",
   },
   {
-    question: "Is DAC8 an asset registry?",
+    question: "Can DAC8 data reveal my wealth?",
     answer:
-      "No. It reports annual activity aggregates, not current balances or total wealth. Combined with account registries, provider records and blockchain analysis, they could nevertheless reveal a detailed picture of a person’s assets.",
+      "Not directly. It reports annual totals, not current balances or total wealth. Over the years, though, they show how much you move. Combined with account registries, provider records and blockchain analysis, they can reveal a detailed picture of a person’s assets.",
   },
   {
     question: "Will transactions before 2026 be reported retroactively?",
@@ -71,9 +214,14 @@ const faqs = [
       "No. The first reporting period starts on 1 January 2026. A retroactive obligation would require a new law. Neither DAC9 nor the current proposal to recast the directive provides for this.",
   },
   {
-    question: "Will my data be deleted when I close my account?",
+    question: "How long is my data kept?",
     answer:
-      "Not immediately. Under Austria’s Financial Markets Anti-Money Laundering Act, providers must retain necessary identification and transaction records for ten years after the business relationship ends.",
+      "For a long time, and more is added every year. Providers delete each annual report only ten years after the reporting period. Under Austria’s Financial Markets Anti-Money Laundering Act, they must currently keep identification and transaction records for up to ten years after the business relationship ends; if you close your account, that period only starts then. For copies received by tax authorities in other EU countries, the directive sets no fixed maximum, only a minimum of five years.",
+  },
+  {
+    question: "How do I recognise phishing that uses the reporting duty?",
+    answer:
+      "The tax office does not ask about your crypto holdings by email or text message. No legitimate sender asks you to connect a wallet or enter your recovery phrase. Your provider reports the DAC8 data itself. Be discreet about your holdings, including with acquaintances and on social media.",
   },
   {
     question: "Can every cryptocurrency payment be traced?",
@@ -104,13 +252,14 @@ const faqs = [
 
 <Layout
   sections={[
-  { id: "was-ist-dac8", label: "What is DAC8?" },
-  { id: "gemeldet", label: "What gets reported" },
-  { id: "problem", label: "Why it is a problem" },
-  { id: "ausblick", label: "What might come next" },
-  { id: "forderungen", label: "Our demands" },
-  { id: "rechtsweg", label: "Our legal strategy" },
-  { id: "faq", label: "Questions and answers" },
+  { id: "was-ist-dac8", label: "DAC8" },
+  { id: "gemeldet", label: "The report" },
+  { id: "problem", label: "Concerns" },
+  { id: "faelle", label: "Cases" },
+  { id: "ausblick", label: "Bigger picture" },
+  { id: "forderungen", label: "Demands" },
+  { id: "rechtsweg", label: "Legal route" },
+  { id: "faq", label: "Questions" },
   { id: "quellen", label: "Sources" },
 ]}
 >
@@ -118,10 +267,10 @@ const faqs = [
   <article class="campaign dossier">
     <header class="hero">
       <div class="hero-text">
-        <h1>What DAC8 requires. <span>And what it does not.</span></h1>
+        <h1>What DAC8 requires. <span>And where it leads.</span></h1>
         <p class="lead">
-          What data about you gets reported, what your provider keeps and why we
-          are challenging it.
+          What data about you gets reported, what builds up at your provider
+          over the years and why we are challenging it.
         </p>
         <nav class="hero-actions" aria-label="Get started">
           <a class="button primary" href="#gemeldet">What gets reported</a
@@ -161,7 +310,7 @@ const faqs = [
           <strong>The provider</strong
           ><span
             >prepares identities and annual aggregates for all customers and
-            reports once a year</span
+            reports them anew every year</span
           >
         </li>
         <li>
@@ -177,16 +326,18 @@ const faqs = [
         <strong>Austria’s additional requirement:</strong>
         Before it is established who will be reported, the provider must prepare
         reporting data for all customers, all transactions and all
-        crypto-assets. The directive does not require this.<small
+        crypto-assets. This goes beyond the directive.<small
           >Section 20(1) Krypto-MPfG.</small
         >
       </p>
     </section>
     <section id="gemeldet" aria-labelledby="gemeldet-heading">
-      <h2 id="gemeldet-heading">What gets reported, and what does not</h2>
+      <h2 id="gemeldet-heading">
+        What gets reported and what the provider keeps
+      </h2>
       <p class="section-intro">
-        The report contains identities and annual aggregates, not individual
-        transactions.
+        The report contains identities and annual aggregates. The details stay
+        with the provider.
       </p>
       <Artwork id="reportAssets" language="en" size="wide" zoom />
       <div class="compare">
@@ -210,15 +361,19 @@ const faqs = [
               Activities that often have no tax consequences, such as
               crypto-to-crypto exchanges
             </li>
+            <li>Year after year, starting with 2026</li>
           </ul>
         </div>
         <div class="absent">
-          <h3>Not included in the report</h3>
+          <h3>Not in the report, but held by the provider</h3>
           <ul>
-            <li>Wallet addresses and transaction identifiers</li>
-            <li>Individual transactions, timestamps or counterparties</li>
-            <li>Current balances or total wealth</li>
-            <li>Activities before 1 January 2026</li>
+            <li>Your ID and the records of your identification</li>
+            <li>Wallet addresses, including those of your own wallet</li>
+            <li>
+              Individual transactions with time and amount, and for transfers,
+              details of the sender and recipient
+            </li>
+            <li>Your balance with the provider</li>
           </ul>
         </div>
       </div>
@@ -241,18 +396,19 @@ const faqs = [
       </ol>
       <div class="art-split even">
         <div>
-          <h3>What the provider retains</h3>
+          <h3>A trove of data builds up at the provider</h3>
           <p class="prose">
-            Your provider can link your name to wallet addresses and individual
-            transactions. These details are outside the annual DAC8 report but
-            may remain in its records, depending on the service.
+            Your provider links your name to wallet addresses and individual
+            transactions. DAC8 adds your tax identification number, tax
+            residence and prepared annual totals.
             <a
               href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&amp;Gesetzesnummer=20009769"
               >Section 21 FM-GwG</a
             >
-            requires, independently of DAC8, necessary identification and
-            transaction records to be kept for ten years after the business
-            relationship ends or an occasional transaction.
+            currently requires identification and transaction records to be kept
+            for up to ten years after the business relationship ends. The clock
+            only starts when you leave. Such stores are lost again and again, as
+            the <a href="#faelle">cases further down</a> show.
           </p>
         </div>
         <Artwork id="linkedIdentity" language="en" />
@@ -261,9 +417,10 @@ const faqs = [
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">Why it is a problem</h2>
       <p class="section-intro">
-        Your data is prepared and stored for years even without suspicion. This
-        intrudes on your private life and exposes you to errors, breaches and
-        misuse.
+        A new report is added every year, even more builds up at the provider,
+        and all of it is stored for years without any suspicion. The result is a
+        financial profile that goes far beyond any single report, and with it
+        the risk of errors, breaches and misuse.
       </p>
       <ul class="facts concerns">
         {concerns.map(concern => <li><strong>{concern.title}</strong><p>{concern.text}</p></li>)}
@@ -276,11 +433,11 @@ const faqs = [
         <div>
           <h3 id="zahlungsprofile">When payments reveal everyday life</h3>
           <p class="prose">
-            Paying with cryptocurrencies can leave traces of everyday life.
-            Bitcoin’s on-chain transactions remain public. When a provider links
-            your name to an address, further payments may become attributable to
-            you. With information about recipients, purchases, donations and
-            recurring payments can
+            Paying with bitcoin leaves traces of your everyday life, because
+            on-chain transactions remain public. When a provider links your name
+            to an address, further payments may become attributable to you. With
+            information about recipients, purchases, donations and recurring
+            payments can
             <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
               >reveal habits and relationships</a
             >.
@@ -288,46 +445,112 @@ const faqs = [
         </div>
         <Artwork id="spendingProfile" language="en" />
       </div>
+    </section>
+    <section id="faelle" aria-labelledby="faelle-heading">
+      <h2 id="faelle-heading">What has already happened</h2>
+      <p class="section-intro">
+        Providers and authorities lose data on people’s wealth again and again.
+        Fraudsters and violent criminals use it.
+      </p>
+      <h3>When providers and authorities lose data</h3>
+      <ul class="facts">
+        {leaks.map((item) => (
+          <li>
+            <strong>{item.title}</strong>
+            <p>{item.text}</p>
+            <small>
+              {item.sources.length > 1 ? "Sources:" : "Source:"}{" "}
+              {item.sources.map((source, index) => [
+                index > 0 && ", ",
+                <a href={source.href}>{source.label}</a>,
+              ])}
+            </small>
+          </li>
+        ))}
+        <li class="facts-figure">
+          <Artwork id="dataHack" language="en" />
+        </li>
+      </ul>
       <div class="art-split even reverse">
         <div>
-          <h3>Data breaches put people at risk</h3>
+          <h3>From data leak to front door</h3>
           <p class="prose">
-            Stored links between identities and financial data are a valuable
-            target for attackers, and long retention obligations keep them
-            available for years. The
-            <a
-              href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
-              >French Gendarmerie</a
-            >
-            reports that criminals use stolen customer data from crypto tax
-            service Waltio to select targets, and describes kidnappings and
-            physical violence. Even a mistaken assumption that someone owns a
-            lot of crypto can put them and their family at risk. Data
-            minimisation and shorter retention periods also protect personal
-            safety.
+            A data leak gives criminals what they would otherwise have to work
+            hard to find out: who holds crypto and where they live. Long
+            retention obligations keep this data available for years. Even a
+            mistaken assumption that someone owns a lot of crypto can put them
+            and their family at risk. That is why we call for data minimisation
+            and short retention periods.
           </p>
         </div>
         <Artwork id="wrenchAttack" language="en" />
       </div>
+      <ul class="facts">
+        {attacks.map((item) => (
+          <li>
+            <strong>{item.title}</strong>
+            <p>{item.text}</p>
+            <small>
+              {item.sources.length > 1 ? "Sources:" : "Source:"}{" "}
+              {item.sources.map((source, index) => [
+                index > 0 && ", ",
+                <a href={source.href}>{source.label}</a>,
+              ])}
+            </small>
+          </li>
+        ))}
+      </ul>
+      <AttackSummary language="en" />
     </section>
     <section id="ausblick" aria-labelledby="ausblick-heading">
-      <h2 id="ausblick-heading">What might come next</h2>
+      <h2 id="ausblick-heading">
+        One building block of financial surveillance
+      </h2>
       <div class="columns">
         <p class="section-intro">
-          Reporting infrastructure can be expanded later. That is why we want
-          effective limits on data collection now.
+          Step by step, the EU and Austria are building an infrastructure that
+          collects financial data without suspicion, stores it for years and
+          links it ever more closely. DAC8 is one part of it.
         </p>
         <p class="prose">
-          Requiring reports of wallet addresses, individual transactions or
-          activities before 2026 would need a change in the law. None of this
-          has been enacted, and the current proposal to recast the directive
-          does not provide for it either.
-        </p>
-        <p class="prose">
-          Which steps have been adopted and what the recast would change is
-          shown in the <a href="/en/history/#ausblick">history of the DAC</a>.
+          No one currently has to report wallet addresses, individual
+          transactions or activities before 2026, and the proposal to recast the
+          directive does not provide for it either. But lawmakers can expand
+          existing infrastructure at any time. We want to limit it now. The
+          <a href="/en/history/#ausblick">history of the DAC</a>
+          shows which steps have been adopted and what the recast would change.
         </p>
       </div>
+      <ol class="flow" aria-label="The building blocks">
+        <li>
+          <strong>When you open an account</strong>
+          <span
+            >the provider identifies you with your ID. The records are currently
+            kept for up to ten years after the customer relationship ends.</span
+          >
+        </li>
+        <li>
+          <strong>With every transfer</strong>
+          <span
+            >it records the sender and recipient, including for transfers to
+            your own wallet.</span
+          >
+        </li>
+        <li class="accent">
+          <strong>Every year</strong>
+          <span
+            >it prepares the tax identification numbers and annual totals of all
+            customers for the DAC8 report.</span
+          >
+        </li>
+        <li>
+          <strong>By 2029</strong>
+          <span
+            >account registries will be connected across the EU, then including
+            crypto-asset accounts.</span
+          >
+        </li>
+      </ol>
     </section>
     <section id="forderungen" aria-labelledby="forderungen-heading">
       <h2 id="forderungen-heading">Our demands</h2>
@@ -372,12 +595,11 @@ const faqs = [
       <div class="precedent">
         <p class="precedent-year" aria-hidden="true">2014</p>
         <p class="prose">
-          <strong>Resistance can work.</strong>
+          <strong>A surveillance law has fallen before.</strong>
           The challenge to data retention organised by AKVorrat, now
           epicenter.works, reached the Court of Justice through Austria’s
           Constitutional Court. In 2014, both the EU directive and Austrian
-          rules fell. That success shows that even sweeping surveillance laws
-          can be changed.
+          rules fell.
         </p>
       </div>
     </section>
@@ -389,18 +611,18 @@ const faqs = [
       <LegalRoute language="en" />
       <ul class="facts">
         <li>
-          <strong>What the complaint does not do</strong>
+          <strong>What to expect</strong>
           <p>
-            It does not automatically stop data collection. The court decides
-            whether to refer questions to the CJEU; the duration of the
-            proceedings is not yet known.
+            Data collection continues during the proceedings. The court decides
+            whether the case goes to the CJEU, and we do not yet know how long
+            it will take.
           </p>
         </li>
         <li>
           <strong>How you can take part</strong>
           <p>
-            Whether and how individuals can take part will be clarified as the
-            case develops. In the meantime, you can
+            We are still working out how individuals can take part. In the
+            meantime, you can
             <a href="/en/get-involved/#spenden">help fund the case</a>
             and <a href="/en/proceedings/">follow its progress</a>.
           </p>

@@ -18,13 +18,14 @@ import { homeSteps } from "@/data/history"
       <div class="hero-text">
         <CampaignStatus language="en" />
         <h1>
-          Financial privacy is a fundamental right.
-          <span>Let’s defend it.</span>
+          DAC8 records every crypto customer.
+          <span>We are fighting back.</span>
         </h1>
         <p class="lead">
-          You use your money to pay for medical treatment, support relatives or
-          donate to a political cause. Financial privacy protects your freedom
-          to do so without others scrutinising your personal life.
+          Since 2026, exchanges and brokers in Austria have had to prepare a
+          yearly record for the tax authority of how much you buy, sell,
+          exchange and move to your own wallets. They do this for all customers,
+          without any suspicion.
         </p>
         <nav class="hero-actions" aria-label="Get started">
           <a class="button primary" href="/en/get-involved/#spenden"
@@ -34,21 +35,20 @@ import { homeSteps } from "@/data/history"
         </nav>
       </div>
       <Artwork
-        id="spendingProfile"
+        id="collectionChallenge"
         language="en"
         size="hero"
         priority
-        caption="What linked payments reveal. Not fields of the DAC8 report."
+        caption="Our planned complaint targets the blanket collection of all customers’ data."
       />
     </header>
     <section class="brief" aria-label="DAC8 in Austria">
       <p class="brief-text">
-        Since 2026, crypto-asset providers in Austria have had to prepare
-        financial data on all their customers for the tax authority, without any
-        specific suspicion.
+        This is financial mass surveillance, and your provider stores it all for
+        years, along with your ID and wallet addresses.
         <strong
-          >We believe this violates fundamental rights and are preparing a legal
-          challenge.</strong
+          >We are convinced this violates your fundamental right to financial
+          privacy, and we are preparing a legal challenge.</strong
         >
       </p>
       <dl class="keyfigures">
@@ -62,7 +62,7 @@ import { homeSteps } from "@/data/history"
         <div>
           <dt>
             <strong>Retention by the provider</strong>
-            of records documenting checks and reporting of your data.
+            for each annual report. A new one is added every year.
           </dt>
           <dd>10 <small>years</small></dd>
         </div>
@@ -96,8 +96,8 @@ import { homeSteps } from "@/data/history"
         >
           <p>
             Providers must prepare reporting data for all customers, including
-            those who will not ultimately be reported. This requirement appears
-            in Austrian law, not in the directive.
+            those who will not ultimately be reported. Austrian law requires
+            this, going beyond the EU directive.
           </p>
         </StoryScene>
         <StoryScene
@@ -109,60 +109,30 @@ import { homeSteps } from "@/data/history"
           zoom
         >
           <p>
-            Once a year: name, address, tax residence, tax identification number
-            and date of birth, plus value in euros, units and, for most
-            categories, the number of transactions for each crypto-asset and
-            transaction type. Wallet addresses, individual transactions and your
-            current balance are not included.
+            Name, address, tax residence, tax identification number and date of
+            birth, plus value in euros, units and, for most categories, the
+            number of transactions for each crypto-asset and transaction type.
+            From this, the tax authority can read how much you buy, sell,
+            exchange and transfer to your own wallets in a year.
           </p>
         </StoryScene>
         <StoryScene
           art="yearsOnFile"
           language="en"
           title="More about you. Every year."
-          note="Pictured: accumulating annual reports, not a central register."
+          note="Pictured: one person’s annual reports after one, five and ten years."
         >
           <p>
-            Annual reports reveal activity. Providers delete reported
-            crypto-asset data ten years after the reporting period; for
-            corresponding bank-account data, it is five.
+            The report comes every year, with no end date, and the provider
+            keeps each one for ten years. If you remain a customer, from 2036
+            there will always be a full decade of your crypto activity on file:
+            enough to see how much you move and how that changes over the years.
           </p>
         </StoryScene>
       </div>
       <a class="text-link" href="/en/dossier/#gemeldet"
-        >What is reported, and what is not</a
+        >What is reported and what the provider keeps</a
       >
-    </section>
-    <section id="risiko" aria-labelledby="risiko-heading">
-      <h2 id="risiko-heading">What it can lead to</h2>
-      <div class="story pair">
-        <StoryScene
-          art="dataHack"
-          language="en"
-          title="A data leak. Personal consequences."
-          note="Pictured: linked provider records, not fields of the DAC8 report."
-        >
-          <p>
-            A provider breach can expose the link between your name and
-            blockchain transactions. Once that link spreads, it is hard to take
-            back.
-          </p>
-        </StoryScene>
-        <StoryScene
-          art="rankedPortrait"
-          language="en"
-          title="Sortable by wealth. Dangerous in the wrong hands."
-          note="Pictured: linked and leaked data, not fields of the DAC8 report."
-        >
-          <p>
-            Total value and number of purchases give a rough estimate of how
-            much money someone moves in crypto. In France, according to the
-            Gendarmerie, criminals select victims using stolen customer data
-            from a crypto tax service.
-          </p>
-        </StoryScene>
-      </div>
-      <a class="text-link" href="/en/dossier/#problem">Why it is a problem</a>
     </section>
     <section id="geschichte" aria-labelledby="geschichte-heading">
       <h2 id="geschichte-heading">How we got here</h2>
@@ -174,23 +144,100 @@ import { homeSteps } from "@/data/history"
       <TimelineRail language="en" steps={homeSteps} />
       <a class="text-link" href="/en/history/">The full history since 1977</a>
     </section>
-
+    <section id="risiko" aria-labelledby="risiko-heading">
+      <h2 id="risiko-heading">What it can lead to</h2>
+      <div class="story pair">
+        <StoryScene
+          art="dataHack"
+          language="en"
+          title="A data leak. Personal consequences."
+          note="Pictured: linked data of the kind a provider breach can expose."
+        >
+          <p>
+            Your provider holds far more than the report: your ID, your wallet
+            addresses and every single transaction, currently for up to ten
+            years after the customer relationship ends. A breach there reveals
+            which blockchain addresses belong to your name. Whoever has that
+            link keeps it.
+          </p>
+        </StoryScene>
+        <StoryScene
+          art="rankedPortrait"
+          language="en"
+          title="Sortable by wealth. Dangerous in the wrong hands."
+          note="Pictured: a target list built from linked, leaked data."
+        >
+          <p>
+            Several years of annual totals give a rough estimate of who moves a
+            lot of money in crypto. For criminals, a list of people who appear
+            wealthy is enough.
+          </p>
+        </StoryScene>
+      </div>
+      <a class="text-link" href="/en/dossier/#problem">Why it is a problem</a>
+    </section>
+    <section id="faelle" aria-labelledby="faelle-heading">
+      <h2 id="faelle-heading">This has already happened</h2>
+      <p class="section-intro">
+        Providers and authorities lose data on people’s wealth again and again.
+        Fraudsters and violent criminals use it.
+      </p>
+      <ul class="facts">
+        <li>
+          <strong>Ledger, 2020: the addresses of 272,000 wallet buyers.</strong>
+          <p>
+            Names, postal addresses and phone numbers leak. Phishing, extortion
+            threats and letters to home addresses asking for the recovery phrase
+            follow.
+          </p>
+        </li>
+        <li>
+          <strong>Coinbase, 2025: defrauded with real customer data.</strong>
+          <p>
+            Bribed support staff copy customer data. Fraudsters use it to pose
+            as Coinbase and persuade customers to send them money. Coinbase
+            expects costs, including reimbursements, of up to 400 million
+            dollars.
+          </p>
+        </li>
+        <li>
+          <strong>Waltio, 2026: tax data as a target list.</strong>
+          <p>
+            Customers’ gains, losses and year-end balances are stolen from the
+            French crypto tax service. According to the Gendarmerie, criminals
+            use them to select victims of violent crime.
+          </p>
+        </li>
+        <li>
+          <strong
+            >France, 2026: the tax administration is breached twice.</strong
+          >
+          <p>
+            Using officials’ stolen credentials, attackers take 1.2 million
+            records from the bank-account register and tax data on 678,000
+            individuals and businesses.
+          </p>
+        </li>
+      </ul>
+      <p class="prose attacks-teaser">
+        All over the world, criminals rob, kidnap and torture people they take
+        for crypto holders, and there are more such cases every year.
+        <a href="/en/attacks/">Open the attack archive</a>
+      </p>
+      <a class="text-link" href="/en/dossier/#faelle">More cases and sources</a>
+    </section>
     <section id="weg" aria-labelledby="weg-heading">
-      <div class="art-split even">
-        <div>
-          <h2 id="weg-heading">What we are doing</h2>
-          <p class="section-intro">
-            <strong
-              >We are convinced that the blanket collection of all customers’
-              data violates fundamental rights.</strong
-            >
-          </p>
-          <p class="prose">
-            {campaignStatus.en.text}
-            The authority and the courts decide the outcome.
-          </p>
-        </div>
-        <Artwork id="collectionChallenge" language="en" caption={false} />
+      <h2 id="weg-heading">What we are doing</h2>
+      <div class="columns">
+        <p class="section-intro">
+          <strong
+            >We are convinced that the blanket collection of all customers’ data
+            violates fundamental rights.</strong
+          >
+        </p>
+        <p class="prose">
+          {campaignStatus.en.text}
+        </p>
       </div>
       <LegalRoute language="en" />
       <a class="text-link" href="/en/proceedings/">Where the case stands</a>
@@ -202,9 +249,7 @@ import { homeSteps } from "@/data/history"
           <Artwork id="collectiveDefense" language="en" caption={false} />
           <div>
             <h3>Help fund the case</h3>
-            <p>
-              Your donation primarily helps cover the costs of the proceedings.
-            </p>
+            <p>Your donation pays for the proceedings.</p>
             <a class="button primary" href="/en/get-involved/#spenden"
               >Donate</a
             >
@@ -243,10 +288,10 @@ import { homeSteps } from "@/data/history"
         <span>State interference does.</span>
       </h2>
       <p class="section-intro">
-        A liberal democracy needs limits on state power. Specific suspicions of
-        crime should be investigated in a targeted way, with a legal basis and
-        independent oversight. Collecting everyone’s financial data as a
-        precaution crosses a red line for us.
+        A liberal democracy needs limits on state power. Where there is specific
+        suspicion of a crime, authorities should investigate that case, with a
+        legal basis and independent oversight. We reject collecting everyone’s
+        financial data as a precaution.
       </p>
       <div class="vision-points">
         <div>

@@ -1,0 +1,60 @@
+# Keeps src/data/attacks.json in step with Jameson Lopp's public-domain list of
+# known physical attacks. It only opens a pull request; publishing still flows
+# through main and Cloudflare Workers Builds. Pull requests opened with the
+# workflow token do not trigger CI, so this job builds the site itself first.
+name: Sync attack list
+
+on:
+  schedule:
+    - cron: "17 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-attacks
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Update attacks.json
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: pnpm
+      - run: node scripts/sync-attacks.mjs
+      - id: diff
+        run: |
+          if git diff --quiet -- src/data/attacks.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.diff.outputs.changed == 'true'
+        run: pnpm install --frozen-lockfile
+      - if: steps.diff.outputs.changed == 'true'
+        run: pnpm build
+      - if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          branch=bot/sync-attacks
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -C "$branch"
+          git commit -m "Sync the list of known physical attacks" \
+            -m "Weekly update from jlopp/physical-bitcoin-attacks." \
+            -- src/data/attacks.json
+          git push --force origin "$branch"
+          if ! gh pr view "$branch" --json state --jq .state | grep -q OPEN; then
+            gh pr create --base main --head "$branch" \
+              --title "Sync the list of known physical attacks" \
+              --body "Weekly update of \`src/data/attacks.json\` from https://github.com/jlopp/physical-bitcoin-attacks. The site built successfully with the new data. Check the diff, then merge to publish."
+          fi

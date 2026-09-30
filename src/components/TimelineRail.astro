@@ -44,6 +44,58 @@ const entries = historyFor(language).filter(
     scrollbar-width: thin;
   }
 
+  /* Wo weitere Stationen außerhalb liegen, blendet die Schiene den Rand aus,
+     damit sie als scrollbar erkennbar ist. Ohne Unterstützung für
+     scrollgesteuerte Animationen bleibt sie wie bisher. */
+  @property --rail-fade-start {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+  }
+
+  @property --rail-fade-end {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .timeline-rail {
+      animation: rail-fade linear both;
+      mask-image: linear-gradient(
+        to right,
+        transparent,
+        #000 var(--rail-fade-start),
+        #000 calc(100% - var(--rail-fade-end)),
+        transparent
+      );
+    }
+
+    /* Timeline in a separate rule: minified into the animation shorthand,
+       Chrome drops the whole declaration. */
+    nav.timeline-rail {
+      animation-timeline: scroll(self inline);
+    }
+  }
+
+  @keyframes rail-fade {
+    0% {
+      --rail-fade-start: 0px;
+      --rail-fade-end: 40px;
+    }
+
+    8%,
+    92% {
+      --rail-fade-start: 40px;
+      --rail-fade-end: 40px;
+    }
+
+    100% {
+      --rail-fade-start: 40px;
+      --rail-fade-end: 0px;
+    }
+  }
+
   ol {
     --dot: 1rem;
     display: grid;
