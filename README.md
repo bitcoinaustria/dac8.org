@@ -65,7 +65,8 @@ A top bar carries the navigation and a permanent donate button that leads to
 sharing within reach. `/spenden` and `/en/donate` are short redirects for print
 and QR codes. The home page is a sequence of bands, each with one statement and
 at most one illustration: the hero, a short DAC8 brief with three key figures,
-two story chapters (`src/components/StoryScene.astro`), what we do, what you
+two story chapters (`src/components/StoryScene.astro`), how it came about
+(a timeline selection linking to the history page), what we do, what you
 can do, the guiding statement and who we are. The dossier's "Am I affected?"
 check (`src/components/AffectedCheck.astro`) restates the FAQ. The footer
 closes every page with the campaign statement, two actions and the status on a
