@@ -1,0 +1,253 @@
+---
+import { mediaKinds, publishedMedia, type MediaKind } from "@/data/media"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+const { language } = Astro.props
+const en = language === "en"
+const items = publishedMedia()
+// Beyond this many, older pieces wait behind a toggle so the page stays short.
+// Six fills whole rows in one, two and three columns.
+const visible = 6
+
+const kindLabels: Record<Language, Record<MediaKind, string>> = {
+  de: {
+    article: "Artikel",
+    podcast: "Podcast",
+    video: "Video",
+    broadcast: "TV & Radio",
+  },
+  en: {
+    article: "Article",
+    podcast: "Podcast",
+    video: "Video",
+    broadcast: "TV & radio",
+  },
+}
+const kinds = mediaKinds.filter((kind) =>
+  items.some((item) => item.kind === kind),
+)
+const count = (kind: MediaKind) =>
+  items.filter((item) => item.kind === kind).length
+const formatDate = new Intl.DateTimeFormat(en ? "en-GB" : "de-AT", {
+  dateStyle: "long",
+  timeZone: "UTC",
+})
+const languageNames = new Intl.DisplayNames([language], { type: "language" })
+---
+
+<section class="media" aria-labelledby="media-heading">
+  <h2 id="media-heading">{en ? "In the media" : "In den Medien"}</h2>
+  {items.length === 0 ? (
+    <p class="empty-state">
+      <strong>{en ? "No coverage linked yet." : "Noch keine Beiträge verlinkt."}</strong>
+      {en ? "Articles, podcasts, videos and broadcasts about the case will appear here with a link to the original." : "Artikel, Podcasts, Videos und Sendungen über das Verfahren erscheinen hier mit Link zum Original."}
+    </p>
+  ) : (
+    <p class="section-intro">
+      {en ? "Articles, podcasts, videos and broadcasts about the case, with a link to the original. Pieces by other outlets reflect their editors’ views." : "Artikel, Podcasts, Videos und Sendungen über das Verfahren, mit Link zum Original. Fremde Beiträge geben die Sicht der jeweiligen Redaktion wieder."}
+    </p>
+  )}
+  {kinds.length > 1 && (
+    <fieldset class="media-filter">
+      <legend>{en ? "Show" : "Anzeigen"}</legend>
+      <label>
+        <input type="radio" name="media-kind" value="all" checked />
+        {en ? "All" : "Alle"} <span>{items.length}</span>
+      </label>
+      {kinds.map((kind) => (
+        <label>
+          <input type="radio" name="media-kind" value={kind} />
+          {kindLabels[language][kind]} <span>{count(kind)}</span>
+        </label>
+      ))}
+    </fieldset>
+  )}
+  {items.length > 0 && (
+    <ol class="media-list">
+      {items.map((item, index) => (
+        <li
+          class="media-item"
+          data-kind={item.kind}
+          data-older={index >= visible ? "" : undefined}
+        >
+          <p class="media-meta">
+            <span class="media-kind">{kindLabels[language][item.kind]}</span>
+            <span>{item.outlet}</span>
+          </p>
+          <h3 lang={item.language}>
+            <a href={item.url} hreflang={item.language}>{item.title}</a>
+          </h3>
+          {item.guest && (
+            <p class="media-guest">{en ? "With " : "Mit "}{item.guest}</p>
+          )}
+          <p class="media-date">
+            <time datetime={item.date}>{formatDate.format(new Date(item.date))}</time>
+            {item.language.split("-")[0] !== language && (
+              <span>{languageNames.of(item.language)}</span>
+            )}
+          </p>
+        </li>
+      ))}
+    </ol>
+  )}
+  {items.length > visible && (
+    <label class="media-more text-link">
+      <input type="checkbox" />
+      {en ? `Show all ${items.length} pieces` : `Alle ${items.length} Beiträge anzeigen`}
+    </label>
+  )}
+  <p class="media-contact">
+    {en ? "Press enquiries or a piece we are missing: " : "Presseanfragen oder ein Beitrag, der hier fehlt: "}
+    <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>
+  </p>
+</section>
+
+<style>
+  .media-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin: var(--space-l) 0 0;
+    padding: 0;
+    border: 0;
+  }
+  .media-filter legend {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .media-filter label {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4em;
+    padding: var(--space-3xs) var(--space-s);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink-2);
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .media-filter label span {
+    color: var(--ink-3);
+    font-size: var(--step--1);
+  }
+  .media-filter label:has(:checked) {
+    border-color: var(--ink);
+    color: var(--background);
+    background: var(--ink);
+  }
+  .media-filter label:has(:checked) span {
+    color: inherit;
+  }
+  .media-filter label:has(:focus-visible),
+  .media-more:has(:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .media-filter input,
+  .media-more input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .media-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: var(--space-s);
+    margin-block-start: var(--space-l);
+    padding: 0;
+    list-style: none;
+  }
+  .media-filter + .media-list {
+    margin-block-start: var(--space-m);
+  }
+  .media-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    padding: var(--space-m);
+    border-radius: var(--radius);
+    background: var(--panel);
+    transition: background 160ms ease;
+  }
+  .media-item:hover {
+    background: var(--panel-strong);
+  }
+  .media-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.6em;
+    color: var(--ink-3);
+    font-size: var(--step--1);
+  }
+  .media-kind {
+    color: var(--accent);
+    font-weight: 560;
+  }
+  .media-item h3 {
+    font-size: var(--step-1);
+    font-weight: 560;
+    line-height: 1.3;
+    text-wrap: pretty;
+  }
+  .media-item h3 a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  /* Die ganze Karte ist der Link. */
+  .media-item h3 a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .media-item h3 a:focus-visible {
+    outline: none;
+  }
+  .media-item:has(h3 a:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .media-guest {
+    color: var(--ink-2);
+  }
+  .media-date {
+    margin-block-start: auto;
+    padding-block-start: var(--space-2xs);
+    color: var(--ink-3);
+    font-size: var(--step--1);
+  }
+  .media-date span::before {
+    content: "·";
+    margin-inline: 0.5em;
+  }
+  .media-contact {
+    margin-block-start: var(--space-l);
+    color: var(--ink-2);
+  }
+
+  /* Filter und „Alle anzeigen“ ohne JavaScript: Die Auswahl steckt in den
+     Formularfeldern, :has() blendet die übrigen Karten aus. Ein Filter zeigt
+     immer alle passenden Beiträge. */
+  .media:has([value="article"]:checked) .media-item:not([data-kind="article"]),
+  .media:has([value="podcast"]:checked) .media-item:not([data-kind="podcast"]),
+  .media:has([value="video"]:checked) .media-item:not([data-kind="video"]),
+  .media:has([value="broadcast"]:checked)
+    .media-item:not([data-kind="broadcast"]),
+  .media:not(
+      :has(.media-more :checked, .media-filter :checked:not([value="all"]))
+    )
+    .media-item[data-older],
+  .media:has(.media-more :checked, .media-filter :checked:not([value="all"]))
+    .media-more {
+    display: none;
+  }
+</style>
