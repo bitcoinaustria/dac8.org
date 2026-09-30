@@ -17,10 +17,44 @@ const isoDate = (raw) => {
   return Number.isNaN(time) ? null : new Date(time).toISOString().slice(0, 10)
 }
 
+const archiveHosts = [
+  "archive.is",
+  "archive.ph",
+  "archive.today",
+  "archive.org",
+]
+const isArchive = (url) => {
+  try {
+    const host = new URL(url).hostname
+    return archiveHosts.some(
+      (archive) => host === archive || host.endsWith(`.${archive}`),
+    )
+  } catch {
+    return false
+  }
+}
+
+// Upstream lists each report as a headline link (usually an archive copy)
+// followed by "(original link)" to the publisher. Keep both, so every case
+// leads straight to the original report.
+const reportsOf = (links = []) => {
+  const reports = []
+  for (const { label = "", url = "" } of links) {
+    const href = url.trim()
+    const startsReport = !label.trim().startsWith("(") || reports.length === 0
+    if (startsReport) reports.push({ url: null, archive: null })
+    const report = reports.at(-1)
+    if (!href) continue
+    if (isArchive(href)) report.archive ??= href
+    else report.url ??= href
+  }
+  return reports.filter((report) => report.url || report.archive)
+}
+
 const attacks = upstream.map((entry, index) => {
-  const link =
-    entry.links?.find((candidate) => !candidate.label.startsWith("(")) ??
-    entry.links?.[0]
+  const headline = entry.links?.find(
+    (link) => link.label && !link.label.trim().startsWith("("),
+  )?.label
   const attack = {
     date: isoDate(entry.date?.raw?.trim() ?? ""),
     year: entry.date?.year,
@@ -29,8 +63,8 @@ const attacks = upstream.map((entry, index) => {
     countryCode: entry.country_code?.trim() || null,
     lat: Math.round(entry.lat * 100) / 100,
     lng: Math.round(entry.lng * 100) / 100,
-    headline: link?.label.trim() ?? null,
-    url: link?.url ?? null,
+    headline: headline?.trim() || null,
+    reports: reportsOf(entry.links),
   }
   if (
     !Number.isInteger(attack.year) ||

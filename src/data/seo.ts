@@ -52,16 +52,16 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
   },
   attacks: {
     de: {
-      title: "Angriffe auf Krypto-Besitzer: Karte und Liste",
+      title: "Angriffsarchiv: Gewalt gegen Krypto-Besitzer weltweit",
       description:
-        "Öffentlich bekannte Überfälle, Entführungen und Erpressungen von Krypto-Besitzern weltweit, nach Jahr und Ort. Unvollständig, denn die meisten Opfer schweigen.",
-      imageLines: ["Angriffe auf", "Krypto-Besitzer.", "Jedes Jahr mehr."],
+        "Überfälle, Entführungen und Folter von Menschen, die Kryptowerte besitzen oder besitzen sollen, weltweit, jeweils mit dem ursprünglichen Bericht. Bei Weitem nicht vollständig.",
+      imageLines: ["Überfallen,", "entführt,", "gefangen gehalten."],
     },
     en: {
-      title: "Attacks on crypto holders: map and list",
+      title: "Attack archive: violence against crypto holders worldwide",
       description:
-        "Publicly known robberies, kidnappings and extortion of crypto holders worldwide, by year and place. Incomplete, because most victims stay silent.",
-      imageLines: ["Attacks on", "crypto holders.", "More every year."],
+        "Robberies, kidnappings and torture of people who hold crypto-assets, or are believed to, worldwide, each with the original report. Far from complete.",
+      imageLines: ["Robbed,", "kidnapped,", "held captive."],
     },
   },
   proceedings: {

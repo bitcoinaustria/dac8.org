@@ -7,7 +7,6 @@ import MetaPage from "@/components/MetaPage.astro"
 import StoryScene from "@/components/StoryScene.astro"
 import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
-import { attacks, countIn, latestYear } from "@/lib/attacks"
 ---
 
 <Layout>
@@ -209,10 +208,9 @@ import { attacks, countIn, latestYear } from "@/lib/attacks"
         </li>
       </ul>
       <p class="prose attacks-teaser">
-        Being known as a crypto holder is dangerous: {attacks.length} physical
-        attacks are publicly known worldwide, {countIn(latestYear - 1)} of them
-        in {latestYear - 1} alone.
-        <a href="/en/attacks/">See the map of attacks</a>
+        Being seen as a crypto holder is dangerous: home invasions, kidnappings
+        and torture happen all over the world, and there are more every year.
+        <a href="/en/attacks/">Open the attack archive</a>
       </p>
       <a class="text-link" href="/en/dossier/#faelle">More cases and sources</a>
     </section>

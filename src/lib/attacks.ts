@@ -72,3 +72,13 @@ export const placeOf = (attack: Attack, language: Language) => {
     ? `${attack.city}, ${country}`
     : (country ?? "")
 }
+
+// The publisher's domain, shown as the link text so readers see where a
+// report comes from.
+export const hostOf = (url: string) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "")
+  } catch {
+    return url
+  }
+}

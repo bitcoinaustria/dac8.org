@@ -7,7 +7,6 @@ import MetaPage from "@/components/MetaPage.astro"
 import StoryScene from "@/components/StoryScene.astro"
 import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
-import { attacks, countIn, latestYear } from "@/lib/attacks"
 ---
 
 <Layout>
@@ -218,12 +217,10 @@ import { attacks, countIn, latestYear } from "@/lib/attacks"
         </li>
       </ul>
       <p class="prose attacks-teaser">
-        Wer als Krypto-Besitzer bekannt ist, lebt gefährlich: Weltweit sind
-        {attacks.length}
-        körperliche Angriffe öffentlich bekannt,
-        {countIn(latestYear - 1)}
-        davon allein im Jahr {latestYear - 1}.
-        <a href="/angriffe/">Zur Karte der Angriffe</a>
+        Wer als Krypto-Besitzer gilt, lebt gefährlich: Überfälle in der eigenen
+        Wohnung, Entführungen und Folter gibt es auf der ganzen Welt, und es
+        werden jedes Jahr mehr.
+        <a href="/angriffe/">Zum Angriffsarchiv</a>
       </p>
       <a class="text-link" href="/dossier/#faelle">Weitere Fälle und Quellen</a>
     </section>

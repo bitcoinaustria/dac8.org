@@ -5,6 +5,7 @@ import {
   attacks,
   countIn,
   formatDate,
+  hostOf,
   latestDate,
   latestYear,
   placeOf,
@@ -28,24 +29,18 @@ const newestFirst = [...attacks].sort((a, b) =>
 // Texts the map script needs; everything else is rendered here.
 const strings = en
   ? {
-      inView: "attacks in this view",
-      more: "more in this view. Zoom in to see them.",
-      none: "No known cases in this view.",
-      countries: "Most cases in this view",
-      zoomIn: "Zoom in",
-      zoomOut: "Zoom out",
-      showOnMap: "Show on the map",
-      credit: "Map: Natural Earth · Data: Jameson Lopp",
+      listTitle: "The latest cases in this view",
+      more: "More cases in this view: zoom in or choose a shorter period.",
+      none: "No known cases in this view. The archive is incomplete.",
+      report: "Report",
+      archive: "Archive copy",
     }
   : {
-      inView: "Angriffe im Kartenausschnitt",
-      more: "weitere im Ausschnitt. Zoome hinein, um sie zu sehen.",
-      none: "Keine bekannten Fälle in diesem Ausschnitt.",
-      countries: "Die meisten Fälle im Ausschnitt",
-      zoomIn: "Hineinzoomen",
-      zoomOut: "Herauszoomen",
-      showOnMap: "Auf der Karte zeigen",
-      credit: "Karte: Natural Earth · Daten: Jameson Lopp",
+      listTitle: "Die neuesten Fälle in diesem Ausschnitt",
+      more: "Weitere Fälle in diesem Ausschnitt: Zoome hinein oder wähle einen kürzeren Zeitraum.",
+      none: "Keine bekannten Fälle in diesem Ausschnitt. Das Archiv ist unvollständig.",
+      report: "Bericht",
+      archive: "Archivkopie",
     }
 ---
 
@@ -59,41 +54,34 @@ const strings = en
   >
     <aside class="atlas-panel">
       <h1>
-        {en ? "Attacks on crypto holders" : "Angriffe auf Krypto-Besitzer"}
+        {en
+            ? "Robbed, kidnapped, held captive."
+            : "Überfallen, entführt, gefangen gehalten."}
       </h1>
       <p class="atlas-lead">
         {en
-            ? `${attacks.length} publicly known robberies, kidnappings and extortions since ${firstYear}. The list is incomplete: most victims stay silent.`
-            : `${attacks.length} öffentlich bekannte Überfälle, Entführungen und Erpressungen seit ${firstYear}. Die Liste ist unvollständig, denn die meisten Opfer schweigen.`}
+            ? "An archive of physical attacks on people who hold crypto-assets, or are believed to, all over the world. Attackers force their way into homes, tie up families, abduct and torture people to get at their wallets."
+            : "Ein Archiv körperlicher Angriffe auf Menschen, die Kryptowerte besitzen oder besitzen sollen, auf der ganzen Welt. Täter dringen in Wohnungen ein, fesseln Familien, entführen und foltern, um an Wallets zu kommen."}
       </p>
-
-      <p class="atlas-count" aria-live="polite">
-        <strong data-count>{attacks.length}</strong>
-        <span>
-          <span data-count-label
-            >{en ? "attacks in this view" : "Angriffe im Kartenausschnitt"}</span
-          >
-          <span class="atlas-range" data-range-label
-            >{firstYear}–{latestYear}</span
-          >
-        </span>
-      </p>
-
-      <p class="atlas-legend">
-        <span class="recent">
-          {en ? `mostly ${latestYear - 1} and ${latestYear}` : `überwiegend ${latestYear - 1} und ${latestYear}`}
-        </span>
-        <span>{en ? "mostly earlier" : "überwiegend früher"}</span>
+      <p class="atlas-caveat">
+        <strong
+          >{en ? "Far from complete." : "Bei Weitem nicht vollständig."}</strong
+        >
+        {en
+            ? " Most victims stay silent, and many cases never become public. Every entry links to the original report."
+            : " Die meisten Opfer schweigen, viele Fälle werden nie öffentlich. Jeder Eintrag verweist auf den ursprünglichen Bericht."}
       </p>
 
       <fieldset class="atlas-years">
-        <legend>{en ? "Period" : "Zeitraum"}</legend>
+        <legend>
+          {en ? "Period" : "Zeitraum"}
+          <span data-range-label>{firstYear}–{latestYear}</span>
+        </legend>
         <div class="atlas-bars" aria-hidden="true">
           {years.map((year) => (
               <span
                 data-year={year}
                 style={`--share: ${countIn(year) / peak}`}
-                title={`${year}: ${countIn(year)}`}
               />
             ))}
         </div>
@@ -121,41 +109,41 @@ const strings = en
           <span>{firstYear}</span>
           <span>{latestYear}</span>
         </div>
+        <p class="atlas-legend">
+          <span class="recent">{`${latestYear - 1}–${latestYear}`}</span>
+          <span>{en ? "earlier" : "früher"}</span>
+        </p>
       </fieldset>
 
-      <div
-        class="atlas-views"
-        role="group"
-        aria-label={en ? "Views" : "Ansichten"}
-      >
-        <button type="button" data-view="world">{en ? "World" : "Welt"}</button>
-        <button type="button" data-view="europe">
-          {en ? "Europe" : "Europa"}
-        </button>
-        <button type="button" data-view="austria">
-          {en ? "Austria" : "Österreich"}
-        </button>
-      </div>
-
-      <div class="atlas-countries" data-countries hidden></div>
-
-      <h2 class="atlas-list-title">
-        {en ? "Cases, newest first" : "Fälle, die neuesten zuerst"}
+      <h2 class="atlas-list-title" data-list-title>
+        {en ? "All cases, newest first" : "Alle Fälle, die neuesten zuerst"}
       </h2>
       <ol class="atlas-list" data-list>
         {newestFirst.map((attack) => (
             <li>
-              <span class="atlas-place">{placeOf(attack, language)}</span>
-              <span class="atlas-date">
-                {attack.date ? formatDate(attack.date, language) : attack.year}
-              </span>
-              {attack.url ? (
-                <a href={attack.url} lang="en">
-                  {attack.headline}
-                </a>
-              ) : (
-                <span lang="en">{attack.headline}</span>
-              )}
+              <p class="atlas-meta">
+                <span class="atlas-date">
+                  {attack.date ? formatDate(attack.date, language) : attack.year}
+                </span>
+                <span class="atlas-place">{placeOf(attack, language)}</span>
+              </p>
+              <p class="atlas-headline" lang="en">
+                {attack.headline}
+              </p>
+              <p class="atlas-links">
+                {attack.reports.map((report) => [
+                  report.url && (
+                    <a href={report.url} rel="noopener">
+                      {`${strings.report}: ${hostOf(report.url)}`}
+                    </a>
+                  ),
+                  report.archive && (
+                    <a href={report.archive} rel="noopener">
+                      {strings.archive}
+                    </a>
+                  ),
+                ])}
+              </p>
             </li>
           ))}
       </ol>
@@ -166,21 +154,52 @@ const strings = en
         <a href="https://github.com/jlopp/physical-bitcoin-attacks"
           >Jameson Lopp, Known Physical Bitcoin Attacks</a
         >{en
-            ? `, as of ${through}. Headlines in English as given in the collection. Victims’ names are left out.`
-            : `, Stand ${through}. Überschriften auf Englisch aus der Sammlung. Namen der Opfer lassen wir weg.`}
+            ? `, as of ${through}. Descriptions in English as given in the collection. Victims’ names are left out.`
+            : `, Stand ${through}. Beschreibungen auf Englisch aus der Sammlung. Namen der Opfer lassen wir weg.`}
         <a href={`${pathFor("dossier", language)}#faelle`}
           >{en ? "What this has to do with DAC8" : "Was das mit DAC8 zu tun hat"}</a
         >
       </p>
     </aside>
-    <div
-      class="atlas-map"
-      data-map
-      role="region"
-      aria-label={en
-          ? "Map of known attacks. The list beside it shows the same cases."
-          : "Karte der bekannten Angriffe. Die Liste daneben zeigt dieselben Fälle."}
-    ></div>
+    <div class="atlas-stage">
+      <div
+        class="atlas-toolbar"
+        role="toolbar"
+        aria-label={en ? "Map controls" : "Kartensteuerung"}
+      >
+        <button type="button" data-view="world">{en ? "World" : "Welt"}</button>
+        <button type="button" data-view="europe">
+          {en ? "Europe" : "Europa"}
+        </button>
+        <button type="button" data-view="austria">
+          {en ? "Austria" : "Österreich"}
+        </button>
+        <span class="atlas-zoom">
+          <button
+            type="button"
+            data-zoom="out"
+            aria-label={en ? "Zoom out" : "Herauszoomen"}
+          >
+            −
+          </button>
+          <button
+            type="button"
+            data-zoom="in"
+            aria-label={en ? "Zoom in" : "Hineinzoomen"}
+          >
+            +
+          </button>
+        </span>
+      </div>
+      <div
+        class="atlas-map"
+        data-map
+        role="region"
+        aria-label={en
+            ? "Map of known attacks. The list shows the same cases."
+            : "Karte der bekannten Angriffe. Die Liste zeigt dieselben Fälle."}
+      ></div>
+    </div>
   </div>
 </Layout>
 
@@ -227,6 +246,13 @@ const strings = en
             timeZone: "UTC",
           })
         : String(attack.year)
+    const hostOf = (url: string) => {
+      try {
+        return new URL(url).hostname.replace(/^www\./, "")
+      } catch {
+        return url
+      }
+    }
     const element = <K extends keyof HTMLElementTagNameMap>(
       tag: K,
       className: string,
@@ -237,26 +263,26 @@ const strings = en
       if (text !== undefined) node.textContent = text
       return node
     }
+    const link = (href: string, text: string) =>
+      Object.assign(element("a", "", text), { href, rel: "noopener" })
 
-    // Headlines come from a third-party file, so they are set as text, never
-    // as HTML.
-    const details = (attack: Attack) => {
-      const box = element("div", "atlas-popup-body")
-      box.append(
-        element("strong", "atlas-place", place(attack)),
-        element("span", "atlas-date", dateOf(attack)),
-      )
-      if (attack.headline) {
-        const headline = attack.url
-          ? Object.assign(element("a", "", attack.headline), {
-              href: attack.url,
-              rel: "noopener",
-            })
-          : element("span", "", attack.headline)
-        headline.lang = "en"
-        box.append(headline)
+    // Descriptions come from a third-party file, so they are set as text,
+    // never as HTML. Each case links to the original report and an archive
+    // copy, so readers can check it for themselves.
+    const caseBody = (attack: Attack, placeElement: HTMLElement) => {
+      const meta = element("p", "atlas-meta")
+      meta.append(element("span", "atlas-date", dateOf(attack)), placeElement)
+      const headline = element("p", "atlas-headline", attack.headline ?? "")
+      headline.lang = "en"
+      const links = element("p", "atlas-links")
+      for (const report of attack.reports) {
+        if (report.url)
+          links.append(
+            link(report.url, `${strings.report}: ${hostOf(report.url)}`),
+          )
+        if (report.archive) links.append(link(report.archive, strings.archive))
       }
-      return box
+      return [meta, headline, links]
     }
 
     const map = L.map(mapElement, {
@@ -272,22 +298,29 @@ const strings = en
       ],
       maxBoundsViscosity: 0.8,
     })
-    L.control
-      .zoom({
-        position: "topright",
-        zoomInTitle: strings.zoomIn,
-        zoomOutTitle: strings.zoomOut,
-      })
-      .addTo(map)
-    map.attributionControl.setPrefix(false).addAttribution(strings.credit)
+    map.attributionControl
+      .setPrefix(false)
+      .addAttribution(
+        language === "en"
+          ? "Map: Natural Earth · Data: Jameson Lopp"
+          : "Karte: Natural Earth · Daten: Jameson Lopp",
+      )
 
     const views = {
       world: L.latLngBounds([-45, -130], [68, 150]),
       europe: L.latLngBounds([35, -11], [62, 32]),
       austria: L.latLngBounds([46.3, 9.4], [49.1, 17.2]),
     }
-    map.fitBounds(views.world)
+    // Keep the toolbar from covering cases when a view is fitted.
+    const toolbar = root.querySelector<HTMLElement>(".atlas-toolbar")
+    const fitOptions = () => ({
+      paddingTopLeft: L.point(0, (toolbar?.offsetHeight ?? 0) + 16),
+      paddingBottomRight: L.point(0, 16),
+    })
+    map.fitBounds(views.world, fitOptions())
     new ResizeObserver(() => map.invalidateSize()).observe(mapElement)
+    // Phones get smaller circles and merge nearby cases earlier.
+    const compact = matchMedia("(width < 40rem)").matches
 
     // Land and borders are drawn from Natural Earth on a canvas, in the site's
     // own colours, so no map tiles are loaded from third parties.
@@ -352,10 +385,24 @@ const strings = en
         alt: `${place(attack)}, ${dateOf(attack)}`,
         title: `${place(attack)}, ${attack.year}`,
       })
-      marker.bindPopup(() => details(attack), {
-        className: "atlas-popup",
-        maxWidth: 300,
-      })
+      marker.bindPopup(
+        () => {
+          const box = element("div", "atlas-case")
+          box.append(
+            ...caseBody(
+              attack,
+              element("strong", "atlas-place", place(attack)),
+            ),
+          )
+          return box
+        },
+        {
+          className: "atlas-popup",
+          minWidth: 240,
+          maxWidth: 320,
+          autoPanPadding: [24, 72],
+        },
+      )
       return { attack, marker, recent }
     })
     const recentMarkers = new Set(
@@ -367,14 +414,19 @@ const strings = en
     const cluster = L.markerClusterGroup({
       showCoverageOnHover: false,
       spiderfyOnMaxZoom: true,
-      maxClusterRadius: (zoom: number) => (zoom < 5 ? 48 : 34),
+      // Circles stay smaller than the merge radius, so hotspots do not pile
+      // up on top of each other on small screens.
+      maxClusterRadius: (zoom: number) =>
+        (zoom < 5 ? 56 : 44) + (compact ? 12 : 0),
       iconCreateFunction: (group) => {
         const children = group.getAllChildMarkers()
         const count = children.length
         const recent = children.filter((marker) =>
           recentMarkers.has(marker),
         ).length
-        const size = Math.round(28 + Math.log2(count) * 7)
+        const size = Math.round(
+          compact ? 24 + Math.log2(count) * 3.5 : 26 + Math.log2(count) * 4.5,
+        )
         return L.divIcon({
           html: `<span>${count}</span>`,
           className:
@@ -387,14 +439,14 @@ const strings = en
     const from = root.querySelector<HTMLInputElement>("[data-from]")!
     const to = root.querySelector<HTMLInputElement>("[data-to]")!
     const bars = root.querySelectorAll<HTMLElement>("[data-year]")
-    const count = root.querySelector<HTMLElement>("[data-count]")!
     const rangeLabel = root.querySelector<HTMLElement>("[data-range-label]")!
+    const listTitle = root.querySelector<HTMLElement>("[data-list-title]")!
     const list = root.querySelector<HTMLOListElement>("[data-list]")!
     const more = root.querySelector<HTMLElement>("[data-more]")!
-    const countryBox = root.querySelector<HTMLElement>("[data-countries]")!
+    listTitle.textContent = strings.listTitle
     let active = entries
 
-    const listLimit = 80
+    const listLimit = 60
     const renderList = () => {
       const bounds = map.getBounds()
       const visible = active
@@ -404,70 +456,23 @@ const strings = en
             a.attack.date ?? `${a.attack.year}`,
           ),
         )
-      count.textContent = String(visible.length)
-
-      const items = visible.slice(0, listLimit).map(({ attack, marker }) => {
-        const item = element("li", "")
-        const button = element("button", "atlas-place", place(attack))
-        button.type = "button"
-        button.title = strings.showOnMap
-        button.addEventListener("click", () =>
-          cluster.zoomToShowLayer(marker, () => marker.openPopup()),
-        )
-        item.append(button, element("span", "atlas-date", dateOf(attack)))
-        if (attack.headline) {
-          const headline = attack.url
-            ? Object.assign(element("a", "", attack.headline), {
-                href: attack.url,
-                rel: "noopener",
-              })
-            : element("span", "", attack.headline)
-          headline.lang = "en"
-          item.append(headline)
-        }
-        return item
-      })
-      list.replaceChildren(...items)
-      more.hidden = visible.length > 0 && visible.length <= listLimit
-      more.textContent =
-        visible.length === 0
-          ? strings.none
-          : `${visible.length - listLimit} ${strings.more}`
-
-      // Where the cases in view cluster, by country.
-      const byCountry = new Map<string, typeof visible>()
-      for (const entry of visible) {
-        const code = entry.attack.countryCode ?? entry.attack.country ?? "?"
-        byCountry.set(code, [...(byCountry.get(code) ?? []), entry])
-      }
-      const top = [...byCountry.entries()]
-        .sort((a, b) => b[1].length - a[1].length)
-        .slice(0, 5)
-      countryBox.hidden = top.length < 2
-      countryBox.replaceChildren(
-        element("h2", "atlas-list-title", strings.countries),
-        ...top.map(([code, group]) => {
-          const button = element("button", "atlas-country")
+      list.replaceChildren(
+        ...visible.slice(0, listLimit).map(({ attack, marker }) => {
+          const button = element("button", "atlas-place", place(attack))
           button.type = "button"
-          button.append(
-            element(
-              "span",
-              "",
-              (code.length === 2 && regions.of(code)) ||
-                group[0].attack.country ||
-                code,
-            ),
-            element("strong", "", String(group.length)),
-          )
-          button.addEventListener("click", () =>
-            map.fitBounds(
-              L.latLngBounds(group.map((entry) => entry.marker.getLatLng())),
-              { padding: [48, 48], maxZoom: 8 },
-            ),
-          )
-          return button
+          button.addEventListener("click", () => {
+            cluster.zoomToShowLayer(marker, () => marker.openPopup())
+            // On phones the map sits above the list; bring it into view.
+            if (matchMedia("(width < 64rem)").matches)
+              mapElement.scrollIntoView({ behavior: "smooth", block: "start" })
+          })
+          const item = element("li", "")
+          item.append(...caseBody(attack, button))
+          return item
         }),
       )
+      more.hidden = visible.length > 0 && visible.length <= listLimit
+      more.textContent = visible.length === 0 ? strings.none : strings.more
     }
 
     const applyYears = () => {
@@ -494,8 +499,17 @@ const strings = en
       "[data-view]",
     ))
       button.addEventListener("click", () =>
-        map.fitBounds(views[button.dataset.view as keyof typeof views]),
+        map.flyToBounds(views[button.dataset.view as keyof typeof views], {
+          ...fitOptions(),
+          duration: 0.8,
+        }),
       )
+    root
+      .querySelector("[data-zoom='in']")
+      ?.addEventListener("click", () => map.zoomIn())
+    root
+      .querySelector("[data-zoom='out']")
+      ?.addEventListener("click", () => map.zoomOut())
 
     applyYears()
   }
@@ -506,15 +520,16 @@ const strings = en
 </script>
 
 <style>
-  /* Vollbild-Karte: links die Einordnung, Filter und Liste, rechts die
-     Karte. Auf schmalen Bildschirmen steht die Karte oben. */
+  /* Vollbild-Archiv: links Einordnung, Zeitraum und die Fälle, rechts die
+     Karte mit einer Leiste für Ansichten und Zoom. Auf schmalen
+     Bildschirmen steht die Karte oben, die Liste darunter. */
   .atlas {
     --ink: var(--foreground);
     --ink-2: color-mix(in oklab, var(--foreground) 86%, transparent);
     --ink-3: var(--muted-foreground);
     --line: color-mix(in oklab, var(--foreground) 14%, transparent);
     display: grid;
-    grid-template-columns: minmax(20rem, 27rem) minmax(0, 1fr);
+    grid-template-columns: minmax(20rem, 28rem) minmax(0, 1fr);
     block-size: calc(100dvh - var(--bar-height));
     min-block-size: 34rem;
   }
@@ -529,10 +544,15 @@ const strings = en
     background: var(--background);
   }
 
-  .atlas-map {
+  .atlas-stage {
     position: relative;
-    z-index: 0;
     min-block-size: 20rem;
+  }
+
+  .atlas-map {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
     background: var(--gray-2);
   }
 
@@ -546,61 +566,22 @@ const strings = en
 
   .atlas-lead {
     color: var(--ink-2);
+    font-size: var(--step-1);
+    line-height: 1.45;
     text-wrap: pretty;
   }
 
-  .atlas-count {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-xs);
-  }
-
-  .atlas-count strong {
-    font-size: clamp(2.4rem, 1.9rem + 1.6vw, 3.2rem);
-    font-weight: 600;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .atlas-count > span {
-    display: grid;
+  .atlas-caveat {
+    padding: var(--space-s) var(--space-m);
+    border-inline-start: 3px solid var(--primary);
+    border-radius: 0 0.5rem 0.5rem 0;
     color: var(--ink-2);
-    line-height: 1.3;
+    background: var(--gray-3);
+    text-wrap: pretty;
   }
 
-  .atlas-range {
-    color: var(--ink-3);
-    font-size: var(--step--1);
-  }
-
-  .atlas-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3xs) var(--space-m);
-    color: var(--ink-3);
-    font-size: var(--step--1);
-  }
-
-  .atlas-legend span::before {
-    content: "";
-    display: inline-block;
-    inline-size: 0.75em;
-    block-size: 0.75em;
-    margin-inline-end: 0.4em;
-    border-radius: var(--radius-full);
-    background: color-mix(in oklab, var(--gray-9) 30%, var(--background));
-    box-shadow: 0 0 0 2px color-mix(in oklab, var(--gray-9) 22%, transparent);
-    vertical-align: -0.05em;
-  }
-
-  .atlas-legend .recent::before {
-    background: var(--primary);
-    box-shadow: 0 0 0 2px color-mix(in oklab, var(--primary) 28%, transparent);
-  }
-
-  .atlas:not(.atlas-ready) .atlas-legend {
-    display: none;
+  .atlas-caveat strong {
+    color: var(--ink);
   }
 
   .atlas-years {
@@ -610,18 +591,26 @@ const strings = en
   }
 
   .atlas-years legend {
+    display: flex;
+    gap: var(--space-xs);
     margin-block-end: var(--space-2xs);
     padding: 0;
-    font-weight: 560;
+    font-weight: 600;
   }
 
-  /* Die Balken zeigen, wie viele Fälle pro Jahr bekannt sind; der gewählte
-     Zeitraum bleibt rot. */
+  .atlas-years legend span {
+    color: var(--ink-3);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Die Balken zeigen den Verlauf über die Jahre, ohne Zahlen in den
+     Vordergrund zu stellen; der gewählte Zeitraum bleibt rot. */
   .atlas-bars {
     display: flex;
     align-items: end;
     gap: 3px;
-    block-size: 4.5rem;
+    block-size: 3.5rem;
   }
 
   .atlas-bars span {
@@ -640,7 +629,7 @@ const strings = en
   /* Zwei überlagerte Regler ergeben einen Bereich; nur die Griffe reagieren. */
   .atlas-sliders {
     position: relative;
-    block-size: 1.5rem;
+    block-size: 1.75rem;
   }
 
   .atlas-sliders input {
@@ -664,9 +653,9 @@ const strings = en
   }
 
   .atlas-sliders input::-webkit-slider-thumb {
-    inline-size: 1.25rem;
-    block-size: 1.25rem;
-    margin-block-start: -0.56rem;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    margin-block-start: -0.69rem;
     border: 2px solid var(--background);
     border-radius: var(--radius-full);
     background: var(--foreground);
@@ -678,8 +667,8 @@ const strings = en
   }
 
   .atlas-sliders input::-moz-range-thumb {
-    inline-size: 1rem;
-    block-size: 1rem;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
     border: 2px solid var(--background);
     border-radius: var(--radius-full);
     background: var(--foreground);
@@ -692,7 +681,8 @@ const strings = en
     outline-offset: 2px;
   }
 
-  .atlas-scale {
+  .atlas-scale,
+  .atlas-legend {
     display: flex;
     justify-content: space-between;
     color: var(--ink-3);
@@ -700,45 +690,35 @@ const strings = en
     font-variant-numeric: tabular-nums;
   }
 
-  .atlas-views {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs);
+  .atlas-legend {
+    justify-content: start;
+    gap: var(--space-m);
+    margin-block-start: var(--space-2xs);
   }
 
-  .atlas-views button {
-    min-block-size: 2.5rem;
-    padding: 0.4em 1em;
-    border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
+  .atlas-legend span::before {
+    content: "";
+    display: inline-block;
+    inline-size: 0.75em;
+    block-size: 0.75em;
+    margin-inline-end: 0.4em;
     border-radius: var(--radius-full);
-    color: inherit;
-    background: transparent;
-    font: inherit;
-    font-weight: 560;
-    cursor: pointer;
+    background: var(--gray-9);
+    vertical-align: -0.05em;
   }
 
-  .atlas-views button:hover {
-    border-color: var(--ink);
+  .atlas-legend .recent::before {
+    background: var(--primary);
   }
 
-  /* Ohne JavaScript gibt es keine Karte; dann reichen Liste und Quelle. */
-  .atlas:not(.atlas-ready) :is(.atlas-years, .atlas-views, .atlas-map) {
-    display: none;
-  }
-
-  .atlas:not(.atlas-ready) {
-    grid-template-columns: minmax(0, 48rem);
-    block-size: auto;
-  }
-
-  .atlas-countries {
-    display: grid;
-    gap: 2px;
+  .atlas-list-title {
+    font-size: var(--step-0);
+    font-weight: 600;
   }
 
   .atlas-list {
     display: grid;
+    margin-block-start: calc(-1 * var(--space-xs));
     padding: 0;
     list-style: none;
   }
@@ -754,14 +734,81 @@ const strings = en
     color: inherit;
   }
 
+  /* Ansichten und Zoom in einer Leiste über der Karte. */
+  .atlas-toolbar {
+    position: absolute;
+    z-index: 2;
+    inset-block-start: var(--space-s);
+    inset-inline-start: var(--space-s);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    max-inline-size: calc(100% - 2 * var(--space-s));
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    background: color-mix(in oklab, var(--background) 94%, transparent);
+    box-shadow: 0 2px 10px
+      color-mix(in oklab, var(--foreground) 12%, transparent);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .atlas-toolbar button {
+    flex: none;
+    min-block-size: 2.5rem;
+    padding: 0 1em;
+    border: 0;
+    border-radius: var(--radius-full);
+    color: var(--ink);
+    background: transparent;
+    font: inherit;
+    font-weight: 560;
+    cursor: pointer;
+  }
+
+  .atlas-toolbar button:hover {
+    background: var(--gray-4);
+  }
+
+  .atlas-toolbar button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+  }
+
+  .atlas-zoom {
+    display: flex;
+    gap: 2px;
+    margin-inline-start: var(--space-3xs);
+    padding-inline-start: var(--space-3xs);
+    border-inline-start: 1px solid var(--border);
+  }
+
+  .atlas-zoom button {
+    inline-size: 2.5rem;
+    padding: 0;
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  /* Ohne JavaScript gibt es keine Karte; dann bleibt das Archiv als Liste. */
+  .atlas:not(.atlas-ready) :is(.atlas-years, .atlas-stage) {
+    display: none;
+  }
+
+  .atlas:not(.atlas-ready) {
+    grid-template-columns: minmax(0, 48rem);
+    block-size: auto;
+  }
+
   @media (width < 64rem) {
     .atlas {
       grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: 62svh auto;
+      grid-template-rows: 60svh auto;
       block-size: auto;
     }
 
-    .atlas-map {
+    .atlas-stage {
       grid-row: 1;
     }
 
@@ -770,12 +817,17 @@ const strings = en
       overflow: visible;
       border-inline-end: 0;
     }
+
+    .atlas-toolbar {
+      inset-inline-end: var(--space-s);
+      justify-content: space-between;
+    }
   }
 </style>
 
 <style is:global>
-  /* Elemente, die Leaflet selbst erzeugt: Punkte, Hotspots, Popups und
-     Bedienelemente im Stil der Seite. */
+  /* Elemente, die Leaflet oder das Skript erzeugen: Punkte, Hotspots,
+     Popups und die Fälle der Liste. */
   .atlas .leaflet-container {
     background: var(--gray-2);
     font: inherit;
@@ -819,22 +871,6 @@ const strings = en
       0 1px 3px color-mix(in oklab, var(--foreground) 25%, transparent);
   }
 
-  .atlas .leaflet-bar {
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    box-shadow: none;
-    overflow: hidden;
-  }
-
-  .atlas .leaflet-bar a {
-    inline-size: 2.25rem;
-    block-size: 2.25rem;
-    border-color: var(--border);
-    color: var(--foreground);
-    background: var(--background);
-    line-height: 2.2rem;
-  }
-
   .atlas .leaflet-control-attribution {
     color: var(--ink-3);
     background: color-mix(in oklab, var(--background) 85%, transparent);
@@ -854,28 +890,45 @@ const strings = en
   }
 
   .atlas .atlas-popup .leaflet-popup-content {
-    margin: 0.9rem 1rem;
+    margin: 0.9rem 1.1rem;
     font-size: var(--step--1);
     line-height: 1.45;
   }
 
-  .atlas .atlas-popup-body,
+  .atlas .atlas-popup .leaflet-popup-close-button {
+    color: var(--ink-3);
+  }
+
+  /* Ein Fall: Datum und Ort klein, darüber steht, was passiert ist; darunter
+     die Links zum Bericht und zur Archivkopie. */
+  .atlas .atlas-case,
   .atlas .atlas-list li {
     display: grid;
-    gap: 0.15rem;
+    gap: 0.35rem;
+  }
+
+  .atlas .atlas-case p,
+  .atlas .atlas-list li p {
+    margin: 0;
   }
 
   .atlas .atlas-list li {
-    padding-block: var(--space-xs);
-    border-block-start: 1px solid var(--line);
-    text-wrap: pretty;
+    padding-block: var(--space-s);
+    border-block-end: 1px solid var(--line);
+  }
+
+  .atlas .atlas-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.6em;
+    color: var(--ink-3);
+    font-size: var(--step--1);
   }
 
   .atlas .atlas-place {
-    justify-self: start;
     padding: 0;
     border: 0;
-    color: var(--foreground);
+    color: var(--ink);
     background: none;
     font: inherit;
     font-weight: 600;
@@ -884,41 +937,43 @@ const strings = en
 
   .atlas button.atlas-place {
     cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+    text-underline-offset: 0.2em;
   }
 
   .atlas button.atlas-place:hover {
     color: var(--accent);
   }
 
-  .atlas .atlas-date {
-    color: var(--ink-3);
+  .atlas .atlas-headline {
+    color: var(--ink);
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .atlas .atlas-popup .atlas-headline {
+    font-size: var(--step-0);
+  }
+
+  .atlas .atlas-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem var(--space-s);
     font-size: var(--step--1);
   }
 
-  .atlas .atlas-popup a,
-  .atlas .atlas-list a {
-    color: var(--ink-2);
-  }
-
-  .atlas .atlas-list-title {
-    margin-block-end: var(--space-2xs);
-    font-size: var(--step-0);
-    font-weight: 600;
-  }
-
-  .atlas .atlas-country {
-    display: flex;
-    justify-content: space-between;
-    padding: var(--space-3xs) 0;
-    border: 0;
-    border-block-end: 1px solid var(--line);
-    color: inherit;
-    background: none;
-    font: inherit;
-    cursor: pointer;
-  }
-
-  .atlas .atlas-country:hover {
+  .atlas .atlas-links a {
     color: var(--accent);
+    font-weight: 560;
+    text-decoration: none;
+  }
+
+  .atlas .atlas-links a::after {
+    content: " ↗";
+  }
+
+  .atlas .atlas-links a:hover {
+    text-decoration: underline;
   }
 </style>

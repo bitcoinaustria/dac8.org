@@ -74,15 +74,18 @@ two actions and the status on a dark band.
 
 ## Map of known physical attacks
 
-`/angriffe/` and `/en/attacks/` (`src/components/pages/AttacksPage.astro`) show
-Jameson Lopp's public-domain list of
-[known physical attacks](https://github.com/jlopp/physical-bitcoin-attacks) as
-a full-screen map with numbered hotspots that split up as you zoom, a year
-filter over a per-year histogram, quick views for the world, Europe and
-Austria, the countries with most cases in view and the cases in view, newest
-first. Without JavaScript the page shows the full list. The dossier's
-`#angriffe` block (`src/components/AttackSummary.astro`) gives the key figures
-and links to the map.
+`/angriffe/` and `/en/attacks/` (`src/components/pages/AttacksPage.astro`) are
+an archive of Jameson Lopp's public-domain list of
+[known physical attacks](https://github.com/jlopp/physical-bitcoin-attacks).
+The page shows what was done to people rather than case counts: it says up
+front that the archive is far from complete, and every case links to the
+original report and, where available, an archive copy. A full-screen map shows
+numbered hotspots that split up as you zoom; one toolbar on the map holds the
+world, Europe and Austria views and the zoom buttons. A year filter sits over a
+per-year histogram, and the list shows the cases in view, newest first.
+Without JavaScript the page shows the full list. The dossier's `#angriffe`
+block (`src/components/AttackSummary.astro`) gives the key figures and links
+to the archive.
 
 The map uses Leaflet with Natural Earth country outlines from `world-atlas`,
 both bundled and served from our own origin, so visitors load no map tiles
