@@ -13,7 +13,6 @@ import linkedIdentity from "@/assets/artwork/linked-identity.webp"
 import linkedIdentityEn from "@/assets/artwork/linked-identity-en.webp"
 import massCapture from "@/assets/artwork/mass-capture.webp"
 import massCaptureEn from "@/assets/artwork/mass-capture-en.webp"
-import privacyExposed from "@/assets/artwork/privacy-exposed.webp"
 import rankedPortrait from "@/assets/artwork/ranked-portrait.webp"
 import rankedPortraitEn from "@/assets/artwork/ranked-portrait-en.webp"
 import reportAssets from "@/assets/artwork/report-assets.webp"
@@ -50,15 +49,6 @@ export const imageFor = (entry: Artwork, language: Language) =>
 // profiles, rankings and holdings stand for combined or leaked records, and
 // captions keep that distinction beside the image.
 export const artwork = {
-  privacyExposed: {
-    image: privacyExposed,
-    de: {
-      alt: "Illustration: Eine gläserne Box mit angehobenem Deckel gibt den Blick auf ein Personensymbol und ein Bitcoin-Zeichen frei.",
-    },
-    en: {
-      alt: "Illustration: a glass case with its lid lifted reveals a person icon and a Bitcoin symbol.",
-    },
-  },
   accountToRecord: {
     image: { de: accountToRecord, en: accountToRecordEn },
     de: {

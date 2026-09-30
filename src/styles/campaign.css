@@ -1,9 +1,10 @@
 /* Gestaltungssystem der Kampagnenseiten.
 
-   Eine Datei für Start, Dossier, Verfahren und Mitmachen. Einfach und
-   textlich: große Überschriften, Fließtext in voller Größe, fette
-   Einstiege, kurze Listen, wenige Flächen. Tabellarische Ziffern für
-   Zahlen und Paragrafen, ein Rot als Signal, nicht als Dekor. */
+   Eine Datei für Start, Dossier, Verfahren und Mitmachen. Jede Seite ist
+   eine Folge von Bändern: eine Aussage, ein erklärendes Bild, wenig Text.
+   Große Überschriften, dunkler Fließtext, fette Einstiege, kurze Listen,
+   wenige Flächen. Tabellarische Ziffern für Zahlen und Paragrafen, ein Rot
+   als Signal, nicht als Dekor. */
 
 /* ---------- Grundraster ------------------------------------------------ */
 
@@ -12,7 +13,7 @@
   --panel-strong: light-dark(#ebebea, #242424);
   --paper: light-dark(#ffffff, #161616);
   --ink: var(--foreground);
-  --ink-2: color-mix(in oklab, var(--foreground) 78%, transparent);
+  --ink-2: color-mix(in oklab, var(--foreground) 86%, transparent);
   --ink-3: var(--muted-foreground);
   --line: color-mix(in oklab, var(--foreground) 14%, transparent);
   --radius: var(--radius-lg);
@@ -22,10 +23,13 @@
   --material-shine: light-dark(#ffffff, #ffffff24);
   --material-shade: light-dark(#15202b18, #00000060);
   --measure-lead: 55ch;
-  container: campaign / inline-size;
   --measure-text: 66ch;
+  /* Luft zwischen den Bändern einer Seite. Innerhalb eines Bands stehen
+     Blöcke mit --space-xl Abstand, Überschrift und Text mit --space-m. */
+  --band-gap: clamp(4.5rem, 2.75rem + 5vw, 8rem);
+  container: campaign / inline-size;
   display: grid;
-  gap: var(--space-2xl-3xl);
+  gap: var(--band-gap);
   min-inline-size: 0;
   font-size: var(--step-0);
   line-height: 1.55;
@@ -65,9 +69,9 @@
 
 .campaign h2 {
   max-inline-size: 26ch;
-  font-size: clamp(2rem, 1.3rem + 2.2vw, 2.75rem);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-size: clamp(2.125rem, 1.35rem + 2.4vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.022em;
 }
 
 .campaign h3 {
@@ -78,7 +82,7 @@
 }
 
 .campaign.dossier > section > h3 {
-  margin-block-start: var(--space-l);
+  margin-block-start: var(--space-xl);
 }
 
 .campaign.dossier > section > h3 + .prose {
@@ -92,7 +96,7 @@
 }
 
 .campaign .lead {
-  max-inline-size: var(--measure-lead);
+  max-inline-size: 52ch;
   margin-block-start: var(--space-m);
   color: var(--ink-2);
   font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
@@ -102,11 +106,15 @@
 
 .campaign .section-intro {
   max-inline-size: var(--measure-lead);
-  margin-block-start: var(--space-s);
+  margin-block-start: var(--space-m);
   color: var(--ink-2);
   font-size: var(--step-1);
   line-height: 1.45;
   text-wrap: pretty;
+}
+
+.campaign .section-intro + .section-intro {
+  margin-block-start: var(--space-s);
 }
 
 .campaign .lead strong,
@@ -117,7 +125,7 @@
 
 .campaign .prose {
   max-inline-size: var(--measure-text);
-  margin-block-start: var(--space-l);
+  margin-block-start: var(--space-m);
   color: var(--ink-2);
   line-height: 1.6;
   text-wrap: pretty;
@@ -132,24 +140,57 @@
   font-weight: 560;
 }
 
-/* Fließtextlinks; Buttons und Textlinks bringen ihre eigene Gestalt mit. */
-.campaign :is(p, li, dd) a:not(.button, .text-link) {
+/* Fließtextlinks. Mit niedriger Spezifität, damit Buttons, Textlinks und
+   Blocklinks wie die Aktionsliste ihre eigene Gestalt behalten. */
+.campaign :where(p, li, dd) a:where(:not(.button, .text-link)) {
   color: inherit;
   text-decoration: underline;
   text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
   text-underline-offset: 0.18em;
 }
 
-.campaign :is(p, li, dd) a:not(.button, .text-link):hover {
+.campaign :where(p, li, dd) a:where(:not(.button, .text-link)):hover {
   color: var(--accent);
   text-decoration-color: currentColor;
 }
 
 /* ---------- Hero ------------------------------------------------------- */
 
+/* Text links, erklärendes Bild rechts, beide mittig zueinander. Schmal
+   folgt das Bild dem Text. */
 .campaign .hero {
   display: grid;
-  gap: 0;
+  align-items: center;
+  gap: 0 var(--space-2xl);
+}
+
+.campaign .hero:has(> .hero-text) {
+  row-gap: var(--space-xl);
+}
+
+.campaign .hero-text > :first-child {
+  margin-block-start: 0;
+}
+
+.campaign .hero > .artwork {
+  --art-height: 17rem;
+  margin-block-start: 0;
+}
+
+@container campaign (width >= 56rem) {
+  .campaign .hero:has(> .artwork) {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .campaign .hero > .artwork {
+    --art-height: 26rem;
+  }
+
+  /* Die Schlagzeile neben dem Bild ist eine Stufe kleiner, damit sie in
+     drei bis vier Zeilen bleibt. */
+  .campaign .hero:has(> .artwork) h1 {
+    font-size: clamp(2.25rem, 1.3rem + 3vw, 3.75rem);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -158,14 +199,10 @@
   }
 
   .campaign .hero > :nth-child(2) {
-    animation-delay: 40ms;
-  }
-
-  .campaign .hero > :nth-child(3) {
     animation-delay: 80ms;
   }
 
-  .campaign .hero > :nth-child(n + 4) {
+  .campaign .hero > :nth-child(n + 3) {
     animation-delay: 120ms;
   }
 }
@@ -178,7 +215,6 @@
 }
 
 .campaign .hero-actions,
-.campaign .closing-actions,
 .campaign .output-actions {
   display: flex;
   flex-wrap: wrap;
@@ -191,15 +227,90 @@
   margin-block-start: var(--space-l);
 }
 
+/* Kleine Zusatzzeile unter den Buttons, etwa zum Stand der Beteiligung. */
+.campaign .hero-note {
+  max-inline-size: 52ch;
+  margin-block-start: var(--space-l);
+  color: var(--ink-3);
+  font-size: var(--step--1);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.campaign .hero-note strong {
+  color: var(--ink);
+  font-weight: 560;
+}
+
+/* Verfahrensstand über der Schlagzeile: ein Punkt und eine Zeile, gesetzt
+   wie der Stand im Footer. Eine Aussage über den Stand, keine Rubrik. */
+.campaign .status-line {
+  display: inline-block;
+  margin-block-end: var(--space-m);
+  color: var(--ink-3);
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  overflow-wrap: normal;
+}
+
+.campaign .status-line::before {
+  content: "";
+  display: inline-block;
+  inline-size: 0.625rem;
+  block-size: 0.625rem;
+  margin-inline-end: 0.6em;
+  vertical-align: -0.02em;
+  border: 1px solid light-dark(#b6000c, #fa5963);
+  border-radius: var(--radius-full);
+  background: linear-gradient(155deg, #e3000f, #be000c);
+  box-shadow: inset 0 1px 0 #ffffff30;
+}
+
+.campaign .status-line span {
+  color: var(--ink);
+}
+
+.campaign .status-line:hover span {
+  color: var(--accent);
+}
+
+/* ---------- Kurz gesagt: Einordnung und Kennzahlen -------------------- */
+
+/* Das Band unter dem Hero: ein Satz, was DAC8 in Österreich verlangt und
+   was wir tun, darunter drei große Werte. Eine weiche Fläche trennt es vom
+   Hero, ohne Linie. */
+.campaign .brief {
+  display: grid;
+  gap: var(--space-l);
+  padding: var(--space-m-l) var(--space-m-l) var(--space-l);
+  border-radius: var(--radius-xl);
+  background: var(--panel);
+}
+
+.campaign .brief-text {
+  max-inline-size: 62ch;
+  color: var(--ink-2);
+  font-size: var(--step-1);
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.campaign .brief-text strong {
+  color: var(--ink);
+  font-weight: 560;
+}
+
 /* Kennzahlen: drei große Werte, die den Fall in einer Zeile erzählen. */
 .campaign .keyfigures {
   display: grid;
   gap: var(--space-m) var(--space-l);
-  margin-block-start: var(--space-xl-2xl);
 }
 
 /* Die obere Kante ist gefrästes Metall statt einer schwarzen Linie; die
-   Zahlen selbst stehen direkt auf der Seite. */
+   Zahlen selbst stehen direkt auf der Fläche. */
 .campaign .keyfigures > div {
   --rule: 2px;
   display: grid;
@@ -249,6 +360,24 @@
   }
 }
 
+/* Kennzahlen am Handy: kompakter, damit die drei Werte nicht einen ganzen
+   Bildschirm füllen. */
+@container campaign (width < 46rem) {
+  .campaign .keyfigures {
+    gap: var(--space-s);
+  }
+
+  .campaign .keyfigures > div {
+    --rule: 1px;
+    gap: var(--space-3xs);
+    padding-block-start: var(--space-xs);
+  }
+
+  .campaign .keyfigures dd {
+    font-size: 1.75rem;
+  }
+}
+
 /* Auf einen Blick: kurze Tabelle aus Begriff und Wert. */
 .campaign .glance {
   display: grid;
@@ -270,14 +399,6 @@
   max-inline-size: 48ch;
   font-weight: 560;
   text-wrap: pretty;
-}
-
-.campaign .glance .glance-note {
-  grid-column: 1 / -1;
-  margin-block-start: var(--space-2xs);
-  color: var(--ink-2);
-  font-weight: 400;
-  font-size: var(--step--1);
 }
 
 /* ---------- Buttons ---------------------------------------------------- */
@@ -335,7 +456,7 @@
   align-items: baseline;
   gap: 0.4em;
   inline-size: fit-content;
-  margin-block-start: var(--space-m);
+  margin-block-start: var(--space-l);
   padding: 0;
   border: 0;
   color: var(--accent);
@@ -349,6 +470,10 @@
 .text-link::after {
   content: "→";
   transition: translate 160ms ease;
+}
+
+.text-link:hover::after {
+  translate: 0.25em 0;
 }
 
 [data-share] {
@@ -366,24 +491,6 @@
   flex-shrink: 0;
 }
 
-.campaign .action-facts li {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.campaign .action-facts p {
-  flex-grow: 1;
-}
-
-.campaign .action-facts .button {
-  margin-block-start: var(--space-m);
-}
-
-.text-link:hover::after {
-  translate: 0.25em 0;
-}
-
 .campaign .share-status,
 .campaign .copy-status {
   min-block-size: 1.5em;
@@ -392,13 +499,17 @@
   font-size: var(--step--1);
 }
 
+.campaign .hero .share-status:empty {
+  display: none;
+}
+
 /* ---------- Listen zum Überfliegen ------------------------------------ */
 
 /* Fakten: fetter Einstieg, dann ein bis zwei Sätze in voller Lesegröße. */
 .campaign .facts {
   display: grid;
-  gap: var(--space-l) var(--space-xl);
-  margin-block-start: var(--space-l);
+  gap: var(--space-l) var(--space-2xl);
+  margin-block-start: var(--space-xl);
   padding: 0;
   list-style: none;
 }
@@ -406,41 +517,6 @@
 .campaign .facts li {
   max-inline-size: var(--measure-text);
   text-wrap: pretty;
-}
-
-/* Die Kritikpunkte: mehr Luft zwischen den Zeilen, weil sie die dichteste
-   Textstrecke sind. Die Illustration füllt die freie letzte Zelle neben
-   „Zehn Jahre ohne Begründung“. */
-.campaign .facts.concerns {
-  row-gap: clamp(2rem, 3vw, 3rem);
-}
-
-.campaign .facts .facts-figure {
-  align-self: center;
-}
-
-.campaign .facts-figure .artwork {
-  --art-height: 15rem;
-  margin-block-start: 0;
-}
-
-/* Das kleine Motiv ist schmaler als ein lesbarer Bildtext; der Titel folgt
-   den übrigen Bildunterschriften, nicht den Einstiegen der Kritikpunkte. */
-.campaign .facts .facts-figure .artwork {
-  inline-size: auto;
-}
-
-.campaign .facts .facts-figure .artwork figcaption {
-  contain: none;
-  inline-size: min(34ch, 100%);
-  justify-self: center;
-}
-
-.campaign .facts-figure .artwork figcaption strong {
-  margin-block-end: var(--space-3xs);
-  font-size: inherit;
-  line-height: inherit;
-  letter-spacing: normal;
 }
 
 .campaign .facts strong,
@@ -468,6 +544,40 @@
   font-size: var(--step--1);
 }
 
+/* Die Kritikpunkte: mehr Luft zwischen den Zeilen, weil sie die dichteste
+   Textstrecke sind. Die Illustration füllt die freie letzte Zelle neben
+   „Zehn Jahre ohne Begründung“. */
+.campaign .facts.concerns {
+  row-gap: clamp(2rem, 3vw, 3rem);
+}
+
+.campaign .facts .facts-figure {
+  align-self: center;
+}
+
+.campaign .facts-figure .artwork {
+  --art-height: 15rem;
+  margin-block-start: 0;
+}
+
+/* Das kleine Motiv ist schmaler als ein lesbarer Bildtext. */
+.campaign .facts-figure .artwork figcaption {
+  inline-size: min(34ch, 100%);
+}
+
+.campaign .facts-figure .artwork figcaption strong {
+  margin-block-end: var(--space-3xs);
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: normal;
+}
+
+@media (width >= 48rem) {
+  .campaign .facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* Status-Marke vor einem Fakt: „gilt heute“, „Vorschlag“, „bräuchte ein
    Gesetz“. Eine Aussage über den Stand, keine Kategorie-Etikette. */
 .campaign .tag {
@@ -491,7 +601,7 @@
 .campaign .checklist {
   display: grid;
   gap: var(--space-m) var(--space-xl);
-  margin-block-start: var(--space-l);
+  margin-block-start: var(--space-xl);
   padding: 0;
   list-style: none;
 }
@@ -536,11 +646,6 @@
   font-weight: 560;
 }
 
-/* Zwischenüberschrift mit Abstand zum vorigen Block. */
-.campaign .subhead {
-  margin-block-start: var(--space-xl);
-}
-
 /* Hervorgehobene Aussage: ein Satz, der die Seite trägt. Roter Balken als
    Marke für „hier setzt die Kritik an“, nicht als Trennlinie. */
 .campaign .callout {
@@ -564,25 +669,23 @@
   font-size: var(--step--1);
 }
 
-/* Hinweise: weiche Fläche. */
-.campaign .note {
-  max-inline-size: 70ch;
-  margin-block-start: var(--space-l);
-  padding: var(--space-s) var(--space-m);
-  border-radius: var(--radius);
-  color: var(--ink-2);
-  background: var(--panel);
-  text-wrap: pretty;
+/* Zwei Textspalten: links die Einordnung, rechts die Einzelheiten. Für
+   kurze Abschnitte ohne Bild, damit sie nicht links an der Kante hängen. */
+.campaign .columns {
+  display: grid;
+  align-items: start;
+  gap: var(--space-m) var(--space-2xl);
+  margin-block-start: var(--space-m);
 }
 
-.campaign .note strong {
-  color: var(--ink);
-  font-weight: 560;
+.campaign .columns > * {
+  margin-block-start: 0;
 }
 
-.campaign .note h3 {
-  margin-block-end: var(--space-2xs);
-  color: var(--ink);
+@container campaign (width >= 52rem) {
+  .campaign .columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* ---------- Stationen: Datenweg, Rechtsweg ---------------------------- */
@@ -592,7 +695,7 @@
   display: grid;
   gap: var(--space-m);
   max-inline-size: var(--measure-text);
-  margin-block-start: var(--space-l);
+  margin-block-start: var(--space-xl);
   padding: 0;
   list-style: none;
   counter-reset: station;
@@ -666,12 +769,91 @@
   text-wrap: pretty;
 }
 
+/* Rechtsweg mit Stand: erledigt, jetzt, noch offen. Offene Stationen sind
+   Glas statt Graphit. Die letzte Station ist gestrichelt angebunden, weil
+   über Vorlagen die Gerichte entscheiden. */
+.campaign .route li.next::before {
+  color: light-dark(#202428, #eef0f2);
+  background: linear-gradient(
+    155deg,
+    light-dark(#ffffff, #292d31),
+    light-dark(#e8ecee, #181b1e)
+  );
+  box-shadow:
+    inset 0 1px 0 var(--material-shine),
+    inset 0 0 0 2px light-dark(#ffffff80, #ffffff06);
+}
+
+.campaign .route li.next > strong {
+  color: var(--ink-2);
+}
+
+.campaign .route li:has(+ [data-possible])::after {
+  border-inline-start-style: dashed;
+  box-shadow: none;
+}
+
+/* „Jetzt“ bleibt lesbar, ohne mit dem roten Token zu konkurrieren. */
+.campaign .route .tag.live {
+  color: var(--ink);
+  background: var(--panel-strong);
+}
+
+.campaign .route .tag {
+  margin: 0 0 0 0.6em;
+  padding-block: 0.05em;
+  vertical-align: 0.1em;
+}
+
+.campaign .route + .prose {
+  margin-block-start: var(--space-xl);
+}
+
+/* Ab mittlerer Breite laufen Datenweg und Rechtsweg von links nach rechts:
+   Token auf einer Schiene, darunter Titel und Erklärung. */
+@container campaign (width >= 46rem) {
+  .campaign .flow {
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    gap: var(--space-m);
+    max-inline-size: none;
+  }
+
+  .campaign .flow li {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: var(--space-xs);
+  }
+
+  .campaign .flow li > :is(strong, span) {
+    grid-column: 1;
+  }
+
+  .campaign .flow li > strong {
+    align-self: start;
+    margin-block-start: var(--space-2xs);
+  }
+
+  .campaign .flow li:not(:last-child)::after {
+    inset-block: calc(var(--dot) / 2 - 1px) auto;
+    inset-inline: calc(var(--dot) + var(--space-2xs))
+      calc(-1 * var(--space-m) + var(--space-2xs));
+    border-inline-start: 0;
+    border-block-start: 2px solid light-dark(#c6cbcf, #454b51);
+    box-shadow: 0 1px 0 light-dark(#ffffff, #ffffff08);
+  }
+
+  .campaign .route li:has(+ [data-possible])::after {
+    border-block-start-style: dashed;
+  }
+}
+
 /* ---------- Gegenüberstellung: gemeldet / nicht gemeldet ------------- */
 
 .campaign .compare {
   display: grid;
-  gap: var(--space-l) var(--space-xl);
-  margin-block-start: var(--space-l);
+  gap: var(--space-l) var(--space-2xl);
+  margin-block-start: var(--space-xl);
 }
 
 /* Zwei Spalten wie ein Datenblatt: eine Metallkante über der Meldung, eine
@@ -725,16 +907,18 @@
   box-shadow: inset 0 0 0 1.5px var(--ink-3);
 }
 
-.campaign .compare + .facts {
-  margin-block-start: var(--space-xl);
+@media (width >= 48rem) {
+  .campaign .compare {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-/* ---------- Handlungs- und Spendenkarten ----------------------------- */
+/* ---------- Karten für Organisationen --------------------------------- */
 
 .campaign .cards {
   display: grid;
   gap: var(--space-m);
-  margin-block-start: var(--space-l);
+  margin-block-start: var(--space-xl);
   padding: 0;
   list-style: none;
 }
@@ -743,7 +927,7 @@
   display: flex;
   flex-direction: column;
   padding: var(--space-m) var(--space-m-l);
-  border-radius: var(--radius);
+  border-radius: var(--radius-xl);
   background: var(--panel);
 }
 
@@ -754,16 +938,20 @@
   letter-spacing: -0.02em;
 }
 
-.campaign .cards .where {
-  flex: none;
-  margin-block-end: var(--space-s);
-  color: var(--ink-3);
-}
-
 .campaign .cards p {
   flex: 1;
   color: var(--ink-2);
   text-wrap: pretty;
+}
+
+/* Mehrere Absätze in einer Karte: nur der letzte dehnt sich, damit die
+   Buttons nebeneinanderliegender Karten auf einer Linie bleiben. */
+.campaign .cards p:not(:last-of-type) {
+  flex: none;
+}
+
+.campaign .cards p + p {
+  margin-block-start: var(--space-xs);
 }
 
 .campaign .cards .button {
@@ -771,60 +959,10 @@
   margin-block-start: var(--space-m);
 }
 
-/* Zwei Spalten: Haltung links, Stand rechts. */
-.campaign .split {
-  display: grid;
-  gap: var(--space-l);
-}
-
-.campaign .split .status {
-  padding: var(--space-m) var(--space-m-l);
-  border-radius: var(--radius);
-  background: var(--panel);
-}
-
-.campaign .status h3 {
-  margin-block-end: var(--space-s);
-}
-
-.campaign .status dl {
-  display: grid;
-  gap: var(--space-s);
-}
-
-.campaign .status dt {
-  color: var(--ink-3);
-  font-size: var(--step--1);
-}
-
-.campaign .status dd {
-  font-weight: 560;
-}
-
-.campaign .status .text-link {
-  margin-block-start: var(--space-m);
-}
-
-/* Zwei Spuren im Rechtsweg. */
-.campaign .tracks {
-  display: grid;
-  gap: var(--space-m);
-  margin-block-start: var(--space-l);
-}
-
-.campaign .tracks > * {
-  padding: var(--space-m) var(--space-m-l);
-  border-radius: var(--radius);
-  background: var(--panel);
-}
-
-.campaign .tracks h3 {
-  margin-block-end: var(--space-xs);
-}
-
-.campaign .tracks p {
-  color: var(--ink-2);
-  text-wrap: pretty;
+@media (width >= 48rem) {
+  .campaign .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* ---------- FAQ und Quellen ------------------------------------------- */
@@ -907,29 +1045,35 @@
   text-decoration: underline;
 }
 
-.campaign .research-note {
+@media (width >= 48rem) {
+  .campaign .sources .source-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.campaign :is(.research-note, .aside-note) {
   max-inline-size: 70ch;
   margin-block-start: var(--space-l);
   color: var(--ink-3);
   font-size: var(--step--1);
 }
 
-.campaign .closing {
-  padding-block-start: var(--space-l);
-  border-block-start: 1px solid var(--line);
+/* Leerer Zustand einer Liste: sagt, was hier erscheinen wird. */
+.campaign .empty-state {
+  max-inline-size: var(--measure-text);
+  margin-block-start: var(--space-l);
+  padding: var(--space-m) var(--space-m-l);
+  border: 1px dashed color-mix(in oklab, var(--ink) 22%, transparent);
+  border-radius: var(--radius);
+  color: var(--ink-2);
+  text-wrap: pretty;
 }
 
-.campaign .closing h2 {
-  font-size: var(--step-2);
-}
-
-.campaign .closing-actions {
-  align-items: center;
-  margin-block-start: var(--space-m);
-}
-
-.campaign .closing .text-link {
-  margin-block-start: 0;
+.campaign .empty-state strong {
+  display: block;
+  margin-block-end: var(--space-3xs);
+  color: var(--ink);
+  font-weight: 560;
 }
 
 /* ---------- Generatoren ----------------------------------------------- */
@@ -1046,13 +1190,52 @@
   margin-block-start: var(--space-s);
 }
 
+@media (width >= 48rem) {
+  .campaign .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .campaign .field.wide {
+    grid-column: 1 / -1;
+  }
+
+  .campaign .generator-form,
+  .campaign .generator-output {
+    padding: var(--space-l);
+  }
+
+  .campaign .generator-output textarea {
+    min-block-size: 32rem;
+  }
+}
+
+@media (width >= 80rem) {
+  .campaign .generator-workspace {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: var(--space-l);
+  }
+
+  .campaign .generator-workspace .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .campaign .generator-workspace .field.wide {
+    grid-column: auto;
+  }
+
+  .campaign .generator-output {
+    position: sticky;
+    inset-block-start: var(--space-l);
+  }
+}
+
 /* ---------- Spenden ---------------------------------------------------- */
 
-/* The payment grid responds to the content width beside the sidebar. */
+/* The payment grid responds to the content width. */
 .campaign .donation-options {
   display: grid;
   gap: 2.5rem clamp(2rem, 5cqi, 4rem);
-  margin-block-start: var(--space-l);
+  margin-block-start: var(--space-xl);
 }
 
 .campaign .donation-method {
@@ -1252,79 +1435,16 @@
   font-size: var(--step-1);
 }
 
-/* ---------- Fokus und Breakpoints ------------------------------------- */
+/* ---------- Fokus und schmale Bildschirme ------------------------------ */
 
 .campaign :is(button, a, summary):focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 0.2rem;
 }
 
-@media (width >= 48rem) {
-  .campaign .facts {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .campaign .facts.single {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .campaign .compare,
-  .campaign .tracks,
-  .campaign .cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .campaign .split {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-    align-items: start;
-  }
-
-  .campaign .sources .source-groups {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .campaign .form-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .campaign .field.wide {
-    grid-column: 1 / -1;
-  }
-
-  .campaign .generator-form,
-  .campaign .generator-output {
-    padding: var(--space-l);
-  }
-
-  .campaign .generator-output textarea {
-    min-block-size: 32rem;
-  }
-}
-
-@media (width >= 80rem) {
-  .campaign .generator-workspace {
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: var(--space-l);
-  }
-
-  .campaign .generator-workspace .form-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .campaign .generator-workspace .field.wide {
-    grid-column: auto;
-  }
-
-  .campaign .generator-output {
-    position: sticky;
-    inset-block-start: var(--space-l);
-  }
-}
-
 @media (width < 36rem) {
   .campaign .hero-actions .button,
-  .campaign .output-actions > *,
-  .campaign .closing-actions .button {
+  .campaign .output-actions > * {
     inline-size: 100%;
   }
 
@@ -1336,191 +1456,41 @@
   .campaign .glance dd {
     margin-block-end: var(--space-xs);
   }
-
-}
-
-/* Action cards follow their content column, including beside the sidebar. */
-.campaign .cards.three {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-@container campaign (width >= 38rem) {
-  .campaign .cards.three {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .campaign .cards.three > :last-child {
-    grid-column: 1 / -1;
-  }
-}
-
-@container campaign (width >= 54rem) {
-  .campaign .cards.three {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .campaign .cards.three > :last-child {
-    grid-column: auto;
-  }
-}
-
-/* Verfahrensstand über der Schlagzeile: gesetzt wie die Navigation, damit er
-   als Einordnung liest und nicht als Hinweis oder Eilmeldung. */
-.campaign .status-line {
-  inline-size: fit-content;
-  margin-block-end: var(--space-s);
-  color: var(--ink-3);
-  font-size: var(--step--1);
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-decoration: none;
-  text-transform: uppercase;
-}
-
-.campaign .status-line span {
-  color: var(--ink);
-}
-
-.campaign .status-line:hover span {
-  color: var(--accent);
-}
-
-/* Rechtsweg mit Stand: erledigt, jetzt, noch offen. Offene Stationen sind
-   Glas statt Graphit. Die letzte Station ist gestrichelt angebunden, weil
-   über Vorlagen die Gerichte entscheiden. */
-.campaign .route li.next::before {
-  color: light-dark(#202428, #eef0f2);
-  background: linear-gradient(
-    155deg,
-    light-dark(#ffffff, #292d31),
-    light-dark(#e8ecee, #181b1e)
-  );
-  box-shadow:
-    inset 0 1px 0 var(--material-shine),
-    inset 0 0 0 2px light-dark(#ffffff80, #ffffff06);
-}
-
-.campaign .route li.next > strong {
-  color: var(--ink-2);
-}
-
-.campaign .route li:has(+ [data-possible])::after {
-  border-inline-start-style: dashed;
-  box-shadow: none;
-}
-
-/* „Jetzt“ bleibt lesbar, ohne mit dem roten Token zu konkurrieren. */
-.campaign .route .tag.live {
-  color: var(--ink);
-  background: var(--panel-strong);
-}
-
-.campaign .route .tag {
-  margin: 0 0 0 0.6em;
-  padding-block: 0.05em;
-  vertical-align: 0.1em;
-}
-
-.campaign .route + .prose {
-  margin-block-start: var(--space-l);
-}
-
-/* Leerer Zustand einer Liste: sagt, was hier erscheinen wird. */
-.campaign .empty-state {
-  max-inline-size: var(--measure-text);
-  margin-block-start: var(--space-l);
-  padding: var(--space-m) var(--space-m-l);
-  border: 1px dashed color-mix(in oklab, var(--ink) 22%, transparent);
-  border-radius: var(--radius);
-  color: var(--ink-2);
-  text-wrap: pretty;
-}
-
-.campaign .empty-state strong {
-  display: block;
-  margin-block-end: var(--space-3xs);
-  color: var(--ink);
-  font-weight: 560;
-}
-
-/* Kennzahlen am Handy: kompakter, damit die drei Werte nicht einen ganzen
-   Bildschirm füllen. */
-@container campaign (width < 46rem) {
-  .campaign .keyfigures {
-    gap: var(--space-s);
-  }
-
-  .campaign .keyfigures > div {
-    --rule: 1px;
-    gap: var(--space-3xs);
-    padding-block-start: var(--space-xs);
-  }
-
-  .campaign .keyfigures dd {
-    font-size: 1.75rem;
-  }
-}
-
-/* Einordnung im Hero: steht nach den Buttons und leitet zu den Kennzahlen. */
-.campaign .hero-context {
-  margin-block-start: var(--space-xl);
-}
-
-.campaign .hero-context + .keyfigures {
-  margin-block-start: var(--space-l);
-}
-
-/* Mehrere Absätze in einer Karte: nur der letzte dehnt sich, damit die
-   Buttons nebeneinanderliegender Karten auf einer Linie bleiben. */
-.campaign .cards p:not(:last-of-type) {
-  flex: none;
-}
-
-.campaign .cards p + p {
-  margin-block-start: var(--space-xs);
-}
-
-.campaign .participation-note {
-  margin-block-start: var(--space-m);
 }
 
 /* ---------- Illustrationen --------------------------------------------- */
 
 /* Freigestellte Renderings ohne eigenen Hintergrund, frei auf der Seite wie
    im Kontaktbogen des Bildlabors. Die Seitenfarbe scheint durch, deshalb
-   tragen sie hell wie dunkel ohne zweite Fassung. Kein Rahmen, keine Fläche;
-   die Höhe ist gedeckelt, damit hohe Motive den Text nicht verdrängen. */
+   tragen sie hell wie dunkel ohne zweite Fassung. Kein Rahmen, keine Fläche.
+
+   Die Höhe ist gedeckelt, damit hohe Motive den Text nicht verdrängen. Die
+   Breite folgt aus Höhe und Seitenverhältnis (--ratio setzt Artwork.astro),
+   deshalb steht die Box schon, bevor das Bild geladen ist. Die
+   Bildunterschrift ist genauso breit wie das Bild und bricht bündig darunter
+   um. */
 .campaign .artwork {
   --art-height: 22rem;
+  --art-width: min(100%, calc(var(--art-height) * var(--ratio, 1.3333)));
   display: grid;
   justify-items: center;
   gap: var(--space-s);
   margin-block-start: var(--space-xl);
 }
 
-/* Die Figur ist so breit wie das Bild, die Bildunterschrift bricht darunter
-   bündig um, statt am Spaltenrand zu kleben. */
-.campaign .artwork:not(.artwork-wide) {
-  inline-size: fit-content;
-  max-inline-size: 100%;
-  margin-inline: auto;
-}
-
-.campaign .artwork:not(.artwork-wide) figcaption {
-  contain: inline-size;
+.campaign .artwork picture {
+  display: contents;
 }
 
 .campaign .artwork img {
   display: block;
-  inline-size: auto;
-  max-inline-size: 100%;
+  inline-size: var(--art-width);
   block-size: auto;
-  max-block-size: var(--art-height);
+  aspect-ratio: var(--ratio, 1.3333);
 }
 
 .campaign .artwork figcaption {
-  justify-self: stretch;
-  max-inline-size: 52ch;
+  inline-size: var(--art-width);
   color: var(--ink-3);
   font-size: var(--step--1);
   line-height: 1.45;
@@ -1532,6 +1502,18 @@
   margin-block-end: var(--space-3xs);
   color: var(--ink);
   font-weight: 560;
+}
+
+.campaign .artwork-zoom-link {
+  display: inline-block;
+  margin-inline-start: 0.4em;
+  color: var(--accent);
+  font-weight: 560;
+  text-decoration: none;
+}
+
+.campaign .artwork-zoom-link::after {
+  content: " ↗";
 }
 
 /* Breit: das Motiv links, die Bildunterschrift wie ein Museumsschild rechts
@@ -1551,6 +1533,10 @@
     align-items: end;
     gap: var(--space-l);
   }
+
+  .campaign .artwork-wide figcaption {
+    inline-size: auto;
+  }
 }
 
 /* Text und Illustration nebeneinander, sobald die Spalte breit genug ist.
@@ -1558,8 +1544,18 @@
 .campaign .art-split {
   display: grid;
   align-items: start;
-  gap: var(--space-l) var(--space-xl);
-  margin-block-start: var(--space-l);
+  gap: var(--space-l) var(--space-2xl);
+  margin-block-start: var(--space-xl);
+}
+
+.campaign section > .art-split:first-child {
+  margin-block-start: 0;
+}
+
+/* Beginnt die Textspalte mit ihrer eigenen Überschrift, stehen Text und
+   Bild mittig zueinander, statt unter kurzem Text eine Lücke zu lassen. */
+.campaign .art-split:has(> div > :is(h2, h3):first-child) {
+  align-items: center;
 }
 
 .campaign .art-split > .artwork {
@@ -1574,10 +1570,6 @@
   margin-block-start: var(--space-xs);
 }
 
-.campaign h2 + .art-split {
-  margin-block-start: var(--space-s);
-}
-
 .campaign .art-split .artwork-side {
   --art-height: 19rem;
 }
@@ -1587,11 +1579,9 @@
     grid-template-columns: minmax(0, 1fr) minmax(17rem, 23rem);
   }
 
-  /* Gleich breit für Profile mit lesbaren Beschriftungen. Oben bündig,
-     damit der Text direkt unter der Überschrift beginnt. */
+  /* Gleich breit für Profile mit lesbaren Beschriftungen. */
   .campaign .art-split.even {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin-block-start: var(--space-xl);
   }
 
   /* Motiv links, Text rechts: bricht die Folge gleich gebauter Blöcke. */
@@ -1601,7 +1591,7 @@
   }
 
   .campaign .art-split.even .artwork-side {
-    --art-height: 21rem;
+    --art-height: 22rem;
   }
 
   /* Aufeinanderfolgende Bildblöcke brauchen mehr Luft als Text zu Text. */
@@ -1610,58 +1600,31 @@
   }
 }
 
-/* Hero mit Illustration: rechts neben den ersten Zeilen. Auf der Startseite
-   läuft die Schlagzeile über die volle Breite und das Bild steht neben Lead
-   und Buttons. Schmal folgt es dem Text. */
-.campaign .artwork-hero {
-  --art-height: 17rem;
-}
-
-@container campaign (width >= 56rem) {
-  .campaign .hero:has(> .artwork) {
-    grid-template-columns: minmax(0, 1fr) minmax(15rem, 22rem);
-    column-gap: var(--space-xl);
-  }
-
-  .campaign .hero:has(> .artwork) > * {
-    grid-column: 1;
-  }
-
-  .campaign .hero > .artwork {
-    --art-height: 20rem;
-    grid-column: 2;
-    grid-row: 1 / span 3;
-    align-self: center;
-    margin-block-start: 0;
-  }
-
-  .campaign.landing .hero > :is(.status-line, h1, .keyfigures) {
-    grid-column: 1 / -1;
-  }
-
-  /* Neben Lead, Buttons und Einordnung, damit die Bildhöhe keine Lücke
-     zwischen Lead und Buttons aufreißt. */
-  .campaign.landing .hero > .artwork {
-    grid-row: 3 / span 3;
-  }
-}
-
 /* Dossier: „Bin ich betroffen?“ steht rechts neben der Schlagzeile. */
 @container campaign (width >= 60rem) {
-  .campaign.dossier .hero:has(> .check) {
+  .campaign .hero:has(> .check) {
     grid-template-columns: minmax(0, 1fr) minmax(18rem, 26rem);
+    align-items: start;
+  }
+
+  .campaign .hero > .check {
+    margin-block-start: var(--space-s);
+  }
+}
+
+/* Häufige Fragen: Überschrift links, Antworten rechts, damit die Liste
+   nicht an der linken Kante hängt. */
+@container campaign (width >= 60rem) {
+  .campaign .faq {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    align-items: start;
     column-gap: var(--space-2xl);
   }
 
-  .campaign.dossier .hero:has(> .check) > * {
-    grid-column: 1;
-  }
-
-  .campaign.dossier .hero > .check {
-    grid-column: 2;
-    grid-row: 1 / span 5;
-    align-self: start;
-    margin-block-start: var(--space-s);
+  .campaign .faq .faq-list {
+    max-inline-size: none;
+    margin-block-start: 0;
   }
 }
 
@@ -1669,17 +1632,23 @@
 
 /* Die Startseite erzählt in Szenen: eine große Illustration, eine Zeile als
    Überschrift, ein bis zwei Sätze. Text und Bild wechseln die Seite; das
-   Musterblatt der Meldung bekommt die breitere Bildspalte. */
+   Musterblatt der Meldung bekommt die breitere Bildspalte. Schmal steht das
+   Bild über dem Text. */
 .campaign .story {
   display: grid;
-  gap: var(--space-2xl-3xl);
-  margin-block-start: var(--space-xl-2xl);
+  gap: clamp(3.5rem, 2rem + 4vw, 6rem);
+  margin-block-start: var(--space-xl);
 }
 
 .campaign .scene {
   display: grid;
   align-items: center;
-  gap: var(--space-m) var(--space-xl);
+  gap: var(--space-m) var(--space-2xl);
+}
+
+.campaign .scene > .artwork {
+  order: -1;
+  margin-block-start: 0;
 }
 
 .campaign .scene-text h3 {
@@ -1687,13 +1656,13 @@
   font-size: clamp(1.5rem, 1.15rem + 1.1vw, 2rem);
   font-weight: 600;
   font-stretch: 94%;
-  line-height: 1.08;
+  line-height: 1.1;
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
-.campaign .scene-text p {
-  max-inline-size: 46ch;
+.campaign .scene-text > p {
+  max-inline-size: 44ch;
   margin-block-start: var(--space-s);
   color: var(--ink-2);
   font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
@@ -1701,8 +1670,12 @@
   text-wrap: pretty;
 }
 
-.campaign .scene .artwork {
-  margin-block-start: 0;
+/* Was das Bild zeigt, wo es nicht die Jahresmeldung selbst ist. */
+.campaign .scene-text > .scene-note {
+  margin-block-start: var(--space-m);
+  color: var(--ink-3);
+  font-size: var(--step--1);
+  line-height: 1.45;
 }
 
 .campaign .artwork-scene {
@@ -1716,6 +1689,10 @@
 @container campaign (width >= 52rem) {
   .campaign .scene {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+
+  .campaign .scene > .artwork {
+    order: 0;
   }
 
   .campaign .scene:nth-child(even) {
@@ -1734,22 +1711,282 @@
   .campaign .scene.scene-wide:nth-child(even) {
     grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
   }
+
+  /* Paar: zwei Szenen nebeneinander, das Bild über dem Text, beide auf
+     gleicher Höhe. Bricht den Wechsel links, rechts. */
+  .campaign .story.pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    column-gap: var(--space-2xl);
+  }
+
+  .campaign .story.pair .scene {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .campaign .story.pair .scene > .artwork {
+    grid-row: 1;
+    grid-column: 1;
+    justify-items: start;
+  }
+
+  .campaign .story.pair .artwork-scene {
+    --art-height: 21rem;
+  }
 }
 
-.campaign .artwork-zoom-link {
-  display: inline-block;
-  margin-inline-start: 0.4em;
-  color: var(--accent);
-  font-weight: 560;
-  text-decoration: none;
-}
-
-.campaign .artwork-zoom-link::after {
-  content: " ↗";
+.campaign h2 + .story {
+  margin-block-start: var(--space-l);
 }
 
 .campaign .story + .text-link {
   margin-block-start: var(--space-xl);
+}
+
+/* ---------- Was du tun kannst ------------------------------------------ */
+
+/* Spenden trägt den Prozess und steht deshalb groß auf einer weichen
+   Fläche, mit Bild. Die übrigen Wege folgen als drei kurze Einträge. */
+.campaign .act {
+  display: grid;
+  gap: var(--space-l);
+  margin-block-start: var(--space-l);
+}
+
+.campaign .act-lead {
+  display: grid;
+  align-items: center;
+  gap: var(--space-m) var(--space-2xl);
+  padding: var(--space-m-l);
+  border-radius: var(--radius-xl);
+  background: var(--panel);
+}
+
+.campaign .act-lead .artwork {
+  --art-height: 13rem;
+  margin-block-start: 0;
+}
+
+.campaign .act-lead h3 {
+  font-size: clamp(1.5rem, 1.15rem + 1.1vw, 2rem);
+  font-weight: 600;
+  font-stretch: 94%;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.campaign .act-lead p {
+  max-inline-size: 40ch;
+  margin-block-start: var(--space-xs);
+  color: var(--ink-2);
+  font-size: var(--step-1);
+  line-height: 1.45;
+}
+
+.campaign .act-lead .button {
+  margin-block-start: var(--space-m);
+}
+
+.campaign .act-list {
+  display: grid;
+  gap: 0 var(--space-l);
+  padding: 0;
+  list-style: none;
+}
+
+.campaign .act-list li {
+  border-block-start: 1px solid var(--line);
+}
+
+.campaign .act-list a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-2xs) var(--space-s);
+  padding-block: var(--space-s) var(--space-m);
+  color: inherit;
+  text-decoration: none;
+}
+
+.campaign .act-list strong {
+  font-size: var(--step-1);
+  font-weight: 560;
+  line-height: 1.3;
+  letter-spacing: -0.012em;
+}
+
+.campaign .act-list span {
+  grid-column: 1;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.campaign .act-list a::after {
+  content: "→";
+  grid-row: 1;
+  grid-column: 2;
+  color: var(--accent);
+  font-size: var(--step-1);
+  font-weight: 560;
+  transition: translate 160ms ease;
+}
+
+.campaign .act-list a:hover strong {
+  color: var(--accent);
+}
+
+.campaign .act-list a:hover::after {
+  translate: 0.25em 0;
+}
+
+@container campaign (width >= 46rem) {
+  .campaign .act-lead {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+
+  .campaign .act-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Leitsatz und Ziel ------------------------------------------ */
+
+/* Der Leitsatz steht als einziger Moment der Seite mittig: eine Pause
+   zwischen den Werkzeugen und dem Absender. Darunter zwei gleich schwere
+   Spalten, links bündig. */
+.campaign .vision {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.campaign .statement {
+  max-inline-size: 20ch;
+  font-size: clamp(2.125rem, 1.2rem + 3vw, 3.5rem);
+  font-weight: 600;
+  font-stretch: 94%;
+  line-height: 1.04;
+  letter-spacing: -0.026em;
+  text-wrap: balance;
+}
+
+.campaign .statement span {
+  display: block;
+  color: var(--accent);
+}
+
+.campaign .vision > .section-intro {
+  max-inline-size: 54ch;
+  margin-block-start: var(--space-l);
+}
+
+.campaign .vision-points {
+  display: grid;
+  gap: var(--space-xl) var(--space-2xl);
+  inline-size: 100%;
+  max-inline-size: 64rem;
+  margin-block-start: var(--space-2xl);
+  text-align: start;
+}
+
+.campaign .vision-points h3 {
+  font-size: var(--step-2);
+  font-weight: 600;
+  letter-spacing: -0.018em;
+}
+
+.campaign .vision-points .checklist {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-s);
+  margin-block-start: var(--space-m);
+}
+
+.campaign .vision-points .checklist li {
+  color: var(--ink);
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.campaign .vision-points .checklist li::before {
+  inset-block-start: 0;
+}
+
+.campaign .vision-points p:not(.precedent-year) {
+  max-inline-size: 48ch;
+  margin-block-start: var(--space-s);
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+@container campaign (width >= 46rem) {
+  .campaign .vision-points {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Präzedenzfall ---------------------------------------------- */
+
+/* Das Jahr steht in gefrästem Metall neben dem Absatz, der es erzählt. */
+.campaign .precedent {
+  display: grid;
+  align-items: start;
+  gap: var(--space-2xs) var(--space-l);
+  max-inline-size: 52rem;
+  margin-block-start: var(--space-xl);
+}
+
+.campaign .precedent .prose {
+  margin-block-start: 0;
+}
+
+.campaign .precedent-year {
+  inline-size: fit-content;
+  background: linear-gradient(
+    170deg,
+    light-dark(#8e969d, #e3e6e8),
+    light-dark(#3c4248, #7d858c)
+  );
+  background-clip: text;
+  color: transparent;
+  font-size: clamp(3rem, 2rem + 4vw, 4.75rem);
+  font-weight: 600;
+  font-stretch: 94%;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+}
+
+@container campaign (width >= 40rem) {
+  .campaign .precedent {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}
+
+/* Im Ziel steht das Jahr über der Überschrift, nicht daneben. */
+.campaign .vision-points .precedent {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-s);
+  margin-block-start: 0;
+}
+
+/* ---------- Wer dahintersteht ------------------------------------------ */
+
+.campaign .about {
+  display: grid;
+  align-items: start;
+  gap: var(--space-l) var(--space-2xl);
+  margin-block-start: var(--space-m);
+}
+
+.campaign .about > div > :first-child {
+  margin-block-start: 0;
+}
+
+@container campaign (width >= 52rem) {
+  .campaign .about {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
 }
 
 /* ---------- Grafiken zum Teilen ------------------------------------------ */
@@ -1758,7 +1995,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
   gap: var(--space-l) var(--space-m);
-  margin-block-start: var(--space-l);
+  margin-block-start: var(--space-xl);
   padding: 0;
   list-style: none;
 }
@@ -1798,47 +2035,6 @@
 .campaign .share-grid .share-downloads a::before {
   content: "↓ ";
   white-space: pre;
-}
-
-/* ---------- Stationen quer ------------------------------------------- */
-
-/* Ab mittlerer Breite laufen Datenweg und Rechtsweg von links nach rechts:
-   Token auf einer Schiene, darunter Titel und Erklärung. */
-@container campaign (width >= 46rem) {
-  .campaign .flow {
-    grid-auto-columns: minmax(0, 1fr);
-    grid-auto-flow: column;
-    gap: var(--space-m);
-    max-inline-size: none;
-  }
-
-  .campaign .flow li {
-    grid-template-columns: minmax(0, 1fr);
-    align-content: start;
-    gap: var(--space-xs);
-  }
-
-  .campaign .flow li > :is(strong, span) {
-    grid-column: 1;
-  }
-
-  .campaign .flow li > strong {
-    align-self: start;
-    margin-block-start: var(--space-2xs);
-  }
-
-  .campaign .flow li:not(:last-child)::after {
-    inset-block: calc(var(--dot) / 2 - 1px) auto;
-    inset-inline: calc(var(--dot) + var(--space-2xs))
-      calc(-1 * var(--space-m) + var(--space-2xs));
-    border-inline-start: 0;
-    border-block-start: 2px solid light-dark(#c6cbcf, #454b51);
-    box-shadow: 0 1px 0 light-dark(#ffffff, #ffffff08);
-  }
-
-  .campaign .route li:has(+ [data-possible])::after {
-    border-block-start-style: dashed;
-  }
 }
 
 /* ---------- Zeitleiste ------------------------------------------------- */
@@ -1912,64 +2108,4 @@
     border-inline-start: 0;
     border-block-start: 2px solid light-dark(#c6cbcf, #454b51);
   }
-}
-
-/* ---------- Präzedenzfall ---------------------------------------------- */
-
-/* Das Jahr steht in gefrästem Metall neben dem Absatz, der es erzählt. */
-.campaign .precedent {
-  display: grid;
-  align-items: start;
-  gap: var(--space-2xs) var(--space-l);
-  max-inline-size: 52rem;
-  margin-block-start: var(--space-xl);
-}
-
-.campaign .precedent .prose {
-  margin-block-start: 0;
-}
-
-.campaign .precedent-year {
-  inline-size: fit-content;
-  background: linear-gradient(
-    170deg,
-    light-dark(#8e969d, #e3e6e8),
-    light-dark(#3c4248, #7d858c)
-  );
-  background-clip: text;
-  color: transparent;
-  font-size: clamp(3rem, 2rem + 4vw, 4.75rem);
-  font-weight: 600;
-  font-stretch: 94%;
-  line-height: 0.9;
-  letter-spacing: -0.045em;
-  font-variant-numeric: tabular-nums;
-}
-
-@container campaign (width >= 40rem) {
-  .campaign .precedent {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-}
-
-/* ---------- Leitsatz --------------------------------------------------- */
-
-.campaign .statement {
-  max-inline-size: 20ch;
-  margin-block-start: var(--space-s);
-  font-size: clamp(1.875rem, 1.2rem + 2.6vw, 3rem);
-  font-weight: 600;
-  font-stretch: 94%;
-  line-height: 1.06;
-  letter-spacing: -0.026em;
-  text-wrap: balance;
-}
-
-.campaign .statement span {
-  display: block;
-  color: var(--accent);
-}
-
-.campaign .statement + .art-split {
-  margin-block-start: var(--space-l);
 }

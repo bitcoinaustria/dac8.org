@@ -12,31 +12,31 @@ const researchDate = "20. September 2026"
 const concerns = [
   {
     title: "Alle, nicht nur Verdächtige.",
-    text: "Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, bevor überhaupt feststeht, wer gemeldet wird. Ein Anlass oder Verdacht ist nicht nötig. Genau diese Vorratslogik lehnen wir ab.",
+    text: "Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, bevor feststeht, wer gemeldet wird. Ohne Anlass, ohne Verdacht. Genau diese Vorratslogik lehnen wir ab.",
   },
   {
     title: "Ein Profil über Jahre.",
-    text: "Anders als bei Bankkonten werden je Kryptowert auch Stückzahlen und die Zahl der Vorgänge gemeldet. Jahr für Jahr ergibt das ein Bild, wie aktiv jemand ist, auch wenn der aktuelle Bestand nicht dabei ist.",
+    text: "Anders als bei Bankkonten werden je Kryptowert auch Stückzahlen und die Zahl der Vorgänge gemeldet. Jahr für Jahr zeigt das, wie aktiv jemand ist.",
   },
   {
     title: "Sortierbar nach Vermögen.",
-    text: "Aus Summe und Anzahl der Käufe ergibt sich die durchschnittliche Kaufgröße: Ein kleiner monatlicher Sparplan sieht anders aus als wenige große Käufe. So lässt sich für jede gemeldete Person grob schätzen, wie viel Geld sie in Krypto bewegt, ob die Schätzung stimmt oder nicht. In falschen Händen lassen sich damit gezielt Menschen herausfiltern, die vermögend wirken.",
+    text: "Aus Summe und Anzahl der Käufe lässt sich grob schätzen, wie viel Geld jemand in Krypto bewegt, ob die Schätzung stimmt oder nicht. In falschen Händen lassen sich so Menschen herausfiltern, die vermögend wirken.",
   },
   {
     title: "Ein Datenleck ist nicht rückgängig zu machen.",
-    text: "Ein Leck beim Anbieter kann die Verbindung zwischen deinem Namen und Blockchain-Vorgängen offenlegen. Eine einmal verbreitete Zuordnung lässt sich kaum zurückholen. Sie kann weitere Zahlungen erschließen und Menschen zur Zielscheibe machen.",
+    text: "Ein Leck beim Anbieter kann die Verbindung zwischen deinem Namen und Blockchain-Vorgängen offenlegen. Eine verbreitete Zuordnung lässt sich kaum zurückholen und kann weitere Zahlungen erschließen.",
   },
   {
     title: "Der Zweck wächst mit.",
-    text: "Ausgetauschte Daten dürfen laut Richtlinie nicht nur für Steuern, sondern auch für Zoll, Geldwäschebekämpfung und unter Bedingungen für Sanktionen genutzt werden. Jeder neue Zweck braucht eine eigene, klare Grenze.",
+    text: "Laut Richtlinie dürfen die Daten auch für Zoll, Geldwäschebekämpfung und unter Bedingungen für Sanktionen genutzt werden. Jeder neue Zweck braucht eine eigene, klare Grenze.",
   },
   {
     title: "Fehler reisen mit.",
-    text: "Ein falscher Steuerwohnsitz, eine falsche Bewertung oder ein missverstandener Transfer kann an andere Staaten weitergegeben werden. Je mehr Stellen beteiligt sind, desto schwerer wird die Korrektur.",
+    text: "Ein falscher Steuerwohnsitz, eine falsche Bewertung oder ein missverstandener Transfer kann an andere Staaten gehen. Je mehr Stellen beteiligt sind, desto schwerer die Korrektur.",
   },
   {
     title: "Zehn Jahre ohne Begründung.",
-    text: "Übermittelte Kryptodaten werden beim Anbieter erst zehn Jahre nach dem Meldezeitraum gelöscht. Bei entsprechenden Bankkontendaten sind es fünf Jahre. Die Gesetzesmaterialien begründen diesen Unterschied nicht.",
+    text: "Übermittelte Kryptodaten werden beim Anbieter erst zehn Jahre nach dem Meldezeitraum gelöscht, entsprechende Bankkontendaten nach fünf. Die Gesetzesmaterialien begründen den Unterschied nicht.",
   },
 ]
 
@@ -85,7 +85,7 @@ const faqs = [
   {
     question: "Ist DAC8 rechtswidrig?",
     answer:
-      "Wir halten die österreichische Erfassung aller Kunden für grundrechtswidrig und wollen sie gerichtlich prüfen lassen. Ob die konkreten Pflichten verhältnismäßig sind, müssen die Gerichte entscheiden.",
+      "Wir sind überzeugt, dass die österreichische Erfassung aller Kunden gegen Grundrechte verstößt, und bringen die Frage über die Datenschutzbehörde vor die Gerichte. Ob die konkreten Pflichten verhältnismäßig sind, entscheiden die Gerichte.",
   },
   {
     question: "Was passiert mit meinen Daten auf dieser Website?",
@@ -111,21 +111,23 @@ const faqs = [
 
   <article class="campaign dossier">
     <header class="hero">
-      <h1>Was DAC8 verlangt. <span>Und was nicht.</span></h1>
-      <p class="lead">
-        Welche Daten über dich gemeldet werden, was beim Anbieter gespeichert
-        bleibt und warum wir dagegen vorgehen.
-      </p>
-      <nav class="hero-actions" aria-label="Direkteinstieg">
-        <a class="button primary" href="#gemeldet">Was gemeldet wird</a>
-        <a class="button" href="#rechtsweg">Wie wir vorgehen</a>
-      </nav>
-      <dl class="glance" aria-label="Aktueller Stand">
-        <dt>Gesetz in Kraft</dt>
-        <dd>seit 1. Jänner 2026</dd>
-        <dt>Erste Meldung</dt>
-        <dd>für das Jahr 2026, spätestens am 31. Juli 2027</dd>
-      </dl>
+      <div class="hero-text">
+        <h1>Was DAC8 verlangt. <span>Und was nicht.</span></h1>
+        <p class="lead">
+          Welche Daten über dich gemeldet werden, was beim Anbieter gespeichert
+          bleibt und warum wir dagegen vorgehen.
+        </p>
+        <nav class="hero-actions" aria-label="Direkteinstieg">
+          <a class="button primary" href="#gemeldet">Was gemeldet wird</a>
+          <a class="button" href="#rechtsweg">Wie wir vorgehen</a>
+        </nav>
+        <dl class="glance" aria-label="Aktueller Stand">
+          <dt>Gesetz in Kraft</dt>
+          <dd>seit 1. Jänner 2026</dd>
+          <dt>Erste Meldung</dt>
+          <dd>für das Jahr 2026, spätestens am 31. Juli 2027</dd>
+        </dl>
+      </div>
       <AffectedCheck language="de" />
     </header>
 
@@ -284,23 +286,18 @@ const faqs = [
           <h3>Datenlecks gefährden Menschen</h3>
           <p class="prose">
             Gespeicherte Verbindungen zwischen Identität und Finanzdaten sind
-            ein lohnendes Ziel für Angreifer. Lange Aufbewahrungspflichten
-            halten diese Daten über Jahre verfügbar. Gelangen sie in falsche
-            Hände, können sie für Betrug, Erpressung oder die Auswahl von Opfern
-            genutzt werden.
-          </p>
-          <p class="prose">
-            Die
+            ein lohnendes Ziel für Angreifer, und lange Aufbewahrungspflichten
+            halten sie über Jahre verfügbar. Die
             <a
               href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
               >französische Gendarmerie</a
             >
             berichtet, dass Täter gestohlene Kundendaten des
-            Krypto-Steuerdienstes Waltio zur Auswahl von Angriffszielen nutzen.
-            Sie beschreibt Entführungen und körperliche Gewalt. Schon die teils
-            falsche Annahme, jemand besitze größere Kryptobestände, kann ihn und
-            seine Angehörigen gefährden. Datensparsamkeit und kurze
-            Speicherfristen schützen deshalb auch die persönliche Sicherheit.
+            Krypto-Steuerdienstes Waltio zur Auswahl von Angriffszielen nutzen,
+            und beschreibt Entführungen und körperliche Gewalt. Schon die
+            falsche Annahme, jemand besitze viel Krypto, kann ihn und seine
+            Angehörigen gefährden. Datensparsamkeit und kurze Speicherfristen
+            schützen deshalb auch die persönliche Sicherheit.
           </p>
         </div>
         <Artwork id="wrenchAttack" language="de" />
@@ -309,16 +306,18 @@ const faqs = [
 
     <section id="ausblick" aria-labelledby="ausblick-heading">
       <h2 id="ausblick-heading">Was noch kommen könnte</h2>
-      <p class="section-intro">
-        Eine Meldeinfrastruktur lässt sich später erweitern. Deshalb wollen wir
-        der Datensammlung jetzt wirksame Grenzen setzen.
-      </p>
-      <p class="prose">
-        Eine Pflicht zur Meldung von Wallet-Adressen, einzelnen Transaktionen
-        oder Vorgängen vor 2026 bräuchte eine Gesetzesänderung. Das ist derzeit
-        nicht beschlossen. Auch der aktuelle Vorschlag zur Neufassung der
-        Richtlinie sieht dies nicht vor.
-      </p>
+      <div class="columns">
+        <p class="section-intro">
+          Eine Meldeinfrastruktur lässt sich später erweitern. Deshalb wollen
+          wir der Datensammlung jetzt wirksame Grenzen setzen.
+        </p>
+        <p class="prose">
+          Eine Pflicht zur Meldung von Wallet-Adressen, einzelnen Transaktionen
+          oder Vorgängen vor 2026 bräuchte eine Gesetzesänderung. Das ist
+          derzeit nicht beschlossen. Auch der aktuelle Vorschlag zur Neufassung
+          der Richtlinie sieht dies nicht vor.
+        </p>
+      </div>
     </section>
 
     <section id="forderungen" aria-labelledby="forderungen-heading">
@@ -327,8 +326,7 @@ const faqs = [
         Der Staat muss begründen, warum ein Eingriff in dein Privatleben
         notwendig ist. Der Verweis auf Geldwäsche oder Steuerhinterziehung
         ersetzt diesen Nachweis nicht. Wir fordern gezielte Ermittlungen bei
-        konkretem Verdacht und wirksamen Schutz für Unbeteiligte. Ein politisch
-        erklärtes Ziel ist kein Freibrief für Massenüberwachung.
+        konkretem Verdacht und wirksamen Schutz für Unbeteiligte.
       </p>
       <ul class="checklist">
         <li>
@@ -383,21 +381,30 @@ const faqs = [
         {campaignStatus.de.text}
       </p>
       <LegalRoute language="de" />
-      <p class="prose">
-        Über eine Vorlage an den EuGH entscheidet das Gericht. Die Beschwerde
-        stoppt die Datenerfassung nicht automatisch; wie lange das Verfahren
-        dauert, steht noch nicht fest.
-      </p>
-      <p class="prose">
-        Ob und wie sich Privatpersonen beteiligen können, klären wir im weiteren
-        Verlauf. Bis dahin kannst du den
-        <a href="/mitmachen/#spenden">Prozess mit einer Spende unterstützen</a>
-        und die
-        <a href="/verfahren/">nächsten Schritte verfolgen</a>.
-      </p>
+      <ul class="facts">
+        <li>
+          <strong>Was die Beschwerde nicht tut</strong>
+          <p>
+            Sie stoppt die Datenerfassung nicht automatisch. Über eine Vorlage
+            an den EuGH entscheidet das Gericht; wie lange das Verfahren dauert,
+            steht noch nicht fest.
+          </p>
+        </li>
+        <li>
+          <strong>Wie du dich beteiligen kannst</strong>
+          <p>
+            Ob und wie sich Privatpersonen beteiligen können, klären wir im
+            weiteren Verlauf. Bis dahin kannst du den
+            <a href="/mitmachen/#spenden"
+              >Prozess mit einer Spende unterstützen</a
+            >
+            und die <a href="/verfahren/">nächsten Schritte verfolgen</a>.
+          </p>
+        </li>
+      </ul>
     </section>
 
-    <section id="faq" aria-labelledby="faq-heading">
+    <section id="faq" class="faq" aria-labelledby="faq-heading">
       <h2 id="faq-heading">Häufige Fragen</h2>
       <div class="faq-list">
         {faqs.map((faq) => (

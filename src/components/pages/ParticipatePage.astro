@@ -27,51 +27,53 @@ const other = en ? "de" : "en"
   <MetaPage slot="head" />
   <article class="campaign">
     <header class="hero" data-share-scope>
-      <h1>
-        {en ? "Help defend " : "Hilf mit, "}
-        <span
-          >{en ? "financial privacy." : "Privatsphäre zu verteidigen."}</span
+      <div class="hero-text">
+        <h1>
+          {en ? "Help defend " : "Hilf mit, "}
+          <span
+            >{en ? "financial privacy." : "Privatsphäre zu verteidigen."}</span
+          >
+        </h1>
+        <p class="lead">
+          {en ? "Help us challenge mass surveillance of our finances: fund the case, write to your MPs and share the campaign." : "Hilf uns, der Massenüberwachung unserer Finanzen Grenzen zu setzen: Trage den Prozess mit, schreib deinen Abgeordneten und teile die Kampagne."}
+        </p>
+        <nav
+          class="hero-actions"
+          aria-label={en ? "Support the campaign" : "Kampagne unterstützen"}
         >
-      </h1>
-      <p class="lead">
-        {en ? "Help us challenge mass surveillance of our finances: fund the case, write to your MPs and share the campaign." : "Hilf uns, der Massenüberwachung unserer Finanzen Grenzen zu setzen: Trage den Prozess mit, schreib deinen Abgeordneten und teile die Kampagne."}
-      </p>
-      <nav
-        class="hero-actions"
-        aria-label={en ? "Support the campaign" : "Kampagne unterstützen"}
-      >
-        <a class="button primary" href={btcpay} target="_blank" rel="noopener"
-          >{en ? "Donate bitcoin" : "Mit Bitcoin spenden"}</a
-        >
-        <a class="button" href="#euro"
-          >{en ? "Bank transfer" : "Per Überweisung"}</a
-        >
-        <button class="button" type="button" data-share>
-          <ShareIcon />
-          {en ? "Share the link" : "Link teilen"}
-        </button>
-      </nav>
+          <a class="button primary" href={btcpay} target="_blank" rel="noopener"
+            >{en ? "Donate bitcoin" : "Mit Bitcoin spenden"}</a
+          >
+          <a class="button" href="#euro"
+            >{en ? "Bank transfer" : "Per Überweisung"}</a
+          >
+          <button class="button" type="button" data-share>
+            <ShareIcon />
+            {en ? "Share the link" : "Link teilen"}
+          </button>
+        </nav>
+        <p class="share-status" data-share-status aria-live="polite"></p>
+        <p class="hero-note">
+          <strong
+            >{en ? "Taking part in the proceedings: " : "Beteiligung am Verfahren: "}</strong
+          >
+          {en ? "How individuals can take part has not yet been determined. We will publish the options and requirements as the case develops." : "Wie sich Privatpersonen am Verfahren beteiligen können, steht noch nicht fest. Wir veröffentlichen Möglichkeiten und Voraussetzungen, sobald sie konkret sind."}
+          <a href={pathFor("proceedings", language)}
+            >{en ? "Follow the case" : "Verfahren verfolgen"}</a
+          >
+        </p>
+      </div>
       <Artwork id="collectiveDefense" language={language} size="hero" />
-      <p class="share-status" data-share-status aria-live="polite"></p>
-      <p class="note participation-note">
-        <strong
-          >{en ? "Taking part in the proceedings: " : "Beteiligung am Verfahren: "}</strong
-        >
-        {en ? "How individuals can take part has not yet been determined. We will publish the options and requirements as the case develops." : "Wie sich Privatpersonen am Verfahren beteiligen können, steht noch nicht fest. Wir veröffentlichen Möglichkeiten und Voraussetzungen, sobald sie konkret sind."}
-        <a href={pathFor("proceedings", language)}
-          >{en ? "Follow the case" : "Verfahren verfolgen"}</a
-        >
-      </p>
     </header>
     <section id="spenden" aria-labelledby="donate-heading">
       <h2 id="donate-heading">{en ? "Donate" : "Spenden"}</h2>
       <p class="section-intro">
-        {en ? "Legal proceedings cost money. Your donation goes directly to Bitcoin Austria, the association behind dac8.org." : "Der Rechtsweg kostet Geld. Deine Spende geht direkt an Bitcoin Austria, den Verein hinter dac8.org."}
+        {en ? "Legal proceedings cost money. Your donation goes directly to Bitcoin Austria, the association behind dac8.org, and primarily funds the case against indiscriminate collection of our financial data." : "Der Rechtsweg kostet Geld. Deine Spende geht direkt an Bitcoin Austria, den Verein hinter dac8.org, und finanziert vor allem den Prozess gegen die anlasslose Erfassung unserer Finanzdaten."}
       </p>
       <DonationOptions language={language} />
-      <p class="prose">
-        {en ? "Your donation primarily funds the case against indiscriminate collection of our financial data. Questions: " : "Mit deiner Spende finanzieren wir vor allem den Prozess gegen die anlasslose Erfassung unserer Finanzdaten. Fragen zur Spende: "}
-        <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>.
+      <p class="aside-note">
+        {en ? "Questions about donating: " : "Fragen zur Spende: "}
+        <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>
       </p>
     </section>
     <section id="abgeordnete" aria-labelledby="letter-heading">
