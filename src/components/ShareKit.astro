@@ -1,0 +1,244 @@
+---
+import { shareFile, shareScenes } from "@/data/share"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+const en = language === "en"
+const fileName = (id: string, format: string) =>
+  `dac8-${id}-${language}-${format}.jpg`
+const formats = [
+  { id: "story", label: "Story", width: 1080, height: 1920 },
+  { id: "square", label: en ? "Square" : "Quadrat", width: 1080, height: 1080 },
+] as const
+---
+
+<!--
+  The previews are the full-size files, so "Copy image" from the context menu
+  copies what gets posted. Without JavaScript a click opens the file in the
+  browser; with it, a dialog offers download, copy and (on phones) sharing.
+-->
+<ul class="share-kit" data-share-kit>
+  {shareScenes.map((scene) => (
+    <li>
+      <div class="share-formats">
+        {formats.map((format) => (
+          <figure class={`share-${format.id}`}>
+            <a
+              href={shareFile(language, scene.id, format.id)}
+              data-share-open={format.id}
+              data-title={scene.title[language]}
+              data-story={shareFile(language, scene.id, "story")}
+              data-square={shareFile(language, scene.id, "square")}
+              data-story-file={fileName(scene.id, "story")}
+              data-square-file={fileName(scene.id, "square")}
+            >
+              <img
+                src={shareFile(language, scene.id, format.id)}
+                width={format.width}
+                height={format.height}
+                loading="lazy"
+                decoding="async"
+                alt={`${scene.title[language]} (${format.label})`}
+              />
+            </a>
+            <figcaption>
+              <a
+                href={shareFile(language, scene.id, format.id)}
+                download={fileName(scene.id, format.id)}
+              >
+                {format.label}
+              </a>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+      <h3>{scene.title[language]}</h3>
+    </li>
+  ))}
+</ul>
+
+<dialog
+  class="share-preview"
+  data-share-preview
+  aria-labelledby="share-preview-title"
+>
+  <div class="share-preview-bar">
+    <h3 id="share-preview-title" data-preview-title></h3>
+    <div
+      class="share-preview-formats"
+      role="group"
+      aria-label={en ? "Format" : "Format"}
+    >
+      {formats.map((format) => (
+        <button type="button" data-preview-format={format.id} aria-pressed="false">
+          {format.label}
+        </button>
+      ))}
+    </div>
+    <button class="share-preview-close" type="button" data-preview-close>
+      {en ? "Close" : "Schließen"}
+    </button>
+  </div>
+  <div class="share-preview-image">
+    <img data-preview-image alt="">
+  </div>
+  <div class="share-preview-actions">
+    <a class="button primary" data-preview-download download>
+      {en ? "Download" : "Herunterladen"}
+    </a>
+    <button class="button" type="button" data-preview-copy hidden>
+      {en ? "Copy image" : "Bild kopieren"}
+    </button>
+    <button class="button" type="button" data-preview-share hidden>
+      {en ? "Share" : "Teilen"}
+    </button>
+    <a class="text-link" data-preview-tab target="_blank" rel="noopener">
+      {en ? "Open in new tab" : "In neuem Tab öffnen"}
+    </a>
+  </div>
+  <p
+    class="share-status"
+    data-preview-status
+    aria-live="polite"
+    data-copied={en ? "Image copied. Paste it wherever you want to post it." : "Bild kopiert. Füge es ein, wo du es posten willst."}
+    data-failed={en ? "Copying does not work in this browser. Please download the image." : "Kopieren geht in diesem Browser nicht. Lade das Bild bitte herunter."}
+  ></p>
+</dialog>
+
+<script>
+  type Format = "story" | "square"
+
+  const dialog = document.querySelector<HTMLDialogElement>(
+    "[data-share-preview]",
+  )
+  const kit = document.querySelector<HTMLElement>("[data-share-kit]")
+
+  if (dialog && kit && typeof dialog.showModal === "function") {
+    const title = dialog.querySelector<HTMLElement>("[data-preview-title]")!
+    const image = dialog.querySelector<HTMLImageElement>(
+      "[data-preview-image]",
+    )!
+    const download = dialog.querySelector<HTMLAnchorElement>(
+      "[data-preview-download]",
+    )!
+    const tab = dialog.querySelector<HTMLAnchorElement>("[data-preview-tab]")!
+    const copy = dialog.querySelector<HTMLButtonElement>("[data-preview-copy]")!
+    const share = dialog.querySelector<HTMLButtonElement>(
+      "[data-preview-share]",
+    )!
+    const status = dialog.querySelector<HTMLElement>("[data-preview-status]")!
+    const formatButtons = dialog.querySelectorAll<HTMLButtonElement>(
+      "[data-preview-format]",
+    )
+    let source: HTMLAnchorElement | undefined
+    let file: Promise<File> | undefined
+
+    // Browsers only accept PNG on the clipboard, so the JPEG is redrawn.
+    const canCopy =
+      typeof ClipboardItem !== "undefined" && !!navigator.clipboard?.write
+    const canShareFiles = (() => {
+      try {
+        return !!navigator.canShare?.({
+          files: [new File([""], "dac8.jpg", { type: "image/jpeg" })],
+        })
+      } catch {
+        return false
+      }
+    })()
+    copy.hidden = !canCopy
+    share.hidden = !canShareFiles
+
+    const fetchFile = (url: string, name: string) =>
+      fetch(url)
+        .then((response) => response.blob())
+        .then((blob) => new File([blob], name, { type: "image/jpeg" }))
+
+    const show = (format: Format) => {
+      if (!source) return
+      const url = source.dataset[format]!
+      const name = source.dataset[`${format}File`]!
+      image.src = url
+      image.alt = source.dataset.title ?? ""
+      download.href = url
+      download.download = name
+      tab.href = url
+      status.textContent = ""
+      // Fetched ahead so sharing still counts as part of the tap.
+      file = canShareFiles ? fetchFile(url, name) : undefined
+      for (const button of formatButtons) {
+        button.setAttribute(
+          "aria-pressed",
+          String(button.dataset.previewFormat === format),
+        )
+      }
+    }
+
+    kit.addEventListener("click", (event) => {
+      const link = (event.target as Element).closest<HTMLAnchorElement>(
+        "[data-share-open]",
+      )
+      if (!link || event.metaKey || event.ctrlKey || event.shiftKey) return
+      event.preventDefault()
+      source = link
+      title.textContent = link.dataset.title ?? ""
+      show(link.dataset.shareOpen as Format)
+      dialog.showModal()
+    })
+
+    for (const button of formatButtons) {
+      button.addEventListener("click", () =>
+        show(button.dataset.previewFormat as Format),
+      )
+    }
+
+    dialog
+      .querySelector("[data-preview-close]")!
+      .addEventListener("click", () => dialog.close())
+    // A click on the backdrop closes the preview.
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close()
+    })
+
+    copy.addEventListener("click", async () => {
+      const png = new Promise<Blob>((resolve, reject) => {
+        const canvas = document.createElement("canvas")
+        const done = () => {
+          canvas.width = image.naturalWidth
+          canvas.height = image.naturalHeight
+          canvas.getContext("2d")!.drawImage(image, 0, 0)
+          canvas.toBlob(
+            (blob) => (blob ? resolve(blob) : reject(new Error())),
+            "image/png",
+          )
+        }
+        if (image.complete) done()
+        else image.addEventListener("load", done, { once: true })
+      })
+      try {
+        // Safari needs the ClipboardItem within the click, with a promise.
+        await navigator.clipboard.write([
+          new ClipboardItem({ "image/png": png }),
+        ])
+        status.textContent = status.dataset.copied ?? ""
+      } catch {
+        status.textContent = status.dataset.failed ?? ""
+      }
+    })
+
+    share.addEventListener("click", async () => {
+      if (!file) return
+      try {
+        await navigator.share({
+          files: [await file],
+          title: title.textContent ?? "",
+        })
+      } catch {
+        // Cancelled or refused; the download stays available.
+      }
+    })
+  }
+</script>

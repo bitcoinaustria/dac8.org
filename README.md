@@ -45,8 +45,16 @@ text instead of a caption under the image.
 
 The share graphics on the support page come from the lab's share kit
 (`knowledge/share-kit/`): square and story formats per scene and language,
-exported as JPEG to `public/share/` and listed in `src/data/share.ts`. Their
-headlines match the story scenes on the home page.
+listed in `src/data/share.ts`. Their headlines match the story scenes on the
+home page. Squares are exported as JPEG to `public/share/`. Story exports go
+to `src/assets/share/`; the build sets each scene's `text` (a short version of
+the home page scene) and its "Im Bild" `note` into the free space
+(`src/lib/share-story.ts`, Liberation Sans, SIL Open Font License) and serves
+them under the same `/share/` URLs. It fails if the text leaves too little
+room for the picture. `src/components/ShareKit.astro` shows both formats per
+scene at full size, so "Copy image" in the context menu copies the real file;
+a click opens a preview with download, copy and, where the browser can share
+files, sharing.
 
 ## Site structure
 
