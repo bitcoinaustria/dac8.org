@@ -28,7 +28,7 @@ from the lab's transparent cutouts (`knowledge/dac8-*-cutout.png`) into
 `src/assets/artwork/` as WebP masters; Astro generates the responsive AVIF and
 WebP files at build time. `src/data/artwork.ts` holds the German and English
 alt texts and captions, and `src/components/Artwork.astro` renders them. Labels
-in the renders cast no shadow (`ob.visible_shadow=False` in the lab's
+in the renders cast no shadow (`visible_shadow=False` in the lab's
 `build_site.py` `label()`); a soft shadow behind glass made small text look
 blurred. Motifs
 with text labels have a German and an English render (`*-en.webp`). The
