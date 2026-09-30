@@ -65,7 +65,7 @@
 
 .campaign h2 {
   max-inline-size: 26ch;
-  font-size: clamp(1.75rem, 1.2rem + 1.9vw, 2.5rem);
+  font-size: clamp(2rem, 1.3rem + 2.2vw, 2.75rem);
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
@@ -422,6 +422,25 @@
 .campaign .facts-figure .artwork {
   --art-height: 15rem;
   margin-block-start: 0;
+}
+
+/* Das kleine Motiv ist schmaler als ein lesbarer Bildtext; der Titel folgt
+   den übrigen Bildunterschriften, nicht den Einstiegen der Kritikpunkte. */
+.campaign .facts .facts-figure .artwork {
+  inline-size: auto;
+}
+
+.campaign .facts .facts-figure .artwork figcaption {
+  contain: none;
+  inline-size: min(34ch, 100%);
+  justify-self: center;
+}
+
+.campaign .facts-figure .artwork figcaption strong {
+  margin-block-end: var(--space-3xs);
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: normal;
 }
 
 .campaign .facts strong,
@@ -1479,6 +1498,18 @@
   margin-block-start: var(--space-xl);
 }
 
+/* Die Figur ist so breit wie das Bild, die Bildunterschrift bricht darunter
+   bündig um, statt am Spaltenrand zu kleben. */
+.campaign .artwork:not(.artwork-wide) {
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  margin-inline: auto;
+}
+
+.campaign .artwork:not(.artwork-wide) figcaption {
+  contain: inline-size;
+}
+
 .campaign .artwork img {
   display: block;
   inline-size: auto;
@@ -1556,11 +1587,10 @@
     grid-template-columns: minmax(0, 1fr) minmax(17rem, 23rem);
   }
 
-  /* Gleich breit für Profile mit lesbaren Beschriftungen; Text und Motiv
-     stehen auf gemeinsamer Mitte. */
+  /* Gleich breit für Profile mit lesbaren Beschriftungen. Oben bündig,
+     damit der Text direkt unter der Überschrift beginnt. */
   .campaign .art-split.even {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: center;
     margin-block-start: var(--space-xl);
   }
 
@@ -1605,12 +1635,14 @@
     margin-block-start: 0;
   }
 
-  .campaign.landing .hero > :is(.status-line, h1, .hero-context, .keyfigures) {
+  .campaign.landing .hero > :is(.status-line, h1, .keyfigures) {
     grid-column: 1 / -1;
   }
 
+  /* Neben Lead, Buttons und Einordnung, damit die Bildhöhe keine Lücke
+     zwischen Lead und Buttons aufreißt. */
   .campaign.landing .hero > .artwork {
-    grid-row: 3 / span 2;
+    grid-row: 3 / span 3;
   }
 }
 
@@ -1637,7 +1669,7 @@
 
 /* Die Startseite erzählt in Szenen: eine große Illustration, eine Zeile als
    Überschrift, ein bis zwei Sätze. Text und Bild wechseln die Seite; das
-   Musterblatt der Meldung bekommt die volle Breite. */
+   Musterblatt der Meldung bekommt die breitere Bildspalte. */
 .campaign .story {
   display: grid;
   gap: var(--space-2xl-3xl);
@@ -1652,7 +1684,7 @@
 
 .campaign .scene-text h3 {
   max-inline-size: 18ch;
-  font-size: clamp(1.75rem, 1.2rem + 1.9vw, 2.5rem);
+  font-size: clamp(1.5rem, 1.15rem + 1.1vw, 2rem);
   font-weight: 600;
   font-stretch: 94%;
   line-height: 1.08;
@@ -1677,8 +1709,8 @@
   --art-height: 27rem;
 }
 
-.campaign .scene-wide .artwork-wide {
-  --art-height: 34rem;
+.campaign .scene-wide .artwork-scene {
+  --art-height: 32rem;
 }
 
 @container campaign (width >= 52rem) {
@@ -1696,18 +1728,11 @@
   }
 
   .campaign .scene.scene-wide {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
   }
 
-  .campaign .scene-wide .scene-text {
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    align-items: end;
-    gap: var(--space-xl);
-  }
-
-  .campaign .scene-wide .scene-text p {
-    margin-block-start: 0;
+  .campaign .scene.scene-wide:nth-child(even) {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
   }
 }
 
@@ -1725,11 +1750,6 @@
 
 .campaign .story + .text-link {
   margin-block-start: var(--space-xl);
-}
-
-/* Handlungen gestapelt, wenn sie neben einer Illustration stehen. */
-.campaign .facts.stack {
-  grid-template-columns: minmax(0, 1fr);
 }
 
 /* ---------- Grafiken zum Teilen ------------------------------------------ */

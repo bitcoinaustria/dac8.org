@@ -2,7 +2,6 @@
 import LanguageSelector from "@/components/LanguageSelector.astro"
 import ThemeToggle from "@/components/ThemeToggle.astro"
 import { SITE, type PageSection } from "@/consts"
-import { campaignStatus } from "@/data/campaign"
 import { donateFor, languageFor, navigationFor, pathFor } from "@/lib/i18n"
 import { normalizePath } from "@/lib/utils"
 
@@ -46,11 +45,6 @@ const current = navigation.find(
         ))}
       </ul>
       <div class="nav-extras">
-        <a class="status-pill" href={pathFor("proceedings", language)}>
-          <span class="status-dot" aria-hidden="true"></span>
-          {en ? "Austria" : "Österreich"}
-          · {campaignStatus[language].label}
-        </a>
         <div class="controls">
           <LanguageSelector />
           <ThemeToggle />
@@ -121,7 +115,8 @@ const current = navigation.find(
 
 <style>
   /* Schlanke Kopfleiste statt Seitenleiste: Die ganze Breite gehört dem
-     Inhalt und den Illustrationen. Spenden bleibt immer sichtbar. */
+     Inhalt und den Illustrationen. Spenden bleibt immer sichtbar; den Stand
+     des Verfahrens zeigen Startseite und Footer. */
   .site-header {
     position: sticky;
     z-index: 10;
@@ -206,31 +201,6 @@ const current = navigation.find(
     align-items: center;
     gap: var(--space-s);
     margin-inline-start: auto;
-  }
-
-  .status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
-    min-block-size: 2.75rem;
-    color: var(--muted-foreground);
-    font-size: var(--step--1);
-    text-decoration: none;
-    white-space: nowrap;
-
-    &:hover {
-      color: var(--foreground);
-    }
-  }
-
-  /* Kleiner Token wie die Stationen des Rechtswegs. */
-  .status-dot {
-    inline-size: 0.625rem;
-    block-size: 0.625rem;
-    border: 1px solid light-dark(#b6000c, #fa5963);
-    border-radius: var(--radius-full);
-    background: linear-gradient(155deg, #e3000f, #be000c);
-    box-shadow: inset 0 1px 0 #ffffff30;
   }
 
   .controls {
@@ -332,12 +302,6 @@ const current = navigation.find(
     }
   }
 
-  @media (width < 80rem) {
-    .status-pill {
-      display: none;
-    }
-  }
-
   @media (width < 64rem) {
     .site-header[data-menu-ready] .site-bar > nav#site-navigation {
       display: none;
@@ -423,10 +387,6 @@ const current = navigation.find(
       align-items: stretch;
       gap: var(--space-s);
       margin-inline-start: 0;
-    }
-
-    dialog .status-pill {
-      display: inline-flex;
     }
 
     dialog .controls {
