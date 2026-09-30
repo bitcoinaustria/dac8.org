@@ -1,23 +1,15 @@
 ---
-import ShareIcon from "@/assets/icons/share.svg"
-import Layout from "@/layouts/Layout.astro"
 import Artwork from "@/components/Artwork.astro"
 import CampaignPartners from "@/components/CampaignPartners.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
+import StoryScene from "@/components/StoryScene.astro"
+import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
 ---
 
-<Layout
-  sections={[
-  { id: "problem", label: "What is at stake" },
-  { id: "weg", label: "What we are doing" },
-  { id: "handeln", label: "How you can help" },
-  { id: "vision", label: "What we want to achieve" },
-  { id: "position", label: "Who we are" },
-]}
->
+<Layout>
   <MetaPage slot="head" />
   <article class="campaign landing">
     <header class="hero">
@@ -32,8 +24,10 @@ import { campaignStatus } from "@/data/campaign"
         others scrutinising your personal life.
       </p>
       <nav class="hero-actions" aria-label="Get started">
-        <a class="button primary" href="/en/donate/">Support the case</a>
-        <a class="button" href="/en/background/">What DAC8 requires</a>
+        <a class="button primary" href="/en/get-involved/#spenden"
+          >Support the case</a
+        >
+        <a class="button" href="/en/dossier/">What DAC8 requires</a>
       </nav>
       <Artwork id="privacyExposed" language="en" size="hero" priority />
       <p class="prose hero-context">
@@ -68,65 +62,102 @@ import { campaignStatus } from "@/data/campaign"
     </header>
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">What is at stake</h2>
-      <div class="art-split">
-        <div>
-          <p class="section-intro">
-            Your private life deserves protection, including your finances.
-            Information about your money can reveal details about your life. If
-            it is shared, misunderstood or stolen, you bear the consequences.
+      <p class="section-intro">
+        Your private life deserves protection, including your finances.
+        Information about your money can reveal details about your life. If it
+        is shared, misunderstood or stolen, you bear the consequences.
+      </p>
+      <div class="story">
+        <StoryScene
+          art="accountToRecord"
+          language="en"
+          title="Your account becomes a file."
+        >
+          <p>
+            You buy crypto-assets from an exchange or broker with reporting
+            obligations in Austria. Since 2026, the provider has been preparing
+            your identity and annual aggregates for the tax authority.
           </p>
-          <p class="prose">
-            DAC8 is an EU directive on exchanging tax information. Reports
-            contain identities and annual crypto-asset aggregates, not a list of
-            individual payments. Over the years, even these aggregates create a
-            financial profile.
-          </p>
-        </div>
-        <Artwork id="leakedTarget" language="en" />
-      </div>
-      <ul class="facts">
-        <li>
-          <strong>Everyone is covered, not just suspects.</strong>
+        </StoryScene>
+        <StoryScene
+          art="massCapture"
+          language="en"
+          title="Everyone recorded. Without suspicion."
+        >
           <p>
             Providers must prepare reporting data for all customers, including
             those who will not ultimately be reported. This requirement appears
             in Austrian law, not in the directive.
           </p>
-        </li>
-        <li>
-          <strong>A profile builds up over time.</strong>
+        </StoryScene>
+        <StoryScene
+          art="reportAssets"
+          language="en"
+          title="What gets reported?"
+          wide
+          zoom
+        >
           <p>
-            Annual reports reveal activity. Providers may also retain links
-            between names, wallet addresses and individual transactions. For
-            people who pay with cryptocurrencies, these links can expose parts
-            of everyday life.
+            Once a year: name, address, tax residence, tax identification number
+            and date of birth, plus value in euros, units and, for most
+            categories, the number of transactions for each crypto-asset and
+            transaction type. Wallet addresses, individual transactions and your
+            current balance are not included.
           </p>
-        </li>
-        <li>
-          <strong>A data breach cannot be undone.</strong>
+        </StoryScene>
+        <StoryScene
+          art="yearsOnFile"
+          language="en"
+          title="More about you. Every year."
+        >
           <p>
-            Stolen customer data can make people targets for extortion and
-            robbery. According to France’s Gendarmerie, criminals use leaked
-            data from a crypto tax service to select victims. Even mistaken
-            assumptions about their wealth put them at risk.
+            Annual reports reveal activity. Providers delete reported
+            crypto-asset data ten years after the reporting period; for
+            corresponding bank-account data, it is five.
           </p>
-        </li>
-        <li>
-          <strong>Ten years instead of five.</strong>
+        </StoryScene>
+        <StoryScene
+          art="dataHack"
+          language="en"
+          title="A data leak. Personal consequences."
+        >
           <p>
-            Austrian law provides for reported crypto-asset data to be deleted
-            after ten years, compared with five for corresponding bank-account
-            data. The legislative materials do not explain the difference.
+            A provider breach can expose the link between your name and
+            blockchain transactions. Once that link spreads, it is hard to take
+            back.
           </p>
-        </li>
-      </ul>
-      <a class="text-link" href="/en/background/#gemeldet"
+        </StoryScene>
+        <StoryScene
+          art="rankedPortrait"
+          language="en"
+          title="Sortable by wealth. Dangerous in the wrong hands."
+        >
+          <p>
+            Total value and number of purchases give a rough estimate of how
+            much money someone moves in crypto, whether or not the estimate is
+            right. In the wrong hands, this can become a target list: according
+            to France’s Gendarmerie, criminals use stolen customer data from a
+            crypto tax service to select victims.
+          </p>
+        </StoryScene>
+      </div>
+      <a class="text-link" href="/en/dossier/#gemeldet"
         >What is reported, and what is not</a
       >
     </section>
     <section id="weg" aria-labelledby="weg-heading">
       <h2 id="weg-heading">What we are doing</h2>
-      <p class="section-intro">{campaignStatus.en.text}</p>
+      <div class="art-split even">
+        <div>
+          <p class="section-intro">{campaignStatus.en.text}</p>
+          <p class="prose">
+            We believe Austria’s collection covering all customers violates
+            fundamental rights and seek judicial review. Whether these specific
+            obligations are proportionate is for the courts to decide.
+          </p>
+        </div>
+        <Artwork id="collectionChallenge" language="en" />
+      </div>
       <LegalRoute language="en" />
       <div class="precedent">
         <p class="precedent-year" aria-hidden="true">2014</p>
@@ -138,31 +169,44 @@ import { campaignStatus } from "@/data/campaign"
           can be changed.
         </p>
       </div>
-      <a class="text-link" href="/en/background/#rechtsweg"
-        >Our legal strategy in detail</a
-      >
+      <a class="text-link" href="/en/proceedings/">Where the case stands</a>
     </section>
     <section id="handeln" aria-labelledby="handeln-heading">
       <h2 id="handeln-heading">How you can help</h2>
-      <ul class="facts action-facts">
-        <li>
-          <strong>Help fund the case</strong>
-          <p>
-            Your donation primarily helps cover the costs of the proceedings.
-          </p>
-          <a class="button primary" href="/en/donate/">Donate</a>
-        </li>
-        <li>
-          <strong>Follow the case</strong>
-          <p>We publish news and next steps here and via RSS.</p>
-          <a class="button" href="/en/updates/">Updates</a>
-        </li>
-      </ul>
-      <button class="text-link" type="button" data-share>
-        <ShareIcon />
-        Share
-      </button>
-      <p class="share-status" data-share-status aria-live="polite"></p>
+      <div class="art-split even reverse">
+        <ul class="facts action-facts stack">
+          <li>
+            <strong>Help fund the case</strong>
+            <p>
+              Your donation primarily helps cover the costs of the proceedings.
+            </p>
+            <a class="button primary" href="/en/get-involved/#spenden"
+              >Donate</a
+            >
+          </li>
+          <li>
+            <strong>Follow the case</strong>
+            <p>We publish news and next steps here and via RSS.</p>
+            <a class="button" href="/en/proceedings/">Proceedings</a>
+          </li>
+          <li>
+            <strong>Write to your MPs</strong>
+            <p>
+              A letter to the National Council, drafted in your browser and sent
+              by you.
+            </p>
+            <a class="button" href="/en/get-involved/#abgeordnete"
+              >Write a letter</a
+            >
+          </li>
+          <li>
+            <strong>Share the campaign</strong>
+            <p>Ready-made graphics on the story, in German and English.</p>
+            <a class="button" href="/en/get-involved/#teilen">Share graphics</a>
+          </li>
+        </ul>
+        <Artwork id="collectiveDefense" language="en" />
+      </div>
     </section>
     <section id="vision" aria-labelledby="vision-heading">
       <h2 id="vision-heading">What we want to achieve</h2>
@@ -222,8 +266,4 @@ import { campaignStatus } from "@/data/campaign"
       <CampaignPartners />
     </section>
   </article>
-  <script>
-    import { initializeShareButtons } from "@/lib/share"
-    initializeShareButtons()
-  </script>
 </Layout>

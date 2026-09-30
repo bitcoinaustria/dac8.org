@@ -1,0 +1,212 @@
+---
+import { type Language, pathFor } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+const en = language === "en"
+const reported = `${pathFor("dossier", language)}#gemeldet`
+
+// The answers restate the vetted FAQ entries on who is affected and on own
+// wallets. Keep them in sync with the FAQ when either changes.
+const options = en
+  ? [
+      {
+        value: "provider",
+        label: "Yes",
+        answer:
+          "Then your data falls under DAC8. The report contains your identity and annual aggregates, not wallet addresses or individual payments. Providers with Austrian reporting obligations must prepare data on all customers, even those who are not ultimately reported.",
+        link: { href: reported, label: "What is reported" },
+      },
+      {
+        value: "self",
+        label: "No, only my own wallet",
+        answer:
+          "DAC8 does not report people who exclusively hold bitcoin in self-custody and do not use such a provider. If you buy from a provider and transfer to your own wallet, the annual report generally includes the total value and units of such transfers, without the address. The provider may still keep the address on file.",
+      },
+      {
+        value: "unsure",
+        label: "Not sure",
+        answer:
+          "What matters is whether a crypto-asset provider is involved, such as an exchange or broker. If in doubt, ask your provider whether it reports under DAC8.",
+      },
+    ]
+  : [
+      {
+        value: "provider",
+        label: "Ja",
+        answer:
+          "Dann fallen deine Daten unter DAC8. Gemeldet werden Identität und Jahreswerte, keine Wallet-Adressen und keine einzelnen Zahlungen. Anbieter mit Meldepflicht in Österreich müssen die Daten aller Kunden aufbereiten, auch wenn du am Ende nicht gemeldet wirst.",
+        link: { href: reported, label: "Was gemeldet wird" },
+      },
+      {
+        value: "self",
+        label: "Nein, nur eigene Wallet",
+        answer:
+          "Wer Bitcoin ausschließlich selbst verwahrt und keinen solchen Anbieter nutzt, wird durch DAC8 nicht gemeldet. Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, fließen Wert und Stückzahl solcher Übertragungen in der Regel als Jahreswerte in die Meldung ein, ohne Adresse. Die Adresse kann beim Anbieter gespeichert bleiben.",
+      },
+      {
+        value: "unsure",
+        label: "Weiß ich nicht",
+        answer:
+          "Entscheidend ist, ob ein Krypto-Anbieter beteiligt ist, etwa eine Börse oder ein Broker. Frag im Zweifel bei deinem Anbieter nach, ob er nach DAC8 meldet.",
+      },
+    ]
+---
+
+<div class="check" data-affected-check>
+  <fieldset>
+    <legend>
+      <span class="check-title"
+        >{en ? "Am I affected?" : "Bin ich betroffen?"}</span
+      >
+      {en ? "Do you use an exchange, broker or other crypto-asset provider?" : "Nutzt du eine Börse, einen Broker oder einen anderen Krypto-Anbieter?"}
+    </legend>
+    <div class="check-options">
+      {options.map((option) => (
+        <label>
+          <input type="radio" name="affected" value={option.value} />
+          <span>{option.label}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+  <div class="check-answers" aria-live="polite">
+    {options.map((option) => (
+      <p data-answer={option.value}>
+        {option.answer}
+        {option.link && (
+          <>
+            {" "}
+            <a href={option.link.href}>{option.link.label}</a>
+          </>
+        )}
+      </p>
+    ))}
+  </div>
+  <p class="check-note">
+    {en ? "Orientation, not legal advice." : "Orientierung, keine Rechtsberatung."}
+  </p>
+</div>
+
+<style>
+  /* Keine Karte, keine Linie: eine Frage, drei Antworten als Schaltflächen,
+     darunter die passende Auskunft. */
+  .check {
+    display: grid;
+    gap: var(--space-s);
+    max-inline-size: 48rem;
+    margin-block-start: var(--space-xl);
+  }
+
+  fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  legend {
+    display: grid;
+    gap: var(--space-3xs);
+    padding: 0;
+    font-size: var(--step-1);
+    font-weight: 560;
+    line-height: 1.35;
+    text-wrap: balance;
+  }
+
+  .check-title {
+    color: var(--ink-3);
+    font-size: var(--step--1);
+    font-weight: 560;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .check-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin-block-start: var(--space-s);
+  }
+
+  label {
+    position: relative;
+    display: inline-flex;
+    cursor: pointer;
+  }
+
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  label span {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 2.75rem;
+    padding: 0.55em 1.1em;
+    border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
+    border-radius: var(--radius-full);
+    font-weight: 560;
+    transition:
+      background-color 140ms ease,
+      color 140ms ease,
+      border-color 140ms ease;
+  }
+
+  label:hover span {
+    border-color: var(--ink);
+  }
+
+  input:checked + span {
+    border-color: var(--ink);
+    color: var(--background);
+    background: var(--ink);
+  }
+
+  input:focus-visible + span {
+    outline: 2px solid var(--primary);
+    outline-offset: 0.2rem;
+  }
+
+  .check-answers p {
+    max-inline-size: var(--measure-text);
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  .check-answers p[hidden] {
+    display: none;
+  }
+
+  .check-answers a {
+    font-weight: 560;
+  }
+
+  .check-note {
+    color: var(--ink-3);
+    font-size: var(--step--1);
+  }
+</style>
+
+<script>
+  // Ohne JavaScript bleiben alle drei Auskünfte sichtbar.
+  for (const check of document.querySelectorAll<HTMLElement>(
+    "[data-affected-check]",
+  )) {
+    const answers = check.querySelectorAll<HTMLElement>("[data-answer]")
+    const show = (value: string | null) => {
+      for (const answer of answers)
+        answer.hidden = answer.dataset.answer !== value
+    }
+    show(null)
+    check.addEventListener("change", (event) => {
+      const input = event.target as HTMLInputElement
+      if (input.name === "affected") show(input.value)
+    })
+  }
+</script>

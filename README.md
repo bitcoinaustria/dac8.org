@@ -27,10 +27,38 @@ The site does not build from the submodule. Illustrations in use are copied
 from the lab's transparent cutouts (`knowledge/dac8-*-cutout.png`) into
 `src/assets/artwork/` as WebP masters; Astro generates the responsive AVIF and
 WebP files at build time. `src/data/artwork.ts` holds the German and English
-alt texts and captions, and `src/components/Artwork.astro` renders them. The
+alt texts and captions, and `src/components/Artwork.astro` renders them. Labels
+in the renders cast no shadow (`visible_shadow=False` in the lab's
+`build_site.py` `label()`); a soft shadow behind glass made small text look
+blurred. Motifs
+with text labels have a German and an English render (`*-en.webp`). The
 cutouts have no background, so the same file works in light and dark mode.
 People, addresses and amounts in the profiles are invented; captions must keep
 the distinction between combined or leaked records and the annual DAC8 report.
+
+The share graphics on the support page come from the lab's share kit
+(`knowledge/share-kit/`): square and story formats per scene and language,
+exported as JPEG to `public/share/` and listed in `src/data/share.ts`. Their
+headlines match the story scenes on the home page.
+
+## Site structure
+
+Four pages per language, with URLs that follow the navigation labels:
+
+| Page | German | English |
+| --- | --- | --- |
+| Start: the case told as a story in scenes | `/` | `/en/` |
+| Dossier: the complete reference, FAQ and sources | `/dossier/` | `/en/dossier/` |
+| Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
+| Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
+
+A top bar carries the navigation, the procedural status and a permanent donate
+button that leads to `#spenden` on the participation page; on mobile a bottom
+bar keeps donating and sharing within reach. `/spenden` and `/en/donate` are
+short redirects for print and QR codes. The home page scenes use
+`src/components/StoryScene.astro`; the dossier's "Am I affected?" check
+(`src/components/AffectedCheck.astro`) restates the FAQ. The footer closes every
+page with the campaign statement, two actions and the status.
 
 ## Development
 
@@ -44,29 +72,33 @@ pnpm dev
 
 ## Languages and campaign updates
 
-The active campaign concerns **Austria**. German pages keep their existing URLs;
-English equivalents live under `/en/`. `src/lib/i18n.ts` maps equivalent pages,
+The active campaign concerns **Austria**. English equivalents of the German
+pages live under `/en/`. `src/lib/i18n.ts` maps equivalent pages,
 navigation and feeds. Language selection does not change jurisdiction. Add a
 region selector only when another country has an actual campaign with its own
 content and procedural context. No browser-language redirects or preference
 storage are used.
 
 Keep both language versions in sync when changing public claims. Navigation,
-support and updates pages share components; long editorial pages remain explicit
-Astro documents. Source URLs are shared in `src/data/sources.ts`.
+the participation and proceedings pages share components; the home page and the
+dossier remain explicit Astro documents per language. Source URLs are shared in `src/data/sources.ts`.
 
 - Update `src/data/campaign.ts` when the procedural status changes.
 - Add confirmed public milestones to `src/data/updates.ts`, with a stable ID,
   publication timestamp including timezone, both translations and an optional
   source URL. Future-dated entries stay hidden until a build after that date.
-- `/aktuelles/` and `/en/updates/` render the updates; `/feed.xml` and
+- `/verfahren/` and `/en/proceedings/` render the updates; `/feed.xml` and
   `/en/feed.xml` expose RSS 2.0 feeds from the same data. Empty feeds are valid;
   do not create placeholder milestones or imply a filing has happened.
 - The newsletter link points to Bitcoin Austria's existing newsletter form.
-- The previous individual complaint/letter generators are preserved in
-  `src/components/ParticipationTools.astro`, but are not exposed as a public
-  route while individual participation remains undefined. Review their content
-  and translate their interface before bringing them back into the campaign.
+- The letter to members of the National Council is on the participation page
+  (`src/components/LetterGenerator.astro`, texts in `src/data/letter.ts`). It
+  runs entirely in the browser; its demands restate the dossier's "Was wir
+  fordern" list, so change both together.
+- The earlier individual complaint generator is preserved in
+  `src/components/ParticipationTools.astro`, but is not exposed as a public
+  route while individual participation in the proceedings remains undefined.
+  Review its content and translate its interface before bringing it back.
 
 Run `pnpm test` for language routing and RSS regression checks, then
 `pnpm format:check` and `pnpm build` before publication.
@@ -81,9 +113,12 @@ entries. URLs always use the production origin from `astro.config.ts`.
 
 The build renders a 1200 × 630 PNG for each page and language under
 `/og/{de|en}/{page}.png`. The renderer uses Sharp and the bundled IBM Plex Sans
-font (SIL Open Font License), with no remote rendering service. Headlines have
-up to three explicit lines; a build fails if a line exceeds the available space.
+font (SIL Open Font License), with no remote rendering service. The four main
+pages show their lead illustration on the right, mapped in
+`src/pages/og/[language]/[page].png.ts`; the legal pages stay text-only.
+Headlines have up to three explicit lines; a build fails if a line exceeds the
+available space, which is narrower beside an illustration.
 Check edited cards at small preview sizes as well as full resolution.
 
 After `pnpm build`, run `pnpm test:seo` to check the generated HTML, language
-links, structured data, PNG files, sitemap and legacy redirects.
+links, structured data, PNG files, sitemap and short redirects.

@@ -1,0 +1,157 @@
+---
+import ShareIcon from "@/assets/icons/share.svg"
+import Artwork from "@/components/Artwork.astro"
+import DonationOptions from "@/components/DonationOptions.astro"
+import LetterGenerator from "@/components/LetterGenerator.astro"
+import Layout from "@/layouts/Layout.astro"
+import MetaPage from "@/components/MetaPage.astro"
+import { btcpay } from "@/data/donation"
+import { shareFile, shareScenes } from "@/data/share"
+import { languageFor, pathFor } from "@/lib/i18n"
+const language = languageFor(Astro.url.pathname)
+const en = language === "en"
+const other = en ? "de" : "en"
+---
+
+<Layout
+  sections={[
+    { id: "spenden", label: en ? "Donate" : "Spenden" },
+    { id: "abgeordnete", label: en ? "Write to MPs" : "Abgeordnete anschreiben" },
+    { id: "teilen", label: en ? "Share" : "Teilen" },
+    {
+      id: "organisationen",
+      label: en ? "For organisations" : "Für Organisationen",
+    },
+  ]}
+>
+  <MetaPage slot="head" />
+  <article class="campaign">
+    <header class="hero" data-share-scope>
+      <h1>
+        {en ? "Help defend " : "Hilf mit, "}
+        <span
+          >{en ? "financial privacy." : "Privatsphäre zu verteidigen."}</span
+        >
+      </h1>
+      <p class="lead">
+        {en ? "Help us challenge mass surveillance of our finances: fund the case, write to your MPs and share the campaign." : "Hilf uns, der Massenüberwachung unserer Finanzen Grenzen zu setzen: Trage den Prozess mit, schreib deinen Abgeordneten und teile die Kampagne."}
+      </p>
+      <nav
+        class="hero-actions"
+        aria-label={en ? "Support the campaign" : "Kampagne unterstützen"}
+      >
+        <a class="button primary" href={btcpay} target="_blank" rel="noopener"
+          >{en ? "Donate bitcoin" : "Mit Bitcoin spenden"}</a
+        >
+        <a class="button" href="#euro"
+          >{en ? "Bank transfer" : "Per Überweisung"}</a
+        >
+        <button class="button" type="button" data-share>
+          <ShareIcon />
+          {en ? "Share the link" : "Link teilen"}
+        </button>
+      </nav>
+      <Artwork id="collectiveDefense" language={language} size="hero" />
+      <p class="share-status" data-share-status aria-live="polite"></p>
+      <p class="note participation-note">
+        <strong
+          >{en ? "Taking part in the proceedings: " : "Beteiligung am Verfahren: "}</strong
+        >
+        {en ? "How individuals can take part has not yet been determined. We will publish the options and requirements as the case develops." : "Wie sich Privatpersonen am Verfahren beteiligen können, steht noch nicht fest. Wir veröffentlichen Möglichkeiten und Voraussetzungen, sobald sie konkret sind."}
+        <a href={pathFor("proceedings", language)}
+          >{en ? "Follow the case" : "Verfahren verfolgen"}</a
+        >
+      </p>
+    </header>
+    <section id="spenden" aria-labelledby="donate-heading">
+      <h2 id="donate-heading">{en ? "Donate" : "Spenden"}</h2>
+      <p class="section-intro">
+        {en ? "Legal proceedings cost money. Your donation goes directly to Bitcoin Austria, the association behind dac8.org." : "Der Rechtsweg kostet Geld. Deine Spende geht direkt an Bitcoin Austria, den Verein hinter dac8.org."}
+      </p>
+      <DonationOptions language={language} />
+      <p class="prose">
+        {en ? "Your donation primarily funds the case against indiscriminate collection of our financial data. Questions: " : "Mit deiner Spende finanzieren wir vor allem den Prozess gegen die anlasslose Erfassung unserer Finanzdaten. Fragen zur Spende: "}
+        <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>.
+      </p>
+    </section>
+    <section id="abgeordnete" aria-labelledby="letter-heading">
+      <h2 id="letter-heading">
+        {en ? "Write to your MPs" : "Schreib deinen Abgeordneten"}
+      </h2>
+      <p class="section-intro">
+        {en ? "The rule that covers all customers is in Austrian law, and the National Council can change it. A personal letter shows members of parliament that people care. The letter is in German by default, the working language of the Austrian parliament." : "Die Regel, die alle Kunden erfasst, steht im österreichischen Gesetz. Der Nationalrat kann sie ändern. Ein persönlicher Brief zeigt Abgeordneten, dass das Thema Menschen bewegt."}
+      </p>
+      <LetterGenerator language={language} />
+    </section>
+    <section id="teilen" aria-labelledby="share-heading">
+      <h2 id="share-heading">
+        {en ? "Share the campaign" : "Teile die Kampagne"}
+      </h2>
+      <p class="section-intro">
+        {en ? "Graphics on the story from the home page and on what we are doing. Square for posts, portrait for stories and status updates." : "Grafiken zur Geschichte auf der Startseite und zu unserem Vorgehen. Quadratisch für Beiträge, hochkant für Stories und Status."}
+      </p>
+      <ul class="share-grid">
+        {shareScenes.map((scene) => (
+          <li>
+            <img
+              src={shareFile(language, scene.id, "thumb")}
+              width="480"
+              height="480"
+              loading="lazy"
+              decoding="async"
+              alt={scene.title[language]}
+            />
+            <h3>{scene.title[language]}</h3>
+            <div class="share-downloads">
+              <a href={shareFile(language, scene.id, "square")} download>
+                {en ? "Square" : "Quadrat"}
+              </a>
+              <a href={shareFile(language, scene.id, "story")} download>
+                Story
+              </a>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <a
+        class="text-link"
+        href={`${pathFor("participate", other)}#teilen`}
+        lang={other}
+      >
+        {en ? "Die Grafiken auf Deutsch" : "The graphics in English"}
+      </a>
+    </section>
+    <section id="organisationen" aria-labelledby="organisations-heading">
+      <h2 id="organisations-heading">
+        {en ? "For organisations and experts" : "Für Organisationen und Fachleute"}
+      </h2>
+      <div class="cards">
+        <article>
+          <h3>
+            {en ? "Support as an organisation" : "Als Organisation unterstützen"}
+          </h3>
+          <p>
+            {en ? "Businesses, associations and other organisations can help fund the proceedings or contribute expertise. Crypto-asset service providers are welcome to support the case too." : "Unternehmen, Verbände und andere Organisationen können das Verfahren finanziell unterstützen oder fachliche Expertise beitragen. Das gilt auch für Krypto-Dienstleister."}
+          </p>
+          <p>
+            {en ? "Supporting the case does not require public recognition. We will agree with you in advance whether and how your support is made public." : "Eine Unterstützung setzt keine öffentliche Nennung voraus. Ob und wie wir eure Beteiligung sichtbar machen, stimmen wir vorab mit euch ab."}
+          </p>
+          <a class="button primary" href="mailto:kontakt@dac8.org"
+            >{en ? "Discuss supporting the case" : "Unterstützung besprechen"}</a
+          >
+        </article>
+        <article>
+          <h3>{en ? "Work with us" : "Mit uns zusammenarbeiten"}</h3>
+          <p>
+            {en ? "This campaign currently focuses on Austria. Organisations and experts who want to challenge DAC8 in other countries are welcome to get in touch." : "Diese Kampagne richtet sich derzeit auf Österreich. Organisationen und Fachleute, die DAC8 in anderen Ländern angehen wollen, können sich bei uns melden."}
+          </p>
+          <a
+            class="button"
+            href="mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"
+            >kontakt@dac8.org</a
+          >
+        </article>
+      </div>
+    </section>
+  </article>
+</Layout>

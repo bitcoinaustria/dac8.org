@@ -1,0 +1,102 @@
+---
+import ShareIcon from "@/assets/icons/share.svg"
+import { donateFor, languageFor } from "@/lib/i18n"
+
+const language = languageFor(Astro.url.pathname)
+const en = language === "en"
+---
+
+<div class="action-bar" data-action-bar data-share-scope>
+  <a class="button primary" href={donateFor(language)}>
+    {en ? "Donate" : "Spenden"}
+  </a>
+  <button class="button" type="button" data-share>
+    <ShareIcon />
+    {en ? "Share" : "Teilen"}
+  </button>
+  <p class="share-status" data-share-status aria-live="polite"></p>
+</div>
+
+<style>
+  /* Nur mobil: die zwei Handlungen in Daumenreichweite, sobald der Hero mit
+     seinen eigenen Buttons aus dem Bild ist, und bis der Footer sie wieder
+     anbietet. */
+  .action-bar {
+    display: none;
+  }
+
+  @media (width < 64rem) {
+    .action-bar {
+      position: fixed;
+      z-index: 9;
+      inset-inline: 0;
+      inset-block-end: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2xs);
+      padding: var(--space-2xs) var(--grid-gutter)
+        max(var(--space-2xs), env(safe-area-inset-bottom));
+      border-block-start: 1px solid var(--border);
+      background: color-mix(in oklab, var(--background) 94%, transparent);
+      backdrop-filter: blur(12px);
+      transition: translate 220ms ease;
+    }
+
+    .action-bar[data-hidden] {
+      translate: 0 110%;
+    }
+
+    .action-bar .button {
+      flex: 1;
+      min-block-size: 2.75rem;
+      padding-block: 0.5em;
+    }
+
+    .action-bar .button svg {
+      inline-size: 1.1em;
+      block-size: 1.1em;
+    }
+
+    .share-status {
+      flex-basis: 100%;
+      margin: 0;
+      color: var(--accent);
+      font-size: var(--step--1);
+    }
+
+    .share-status:empty {
+      display: none;
+    }
+
+    :global(html[data-menu-open]) .action-bar {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .action-bar {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Ohne JavaScript bleibt die Leiste immer sichtbar.
+  const bar = document.querySelector<HTMLElement>("[data-action-bar]")
+  const start = document.querySelector("main .hero, main h1")
+  const end = document.querySelector("footer:has(.sign-off)")
+  if (bar && "IntersectionObserver" in window) {
+    const visible = new Map<Element, boolean>()
+    const update = () => {
+      const hidden = [...visible.values()].some(Boolean)
+      bar.toggleAttribute("data-hidden", hidden)
+      bar.inert = hidden
+    }
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries)
+        visible.set(entry.target, entry.isIntersecting)
+      update()
+    })
+    for (const target of [start, end]) if (target) observer.observe(target)
+  }
+</script>

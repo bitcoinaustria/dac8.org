@@ -1,0 +1,406 @@
+---
+import AffectedCheck from "@/components/AffectedCheck.astro"
+import Artwork from "@/components/Artwork.astro"
+import Layout from "@/layouts/Layout.astro"
+import LegalRoute from "@/components/LegalRoute.astro"
+import MetaPage from "@/components/MetaPage.astro"
+import { campaignStatus } from "@/data/campaign"
+import { sourceGroups } from "@/data/sources"
+const researchDate = "20 September 2026"
+const sources = sourceGroups.map((group) => ({
+  title: group.titleEn,
+  sources: group.sources.map((source) => ({
+    href: source.href,
+    label: source.labelEn,
+  })),
+}))
+const concerns = [
+  {
+    title: "Everyone, not just suspects.",
+    text: "Providers must prepare reporting data for all customers before it is even clear who will be reported. No specific reason or suspicion is required. We reject this precautionary collection.",
+  },
+  {
+    title: "A profile over the years.",
+    text: "Unlike bank-account reporting, crypto-asset reports include units and transaction counts. Year after year, this reveals activity even though current balances are not reported.",
+  },
+  {
+    title: "Sortable by wealth.",
+    text: "Total value and number of purchases give the average purchase size: a small monthly savings plan looks very different from a few large purchases. This lets anyone holding the data roughly estimate how much money each reported person moves in crypto, whether or not the estimate is right. In the wrong hands, it can be used to single out people who appear wealthy.",
+  },
+  {
+    title: "A data breach cannot be undone.",
+    text: "A provider breach can expose the link between your name and blockchain transactions. Once that link spreads, it is hard to take back. It can reveal further payments and make people targets.",
+  },
+  {
+    title: "The purpose keeps expanding.",
+    text: "Under the directive, exchanged data may be used for customs, anti-money-laundering purposes and, under certain conditions, sanctions as well as taxation. Each new purpose needs its own clear limits.",
+  },
+  {
+    title: "Errors travel too.",
+    text: "An incorrect tax residence, valuation or interpretation of a transfer can be passed to other countries. The more bodies involved, the harder it becomes to correct the record.",
+  },
+  {
+    title: "Ten years without an explanation.",
+    text: "Providers delete reported crypto-asset data ten years after the reporting period. For corresponding bank-account data, it is five years. The legislative materials do not explain the difference.",
+  },
+]
+const faqs = [
+  {
+    question: "Am I affected just because I own bitcoin?",
+    answer:
+      "Only if a crypto-asset provider is involved, such as an exchange or broker. Providers with Austrian reporting obligations must prepare data on all customers. Providers in other EU countries report there, and the data goes to the country where you are tax-resident. DAC8 does not report people who exclusively hold bitcoin in self-custody and do not use such a provider.",
+  },
+  {
+    question: "Will my own wallet address be reported?",
+    answer:
+      "No. Wallet addresses are not part of the annual DAC8 report. But the value and units transferred to addresses not known to belong to another provider are reported. This generally includes your own wallet. The address and its link to you may still remain in the provider’s records.",
+  },
+  {
+    question: "Are exchanges of bitcoin for another crypto-asset reported?",
+    answer:
+      "Yes. Value, units and transaction counts are reported on both sides, even though in Austria such an exchange usually does not constitute a taxable disposal for individuals.",
+  },
+  {
+    question: "Is DAC8 an asset registry?",
+    answer:
+      "No. It reports annual activity aggregates, not current balances or total wealth. Combined with account registries, provider records and blockchain analysis, they could nevertheless reveal a detailed picture of a person’s assets.",
+  },
+  {
+    question: "Will transactions before 2026 be reported retroactively?",
+    answer:
+      "No. The first reporting period starts on 1 January 2026. A retroactive obligation would require a new law. Neither DAC9 nor the current proposal to recast the directive provides for this.",
+  },
+  {
+    question: "Will my data be deleted when I close my account?",
+    answer:
+      "Not immediately. Under Austria’s Financial Markets Anti-Money Laundering Act, providers must retain necessary identification and transaction records for ten years after the business relationship ends.",
+  },
+  {
+    question: "Can every cryptocurrency payment be traced?",
+    answer:
+      "No. A known Bitcoin address can reveal further payments on the blockchain. It is not always possible to reliably identify who made them or why. Individual Lightning payments are not recorded on the public blockchain.",
+  },
+  {
+    question: "Do DAC9 and DAC10 mean more crypto surveillance?",
+    answer:
+      "Not automatically. DAC9 concerns minimum taxation of large corporate groups, not individual crypto users. The recast proposed in June 2026, often called DAC10, is not yet law and retains the existing crypto reporting fields.",
+  },
+  {
+    question: "Is DAC8 unlawful?",
+    answer:
+      "We believe Austria’s collection covering all customers violates fundamental rights and seek judicial review. Whether these specific obligations are proportionate is for the courts to decide.",
+  },
+  {
+    question: "What happens to my data on this website?",
+    answer:
+      "Reading the site and subscribing to RSS require no registration. Our privacy notice explains the technical data involved in hosting and what is processed when you contact us or donate.",
+  },
+]
+---
+
+<Layout
+  sections={[
+  { id: "was-ist-dac8", label: "What is DAC8?" },
+  { id: "gemeldet", label: "What gets reported" },
+  { id: "problem", label: "Why it is a problem" },
+  { id: "ausblick", label: "What might come next" },
+  { id: "forderungen", label: "Our demands" },
+  { id: "rechtsweg", label: "Our legal strategy" },
+  { id: "faq", label: "Questions and answers" },
+  { id: "quellen", label: "Sources" },
+]}
+>
+  <MetaPage slot="head" />
+  <article class="campaign dossier">
+    <header class="hero">
+      <h1>What DAC8 requires. <span>And what it does not.</span></h1>
+      <p class="lead">
+        What data about you gets reported, what your provider keeps and why we
+        are challenging it.
+      </p>
+      <nav class="hero-actions" aria-label="Get started">
+        <a class="button primary" href="#gemeldet">What gets reported</a
+        ><a class="button" href="#rechtsweg">Our legal strategy</a>
+      </nav>
+      <dl class="glance" aria-label="Current position">
+        <dt>Law in force</dt>
+        <dd>since 1 January 2026</dd>
+        <dt>First report</dt>
+        <dd>for 2026, due by 31 July 2027</dd>
+      </dl>
+      <AffectedCheck language="en" />
+    </header>
+    <section id="was-ist-dac8" aria-labelledby="was-heading">
+      <h2 id="was-heading">What is DAC8?</h2>
+      <p class="section-intro">
+        DAC8 is an EU directive extending automatic exchange of tax information
+        between EU countries to crypto-assets. Austria implemented it through
+        the Crypto-Asset Reporting Obligations Act (Krypto-MPfG), which has
+        applied since 1 January 2026.
+      </p>
+      <ol class="flow" aria-label="Where the data goes">
+        <li>
+          <strong>You</strong
+          ><span
+            >use an exchange or broker with reporting obligations in Austria</span
+          >
+        </li>
+        <li class="accent">
+          <strong>The provider</strong
+          ><span
+            >prepares identities and annual aggregates for all customers and
+            reports once a year</span
+          >
+        </li>
+        <li>
+          <strong>The tax authority</strong
+          ><span>receives, analyses and stores the report</span>
+        </li>
+        <li>
+          <strong>Other EU countries</strong
+          ><span>receive the data if you are tax-resident there</span>
+        </li>
+      </ol>
+      <p class="callout">
+        <strong>Austria’s additional requirement:</strong>
+        Before it is established who will be reported, the provider must prepare
+        reporting data for all customers, all transactions and all
+        crypto-assets. The directive does not require this.<small
+          >Section 20(1) Krypto-MPfG.</small
+        >
+      </p>
+    </section>
+    <section id="gemeldet" aria-labelledby="gemeldet-heading">
+      <h2 id="gemeldet-heading">What gets reported, and what does not</h2>
+      <p class="section-intro">
+        The report contains identities and annual aggregates, not individual
+        transactions.
+      </p>
+      <Artwork id="reportAssets" language="en" size="wide" zoom />
+      <div class="compare">
+        <div>
+          <h3>Included in the report</h3>
+          <ul>
+            <li>
+              Name, address, tax residence, tax identification number and date
+              of birth
+            </li>
+            <li>
+              For each crypto-asset and activity category: euro value, units
+              and, for most categories, transaction count, separated into
+              purchases, sales, exchanges and transfers
+            </li>
+            <li>
+              Value and units transferred to addresses not associated with a
+              known provider, generally including your own wallet
+            </li>
+            <li>
+              Activities that often have no tax consequences, such as
+              crypto-to-crypto exchanges
+            </li>
+          </ul>
+        </div>
+        <div class="absent">
+          <h3>Not included in the report</h3>
+          <ul>
+            <li>Wallet addresses and transaction identifiers</li>
+            <li>Individual transactions, timestamps or counterparties</li>
+            <li>Current balances or total wealth</li>
+            <li>Activities before 1 January 2026</li>
+          </ul>
+        </div>
+      </div>
+      <h3>The timetable</h3>
+      <ol class="timeline" aria-label="Timetable of the first report">
+        <li>
+          <strong>2026</strong>
+          <span>The first reporting period</span>
+        </li>
+        <li>
+          <strong>By 31 July 2027</strong>
+          <span>Providers report 2026 to the tax authority.</span>
+        </li>
+        <li>
+          <strong>By 30 September 2027</strong>
+          <span
+            >Austria exchanges the information with other EU countries.</span
+          >
+        </li>
+      </ol>
+      <div class="art-split even">
+        <div>
+          <h3>What the provider retains</h3>
+          <p class="prose">
+            Your provider can link your name to wallet addresses and individual
+            transactions. These details are outside the annual DAC8 report but
+            may remain in its records, depending on the service.
+            <a
+              href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&amp;Gesetzesnummer=20009769"
+              >Section 21 FM-GwG</a
+            >
+            requires, independently of DAC8, necessary identification and
+            transaction records to be kept for ten years after the business
+            relationship ends or an occasional transaction.
+          </p>
+        </div>
+        <Artwork id="linkedIdentity" language="en" />
+      </div>
+    </section>
+    <section id="problem" aria-labelledby="problem-heading">
+      <h2 id="problem-heading">Why it is a problem</h2>
+      <p class="section-intro">
+        Your data is prepared and stored for years even without suspicion. This
+        intrudes on your private life and exposes you to errors, breaches and
+        misuse.
+      </p>
+      <ul class="facts concerns">
+        {concerns.map(concern => <li><strong>{concern.title}</strong><p>{concern.text}</p></li>)}
+        <li class="facts-figure">
+          <Artwork id="retentionArchive" language="en" />
+        </li>
+      </ul>
+      <Artwork id="wealthProfile" language="en" size="wide" />
+      <div class="art-split even">
+        <div>
+          <h3 id="zahlungsprofile">When payments reveal everyday life</h3>
+          <p class="prose">
+            Paying with cryptocurrencies can leave traces of everyday life.
+            Bitcoin’s on-chain transactions remain public. When a provider links
+            your name to an address, further payments may become attributable to
+            you. With information about recipients, purchases, donations and
+            recurring payments can
+            <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
+              >reveal habits and relationships</a
+            >.
+          </p>
+        </div>
+        <Artwork id="spendingProfile" language="en" />
+      </div>
+      <div class="art-split even reverse">
+        <div>
+          <h3>Data breaches put people at risk</h3>
+          <p class="prose">
+            Stored links between identities and financial data are a valuable
+            target for attackers. Long retention obligations keep these records
+            available for years. In the wrong hands, they can be used for fraud,
+            extortion or selecting victims.
+          </p>
+          <p class="prose">
+            The
+            <a
+              href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
+              >French Gendarmerie</a
+            >
+            reports that criminals use stolen customer data from crypto tax
+            service Waltio to select targets. It describes kidnappings and
+            physical violence. Even a mistaken assumption that someone owns
+            substantial crypto assets can put them and their family at risk.
+            Data minimisation and shorter retention periods also protect
+            personal safety.
+          </p>
+        </div>
+        <Artwork id="wrenchAttack" language="en" />
+      </div>
+    </section>
+    <section id="ausblick" aria-labelledby="ausblick-heading">
+      <h2 id="ausblick-heading">What might come next</h2>
+      <p class="section-intro">
+        Reporting infrastructure can be expanded later. That is why we want
+        effective limits on data collection now.
+      </p>
+      <p class="prose">
+        Requiring reports of wallet addresses, individual transactions or
+        activities before 2026 would need a change in the law. None of this has
+        been enacted, and the current proposal to recast the directive does not
+        provide for it either.
+      </p>
+    </section>
+    <section id="forderungen" aria-labelledby="forderungen-heading">
+      <h2 id="forderungen-heading">Our demands</h2>
+      <p class="section-intro">
+        The state must justify why an intrusion into your private life is
+        necessary. Invoking money laundering or tax evasion does not replace
+        that justification. We call for targeted investigations based on
+        specific suspicion and effective protection for uninvolved people. A
+        stated policy goal is no licence for mass surveillance.
+      </p>
+      <ul class="checklist">
+        <li>
+          <strong>Determine whose data must be reported first.</strong>
+          No precautionary preparation of data for all customers.
+        </li>
+        <li>
+          <strong>Collect only necessary data.</strong>
+          The additional value of units and transaction counts must be
+          demonstrated.
+        </li>
+        <li>
+          <strong>Your own wallet is not a payment to someone else.</strong>
+          Transfers to self-custodied addresses should be treated distinctly.
+        </li>
+        <li>
+          <strong>Keep data no longer than necessary.</strong>
+          Ten years instead of five needs a clear justification.
+        </li>
+        <li>
+          <strong>Strictly limit purpose, access and onward disclosure.</strong>
+          Access must be traceable and subject to independent oversight.
+        </li>
+        <li>
+          <strong>Your rights must work in practice.</strong>
+          You must be able to access your data, correct errors and have
+          unlawfully stored data deleted by every recipient.
+        </li>
+        <li>
+          <strong>Independently review benefits and risks.</strong>
+          Regularly and publicly, so unnecessary intrusions can be ended.
+        </li>
+      </ul>
+      <div class="precedent">
+        <p class="precedent-year" aria-hidden="true">2014</p>
+        <p class="prose">
+          <strong>Resistance can work.</strong>
+          The challenge to data retention organised by AKVorrat, now
+          epicenter.works, reached the Court of Justice through Austria’s
+          Constitutional Court. In 2014, both the EU directive and Austrian
+          rules fell. That success shows that even sweeping surveillance laws
+          can be changed.
+        </p>
+      </div>
+    </section>
+    <section id="rechtsweg" aria-labelledby="rechtsweg-heading">
+      <h2 id="rechtsweg-heading">Our legal strategy</h2>
+      <p class="section-intro">
+        {campaignStatus.en.text}
+      </p>
+      <LegalRoute language="en" />
+      <p class="prose">
+        The court decides whether to refer questions to the CJEU. The complaint
+        does not automatically stop data collection; the duration of the
+        proceedings is not yet known.
+      </p>
+      <p class="prose">
+        Whether and how individuals can take part will be clarified as the case
+        develops. In the meantime, you can
+        <a href="/en/get-involved/#spenden">help fund the case</a>
+        and
+        <a href="/en/proceedings/">follow its progress</a>.
+      </p>
+    </section>
+    <section id="faq" aria-labelledby="faq-heading">
+      <h2 id="faq-heading">Questions and answers</h2>
+      <div class="faq-list">
+        {faqs.map(faq => <details name="faq"><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}
+      </div>
+    </section>
+    <section id="quellen" class="sources" aria-labelledby="sources-heading">
+      <h2 id="sources-heading">Sources</h2>
+      <div class="source-groups">
+        {sources.map(group => <div><h3>{group.title}</h3><ul>{group.sources.map(source => <li><a href={source.href}>{source.label}</a></li>)}</ul></div>)}
+      </div>
+      <p class="research-note">
+        Research last updated: {researchDate}. Not individual legal advice.
+      </p>
+    </section>
+  </article>
+</Layout>

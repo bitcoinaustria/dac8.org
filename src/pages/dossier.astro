@@ -1,0 +1,433 @@
+---
+import AffectedCheck from "@/components/AffectedCheck.astro"
+import Artwork from "@/components/Artwork.astro"
+import LegalRoute from "@/components/LegalRoute.astro"
+import MetaPage from "@/components/MetaPage.astro"
+import Layout from "@/layouts/Layout.astro"
+import { campaignStatus } from "@/data/campaign"
+import { sourceGroups } from "@/data/sources"
+
+const researchDate = "20. September 2026"
+
+const concerns = [
+  {
+    title: "Alle, nicht nur Verdächtige.",
+    text: "Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, bevor überhaupt feststeht, wer gemeldet wird. Ein Anlass oder Verdacht ist nicht nötig. Genau diese Vorratslogik lehnen wir ab.",
+  },
+  {
+    title: "Ein Profil über Jahre.",
+    text: "Anders als bei Bankkonten werden je Kryptowert auch Stückzahlen und die Zahl der Vorgänge gemeldet. Jahr für Jahr ergibt das ein Bild, wie aktiv jemand ist, auch wenn der aktuelle Bestand nicht dabei ist.",
+  },
+  {
+    title: "Sortierbar nach Vermögen.",
+    text: "Aus Summe und Anzahl der Käufe ergibt sich die durchschnittliche Kaufgröße: Ein kleiner monatlicher Sparplan sieht anders aus als wenige große Käufe. So lässt sich für jede gemeldete Person grob schätzen, wie viel Geld sie in Krypto bewegt, ob die Schätzung stimmt oder nicht. In falschen Händen lassen sich damit gezielt Menschen herausfiltern, die vermögend wirken.",
+  },
+  {
+    title: "Ein Datenleck ist nicht rückgängig zu machen.",
+    text: "Ein Leck beim Anbieter kann die Verbindung zwischen deinem Namen und Blockchain-Vorgängen offenlegen. Eine einmal verbreitete Zuordnung lässt sich kaum zurückholen. Sie kann weitere Zahlungen erschließen und Menschen zur Zielscheibe machen.",
+  },
+  {
+    title: "Der Zweck wächst mit.",
+    text: "Ausgetauschte Daten dürfen laut Richtlinie nicht nur für Steuern, sondern auch für Zoll, Geldwäschebekämpfung und unter Bedingungen für Sanktionen genutzt werden. Jeder neue Zweck braucht eine eigene, klare Grenze.",
+  },
+  {
+    title: "Fehler reisen mit.",
+    text: "Ein falscher Steuerwohnsitz, eine falsche Bewertung oder ein missverstandener Transfer kann an andere Staaten weitergegeben werden. Je mehr Stellen beteiligt sind, desto schwerer wird die Korrektur.",
+  },
+  {
+    title: "Zehn Jahre ohne Begründung.",
+    text: "Übermittelte Kryptodaten werden beim Anbieter erst zehn Jahre nach dem Meldezeitraum gelöscht. Bei entsprechenden Bankkontendaten sind es fünf Jahre. Die Gesetzesmaterialien begründen diesen Unterschied nicht.",
+  },
+]
+
+const faqs = [
+  {
+    question: "Bin ich betroffen, wenn ich Bitcoin besitze?",
+    answer:
+      "Nur, wenn ein Krypto-Anbieter beteiligt ist, etwa eine Börse oder ein Broker. Anbieter mit Meldepflicht in Österreich müssen die Daten aller Kunden aufbereiten. Anbieter in anderen EU-Staaten melden dort; die Daten gehen an den Staat, in dem du steuerlich ansässig bist. Wer Bitcoin ausschließlich selbst verwahrt und keinen solchen Anbieter nutzt, wird durch DAC8 nicht gemeldet.",
+  },
+  {
+    question: "Wird meine eigene Wallet-Adresse gemeldet?",
+    answer:
+      "Nein, Wallet-Adressen sind nicht Teil der jährlichen DAC8-Meldung. Gemeldet werden aber Wert und Stückzahl von Übertragungen an Adressen, die dem Anbieter nicht als Adresse eines anderen Anbieters bekannt sind. Darunter fällt in der Regel auch deine eigene Wallet. Die Adresse und ihr Bezug zu dir können trotzdem in den Aufzeichnungen des Anbieters gespeichert bleiben.",
+  },
+  {
+    question:
+      "Ich tausche Bitcoin gegen einen anderen Kryptowert. Wird das gemeldet?",
+    answer:
+      "Ja. Der Tausch wird mit Wert, Stückzahl und Anzahl auf beiden Seiten gemeldet, obwohl er in Österreich für Privatpersonen steuerlich meist kein Verkauf ist.",
+  },
+  {
+    question: "Ist DAC8 ein Vermögensregister?",
+    answer:
+      "Nein. Gemeldet werden Jahreswerte der Aktivität, kein aktueller Bestand und kein Gesamtvermögen. Zusammen mit Kontenregister, Anbieteraufzeichnungen und Blockchain-Analyse können sie aber ein detailliertes Bild der Vermögensverhältnisse ergeben.",
+  },
+  {
+    question: "Werden Transaktionen vor 2026 nachgemeldet?",
+    answer:
+      "Nein. Der erste Meldezeitraum beginnt am 1. Jänner 2026. Eine rückwirkende Meldepflicht bräuchte ein neues Gesetz. Weder DAC9 noch der aktuelle Vorschlag für eine Neufassung der Richtlinie sehen das vor.",
+  },
+  {
+    question: "Werden meine Daten gelöscht, wenn ich mein Konto schließe?",
+    answer:
+      "Nicht sofort. Nach dem österreichischen Finanzmarkt-Geldwäschegesetz muss der Anbieter notwendige Identifizierungs- und Transaktionsunterlagen noch zehn Jahre nach Ende der Geschäftsbeziehung aufbewahren.",
+  },
+  {
+    question: "Lässt sich jede Zahlung mit Kryptowährungen nachverfolgen?",
+    answer:
+      "Nein. Eine bekannte Bitcoin-Adresse kann weitere Zahlungen auf der Blockchain sichtbar machen. Wem sie gehören und wofür sie bestimmt sind, lässt sich daraus nicht immer sicher erkennen. Einzelne Lightning-Zahlungen stehen nicht auf der öffentlichen Blockchain.",
+  },
+  {
+    question: "Bedeuten DAC9 und DAC10 noch mehr Krypto-Überwachung?",
+    answer:
+      "Nicht automatisch. DAC9 betrifft die Mindestbesteuerung großer Unternehmensgruppen, nicht einzelne Krypto-Nutzer. Die im Juni 2026 vorgeschlagene Neufassung der Richtlinie, oft DAC10 genannt, ist noch kein geltendes Recht und führt die bisherigen Krypto-Felder fort.",
+  },
+  {
+    question: "Ist DAC8 rechtswidrig?",
+    answer:
+      "Wir halten die österreichische Erfassung aller Kunden für grundrechtswidrig und wollen sie gerichtlich prüfen lassen. Ob die konkreten Pflichten verhältnismäßig sind, müssen die Gerichte entscheiden.",
+  },
+  {
+    question: "Was passiert mit meinen Daten auf dieser Website?",
+    answer:
+      "Für das Lesen und den RSS-Feed ist keine Anmeldung nötig. Welche technischen Daten beim Hosting anfallen und was bei Kontaktaufnahme oder Spenden verarbeitet wird, steht in der Datenschutzerklärung.",
+  },
+]
+---
+
+<Layout
+  sections={[
+    { id: "was-ist-dac8", label: "Was ist DAC8?" },
+    { id: "gemeldet", label: "Was gemeldet wird" },
+    { id: "problem", label: "Was problematisch ist" },
+    { id: "ausblick", label: "Was noch kommen könnte" },
+    { id: "forderungen", label: "Was wir fordern" },
+    { id: "rechtsweg", label: "Wie wir vorgehen" },
+    { id: "faq", label: "Häufige Fragen" },
+    { id: "quellen", label: "Quellen" },
+  ]}
+>
+  <MetaPage slot="head" />
+
+  <article class="campaign dossier">
+    <header class="hero">
+      <h1>Was DAC8 verlangt. <span>Und was nicht.</span></h1>
+      <p class="lead">
+        Welche Daten über dich gemeldet werden, was beim Anbieter gespeichert
+        bleibt und warum wir dagegen vorgehen.
+      </p>
+      <nav class="hero-actions" aria-label="Direkteinstieg">
+        <a class="button primary" href="#gemeldet">Was gemeldet wird</a>
+        <a class="button" href="#rechtsweg">Wie wir vorgehen</a>
+      </nav>
+      <dl class="glance" aria-label="Aktueller Stand">
+        <dt>Gesetz in Kraft</dt>
+        <dd>seit 1. Jänner 2026</dd>
+        <dt>Erste Meldung</dt>
+        <dd>für das Jahr 2026, spätestens am 31. Juli 2027</dd>
+      </dl>
+      <AffectedCheck language="de" />
+    </header>
+
+    <section id="was-ist-dac8" aria-labelledby="was-heading">
+      <h2 id="was-heading">Was ist DAC8?</h2>
+      <p class="section-intro">
+        DAC8 ist eine EU-Richtlinie. Sie erweitert den automatischen Austausch
+        von Steuerdaten zwischen den EU-Staaten auf Kryptowerte. Österreich hat
+        sie mit dem Krypto-Meldepflichtgesetz umgesetzt, das seit 1. Jänner 2026
+        gilt.
+      </p>
+      <ol class="flow" aria-label="Der Weg der Daten">
+        <li>
+          <strong>Du</strong>
+          <span
+            >nutzt eine Börse oder einen Broker mit Meldepflicht in Österreich</span
+          >
+        </li>
+        <li class="accent">
+          <strong>Der Anbieter</strong>
+          <span
+            >bereitet Identität und Jahreswerte für alle Kunden auf und meldet
+            einmal im Jahr</span
+          >
+        </li>
+        <li>
+          <strong>Das Finanzamt</strong>
+          <span>empfängt die Meldung, wertet sie aus, speichert sie</span>
+        </li>
+        <li>
+          <strong>Andere EU-Staaten</strong>
+          <span>erhalten die Daten, wenn du dort steuerlich ansässig bist</span>
+        </li>
+      </ol>
+      <p class="callout">
+        <strong>Der österreichische Zusatz:</strong>
+        Bevor feststeht, wer überhaupt gemeldet wird, muss der Anbieter die
+        Meldedaten für alle Kunden, alle Transaktionen und alle Kryptowerte
+        aufbereiten. Die Richtlinie verlangt das nicht.
+        <small>§ 20 Abs. 1 Krypto-MPfG.</small>
+      </p>
+    </section>
+
+    <section id="gemeldet" aria-labelledby="gemeldet-heading">
+      <h2 id="gemeldet-heading">Was gemeldet wird, und was nicht</h2>
+      <p class="section-intro">
+        Die Meldung enthält Identität und Jahreswerte, keine einzelnen
+        Transaktionen.
+      </p>
+      <Artwork id="reportAssets" language="de" size="wide" zoom />
+      <div class="compare">
+        <div>
+          <h3>Das steht in der Meldung</h3>
+          <ul>
+            <li>Name, Anschrift, Steuerwohnsitz, Steuernummer, Geburtsdatum</li>
+            <li>
+              je Kryptowert und Vorgangsart Wert in Euro, Stückzahl und meist
+              die Anzahl der Vorgänge – getrennt nach Kauf, Verkauf, Tausch und
+              Übertragung
+            </li>
+            <li>
+              Wert und Stückzahl aller Übertragungen an Adressen, die keinem
+              bekannten Anbieter gehören. Dazu zählt in der Regel deine eigene
+              Wallet.
+            </li>
+            <li>
+              auch Vorgänge, die steuerlich meist keine Rolle spielen, etwa der
+              Tausch von Krypto gegen Krypto
+            </li>
+          </ul>
+        </div>
+        <div class="absent">
+          <h3>Das steht nicht in der Meldung</h3>
+          <ul>
+            <li>Wallet-Adressen und Transaktionskennungen</li>
+            <li>einzelne Transaktionen, Zeitpunkte oder Gegenparteien</li>
+            <li>der aktuelle Bestand oder dein Gesamtvermögen</li>
+            <li>Vorgänge vor dem 1. Jänner 2026</li>
+          </ul>
+        </div>
+      </div>
+      <h3>Wann was passiert</h3>
+      <ol class="timeline" aria-label="Zeitplan der ersten Meldung">
+        <li>
+          <strong>2026</strong>
+          <span>Der erste Meldezeitraum</span>
+        </li>
+        <li>
+          <strong>bis 31. Juli 2027</strong>
+          <span>Der Anbieter meldet das Jahr 2026 ans Finanzamt.</span>
+        </li>
+        <li>
+          <strong>bis 30. September 2027</strong>
+          <span>Österreich tauscht die Daten mit anderen EU-Staaten aus.</span>
+        </li>
+      </ol>
+      <div class="art-split even">
+        <div>
+          <h3>Was beim Anbieter bleibt</h3>
+          <p class="prose">
+            Dein Anbieter kann deinen Namen mit Wallet-Adressen und einzelnen
+            Transaktionen verknüpfen. Diese Details gehören nicht zur jährlichen
+            DAC8-Meldung, bleiben aber je nach Dienstleistung gespeichert.
+            <a
+              href="https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&amp;Gesetzesnummer=20009769"
+              >§ 21 FM-GwG</a
+            >
+            verlangt unabhängig von DAC8, notwendige Identifizierungs- und
+            Transaktionsunterlagen noch zehn Jahre nach Ende der
+            Geschäftsbeziehung oder einer gelegentlichen Transaktion
+            aufzubewahren.
+          </p>
+        </div>
+        <Artwork id="linkedIdentity" language="de" />
+      </div>
+    </section>
+
+    <section id="problem" aria-labelledby="problem-heading">
+      <h2 id="problem-heading">Was daran problematisch ist</h2>
+      <p class="section-intro">
+        Auch ohne Verdacht werden deine Daten aufbereitet und über Jahre
+        gespeichert. Das greift in dein Privatleben ein und setzt dich den
+        Risiken von Fehlern, Datenlecks und Missbrauch aus.
+      </p>
+      <ul class="facts concerns">
+        {concerns.map((concern) => (
+          <li>
+            <strong>{concern.title}</strong>
+            <p>{concern.text}</p>
+          </li>
+        ))}
+        <li class="facts-figure">
+          <Artwork id="retentionArchive" language="de" />
+        </li>
+      </ul>
+      <Artwork id="wealthProfile" language="de" size="wide" />
+      <div class="art-split even">
+        <div>
+          <h3 id="zahlungsprofile">Wenn Zahlungen deinen Alltag offenlegen</h3>
+          <p class="prose">
+            Wer mit Kryptowährungen bezahlt, kann Spuren seines Alltags
+            hinterlassen. Bei Bitcoin bleiben On-Chain-Transaktionen öffentlich.
+            Verbindet ein Anbieter deinen Namen mit einer Adresse, können
+            weitere Zahlungen zugeordnet werden. Mit Informationen über die
+            Empfänger lassen Einkäufe, Spenden und regelmäßige Zahlungen
+            <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
+              >Rückschlüsse auf Gewohnheiten und Beziehungen</a
+            >
+            zu.
+          </p>
+        </div>
+        <Artwork id="spendingProfile" language="de" />
+      </div>
+      <div class="art-split even reverse">
+        <div>
+          <h3>Datenlecks gefährden Menschen</h3>
+          <p class="prose">
+            Gespeicherte Verbindungen zwischen Identität und Finanzdaten sind
+            ein lohnendes Ziel für Angreifer. Lange Aufbewahrungspflichten
+            halten diese Daten über Jahre verfügbar. Gelangen sie in falsche
+            Hände, können sie für Betrug, Erpressung oder die Auswahl von Opfern
+            genutzt werden.
+          </p>
+          <p class="prose">
+            Die
+            <a
+              href="https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
+              >französische Gendarmerie</a
+            >
+            berichtet, dass Täter gestohlene Kundendaten des
+            Krypto-Steuerdienstes Waltio zur Auswahl von Angriffszielen nutzen.
+            Sie beschreibt Entführungen und körperliche Gewalt. Schon die teils
+            falsche Annahme, jemand besitze größere Kryptobestände, kann ihn und
+            seine Angehörigen gefährden. Datensparsamkeit und kurze
+            Speicherfristen schützen deshalb auch die persönliche Sicherheit.
+          </p>
+        </div>
+        <Artwork id="wrenchAttack" language="de" />
+      </div>
+    </section>
+
+    <section id="ausblick" aria-labelledby="ausblick-heading">
+      <h2 id="ausblick-heading">Was noch kommen könnte</h2>
+      <p class="section-intro">
+        Eine Meldeinfrastruktur lässt sich später erweitern. Deshalb wollen wir
+        der Datensammlung jetzt wirksame Grenzen setzen.
+      </p>
+      <p class="prose">
+        Eine Pflicht zur Meldung von Wallet-Adressen, einzelnen Transaktionen
+        oder Vorgängen vor 2026 bräuchte eine Gesetzesänderung. Das ist derzeit
+        nicht beschlossen. Auch der aktuelle Vorschlag zur Neufassung der
+        Richtlinie sieht dies nicht vor.
+      </p>
+    </section>
+
+    <section id="forderungen" aria-labelledby="forderungen-heading">
+      <h2 id="forderungen-heading">Was wir fordern</h2>
+      <p class="section-intro">
+        Der Staat muss begründen, warum ein Eingriff in dein Privatleben
+        notwendig ist. Der Verweis auf Geldwäsche oder Steuerhinterziehung
+        ersetzt diesen Nachweis nicht. Wir fordern gezielte Ermittlungen bei
+        konkretem Verdacht und wirksamen Schutz für Unbeteiligte. Ein politisch
+        erklärtes Ziel ist kein Freibrief für Massenüberwachung.
+      </p>
+      <ul class="checklist">
+        <li>
+          <strong>Erst klären, wessen Daten gemeldet werden müssen.</strong>
+          Keine vorsorgliche Aufbereitung für alle Kunden.
+        </li>
+        <li>
+          <strong>Nur notwendige Daten erfassen.</strong>
+          Der zusätzliche Nutzen von Stückzahlen und Transaktionszahlen muss
+          belegt werden.
+        </li>
+        <li>
+          <strong>Die eigene Wallet ist keine Zahlung an Dritte.</strong>
+          Übertragungen auf selbst verwahrte Adressen sollen erkennbar getrennt
+          behandelt werden.
+        </li>
+        <li>
+          <strong>Daten nicht länger als nötig speichern.</strong>
+          Zehn Jahre statt fünf brauchen eine nachvollziehbare Begründung.
+        </li>
+        <li>
+          <strong>Zweck, Zugriff und Weitergabe eng begrenzen.</strong>
+          Zugriffe müssen nachvollziehbar sein und unabhängig kontrolliert
+          werden.
+        </li>
+        <li>
+          <strong>Deine Rechte müssen praktisch funktionieren.</strong>
+          Du musst Auskunft erhalten, Fehler korrigieren und unrechtmäßig
+          gespeicherte Daten bei allen Empfängern löschen lassen können.
+        </li>
+        <li>
+          <strong>Nutzen und Risiken unabhängig überprüfen.</strong>
+          Regelmäßig und öffentlich, damit unnötige Eingriffe beendet werden.
+        </li>
+      </ul>
+      <div class="precedent">
+        <p class="precedent-year" aria-hidden="true">2014</p>
+        <p class="prose">
+          <strong>Gegenwehr wirkt.</strong>
+          Die von AKVorrat, heute epicenter.works, organisierte Beschwerde gegen
+          die Vorratsdatenspeicherung führte über den Verfassungsgerichtshof zum
+          Europäischen Gerichtshof. 2014 fielen die EU-Richtlinie und die
+          österreichischen Regeln. Der Erfolg zeigt, dass sich auch
+          weitreichende Überwachungsgesetze ändern lassen.
+        </p>
+      </div>
+    </section>
+
+    <section id="rechtsweg" aria-labelledby="rechtsweg-heading">
+      <h2 id="rechtsweg-heading">Wie wir vorgehen</h2>
+      <p class="section-intro">
+        {campaignStatus.de.text}
+      </p>
+      <LegalRoute language="de" />
+      <p class="prose">
+        Über eine Vorlage an den EuGH entscheidet das Gericht. Die Beschwerde
+        stoppt die Datenerfassung nicht automatisch; wie lange das Verfahren
+        dauert, steht noch nicht fest.
+      </p>
+      <p class="prose">
+        Ob und wie sich Privatpersonen beteiligen können, klären wir im weiteren
+        Verlauf. Bis dahin kannst du den
+        <a href="/mitmachen/#spenden">Prozess mit einer Spende unterstützen</a>
+        und die
+        <a href="/verfahren/">nächsten Schritte verfolgen</a>.
+      </p>
+    </section>
+
+    <section id="faq" aria-labelledby="faq-heading">
+      <h2 id="faq-heading">Häufige Fragen</h2>
+      <div class="faq-list">
+        {faqs.map((faq) => (
+          <details name="faq">
+            <summary>{faq.question}</summary>
+            <p>{faq.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <section id="quellen" class="sources" aria-labelledby="sources-heading">
+      <h2 id="sources-heading">Quellen</h2>
+      <div class="source-groups">
+        {sourceGroups.map((group) => (
+          <div>
+            <h3>{group.title}</h3>
+            <ul>
+              {group.sources.map((source) => (
+                <li>
+                  <a href={source.href}>{source.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p class="research-note">
+        Stand der Recherche: {researchDate}. Keine individuelle Rechtsberatung.
+      </p>
+    </section>
+  </article>
+</Layout>

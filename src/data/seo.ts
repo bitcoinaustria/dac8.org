@@ -13,24 +13,16 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       title: "Gegen DAC8. Für finanzielle Privatsphäre",
       description:
         "Finanzielle Privatsphäre ist ein Grundrecht. Bitcoin Austria bereitet ein Verfahren gegen die anlasslose Erfassung von Krypto-Finanzdaten unter DAC8 vor.",
-      imageLines: [
-        "Finanzielle Privatsphäre",
-        "ist ein Grundrecht.",
-        "Verteidigen wir sie.",
-      ],
+      imageLines: ["Finanzielle", "Privatsphäre.", "Verteidigen wir sie."],
     },
     en: {
       title: "Against DAC8. For financial privacy",
       description:
         "Financial privacy is a fundamental right. Bitcoin Austria is preparing a legal challenge to indiscriminate financial data collection under DAC8.",
-      imageLines: [
-        "Financial privacy",
-        "is a fundamental right.",
-        "Let’s defend it.",
-      ],
+      imageLines: ["Financial privacy.", "Let’s defend it."],
     },
   },
-  background: {
+  dossier: {
     de: {
       title: "DAC8 erklärt: Meldepflichten, Risiken und Rechtsweg",
       description:
@@ -44,46 +36,32 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       imageLines: ["What DAC8 requires.", "And what it doesn’t."],
     },
   },
-  support: {
+  participate: {
     de: {
       title: "Die Kampagne gegen DAC8 unterstützen",
       description:
-        "Hilf mit, finanzielle Privatsphäre zu verteidigen: Spende, teile die Kampagne oder unterstütze als Organisation. Verfolge die nächsten Schritte im Verfahren.",
-      imageLines: ["Finanzielle Privatsphäre", "braucht Unterstützung."],
+        "Hilf mit, finanzielle Privatsphäre zu verteidigen: Spende für das Verfahren, schreib deinen Abgeordneten, teile die Kampagne oder unterstütze als Organisation.",
+      imageLines: ["Hilf mit,", "Privatsphäre zu", "verteidigen."],
     },
     en: {
       title: "Support the campaign against DAC8",
       description:
-        "Help defend financial privacy: donate, share the campaign or support it as an organisation. Follow the next steps in Bitcoin Austria’s legal challenge.",
+        "Help defend financial privacy: donate to the legal challenge, write to your MPs, share the campaign or support it as an organisation.",
       imageLines: ["Help defend", "financial privacy."],
     },
   },
-  donate: {
-    de: {
-      title: "Spenden für das Verfahren gegen DAC8",
-      description:
-        "Unterstütze das Verfahren gegen DAC8 mit Bitcoin oder Euro. Deine Spende an Bitcoin Austria hilft vor allem, die Kosten des Verfahrens zu tragen.",
-      imageLines: ["Gegen DAC8 vorgehen.", "Den Prozess mittragen."],
-    },
-    en: {
-      title: "Donate to the legal challenge against DAC8",
-      description:
-        "Support the legal challenge against DAC8 with bitcoin or euros. Your donation to Bitcoin Austria primarily helps cover the costs of the proceedings.",
-      imageLines: ["Challenge DAC8.", "Help fund the case."],
-    },
-  },
-  updates: {
+  proceedings: {
     de: {
       title: "DAC8-Verfahren: Aktuelles und nächste Schritte",
       description:
         "Der aktuelle Stand des von Bitcoin Austria vorbereiteten DAC8-Verfahrens in Österreich. Neuigkeiten und nächste Schritte, auch per RSS.",
-      imageLines: ["Das Verfahren", "gegen DAC8.", "Aktuelles und Ausblick."],
+      imageLines: ["Das Verfahren", "gegen DAC8.", "In Vorbereitung."],
     },
     en: {
       title: "DAC8 legal challenge: updates and next steps",
       description:
         "Follow Bitcoin Austria’s legal challenge to DAC8 in Austria: the current status, campaign updates and next steps. Also available via RSS.",
-      imageLines: ["The case against DAC8.", "Updates and next steps."],
+      imageLines: ["The case", "against DAC8.", "In preparation."],
     },
   },
   legal: {
