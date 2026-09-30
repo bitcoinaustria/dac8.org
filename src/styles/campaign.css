@@ -1996,50 +1996,293 @@
 
 /* ---------- Grafiken zum Teilen ------------------------------------------ */
 
-.campaign .share-grid {
+/* Jede Szene zeigt Story und Quadrat in gleicher Höhe nebeneinander. Die
+   Breiten folgen den Seitenverhältnissen 9:16 und 1:1. */
+.campaign .share-kit {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
-  gap: var(--space-l) var(--space-m);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr));
+  gap: var(--space-xl) var(--space-l);
   margin-block-start: var(--space-xl);
   padding: 0;
   list-style: none;
 }
 
-.campaign .share-grid img {
+.campaign .share-formats {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+}
+
+.campaign .share-formats figure {
+  flex: 1000 1 0;
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.campaign .share-formats .share-story {
+  flex-grow: 562.5;
+}
+
+.campaign .share-formats img {
   display: block;
   inline-size: 100%;
   block-size: auto;
   border-radius: var(--radius-md);
   box-shadow: 0 0 0 1px var(--line);
+  cursor: zoom-in;
 }
 
-.campaign .share-grid h3 {
-  margin-block-start: var(--space-xs);
+.campaign .share-formats figcaption a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  min-block-size: 2.75rem;
+  color: var(--accent);
+  font-size: var(--step--1);
+  font-weight: 560;
+  text-decoration: none;
+}
+
+.campaign .share-formats figcaption svg {
+  inline-size: 1.05em;
+  block-size: 1.05em;
+}
+
+.campaign .share-kit h3 {
+  margin-block-start: var(--space-3xs);
   font-size: var(--step-0);
   font-weight: 560;
   line-height: 1.3;
   text-wrap: balance;
 }
 
-.campaign .share-downloads {
+/* Lightbox: dunkle Vollbildansicht, unabhängig vom Farbschema. Oben Titel
+   und Werkzeuge als Icons, in der Mitte das Bild mit Blätterpfeilen. */
+.campaign .lightbox {
+  --lightbox-ink: #f4f4f4;
+  --lightbox-soft: rgb(255 255 255 / 12%);
+
+  position: fixed;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: none;
+  max-block-size: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--lightbox-ink);
+  background: #0e0e0e;
+}
+
+.campaign .lightbox::backdrop {
+  background: #0e0e0e;
+}
+
+/* Die Seite dahinter scrollt nicht mit; ohne reservierte Scrollleiste
+   füllt die Lightbox die ganze Breite. */
+html:has(.lightbox[open]) {
+  overflow: hidden;
+  scrollbar-gutter: auto;
+}
+
+.campaign .lightbox[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.campaign .lightbox-bar {
   display: flex;
-  gap: var(--space-s);
-  margin-block-start: var(--space-3xs);
-  font-size: var(--step--1);
-}
-
-.campaign .share-grid .share-downloads a {
-  display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
-  min-block-size: 2.75rem;
-  color: var(--accent);
-  font-weight: 560;
-  text-decoration: none;
+  justify-content: space-between;
+  gap: var(--space-2xs) var(--space-s);
+  padding: var(--space-xs) var(--space-s);
 }
 
-.campaign .share-grid .share-downloads a::before {
-  content: "↓ ";
-  white-space: pre;
+.campaign .lightbox-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75em;
+  min-inline-size: 0;
+  margin: 0;
+  font-size: var(--step-0);
+}
+
+.campaign .lightbox-title span {
+  flex: none;
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+
+.campaign .lightbox-title strong {
+  overflow: hidden;
+  font-weight: 560;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.campaign .lightbox-tools {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-inline-start: auto;
+}
+
+.campaign .lightbox-tools :is(a, button),
+.campaign .lightbox-nav {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.campaign .lightbox-tools :is(a, button):hover,
+.campaign .lightbox-tools :is(a, button):focus-visible,
+.campaign .lightbox-nav:hover,
+.campaign .lightbox-nav:focus-visible {
+  background: var(--lightbox-soft);
+}
+
+.campaign .lightbox-tools [hidden] {
+  display: none;
+}
+
+.campaign .lightbox svg {
+  inline-size: 1.35rem;
+  block-size: 1.35rem;
+}
+
+.campaign .lightbox-formats {
+  display: inline-flex;
+  gap: 2px;
+  margin-inline-end: var(--space-2xs);
+  padding: 2px;
+  border-radius: 999px;
+  background: var(--lightbox-soft);
+}
+
+.campaign .lightbox-formats button[aria-pressed="true"] {
+  color: #151515;
+  background: var(--lightbox-ink);
+}
+
+.campaign .lightbox-formats button[aria-pressed="true"]:hover {
+  background: var(--lightbox-ink);
+}
+
+/* Nach dem Kopieren zeigt der Knopf kurz einen Haken. */
+.campaign [data-lb-copy] svg:last-child,
+.campaign [data-lb-copy][data-done] svg:first-child {
+  display: none;
+}
+
+.campaign [data-lb-copy][data-done] svg:last-child {
+  display: block;
+}
+
+.campaign .lightbox-stage {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-xs);
+  min-block-size: 0;
+  padding: 0 var(--space-xs) var(--space-m);
+}
+
+.campaign .lightbox-stage img {
+  justify-self: center;
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  inline-size: auto;
+  block-size: auto;
+  border-radius: var(--radius-md);
+  box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 50%);
+  touch-action: pan-y;
+}
+
+.campaign .lightbox-nav {
+  inline-size: 3.25rem;
+  block-size: 3.25rem;
+  background: var(--lightbox-soft);
+}
+
+.campaign .lightbox-status {
+  position: fixed;
+  inset-block-end: var(--space-l);
+  inset-inline: 0;
+  inline-size: fit-content;
+  max-inline-size: calc(100% - 2 * var(--space-s));
+  margin: 0 auto;
+  padding: 0.6em 1.1em;
+  border-radius: 999px;
+  color: #151515;
+  background: var(--lightbox-ink);
+  font-size: var(--step--1);
+  font-weight: 560;
+  opacity: 0;
+  translate: 0 0.5rem;
+  transition:
+    opacity 180ms ease,
+    translate 180ms ease;
+  pointer-events: none;
+}
+
+.campaign .lightbox-status[data-visible] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* Auf schmalen Bildschirmen liegen die Pfeile über dem Bildrand; wischen
+   geht auch. */
+@media (width < 40rem) {
+  .campaign .lightbox-stage {
+    grid-template-columns: minmax(0, 1fr);
+    padding-inline: var(--space-2xs);
+  }
+
+  .campaign .lightbox-stage img {
+    grid-area: 1 / 1;
+  }
+
+  .campaign .lightbox-nav {
+    grid-area: 1 / 1;
+    z-index: 1;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    background: rgb(10 10 10 / 55%);
+  }
+
+  .campaign .lightbox-nav[data-lb-step="-1"] {
+    justify-self: start;
+  }
+
+  .campaign .lightbox-nav[data-lb-step="1"] {
+    justify-self: end;
+  }
+
+  .campaign .lightbox-title {
+    flex: 1 1 100%;
+    order: 1;
+    font-size: var(--step--1);
+  }
+
+  .campaign .lightbox-tools {
+    flex: 1 1 100%;
+    margin-inline-start: 0;
+  }
+
+  .campaign [data-lb-close] {
+    margin-inline-start: auto;
+  }
 }
 
 /* ---------- Zeitleiste ------------------------------------------------- */
