@@ -59,7 +59,7 @@ Five main pages per language, with URLs that follow the navigation labels:
 | Angriffe: archive of known physical attacks, map and list | `/angriffe/` | `/en/attacks/` |
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
-| Geschichte: DAC timeline since 1977, linked from dossier, home and footer | `/geschichte/` | `/en/history/` |
+| Geschichte: DAC timeline since 1977 as cards per era, with what tax authorities receive today; linked from dossier, home and footer | `/geschichte/` | `/en/history/` |
 
 A top bar carries the navigation and a permanent donate button that leads to
 `#spenden` on the participation page; on mobile a bottom bar keeps donating and

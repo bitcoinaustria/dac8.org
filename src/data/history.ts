@@ -559,6 +559,159 @@ export const history: Entry[] = [
   },
 ]
 
+// What tax authorities receive today, by the step that introduced it; the
+// history page shows it beside the headline. Years are EU application dates,
+// as in the entries. Each item links to its entry.
+export const historyToday: Record<
+  Language,
+  {
+    title: string
+    groups: {
+      label: string
+      items: { id: string; step: string; since: string; what: string }[]
+    }[]
+  }
+> = {
+  de: {
+    title: "Was die Steuerbehörden heute bekommen",
+    groups: [
+      {
+        label: "Über Privatpersonen",
+        items: [
+          {
+            id: "dac1",
+            step: "DAC1",
+            since: "seit 2015",
+            what: "Löhne, Pensionen, Lebensversicherungen, Immobilien",
+          },
+          {
+            id: "dac2",
+            step: "DAC2",
+            since: "seit 2016",
+            what: "Bankkonten mit Kontostand, Zinsen und Dividenden",
+          },
+          {
+            id: "dac5",
+            step: "DAC5",
+            since: "seit 2018",
+            what: "Zugriff auf Geldwäschedaten",
+          },
+          {
+            id: "dac7",
+            step: "DAC7",
+            since: "seit 2023",
+            what: "Einnahmen über Online-Plattformen",
+          },
+          {
+            id: "dac8",
+            step: "DAC8",
+            since: "seit 2026",
+            what: "Käufe, Verkäufe und Übertragungen von Kryptowerten",
+          },
+        ],
+      },
+      {
+        label: "Über Unternehmen und Berater",
+        items: [
+          {
+            id: "dac3",
+            step: "DAC3",
+            since: "seit 2017",
+            what: "Steuervorbescheide",
+          },
+          {
+            id: "dac4",
+            step: "DAC4",
+            since: "seit 2016",
+            what: "Konzernberichte nach Ländern",
+          },
+          {
+            id: "dac6",
+            step: "DAC6",
+            since: "seit 2020",
+            what: "Grenzüberschreitende Steuergestaltungen",
+          },
+          {
+            id: "dac9",
+            step: "DAC9",
+            since: "seit 2026",
+            what: "Erklärungen zur Mindeststeuer",
+          },
+        ],
+      },
+    ],
+  },
+  en: {
+    title: "What tax authorities receive today",
+    groups: [
+      {
+        label: "About individuals",
+        items: [
+          {
+            id: "dac1",
+            step: "DAC1",
+            since: "since 2015",
+            what: "Salaries, pensions, life insurance, real estate",
+          },
+          {
+            id: "dac2",
+            step: "DAC2",
+            since: "since 2016",
+            what: "Bank accounts with balances, interest and dividends",
+          },
+          {
+            id: "dac5",
+            step: "DAC5",
+            since: "since 2018",
+            what: "Access to anti-money laundering data",
+          },
+          {
+            id: "dac7",
+            step: "DAC7",
+            since: "since 2023",
+            what: "Income earned through online platforms",
+          },
+          {
+            id: "dac8",
+            step: "DAC8",
+            since: "since 2026",
+            what: "Purchases, sales and transfers of crypto-assets",
+          },
+        ],
+      },
+      {
+        label: "About companies and advisers",
+        items: [
+          {
+            id: "dac3",
+            step: "DAC3",
+            since: "since 2017",
+            what: "Advance tax rulings",
+          },
+          {
+            id: "dac4",
+            step: "DAC4",
+            since: "since 2016",
+            what: "Country-by-country reports of multinationals",
+          },
+          {
+            id: "dac6",
+            step: "DAC6",
+            since: "since 2020",
+            what: "Cross-border tax arrangements",
+          },
+          {
+            id: "dac9",
+            step: "DAC9",
+            since: "since 2026",
+            what: "Minimum tax returns",
+          },
+        ],
+      },
+    ],
+  },
+}
+
 export const historyEras: Record<
   Language,
   { id: Era; label: string; title: string; intro: string }[]

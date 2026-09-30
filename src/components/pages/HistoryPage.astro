@@ -2,7 +2,12 @@
 import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import TimelineRail from "@/components/TimelineRail.astro"
-import { historyEras, historyFor, historyResearchDate } from "@/data/history"
+import {
+  historyEras,
+  historyFor,
+  historyResearchDate,
+  historyToday,
+} from "@/data/history"
 import { languageFor, pathFor } from "@/lib/i18n"
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
@@ -15,6 +20,7 @@ const statusLabel = {
   current: en ? "Applies since 2026" : "Gilt seit 2026",
   proposed: en ? "Proposal" : "Vorschlag",
 } as const
+const today = historyToday[language]
 ---
 
 <Layout
@@ -37,73 +43,111 @@ const statusLabel = {
             : "Am Anfang fragten Steuerbehörden einander zu einzelnen Fällen. Heute melden Banken, Plattformen und Krypto-Anbieter jedes Jahr Daten über ihre Kunden. DAC8 ist die achte Stufe. Die neunte ist beschlossen, eine Neufassung des ganzen Systems vorgeschlagen."}
         </p>
       </div>
+      <aside class="today" aria-labelledby="today-heading">
+        <h2 id="today-heading">{today.title}</h2>
+        {today.groups.map((group) => (
+          <div class="today-group">
+            <h3>{group.label}</h3>
+            <ul>
+              {group.items.map((item) => (
+                <li>
+                  <a href={`#${item.id}`}>{item.what}</a>
+                  <span>
+                    <strong>{item.step}</strong> {item.since}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </aside>
     </header>
 
     <TimelineRail language={language} />
 
-    {eras.map((era) => (
-      <section id={era.id} aria-labelledby={`${era.id}-heading`}>
-        <h2 id={`${era.id}-heading`}>{era.title}</h2>
-        <p class="section-intro">{era.intro}</p>
-        <ol class="chronicle">
-          {entries
-            .filter((entry) => entry.era === era.id)
-            .map((entry) => (
-              <li
+    {eras.map((era) => {
+      const stations = entries.filter((entry) => entry.era === era.id)
+      // With an odd number of stations the heading takes the first cell,
+      // so the two-column grid stays even.
+      const inline = stations.length % 2 === 1
+      return (
+        <section id={era.id} aria-labelledby={`${era.id}-heading`}>
+          <div class="era-grid">
+            <header class:list={["era-head", { inline }]}>
+              <h2 id={`${era.id}-heading`}>{era.title}</h2>
+              <p class="section-intro">{era.intro}</p>
+            </header>
+            {stations.map((entry) => (
+              <article
                 id={entry.id}
-                class={entry.status}
+                class:list={["station", entry.status]}
               >
-                <p class="chronicle-date">
+                <p class="station-date">
                   <time datetime={entry.date}>{entry.when}</time>
                   <span class="tag">{statusLabel[entry.status]}</span>
                 </p>
                 <h3>{entry.title}</h3>
-                <p class="prose">{entry.text}</p>
-                {entry.details.length > 0 && (
-                  <dl class="chronicle-facts">
-                    {entry.details.map((detail) => (
-                      <>
-                        <dt>{detail.label}</dt>
-                        <dd>{detail.text}</dd>
-                      </>
+                <p class="station-text">{entry.text}</p>
+                <details class="station-more">
+                  <summary>
+                    {entry.details.length > 0
+                      ? en
+                        ? "Details and sources"
+                        : "Details und Quellen"
+                      : en
+                        ? "Sources"
+                        : "Quellen"}
+                  </summary>
+                  {entry.details.length > 0 && (
+                    <dl class="station-facts">
+                      {entry.details.map((detail) => (
+                        <>
+                          <dt>{detail.label}</dt>
+                          <dd>{detail.text}</dd>
+                        </>
+                      ))}
+                    </dl>
+                  )}
+                  <ul class="station-sources">
+                    {entry.sources.map((source) => (
+                      <li>
+                        <a href={source.href}>{source.label}</a>
+                      </li>
                     ))}
-                  </dl>
-                )}
-                <p class="chronicle-sources">
-                  {entry.sources.map((source, index) => (
-                    <>
-                      {index > 0 && " · "}
-                      <a href={source.href}>{source.label}</a>
-                    </>
-                  ))}
-                </p>
-              </li>
+                  </ul>
+                </details>
+              </article>
             ))}
-        </ol>
-      </section>
-    ))}
+          </div>
+        </section>
+      )
+    })}
 
     <section id="gemeinsam" aria-labelledby="gemeinsam-heading">
       <h2 id="gemeinsam-heading">
         {en ? "What applies to every step" : "Was für alle Stufen gilt"}
       </h2>
-      <p class="section-intro">
-        {en
+      <div class="columns">
+        <p class="section-intro">
+          {en
           ? "Every step amends the same 2011 directive. The exchange channels, official secrecy and the rules on what the data may be used for apply to all categories alike."
           : "Jede Stufe ändert dieselbe Richtlinie von 2011. Übermittlungswege, Amtsgeheimnis und die Regeln, wofür die Daten verwendet werden dürfen, gelten für alle Kategorien gemeinsam."}
-      </p>
-      <p class="prose">
-        {en
+        </p>
+        <div>
+          <p class="prose">
+            {en
           ? "Originally, exchanged information could be used for taxes, tax recovery, social security contributions and tax penalty proceedings; any other use needed the sending country’s consent. DAC8 added the fight against money laundering and terrorist financing, and for the purposes of EU sanctions acts under Article 215 TFEU, the sending country’s consent is no longer required. Purpose limits, official secrecy and data protection still apply. This covers all DAC data, including bank-account, salary, pension and platform data."
           : "Ursprünglich durften ausgetauschte Informationen für Steuern, deren Beitreibung, Sozialversicherungsbeiträge und Steuerstrafverfahren verwendet werden; für alles andere brauchte es die Zustimmung des Herkunftsstaats. DAC8 hat die Bekämpfung von Geldwäsche und Terrorismusfinanzierung hinzugefügt, und für EU-Sanktionsrechtsakte nach Art. 215 AEUV braucht es keine Zustimmung des Herkunftsstaats mehr. Zweckbindung, Geheimhaltung und Datenschutz gelten weiter. Das betrifft alle DAC-Daten, auch Konto-, Lohn-, Pensions- und Plattformdaten."}
-      </p>
-      <p class="chronicle-sources">
-        {en ? "Article 16 of Directive 2011/16/EU, as amended by Article 1(7) of " : "Art. 16 der Richtlinie 2011/16/EU, geändert durch Art. 1 Nr. 7 der "}
-        <a
-          href={en ? "https://eur-lex.europa.eu/eli/dir/2023/2226/oj/eng" : "https://eur-lex.europa.eu/eli/dir/2023/2226/oj/deu"}
-          >{en ? "Directive (EU) 2023/2226" : "Richtlinie (EU) 2023/2226"}</a
-        >.
-      </p>
+          </p>
+          <p class="chronicle-sources">
+            {en ? "Article 16 of Directive 2011/16/EU, as amended by Article 1(7) of " : "Art. 16 der Richtlinie 2011/16/EU, geändert durch Art. 1 Nr. 7 der "}
+            <a
+              href={en ? "https://eur-lex.europa.eu/eli/dir/2023/2226/oj/eng" : "https://eur-lex.europa.eu/eli/dir/2023/2226/oj/deu"}
+              >{en ? "Directive (EU) 2023/2226" : "Richtlinie (EU) 2023/2226"}</a
+            >.
+          </p>
+        </div>
+      </div>
       <nav
         class="hero-actions"
         aria-label={en ? "Continue reading" : "Weiterlesen"}
@@ -131,126 +175,214 @@ const statusLabel = {
     margin-block-start: calc(var(--band-gap) * -0.5);
   }
 
-  /* Stationen im Detail: senkrechte Nut links, Token je Eintrag. */
-  .chronicle {
-    --dot: 1rem;
+  /* Neben der Schlagzeile: was die Steuerbehörden heute bekommen, nach der
+     Stufe, die es gebracht hat. Jede Zeile springt zu ihrem Eintrag. */
+  @container campaign (width >= 56rem) {
+    .history .hero:has(> .today) {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: center;
+    }
+
+    /* Wie neben einem Bild eine Stufe kleiner, damit die Schlagzeile in
+       drei Zeilen bleibt. */
+    .history .hero:has(> .today) h1 {
+      font-size: clamp(2.25rem, 1.3rem + 3vw, 3.75rem);
+    }
+  }
+
+  .today {
     display: grid;
-    gap: var(--space-xl);
-    max-inline-size: calc(var(--measure-text) + 3rem);
-    margin-block-start: var(--space-xl);
+    gap: var(--space-m);
+    padding: var(--space-l);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+
+  .today h2 {
+    font-size: var(--step-1);
+    line-height: 1.3;
+  }
+
+  .today h3 {
+    margin-block-end: var(--space-3xs);
+    color: var(--ink-3);
+    font-size: var(--step--1);
+    font-weight: 560;
+  }
+
+  .today ul {
+    display: grid;
     padding: 0;
     list-style: none;
   }
 
-  .chronicle > li {
-    position: relative;
-    padding-inline-start: calc(var(--dot) + var(--space-m));
-    scroll-margin-block-start: calc(var(--space-2xl) + var(--space-xl));
+  .today li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-s);
+    padding-block: var(--space-2xs);
+    border-block-end: 1px solid var(--line);
   }
 
-  .chronicle > li::before {
-    content: "";
-    position: absolute;
-    z-index: 1;
-    inset-block-start: 0.2rem;
-    inset-inline-start: 0;
-    inline-size: var(--dot);
-    block-size: var(--dot);
-    border: 1px solid var(--material-edge);
-    border-radius: var(--radius-full);
-    background: linear-gradient(155deg, #4b5056, #25282d);
-    box-shadow:
-      inset 0 1px 0 #ffffff38,
-      0 1px 2px var(--material-shade);
+  .today li a {
+    color: var(--ink);
+    text-decoration: none;
   }
 
-  .chronicle > li:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    inset-block-start: calc(0.2rem + var(--dot));
-    inset-block-end: calc(-1 * var(--space-xl) - 0.2rem);
-    inset-inline-start: calc(var(--dot) / 2 - 1px);
-    border-inline-start: 2px solid light-dark(#c6cbcf, #454b51);
-  }
-
-  .chronicle > .context::before {
-    background: var(--background);
-    box-shadow: none;
-  }
-
-  .chronicle > .current::before {
-    border-color: light-dark(#b6000c, #fa5963);
-    background: linear-gradient(155deg, #e3000f, #be000c);
-  }
-
-  .chronicle > .proposed::before {
-    background: linear-gradient(
-      155deg,
-      light-dark(#ffffff, #292d31),
-      light-dark(#e8ecee, #181b1e)
-    );
-  }
-
-  .chronicle > .proposed::after,
-  .chronicle > li:has(+ .proposed)::after {
-    border-inline-start-style: dashed;
-  }
-
-  .chronicle > li:target > h3 {
+  .today li a:hover {
     color: var(--accent);
   }
 
-  .chronicle-date {
+  .today li span {
+    flex: none;
+    color: var(--ink-3);
+    font-size: var(--step--1);
+    white-space: nowrap;
+  }
+
+  .today li strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  @media (width < 40rem) {
+    .today li {
+      flex-direction: column;
+      gap: 0;
+    }
+  }
+
+  .history .columns > div > :first-child {
+    margin-block-start: 0;
+  }
+
+  /* Die Stationen einer Epoche als Karten, ab mittlerer Breite zweispaltig.
+     Eine Metallkante oben statt grauer Flächen, wie bei der
+     Gegenüberstellung im Dossier. */
+  .era-grid {
+    display: grid;
+    gap: var(--space-xl) var(--space-2xl);
+  }
+
+  .era-head > :first-child {
+    margin-block-start: 0;
+  }
+
+  @container campaign (width >= 52rem) {
+    .era-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .era-head:not(.inline) {
+      grid-column: 1 / -1;
+    }
+
+    .era-head.inline {
+      align-self: start;
+    }
+  }
+
+  .station {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2xs);
+    padding-block-start: var(--space-s);
+    background: var(--metal-rule) top / 100% 2px no-repeat;
+    scroll-margin-block-start: calc(var(--space-2xl) + var(--space-xl));
+  }
+
+  .station.current {
+    background-image: linear-gradient(var(--primary), var(--primary));
+  }
+
+  .station:target h3 {
+    color: var(--accent);
+  }
+
+  .station-date {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-2xs);
     color: var(--ink-3);
+    font-size: var(--step--1);
   }
 
-  .chronicle-date .tag {
+  .station-date .tag {
     margin: 0;
   }
 
-  .chronicle h3 {
+  .station.current .tag {
+    color: var(--primary-foreground);
+    background: var(--primary);
+  }
+
+  .station h3 {
+    font-size: var(--step-1);
+    line-height: 1.3;
+  }
+
+  .station-text {
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  .station-more {
     margin-block-start: var(--space-3xs);
+    font-size: var(--step--1);
   }
 
-  .chronicle .prose {
-    margin-block-start: var(--space-xs);
+  .station-more summary {
+    color: var(--ink-3);
+    font-weight: 560;
+    cursor: pointer;
   }
 
-  .chronicle-facts {
+  .station-more summary:hover {
+    color: var(--ink);
+  }
+
+  .station-facts {
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
     gap: var(--space-3xs) var(--space-s);
-    max-inline-size: var(--measure-text);
-    margin-block-start: var(--space-s);
-    font-size: 0.9375rem;
+    margin-block-start: var(--space-xs);
   }
 
-  .chronicle-facts dt {
+  .station-facts dt {
     color: var(--ink-3);
   }
 
-  .chronicle-facts dd {
+  .station-facts dd {
     color: var(--ink-2);
   }
 
   @container campaign (width < 34rem) {
-    .chronicle-facts {
+    .station-facts {
       grid-template-columns: minmax(0, 1fr);
     }
 
-    .chronicle-facts dd + dt {
+    .station-facts dd + dt {
       margin-block-start: var(--space-2xs);
     }
   }
 
+  .station-sources {
+    display: grid;
+    gap: var(--space-3xs);
+    margin-block-start: var(--space-xs);
+    padding: 0;
+    list-style: none;
+  }
+
+  .station-sources a,
   .chronicle-sources {
-    max-inline-size: var(--measure-text);
-    margin-block-start: var(--space-s);
     color: var(--ink-3);
+  }
+
+  .chronicle-sources {
+    margin-block-start: var(--space-s);
     font-size: 0.875rem;
   }
 </style>
