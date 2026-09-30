@@ -115,7 +115,10 @@ const sections = [
         >dac8<span>.org</span></a
       >
       <p>
-        {en ? "For financial privacy. Against mass surveillance. An initiative by Bitcoin Austria." : "Für finanzielle Privatsphäre. Gegen Massenüberwachung. Eine Initiative des Vereins Bitcoin Austria."}
+        {en ? "For financial privacy. Against mass surveillance. An initiative by Bitcoin Austria. Supported by " : "Für finanzielle Privatsphäre. Gegen Massenüberwachung. Eine Initiative des Vereins Bitcoin Austria. Unterstützt von "}
+        <a href={en ? "https://coinfinity.co/en" : "https://coinfinity.co/"}
+          >Coinfinity</a
+        >.
       </p>
       <a
         class="social-link"
@@ -273,6 +276,16 @@ const sections = [
 
     @media (width < 72rem) {
       grid-template-columns: 1fr;
+    }
+  }
+
+  .footer-lead p a {
+    color: inherit;
+    text-decoration-color: var(--border);
+    text-underline-offset: 0.2em;
+
+    &:hover {
+      color: var(--foreground);
     }
   }
 
