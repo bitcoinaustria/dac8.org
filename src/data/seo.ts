@@ -12,14 +12,14 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "Gegen DAC8. Für finanzielle Privatsphäre",
       description:
-        "Finanzielle Privatsphäre ist ein Grundrecht. Bitcoin Austria bereitet ein Verfahren gegen die anlasslose Erfassung von Krypto-Finanzdaten unter DAC8 vor.",
-      imageLines: ["Finanzielle", "Privatsphäre.", "Verteidigen wir sie."],
+        "DAC8 erfasst die Finanzdaten aller Krypto-Kunden, Jahr für Jahr und ohne Verdacht. Bitcoin Austria bereitet ein Verfahren gegen diese finanzielle Massenüberwachung vor.",
+      imageLines: ["DAC8 erfasst jeden", "Krypto-Kunden.", "Wir wehren uns."],
     },
     en: {
       title: "Against DAC8. For financial privacy",
       description:
-        "Financial privacy is a fundamental right. Bitcoin Austria is preparing a legal challenge to indiscriminate financial data collection under DAC8.",
-      imageLines: ["Financial privacy.", "Let’s defend it."],
+        "DAC8 records the financial data of every crypto customer, every year and without suspicion. Bitcoin Austria is preparing a legal challenge to this mass surveillance.",
+      imageLines: ["DAC8 records every", "crypto customer.", "We fight back."],
     },
   },
   dossier: {

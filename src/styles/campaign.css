@@ -848,6 +848,11 @@
   }
 }
 
+/* Der Satz zur Angriffskarte unter den Fällen der Startseite. */
+.campaign .attacks-teaser {
+  margin-block-start: var(--space-xl);
+}
+
 /* ---------- Gegenüberstellung: gemeldet / nicht gemeldet ------------- */
 
 .campaign .compare {

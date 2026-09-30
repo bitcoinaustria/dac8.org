@@ -14,7 +14,8 @@
     "format": "biome format --write .",
     "format:check": "biome format .",
     "test": "node scripts/test-campaign.mjs",
-    "test:seo": "node scripts/test-seo.mjs"
+    "test:seo": "node scripts/test-seo.mjs",
+    "sync:attacks": "node scripts/sync-attacks.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
