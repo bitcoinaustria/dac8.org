@@ -6,7 +6,10 @@ import { createOgImage } from "@/lib/og-image"
 // The page's lead illustration; English renders where the object has labels.
 // Legal pages stay text-only.
 const artwork: Partial<Record<Page, Record<Language, string>>> = {
-  home: { de: "spending-profile.webp", en: "spending-profile-en.webp" },
+  home: {
+    de: "collection-challenge.webp",
+    en: "collection-challenge-en.webp",
+  },
   dossier: { de: "report-assets.webp", en: "report-assets-en.webp" },
   proceedings: {
     de: "collection-challenge.webp",

@@ -34,11 +34,11 @@ import { campaignStatus } from "@/data/campaign"
         </nav>
       </div>
       <Artwork
-        id="spendingProfile"
+        id="collectionChallenge"
         language="de"
         size="hero"
         priority
-        caption="Was verknüpfte Zahlungen verraten, sobald dein Name an einer Adresse hängt."
+        caption="Unsere geplante Beschwerde richtet sich gegen die anlasslose Erfassung aller Kunden."
       />
     </header>
 
@@ -221,21 +221,18 @@ import { campaignStatus } from "@/data/campaign"
     </section>
 
     <section id="weg" aria-labelledby="weg-heading">
-      <div class="art-split even">
-        <div>
-          <h2 id="weg-heading">Was wir tun</h2>
-          <p class="section-intro">
-            <strong
-              >Wir sind überzeugt, dass die anlasslose Erfassung aller Kunden
-              gegen Grundrechte verstößt.</strong
-            >
-          </p>
-          <p class="prose">
-            {campaignStatus.de.text}
-            Über das Ergebnis entscheiden Behörde und Gerichte.
-          </p>
-        </div>
-        <Artwork id="collectionChallenge" language="de" caption={false} />
+      <h2 id="weg-heading">Was wir tun</h2>
+      <div class="columns">
+        <p class="section-intro">
+          <strong
+            >Wir sind überzeugt, dass die anlasslose Erfassung aller Kunden
+            gegen Grundrechte verstößt.</strong
+          >
+        </p>
+        <p class="prose">
+          {campaignStatus.de.text}
+          Über das Ergebnis entscheiden Behörde und Gerichte.
+        </p>
       </div>
       <LegalRoute language="de" />
       <a class="text-link" href="/verfahren/">Zum Stand des Verfahrens</a>
