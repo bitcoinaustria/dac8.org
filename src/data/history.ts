@@ -101,6 +101,11 @@ export const history: Entry[] = [
         de: "Richtlinie 77/799/EWG",
         en: "Directive 77/799/EEC",
       }),
+      same(
+        "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=10004910&FassungVom=2004-12-30",
+        "EG-Amtshilfegesetz, BGBl. Nr. 657/1994 (Fassung 2004)",
+        "EC Mutual Assistance Act, Federal Law Gazette No. 657/1994 (2004 version)",
+      ),
     ],
   },
   {
@@ -138,6 +143,10 @@ export const history: Entry[] = [
         en: "Repeal by Directive (EU) 2015/2060",
       }),
       bgbl(2004, "I", 33),
+      eli("dec/2004/587", {
+        de: "Entscheidung 2004/587/EG: Anwendung ab 1. Juli 2005",
+        en: "Decision 2004/587/EC: application from 1 July 2005",
+      }),
     ],
   },
   {
@@ -151,12 +160,12 @@ export const history: Entry[] = [
       de: {
         when: "18. März 2010",
         title: "FATCA: Die USA verlangen Kontodaten aus aller Welt",
-        text: "Ein US-Gesetz verpflichtet ausländische Banken, Konten von US-Steuerpflichtigen an die US-Steuerbehörde zu melden. Die EU-Richtlinie über den Kontenaustausch (DAC2) nennt FATCA ausdrücklich als Anstoß.",
+        text: "Ein US-Gesetz verpflichtet ausländische Finanzinstitute, Konten von US-Steuerpflichtigen an die US-Steuerbehörde zu melden. Die EU-Richtlinie über den Kontenaustausch (DAC2) nennt FATCA ausdrücklich als Anstoß.",
       },
       en: {
         when: "18 March 2010",
         title: "FATCA: the US demands account data worldwide",
-        text: "A US law requires foreign banks to report accounts of US taxpayers to the US tax authority. The EU directive on account exchange (DAC2) expressly names FATCA as a driver.",
+        text: "A US law requires foreign financial institutions to report accounts of US taxpayers to the US tax authority. The EU directive on account exchange (DAC2) expressly names FATCA as a driver.",
       },
     },
     sources: [
@@ -236,18 +245,18 @@ export const history: Entry[] = [
       de: {
         when: "9. Dezember 2014, angewendet ab 2016, in Österreich ab 2017",
         title: "DAC2: Bankkonten",
-        text: "Banken und andere Finanzinstitute melden jährlich Name, Steuernummer, Kontonummer, Kontostand sowie Zinsen, Dividenden und Verkaufserlöse von Kunden, die in einem anderen Staat steuerlich ansässig sind. Um das festzustellen, prüfen sie alle Kunden. Damit übernimmt die EU den OECD-Standard.",
+        text: "Banken und andere Finanzinstitute melden jährlich Name, Steuernummer, Kontonummer, Kontostand sowie Zinsen, Dividenden und Verkaufserlöse von Kunden, die in einem anderen Staat steuerlich ansässig sind. Dafür stellen sie nach Sorgfaltsregeln die steuerliche Ansässigkeit ihrer Kontoinhaber fest; bestimmte Konten sind ausgenommen. Damit übernimmt die EU den OECD-Standard.",
         reporters: "Banken, Depotbanken, Versicherungen, Fonds",
         austria:
-          "Gemeinsamer Meldestandard-Gesetz, im selben Paket wie Kontenregister und Lockerung des Bankgeheimnisses (2015). Erster allgemeiner Austausch am 30. September 2018",
+          "Gemeinsamer Meldestandard-Gesetz, im selben Paket wie Kontenregister und Lockerung des Bankgeheimnisses (2015). Erster allgemeiner Austausch bis 30. September 2018",
       },
       en: {
         when: "9 December 2014, applied from 2016, in Austria from 2017",
         title: "DAC2: bank accounts",
-        text: "Banks and other financial institutions report, every year, the name, tax number, account number and balance, as well as interest, dividends and sale proceeds, of customers who are tax resident in another country. To determine this, they review all customers. With this, the EU adopts the OECD standard.",
+        text: "Banks and other financial institutions report, every year, the name, tax number, account number and balance, as well as interest, dividends and sale proceeds, of customers who are tax resident in another country. To do so, they determine their account holders’ tax residence under due-diligence rules; certain accounts are exempt. With this, the EU adopts the OECD standard.",
         reporters: "Banks, custodians, insurers, funds",
         austria:
-          "Common Reporting Standard Act (GMSG), in the same 2015 package as the central account register and the easing of bank secrecy. First general exchange on 30 September 2018",
+          "Common Reporting Standard Act (GMSG), in the same 2015 package as the central account register and the easing of bank secrecy. First general exchange by 30 September 2018",
       },
     },
     sources: [
@@ -269,14 +278,14 @@ export const history: Entry[] = [
       de: {
         when: "8. Dezember 2015, angewendet ab 2017",
         title: "DAC3: Steuervorbescheide",
-        text: "Die Behörden tauschen verbindliche Auskünfte und Verrechnungspreis-Zusagen aus, die sie Unternehmen für grenzüberschreitende Fälle gegeben haben, rückwirkend für fünf Jahre. Der Vorschlag folgt auf die Debatte über Steuerabsprachen mit Konzernen. Die Richtlinie selbst nennt die „LuxLeaks“-Enthüllungen nicht.",
+        text: "Die Behörden tauschen Informationen über grenzüberschreitende Steuervorbescheide und Verrechnungspreis-Zusagen aus, darunter bestimmte aus den fünf Jahren vor 2017; für ältere gelten Grenzen nach Gültigkeit und Umsatz. Der Vorschlag folgt auf die Debatte über Steuerabsprachen mit Konzernen. Die Richtlinie selbst nennt die „LuxLeaks“-Enthüllungen nicht.",
         reporters: "Behörden",
         austria: "EU-Amtshilfegesetz, Änderung 2016",
       },
       en: {
         when: "8 December 2015, applied from 2017",
         title: "DAC3: tax rulings",
-        text: "Authorities exchange the binding rulings and pricing agreements they have given companies in cross-border cases, going back five years. The proposal follows the debate about tax deals with multinationals. The directive itself does not mention the LuxLeaks revelations.",
+        text: "Authorities exchange information on advance cross-border tax rulings and pricing agreements, including certain rulings from the five years before 2017; validity and turnover limits apply to older rulings. The proposal follows the debate about tax deals with multinationals. The directive itself does not mention the LuxLeaks revelations.",
         reporters: "Authorities",
         austria: "EU-Amtshilfegesetz, 2016 amendment",
       },
@@ -300,14 +309,14 @@ export const history: Entry[] = [
       de: {
         when: "25. Mai 2016, ab dem Geschäftsjahr 2016",
         title: "DAC4: Konzernberichte",
-        text: "Konzerne mit mindestens 750 Millionen Euro Umsatz berichten, in welchem Land sie wie viel Umsatz, Gewinn und Steuern haben. Grundlage ist ein Projekt der OECD gegen Gewinnverlagerung.",
+        text: "Multinationale Konzerne mit mindestens 750 Millionen Euro konsolidiertem Umsatz im Vorjahr berichten, in welchem Land sie wie viel Umsatz, Gewinn und Steuern haben. Grundlage ist ein Projekt der OECD gegen Gewinnverlagerung.",
         reporters: "Große Konzerne",
         austria: "Verrechnungspreisdokumentationsgesetz 2016",
       },
       en: {
         when: "25 May 2016, from financial year 2016",
         title: "DAC4: country-by-country reports",
-        text: "Groups with revenue of at least 750 million euros report their revenue, profits and taxes country by country. It is based on an OECD project against profit shifting.",
+        text: "Multinational groups with consolidated revenue of at least 750 million euros in the preceding year report their revenue, profits and taxes country by country. It is based on an OECD project against profit shifting.",
         reporters: "Large groups",
         austria: "Transfer Pricing Documentation Act (VPDG), 2016",
       },
@@ -331,7 +340,7 @@ export const history: Entry[] = [
       de: {
         when: "6. Dezember 2016, angewendet ab 2018",
         title: "DAC5: Zugriff auf Geldwäschedaten",
-        text: "Keine neue Meldung, aber ein neuer Zugang: Steuerbehörden dürfen auf Daten zugreifen, die Banken und andere zur Geldwäschebekämpfung erheben, etwa Identifizierung und wirtschaftliche Eigentümer. Vor allem sollen sie so prüfen können, ob die Kontenmeldungen unter DAC2 stimmen. Der Vorschlag erschien kurz nach den „Panama Papers“ und verweist auf „jüngste Medienberichte“.",
+        text: "Keine neue Meldung, aber ein neuer Zugang: Steuerbehörden dürfen auf Daten zugreifen, die Banken und andere zur Geldwäschebekämpfung erheben, etwa Identifizierung und wirtschaftliche Eigentümer. Vor allem sollen sie so prüfen können, ob die Kontenmeldungen unter DAC2 stimmen. Der Vorschlag erschien kurz nach den „Panama Papers“ und verweist auf an die Medien durchgesickerte Informationen.",
         reporters: "Keine neue Meldepflicht",
         austria:
           "Umgesetzt im Paket zum Wirtschaftliche Eigentümer Registergesetz (2017)",
@@ -364,14 +373,14 @@ export const history: Entry[] = [
       de: {
         when: "25. Mai 2018, angewendet ab 1. Juli 2020",
         title: "DAC6: Steuergestaltungen",
-        text: "Berater, Banken und andere Intermediäre melden grenzüberschreitende Gestaltungen mit bestimmten Kennzeichen binnen 30 Tagen, sonst der Steuerpflichtige selbst. Der Vorschlag nennt die „Panama Papers“. Der EuGH hat 2022 die Pflicht von Anwälten gekippt, andere Beteiligte zu informieren, 2024 aber den Rest der Richtlinie bestätigt.",
+        text: "Berater, Banken und andere Intermediäre melden grenzüberschreitende Gestaltungen mit bestimmten Kennzeichen binnen 30 Tagen, sonst der Steuerpflichtige selbst. Der Vorschlag nennt die „Panama Papers“. Der EuGH hat 2022 die Pflicht von Anwälten mit Berufsgeheimnis gekippt, andere Intermediäre zu informieren, die nicht ihre Mandanten sind. 2024 wies er die übrigen geprüften Einwände gegen die Gültigkeit zurück.",
         reporters: "Berater und Intermediäre",
         austria: "EU-Meldepflichtgesetz, ab 1. Juli 2020",
       },
       en: {
         when: "25 May 2018, applied from 1 July 2020",
         title: "DAC6: tax arrangements",
-        text: "Advisers, banks and other intermediaries report cross-border arrangements with certain hallmarks within 30 days; otherwise the taxpayer reports. The proposal names the Panama Papers. In 2022, the CJEU struck down the duty of lawyers to notify other intermediaries, but in 2024 it upheld the rest of the directive.",
+        text: "Advisers, banks and other intermediaries report cross-border arrangements with certain hallmarks within 30 days; otherwise the taxpayer reports. The proposal names the Panama Papers. In 2022, the CJEU invalidated privileged lawyers’ duty to notify other intermediaries who were not their clients. In 2024, it rejected the other validity challenges it examined.",
         reporters: "Advisers and intermediaries",
         austria: "EU Reporting Obligations Act (EU-MPfG), from 1 July 2020",
       },
@@ -397,14 +406,14 @@ export const history: Entry[] = [
       de: {
         when: "22. März 2021, angewendet ab 2023",
         title: "DAC7: Online-Plattformen",
-        text: "Plattformen melden, wer über sie Wohnungen vermietet, Dienstleistungen anbietet, Waren verkauft oder Fahrzeuge vermietet, samt Einnahmen. Wer weniger als 30 Waren um höchstens 2.000 Euro im Jahr verkauft, ist ausgenommen.",
+        text: "Plattformen melden, wer über sie Wohnungen vermietet, Dienstleistungen anbietet, Waren verkauft oder Fahrzeuge vermietet, samt Einnahmen. Wer im Meldezeitraum weniger als 30 Verkaufsvorgänge hat und dafür insgesamt höchstens 2.000 Euro erhält, ist ausgenommen.",
         reporters: "Betreiber digitaler Plattformen",
         austria: "Digitale Plattformen-Meldepflichtgesetz, ab 2023",
       },
       en: {
         when: "22 March 2021, applied from 2023",
         title: "DAC7: online platforms",
-        text: "Platforms report who rents out property, offers services, sells goods or rents out vehicles through them, including earnings. Sellers of fewer than 30 items for no more than 2,000 euros a year are exempt.",
+        text: "Platforms report who rents out property, offers services, sells goods or rents out vehicles through them, including earnings. Sellers with fewer than 30 sales transactions and total consideration of no more than 2,000 euros in the reporting period are exempt.",
         reporters: "Digital platform operators",
         austria: "Digital Platforms Reporting Act (DPMG), from 2023",
       },
@@ -428,12 +437,12 @@ export const history: Entry[] = [
       de: {
         when: "26. August 2022",
         title: "Der Krypto-Standard der OECD",
-        text: "Die OECD beschließt das Crypto-Asset Reporting Framework, 2023 folgen Abkommen und ein überarbeiteter Kontenstandard. Bis September 2026 haben sich 77 Staaten verpflichtet, darunter alle EU-Staaten, die Schweiz ab 2028 und die USA ab 2029.",
+        text: "Die OECD beschließt das Crypto-Asset Reporting Framework. 2023 veröffentlicht sie den Text des Austauschabkommens und einen überarbeiteten Kontenstandard. Bis September 2026 haben sich 77 Staaten verpflichtet, darunter alle EU-Staaten, die Schweiz ab 2028 und die USA ab 2029.",
       },
       en: {
         when: "26 August 2022",
         title: "The OECD crypto-asset standard",
-        text: "The OECD approves the Crypto-Asset Reporting Framework; an exchange agreement and an amended account standard follow in 2023. By September 2026, 77 jurisdictions had committed, including every EU country, Switzerland from 2028 and the US from 2029.",
+        text: "The OECD approves the Crypto-Asset Reporting Framework. In 2023, it publishes the text of the exchange agreement and an amended account standard. By September 2026, 77 jurisdictions had committed, including every EU country, Switzerland from 2028 and the US from 2029.",
       },
     },
     sources: [
@@ -441,6 +450,11 @@ export const history: Entry[] = [
         "https://www.oecd.org/content/dam/oecd/en/networks/global-forum-tax-transparency/commitments-carf.pdf",
         "OECD Global Forum: CARF-Zusagen",
         "OECD Global Forum: CARF commitments",
+      ),
+      same(
+        "https://www.oecd.org/content/dam/oecd/en/publications/reports/2023/06/international-standards-for-automatic-exchange-of-information-in-tax-matters_ab3a23bc/896d79d1-en.pdf",
+        "OECD: CARF und geänderter Meldestandard (2023)",
+        "OECD: CARF and amended CRS (2023)",
       ),
     ],
   },
@@ -484,16 +498,16 @@ export const history: Entry[] = [
     short: { de: "DAC9", en: "DAC9" },
     translations: {
       de: {
-        when: "14. April 2025, erste Meldung am 30. Juni 2026",
+        when: "14. April 2025, erste Erklärungen für 2024 fällig bis 30. Juni 2026",
         title: "DAC9: Globale Mindeststeuer",
-        text: "Große Konzerne reichen die Erklärung zur Mindeststeuer von 15 % zentral in einem Staat ein, die Behörden tauschen sie untereinander aus. Private sind nicht betroffen.",
+        text: "Große Konzerne reichen die Erklärung zur Mindeststeuer von 15 % grundsätzlich in jedem Staat ein. Unter Bedingungen genügt eine zentrale Einreichung, die Behörden tauschen die Angaben dann untereinander aus. Private sind nicht betroffen.",
         reporters: "Große Konzerne",
         austria: "Abgabenänderungsgesetz 2025, seit 1. Jänner 2026",
       },
       en: {
-        when: "14 April 2025, first filing on 30 June 2026",
+        when: "14 April 2025, first 2024 returns due by 30 June 2026",
         title: "DAC9: global minimum tax",
-        text: "Large groups file the return for the 15% minimum tax centrally in one country, and authorities exchange it among themselves. Individuals are not affected.",
+        text: "Large groups generally file the return for the 15% minimum tax in each country. Qualifying groups can file centrally instead, with authorities exchanging the relevant information. Individuals are not affected.",
         reporters: "Large groups",
         austria: "Tax Amendment Act 2025, since 1 January 2026",
       },
@@ -562,7 +576,7 @@ export const historyEras: Record<
       label: "2011–2014",
       title: "Der automatische Austausch",
       intro:
-        "Ab 2011 wird der automatische Austausch zur Regel: erst für Daten, die Behörden schon haben, dann für Kontodaten, die Banken über alle Kunden aufbereiten.",
+        "Ab 2011 wird der automatische Austausch zur Regel: erst für Daten, die Behörden schon haben, dann für Kontodaten, die Banken über meldepflichtige Konten liefern.",
     },
     {
       id: "konzerne",
@@ -599,7 +613,7 @@ export const historyEras: Record<
       label: "2011–2014",
       title: "Automatic exchange",
       intro:
-        "From 2011, automatic exchange becomes the rule: first for data authorities already hold, then for account data that banks compile on all customers.",
+        "From 2011, automatic exchange becomes the rule: first for data authorities already hold, then for account data that banks supply on reportable accounts.",
     },
     {
       id: "konzerne",
