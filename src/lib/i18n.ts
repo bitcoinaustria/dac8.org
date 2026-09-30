@@ -11,6 +11,7 @@ export const campaign = {
 export const routes = {
   home: { de: "/", en: "/en/" },
   dossier: { de: "/dossier/", en: "/en/dossier/" },
+  attacks: { de: "/angriffe/", en: "/en/attacks/" },
   proceedings: { de: "/verfahren/", en: "/en/proceedings/" },
   participate: { de: "/mitmachen/", en: "/en/get-involved/" },
   legal: { de: "/impressum/", en: "/en/legal/" },
@@ -42,6 +43,10 @@ export const navigationFor = (language: Language) => [
     label: language === "en" ? "Home" : "Start",
   },
   { href: pathFor("dossier", language), label: "Dossier" },
+  {
+    href: pathFor("attacks", language),
+    label: language === "en" ? "Attacks" : "Angriffe",
+  },
   {
     href: pathFor("proceedings", language),
     label: language === "en" ? "Proceedings" : "Verfahren",

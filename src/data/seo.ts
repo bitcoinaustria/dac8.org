@@ -50,6 +50,20 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       imageLines: ["Help defend", "financial privacy."],
     },
   },
+  attacks: {
+    de: {
+      title: "Angriffe auf Krypto-Besitzer: Karte und Liste",
+      description:
+        "Öffentlich bekannte Überfälle, Entführungen und Erpressungen von Krypto-Besitzern weltweit, nach Jahr und Ort. Unvollständig, denn die meisten Opfer schweigen.",
+      imageLines: ["Angriffe auf", "Krypto-Besitzer.", "Jedes Jahr mehr."],
+    },
+    en: {
+      title: "Attacks on crypto holders: map and list",
+      description:
+        "Publicly known robberies, kidnappings and extortion of crypto holders worldwide, by year and place. Incomplete, because most victims stay silent.",
+      imageLines: ["Attacks on", "crypto holders.", "More every year."],
+    },
+  },
   proceedings: {
     de: {
       title: "DAC8-Verfahren: Aktuelles und nächste Schritte",

@@ -12,8 +12,7 @@
       "!**/*.svg",
       "!dac8-wiki/**",
       "!artwork-lab/**",
-      "!src/data/attacks.json",
-      "!src/data/world-land.json"
+      "!src/data/attacks.json"
     ]
   },
   "html": {

@@ -72,24 +72,3 @@ export const placeOf = (attack: Attack, language: Language) => {
     ? `${attack.city}, ${country}`
     : (country ?? "")
 }
-
-// Equal Earth projection (Šavrič, Patterson and Jenny 2018): continents keep
-// their true relative size, so clusters are not exaggerated towards the poles.
-const A1 = 1.340264
-const A2 = -0.081106
-const A3 = 0.000893
-const A4 = 0.003796
-const M = Math.sqrt(3) / 2
-const scale = 180
-
-export const project = (lng: number, lat: number): [number, number] => {
-  const lambda = (lng * Math.PI) / 180
-  const theta = Math.asin(M * Math.sin((lat * Math.PI) / 180))
-  const t2 = theta * theta
-  const t6 = t2 * t2 * t2
-  const x =
-    (2 * Math.sqrt(3) * lambda * Math.cos(theta)) /
-    (3 * (A1 + 3 * A2 * t2 + t6 * (7 * A3 + 9 * A4 * t2)))
-  const y = theta * (A1 + A2 * t2 + t6 * (A3 + A4 * t2))
-  return [x * scale, -y * scale]
-}

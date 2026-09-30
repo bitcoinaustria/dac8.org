@@ -11,6 +11,7 @@ const artwork: Partial<Record<Page, Record<Language, string>>> = {
     en: "collection-challenge-en.webp",
   },
   dossier: { de: "report-assets.webp", en: "report-assets-en.webp" },
+  attacks: { de: "wrench-attack.webp", en: "wrench-attack-en.webp" },
   proceedings: {
     de: "collection-challenge.webp",
     en: "collection-challenge-en.webp",

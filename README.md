@@ -74,19 +74,25 @@ two actions and the status on a dark band.
 
 ## Map of known physical attacks
 
-The dossier's `#angriffe` block (`src/components/AttackMap.astro`) shows
+`/angriffe/` and `/en/attacks/` (`src/components/pages/AttacksPage.astro`) show
 Jameson Lopp's public-domain list of
-[known physical attacks](https://github.com/jlopp/physical-bitcoin-attacks)
-as key figures, a world map and a full list. The site keeps a trimmed copy in
+[known physical attacks](https://github.com/jlopp/physical-bitcoin-attacks) as
+a full-screen map with numbered hotspots that split up as you zoom, a year
+filter over a per-year histogram, quick views for the world, Europe and
+Austria, the countries with most cases in view and the cases in view, newest
+first. Without JavaScript the page shows the full list. The dossier's
+`#angriffe` block (`src/components/AttackSummary.astro`) gives the key figures
+and links to the map.
+
+The map uses Leaflet with Natural Earth country outlines from `world-atlas`,
+both bundled and served from our own origin, so visitors load no map tiles
+from third parties. The site keeps a trimmed copy of the list in
 `src/data/attacks.json` without victim names; `pnpm sync:attacks` refreshes it.
 `.github/workflows/sync-attacks.yml` runs the sync every Monday, builds the
 site and opens a pull request on `bot/sync-attacks` when the list changed.
 Pull requests opened with the workflow token do not trigger CI, and the
-repository must allow GitHub Actions to create pull requests. The map is drawn
-at build time from Natural Earth's public-domain land outlines
-(`src/data/world-land.json`, regenerated with `scripts/build-world-land.mjs`),
-so visitors load no map tiles from third parties. Both data files are excluded
-from Biome formatting because the scripts write them.
+repository must allow GitHub Actions to create pull requests. The data file is
+excluded from Biome formatting because the script writes it.
 
 ## Development
 
