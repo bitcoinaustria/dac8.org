@@ -7,8 +7,8 @@ interface Props {
   art: ArtworkId
   language: Language
   title: string
-  // "wide" puts the text above a full-width illustration, for the report
-  // specimen that needs its width to stay legible.
+  // "wide" gives the illustration the larger column, for the report specimen
+  // that needs its width to stay legible.
   wide?: boolean
   zoom?: boolean
 }
@@ -21,10 +21,5 @@ const { art, language, title, wide = false, zoom = false } = Astro.props
     <h3>{title}</h3>
     <slot />
   </div>
-  <Artwork
-    id={art}
-    language={language}
-    size={wide ? "wide" : "scene"}
-    zoom={zoom}
-  />
+  <Artwork id={art} language={language} size="scene" zoom={zoom} />
 </div>
