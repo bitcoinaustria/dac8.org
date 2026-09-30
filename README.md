@@ -136,6 +136,16 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
 - `/verfahren/` and `/en/proceedings/` render the updates; `/feed.xml` and
   `/en/feed.xml` expose RSS 2.0 feeds from the same data. Empty feeds are valid;
   do not create placeholder milestones or imply a filing has happened.
+- The proceedings pages also list media coverage: articles, podcasts, videos
+  and broadcasts, by the campaign or by other outlets, each linking to the
+  original. `pnpm add:media <url>` reads title, outlet, date and language
+  from the page (oEmbed for YouTube, Vimeo and Spotify) and writes the entry
+  to `src/data/media.json`; flags such as `--kind podcast`, `--date`,
+  `--guest` fill in or override what the page does not say. Check the result
+  against the page before committing. Entries can also be added by hand;
+  `src/data/media.ts` defines the fields and fails the build on a malformed
+  entry. Titles stay in the language of the piece. The newest six are shown,
+  the rest behind "Alle anzeigen"; the kind filter works without JavaScript.
 - The newsletter link points to Bitcoin Austria's existing newsletter form.
 - The letter to members of the National Council is on the participation page
   (`src/components/LetterGenerator.astro`, texts in `src/data/letter.ts`). It

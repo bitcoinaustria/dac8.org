@@ -1,6 +1,7 @@
 ---
 import Artwork from "@/components/Artwork.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
+import MediaCoverage from "@/components/MediaCoverage.astro"
 import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import { campaignStatus } from "@/data/campaign"
@@ -62,6 +63,7 @@ const entries = publishedUpdates()
         {entry.source && <a class="text-link" href={entry.source}>{en ? "Read the document" : "Zum Dokument"}</a>}
       </article>)}
     </section>
+    <MediaCoverage language={language} />
   </article>
 </Layout>
 <style>

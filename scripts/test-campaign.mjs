@@ -8,7 +8,10 @@ import ts from "typescript"
 // cannot reach the public update data or change the generated site.
 const cache = new Map()
 function load(name) {
-  const filename = resolve("src", `${name.replace(/^@\//, "")}.ts`)
+  const path = name.replace(/^@\//, "")
+  if (path.endsWith(".json"))
+    return JSON.parse(readFileSync(resolve("src", path), "utf8"))
+  const filename = resolve("src", `${path}.ts`)
   if (cache.has(filename)) return cache.get(filename).exports
   const module = { exports: {} }
   cache.set(filename, module)
@@ -86,6 +89,32 @@ for (const language of ["de", "en"]) {
     ),
   )
 }
+const { media, checkMedia, publishedMedia } = load("@/data/media")
+const piece = (date, kind = "article") => ({
+  date,
+  kind,
+  outlet: "Outlet",
+  title: "Title",
+  url: "https://example.org/",
+  language: "de",
+})
+assert.equal(checkMedia([piece("2026-01-01", "podcast")]).length, 1)
+for (const broken of [
+  { ...piece("2026-1-1") },
+  { ...piece("2026-01-01"), kind: "tweet" },
+  { ...piece("2026-01-01"), url: "example.org" },
+  { ...piece("2026-01-01"), title: " " },
+  { ...piece("2026-01-01"), language: "Deutsch" },
+])
+  assert.throws(() => checkMedia([broken]))
+media.push(piece("2020-05-01"), piece("2999-01-01"), piece("2021-03-01"))
+assert.equal(
+  publishedMedia(new Date("2022-01-01"))
+    .map((item) => item.date)
+    .join(","),
+  "2021-03-01,2020-05-01",
+)
+
 console.log(
-  "Passed: locale routing, unknown routes, empty feeds, language-specific URLs, publication dates, ordering, stable GUIDs and XML escaping.",
+  "Passed: locale routing, unknown routes, empty feeds, language-specific URLs, publication dates, ordering, stable GUIDs, XML escaping and media entry checks.",
 )
