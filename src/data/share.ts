@@ -69,6 +69,18 @@ export const shareScenes: {
     },
   },
   {
+    // Numbered after the first eight so existing share URLs stay the same.
+    id: "scene-09-profile",
+    title: {
+      de: "Vier Datenquellen. Ein Personenprofil.",
+      en: "Four data sources. One personal profile.",
+    },
+    text: {
+      de: "Ein öffentliches Profil zeigt dein Gesicht, ein Leck deine Wallet-Adresse, ein gehackter Steuerdienst deine Bestände. Zusammengeführt ergibt das, wer du bist, wo du wohnst und was du vermutlich besitzt.",
+      en: "A public profile shows your face, a leak your wallet address, a hacked tax service your holdings. Put together, they reveal who you are, where you live and what you probably own.",
+    },
+  },
+  {
     id: "scene-06-risk",
     title: {
       de: "Sortierbar nach Vermögen. Gefährlich in falschen Händen.",
@@ -77,6 +89,17 @@ export const shareScenes: {
     text: {
       de: "In Österreich verschicken Betrüger massenhaft gefälschte FinanzOnline-Nachrichten, um herauszufinden, wer Kryptowerte besitzt. Ein Leck beim Anbieter würde ihnen diese Liste fertig liefern.",
       en: "In Austria, fraudsters send fake tax-office messages in bulk to find out who holds crypto. A breach at a provider would hand them that list ready-made.",
+    },
+  },
+  {
+    id: "scene-10-target",
+    title: {
+      de: "Dein Profil. Deine Adresse. Ein Angriffsziel.",
+      en: "Your profile. Your address. A target.",
+    },
+    text: {
+      de: "Dahinter steht organisierte Kriminalität. In den USA hackte eine Bande Datenbanken, suchte Menschen mit vermuteten Kryptobeständen heraus und brach bei ihnen ein.",
+      en: "This is organised crime. In the United States, a gang hacked databases, picked out people believed to hold crypto and broke into their homes.",
     },
   },
   {
