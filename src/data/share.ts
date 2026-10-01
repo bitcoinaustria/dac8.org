@@ -4,11 +4,13 @@ type Text = Record<Language, string>
 
 // Ready-made social graphics in the artwork lab's share-kit layout
 // (knowledge/share-kit/{de,en}/scene-*/{square,story}.png). They follow the
-// home page story and the legal route. The squares are exported as JPEG to
-// public/share/. The stories are exported to src/assets/share/ and get `text`
-// (and an optional `note`) set into the free space at build time
+// home page story and the legal route, kept to the scenes that work on their
+// own. The squares are exported as JPEG to public/share/. The stories are
+// exported to src/assets/share/ and get `text` (and an optional `note`) set
+// into the free space at build time
 // (src/pages/share/[language]/[scene]-story.jpg.ts), so a story works as a
-// post on its own. Titles match the home page scenes; change both together.
+// post on its own. Titles of story scenes match the home page; change both
+// together.
 // A story gets a few seconds of attention: the title carries the point, the
 // text adds one concrete fact in one or two short sentences.
 export const shareScenes: {
@@ -18,47 +20,14 @@ export const shareScenes: {
   note?: Text
 }[] = [
   {
-    id: "scene-01-customer",
-    title: {
-      de: "Dein Konto wird zur Akte.",
-      en: "Your account becomes a file.",
-    },
-    text: {
-      de: "Seit 2026 hält deine Börse jedes Jahr fürs Finanzamt fest, wer du bist und wie viel du kaufst, verkaufst und tauschst.",
-      en: "Since 2026, your exchange has recorded every year for the tax office who you are and how much you buy, sell and swap.",
-    },
-  },
-  {
-    id: "scene-02-processing",
-    title: {
-      de: "Alle erfasst. Ohne Verdacht.",
-      en: "Everyone recorded. Without suspicion.",
-    },
-    text: {
-      de: "Aufbereitet werden die Daten aller Kunden, auch wenn sie nie gemeldet werden. Österreich geht damit über die EU hinaus.",
-      en: "Data on every customer is prepared, even if it is never reported. Austria goes further than the EU requires.",
-    },
-  },
-  {
-    id: "scene-03-report",
-    title: {
-      de: "Jeder Kauf. Jeder Tausch. Gezählt fürs Finanzamt.",
-      en: "Every purchase. Every swap. Counted for the tax office.",
-    },
-    text: {
-      de: "Name, Anschrift, Steuernummer und für jeden Kryptowert, wie viel du gekauft, verkauft, getauscht und übertragen hast.",
-      en: "Name, address, tax number and, for each crypto-asset, how much you bought, sold, swapped and transferred.",
-    },
-  },
-  {
     id: "scene-04-retention",
     title: {
       de: "Jedes Jahr mehr über dich.",
       en: "More about you. Every year.",
     },
     text: {
-      de: "Jedes Jahr kommt eine Meldung dazu. Der Anbieter hebt jede zehn Jahre auf, neben deinem Ausweis und deinen Wallet-Adressen.",
-      en: "Every year adds a report. Your provider keeps each one for ten years, next to your ID and your wallet addresses.",
+      de: "Seit 2026 hält deine Börse jedes Jahr fürs Finanzamt fest, wer du bist und was du kaufst, verkaufst und tauschst. Bei allen Kunden, ohne Verdacht: finanzielle Massenüberwachung.",
+      en: "Since 2026, your exchange has recorded every year for the tax office who you are and what you buy, sell and swap. For every customer, without suspicion: financial mass surveillance.",
     },
   },
   {
@@ -110,7 +79,10 @@ export const shareScenes: {
     // Restates the procedural status in src/data/campaign.ts; update it
     // together with that status.
     id: "scene-07-route",
-    title: { de: "Datensammlung anfechten.", en: "Challenge data collection." },
+    title: {
+      de: "Finanzielle Massenüberwachung anfechten.",
+      en: "Challenge financial mass surveillance.",
+    },
     text: {
       de: "Wir bereiten ein Verfahren gegen die anlasslose Erfassung vor. Unser Ziel: die Frage bis vor den Europäischen Gerichtshof bringen.",
       en: "We are preparing proceedings against recording everyone without suspicion. Our aim: take the question all the way to the EU Court of Justice.",

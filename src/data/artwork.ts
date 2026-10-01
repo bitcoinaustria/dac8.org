@@ -5,8 +5,6 @@ import accountToRecord from "@/assets/artwork/account-to-record.webp"
 import accountToRecordEn from "@/assets/artwork/account-to-record-en.webp"
 import collectionReview from "@/assets/artwork/collection-review.webp"
 import collectionReviewEn from "@/assets/artwork/collection-review-en.webp"
-import collectiveDefense from "@/assets/artwork/collective-defense.webp"
-import collectiveDefenseEn from "@/assets/artwork/collective-defense-en.webp"
 import dataHack from "@/assets/artwork/data-hack.webp"
 import dataHackEn from "@/assets/artwork/data-hack-en.webp"
 import financeTheCase from "@/assets/artwork/finance-the-case.webp"
@@ -160,15 +158,6 @@ export const artwork = {
       alt: "Illustration: a magnifying glass over a card index labelled data collection, full of personal record cards. In front, a complaint by Max Mustermann against the blanket collection of annual totals.",
       caption:
         "Our planned complaint targets the blanket collection of all customers’ data.",
-    },
-  },
-  collectiveDefense: {
-    image: { de: collectiveDefense, en: collectiveDefenseEn },
-    de: {
-      alt: "Illustration: Ein Koffer mit der Aufschrift Privat schützt die Akte von Max Mustermann und eine Beschwerde. Sechs Personensymbole halten ihn von außen zusammen.",
-    },
-    en: {
-      alt: "Illustration: a case marked private protects Max Mustermann’s file and a complaint. Six person icons hold it together from the outside.",
     },
   },
   financeTheCase: {

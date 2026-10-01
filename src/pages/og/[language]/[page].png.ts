@@ -17,8 +17,8 @@ const artwork: Partial<Record<Page, Record<Language, string>>> = {
     en: "collection-review-en.webp",
   },
   participate: {
-    de: "collective-defense.webp",
-    en: "collective-defense-en.webp",
+    de: "finance-the-case.webp",
+    en: "finance-the-case-en.webp",
   },
 }
 
