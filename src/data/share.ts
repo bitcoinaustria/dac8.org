@@ -2,14 +2,15 @@ import type { Language } from "@/lib/i18n"
 
 type Text = Record<Language, string>
 
-// Ready-made social graphics from the artwork lab's share kit
+// Ready-made social graphics in the artwork lab's share-kit layout
 // (knowledge/share-kit/{de,en}/scene-*/{square,story}.png). They follow the
 // home page story and the legal route. The squares are exported as JPEG to
 // public/share/. The stories are exported to src/assets/share/ and get `text`
 // (and an optional `note`) set into the free space at build time
 // (src/pages/share/[language]/[scene]-story.jpg.ts), so a story works as a
-// post on its own. The text restates the home page scenes; change both
-// together.
+// post on its own. Titles match the home page scenes; change both together.
+// A story gets a few seconds of attention: the title carries the point, the
+// text adds one concrete fact in one or two short sentences.
 export const shareScenes: {
   id: string
   title: Text
@@ -23,8 +24,8 @@ export const shareScenes: {
       en: "Your account becomes a file.",
     },
     text: {
-      de: "Du kaufst Kryptowerte bei einer Börse oder einem Broker in Österreich. Seit 2026 bereitet der Anbieter daraus jedes Jahr deine Identität und Jahreswerte für das Finanzamt auf.",
-      en: "You buy crypto-assets from an exchange or broker in Austria. Since 2026, the provider has been preparing your identity and annual aggregates for the tax authority every year.",
+      de: "Seit 2026 hält deine Börse jedes Jahr fürs Finanzamt fest, wer du bist und wie viel du kaufst, verkaufst und tauschst.",
+      en: "Since 2026, your exchange has recorded every year for the tax office who you are and how much you buy, sell and swap.",
     },
   },
   {
@@ -34,16 +35,19 @@ export const shareScenes: {
       en: "Everyone recorded. Without suspicion.",
     },
     text: {
-      de: "Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, auch für jene, die am Ende gar nicht gemeldet werden. Das verlangt das österreichische Gesetz, über die EU-Richtlinie hinaus.",
-      en: "Providers must prepare reporting data for all customers, including those who will not ultimately be reported. Austrian law requires this, going beyond the EU directive.",
+      de: "Aufbereitet werden die Daten aller Kunden, auch wenn sie nie gemeldet werden. Österreich geht damit über die EU hinaus.",
+      en: "Data on every customer is prepared, even if it is never reported. Austria goes further than the EU requires.",
     },
   },
   {
     id: "scene-03-report",
-    title: { de: "Was wird gemeldet?", en: "What gets reported?" },
+    title: {
+      de: "Jeder Kauf. Jeder Tausch. Gezählt fürs Finanzamt.",
+      en: "Every purchase. Every swap. Counted for the tax office.",
+    },
     text: {
-      de: "Name, Anschrift, Steuerwohnsitz, Steuernummer und Geburtsdatum. Dazu je Kryptowert der Wert in Euro und die Stückzahl: wie viel du im Jahr kaufst, verkaufst, tauschst und auf eigene Wallets überträgst.",
-      en: "Name, address, tax residence, tax number and date of birth. Plus the value in euros and the units for each crypto-asset: how much you buy, sell, exchange and transfer to your own wallets in a year.",
+      de: "Name, Anschrift, Steuernummer und für jeden Kryptowert, wie viel du gekauft, verkauft, getauscht und übertragen hast.",
+      en: "Name, address, tax number and, for each crypto-asset, how much you bought, sold, swapped and transferred.",
     },
   },
   {
@@ -53,42 +57,42 @@ export const shareScenes: {
       en: "More about you. Every year.",
     },
     text: {
-      de: "Jedes Jahr kommt eine Meldung dazu, und der Anbieter hebt jede zehn Jahre auf. Bei ihm liegen außerdem dein Ausweis, deine Wallet-Adressen und jede einzelne Transaktion.",
-      en: "Every year adds another report, and the provider keeps each one for ten years. It also holds your ID, your wallet addresses and every single transaction.",
+      de: "Jedes Jahr kommt eine Meldung dazu. Der Anbieter hebt jede zehn Jahre auf, neben deinem Ausweis und deinen Wallet-Adressen.",
+      en: "Every year adds a report. Your provider keeps each one for ten years, next to your ID and your wallet addresses.",
     },
   },
   {
     id: "scene-05-leak",
     title: {
-      de: "Ein Datenleck. Persönliche Folgen.",
-      en: "A data leak. Personal consequences.",
+      de: "Gespeichert. Gehackt. Verkauft.",
+      en: "Stored. Hacked. Sold.",
     },
     text: {
-      de: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist der Einbruch. Börsen, Identifizierungsdienste und Finanzverwaltungen haben solche Daten schon verloren.",
-      en: "The more data sits in one place, and the longer it stays there, the more a break-in pays. Exchanges, identity verification services and tax administrations have already lost such data.",
+      de: "Ledger, Coinbase, Frankreichs Finanzverwaltung: Alle haben Kundendaten verloren, an Hacker oder an bestochene Mitarbeiter.",
+      en: "Ledger, Coinbase, France’s tax administration: all have lost customer data, to hackers or to bribed staff.",
     },
   },
   {
     // Numbered after the first eight so existing share URLs stay the same.
     id: "scene-09-profile",
     title: {
-      de: "Vier Datenquellen. Ein Personenprofil.",
-      en: "Four data sources. One personal profile.",
+      de: "Jedes Leck macht dein Profil genauer.",
+      en: "Every leak sharpens your profile.",
     },
     text: {
-      de: "Ein öffentliches Profil zeigt dein Gesicht, ein Leck deine Wallet-Adresse, ein gehackter Steuerdienst deine Bestände. Zusammengeführt ergibt das, wer du bist, wo du wohnst und was du vermutlich besitzt.",
-      en: "A public profile shows your face, a leak your wallet address, a hacked tax service your holdings. Put together, they reveal who you are, where you live and what you probably own.",
+      de: "Gesicht aus dem Netz, Wallet aus einem Leck, Bestände vom Steuerdienst. Zusammen: wer du bist, wo du wohnst, was du vermutlich hast.",
+      en: "Your face from the web, your wallet from a leak, your holdings from a tax service. Together: who you are, where you live, what you probably own.",
     },
   },
   {
     id: "scene-06-risk",
     title: {
-      de: "Sortierbar nach Vermögen. Gefährlich in falschen Händen.",
-      en: "Sortable by wealth. Dangerous in the wrong hands.",
+      de: "Wer viel bewegt, steht oben auf der Liste.",
+      en: "The more you move, the higher you rank.",
     },
     text: {
-      de: "In Österreich verschicken Betrüger massenhaft gefälschte FinanzOnline-Nachrichten, um herauszufinden, wer Kryptowerte besitzt. Ein Leck beim Anbieter würde ihnen diese Liste fertig liefern.",
-      en: "In Austria, fraudsters send fake tax-office messages in bulk to find out who holds crypto. A breach at a provider would hand them that list ready-made.",
+      de: "Betrüger suchen in Österreich schon per gefälschter FinanzOnline-SMS nach Krypto-Besitzern. Ein Leck beim Anbieter wäre die fertige Liste.",
+      en: "In Austria, fraudsters already hunt for crypto holders with fake tax-office texts. A breach at a provider would be the finished list.",
     },
   },
   {
@@ -98,8 +102,8 @@ export const shareScenes: {
       en: "Your profile. Your address. A target.",
     },
     text: {
-      de: "Dahinter steht organisierte Kriminalität. In den USA hackte eine Bande Datenbanken, suchte Menschen mit vermuteten Kryptobeständen heraus und brach bei ihnen ein.",
-      en: "This is organised crime. In the United States, a gang hacked databases, picked out people believed to hold crypto and broke into their homes.",
+      de: "Eine US-Bande hackte Datenbanken, suchte vermeintlich reiche Krypto-Besitzer heraus und brach bei ihnen ein. Beute insgesamt: über 250 Millionen Dollar.",
+      en: "A US gang hacked databases, picked out people believed to be rich in crypto and broke into their homes. Total haul: over 250 million dollars.",
     },
   },
   {
@@ -108,8 +112,8 @@ export const shareScenes: {
     id: "scene-07-route",
     title: { de: "Datensammlung anfechten.", en: "Challenge data collection." },
     text: {
-      de: "Wir sind überzeugt, dass die anlasslose Erfassung aller Kunden gegen Grundrechte verstößt. Bitcoin Austria bereitet ein Verfahren bei der Datenschutzbehörde vor, mit dem Ziel einer Klärung bis vor den Europäischen Gerichtshof.",
-      en: "We are convinced that recording every customer without suspicion violates fundamental rights. Bitcoin Austria is preparing proceedings before the Data Protection Authority, aiming for a ruling all the way up to the EU Court of Justice.",
+      de: "Wir bereiten ein Verfahren gegen die anlasslose Erfassung vor. Unser Ziel: die Frage bis vor den Europäischen Gerichtshof bringen.",
+      en: "We are preparing proceedings against recording everyone without suspicion. Our aim: take the question all the way to the EU Court of Justice.",
     },
   },
   {
@@ -119,8 +123,8 @@ export const shareScenes: {
       en: "Together, defend privacy.",
     },
     text: {
-      de: "Mit deiner Spende bezahlen wir das Verfahren. Und schreib deinen Abgeordneten: Der Nationalrat kann das Gesetz ändern. Alles dazu auf dac8.org/mitmachen",
-      en: "Your donation funds the case. And write to your MPs: the Austrian parliament can change the law. Find out how at dac8.org/en/get-involved",
+      de: "Spende für das Verfahren und schreib deinen Abgeordneten. Alles auf dac8.org/mitmachen",
+      en: "Donate to the case and write to your MPs. Everything at dac8.org/en/get-involved",
     },
   },
 ]
