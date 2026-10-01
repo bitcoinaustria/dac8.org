@@ -54,7 +54,7 @@ const widths = [360, 540, 720, 960, 1280, 1600].filter(
     sizes={sizes}
     priority={priority}
   />
-  {note && (
+  {(note || zoom) && (
     <figcaption>
       {title && <strong>{title}</strong>}
       {note}

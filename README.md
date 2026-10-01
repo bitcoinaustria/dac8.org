@@ -38,17 +38,17 @@ in the renders cast no shadow (`visible_shadow=False` in the lab's
 blurred. Motifs
 with text labels have a German and an English render (`*-en.webp`). The
 cutouts have no background, so the same file works in light and dark mode.
-People, addresses and amounts in the profiles are invented; captions must keep
-the distinction between combined or leaked records and the annual DAC8 report.
-Story scenes carry that distinction in their `note` ("Im Bild: …") under the
-text instead of a caption under the image.
+People, addresses and amounts in the profiles are invented. The headline and
+text beside a picture say whether it shows the annual report or leaked and
+combined records, so the pictures need no disclaimers; keep captions short and
+only where they add something the text does not say.
 
 The share graphics on the support page come from the lab's share kit
 (`knowledge/share-kit/`): square and story formats per scene and language,
 listed in `src/data/share.ts`. Their headlines match the story scenes on the
 home page. Squares are exported as JPEG to `public/share/`. Story exports go
 to `src/assets/share/`; the build sets each scene's `text` (a short version of
-the home page scene) and its "Im Bild" `note` into the free space
+the home page scene) and an optional `note` into the free space
 (`src/lib/share-story.ts`, Liberation Sans, SIL Open Font License) and serves
 them under the same `/share/` URLs. It fails if the text leaves too little
 room for the picture. `src/components/ShareKit.astro` shows both formats per
@@ -76,9 +76,9 @@ sharing within reach. `/spenden` and `/en/donate` are short redirects for print
 and QR codes. The home page is a sequence of bands, each with one statement and
 at most one illustration: the hero, a short DAC8 brief with three key figures,
 the first story chapter (`src/components/StoryScene.astro`) on what DAC8 does
-with your data, how it came about (a timeline selection linking to the history
-page), the second story chapter on what can follow, documented data leaks and
-what followed them, what we do, what you can do, the guiding statement and who
+with your data, the second on what can follow (leaks, combined datasets, target
+lists, attacks at home), documented data leaks and what followed them, how it
+came about (a timeline selection linking to the history page), what we do, what you can do, the guiding statement and who
 we are. The full case list with sources is in the dossier (`#faelle`). A case
 belongs there only if lost or misused data made the harm possible, and it needs
 a public source. The dossier's "Am I affected?" check

@@ -35,7 +35,7 @@ import { homeSteps } from "@/data/history"
         </nav>
       </div>
       <Artwork
-        id="collectionChallenge"
+        id="collectionReview"
         language="de"
         size="hero"
         priority
@@ -86,9 +86,9 @@ import { homeSteps } from "@/data/history"
           title="Dein Konto wird zur Akte."
         >
           <p>
-            Du kaufst Kryptowerte bei einer Börse oder einem Broker mit
-            Meldepflicht in Österreich. Seit 2026 bereitet der Anbieter daraus
-            deine Identität und Jahreswerte für das Finanzamt auf.
+            Name, Anschrift, Steuernummer und Geburtsdatum stehen neben deinen
+            Jahreswerten, für jeden Kryptowert einzeln: was du gekauft,
+            verkauft, getauscht und auf eigene Wallets übertragen hast.
           </p>
         </StoryScene>
         <StoryScene
@@ -97,87 +97,82 @@ import { homeSteps } from "@/data/history"
           title="Alle erfasst. Ohne Verdacht."
         >
           <p>
-            Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, auch
-            für jene, die am Ende gar nicht gemeldet werden. Das verlangt das
+            Der Anbieter bereitet diese Daten für alle Kunden auf, auch für
+            jene, die am Ende gar nicht gemeldet werden. Das verlangt das
             österreichische Gesetz, über die EU-Richtlinie hinaus.
-          </p>
-        </StoryScene>
-        <StoryScene
-          art="reportAssets"
-          language="de"
-          title="Was wird gemeldet?"
-          note="Im Bild: ein Musterblatt für eine natürliche Person, kein amtliches Formular."
-          wide
-          zoom
-        >
-          <p>
-            Name, Anschrift, Steuerwohnsitz, Steuernummer und Geburtsdatum, dazu
-            je Kryptowert und Vorgangsart der Wert in Euro, die Stückzahl und
-            meist die Anzahl der Vorgänge. Daraus liest das Finanzamt ab, wie
-            viel du im Jahr kaufst, verkaufst, tauschst und auf eigene Wallets
-            überträgst.
           </p>
         </StoryScene>
         <StoryScene
           art="yearsOnFile"
           language="de"
           title="Jedes Jahr mehr über dich."
-          note="Im Bild: die Jahresmeldungen einer Person nach einem, fünf und zehn Jahren."
         >
           <p>
-            Die Meldung kommt jedes Jahr, ohne Enddatum, und beim Anbieter
-            bleibt jede zehn Jahre gespeichert. Bleibst du Kunde, liegt dort ab
-            2036 laufend ein ganzes Jahrzehnt deiner Kryptogeschäfte: genug, um
-            zu sehen, wie viel du bewegst und wie sich das über die Jahre
-            verändert.
+            Jedes Jahr kommt eine Meldung dazu, und der Anbieter hebt jede zehn
+            Jahre auf. Bei ihm liegen außerdem dein Ausweis, deine
+            Wallet-Adressen und jede einzelne Transaktion, bis zehn Jahre nach
+            Ende der Kundenbeziehung.
           </p>
         </StoryScene>
       </div>
       <a class="text-link" href="/dossier/#gemeldet"
-        >Was gemeldet wird und was beim Anbieter bleibt</a
-      >
-    </section>
-
-    <section id="geschichte" aria-labelledby="geschichte-heading">
-      <h2 id="geschichte-heading">Wie es dazu kam</h2>
-      <p class="section-intro">
-        DAC8 ist die achte Stufe einer EU-Richtlinie, deren Vorläufer von 1977
-        stammt. Aus der Amtshilfe im Einzelfall sind jährliche Meldungen über
-        Löhne, Bankkonten, Plattformverkäufe und Kryptowerte geworden.
-      </p>
-      <TimelineRail language="de" steps={homeSteps} />
-      <a class="text-link" href="/geschichte/"
-        >Die ganze Geschichte seit 1977</a
+        >Was genau gemeldet wird und was beim Anbieter bleibt</a
       >
     </section>
 
     <section id="risiko" aria-labelledby="risiko-heading">
       <h2 id="risiko-heading">Was daraus werden kann</h2>
-      <div class="story pair">
+      <div class="story">
         <StoryScene
           art="dataHack"
           language="de"
-          title="Ein Datenleck. Persönliche Folgen."
-          note="Im Bild: verknüpfte Daten, wie sie ein Leck beim Anbieter offenlegen kann."
+          title="Gespeichert. Gehackt. Verkauft."
         >
           <p>
-            Beim Anbieter liegt weit mehr als die Meldung: dein Ausweis, deine
-            Wallet-Adressen und jede einzelne Transaktion, derzeit bis zehn
-            Jahre nach Ende der Kundenbeziehung. Ein Leck dort legt offen,
-            welche Adressen auf der Blockchain zu deinem Namen gehören. Wer
-            diese Zuordnung einmal hat, behält sie.
+            Je mehr an einer Stelle liegt und je länger es dort bleibt, desto
+            lohnender ist der Einbruch. Börsen, Identifizierungsdienste und
+            Finanzverwaltungen haben solche Daten schon verloren, an Hacker und
+            an bestochene Mitarbeiter.
+          </p>
+        </StoryScene>
+        <StoryScene
+          art="profileFourSources"
+          language="de"
+          title="Jedes Leck macht dein Profil genauer."
+          wide
+        >
+          <p>
+            Ein öffentliches Profil zeigt dein Gesicht, ein Leck deine
+            Wallet-Adresse, ein gehackter Steuerdienst deine Bestände.
+            Zusammengeführt ergeben die Bruchstücke, was keine Stelle allein
+            hat: wer du bist, wo du wohnst und was du vermutlich besitzt.
           </p>
         </StoryScene>
         <StoryScene
           art="rankedPortrait"
           language="de"
-          title="Sortierbar nach Vermögen. Gefährlich in falschen Händen."
-          note="Im Bild: eine Zielliste aus verknüpften, geleakten Daten."
+          title="Wer viel bewegt, steht oben auf der Liste."
         >
           <p>
-            Aus den Jahreswerten mehrerer Jahre lässt sich grob schätzen, wer
-            viel Geld in Krypto bewegt. Für Täter reicht eine Liste von
-            Menschen, die vermögend wirken.
+            In Österreich verschicken Betrüger massenhaft gefälschte
+            FinanzOnline-Nachrichten, um herauszufinden, wer Kryptowerte
+            besitzt. Ein Leck beim Anbieter würde ihnen diese Liste fertig
+            liefern, sortierbar danach, wie viel jemand bewegt. Ob die Schätzung
+            stimmt, ist Tätern egal.
+          </p>
+        </StoryScene>
+        <StoryScene
+          art="targetAtHome"
+          language="de"
+          title="Dein Profil. Deine Adresse. Ein Angriffsziel."
+        >
+          <p>
+            Dahinter steht organisierte Kriminalität mit verteilten Rollen. In
+            den USA hackte eine Bande Datenbanken, suchte Menschen mit
+            vermuteten Kryptobeständen heraus und brach bei ihnen ein, wenn
+            Betrugsanrufe nicht reichten. In Frankreich zählte das
+            Innenministerium im ersten Halbjahr 2026 77 Entführungen,
+            Freiheitsberaubungen und Erpressungen rund um Kryptowerte.
           </p>
         </StoryScene>
       </div>
@@ -238,6 +233,19 @@ import { homeSteps } from "@/data/history"
       <a class="text-link" href="/dossier/#faelle">Weitere Fälle und Quellen</a>
     </section>
 
+    <section id="geschichte" aria-labelledby="geschichte-heading">
+      <h2 id="geschichte-heading">Wie es dazu kam</h2>
+      <p class="section-intro">
+        DAC8 ist die achte Stufe einer EU-Richtlinie, deren Vorläufer von 1977
+        stammt. Aus der Amtshilfe im Einzelfall sind jährliche Meldungen über
+        Löhne, Bankkonten, Plattformverkäufe und Kryptowerte geworden.
+      </p>
+      <TimelineRail language="de" steps={homeSteps} />
+      <a class="text-link" href="/geschichte/"
+        >Die ganze Geschichte seit 1977</a
+      >
+    </section>
+
     <section id="weg" aria-labelledby="weg-heading">
       <h2 id="weg-heading">Was wir tun</h2>
       <div class="columns">
@@ -259,7 +267,7 @@ import { homeSteps } from "@/data/history"
       <h2 id="handeln-heading">Was du tun kannst</h2>
       <div class="act">
         <div class="act-lead">
-          <Artwork id="collectiveDefense" language="de" caption={false} />
+          <Artwork id="financeTheCase" language="de" caption={false} />
           <div>
             <h3>Den Prozess mittragen</h3>
             <p>Mit deiner Spende bezahlen wir das Verfahren.</p>

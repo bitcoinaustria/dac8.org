@@ -22,7 +22,7 @@ const concerns = [
   },
   {
     title: "A file with no end date.",
-    text: "The report comes every year, and the provider keeps each one for ten years. From 2036, a full decade will always be on file for anyone who remains a customer. Unlike bank-account reporting, it includes units and transaction counts: over the years, this shows how much someone moves and how that changes.",
+    text: "Every year adds another report, and the provider keeps each one for ten years, corresponding bank-account data only five. If you remain a customer, from 2036 a full decade of your crypto activity will always be on file.",
   },
   {
     title: "Sortable by wealth.",
@@ -30,19 +30,15 @@ const concerns = [
   },
   {
     title: "The provider becomes a honeypot.",
-    text: "The more data sits in one place, and the longer it stays there, the more an attack pays off. A provider breach can tie your name to the blockchain. Whoever has that link can also use it to trace further payments.",
+    text: "The more data sits in one place, and the longer it stays there, the more an attack pays off. A provider breach ties your name to your wallet addresses. Whoever has that link keeps it and can use it to trace further payments.",
   },
   {
     title: "The purpose keeps expanding.",
-    text: "Under the directive, the data may also be used for customs and against money laundering and terrorist financing, and for EU sanctions under Article 215 TFEU even without the sending country’s consent. We call for clear limits on each of these purposes.",
+    text: "Under the directive, the data may also be used for customs, against money laundering and for EU sanctions. Once collected, data finds new purposes. We call for a clear limit on each one.",
   },
   {
     title: "Errors travel too.",
     text: "An incorrect tax residence, valuation or reading of a transfer can be passed to other countries. The more bodies involved, the harder the correction.",
-  },
-  {
-    title: "Ten years without an explanation.",
-    text: "Providers delete reported crypto-asset data only ten years after the reporting period, and corresponding bank-account data after five. The legislative materials do not explain the difference.",
   },
 ]
 // Documented cases in which lost or misused data made the harm possible.
@@ -142,6 +138,16 @@ const leaks = [
 
 const attacks = [
   {
+    title: "USA, 2026: a gang of hackers and burglars.",
+    text: "Between late 2023 and early 2025, a criminal enterprise stole more than 250 million dollars in crypto-assets. Its members had set roles: database hacking, target identification, fraudulent calls, money laundering and burglary. It went after people believed to hold large amounts of crypto. Its burglar was sentenced to 78 months in prison in 2026.",
+    sources: [
+      {
+        label: "US Department of Justice",
+        href: "https://www.justice.gov/usao-dc/pr/gothferrari-sentenced-78-months-prison-role-massive-cryptocurrency-heist",
+      },
+    ],
+  },
+  {
     title: "France, 2026: 68,000 euros at gunpoint.",
     text: "Armed attackers hold a man in his home and force him to transfer crypto-assets worth around 68,000 euros. The Gendarmerie places the case in a series in which criminals target wallet holders whose personal data had apparently been hacked.",
     sources: [
@@ -221,7 +227,11 @@ const faqs = [
   {
     question: "How do I recognise phishing that uses the reporting duty?",
     answer:
-      "The tax office does not ask about your crypto holdings by email or text message. No legitimate sender asks you to connect a wallet or enter your recovery phrase. Your provider reports the DAC8 data itself. Be discreet about your holdings, including with acquaintances and on social media.",
+      "Fake FinanzOnline messages are already circulating in Austria, asking about your holdings on the pretext of new crypto tax rules. The tax office does not ask about them by email or text message. No legitimate sender asks you to connect a wallet or enter your recovery phrase. Your provider reports the DAC8 data itself. Be discreet about your holdings, including with acquaintances and on social media.",
+    link: {
+      href: "https://www.watchlist-internet.at/news/phishing-falle-finanzonline-krypto/",
+      label: "Watchlist Internet warning (German)",
+    },
   },
   {
     question: "Can every cryptocurrency payment be traced?",
@@ -270,7 +280,7 @@ const faqs = [
         <h1>What DAC8 requires. <span>And where it leads.</span></h1>
         <p class="lead">
           What data about you gets reported, what builds up at your provider
-          over the years and why we are challenging it.
+          over the years, what can happen to it and why we are challenging it.
         </p>
         <nav class="hero-actions" aria-label="Get started">
           <a class="button primary" href="#gemeldet">What gets reported</a
@@ -417,34 +427,35 @@ const faqs = [
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">Why it is a problem</h2>
       <p class="section-intro">
-        A new report is added every year, even more builds up at the provider,
-        and all of it is stored for years without any suspicion. The result is a
-        financial profile that goes far beyond any single report, and with it
-        the risk of errors, breaches and misuse.
+        The danger is not the single report. It is the store that grows over the
+        years without any suspicion, and everything that can be linked to it.
       </p>
       <ul class="facts concerns">
         {concerns.map(concern => <li><strong>{concern.title}</strong><p>{concern.text}</p></li>)}
-        <li class="facts-figure">
-          <Artwork id="retentionArchive" language="en" />
-        </li>
       </ul>
-      <Artwork id="wealthProfile" language="en" size="wide" />
-      <div class="art-split even">
-        <div>
-          <h3 id="zahlungsprofile">When payments reveal everyday life</h3>
-          <p class="prose">
-            Paying with bitcoin leaves traces of your everyday life, because
-            on-chain transactions remain public. When a provider links your name
-            to an address, further payments may become attributable to you. With
-            information about recipients, purchases, donations and recurring
-            payments can
-            <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
-              >reveal habits and relationships</a
-            >.
-          </p>
-        </div>
-        <Artwork id="spendingProfile" language="en" />
-      </div>
+      <h3 id="verknuepfung">When datasets come together</h3>
+      <p class="prose">
+        Each source shows only part of the picture. A public profile shows a
+        face and family, a provider breach the wallet address, a hacked tax
+        service the holdings. The annual totals show how much someone moves. Put
+        together, they form a profile with a face, an address and presumed
+        wealth, and every further leak makes it more precise. A single breach
+        can already hold several of these pieces: at Fractal ID, ID documents,
+        home addresses and wallet addresses sat in one dataset.
+      </p>
+      <Artwork id="profileFourSources" language="en" size="wide" zoom />
+      <h3 id="zahlungsprofile">When payments reveal everyday life</h3>
+      <p class="prose">
+        Paying with bitcoin leaves traces of your everyday life, because
+        on-chain transactions remain public. When a provider links your name to
+        an address, further payments may become attributable to you. With
+        information about recipients, purchases, donations and recurring
+        payments can
+        <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
+          >reveal habits and relationships</a
+        >.
+      </p>
+      <Artwork id="walletHistoryRevealed" language="en" size="wide" zoom />
     </section>
     <section id="faelle" aria-labelledby="faelle-heading">
       <h2 id="faelle-heading">What has already happened</h2>
@@ -468,7 +479,7 @@ const faqs = [
           </li>
         ))}
         <li class="facts-figure">
-          <Artwork id="dataHack" language="en" />
+          <Artwork id="personalizedFraud" language="en" />
         </li>
       </ul>
       <div class="art-split even reverse">
@@ -476,14 +487,16 @@ const faqs = [
           <h3>From data leak to front door</h3>
           <p class="prose">
             A data leak gives criminals what they would otherwise have to work
-            hard to find out: who holds crypto and where they live. Long
-            retention obligations keep this data available for years. Even a
-            mistaken assumption that someone owns a lot of crypto can put them
-            and their family at risk. That is why we call for data minimisation
-            and short retention periods.
+            hard to find out: who holds crypto and where they live. Organised
+            gangs split the work: some obtain the data, others pick the targets,
+            others again turn up at the door. Long retention obligations keep
+            this data available for years. Even a mistaken assumption that
+            someone owns a lot of crypto can put them and their family at risk.
+            That is why we call for data minimisation and short retention
+            periods.
           </p>
         </div>
-        <Artwork id="wrenchAttack" language="en" />
+        <Artwork id="targetAtHome" language="en" />
       </div>
       <ul class="facts">
         {attacks.map((item) => (
