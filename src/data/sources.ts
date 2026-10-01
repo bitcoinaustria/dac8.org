@@ -163,6 +163,13 @@ export const sourceGroups = [
       },
       {
         label:
+          "Watchlist Internet: FinanzOnline-SMS fragen massenhaft nach Kryptokonten",
+        labelEn:
+          "Watchlist Internet: FinanzOnline text messages ask in bulk about crypto accounts",
+        href: "https://www.watchlist-internet.at/news/finanzonline-phishing-krypto-unternehmensdaten/",
+      },
+      {
+        label:
           "Abramova und Böhme (Universität Innsbruck, 2023): Folgen des Ledger-Datenlecks für Betroffene",
         labelEn:
           "Abramova and Böhme (University of Innsbruck, 2023): the aftermath of the Ledger data breach",

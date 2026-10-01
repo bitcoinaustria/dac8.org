@@ -17,7 +17,7 @@ const concerns = [
   },
   {
     title: "Eine Akte ohne Enddatum.",
-    text: "Die Meldung kommt jedes Jahr, und beim Anbieter bleibt jede zehn Jahre. Ab 2036 liegt dort über jeden, der Kunde bleibt, laufend ein ganzes Jahrzehnt. Anders als bei Bankkonten gehören Stückzahlen und die Zahl der Vorgänge dazu: Über die Jahre zeigt das, wie viel jemand bewegt und wie sich das verändert.",
+    text: "Jedes Jahr kommt eine Meldung dazu, und der Anbieter hebt jede zehn Jahre auf, entsprechende Bankkontendaten nur fünf. Bleibst du Kunde, liegt dort ab 2036 laufend ein ganzes Jahrzehnt deiner Kryptogeschäfte.",
   },
   {
     title: "Sortierbar nach Vermögen.",
@@ -25,19 +25,15 @@ const concerns = [
   },
   {
     title: "Der Anbieter wird zum Honeypot.",
-    text: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist ein Angriff. Ein Leck beim Anbieter kann deinen Namen mit der Blockchain verbinden. Wer diese Zuordnung einmal hat, kann damit auch weitere Zahlungen verfolgen.",
+    text: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist ein Angriff. Ein Leck beim Anbieter verbindet deinen Namen mit deinen Wallet-Adressen. Wer diese Zuordnung einmal hat, behält sie und kann damit weitere Zahlungen verfolgen.",
   },
   {
     title: "Der Zweck wächst mit.",
-    text: "Laut Richtlinie dürfen die Daten auch für Zoll und gegen Geldwäsche und Terrorismusfinanzierung verwendet werden, für EU-Sanktionen nach Art. 215 AEUV sogar ohne Zustimmung des übermittelnden Staats. Wir fordern für jeden dieser Zwecke eine eigene, klare Grenze.",
+    text: "Laut Richtlinie dürfen die Daten auch für Zoll, gegen Geldwäsche und für EU-Sanktionen verwendet werden. Was einmal gesammelt ist, findet neue Zwecke. Wir fordern für jeden eine eigene, klare Grenze.",
   },
   {
     title: "Fehler reisen mit.",
     text: "Ein falscher Steuerwohnsitz, eine falsche Bewertung oder ein missverstandener Transfer kann an andere Staaten gehen. Je mehr Stellen beteiligt sind, desto schwerer die Korrektur.",
-  },
-  {
-    title: "Zehn Jahre ohne Begründung.",
-    text: "Der Anbieter löscht übermittelte Kryptodaten erst zehn Jahre nach dem Meldezeitraum, entsprechende Bankkontendaten nach fünf. Die Gesetzesmaterialien begründen den Unterschied nicht.",
   },
 ]
 
@@ -139,6 +135,16 @@ const leaks = [
 
 const attacks = [
   {
+    title: "USA 2026: Eine Bande mit Hackern und Einbrechern.",
+    text: "Von Ende 2023 bis Anfang 2025 erbeutete eine kriminelle Vereinigung mehr als 250 Millionen Dollar in Kryptowerten. Ihre Mitglieder hatten feste Rollen: Datenbanken hacken, Ziele auswählen, Betrugsanrufe, Geldwäsche und Einbruch. Im Visier standen Menschen, die viel Krypto besitzen sollten. Ihr Einbrecher wurde 2026 zu 78 Monaten Haft verurteilt.",
+    sources: [
+      {
+        label: "US-Justizministerium",
+        href: "https://www.justice.gov/usao-dc/pr/gothferrari-sentenced-78-months-prison-role-massive-cryptocurrency-heist",
+      },
+    ],
+  },
+  {
     title: "Frankreich 2026: 68.000 Euro unter Waffengewalt.",
     text: "Bewaffnete Täter halten einen Mann in seinem Haus fest und zwingen ihn, Kryptowerte im Wert von rund 68.000 Euro zu überweisen. Die Gendarmerie ordnet den Fall einer Serie zu, in der Täter Wallet-Besitzer ins Visier nehmen, deren persönliche Daten offenbar gehackt wurden.",
     sources: [
@@ -219,7 +225,11 @@ const faqs = [
   {
     question: "Wie erkenne ich Phishing mit der Meldepflicht?",
     answer:
-      "Das Finanzamt fragt nicht per E-Mail oder SMS nach deinen Krypto-Beständen. Niemand, der seriös ist, verlangt, dass du eine Wallet verbindest oder deine Wiederherstellungsphrase eingibst. Die Daten für DAC8 meldet dein Anbieter selbst. Sprich zurückhaltend über deine Bestände, auch im Bekanntenkreis und in sozialen Medien.",
+      "In Österreich kursieren schon gefälschte FinanzOnline-Nachrichten, die unter Verweis auf neue Krypto-Steuerregeln nach deinen Beständen fragen. Das Finanzamt fragt nicht per E-Mail oder SMS danach. Niemand, der seriös ist, verlangt, dass du eine Wallet verbindest oder deine Wiederherstellungsphrase eingibst. Die Daten für DAC8 meldet dein Anbieter selbst. Sprich zurückhaltend über deine Bestände, auch im Bekanntenkreis und in sozialen Medien.",
+    link: {
+      href: "https://www.watchlist-internet.at/news/phishing-falle-finanzonline-krypto/",
+      label: "Warnung der Watchlist Internet",
+    },
   },
   {
     question: "Lässt sich jede Zahlung mit Kryptowährungen nachverfolgen?",
@@ -269,7 +279,8 @@ const faqs = [
         <h1>Was DAC8 verlangt. <span>Und was daraus wird.</span></h1>
         <p class="lead">
           Welche Daten über dich gemeldet werden, was sich beim Anbieter über
-          die Jahre ansammelt und warum wir dagegen vorgehen.
+          die Jahre ansammelt, was damit passieren kann und warum wir dagegen
+          vorgehen.
         </p>
         <nav class="hero-actions" aria-label="Direkteinstieg">
           <a class="button primary" href="#gemeldet">Was gemeldet wird</a>
@@ -414,11 +425,9 @@ const faqs = [
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">Was daran problematisch ist</h2>
       <p class="section-intro">
-        Jedes Jahr kommt eine Meldung dazu, beim Anbieter sammelt sich noch mehr
-        an, und alles bleibt über Jahre gespeichert, ohne dass je ein Verdacht
-        bestand. Daraus entsteht ein Finanzprofil, das weit über jede einzelne
-        Meldung hinausgeht, und mit ihm das Risiko von Fehlern, Datenlecks und
-        Missbrauch.
+        Die Gefahr ist nicht die einzelne Meldung. Es ist der Bestand, der über
+        Jahre wächst, ohne dass je ein Verdacht bestand, und alles, was sich
+        damit verknüpfen lässt.
       </p>
       <ul class="facts concerns">
         {concerns.map((concern) => (
@@ -427,28 +436,32 @@ const faqs = [
             <p>{concern.text}</p>
           </li>
         ))}
-        <li class="facts-figure">
-          <Artwork id="retentionArchive" language="de" />
-        </li>
       </ul>
-      <Artwork id="wealthProfile" language="de" size="wide" />
-      <div class="art-split even">
-        <div>
-          <h3 id="zahlungsprofile">Wenn Zahlungen deinen Alltag offenlegen</h3>
-          <p class="prose">
-            Zahlst du mit Bitcoin, hinterlässt du Spuren deines Alltags, denn
-            On-Chain-Transaktionen bleiben öffentlich. Verbindet ein Anbieter
-            deinen Namen mit einer Adresse, kann jemand weitere Zahlungen dir
-            zuordnen. Mit Informationen über die Empfänger lassen Einkäufe,
-            Spenden und regelmäßige Zahlungen
-            <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
-              >Rückschlüsse auf Gewohnheiten und Beziehungen</a
-            >
-            zu.
-          </p>
-        </div>
-        <Artwork id="spendingProfile" language="de" />
-      </div>
+      <h3 id="verknuepfung">Wenn Datensätze zusammenkommen</h3>
+      <p class="prose">
+        Jede Quelle zeigt nur einen Ausschnitt. Ein öffentliches Profil zeigt
+        Gesicht und Familie, ein Leck beim Anbieter die Wallet-Adresse, ein
+        gehackter Steuerdienst die Bestände. Die Jahreswerte zeigen, wie viel
+        jemand bewegt. Zusammengeführt ergibt das ein Profil mit Gesicht,
+        Anschrift und mutmaßlichem Vermögen, und jedes weitere Leck macht es
+        genauer. Schon ein einzelnes Leck kann mehrere Bausteine enthalten: Bei
+        Fractal ID lagen Ausweis, Wohnadresse und Wallet-Adresse in einem
+        Datensatz.
+      </p>
+      <Artwork id="profileFourSources" language="de" size="wide" zoom />
+      <h3 id="zahlungsprofile">Wenn Zahlungen deinen Alltag offenlegen</h3>
+      <p class="prose">
+        Zahlst du mit Bitcoin, hinterlässt du Spuren deines Alltags, denn
+        On-Chain-Transaktionen bleiben öffentlich. Verbindet ein Anbieter deinen
+        Namen mit einer Adresse, kann jemand weitere Zahlungen dir zuordnen. Mit
+        Informationen über die Empfänger lassen Einkäufe, Spenden und
+        regelmäßige Zahlungen
+        <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
+          >Rückschlüsse auf Gewohnheiten und Beziehungen</a
+        >
+        zu.
+      </p>
+      <Artwork id="walletHistoryRevealed" language="de" size="wide" zoom />
     </section>
 
     <section id="faelle" aria-labelledby="faelle-heading">
@@ -473,7 +486,7 @@ const faqs = [
           </li>
         ))}
         <li class="facts-figure">
-          <Artwork id="dataHack" language="de" />
+          <Artwork id="personalizedFraud" language="de" />
         </li>
       </ul>
       <div class="art-split even reverse">
@@ -481,14 +494,16 @@ const faqs = [
           <h3>Vom Datenleck zur Wohnungstür</h3>
           <p class="prose">
             Ein Datenleck liefert Tätern, was sie sonst mühsam auskundschaften
-            müssten: wer Krypto besitzt und wo er wohnt. Lange
+            müssten: wer Krypto besitzt und wo er wohnt. Organisierte Banden
+            teilen die Arbeit auf: Die einen beschaffen Daten, die anderen
+            wählen Ziele aus, wieder andere stehen vor der Tür. Lange
             Aufbewahrungspflichten halten diese Daten über Jahre bereit. Schon
             die falsche Annahme, jemand besitze viel Krypto, kann ihn und seine
             Angehörigen gefährden. Deshalb fordern wir Datensparsamkeit und
             kurze Speicherfristen.
           </p>
         </div>
-        <Artwork id="wrenchAttack" language="de" />
+        <Artwork id="targetAtHome" language="de" />
       </div>
       <ul class="facts">
         {attacks.map((item) => (

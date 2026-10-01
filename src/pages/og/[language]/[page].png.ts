@@ -7,14 +7,14 @@ import { createOgImage } from "@/lib/og-image"
 // Legal pages stay text-only.
 const artwork: Partial<Record<Page, Record<Language, string>>> = {
   home: {
-    de: "collection-challenge.webp",
-    en: "collection-challenge-en.webp",
+    de: "collection-review.webp",
+    en: "collection-review-en.webp",
   },
   dossier: { de: "report-assets.webp", en: "report-assets-en.webp" },
-  attacks: { de: "wrench-attack.webp", en: "wrench-attack-en.webp" },
+  attacks: { de: "target-at-home.webp", en: "target-at-home-en.webp" },
   proceedings: {
-    de: "collection-challenge.webp",
-    en: "collection-challenge-en.webp",
+    de: "collection-review.webp",
+    en: "collection-review-en.webp",
   },
   participate: {
     de: "collective-defense.webp",

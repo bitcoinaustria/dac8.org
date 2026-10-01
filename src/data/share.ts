@@ -6,11 +6,10 @@ type Text = Record<Language, string>
 // (knowledge/share-kit/{de,en}/scene-*/{square,story}.png). They follow the
 // home page story and the legal route. The squares are exported as JPEG to
 // public/share/. The stories are exported to src/assets/share/ and get `text`
-// and `note` set into the free space at build time
+// (and an optional `note`) set into the free space at build time
 // (src/pages/share/[language]/[scene]-story.jpg.ts), so a story works as a
 // post on its own. The text restates the home page scenes; change both
-// together. `note` keeps the home page's "Im Bild" distinction between
-// linked or leaked records and the annual report.
+// together.
 export const shareScenes: {
   id: string
   title: Text
@@ -46,10 +45,6 @@ export const shareScenes: {
       de: "Name, Anschrift, Steuerwohnsitz, Steuernummer und Geburtsdatum. Dazu je Kryptowert der Wert in Euro und die Stückzahl: wie viel du im Jahr kaufst, verkaufst, tauschst und auf eigene Wallets überträgst.",
       en: "Name, address, tax residence, tax number and date of birth. Plus the value in euros and the units for each crypto-asset: how much you buy, sell, exchange and transfer to your own wallets in a year.",
     },
-    note: {
-      de: "Im Bild: ein Musterblatt für eine natürliche Person, kein amtliches Formular.",
-      en: "Pictured: a specimen for a natural person, not an official form.",
-    },
   },
   {
     id: "scene-04-retention",
@@ -58,12 +53,8 @@ export const shareScenes: {
       en: "More about you. Every year.",
     },
     text: {
-      de: "Die Meldung kommt jedes Jahr, ohne Enddatum, und beim Anbieter bleibt jede zehn Jahre gespeichert. Bleibst du Kunde, liegt dort ab 2036 laufend ein ganzes Jahrzehnt deiner Kryptogeschäfte.",
-      en: "The report comes every year, with no end date, and the provider keeps each one for ten years. If you remain a customer, from 2036 there will always be a full decade of your crypto activity on file.",
-    },
-    note: {
-      de: "Im Bild: die Jahresmeldungen einer Person nach einem, fünf und zehn Jahren.",
-      en: "Pictured: one person’s annual reports after one, five and ten years.",
+      de: "Jedes Jahr kommt eine Meldung dazu, und der Anbieter hebt jede zehn Jahre auf. Bei ihm liegen außerdem dein Ausweis, deine Wallet-Adressen und jede einzelne Transaktion.",
+      en: "Every year adds another report, and the provider keeps each one for ten years. It also holds your ID, your wallet addresses and every single transaction.",
     },
   },
   {
@@ -73,12 +64,8 @@ export const shareScenes: {
       en: "A data leak. Personal consequences.",
     },
     text: {
-      de: "Beim Anbieter liegt weit mehr als die Meldung: dein Ausweis, deine Wallet-Adressen und jede einzelne Transaktion. Ein Leck dort legt offen, welche Adressen zu deinem Namen gehören.",
-      en: "Your provider holds far more than the report: your ID, your wallet addresses and every single transaction. A breach there reveals which blockchain addresses belong to your name.",
-    },
-    note: {
-      de: "Im Bild: verknüpfte Daten, wie sie ein Leck beim Anbieter offenlegen kann.",
-      en: "Pictured: linked data of the kind a provider breach can expose.",
+      de: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist der Einbruch. Börsen, Identifizierungsdienste und Finanzverwaltungen haben solche Daten schon verloren.",
+      en: "The more data sits in one place, and the longer it stays there, the more a break-in pays. Exchanges, identity verification services and tax administrations have already lost such data.",
     },
   },
   {
@@ -88,12 +75,8 @@ export const shareScenes: {
       en: "Sortable by wealth. Dangerous in the wrong hands.",
     },
     text: {
-      de: "Aus den Jahreswerten mehrerer Jahre lässt sich grob schätzen, wer viel Geld in Krypto bewegt. Für Täter reicht eine Liste von Menschen, die vermögend wirken.",
-      en: "Several years of annual totals give a rough estimate of who moves a lot of money in crypto. For criminals, a list of people who appear wealthy is enough.",
-    },
-    note: {
-      de: "Im Bild: eine Zielliste aus verknüpften, geleakten Daten.",
-      en: "Pictured: a target list built from linked, leaked data.",
+      de: "In Österreich verschicken Betrüger massenhaft gefälschte FinanzOnline-Nachrichten, um herauszufinden, wer Kryptowerte besitzt. Ein Leck beim Anbieter würde ihnen diese Liste fertig liefern.",
+      en: "In Austria, fraudsters send fake tax-office messages in bulk to find out who holds crypto. A breach at a provider would hand them that list ready-made.",
     },
   },
   {
