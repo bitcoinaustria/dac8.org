@@ -11,8 +11,7 @@ import financeTheCase from "@/assets/artwork/finance-the-case.webp"
 import financeTheCaseEn from "@/assets/artwork/finance-the-case-en.webp"
 import linkedIdentity from "@/assets/artwork/linked-identity.webp"
 import linkedIdentityEn from "@/assets/artwork/linked-identity-en.webp"
-import massCapture from "@/assets/artwork/mass-capture.webp"
-import massCaptureEn from "@/assets/artwork/mass-capture-en.webp"
+import paragraphWatch from "@/assets/artwork/paragraph-watch.webp"
 import personalizedFraud from "@/assets/artwork/personalized-fraud.webp"
 import personalizedFraudEn from "@/assets/artwork/personalized-fraud-en.webp"
 import profileFourSources from "@/assets/artwork/profile-four-sources.webp"
@@ -57,13 +56,14 @@ export const artwork = {
       alt: "Illustration: a phone with an exchange app and Max Mustermann’s ID card are connected to the provider’s financial record, which lists annual totals: purchases 0.35 BTC, transfers 0.18 BTC.",
     },
   },
-  massCapture: {
-    image: { de: massCapture, en: massCaptureEn },
+  paragraphWatch: {
+    // Text-free, so one render serves both languages.
+    image: paragraphWatch,
     de: {
-      alt: "Illustration: Ein dichtes Feld gleicher Personenkarten läuft unter einer gemeinsamen Scannerleiste hindurch.",
+      alt: "Illustration: Eine Person der Börse reicht einer Kundin über einen Schalter mit Bitcoin-Zeichen eine Bitcoin-Münze. Dahinter steht ein großes Paragrafenzeichen, an dem sechs Überwachungskameras befestigt sind, alle auf den Kauf gerichtet. Rechts steht eine maskierte Person mit einem Schraubenschlüssel.",
     },
     en: {
-      alt: "Illustration: a dense field of identical personal record cards passes under one shared scanner bar.",
+      alt: "Illustration: an exchange employee hands a customer a Bitcoin coin across a desk marked with the Bitcoin sign. Behind them stands a large paragraph sign with six surveillance cameras attached, all aimed at the purchase. To the right stands a masked person holding a wrench.",
     },
   },
   reportAssets: {
