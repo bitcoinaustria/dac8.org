@@ -34,13 +34,27 @@ type ArtworkText = {
   caption?: string
 }
 
+// A compressed glTF of the same Blender scene (public/models/), drawn live
+// with WebGL over the render, which stays as poster and fallback. The camera
+// is the lab's view direction in Blender coordinates (z up).
+export type ArtworkModel = {
+  file: Record<Language, string>
+  camera: [number, number, number]
+}
+
 export type Artwork = {
   // One render per language where the object carries text labels.
   image: ImageMetadata | Record<Language, ImageMetadata>
+  model?: ArtworkModel
 } & Record<Language, ArtworkText>
 
 export const imageFor = (entry: Artwork, language: Language) =>
   "src" in entry.image ? entry.image : entry.image[language]
+
+const model = (name: string, camera: ArtworkModel["camera"]) => ({
+  file: { de: `/models/${name}.glb`, en: `/models/${name}-en.glb` },
+  camera,
+})
 
 // Transparent renders from the artwork lab (knowledge/dac8-*-cutout.png, the
 // -en files from its English editions). They carry no background, so the page
@@ -50,6 +64,7 @@ export const imageFor = (entry: Artwork, language: Language) =>
 export const artwork = {
   accountToRecord: {
     image: { de: accountToRecord, en: accountToRecordEn },
+    model: model("account-to-record", [1.1, -5.7, 16]),
     de: {
       alt: "Illustration: Ein Smartphone mit Börsen-App und ein Ausweis von Max Mustermann sind mit einer Finanzakte des Anbieters verbunden. Darin stehen Jahreswerte: Käufe 0,35 BTC, Transfers 0,18 BTC.",
     },
@@ -59,6 +74,7 @@ export const artwork = {
   },
   massCapture: {
     image: { de: massCapture, en: massCaptureEn },
+    model: model("mass-capture", [5.5, -10, 12]),
     de: {
       alt: "Illustration: Ein dichtes Feld gleicher Personenkarten läuft unter einer gemeinsamen Scannerleiste hindurch.",
     },
@@ -68,6 +84,7 @@ export const artwork = {
   },
   reportAssets: {
     image: { de: reportAssets, en: reportAssetsEn },
+    model: model("report-assets", [0, -1.6, 19]),
     de: {
       alt: "Illustration: Musterblatt einer Jahresmeldung 2026 für Max Mustermann mit Name, Anschrift, Steuerwohnsitz, maskierter Steuernummer, Geburtsdatum und Angaben zum meldenden Anbieter. Daneben je ein Blatt für Bitcoin, Ether und Litecoin mit Gesamtwert, Stückzahl und meist der Anzahl je Vorgangsart.",
     },
@@ -77,6 +94,7 @@ export const artwork = {
   },
   yearsOnFile: {
     image: { de: yearsOnFile, en: yearsOnFileEn },
+    model: model("years-on-file", [4, -10, 12]),
     de: {
       alt: "Illustration: Drei Stapel mit Jahresakten von Max Mustermann, beschriftet 2026 (1. Jahr), 2030 (5. Jahr) und 2035 (10. Jahr), werden von links nach rechts höher.",
     },
@@ -86,6 +104,7 @@ export const artwork = {
   },
   dataHack: {
     image: { de: dataHack, en: dataHackEn },
+    model: model("data-hack", [1.2, -5, 15]),
     de: {
       alt: "Illustration: Aus einem gesprungenen Glasarchiv mit der Aufschrift Personendaten führt ein roter Pfeil zu einem Blatt „Datenleck, offengelegt“ mit Name, Wiener Anschrift, 7,2 BTC und Familienstand von Max Mustermann.",
     },
@@ -95,6 +114,7 @@ export const artwork = {
   },
   profileFourSources: {
     image: { de: profileFourSources, en: profileFourSourcesEn },
+    model: model("profile-four-sources", [0, -3.35, 18]),
     de: {
       alt: "Illustration: Vier kleine Karten, ein öffentliches Profil, eine Wallet-Zuordnung, ein Steuertool-Import und die Meldedaten 2026, sind mit einer großen Akte „Verknüpfte Daten“ verbunden. Darin stehen Foto, Name und Wiener Anschrift von Max Mustermann, Familienstand, eine zugeordnete Wallet mit rund 7,2 BTC, Rang 07, 1.284 importierte Vorgänge und die Jahreswerte aus der Meldung.",
     },
@@ -104,6 +124,7 @@ export const artwork = {
   },
   rankedPortrait: {
     image: { de: rankedPortrait, en: rankedPortraitEn },
+    model: model("ranked-portrait", [0, -2.8, 17]),
     de: {
       alt: "Illustration: Ein Schraubenschlüssel neben einer Zielliste für Wien mit verknüpften Vermögensdaten. Rot markiert ist Platz 07, Max Mustermann mit 7,2 BTC; darunter Anschrift, Familienstand und ein Porträtfoto.",
     },
@@ -113,6 +134,7 @@ export const artwork = {
   },
   targetAtHome: {
     image: { de: targetAtHome, en: targetAtHomeEn },
+    model: model("target-at-home", [0, -3.15, 18]),
     de: {
       alt: "Illustration: Ein Schraubenschlüssel neben einem verknüpften Profil von Max Mustermann mit Foto, Familienstand und einer zugeordneten Wallet mit rund 7,2 BTC. Eine rote Karte führt ihn als Nummer 07 einer Zielliste für Wien. Darunter ein Türschild Musterstraße 7 mit Standortmarke.",
     },
@@ -122,6 +144,7 @@ export const artwork = {
   },
   walletHistoryRevealed: {
     image: { de: walletHistoryRevealed, en: walletHistoryRevealedEn },
+    model: model("wallet-history-revealed", [0, -3.35, 18]),
     de: {
       alt: "Illustration: Eine Karte von Max Mustermann ist mit seiner zugeordneten Wallet bc1q…9f3a verbunden. Unter derselben Adresse stehen öffentliche Zahlungen von 0,003, 0,008 und 0,002 BTC, die zu drei Empfängern führen: Praxis 240 Euro, Familie 600 Euro, Spende 120 Euro.",
     },
@@ -131,6 +154,7 @@ export const artwork = {
   },
   personalizedFraud: {
     image: { de: personalizedFraud, en: personalizedFraudEn },
+    model: model("personalized-fraud", [2.2, -12, 16]),
     de: {
       alt: "Illustration: Von einem Datenleck mit Name, Anschrift und Wallet-Adresse von Max Mustermann führt ein Pfeil zu einem Smartphone. Darauf eine als Betrug markierte Nachricht eines angeblichen Börsen-Service, die ihn mit denselben Angaben anspricht und auffordert, sein Konto zu prüfen.",
     },
@@ -140,6 +164,7 @@ export const artwork = {
   },
   linkedIdentity: {
     image: { de: linkedIdentity, en: linkedIdentityEn },
+    model: model("linked-identity", [2, -8, 13]),
     de: {
       alt: "Illustration: Eine Identitätskarte von Max Mustermann ist mit roten Leitungen verbunden mit einem Bankkonto über 12.400 Euro, einer Wallet A mit 4,1 BTC und einer Hardware-Wallet B mit 3,1 BTC.",
     },
@@ -149,6 +174,7 @@ export const artwork = {
   },
   collectionReview: {
     image: { de: collectionReview, en: collectionReviewEn },
+    model: model("collection-review", [3, -12, 13]),
     de: {
       alt: "Illustration: Eine Lupe über einer Kartei mit der Aufschrift Datensammlung voller Personenkarten. Davor eine Beschwerde von Max Mustermann gegen die anlasslose Erfassung der Jahreswerte.",
       caption:
@@ -162,6 +188,7 @@ export const artwork = {
   },
   financeTheCase: {
     image: { de: financeTheCase, en: financeTheCaseEn },
+    model: model("finance-the-case", [3, -12, 14]),
     de: {
       alt: "Illustration: Drei Spendenkarten über 25, 50 und 100 Euro führen in eine Mappe mit Rechtsvertretung und Verfahrenskosten. Daneben eine Beschwerde gegen die DAC8-Datensammlung.",
     },

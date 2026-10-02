@@ -52,6 +52,10 @@ import { SITE } from "@/consts"
     const theme = localStorage.theme
     if (theme === "light" || theme === "dark")
       document.documentElement.dataset.theme = theme
+    // Artworks with a 3D model hide their render up front where WebGL can
+    // draw it; a failed model brings the render back.
+    if ("WebGL2RenderingContext" in window)
+      document.documentElement.dataset.webgl = ""
   </script>
 
   <slot />

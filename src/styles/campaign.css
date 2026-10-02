@@ -2356,3 +2356,36 @@ html:has(.lightbox[open]) {
     border-block-start: 2px solid light-dark(#c6cbcf, #454b51);
   }
 }
+
+/* Artworks with a live 3D model. Where WebGL is available the render is not
+   shown at all (it differs from the live view, and a lazy image that is not
+   displayed is not downloaded); the box keeps its proportions until the
+   canvas fades in. Without WebGL, or if the model fails, the render stays. */
+.campaign .artwork-stage {
+  position: relative;
+  inline-size: var(--art-width);
+  aspect-ratio: var(--ratio, 1.3333);
+}
+
+.campaign .artwork-stage img {
+  inline-size: 100%;
+}
+
+:root[data-webgl] .campaign .artwork-stage:not([data-state="failed"]) img {
+  display: none;
+}
+
+.campaign .artwork-stage canvas {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  pointer-events: none;
+  animation: artwork-model-in 0.5s ease both;
+}
+
+@keyframes artwork-model-in {
+  from {
+    opacity: 0;
+  }
+}

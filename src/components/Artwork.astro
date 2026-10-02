@@ -1,5 +1,6 @@
 ---
 import { Picture } from "astro:assets"
+import { ARTWORK_MODE } from "astro:env/server"
 import { type Artwork, artwork, type ArtworkId, imageFor } from "@/data/artwork"
 import type { Language } from "@/lib/i18n"
 
@@ -39,21 +40,40 @@ const sizes = {
   side: "(min-width: 64rem) 36rem, 92vw",
   wide: "(min-width: 64rem) 58rem, 100vw",
 }[size]
+const model = ARTWORK_MODE === "webgl" ? entry.model : undefined
 const widths = [360, 540, 720, 960, 1280, 1600].filter(
   (width) => width < image.width,
 )
 ---
 
 <figure class:list={["artwork", `artwork-${size}`]} style={`--ratio: ${ratio}`}>
-  <Picture
-    src={image}
-    alt={text.alt}
-    formats={["avif", "webp"]}
-    fallbackFormat="webp"
-    widths={[...widths, image.width]}
-    sizes={sizes}
-    priority={priority}
-  />
+  {model ? (
+    <div
+      class="artwork-stage"
+      data-model={model.file[language]}
+      data-camera={model.camera.join(" ")}
+    >
+      <Picture
+        src={image}
+        alt={text.alt}
+        formats={["avif", "webp"]}
+        fallbackFormat="webp"
+        widths={[...widths, image.width]}
+        sizes={sizes}
+        priority={priority}
+      />
+    </div>
+  ) : (
+    <Picture
+      src={image}
+      alt={text.alt}
+      formats={["avif", "webp"]}
+      fallbackFormat="webp"
+      widths={[...widths, image.width]}
+      sizes={sizes}
+      priority={priority}
+    />
+  )}
   {(note || zoom) && (
     <figcaption>
       {title && <strong>{title}</strong>}
@@ -66,3 +86,8 @@ const widths = [360, 540, 720, 960, 1280, 1600].filter(
     </figcaption>
   )}
 </figure>
+
+<script>
+  import { mountModels } from "@/lib/artwork-model"
+  mountModels()
+</script>

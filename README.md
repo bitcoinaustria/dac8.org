@@ -43,6 +43,24 @@ text beside a picture say whether it shows the annual report or leaked and
 combined records, so the pictures need no disclaimers; keep captions short and
 only where they add something the text does not say.
 
+Every artwork also has a `model` entry in `src/data/artwork.ts` and can be
+drawn live with WebGL (`src/lib/model-view.ts`, Three.js), sharper than the
+render. This is an experiment for comparison. The build variable
+`ARTWORK_MODE` chooses: `render` (default) shows only the WebP renders and
+never loads Three.js; `webgl` draws the models (`ARTWORK_MODE=webgl pnpm dev`
+or `pnpm build`; set it in the Cloudflare build settings for a preview). The models are the lab's `knowledge/dac8-*.glb` exports,
+compressed into `public/models/` with `npx @gltf-transform/cli optimize <in>
+<out> --compress meshopt --texture-compress false --simplify false --join
+false --flatten false`: mostly 65–260 kB gzipped, the report specimen about
+800 kB because its small print is extruded geometry. Where WebGL is available
+the render is not shown, since it looks different from the live view; it
+stays as alt text and fallback. A model loads only near the viewport and
+stands still in the lab's pose; a scroll-linked turn was tried and dropped.
+One shared renderer draws every model once and copies it onto the artwork's
+own canvas, so a page needs a single WebGL context. Clear glass is drawn as
+tinted translucency, because WebGL transmission on a transparent canvas turns
+milky and costs an extra pass on phones.
+
 The share graphics on the support page come from the lab's share kit
 (`knowledge/share-kit/`): square and story formats per scene and language,
 listed in `src/data/share.ts`. Their headlines match the story scenes on the
