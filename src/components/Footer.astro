@@ -1,5 +1,6 @@
 ---
 import BitcoinAustriaLogo from "@/assets/bitcoin-austria-horizontal.svg"
+import CheckIcon from "@/assets/icons/check.svg"
 import ShareIcon from "@/assets/icons/share.svg"
 import { campaignStatus } from "@/data/campaign"
 
@@ -115,7 +116,7 @@ const sections = [
         aria-label={en ? "Share this page" : "Diese Seite teilen"}
         title={en ? "Share" : "Teilen"}
       >
-        <ShareIcon />
+        <ShareIcon class="share-icon" /><CheckIcon class="share-done" />
       </button>
     </div>
     <p class="share-status" data-share-status aria-live="polite"></p>

@@ -26,6 +26,7 @@ export const copyText = async (url: string) => {
 export const initializeShareButtons = () => {
   const en = document.documentElement.lang.startsWith("en")
   const buttons = document.querySelectorAll<HTMLButtonElement>("[data-share]")
+  const timers = new Map<HTMLButtonElement, ReturnType<typeof setTimeout>>()
 
   for (const button of buttons) {
     const status =
@@ -55,7 +56,19 @@ export const initializeShareButtons = () => {
       }
 
       const copied = await copyText(data.url)
+      if (copied) {
+        // The button itself confirms, like a copy button in the system: a
+        // check mark and a short label above it. The status line only speaks
+        // to screen readers.
+        clearTimeout(timers.get(button))
+        button.dataset.copied = en ? "Link copied" : "Link kopiert"
+        timers.set(
+          button,
+          setTimeout(() => delete button.dataset.copied, 2400),
+        )
+      }
       if (status) {
+        status.toggleAttribute("data-quiet", copied)
         status.textContent = copied
           ? en
             ? "Link copied. Thank you for sharing."
