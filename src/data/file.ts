@@ -339,8 +339,8 @@ export const fileTexts = (answers: FileAnswers, language: Language) => {
             ? `Another report each year, the last one for ${last}.`
             : `Eine weitere Meldung pro Jahr, zuletzt die für ${last}.`,
     keptSince: en
-      ? `Not in the report, but held by your provider since ${answers.since}:`
-      : `Nicht in der Meldung, aber seit ${answers.since} bei deinem Anbieter:`,
+      ? `Not in the report, but held by your provider since ${answers.since}, already under anti-money-laundering rules. DAC8 links these records with your tax data:`
+      : `Nicht in der Meldung, aber seit ${answers.since} bei deinem Anbieter, schon aufgrund der Geldwäschevorschriften. Mit DAC8 werden sie mit deinen Steuerdaten verknüpft:`,
     keptFrom: String(answers.since),
     keptTurn: last === undefined ? (en ? "open" : "offen") : String(last),
     keptToLabel:
