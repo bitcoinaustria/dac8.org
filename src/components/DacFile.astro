@@ -12,6 +12,7 @@ import {
   isComplete,
   labels,
   providerAnswers,
+  residences,
   retention,
   rows,
   showsAsset,
@@ -93,6 +94,25 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
     <div class="file-more" data-unless-self hidden={self}>
       <fieldset class="file-question">
         <legend>
+          {en ? "Where are you tax-resident?" : "Wo bist du steuerlich ansässig?"}
+        </legend>
+        <div class="file-options">
+          {residences.map((value) => (
+            <label>
+              <input
+                type="radio"
+                name="residence"
+                value={value}
+                checked={value === answers.residence}
+              />
+              <span>{text.residence[value]}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset class="file-question">
+        <legend>
           {en ? "Since when, and for how long?" : "Wie lange bist du bei diesem Anbieter?"}
         </legend>
         <div class="file-years">
@@ -159,7 +179,7 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
 
     <noscript>
       <p class="file-noscript">
-        {en ? "Without JavaScript, this page shows an example: bitcoin, bought and transferred to your own wallet, customer since 2021." : "Ohne JavaScript zeigt diese Seite ein Beispiel: Bitcoin, gekauft und auf die eigene Wallet übertragen, Kunde seit 2021."}
+        {en ? "Without JavaScript, this page shows an example: tax-resident in Austria, bitcoin, bought and transferred to your own wallet, customer since 2021." : "Ohne JavaScript zeigt diese Seite ein Beispiel: in Österreich steuerlich ansässig, Bitcoin, gekauft und auf die eigene Wallet übertragen, Kunde seit 2021."}
       </p>
     </noscript>
   </form>
@@ -197,7 +217,7 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
             {en ? "This applies as long as you only self-custody and never buy or sell through a provider." : "Das gilt, solange du ausschließlich selbst verwahrst und nie über einen Anbieter kaufst oder verkaufst."}
           </li>
           <li>
-            {en ? "If you buy from a provider and transfer to your own wallet, the value and units of those transfers usually appear as sums in that provider’s annual report. The address is not in it, but the provider keeps it." : "Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, stehen Wert und Stückzahl dieser Übertragungen in der Regel als Summen in seiner Jahresmeldung. Die Adresse steht nicht darin, er speichert sie aber."}
+            {en ? "If you buy from a provider and transfer to your own wallet, the value and units of those transfers usually appear as sums in that provider’s annual report. The address is not in it, but the provider holds it in its anti-money-laundering records." : "Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, stehen Wert und Stückzahl dieser Übertragungen in der Regel als Summen in seiner Jahresmeldung. Die Adresse steht nicht darin, er hat sie aber aus den Geldwäscheunterlagen."}
           </li>
           <li>
             {en ? "If you used a provider in the past, anti-money-laundering rules currently require it to keep your ID, wallet addresses and transactions for up to ten years after you left." : "Warst du früher Kunde bei einem Anbieter, muss er Ausweis, Wallet-Adressen und Transaktionen nach den Geldwäschevorschriften derzeit bis zehn Jahre nach Ende der Kundenbeziehung aufbewahren."}
@@ -207,6 +227,25 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
       <p class="file-what" data-unless-self hidden={self} data-text="what">
         {texts.what}
       </p>
+      <div class="file-residence" data-unless-self hidden={self}>
+        <p data-residence="at" hidden={answers.residence !== "at"}>
+          {en ? "Whoever is tax-resident in Austria is reported." : "Wer in Österreich steuerlich ansässig ist, wird gemeldet."}
+        </p>
+        <p data-residence="eu" hidden={answers.residence !== "eu"}>
+          {en ? "You are reported, and Austria passes the report on to the EU country where you are tax-resident." : "Du wirst gemeldet, und Österreich gibt die Meldung an den EU-Staat weiter, in dem du steuerlich ansässig bist."}
+        </p>
+        <ul data-residence="third" hidden={answers.residence !== "third"}>
+          <li>
+            {en ? "Only people tax-resident in a participating country are reported: an EU country, or a non-EU country that exchanges crypto data with Austria. Which non-EU countries take part depends on the agreements in force." : "Gemeldet wird nur, wer in einem teilnehmenden Staat steuerlich ansässig ist: in einem EU-Staat oder in einem Drittstaat, der mit Österreich Kryptodaten austauscht. Welche Drittstaaten das sind, hängt von den geltenden Abkommen ab."}
+          </li>
+          <li>
+            {en ? "Your provider must prepare the reporting data for you anyway. The law requires this for all customers, including those who are never reported." : "Aufbereiten muss dein Anbieter die Meldedaten trotzdem. Das Gesetz verlangt es für alle Kunden, auch für jene, die nie gemeldet werden."}
+            <small
+              >{en ? "Section 20(1) Krypto-MPfG" : "§ 20 Abs. 1 Krypto-MPfG"}</small
+            >
+          </li>
+        </ul>
+      </div>
     </div>
 
     <section
@@ -216,14 +255,12 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
       hidden={self}
       aria-labelledby="finanzamt-heading"
     >
-      <h2 id="finanzamt-heading">
-        {en ? "What goes to the tax authority every year" : "Was jedes Jahr ans Finanzamt geht"}
+      <h2 id="finanzamt-heading" data-text="finanzamtHeading">
+        {texts.finanzamtHeading}
       </h2>
 
       <h3>{en ? "Your report for 2026" : "Deine Meldung für 2026"}</h3>
-      <p class="file-intro">
-        {en ? "This is your first annual report. Your provider fills in the fields with your data. Nothing before 2026 is reported." : "So sieht deine erste Jahresmeldung aus. Die Felder füllt dein Anbieter mit deinen Daten. Vorgänge vor 2026 meldet er nicht."}
-      </p>
+      <p class="file-intro" data-text="sheetIntro">{texts.sheetIntro}</p>
 
       <article class="sheet" aria-labelledby="sheet-title">
         <header class="sheet-bar">
@@ -310,9 +347,7 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
           <span>
             {en ? "Reporting provider: your provider" : "Meldender Anbieter: dein Anbieter"}
           </span>
-          <span>
-            {en ? "To the tax authority by 31 July 2027" : "An das Finanzamt bis 31. Juli 2027"}
-          </span>
+          <span data-text="sheetTo">{texts.sheetTo}</span>
         </footer>
       </article>
 
@@ -324,7 +359,7 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
           <strong
             >{en ? "Transfers to your own wallet." : "Übertragungen auf deine eigene Wallet."}</strong
           >
-          {en ? "They usually also appear in a separate category: transfers to addresses with no known link to a crypto-asset provider or financial institution, reported as sums of value and units. This can indicate self-custody. The address is not in the report, but your provider holds it." : "Sie stehen in der Regel auch in einer eigenen Kategorie: Übertragungen an Adressen ohne bekannte Verbindung zu einem Krypto-Anbieter oder Finanzinstitut, gemeldet als Summe von Wert und Stückzahl. Das kann auf Selbstverwahrung hindeuten. Die Adresse steht nicht in der Meldung, dein Anbieter hat sie aber."}
+          {en ? "They usually also appear in a separate category: transfers to addresses with no known link to a crypto-asset provider or financial institution, reported as sums of value and units. This can indicate self-custody. The address is not in the report, but your provider holds it in its anti-money-laundering records." : "Sie stehen in der Regel auch in einer eigenen Kategorie: Übertragungen an Adressen ohne bekannte Verbindung zu einem Krypto-Anbieter oder Finanzinstitut, gemeldet als Summe von Wert und Stückzahl. Das kann auf Selbstverwahrung hindeuten. Die Adresse steht nicht in der Meldung, dein Anbieter hat sie aber aus den Geldwäscheunterlagen."}
         </li>
         <li
           data-note="transfer"
@@ -349,17 +384,13 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
       <ol class="timeline file-timeline">
         <li>
           <strong>{en ? "By 31 July 2027" : "bis 31. Juli 2027"}</strong>
-          <span
-            >{en ? "The tax authority receives your report for 2026 and analyses it." : "Das Finanzamt bekommt deine Meldung für 2026 und wertet sie aus."}</span
-          >
+          <span data-text="taxOfficeText">{texts.taxOfficeText}</span>
         </li>
         <li>
           <strong
             >{en ? "By 30 September 2027" : "bis 30. September 2027"}</strong
           >
-          <span
-            >{en ? "Other EU countries receive it if you are tax-resident there." : "Andere EU-Staaten bekommen sie, wenn du dort steuerlich ansässig bist."}</span
-          >
+          <span data-text="exchangeText">{texts.exchangeText}</span>
         </li>
         <li>
           <strong data-text="nextWhen">{texts.nextWhen}</strong>
@@ -387,9 +418,7 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
       </h2>
 
       <h3>{en ? "Year after year" : "Jahr für Jahr"}</h3>
-      <p class="file-intro">
-        {en ? "Your provider keeps every annual report and deletes each one only ten years after its reporting period." : "Dein Anbieter behält jede Jahresmeldung und löscht sie erst zehn Jahre nach ihrem Meldezeitraum."}
-      </p>
+      <p class="file-intro" data-text="yearsIntro">{texts.yearsIntro}</p>
       <p class="file-key">
         <strong data-text="key">{texts.key}</strong>
         <span data-text="keyFollow">{texts.keyFollow}</span>
@@ -733,6 +762,22 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
     font-size: var(--step-1);
     line-height: 1.45;
     text-wrap: pretty;
+  }
+
+  /* Ob gemeldet wird, hängt von der Steueransässigkeit ab: ein Satz, für
+     Drittstaaten zwei Punkte mit dem Zusatz nach § 20 Abs. 1. */
+  .file-residence p {
+    max-inline-size: var(--measure-text);
+    color: var(--ink);
+    font-weight: 500;
+    text-wrap: pretty;
+  }
+
+  .file-residence small {
+    display: block;
+    margin-block-start: var(--space-3xs);
+    color: var(--ink-3);
+    font-size: var(--step--1);
   }
 
   /* Zwei getrennte Blöcke: was ans Finanzamt geht, und was beim Anbieter
@@ -1419,6 +1464,7 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
     firstYear,
     isComplete,
     type ProviderAnswer,
+    type Residence,
     type RowId,
     showsAsset,
     showsRow,
@@ -1441,6 +1487,7 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
       const until = String(data.get("until") ?? "open")
       return {
         provider: String(data.get("provider") ?? "provider") as ProviderAnswer,
+        residence: String(data.get("residence") ?? "at") as Residence,
         since: Number(data.get("since")),
         until: until === "open" ? "open" : Number(until),
         activities: data.getAll("activity").map(String) as Activity[],
@@ -1458,6 +1505,8 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
       for (const element of all("[data-verdict]"))
         element.hidden = element.dataset.verdict !== answers.provider
       for (const element of all("[data-unless-self]")) element.hidden = self
+      for (const element of all("[data-residence]"))
+        element.hidden = element.dataset.residence !== answers.residence
       // Only changed text is written, so the live summary speaks once per
       // change and not on load.
       for (const element of all("[data-text]")) {
