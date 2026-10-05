@@ -277,31 +277,7 @@
   color: var(--accent);
 }
 
-/* ---------- Kurz gesagt: Einordnung und Kennzahlen -------------------- */
-
-/* Das Band unter dem Hero: ein Satz, was DAC8 in Österreich verlangt und
-   was wir tun, darunter drei große Werte. Eine weiche Fläche trennt es vom
-   Hero, ohne Linie. */
-.campaign .brief {
-  display: grid;
-  gap: var(--space-l);
-  padding: var(--space-m-l) var(--space-m-l) var(--space-l);
-  border-radius: var(--radius-xl);
-  background: var(--panel);
-}
-
-.campaign .brief-text {
-  max-inline-size: 62ch;
-  color: var(--ink-2);
-  font-size: var(--step-1);
-  line-height: 1.45;
-  text-wrap: pretty;
-}
-
-.campaign .brief-text strong {
-  color: var(--ink);
-  font-weight: 560;
-}
+/* ---------- Kennzahlen ------------------------------------------------ */
 
 /* Kennzahlen: drei große Werte, die den Fall in einer Zeile erzählen. */
 .campaign .keyfigures {
@@ -848,9 +824,6 @@
 }
 
 /* Der Satz zur Angriffskarte unter den Fällen der Startseite. */
-.campaign .attacks-teaser {
-  margin-block-start: var(--space-xl);
-}
 
 /* ---------- Gegenüberstellung: gemeldet / nicht gemeldet ------------- */
 
@@ -1745,6 +1718,152 @@
 
 .campaign .story + .text-link {
   margin-block-start: var(--space-xl);
+}
+
+/* ---------- Startseite: dichter erzählt ------------------------------- */
+
+/* Die Startseite trägt viele Bilder; engere Bänder halten sie kurz. */
+.campaign.landing {
+  --band-gap: clamp(4rem, 2.5rem + 4vw, 6.5rem);
+}
+
+/* Die Kennzahlen gehören zum Hero und stehen deshalb dicht darunter, ohne
+   eigene Fläche. */
+.campaign.landing > .hero + .figures {
+  margin-block-start: calc(var(--space-l) - var(--band-gap));
+}
+
+/* Drei Szenen nebeneinander, das Bild über Überschrift und Satz. Die
+   Bildboxen sind gleich hoch, damit die Überschriften auf einer Linie
+   stehen. */
+@container campaign (width >= 60rem) {
+  .campaign .story.trio {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    column-gap: var(--space-xl);
+  }
+
+  .campaign .story.trio .scene,
+  .campaign .story.trio .scene:nth-child(even) {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .campaign .story.trio .scene > .artwork {
+    grid-row: 1;
+    grid-column: 1;
+    block-size: var(--art-height);
+    align-content: end;
+  }
+
+  .campaign .story.trio .artwork-scene {
+    --art-height: 16rem;
+  }
+}
+
+/* Die Kette der Risiken: vier nummerierte Schritte im Raster zwei mal zwei,
+   vom Leck bis zur Haustür. */
+.campaign .story.chain {
+  counter-reset: chain;
+}
+
+.campaign .story.chain .scene-text h3::before {
+  counter-increment: chain;
+  content: counter(chain, decimal-leading-zero);
+  display: block;
+  margin-block-end: var(--space-2xs);
+  color: var(--accent);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+@container campaign (width >= 52rem) {
+  .campaign .story.chain {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: var(--space-2xl) var(--space-xl);
+  }
+
+  .campaign .story.chain .scene,
+  .campaign .story.chain .scene:nth-child(even) {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .campaign .story.chain .scene > .artwork {
+    grid-row: 1;
+    grid-column: 1;
+    block-size: var(--art-height);
+    align-content: end;
+  }
+
+  .campaign .story.chain .artwork-scene {
+    --art-height: 19rem;
+  }
+}
+
+/* Fälle: vier kurze Einträge in einer Zeile, Jahr über Name, gefräste
+   Kante darüber wie bei den Kennzahlen. */
+.campaign .cases {
+  display: grid;
+  gap: var(--space-l) var(--space-l);
+  margin-block-start: var(--space-l);
+  padding: 0;
+  list-style: none;
+}
+
+.campaign .cases li {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2xs);
+  padding-block-start: var(--space-s);
+  background: var(--metal-rule) top / 100% 2px no-repeat;
+}
+
+.campaign .case-year {
+  color: var(--accent);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.campaign .cases strong {
+  font-size: var(--step-1);
+  font-weight: 560;
+  line-height: 1.25;
+  letter-spacing: -0.012em;
+}
+
+.campaign .cases p {
+  color: var(--ink-2);
+  font-size: var(--step--1);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+@container campaign (width >= 40rem) {
+  .campaign .cases {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container campaign (width >= 64rem) {
+  .campaign .cases {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Mehrere Textlinks am Ende eines Bands stehen in einer Zeile. */
+.campaign .link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-l);
+  margin-block-start: var(--space-l);
+}
+
+.campaign .link-row .text-link {
+  margin-block-start: 0;
 }
 
 /* ---------- Was du tun kannst ------------------------------------------ */
