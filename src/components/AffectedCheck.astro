@@ -31,7 +31,7 @@ const options = en
         verdict: "Then DAC8 does not report you.",
         points: [
           "This applies as long as you only self-custody and never buy or sell through a provider.",
-          "If you buy from a provider and transfer to your own wallet, the value and units of those transfers appear in that provider’s annual report. The provider keeps the address.",
+          "If you buy from a provider and transfer to your own wallet, the value and units of those transfers usually appear in that provider’s annual report. The provider keeps the address.",
         ],
         link: { href: faq, label: "Questions and answers" },
       },
@@ -64,7 +64,7 @@ const options = en
         verdict: "Dann meldet DAC8 dich nicht.",
         points: [
           "Das gilt, solange du ausschließlich selbst verwahrst und nie über einen Anbieter kaufst oder verkaufst.",
-          "Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, stehen Wert und Stückzahl dieser Übertragungen in seiner Jahresmeldung. Die Adresse speichert er.",
+          "Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, stehen Wert und Stückzahl dieser Übertragungen in der Regel in seiner Jahresmeldung. Die Adresse speichert er.",
         ],
         link: { href: faq, label: "Häufige Fragen" },
       },
@@ -205,8 +205,18 @@ const options = en
     max-inline-size: var(--measure-text);
   }
 
-  .check-answers > div[hidden] {
-    display: none;
+  /* Nur die Auskunft zur gewählten Antwort steht da, schon beim ersten
+     Rendern und ohne Skript. Browser ohne :has() zeigen alle drei. */
+  @supports selector(:has(*)) {
+    .check-answers > div {
+      display: none;
+    }
+
+    .check:has(input[value="provider"]:checked) [data-answer="provider"],
+    .check:has(input[value="self"]:checked) [data-answer="self"],
+    .check:has(input[value="unsure"]:checked) [data-answer="unsure"] {
+      display: grid;
+    }
   }
 
   .check-verdict {
@@ -238,21 +248,3 @@ const options = en
     font-size: var(--step--1);
   }
 </style>
-
-<script>
-  // Ohne JavaScript bleiben alle drei Auskünfte sichtbar.
-  for (const check of document.querySelectorAll<HTMLElement>(
-    "[data-affected-check]",
-  )) {
-    const answers = check.querySelectorAll<HTMLElement>("[data-answer]")
-    const show = (value: string | null) => {
-      for (const answer of answers)
-        answer.hidden = answer.dataset.answer !== value
-    }
-    show(null)
-    check.addEventListener("change", (event) => {
-      const input = event.target as HTMLInputElement
-      if (input.name === "affected") show(input.value)
-    })
-  }
-</script>

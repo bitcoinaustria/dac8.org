@@ -28,6 +28,10 @@ const sections = [
         href: `${background}#gemeldet`,
       },
       {
+        label: en ? "Your DAC8 file" : "Deine DAC8-Akte",
+        href: pathFor("file", language),
+      },
+      {
         label: en ? "Our demands" : "Was wir fordern",
         href: `${background}#forderungen`,
       },
@@ -46,6 +50,10 @@ const sections = [
     title: en ? "Get involved" : "Mitmachen",
     links: [
       { label: en ? "Donate" : "Spenden", href: donateFor(language) },
+      {
+        label: en ? "Request access" : "Auskunft verlangen",
+        href: pathFor("access", language),
+      },
       {
         label: en ? "Write to MPs" : "Brief an Abgeordnete",
         href: `${pathFor("participate", language)}#abgeordnete`,

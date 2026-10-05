@@ -427,6 +427,11 @@
   display: none;
 }
 
+/* Ein einzelner Knopf direkt unter dem Einleitungssatz eines Bands. */
+.campaign section > .section-intro + .button {
+  margin-block-start: var(--space-m);
+}
+
 .text-link {
   display: inline-flex;
   align-items: baseline;
@@ -1669,121 +1674,6 @@
   }
 }
 
-/* ---------- Story ------------------------------------------------------ */
-
-/* Die Startseite erzählt in Szenen: eine große Illustration, eine Zeile als
-   Überschrift, ein bis zwei Sätze. Text und Bild wechseln die Seite; das
-   Musterblatt der Meldung bekommt die breitere Bildspalte. Schmal steht das
-   Bild über dem Text. */
-.campaign .story {
-  display: grid;
-  gap: clamp(3.5rem, 2rem + 4vw, 6rem);
-  margin-block-start: var(--space-xl);
-}
-
-.campaign .scene {
-  display: grid;
-  align-items: center;
-  gap: var(--space-m) var(--space-2xl);
-}
-
-.campaign .scene > .artwork {
-  order: -1;
-  margin-block-start: 0;
-}
-
-.campaign .scene-text h3 {
-  max-inline-size: 18ch;
-  font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
-  font-weight: 600;
-  font-stretch: 94%;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-}
-
-.campaign .scene-text > p {
-  max-inline-size: 44ch;
-  margin-block-start: var(--space-xs);
-  color: var(--ink-2);
-  line-height: 1.55;
-  text-wrap: pretty;
-}
-
-/* Was das Bild zeigt, wo es nicht die Jahresmeldung selbst ist. */
-.campaign .scene-text > .scene-note {
-  margin-block-start: var(--space-m);
-  color: var(--ink-3);
-  font-size: var(--step--1);
-  line-height: 1.45;
-}
-
-.campaign .artwork-scene {
-  --art-height: 27rem;
-}
-
-.campaign .scene-wide .artwork-scene {
-  --art-height: 32rem;
-}
-
-@container campaign (width >= 52rem) {
-  .campaign .scene {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  }
-
-  .campaign .scene > .artwork {
-    order: 0;
-  }
-
-  .campaign .scene:nth-child(even) {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  }
-
-  .campaign .scene:nth-child(even) > .artwork {
-    grid-row: 1;
-    grid-column: 1;
-  }
-
-  .campaign .scene.scene-wide {
-    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-  }
-
-  .campaign .scene.scene-wide:nth-child(even) {
-    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
-  }
-
-  /* Paar: zwei Szenen nebeneinander, das Bild über dem Text, beide auf
-     gleicher Höhe. Bricht den Wechsel links, rechts. */
-  .campaign .story.pair {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: start;
-    column-gap: var(--space-2xl);
-  }
-
-  .campaign .story.pair .scene {
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-  }
-
-  .campaign .story.pair .scene > .artwork {
-    grid-row: 1;
-    grid-column: 1;
-    justify-items: start;
-  }
-
-  .campaign .story.pair .artwork-scene {
-    --art-height: 21rem;
-  }
-}
-
-.campaign h2 + .story {
-  margin-block-start: var(--space-l);
-}
-
-.campaign .story + .text-link {
-  margin-block-start: var(--space-xl);
-}
-
 /* ---------- Startseite: dichter erzählt ------------------------------- */
 
 /* Die Startseite trägt viele Bilder; engere Bänder halten sie kurz. */
@@ -1795,76 +1685,6 @@
    eigene Fläche. */
 .campaign.landing > .hero + .figures {
   margin-block-start: calc(var(--space-l) - var(--band-gap));
-}
-
-/* Drei Szenen nebeneinander, das Bild über Überschrift und Satz. Die
-   Bildboxen sind gleich hoch, damit die Überschriften auf einer Linie
-   stehen. */
-@container campaign (width >= 60rem) {
-  .campaign .story.trio {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: start;
-    column-gap: var(--space-xl);
-  }
-
-  .campaign .story.trio .scene,
-  .campaign .story.trio .scene:nth-child(even) {
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-  }
-
-  .campaign .story.trio .scene > .artwork {
-    grid-row: 1;
-    grid-column: 1;
-    block-size: var(--art-height);
-    align-content: end;
-  }
-
-  .campaign .story.trio .artwork-scene {
-    --art-height: 16rem;
-  }
-}
-
-/* Die Kette der Risiken: vier nummerierte Schritte im Raster zwei mal zwei,
-   vom Leck bis zur Haustür. */
-.campaign .story.chain {
-  counter-reset: chain;
-}
-
-.campaign .story.chain .scene-text h3::before {
-  counter-increment: chain;
-  content: counter(chain, decimal-leading-zero);
-  display: block;
-  margin-block-end: var(--space-2xs);
-  color: var(--accent);
-  font-size: var(--step--1);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-}
-
-@container campaign (width >= 52rem) {
-  .campaign .story.chain {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: start;
-    gap: var(--space-2xl) var(--space-xl);
-  }
-
-  .campaign .story.chain .scene,
-  .campaign .story.chain .scene:nth-child(even) {
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-  }
-
-  .campaign .story.chain .scene > .artwork {
-    grid-row: 1;
-    grid-column: 1;
-    block-size: var(--art-height);
-    align-content: end;
-  }
-
-  .campaign .story.chain .artwork-scene {
-    --art-height: 19rem;
-  }
 }
 
 /* Mehrere Textlinks am Ende eines Bands stehen in einer Zeile. */
@@ -1879,123 +1699,73 @@
   margin-block-start: 0;
 }
 
-/* ---------- Was du tun kannst ------------------------------------------ */
+/* ---------- Mitmachen am Höhepunkt ------------------------------------ */
 
-/* Spenden trägt den Prozess und steht deshalb groß auf einer weichen
-   Fläche, mit Bild. Die übrigen Wege folgen als drei kurze Einträge. */
-.campaign .act {
-  display: grid;
-  gap: var(--space-l);
-  margin-block-start: var(--space-l);
-}
-
-.campaign .act-lead {
-  display: grid;
-  align-items: center;
-  gap: var(--space-m) var(--space-2xl);
-  padding: var(--space-m-l);
+/* Direkt nach der Geschichte, wo sie am stärksten wirkt: eine Fläche mit
+   drei Wegen. Spenden trägt das Verfahren und steht deshalb mit Bild
+   vorne, die anderen zwei sind gleich schwer. */
+.campaign .peak {
+  padding: var(--space-l) var(--space-m-l);
   border-radius: var(--radius-xl);
   background: var(--panel);
 }
 
-.campaign .act-lead .artwork {
-  --art-height: 13rem;
-  margin-block-start: 0;
+.campaign .peak h2 span {
+  display: block;
+  color: var(--accent);
 }
 
-.campaign .act-lead h3 {
-  font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
-  font-weight: 600;
-  font-stretch: 94%;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+.campaign .peak > .section-intro {
+  margin-block-start: var(--space-s);
 }
 
-.campaign .act-lead p {
-  max-inline-size: 40ch;
-  margin-block-start: var(--space-xs);
-  color: var(--ink-2);
-  font-size: var(--step-1);
-  line-height: 1.45;
-}
-
-.campaign .act-lead .button {
-  margin-block-start: var(--space-m);
-}
-
-.campaign .act-list {
+.campaign .peak-actions {
   display: grid;
-  gap: 0 var(--space-l);
+  gap: var(--space-m);
+  margin-block-start: var(--space-l);
   padding: 0;
   list-style: none;
 }
 
-.campaign .act-list li {
-  border-block-start: 1px solid var(--line);
+.campaign .peak-actions li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding: var(--space-m);
+  border-radius: var(--radius-lg);
+  background: var(--paper);
 }
 
-.campaign .act-list a {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: var(--space-2xs) var(--space-s);
-  padding-block: var(--space-s) var(--space-m);
-  color: inherit;
-  text-decoration: none;
-}
-
-.campaign .act-list strong {
+.campaign .peak-actions h3 {
   font-size: var(--step-1);
-  font-weight: 560;
-  line-height: 1.3;
-  letter-spacing: -0.012em;
 }
 
-.campaign .act-list span {
-  grid-column: 1;
+.campaign .peak-actions p {
   color: var(--ink-2);
   text-wrap: pretty;
 }
 
-.campaign .act-list a::after {
-  content: "→";
-  grid-row: 1;
-  grid-column: 2;
-  color: var(--accent);
-  font-size: var(--step-1);
-  font-weight: 560;
-  transition: translate 160ms ease;
+.campaign .peak-actions .button {
+  margin-block-start: auto;
 }
 
-.campaign .act-list a:hover strong {
-  color: var(--accent);
+.campaign .peak-lead .artwork {
+  --art-height: 9rem;
+  justify-items: start;
+  margin-block: 0 var(--space-2xs);
 }
 
-.campaign .act-list a:hover::after {
-  translate: 0.25em 0;
-}
-
-@container campaign (width >= 46rem) {
-  .campaign .act-lead {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  }
-
-  .campaign .act-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+@container campaign (width >= 52rem) {
+  .campaign .peak-actions {
+    grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(0, 1fr));
   }
 }
 
-/* ---------- Leitsatz und Ziel ------------------------------------------ */
+/* ---------- Leitsatz und Einwände -------------------------------------- */
 
-/* Der Leitsatz steht als einziger Moment der Seite mittig: eine Pause
-   zwischen den Werkzeugen und dem Absender. Darunter zwei gleich schwere
-   Spalten, links bündig. */
-.campaign .vision {
-  display: grid;
-  justify-items: center;
-  text-align: center;
-}
-
+/* Der Leitsatz steht über den häufigsten Einwänden: vier kurze Antworten,
+   jede mit einem Beleg zum Weiterlesen. */
 .campaign .statement {
   max-inline-size: 20ch;
   font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.625rem);
@@ -2011,52 +1781,57 @@
   color: var(--accent);
 }
 
-.campaign .vision > .section-intro {
-  max-inline-size: 54ch;
-  margin-block-start: var(--space-l);
-}
-
-.campaign .vision-points {
+.campaign .objections {
   display: grid;
-  gap: var(--space-xl) var(--space-2xl);
-  inline-size: 100%;
-  max-inline-size: 64rem;
-  margin-block-start: var(--space-2xl);
-  text-align: start;
+  gap: var(--space-l) var(--space-xl);
+  margin-block-start: var(--space-l);
+  padding: 0;
+  list-style: none;
 }
 
-.campaign .vision-points h3 {
+.campaign .objections li {
+  display: grid;
+  align-content: start;
+  gap: var(--space-xs);
+  padding-block-start: var(--space-s);
+  border-block-start: 1px solid var(--line);
+}
+
+.campaign .objections strong {
   font-size: var(--step-1);
-  font-weight: 600;
-  letter-spacing: -0.018em;
+  font-weight: 560;
+  line-height: 1.3;
 }
 
-.campaign .vision-points .checklist {
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-s);
-  margin-block-start: var(--space-m);
-}
-
-.campaign .vision-points .checklist li {
-  color: var(--ink);
-  font-weight: 500;
-  line-height: 1.45;
-}
-
-.campaign .vision-points .checklist li::before {
-  inset-block-start: 0;
-}
-
-.campaign .vision-points p:not(.precedent-year) {
-  max-inline-size: 48ch;
-  margin-block-start: var(--space-s);
+.campaign .objections p {
+  max-inline-size: 52ch;
   color: var(--ink-2);
   text-wrap: pretty;
 }
 
+.campaign .objections .text-link {
+  margin-block-start: var(--space-3xs);
+}
+
 @container campaign (width >= 46rem) {
-  .campaign .vision-points {
+  .campaign .objections {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Die Ziele unter dem Rechtsweg: drei kurze Haken in einer Zeile. */
+.campaign .checklist.goals {
+  margin-block-start: var(--space-l);
+}
+
+.campaign .checklist.goals li {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+@container campaign (width >= 52rem) {
+  .campaign .checklist.goals {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -2096,13 +1871,6 @@
   .campaign .precedent {
     grid-template-columns: auto minmax(0, 1fr);
   }
-}
-
-/* Im Ziel steht das Jahr über der Überschrift, nicht daneben. */
-.campaign .vision-points .precedent {
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-s);
-  margin-block-start: 0;
 }
 
 /* ---------- Wer dahintersteht ------------------------------------------ */
