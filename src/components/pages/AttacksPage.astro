@@ -29,14 +29,14 @@ const newestFirst = [...attacks].sort((a, b) =>
 // Texts the map script needs; everything else is rendered here.
 const strings = en
   ? {
-      listTitle: "The latest cases in this view",
+      newest: "newest first",
       more: "More cases in this view: zoom in or choose a shorter period.",
       none: "No known cases in this view. The archive is incomplete.",
       report: "Report",
       archive: "Archive copy",
     }
   : {
-      listTitle: "Die neuesten Fälle in diesem Ausschnitt",
+      newest: "die neuesten zuerst",
       more: "Weitere Fälle in diesem Ausschnitt: Zoome hinein oder wähle einen kürzeren Zeitraum.",
       none: "Keine bekannten Fälle in diesem Ausschnitt. Das Archiv ist unvollständig.",
       report: "Bericht",
@@ -52,7 +52,7 @@ const strings = en
     data-language={language}
     data-strings={JSON.stringify(strings)}
   >
-    <aside class="atlas-panel">
+    <header class="atlas-intro">
       <h1>
         {en
             ? "Robbed, kidnapped, held captive."
@@ -60,67 +60,130 @@ const strings = en
       </h1>
       <p class="atlas-lead">
         {en
-            ? "An archive of physical attacks on people who hold crypto-assets, or are believed to, all over the world. Attackers force their way into homes, tie up families, abduct and torture people to get at their wallets."
-            : "Ein Archiv körperlicher Angriffe auf Menschen, die Kryptowerte besitzen oder besitzen sollen, auf der ganzen Welt. Täter dringen in Wohnungen ein, fesseln Familien, entführen und foltern, um an Wallets zu kommen."}
+            ? "An archive of physical attacks on people who hold crypto-assets, or are believed to."
+            : "Ein Archiv körperlicher Angriffe auf Menschen, die Kryptowerte besitzen oder besitzen sollen."}
       </p>
       <p class="atlas-caveat">
         <strong
           >{en ? "Far from complete." : "Bei Weitem nicht vollständig."}</strong
         >
         {en
-            ? " Most victims stay silent, and many cases never become public. Every entry links to the original report."
-            : " Die meisten Opfer schweigen, viele Fälle werden nie öffentlich. Jeder Eintrag verweist auf den ursprünglichen Bericht."}
+            ? " Most victims stay silent, and many cases never become public."
+            : " Die meisten Opfer schweigen, viele Fälle werden nie öffentlich."}
       </p>
+      <a class="atlas-why" href={`${pathFor("dossier", language)}#faelle`}
+        >{en ? "What this has to do with DAC8" : "Was das mit DAC8 zu tun hat"}</a
+      >
+    </header>
 
-      <fieldset class="atlas-years">
-        <legend>
-          {en ? "Period" : "Zeitraum"}
-          <span data-range-label>{firstYear}–{latestYear}</span>
-        </legend>
-        <div class="atlas-bars" aria-hidden="true">
-          {years.map((year) => (
-              <span
-                data-year={year}
-                style={`--share: ${countIn(year) / peak}`}
-              />
-            ))}
+    <div class="atlas-stage">
+      <div
+        class="atlas-bar"
+        role="group"
+        aria-label={en ? "Map filters" : "Kartenfilter"}
+      >
+        <div
+          class="atlas-views"
+          role="group"
+          aria-label={en ? "Region" : "Ausschnitt"}
+        >
+          <button type="button" data-view="world" aria-pressed="true">
+            {en ? "World" : "Welt"}
+          </button>
+          <button type="button" data-view="europe" aria-pressed="false">
+            {en ? "Europe" : "Europa"}
+          </button>
+          <button type="button" data-view="austria" aria-pressed="false">
+            {en ? "Austria" : "Österreich"}
+          </button>
         </div>
-        <div class="atlas-sliders">
-          <input
-            type="range"
-            min={firstYear}
-            max={latestYear}
-            value={firstYear}
-            step="1"
-            data-from
-            aria-label={en ? "From year" : "Ab Jahr"}
-          >
-          <input
-            type="range"
-            min={firstYear}
-            max={latestYear}
-            value={latestYear}
-            step="1"
-            data-to
-            aria-label={en ? "Up to year" : "Bis Jahr"}
-          >
+
+        <div
+          class="atlas-years"
+          role="group"
+          aria-labelledby="atlas-years-label"
+        >
+          <p class="atlas-years-label" id="atlas-years-label">
+            <span class="atlas-label">{en ? "Period" : "Zeitraum"}</span>
+            <span class="atlas-range" data-range-label
+              >{firstYear}–{latestYear}</span
+            >
+          </p>
+          <div class="atlas-histogram" style={`--years: ${years.length}`}>
+            <div class="atlas-bars" aria-hidden="true">
+              {years.map((year) => (
+                  <span
+                    data-year={year}
+                    class:list={{ recent: year >= latestYear - 1 }}
+                    style={`--share: ${countIn(year) / peak}`}
+                  />
+                ))}
+            </div>
+            <span class="atlas-fill" data-fill aria-hidden="true"></span>
+            <div class="atlas-sliders">
+              <input
+                type="range"
+                min={firstYear}
+                max={latestYear}
+                value={firstYear}
+                step="1"
+                data-from
+                aria-label={en ? "From year" : "Ab Jahr"}
+              >
+              <input
+                type="range"
+                min={firstYear}
+                max={latestYear}
+                value={latestYear}
+                step="1"
+                data-to
+                aria-label={en ? "Up to year" : "Bis Jahr"}
+              >
+            </div>
+          </div>
         </div>
-        <div class="atlas-scale" aria-hidden="true">
-          <span>{firstYear}</span>
-          <span>{latestYear}</span>
-        </div>
+
         <p class="atlas-legend">
           <span class="recent">{`${latestYear - 1}–${latestYear}`}</span>
           <span>{en ? "earlier" : "früher"}</span>
         </p>
-      </fieldset>
+      </div>
 
-      <h2 class="atlas-list-title" data-list-title>
-        {en ? "All cases, newest first" : "Alle Fälle, die neuesten zuerst"}
+      <div class="atlas-viewport">
+        <div
+          class="atlas-map"
+          data-map
+          role="region"
+          aria-label={en
+              ? "Map of known attacks. The list shows the same cases."
+              : "Karte der bekannten Angriffe. Die Liste zeigt dieselben Fälle."}
+        ></div>
+        <div class="atlas-zoom" role="group" aria-label="Zoom">
+          <button
+            type="button"
+            data-zoom="in"
+            aria-label={en ? "Zoom in" : "Hineinzoomen"}
+          >
+            +
+          </button>
+          <button
+            type="button"
+            data-zoom="out"
+            aria-label={en ? "Zoom out" : "Herauszoomen"}
+          >
+            −
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <section class="atlas-cases" aria-labelledby="atlas-list-title">
+      <h2 class="atlas-list-title" id="atlas-list-title" data-list-title>
+        {`${firstYear}–${latestYear}, ${strings.newest}`}
       </h2>
       <ol class="atlas-list" data-list>
         {newestFirst.map((attack) => (
-            <li>
+            <li class:list={{ recent: attack.year >= latestYear - 1 }}>
               <p class="atlas-meta">
                 <span class="atlas-date">
                   {attack.date ? formatDate(attack.date, language) : attack.year}
@@ -156,50 +219,8 @@ const strings = en
         >{en
             ? `, as of ${through}. Descriptions in English as given in the collection. Victims’ names are left out.`
             : `, Stand ${through}. Beschreibungen auf Englisch aus der Sammlung. Namen der Opfer lassen wir weg.`}
-        <a href={`${pathFor("dossier", language)}#faelle`}
-          >{en ? "What this has to do with DAC8" : "Was das mit DAC8 zu tun hat"}</a
-        >
       </p>
-    </aside>
-    <div class="atlas-stage">
-      <div
-        class="atlas-toolbar"
-        role="toolbar"
-        aria-label={en ? "Map controls" : "Kartensteuerung"}
-      >
-        <button type="button" data-view="world">{en ? "World" : "Welt"}</button>
-        <button type="button" data-view="europe">
-          {en ? "Europe" : "Europa"}
-        </button>
-        <button type="button" data-view="austria">
-          {en ? "Austria" : "Österreich"}
-        </button>
-        <span class="atlas-zoom">
-          <button
-            type="button"
-            data-zoom="out"
-            aria-label={en ? "Zoom out" : "Herauszoomen"}
-          >
-            −
-          </button>
-          <button
-            type="button"
-            data-zoom="in"
-            aria-label={en ? "Zoom in" : "Hineinzoomen"}
-          >
-            +
-          </button>
-        </span>
-      </div>
-      <div
-        class="atlas-map"
-        data-map
-        role="region"
-        aria-label={en
-            ? "Map of known attacks. The list shows the same cases."
-            : "Karte der bekannten Angriffe. Die Liste zeigt dieselben Fälle."}
-      ></div>
-    </div>
+    </section>
   </div>
 </Layout>
 
@@ -215,6 +236,7 @@ const strings = en
   type Attack = (typeof attacks)[number]
 
   const start = async (root: HTMLElement, mapElement: HTMLElement) => {
+    const stage = root.querySelector<HTMLElement>(".atlas-stage") ?? mapElement
     // Show the map area first: Leaflet measures its container on start.
     root.classList.add("atlas-ready")
     // The cluster plugin extends the global Leaflet object.
@@ -311,13 +333,8 @@ const strings = en
       europe: L.latLngBounds([35, -11], [62, 32]),
       austria: L.latLngBounds([46.3, 9.4], [49.1, 17.2]),
     }
-    // Keep the toolbar from covering cases when a view is fitted.
-    const toolbar = root.querySelector<HTMLElement>(".atlas-toolbar")
-    const fitOptions = () => ({
-      paddingTopLeft: L.point(0, (toolbar?.offsetHeight ?? 0) + 16),
-      paddingBottomRight: L.point(0, 16),
-    })
-    map.fitBounds(views.world, fitOptions())
+    const fitOptions = { padding: L.point(16, 16) }
+    map.fitBounds(views.world, fitOptions)
     new ResizeObserver(() => map.invalidateSize()).observe(mapElement)
     // Phones get smaller circles and merge nearby cases earlier.
     const compact = matchMedia("(width < 40rem)").matches
@@ -438,36 +455,76 @@ const strings = en
 
     const from = root.querySelector<HTMLInputElement>("[data-from]")!
     const to = root.querySelector<HTMLInputElement>("[data-to]")!
-    const bars = root.querySelectorAll<HTMLElement>("[data-year]")
+    const fill = root.querySelector<HTMLElement>("[data-fill]")!
+    const bars = [...root.querySelectorAll<HTMLElement>("[data-year]")]
     const rangeLabel = root.querySelector<HTMLElement>("[data-range-label]")!
     const listTitle = root.querySelector<HTMLElement>("[data-list-title]")!
     const list = root.querySelector<HTMLOListElement>("[data-list]")!
     const more = root.querySelector<HTMLElement>("[data-more]")!
-    listTitle.textContent = strings.listTitle
-    let active = entries
+    const presets = [...root.querySelectorAll<HTMLButtonElement>("[data-view]")]
+    const firstYear = Number(from.min)
+    let low = firstYear
+    let high = latestYear
+
+    // A ring marks the place of the case under the pointer or in focus, even
+    // while it sits inside a hotspot.
+    const spot = L.marker([0, 0], {
+      icon: L.divIcon({
+        className: "atlas-spot",
+        html: "<span></span>",
+        iconSize: [36, 36],
+      }),
+      interactive: false,
+      keyboard: false,
+      zIndexOffset: 1000,
+    })
+    const showSpot = (marker: L.Marker) => {
+      spot.setLatLng(marker.getLatLng()).addTo(map)
+    }
+    const hideSpot = () => spot.remove()
 
     const listLimit = 60
-    const renderList = () => {
+    const render = () => {
       const bounds = map.getBounds()
-      const visible = active
-        .filter((entry) => bounds.contains(entry.marker.getLatLng()))
+      const inView = entries.filter((entry) =>
+        bounds.contains(entry.marker.getLatLng()),
+      )
+      // The bars show how the cases in this view spread over the years.
+      const perYear = bars.map(
+        (bar) =>
+          inView.filter(
+            ({ attack }) => attack.year === Number(bar.dataset.year),
+          ).length,
+      )
+      const peak = Math.max(1, ...perYear)
+      bars.forEach((bar, index) =>
+        bar.style.setProperty("--share", String(perYear[index] / peak)),
+      )
+
+      const visible = inView
+        .filter(({ attack }) => attack.year >= low && attack.year <= high)
         .sort((a, b) =>
           (b.attack.date ?? `${b.attack.year}`).localeCompare(
             a.attack.date ?? `${a.attack.year}`,
           ),
         )
+      hideSpot()
       list.replaceChildren(
-        ...visible.slice(0, listLimit).map(({ attack, marker }) => {
+        ...visible.slice(0, listLimit).map(({ attack, marker, recent }) => {
           const button = element("button", "atlas-place", place(attack))
           button.type = "button"
           button.addEventListener("click", () => {
             cluster.zoomToShowLayer(marker, () => marker.openPopup())
             // On phones the map sits above the list; bring it into view.
             if (matchMedia("(width < 64rem)").matches)
-              mapElement.scrollIntoView({ behavior: "smooth", block: "start" })
+              stage.scrollIntoView({ behavior: "smooth", block: "start" })
           })
-          const item = element("li", "")
+          const item = element("li", recent ? "recent" : "")
           item.append(...caseBody(attack, button))
+          item.addEventListener("pointerenter", () => showSpot(marker))
+          item.addEventListener("pointerleave", hideSpot)
+          item.addEventListener("focusin", () => showSpot(marker))
+          item.addEventListener("focusout", hideSpot)
           return item
         }),
       )
@@ -476,34 +533,56 @@ const strings = en
     }
 
     const applyYears = () => {
-      let low = Number(from.value)
-      let high = Number(to.value)
+      low = Number(from.value)
+      high = Number(to.value)
       if (low > high) [low, high] = [high, low]
-      active = entries.filter(
-        ({ attack }) => attack.year >= low && attack.year <= high,
-      )
       cluster.clearLayers()
-      cluster.addLayers(active.map((entry) => entry.marker))
+      cluster.addLayers(
+        entries
+          .filter(({ attack }) => attack.year >= low && attack.year <= high)
+          .map((entry) => entry.marker),
+      )
       for (const bar of bars) {
         const year = Number(bar.dataset.year)
         bar.classList.toggle("off", year < low || year > high)
       }
+      // The red line joins the two handles; each handle sits on its bar.
+      const years = latestYear - firstYear + 1
+      fill.style.insetInlineStart = `${((low - firstYear + 0.5) / years) * 100}%`
+      fill.style.insetInlineEnd = `${((latestYear - high + 0.5) / years) * 100}%`
       rangeLabel.textContent = low === high ? `${low}` : `${low}–${high}`
-      renderList()
+      listTitle.textContent = `${rangeLabel.textContent}, ${strings.newest}`
+      render()
     }
+
+    // A preset stays marked until the reader moves the map themselves.
+    let flying = false
+    const mark = (view?: string) => {
+      for (const button of presets)
+        button.setAttribute(
+          "aria-pressed",
+          String(button.dataset.view === view),
+        )
+    }
+    map.on("movestart", () => {
+      if (!flying) mark()
+    })
+    map.on("moveend", () => {
+      flying = false
+      render()
+    })
+    for (const button of presets)
+      button.addEventListener("click", () => {
+        flying = true
+        mark(button.dataset.view)
+        map.flyToBounds(views[button.dataset.view as keyof typeof views], {
+          ...fitOptions,
+          duration: 0.8,
+        })
+      })
 
     from.addEventListener("input", applyYears)
     to.addEventListener("input", applyYears)
-    map.on("moveend", renderList)
-    for (const button of root.querySelectorAll<HTMLButtonElement>(
-      "[data-view]",
-    ))
-      button.addEventListener("click", () =>
-        map.flyToBounds(views[button.dataset.view as keyof typeof views], {
-          ...fitOptions(),
-          duration: 0.8,
-        }),
-      )
     root
       .querySelector("[data-zoom='in']")
       ?.addEventListener("click", () => map.zoomIn())
@@ -520,33 +599,360 @@ const strings = en
 </script>
 
 <style>
-  /* Vollbild-Archiv: links Einordnung, Zeitraum und die Fälle, rechts die
-     Karte mit einer Leiste für Ansichten und Zoom. Auf schmalen
-     Bildschirmen steht die Karte oben, die Liste darunter. */
+  /* Vollbild-Archiv: links Einordnung, die Zahl der Fälle und die Liste,
+     rechts die Karte. Ausschnitt und Zeitraum sitzen in einer Leiste über
+     der Karte, der Zoom unten rechts. Auf schmalen Bildschirmen folgen
+     Einordnung, Leiste, Karte und Liste aufeinander. */
   .atlas {
     --ink: var(--foreground);
-    --ink-2: color-mix(in oklab, var(--foreground) 86%, transparent);
+    --ink-2: color-mix(in oklab, var(--foreground) 82%, transparent);
     --ink-3: var(--muted-foreground);
-    --line: color-mix(in oklab, var(--foreground) 14%, transparent);
+    --line: color-mix(in oklab, var(--foreground) 12%, transparent);
+    --gutter: var(--space-s);
     display: grid;
-    grid-template-columns: minmax(20rem, 28rem) minmax(0, 1fr);
+    grid-template-areas:
+      "intro stage"
+      "cases stage";
+    grid-template-columns: clamp(19rem, 28vw, 24rem) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
     block-size: calc(100dvh - var(--bar-height));
     min-block-size: 34rem;
   }
 
-  .atlas-panel {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-m);
-    overflow-y: auto;
-    padding: var(--space-l) var(--grid-gutter) var(--space-xl);
+  .atlas-intro {
+    grid-area: intro;
+    display: grid;
+    gap: var(--space-2xs);
+    padding: var(--space-m) var(--gutter) var(--space-s);
     border-inline-end: 1px solid var(--border);
+  }
+
+  h1 {
+    margin-block-end: var(--space-3xs);
+    font-size: clamp(1.375rem, 1.1rem + 0.6vw, 1.75rem);
+    font-weight: 650;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .atlas-lead {
+    color: var(--ink-2);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .atlas-caveat {
+    padding-inline-start: 0.625rem;
+    border-inline-start: 2px solid var(--primary);
+    color: var(--ink-3);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .atlas-caveat strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .atlas-why {
+    justify-self: start;
+    color: var(--accent);
+    font-size: 0.8125rem;
+    font-weight: 560;
+  }
+
+  .atlas-why::after {
+    content: " →";
+  }
+
+  /* Die Liste zeigt die Fälle im Ausschnitt; ihr Kopf nennt Zeitraum und
+     Reihenfolge und bleibt stehen, während die Fälle darunter scrollen. */
+  .atlas-cases {
+    grid-area: cases;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0 var(--gutter) var(--space-l);
+    border-block-start: 1px solid var(--border);
+    border-inline-end: 1px solid var(--border);
+  }
+
+  .atlas-list-title {
+    position: sticky;
+    z-index: 1;
+    inset-block-start: 0;
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 0.625rem var(--gutter);
+    border-block-end: 1px solid var(--line);
+    color: var(--ink-3);
     background: var(--background);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: normal;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .atlas-list {
+    display: grid;
+    padding: 0;
+    list-style: none;
+  }
+
+  .atlas-more,
+  .atlas-source {
+    margin-block-start: var(--space-s);
+    color: var(--ink-3);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  .atlas-source a {
+    color: inherit;
   }
 
   .atlas-stage {
+    grid-area: stage;
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+    scroll-margin-block-start: var(--bar-height);
+  }
+
+  /* Die Filterleiste: Ausschnitt, Zeitraum mit Verlauf und Legende in einer
+     festen Leiste über der Karte statt einer schwebenden Pille. */
+  .atlas-bar {
     position: relative;
-    min-block-size: 20rem;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs) var(--space-s);
+    padding: 0.625rem var(--gutter);
+    border-block-end: 1px solid var(--border);
+    background: var(--background);
+  }
+
+  .atlas-views {
+    display: flex;
+    flex: none;
+    gap: 2px;
+    padding: 3px;
+    border-radius: var(--radius-lg);
+    background: var(--gray-3);
+  }
+
+  .atlas-views button {
+    min-block-size: 2.25rem;
+    padding: 0 0.875rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    color: var(--ink-3);
+    background: transparent;
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 560;
+    cursor: pointer;
+    transition:
+      color 140ms ease,
+      background-color 140ms ease;
+  }
+
+  .atlas-views button:hover {
+    color: var(--ink);
+  }
+
+  .atlas-views button[aria-pressed="true"] {
+    color: var(--ink);
+    background: light-dark(var(--gray-1), var(--gray-6));
+    box-shadow: 0 1px 2px
+      color-mix(in oklab, var(--foreground) 14%, transparent);
+  }
+
+  .atlas-views button:focus-visible,
+  .atlas-zoom button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+  }
+
+  .atlas-years {
+    display: flex;
+    flex: 1 1 15rem;
+    align-items: center;
+    gap: var(--space-s);
+    min-inline-size: 0;
+    max-inline-size: 40rem;
+  }
+
+  .atlas-years-label {
+    display: grid;
+    flex: none;
+    min-inline-size: 5.25rem;
+    line-height: 1.2;
+  }
+
+  .atlas-label {
+    color: var(--ink-3);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .atlas-range {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Ein Balken je Jahr für die Fälle im aktuellen Ausschnitt, in den Farben
+     der Karte: rot die letzten zwei Jahre, grau die früheren. Die Griffe der
+     beiden Regler sitzen genau unter ihren Balken. */
+  .atlas-histogram {
+    --thumb: 1.125rem;
+    --base: 1.75rem;
+    position: relative;
+    flex: 1;
+    min-inline-size: 9rem;
+    block-size: calc(var(--base) + var(--thumb) / 2 + 2px);
+  }
+
+  .atlas-bars {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 0;
+    display: flex;
+    align-items: end;
+    block-size: var(--base);
+  }
+
+  .atlas-bars span {
+    flex: 1;
+    block-size: calc(var(--share) * 100%);
+    min-block-size: 2px;
+    margin-inline: 1.5px;
+    border-radius: 2px 2px 0 0;
+    background: var(--gray-9);
+    transition:
+      block-size 240ms ease,
+      background-color 140ms ease;
+  }
+
+  .atlas-bars span.recent {
+    background: var(--primary);
+  }
+
+  .atlas-bars span.off {
+    background: var(--gray-5);
+  }
+
+  .atlas-fill {
+    position: absolute;
+    inset-block-start: calc(var(--base) - 1px);
+    block-size: 2px;
+    background: var(--ink);
+  }
+
+  .atlas-sliders {
+    position: absolute;
+    inset-block-start: calc(var(--base) - var(--thumb) / 2);
+    inset-inline: calc(50% / var(--years) - var(--thumb) / 2);
+    block-size: var(--thumb);
+  }
+
+  .atlas-sliders input {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    margin: 0;
+    background: transparent;
+    pointer-events: none;
+    appearance: none;
+  }
+
+  .atlas-sliders input::-webkit-slider-runnable-track {
+    block-size: 2px;
+    background: transparent;
+  }
+
+  .atlas-sliders input::-moz-range-track {
+    block-size: 2px;
+    background: transparent;
+  }
+
+  .atlas-sliders input::-webkit-slider-thumb {
+    box-sizing: border-box;
+    inline-size: var(--thumb);
+    block-size: var(--thumb);
+    margin-block-start: calc(1px - var(--thumb) / 2);
+    border: 2px solid var(--background);
+    border-radius: var(--radius-full);
+    background: var(--ink);
+    box-shadow: 0 1px 3px
+      color-mix(in oklab, var(--foreground) 35%, transparent);
+    cursor: grab;
+    pointer-events: auto;
+    appearance: none;
+  }
+
+  .atlas-sliders input::-moz-range-thumb {
+    box-sizing: border-box;
+    inline-size: var(--thumb);
+    block-size: var(--thumb);
+    border: 2px solid var(--background);
+    border-radius: var(--radius-full);
+    background: var(--ink);
+    cursor: grab;
+    pointer-events: auto;
+  }
+
+  /* Beide Regler liegen übereinander; der Fokus zeigt sich am Griff, nicht
+     als Rahmen um die ganze Leiste. */
+  .atlas-sliders input:focus-visible {
+    outline: none;
+  }
+
+  .atlas-sliders input:focus-visible::-webkit-slider-thumb {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+  }
+
+  .atlas-sliders input:focus-visible::-moz-range-thumb {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+  }
+
+  .atlas-legend {
+    display: flex;
+    flex: none;
+    gap: var(--space-s);
+    margin-inline-start: auto;
+    color: var(--ink-3);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .atlas-legend span::before {
+    content: "";
+    display: inline-block;
+    inline-size: 0.625rem;
+    block-size: 0.625rem;
+    margin-inline-end: 0.4em;
+    border-radius: var(--radius-full);
+    background: var(--gray-9);
+  }
+
+  .atlas-legend .recent::before {
+    background: var(--primary);
+  }
+
+  .atlas-viewport {
+    position: relative;
+    flex: 1;
+    min-block-size: 0;
   }
 
   .atlas-map {
@@ -556,271 +962,114 @@ const strings = en
     background: var(--gray-2);
   }
 
-  h1 {
-    font-size: clamp(1.9rem, 1.4rem + 1.4vw, 2.6rem);
-    font-weight: 600;
-    line-height: 1.05;
-    letter-spacing: -0.025em;
-    text-wrap: balance;
-  }
-
-  .atlas-lead {
-    color: var(--ink-2);
-    font-size: var(--step-1);
-    line-height: 1.45;
-    text-wrap: pretty;
-  }
-
-  .atlas-caveat {
-    padding: var(--space-s) var(--space-m);
-    border-inline-start: 3px solid var(--primary);
-    border-radius: 0 0.5rem 0.5rem 0;
-    color: var(--ink-2);
-    background: var(--gray-3);
-    text-wrap: pretty;
-  }
-
-  .atlas-caveat strong {
-    color: var(--ink);
-  }
-
-  .atlas-years {
-    margin: 0;
-    padding: 0;
-    border: 0;
-  }
-
-  .atlas-years legend {
-    display: flex;
-    gap: var(--space-xs);
-    margin-block-end: var(--space-2xs);
-    padding: 0;
-    font-weight: 600;
-  }
-
-  .atlas-years legend span {
-    color: var(--ink-3);
-    font-weight: 400;
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* Die Balken zeigen den Verlauf über die Jahre, ohne Zahlen in den
-     Vordergrund zu stellen; der gewählte Zeitraum bleibt rot. */
-  .atlas-bars {
-    display: flex;
-    align-items: end;
-    gap: 3px;
-    block-size: 3.5rem;
-  }
-
-  .atlas-bars span {
-    flex: 1;
-    block-size: calc(var(--share) * 100%);
-    min-block-size: 3px;
-    border-radius: 2px 2px 0 0;
-    background: var(--primary);
-    transition: background-color 140ms ease;
-  }
-
-  .atlas-bars span.off {
-    background: var(--gray-6);
-  }
-
-  /* Zwei überlagerte Regler ergeben einen Bereich; nur die Griffe reagieren. */
-  .atlas-sliders {
-    position: relative;
-    block-size: 1.75rem;
-  }
-
-  .atlas-sliders input {
-    position: absolute;
-    inset: 0;
-    inline-size: 100%;
-    margin: 0;
-    background: transparent;
-    pointer-events: none;
-    appearance: none;
-  }
-
-  .atlas-sliders input::-webkit-slider-runnable-track {
-    block-size: 2px;
-    background: var(--gray-6);
-  }
-
-  .atlas-sliders input::-moz-range-track {
-    block-size: 2px;
-    background: var(--gray-6);
-  }
-
-  .atlas-sliders input::-webkit-slider-thumb {
-    inline-size: 1.5rem;
-    block-size: 1.5rem;
-    margin-block-start: -0.69rem;
-    border: 2px solid var(--background);
-    border-radius: var(--radius-full);
-    background: var(--foreground);
-    box-shadow: 0 1px 3px
-      color-mix(in oklab, var(--foreground) 35%, transparent);
-    cursor: grab;
-    pointer-events: auto;
-    appearance: none;
-  }
-
-  .atlas-sliders input::-moz-range-thumb {
-    inline-size: 1.25rem;
-    block-size: 1.25rem;
-    border: 2px solid var(--background);
-    border-radius: var(--radius-full);
-    background: var(--foreground);
-    cursor: grab;
-    pointer-events: auto;
-  }
-
-  .atlas-sliders input:focus-visible::-webkit-slider-thumb {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
-  }
-
-  .atlas-scale,
-  .atlas-legend {
-    display: flex;
-    justify-content: space-between;
-    color: var(--ink-3);
-    font-size: var(--step--1);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .atlas-legend {
-    justify-content: start;
-    gap: var(--space-m);
-    margin-block-start: var(--space-2xs);
-  }
-
-  .atlas-legend span::before {
-    content: "";
-    display: inline-block;
-    inline-size: 0.75em;
-    block-size: 0.75em;
-    margin-inline-end: 0.4em;
-    border-radius: var(--radius-full);
-    background: var(--gray-9);
-    vertical-align: -0.05em;
-  }
-
-  .atlas-legend .recent::before {
-    background: var(--primary);
-  }
-
-  .atlas-list-title {
-    font-size: var(--step-0);
-    font-weight: 600;
-  }
-
-  .atlas-list {
-    display: grid;
-    margin-block-start: calc(-1 * var(--space-xs));
-    padding: 0;
-    list-style: none;
-  }
-
-  .atlas-more,
-  .atlas-source {
-    color: var(--ink-3);
-    font-size: var(--step--1);
-    text-wrap: pretty;
-  }
-
-  .atlas-source a {
-    color: inherit;
-  }
-
-  /* Ansichten und Zoom in einer Leiste über der Karte. */
-  .atlas-toolbar {
-    position: absolute;
-    z-index: 2;
-    inset-block-start: var(--space-s);
-    inset-inline-start: var(--space-s);
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    max-inline-size: calc(100% - 2 * var(--space-s));
-    padding: 3px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-full);
-    background: color-mix(in oklab, var(--background) 94%, transparent);
-    box-shadow: 0 2px 10px
-      color-mix(in oklab, var(--foreground) 12%, transparent);
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .atlas-toolbar button {
-    flex: none;
-    min-block-size: 2.5rem;
-    padding: 0 1em;
-    border: 0;
-    border-radius: var(--radius-full);
-    color: var(--ink);
-    background: transparent;
-    font: inherit;
-    font-weight: 560;
-    cursor: pointer;
-  }
-
-  .atlas-toolbar button:hover {
-    background: var(--gray-4);
-  }
-
-  .atlas-toolbar button:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: -2px;
-  }
-
+  /* Zoom wie auf Karten üblich unten rechts, über der Quellenangabe. */
   .atlas-zoom {
-    display: flex;
-    gap: 2px;
-    margin-inline-start: var(--space-3xs);
-    padding-inline-start: var(--space-3xs);
-    border-inline-start: 1px solid var(--border);
+    position: absolute;
+    z-index: 1;
+    inset-inline-end: var(--gutter);
+    inset-block-end: 2rem;
+    display: grid;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--background);
+    box-shadow: 0 2px 8px
+      color-mix(in oklab, var(--foreground) 12%, transparent);
+    overflow: hidden;
   }
 
   .atlas-zoom button {
+    display: grid;
+    place-items: center;
     inline-size: 2.5rem;
+    block-size: 2.5rem;
     padding: 0;
+    border: 0;
+    color: var(--ink);
+    background: transparent;
+    font: inherit;
     font-size: 1.25rem;
     line-height: 1;
+    cursor: pointer;
+  }
+
+  .atlas-zoom button + button {
+    border-block-start: 1px solid var(--border);
+  }
+
+  .atlas-zoom button:hover {
+    background: var(--gray-3);
   }
 
   /* Ohne JavaScript gibt es keine Karte; dann bleibt das Archiv als Liste. */
-  .atlas:not(.atlas-ready) :is(.atlas-years, .atlas-stage) {
-    display: none;
-  }
-
   .atlas:not(.atlas-ready) {
+    grid-template-areas:
+      "intro"
+      "cases";
     grid-template-columns: minmax(0, 48rem);
     block-size: auto;
   }
 
+  .atlas:not(.atlas-ready) .atlas-stage {
+    display: none;
+  }
+
+  .atlas:not(.atlas-ready) .atlas-cases {
+    overflow: visible;
+  }
+
   @media (width < 64rem) {
     .atlas {
+      --gutter: var(--grid-gutter);
+      grid-template-areas:
+        "intro"
+        "stage"
+        "cases";
       grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: 60svh auto;
+      grid-template-rows: auto;
       block-size: auto;
     }
 
-    .atlas-stage {
-      grid-row: 1;
-    }
-
-    .atlas-panel {
-      grid-row: 2;
-      overflow: visible;
+    .atlas-intro,
+    .atlas-cases {
       border-inline-end: 0;
     }
 
-    .atlas-toolbar {
-      inset-inline-end: var(--space-s);
-      justify-content: space-between;
+    .atlas-cases {
+      overflow: visible;
+      border-block-start: 0;
+    }
+
+    .atlas-list-title {
+      inset-block-start: var(--bar-height);
+    }
+
+    .atlas-bar {
+      border-block-start: 1px solid var(--border);
+    }
+
+    .atlas-viewport {
+      flex: none;
+      block-size: 58svh;
+      min-block-size: 20rem;
+    }
+  }
+
+  @media (width < 40rem) {
+    .atlas-views {
+      flex: 1 1 100%;
+    }
+
+    .atlas-views button {
+      flex: 1;
+      padding-inline: 0.5rem;
+    }
+
+    .atlas-years {
+      flex-basis: 100%;
+    }
+
+    .atlas-legend {
+      margin-inline-start: 0;
     }
   }
 </style>
@@ -834,7 +1083,7 @@ const strings = en
   }
 
   /* Leaflet focuses the map on every click; the site's red focus ring would
-     frame the whole map. The toolbar keeps visible focus for keyboard use. */
+     frame the whole map. The filter bar and zoom keep visible focus. */
   .atlas .leaflet-container:is(:focus, :focus-visible) {
     outline: none;
   }
@@ -905,12 +1154,49 @@ const strings = en
     color: var(--ink-3);
   }
 
-  /* Ein Fall: Datum und Ort klein, darüber steht, was passiert ist; darunter
-     die Links zum Bericht und zur Archivkopie. */
+  /* Der Ring markiert auf der Karte den Ort des Falls, auf den in der Liste
+     gezeigt wird, auch wenn er in einem Hotspot steckt. Es pulsiert nur der
+     innere Kreis; Leaflet positioniert das äußere Element per transform. */
+  .atlas .atlas-spot {
+    pointer-events: none;
+  }
+
+  .atlas .atlas-spot span {
+    display: block;
+    block-size: 100%;
+    border: 2px solid var(--foreground);
+    border-radius: var(--radius-full);
+    box-shadow:
+      0 0 0 3px color-mix(in oklab, var(--background) 70%, transparent),
+      inset 0 0 0 3px color-mix(in oklab, var(--background) 70%, transparent);
+    animation: atlas-spot 1.4s ease-out infinite;
+  }
+
+  @keyframes atlas-spot {
+    from {
+      scale: 0.7;
+    }
+    50% {
+      scale: 1;
+    }
+    to {
+      scale: 0.7;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .atlas .atlas-spot span {
+      animation: none;
+    }
+  }
+
+  /* Ein Fall: Datum und Ort klein, darunter, was passiert ist, und die Links
+     zum Bericht und zur Archivkopie. Der Punkt vor dem Datum trägt die Farbe
+     der Karte. */
   .atlas .atlas-case,
   .atlas .atlas-list li {
     display: grid;
-    gap: 0.35rem;
+    gap: 0.25rem;
   }
 
   .atlas .atlas-case p,
@@ -919,16 +1205,30 @@ const strings = en
   }
 
   .atlas .atlas-list li {
-    padding-block: var(--space-s);
+    padding-block: 0.75rem;
     border-block-end: 1px solid var(--line);
   }
 
   .atlas .atlas-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0 0.6em;
+    align-items: baseline;
+    gap: 0 0.5em;
     color: var(--ink-3);
-    font-size: var(--step--1);
+    font-size: 0.8125rem;
+  }
+
+  .atlas .atlas-list .atlas-meta::before {
+    content: "";
+    flex: none;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: var(--radius-full);
+    background: var(--gray-9);
+  }
+
+  .atlas .atlas-list .recent .atlas-meta::before {
+    background: var(--primary);
   }
 
   .atlas .atlas-place {
@@ -953,20 +1253,22 @@ const strings = en
   }
 
   .atlas .atlas-headline {
-    color: var(--ink);
+    color: var(--ink-2);
+    font-size: 0.875rem;
     line-height: 1.45;
     text-wrap: pretty;
   }
 
   .atlas .atlas-popup .atlas-headline {
-    font-size: var(--step-0);
+    color: var(--ink);
+    font-size: 0.9375rem;
   }
 
   .atlas .atlas-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.2rem var(--space-s);
-    font-size: var(--step--1);
+    gap: 0.2rem var(--space-xs);
+    font-size: 0.75rem;
   }
 
   .atlas .atlas-links a {
