@@ -56,7 +56,7 @@
 
 .campaign h1 {
   max-inline-size: 24ch;
-  font-size: clamp(2.25rem, 1.4rem + 3.8vw, 4.25rem);
+  font-size: clamp(2rem, 1.45rem + 2.4vw, 3.25rem);
   line-height: 1.02;
   letter-spacing: -0.028em;
 }
@@ -69,8 +69,8 @@
 
 .campaign h2 {
   max-inline-size: 26ch;
-  font-size: clamp(2.125rem, 1.35rem + 2.4vw, 3rem);
-  line-height: 1.08;
+  font-size: clamp(1.625rem, 1.25rem + 1.5vw, 2.25rem);
+  line-height: 1.1;
   letter-spacing: -0.022em;
 }
 
@@ -99,7 +99,7 @@
   max-inline-size: 52ch;
   margin-block-start: var(--space-m);
   color: var(--ink-2);
-  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
   line-height: 1.5;
   text-wrap: pretty;
 }
@@ -189,7 +189,7 @@
   /* Die Schlagzeile neben dem Bild ist eine Stufe kleiner, damit sie in
      drei bis vier Zeilen bleibt. */
   .campaign .hero:has(> .artwork) h1 {
-    font-size: clamp(2.25rem, 1.3rem + 3vw, 3.75rem);
+    font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
   }
 }
 
@@ -322,7 +322,7 @@
 
 .campaign .keyfigures dd {
   order: -1;
-  font-size: clamp(2rem, 4cqi, 2.75rem);
+  font-size: clamp(1.75rem, 3cqi, 2.25rem);
   font-weight: 600;
   font-stretch: 94%;
   line-height: 1;
@@ -1657,7 +1657,7 @@
 
 .campaign .scene-text h3 {
   max-inline-size: 18ch;
-  font-size: clamp(1.5rem, 1.15rem + 1.1vw, 2rem);
+  font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
   font-weight: 600;
   font-stretch: 94%;
   line-height: 1.1;
@@ -1667,9 +1667,8 @@
 
 .campaign .scene-text > p {
   max-inline-size: 44ch;
-  margin-block-start: var(--space-s);
+  margin-block-start: var(--space-xs);
   color: var(--ink-2);
-  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
   line-height: 1.55;
   text-wrap: pretty;
 }
@@ -1773,7 +1772,7 @@
 }
 
 .campaign .act-lead h3 {
-  font-size: clamp(1.5rem, 1.15rem + 1.1vw, 2rem);
+  font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
   font-weight: 600;
   font-stretch: 94%;
   line-height: 1.1;
@@ -1867,7 +1866,7 @@
 
 .campaign .statement {
   max-inline-size: 20ch;
-  font-size: clamp(2.125rem, 1.2rem + 3vw, 3.5rem);
+  font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.625rem);
   font-weight: 600;
   font-stretch: 94%;
   line-height: 1.04;
@@ -1895,7 +1894,7 @@
 }
 
 .campaign .vision-points h3 {
-  font-size: var(--step-2);
+  font-size: var(--step-1);
   font-weight: 600;
   letter-spacing: -0.018em;
 }
@@ -1953,7 +1952,7 @@
   );
   background-clip: text;
   color: transparent;
-  font-size: clamp(3rem, 2rem + 4vw, 4.75rem);
+  font-size: clamp(2.5rem, 1.9rem + 2.4vw, 3.5rem);
   font-weight: 600;
   font-stretch: 94%;
   line-height: 0.9;
