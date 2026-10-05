@@ -620,12 +620,12 @@ export const historyStack: {
     rows: [
       {
         id: "zinsrichtlinie",
-        step: { de: "Zinsen", en: "Savings" },
+        step: { de: "Zinsen", en: "Interest" },
         from: 2005,
         until: 2015,
         what: {
-          de: "Zinsrichtlinie, ab 2016 aufgehoben",
-          en: "Savings Directive, repealed from 2016",
+          de: "Zinsrichtlinie",
+          en: "Savings Directive",
         },
       },
       {
@@ -633,8 +633,8 @@ export const historyStack: {
         step: "DAC1",
         from: 2015,
         what: {
-          de: "Löhne, Pensionen, Lebensversicherungen, Immobilien",
-          en: "Salaries, pensions, life insurance, real estate",
+          de: "Löhne, Pensionen, Immobilien",
+          en: "Salaries, pensions, property",
         },
       },
       {
@@ -642,8 +642,8 @@ export const historyStack: {
         step: "DAC2",
         from: 2016,
         what: {
-          de: "Bankkonten mit Kontostand, Zinsen und Dividenden",
-          en: "Bank accounts with balances, interest and dividends",
+          de: "Bankkonten",
+          en: "Bank accounts",
         },
       },
       {
@@ -652,7 +652,7 @@ export const historyStack: {
         from: 2018,
         what: {
           de: "Zugriff auf Geldwäschedaten",
-          en: "Access to anti-money laundering data",
+          en: "Anti-money laundering data",
         },
       },
       {
@@ -660,8 +660,8 @@ export const historyStack: {
         step: "DAC7",
         from: 2023,
         what: {
-          de: "Einnahmen über Online-Plattformen",
-          en: "Income earned through online platforms",
+          de: "Plattform-Einnahmen",
+          en: "Platform income",
         },
       },
       {
@@ -669,8 +669,8 @@ export const historyStack: {
         step: "DAC8",
         from: 2026,
         what: {
-          de: "Käufe, Verkäufe und Übertragungen von Kryptowerten",
-          en: "Purchases, sales and transfers of crypto-assets",
+          de: "Kryptowerte",
+          en: "Crypto-assets",
         },
       },
     ],
@@ -686,23 +686,23 @@ export const historyStack: {
         step: "DAC4",
         from: 2016,
         what: {
-          de: "Konzernberichte nach Ländern",
-          en: "Country-by-country reports of multinationals",
+          de: "Konzernberichte",
+          en: "Country-by-country reports",
         },
       },
       {
         id: "dac3",
         step: "DAC3",
         from: 2017,
-        what: { de: "Steuervorbescheide", en: "Advance tax rulings" },
+        what: { de: "Steuervorbescheide", en: "Tax rulings" },
       },
       {
         id: "dac6",
         step: "DAC6",
         from: 2020,
         what: {
-          de: "Grenzüberschreitende Steuergestaltungen",
-          en: "Cross-border tax arrangements",
+          de: "Steuergestaltungen",
+          en: "Tax arrangements",
         },
       },
       {
@@ -710,8 +710,8 @@ export const historyStack: {
         step: "DAC9",
         from: 2026,
         what: {
-          de: "Erklärungen zur Mindeststeuer",
-          en: "Minimum tax returns",
+          de: "Mindeststeuer",
+          en: "Minimum tax",
         },
       },
     ],
@@ -724,8 +724,8 @@ export const historyStack: {
         step: { de: "„DAC10“", en: "“DAC10”" },
         from: 2028,
         what: {
-          de: "Neufassung: Zugang zu Geldwäsche- und Pensionsregistern",
-          en: "Recast: access to anti-money laundering and pension registers",
+          de: "Neufassung, Registerzugang",
+          en: "Recast, register access",
         },
       },
     ],

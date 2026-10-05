@@ -62,7 +62,7 @@ let index = 0
 <figure
   class="stack"
   aria-labelledby="stack-title"
-  style={`--today: ${x(today)}; ${ticks.map((tick, i) => `--tick-${i}: ${x(tick)}`).join("; ")}`}
+  style={`--today: ${x(today)}`}
 >
   <figcaption>
     <h2 id="stack-title">
@@ -111,19 +111,16 @@ let index = 0
   ))}
 
   <div class="stack-axis bottom" aria-hidden="true">
-    {ticks.map((tick, i) => (
-      <span style={`--at: var(--tick-${i})`}>{tick}</span>
-    ))}
+    {ticks.map((tick) => <span style={`--at: ${x(tick)}`}>{tick}</span>)}
   </div>
 </figure>
 
 <style>
   .stack {
-    --stack-cols: 4.5rem minmax(0, 24rem) minmax(0, 1fr);
+    --stack-cols: 5rem minmax(0, 14rem) minmax(0, 1fr);
     --bar: light-dark(#3b4147, #a7afb6);
-    --grid: color-mix(in oklab, var(--foreground) 9%, transparent);
     --today-line: color-mix(in oklab, var(--foreground) 50%, transparent);
-    --row: 2.125rem;
+    --row: 2rem;
     display: grid;
     margin: 0;
     font-size: 0.875rem;
@@ -230,9 +227,21 @@ let index = 0
     padding-block-end: 0.2rem;
   }
 
+  /* Unten eine Grundlinie mit kurzen Strichen statt Hilfslinien. */
+  .stack-axis.bottom::before {
+    content: "";
+    grid-column: 3;
+    grid-row: 1;
+    align-self: start;
+    border-block-start: 1px solid var(--line);
+  }
+
   .stack-axis.bottom > * {
     align-self: start;
-    padding-block-start: 0.35rem;
+    padding-block-start: 0.45rem;
+    background:
+      linear-gradient(var(--line), var(--line)) top center / 1px 0.3rem
+      no-repeat;
   }
 
   .stack-group h3 {
@@ -262,22 +271,12 @@ let index = 0
     list-style: none;
   }
 
-  /* Hilfslinien, Heute-Linie und die Zukunft rechts davon. Jede Spur trägt
-     sie selbst, damit sie schmal mit der Spur umbrechen. */
+  /* Nur die Heute-Linie und die Zukunft rechts davon. Jede Spur trägt sie
+     selbst, damit sie schmal mit der Spur umbrechen. */
   .stack {
     --track-bg:
-      linear-gradient(var(--today-line), var(--today-line)) var(--today) 0 /
-      1px 100% no-repeat,
-      linear-gradient(var(--grid), var(--grid)) var(--tick-0) 0 / 1px 100%
-      no-repeat,
-      linear-gradient(var(--grid), var(--grid)) var(--tick-1) 0 / 1px 100%
-      no-repeat,
-      linear-gradient(var(--grid), var(--grid)) var(--tick-2) 0 / 1px 100%
-      no-repeat,
-      linear-gradient(var(--grid), var(--grid)) var(--tick-3) 0 / 1px 100%
-      no-repeat,
-      linear-gradient(var(--grid), var(--grid)) var(--tick-4) 0 / 1px 100%
-      no-repeat,
+      linear-gradient(var(--today-line), var(--today-line)) var(--today) 0 / 1px
+      100% no-repeat,
       linear-gradient(
         to right,
         transparent var(--today),
@@ -319,26 +318,11 @@ let index = 0
     inset-block: 50% auto;
     inset-inline-start: var(--from);
     inline-size: calc(var(--to) - var(--from));
-    block-size: 0.75rem;
+    block-size: 0.625rem;
     translate: 0 -50%;
     border-radius: 3px;
     background: var(--swatch);
     transform-origin: left center;
-  }
-
-  /* Was gilt, läuft über heute hinaus weiter: ein auslaufender Schweif. */
-  :is(.past, .current) .stack-track::after {
-    content: "";
-    position: absolute;
-    inset-block: 50% auto;
-    inset-inline: var(--today) 0;
-    block-size: 0.75rem;
-    translate: 0 -50%;
-    background: linear-gradient(
-      to right,
-      color-mix(in oklab, var(--swatch) 40%, transparent),
-      transparent 70%
-    );
   }
 
   .repealed .stack-bar {
@@ -379,7 +363,7 @@ let index = 0
 
   li.current .stack-what {
     color: var(--ink);
-    font-weight: 560;
+    font-weight: 600;
   }
 
   li.current {
@@ -416,22 +400,11 @@ let index = 0
       animation: stack-grow 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
       animation-delay: calc(150ms + var(--i) * 55ms);
     }
-
-    .stack-track::after {
-      animation: stack-fade 0.6s ease both;
-      animation-delay: calc(650ms + var(--i) * 55ms);
-    }
   }
 
   @keyframes stack-grow {
     from {
       scale: 0 1;
-    }
-  }
-
-  @keyframes stack-fade {
-    from {
-      opacity: 0;
     }
   }
 
@@ -455,7 +428,8 @@ let index = 0
       grid-template-columns: minmax(0, 1fr);
     }
 
-    .stack-axis > * {
+    .stack-axis > *,
+    .stack-axis.bottom::before {
       grid-column: 1;
     }
 
