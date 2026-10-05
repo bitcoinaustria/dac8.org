@@ -59,7 +59,8 @@ browser can share files, sharing as icon buttons.
 
 ## Site structure
 
-Five main pages per language, with URLs that follow the navigation labels:
+Five main pages per language, plus the history page and two tools, with URLs
+that follow the navigation labels:
 
 | Page | German | English |
 | --- | --- | --- |
@@ -69,19 +70,22 @@ Five main pages per language, with URLs that follow the navigation labels:
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
 | Geschichte: a chart of what tax authorities receive today and one chronology since 1977 by era; linked from dossier, home and footer | `/geschichte/` | `/en/history/` |
+| Deine DAC8-Akte: what a provider reports and keeps about the reader, built from their answers in the browser | `/deine-akte/` | `/en/your-file/` |
+| Auskunft verlangen: a GDPR access request to the reader's provider about its DAC8 processing | `/auskunft/` | `/en/access-request/` |
 
 A top bar carries the navigation and a permanent donate button that leads to
 `#spenden` on the participation page; on mobile a bottom bar keeps donating and
 sharing within reach. `/spenden` and `/en/donate` are short redirects for print
-and QR codes. The home page is a sequence of bands, each with one statement and
-at most one illustration: the hero with three key figures, the first story
-chapter (`src/components/StoryScene.astro`) on what DAC8 does with your data
-as three scenes, how it came about (the duties about individuals from the
-history chart, `HistoryStack` in compact mode), the second chapter on what can
-follow as a numbered chain (leaks, combined datasets, target lists, attacks at
-home), documented leaks as a table of which kinds of data each exposed
-(`src/components/LeakMatrix.astro`), what we do, what you can do, the guiding
-statement and who we are. The full case list with sources is in the dossier (`#faelle`). A case
+and QR codes. The home page tells the case as one story and asks
+for help at its peak: the hero with three key figures, a numbered story of
+seven steps from the account to the doorstep (`src/components/Tale.astro`;
+on wide screens the pictures sit on a pinned stage that follows the steps),
+then the three ways to help (donate, ask your provider, write to MPs),
+documented leaks as a table of which kinds of data each exposed
+(`src/components/LeakMatrix.astro`), how it came about (the duties about
+individuals from the history chart, `HistoryStack` in compact mode), the
+guiding statement with answers to common objections, what we do with the
+goals under the legal route, and who we are. The full case list with sources is in the dossier (`#faelle`). A case
 belongs there only if lost or misused data made the harm possible, and it needs
 a public source. The dossier's "Am I affected?" check
 (`src/components/AffectedCheck.astro`) restates the FAQ. The footer closes
@@ -167,6 +171,12 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   (`src/components/LetterGenerator.astro`, texts in `src/data/letter.ts`). It
   runs entirely in the browser; its demands restate the dossier's "Was wir
   fordern" list, so change both together.
+- The DAC8 file (`src/components/pages/FilePage.astro`) and the access
+  request (`src/components/pages/AccessRequestPage.astro`) run entirely in the
+  browser, like the letter. The file restates the dossier's reporting and
+  retention facts; change them together. The access-request template asks
+  what a provider processes under the Krypto-MPfG; have a lawyer review any
+  change to its wording.
 - The earlier individual complaint generator is preserved in
   `src/components/ParticipationTools.astro`, but is not exposed as a public
   route while individual participation in the proceedings remains undefined.
