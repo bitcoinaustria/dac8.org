@@ -1,5 +1,5 @@
 ---
-import { languageFor, pathFor } from "@/lib/i18n"
+import { languageFor } from "@/lib/i18n"
 import { supporters } from "@/data/supporters"
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
@@ -27,17 +27,11 @@ const en = language === "en"
       </ul>
     </section>
   )}
-  <a
-    class="text-link"
-    href={`${pathFor("participate", language)}#organisationen`}
-  >
-    {en ? "Support as an organisation" : "Als Organisation unterstützen"}
-  </a>
 </div>
 
 <style>
   /* Neben „Wer dahintersteht“: eine weiche Fläche mit der Vertretung und
-     dem Weg für Organisationen. */
+     den unterstützenden Organisationen. */
   .partners {
     display: grid;
     gap: var(--space-m);
@@ -48,10 +42,6 @@ const en = language === "en"
 
   .partners .prose {
     margin-block-start: var(--space-xs);
-  }
-
-  .partners .text-link {
-    margin-block-start: 0;
   }
 
   ul {

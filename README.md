@@ -74,17 +74,19 @@ A top bar carries the navigation and a permanent donate button that leads to
 `#spenden` on the participation page; on mobile a bottom bar keeps donating and
 sharing within reach. `/spenden` and `/en/donate` are short redirects for print
 and QR codes. The home page is a sequence of bands, each with one statement and
-at most one illustration: the hero, a short DAC8 brief with three key figures,
-the first story chapter (`src/components/StoryScene.astro`) on what DAC8 does
-with your data, the second on what can follow (leaks, combined datasets, target
-lists, attacks at home), documented data leaks and what followed them, how it
-came about (a timeline selection linking to the history page), what we do, what you can do, the guiding statement and who
-we are. The full case list with sources is in the dossier (`#faelle`). A case
+at most one illustration: the hero with three key figures, the first story
+chapter (`src/components/StoryScene.astro`) on what DAC8 does with your data
+as three scenes, how it came about (the duties about individuals from the
+history chart, `HistoryStack` in compact mode), the second chapter on what can
+follow as a numbered chain (leaks, combined datasets, target lists, attacks at
+home), documented leaks as a table of which kinds of data each exposed
+(`src/components/LeakMatrix.astro`), what we do, what you can do, the guiding
+statement and who we are. The full case list with sources is in the dossier (`#faelle`). A case
 belongs there only if lost or misused data made the harm possible, and it needs
 a public source. The dossier's "Am I affected?" check
 (`src/components/AffectedCheck.astro`) restates the FAQ. The footer closes
-every page with the campaign statement, two actions and the status on a dark
-band.
+every page with the status, the campaign statement and three equal actions on
+a dark band. Share buttons confirm a copied link on the button itself.
 
 ## Map of known physical attacks
 
@@ -142,8 +144,8 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   as the research status and places the chart's "today" line by it. Each
   entry keeps a one-sentence summary visible and the rest under "Details";
   `historyStack` in the same file feeds the chart
-  (`src/components/HistoryStack.astro`). The home page shows a selection of the
-  same stations (`homeSteps`) through `src/components/TimelineRail.astro`.
+  (`src/components/HistoryStack.astro`); the home page shows its rows about
+  individuals.
 - Add confirmed public milestones to `src/data/updates.ts`, with a stable ID,
   publication timestamp including timezone, both translations and an optional
   source URL. Future-dated entries stay hidden until a build after that date.

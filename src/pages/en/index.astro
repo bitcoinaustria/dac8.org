@@ -2,13 +2,13 @@
 import Artwork from "@/components/Artwork.astro"
 import CampaignPartners from "@/components/CampaignPartners.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
+import HistoryStack from "@/components/HistoryStack.astro"
+import LeakMatrix from "@/components/LeakMatrix.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import StoryScene from "@/components/StoryScene.astro"
-import TimelineRail from "@/components/TimelineRail.astro"
 import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
-import { homeSteps } from "@/data/history"
 ---
 
 <Layout>
@@ -23,9 +23,8 @@ import { homeSteps } from "@/data/history"
         </h1>
         <p class="lead">
           Since 2026, exchanges and brokers in Austria have had to prepare a
-          yearly record for the tax authority of how much you buy, sell,
-          exchange and move to your own wallets. They do this for all customers,
-          without any suspicion.
+          yearly record for the tax authority of what you buy, sell, exchange
+          and move to your own wallets. For all customers, without suspicion.
         </p>
         <nav class="hero-actions" aria-label="Get started">
           <a class="button primary" href="/en/get-involved/#spenden"
@@ -42,34 +41,26 @@ import { homeSteps } from "@/data/history"
         caption="Our planned complaint targets the blanket collection of all customers’ data."
       />
     </header>
-    <section class="brief" aria-label="DAC8 in Austria">
-      <p class="brief-text">
-        This is financial mass surveillance, and your provider stores it all for
-        years, along with your ID and wallet addresses.
-        <strong
-          >We are convinced this violates your fundamental right to financial
-          privacy, and we are preparing a legal challenge.</strong
-        >
-      </p>
+    <section class="figures" aria-label="DAC8 in Austria">
       <dl class="keyfigures">
         <div>
           <dt>
             <strong>Customers</strong>
-            are covered, even if their data is not ultimately reported.
+            are covered, even if nothing is ultimately reported.
           </dt>
           <dd>All</dd>
         </div>
         <div>
           <dt>
-            <strong>Retention by the provider</strong>
-            for each annual report. A new one is added every year.
+            <strong>Retention</strong>
+            of each annual report by the provider.
           </dt>
           <dd>10 <small>years</small></dd>
         </div>
         <div>
           <dt>
             <strong>First report</strong>
-            to the tax authority, covering the 2026 reporting year.
+            to the tax authority, for the year 2026.
           </dt>
           <dd><time datetime="2027-07-31">31 July 2027</time></dd>
         </div>
@@ -77,16 +68,16 @@ import { homeSteps } from "@/data/history"
     </section>
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">What DAC8 does with your data</h2>
-      <div class="story">
+      <div class="story trio">
         <StoryScene
           art="accountToRecord"
           language="en"
           title="Your account becomes a file."
         >
           <p>
-            Your name, address, tax identification number and date of birth sit
-            next to your annual totals, for each crypto-asset separately: what
-            you bought, sold, exchanged and moved to your own wallets.
+            Name, address, tax number and date of birth, next to your annual
+            totals per crypto-asset: bought, sold, exchanged and moved to your
+            own wallets.
           </p>
         </StoryScene>
         <StoryScene
@@ -95,9 +86,9 @@ import { homeSteps } from "@/data/history"
           title="Everyone recorded. Without suspicion."
         >
           <p>
-            Providers prepare this data for all customers, including those who
-            will not ultimately be reported. Austrian law requires this, going
-            beyond the EU directive.
+            Providers prepare this for all customers, including those who will
+            not ultimately be reported. Austrian law requires it, going beyond
+            the EU directive.
           </p>
         </StoryScene>
         <StoryScene
@@ -106,39 +97,44 @@ import { homeSteps } from "@/data/history"
           title="More about you. Every year."
         >
           <p>
-            Every year adds another report, and the provider keeps each one for
-            ten years. It also holds your ID, your wallet addresses and every
-            single transaction, for up to ten years after the customer
-            relationship ends.
+            The provider keeps each annual report for ten years. Your ID, wallet
+            addresses and transactions stay for up to ten years after the
+            customer relationship ends.
           </p>
         </StoryScene>
       </div>
       <a class="text-link" href="/en/dossier/#gemeldet"
-        >What exactly is reported and what the provider keeps</a
+        >What is reported and what the provider keeps</a
       >
+    </section>
+    <section id="geschichte" aria-labelledby="geschichte-heading">
+      <h2 id="geschichte-heading">How DAC8 came about</h2>
+      <p class="section-intro">
+        It began in 1977 with assistance in individual cases. Today banks,
+        platforms and crypto providers report every year, more with each step.
+      </p>
+      <HistoryStack language="en" compact />
+      <a class="text-link" href="/en/history/">The full history since 1977</a>
     </section>
     <section id="risiko" aria-labelledby="risiko-heading">
       <h2 id="risiko-heading">What it can lead to</h2>
-      <div class="story">
+      <div class="story chain">
         <StoryScene art="dataHack" language="en" title="Stored. Hacked. Sold.">
           <p>
-            The more data sits in one place, and the longer it stays there, the
-            more a break-in pays. Exchanges, identity verification services and
-            tax administrations have already lost such data, to hackers and to
-            bribed staff.
+            The more data sits in one place, and the longer, the more a break-in
+            pays. Exchanges, identity verification services and tax
+            administrations have already lost such data.
           </p>
         </StoryScene>
         <StoryScene
           art="profileFourSources"
           language="en"
           title="Every leak sharpens your profile."
-          wide
         >
           <p>
-            A public profile shows your face, a leak your wallet address, a
-            hacked tax service your holdings. Put together, the pieces reveal
-            what no single source holds: who you are, where you live and what
-            you probably own.
+            Your face from the web, your wallet from a leak, your holdings from
+            a hacked tax service. Together they reveal who you are, where you
+            live and what you probably own.
           </p>
         </StoryScene>
         <StoryScene
@@ -147,10 +143,9 @@ import { homeSteps } from "@/data/history"
           title="The more you move, the higher you rank."
         >
           <p>
-            In Austria, fraudsters send fake tax-office messages in bulk to find
-            out who holds crypto. A breach at a provider would hand them that
-            list ready-made, sortable by how much each person moves. Whether the
-            estimate is right does not matter to criminals.
+            In Austria, fraudsters phish for crypto holders with fake tax-office
+            messages. A breach at a provider would hand them the list
+            ready-made, sorted by volume.
           </p>
         </StoryScene>
         <StoryScene
@@ -159,12 +154,9 @@ import { homeSteps } from "@/data/history"
           title="Your profile. Your address. A target."
         >
           <p>
-            This is organised crime with a division of labour. In the United
-            States, a gang hacked databases, picked out people believed to hold
-            crypto and broke into their homes when fraudulent calls did not
-            work. In the first half of 2026, the French interior ministry
-            counted 77 kidnappings, unlawful detentions and extortion cases
-            involving crypto-assets.
+            This is organised crime. In the first half of 2026, the French
+            interior ministry counted 77 kidnappings, unlawful detentions and
+            extortion cases involving crypto-assets.
           </p>
         </StoryScene>
       </div>
@@ -173,62 +165,18 @@ import { homeSteps } from "@/data/history"
     <section id="faelle" aria-labelledby="faelle-heading">
       <h2 id="faelle-heading">This has already happened</h2>
       <p class="section-intro">
-        Providers and authorities lose data on people’s wealth again and again.
-        Fraudsters and violent criminals use it.
+        Name, ID, wallet and holdings: every one of these pieces has already
+        ended up in the wrong hands.
       </p>
-      <ul class="facts">
-        <li>
-          <strong>Ledger, 2020: the addresses of 272,000 wallet buyers.</strong>
-          <p>
-            Names, postal addresses and phone numbers leak. Phishing, extortion
-            threats and letters to home addresses asking for the recovery phrase
-            follow.
-          </p>
-        </li>
-        <li>
-          <strong>Coinbase, 2025: defrauded with real customer data.</strong>
-          <p>
-            Bribed support staff copy customer data. Fraudsters use it to pose
-            as Coinbase and persuade customers to send them money. Coinbase
-            expects costs, including reimbursements, of up to 400 million
-            dollars.
-          </p>
-        </li>
-        <li>
-          <strong>Waltio, 2026: tax data as a target list.</strong>
-          <p>
-            Customers’ gains, losses and year-end balances are stolen from the
-            French crypto tax service. According to the Gendarmerie, criminals
-            use them to select victims of violent crime.
-          </p>
-        </li>
-        <li>
-          <strong
-            >France, 2026: the tax administration is breached twice.</strong
-          >
-          <p>
-            Using officials’ stolen credentials, attackers take 1.2 million
-            records from the bank-account register and tax data on 678,000
-            individuals and businesses.
-          </p>
-        </li>
-      </ul>
-      <p class="prose attacks-teaser">
-        All over the world, criminals rob, kidnap and torture people they take
-        for crypto holders, and there are more such cases every year.
-        <a href="/en/attacks/">Open the attack archive</a>
-      </p>
-      <a class="text-link" href="/en/dossier/#faelle">More cases and sources</a>
-    </section>
-    <section id="geschichte" aria-labelledby="geschichte-heading">
-      <h2 id="geschichte-heading">How we got here</h2>
-      <p class="section-intro">
-        DAC8 is the eighth step of an EU directive whose predecessor dates from
-        1977. Assistance in individual cases has turned into annual reports on
-        salaries, bank accounts, platform sales and crypto-assets.
-      </p>
-      <TimelineRail language="en" steps={homeSteps} />
-      <a class="text-link" href="/en/history/">The full history since 1977</a>
+      <LeakMatrix language="en" />
+      <div class="link-row">
+        <a class="text-link" href="/en/attacks/"
+          >Attacks on crypto holders worldwide</a
+        >
+        <a class="text-link" href="/en/dossier/#faelle"
+          >More cases and sources</a
+        >
+      </div>
     </section>
     <section id="weg" aria-labelledby="weg-heading">
       <h2 id="weg-heading">What we are doing</h2>
@@ -292,10 +240,9 @@ import { homeSteps } from "@/data/history"
         <span>State interference does.</span>
       </h2>
       <p class="section-intro">
-        A liberal democracy needs limits on state power. Where there is specific
-        suspicion of a crime, authorities should investigate that case, with a
-        legal basis and independent oversight. We reject collecting everyone’s
-        financial data as a precaution.
+        Where there is specific suspicion of a crime, authorities should
+        investigate that case, with a legal basis and independent oversight. We
+        reject collecting everyone’s financial data as a precaution.
       </p>
       <div class="vision-points">
         <div>
@@ -313,9 +260,7 @@ import { homeSteps } from "@/data/history"
             <p>
               In 2014, the Court of Justice struck down the data retention
               directive and Austria’s Constitutional Court struck down the
-              national law. That is why we combine concrete proceedings with
-              political advocacy: in court and with the representatives who can
-              change these laws.
+              national law.
             </p>
           </div>
         </div>
@@ -332,10 +277,10 @@ import { homeSteps } from "@/data/history"
             cypherpunks. We see privacy as a prerequisite for a free society.
           </p>
           <p class="prose">
-            The campaign concerns everyone covered by DAC8, regardless of which
+            The campaign concerns everyone covered by DAC8, whatever
             crypto-assets they use. It starts in Austria, but DAC8 applies
-            across the EU: if you want to challenge the law in your country, get
-            in touch. We share arguments, sources and experience:
+            across the EU. If you want to challenge the law in your country, get
+            in touch:
             <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>
           </p>
         </div>

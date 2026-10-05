@@ -1,5 +1,6 @@
 ---
 import BitcoinAustriaLogo from "@/assets/bitcoin-austria-horizontal.svg"
+import CheckIcon from "@/assets/icons/check.svg"
 import ShareIcon from "@/assets/icons/share.svg"
 import { campaignStatus } from "@/data/campaign"
 
@@ -90,29 +91,35 @@ const sections = [
 
 <footer>
   <div class="sign-off" data-share-scope>
-    <p class="sign-off-title">
-      {en ? "Financial privacy is a fundamental right." : "Finanzielle Privatsphäre ist ein Grundrecht."}
-      <span>{en ? "Let’s defend it." : "Verteidigen wir sie."}</span>
-    </p>
-    <div class="sign-off-side">
-      <div class="sign-off-actions">
-        <a class="button primary" href={donateFor(language)}
-          >{en ? "Support the case" : "Prozess unterstützen"}</a
-        >
-        <a class="button" href={pathFor("proceedings", language)}
-          >{en ? "Follow the case" : "Verfahren verfolgen"}</a
-        >
-        <button class="text-link" type="button" data-share>
-          <ShareIcon />{en ? "Share" : "Teilen"}
-        </button>
-      </div>
-      <p class="share-status" data-share-status aria-live="polite"></p>
+    <div class="sign-off-text">
       <a class="sign-off-status" href={pathFor("proceedings", language)}>
         <span class="status-dot" aria-hidden="true"></span>
         {en ? "Austria" : "Österreich"}
         · {campaignStatus[language].label}
       </a>
+      <p class="sign-off-title">
+        {en ? "Financial privacy is a fundamental right." : "Finanzielle Privatsphäre ist ein Grundrecht."}
+        <span>{en ? "Let’s defend it." : "Verteidigen wir sie."}</span>
+      </p>
     </div>
+    <div class="sign-off-actions">
+      <a class="button primary" href={donateFor(language)}
+        >{en ? "Support the case" : "Prozess unterstützen"}</a
+      >
+      <a class="button" href={pathFor("proceedings", language)}
+        >{en ? "Follow the case" : "Verfahren verfolgen"}</a
+      >
+      <button
+        class="button share-button"
+        type="button"
+        data-share
+        aria-label={en ? "Share this page" : "Diese Seite teilen"}
+        title={en ? "Share" : "Teilen"}
+      >
+        <ShareIcon class="share-icon" /><CheckIcon class="share-done" />
+      </button>
+    </div>
+    <p class="share-status" data-share-status aria-live="polite"></p>
   </div>
 
   <div class="footer-main">
@@ -189,9 +196,9 @@ const sections = [
 </footer>
 
 <style>
-  /* Der Footer ist der Schluss der Seite: ein Satz, zwei Handlungen, der
-     Stand des Verfahrens, auf einer dunklen Fläche in beiden Modi. Darunter
-     die kompakte Linkliste. */
+  /* Der Footer ist der Schluss der Seite: der Stand des Verfahrens, ein
+     Satz und drei gleich hohe Handlungen auf einer dunklen Fläche in beiden
+     Modi. Darunter die kompakte Linkliste. */
   footer {
     max-inline-size: var(--page-max);
     margin-inline: auto;
@@ -203,23 +210,34 @@ const sections = [
     --ink: #f4f5f6;
     --background: #16181a;
     --accent: #ff5a62;
+    position: relative;
     display: grid;
-    justify-items: start;
-    gap: var(--space-m);
-    padding: var(--space-l-xl) var(--space-m-l);
+    gap: var(--space-l);
+    padding: var(--space-l) var(--space-m-l);
+    overflow: hidden;
+    border: 1px solid #ffffff14;
     border-radius: var(--radius-xl);
     color: var(--ink);
-    background: light-dark(#16181a, #1f2225);
+    /* Ein rotes Glimmen in der Ecke der Handlungen, sonst eine ruhige
+       Fläche. */
+    background:
+      radial-gradient(60% 140% at 100% 100%, #e3000f2e, transparent 70%),
+      light-dark(#16181a, #1c1f22);
+  }
+
+  .sign-off-text {
+    display: grid;
+    gap: var(--space-s);
   }
 
   .sign-off-title {
-    max-inline-size: 22ch;
+    max-inline-size: 26ch;
     margin: 0;
-    font-size: clamp(2rem, 1.3rem + 2.6vw, 3.25rem);
+    font-size: clamp(1.5rem, 1.15rem + 1.3vw, 2.125rem);
     font-weight: 600;
     font-stretch: 94%;
-    line-height: 1.04;
-    letter-spacing: -0.028em;
+    line-height: 1.12;
+    letter-spacing: -0.022em;
     text-wrap: balance;
 
     span {
@@ -232,36 +250,38 @@ const sections = [
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-xs) var(--space-s);
-    margin-block-start: var(--space-2xs);
+    gap: var(--space-xs);
   }
 
-  .sign-off-side {
-    display: grid;
-    justify-items: start;
-    gap: var(--space-m);
+  /* Teilen ist ein quadratischer Knopf in der Höhe der anderen beiden. */
+  .sign-off .share-button {
+    inline-size: 2.875rem;
+    padding: 0;
+
+    :global(svg) {
+      inline-size: 1.15em;
+      block-size: 1.15em;
+    }
   }
 
-  /* Breit: der Satz links, Handlungen und Stand rechts unten, damit die
-     Fläche nicht halb leer bleibt. */
+  /* Breit: Satz links, Handlungen rechts auf seiner Mitte. */
   @media (width >= 64rem) {
     .sign-off {
       grid-template-columns: minmax(0, 1fr) auto;
-      align-items: end;
+      align-items: center;
       column-gap: var(--space-2xl);
+      padding: var(--space-l-xl) var(--space-l);
     }
 
-    .sign-off-actions {
-      margin-block-start: 0;
+    .sign-off .share-status {
+      grid-column: 2;
+      justify-self: end;
     }
-  }
-
-  .sign-off .text-link {
-    margin-block-start: 0;
   }
 
   .sign-off .share-status {
     margin: 0;
+    margin-block-start: calc(var(--space-s) - var(--space-l));
     color: var(--accent);
     font-size: var(--step--1);
   }
@@ -274,6 +294,7 @@ const sections = [
     display: inline-flex;
     align-items: center;
     gap: 0.5em;
+    inline-size: fit-content;
     color: #b9bdc1;
     font-size: var(--step--1);
     font-weight: 500;
