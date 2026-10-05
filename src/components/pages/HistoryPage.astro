@@ -273,6 +273,15 @@ const chapters = eras.map((era) => {
     );
   }
 
+  /* Breit steht die Lesespalte mittig unter dem Diagramm, statt die rechte
+     Hälfte der Seite leer zu lassen. */
+  @media (width >= 64rem) {
+    .chronicle,
+    .common {
+      margin-inline: auto;
+    }
+  }
+
   .era-head,
   .station {
     display: grid;
