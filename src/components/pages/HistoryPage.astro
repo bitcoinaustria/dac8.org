@@ -1,26 +1,50 @@
 ---
 import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
-import TimelineRail from "@/components/TimelineRail.astro"
-import {
-  historyEras,
-  historyFor,
-  historyResearchDate,
-  historyToday,
-} from "@/data/history"
+import HistoryStack from "@/components/HistoryStack.astro"
+import { historyEras, historyFor, historyResearchDate } from "@/data/history"
 import { languageFor, pathFor } from "@/lib/i18n"
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
 const entries = historyFor(language)
 const eras = historyEras[language]
-const statusLabel = {
-  context: en ? "Context" : "Umfeld",
-  past: en ? "In force" : "In Kraft",
+// "In Kraft" is the rule and goes unmarked; only the exceptions get a tag.
+const statusTag = {
   repealed: en ? "Repealed" : "Aufgehoben",
   current: en ? "Applies since 2026" : "Gilt seit 2026",
   proposed: en ? "Proposal" : "Vorschlag",
-} as const
-const today = historyToday[language]
+} as Partial<Record<string, string>>
+const labels = {
+  details: "Details",
+  date: en ? "Date" : "Datum",
+  reporters: en ? "Who reports" : "Wer meldet",
+  context: en ? "Context: " : "Umfeld: ",
+}
+
+// A long pause between two stations shows as a dashed stretch of the spine.
+const pauseYears = 5
+const chapters = eras.map((era) => {
+  const stations = entries.filter((entry) => entry.era === era.id)
+  return {
+    ...era,
+    stations: stations.map((entry, i) => {
+      const previous = stations[i - 1]
+      const facts = [
+        { label: labels.date, text: entry.when },
+        entry.reporters && { label: labels.reporters, text: entry.reporters },
+        ...entry.details,
+      ].filter((fact): fact is { label: string; text: string } => Boolean(fact))
+      return {
+        ...entry,
+        facts,
+        repeatYear: previous?.year === entry.year,
+        paused:
+          previous !== undefined &&
+          Number(entry.year) - Number(previous.year) >= pauseYears,
+      }
+    }),
+  }
+})
 ---
 
 <Layout
@@ -39,75 +63,43 @@ const today = historyToday[language]
         </h1>
         <p class="lead">
           {en
-            ? "EU tax authorities started out asking each other about specific cases. Today, banks, platforms and crypto-asset providers report on their customers every year. DAC8 is the eighth step. The ninth has been adopted, and a recast of the whole system has been proposed."
-            : "Am Anfang fragten Steuerbehörden einander zu einzelnen Fällen. Heute melden Banken, Plattformen und Krypto-Anbieter jedes Jahr Daten über ihre Kunden. DAC8 ist die achte Stufe. Die neunte ist beschlossen, eine Neufassung des ganzen Systems vorgeschlagen."}
+            ? "EU tax authorities started out asking each other about specific cases. Today, banks, platforms and crypto-asset providers report on their customers every year."
+            : "Am Anfang fragten Steuerbehörden einander zu einzelnen Fällen. Heute melden Banken, Plattformen und Krypto-Anbieter jedes Jahr Daten über ihre Kunden."}
         </p>
       </div>
-      <aside class="today" aria-labelledby="today-heading">
-        <h2 id="today-heading">{today.title}</h2>
-        {today.groups.map((group) => (
-          <div class="today-group">
-            <h3>{group.label}</h3>
-            <ul>
-              {group.items.map((item) => (
-                <li>
-                  <a href={`#${item.id}`}>{item.what}</a>
-                  <span>
-                    <strong>{item.step}</strong> {item.since}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </aside>
+      <HistoryStack language={language} />
     </header>
 
-    <TimelineRail language={language} />
-
-    {eras.map((era) => {
-      const stations = entries.filter((entry) => entry.era === era.id)
-      // With an odd number of stations the heading takes the first cell,
-      // so the two-column grid stays even.
-      const inline = stations.length % 2 === 1
-      return (
-        <section id={era.id} aria-labelledby={`${era.id}-heading`}>
-          <div class="era-grid">
-            <header class:list={["era-head", { inline }]}>
+    <div class="chronicle">
+      {chapters.map((era) => (
+        <section
+          id={era.id}
+          class:list={["era", era.id]}
+          aria-labelledby={`${era.id}-heading`}
+        >
+          <header class="era-head">
+            <div>
+              <p class="era-span">{era.label}</p>
               <h2 id={`${era.id}-heading`}>{era.title}</h2>
-              <p class="section-intro">{era.intro}</p>
-            </header>
-            {stations.map((entry) => (
-              <article
-                id={entry.id}
-                class:list={["station", entry.status]}
-              >
-                <p class="station-date">
-                  <time datetime={entry.date}>{entry.when}</time>
-                  <span class="tag">{statusLabel[entry.status]}</span>
-                </p>
-                <h3>{entry.title}</h3>
-                <p class="station-text">{entry.text}</p>
-                <details class="station-more">
-                  <summary>
-                    {entry.details.length > 0
-                      ? en
-                        ? "Details and sources"
-                        : "Details und Quellen"
-                      : en
-                        ? "Sources"
-                        : "Quellen"}
-                  </summary>
-                  {entry.details.length > 0 && (
-                    <dl class="station-facts">
-                      {entry.details.map((detail) => (
-                        <>
-                          <dt>{detail.label}</dt>
-                          <dd>{detail.text}</dd>
-                        </>
-                      ))}
-                    </dl>
-                  )}
+              <p class="era-intro">{era.intro}</p>
+            </div>
+          </header>
+          <ol class="spine">
+            {era.stations.map((entry) => {
+              const tag = statusTag[entry.status]
+              const context = entry.status === "context"
+              const detail = (
+                <div class="station-detail">
+                  {context && <p>{entry.text}</p>}
+                  {entry.more && <p>{entry.more}</p>}
+                  <dl>
+                    {entry.facts.map((fact) => (
+                      <>
+                        <dt>{fact.label}</dt>
+                        <dd>{fact.text}</dd>
+                      </>
+                    ))}
+                  </dl>
                   <ul class="station-sources">
                     {entry.sources.map((source) => (
                       <li>
@@ -115,274 +107,642 @@ const today = historyToday[language]
                       </li>
                     ))}
                   </ul>
-                </details>
-              </article>
-            ))}
-          </div>
+                </div>
+              )
+              return (
+                <li
+                  id={entry.id}
+                  class:list={["station", entry.status, { paused: entry.paused }]}
+                >
+                  <time
+                    class:list={["station-year", { repeat: entry.repeatYear }]}
+                    datetime={entry.date}
+                  >
+                    {entry.year}
+                  </time>
+                  <span class="station-node" aria-hidden="true" />
+                  <div class="station-body">
+                    {context ? (
+                      <details class="station-more">
+                        <summary>
+                          <h3 class="station-title">
+                            <span class="visually-hidden">{labels.context}</span>
+                            {entry.title}
+                          </h3>
+                        </summary>
+                        {detail}
+                      </details>
+                    ) : (
+                      <>
+                        <h3 class="station-title">
+                          {entry.code && (
+                            <>
+                              <span class="station-code">{entry.code}</span>
+                              <span class="station-sep" aria-hidden="true">
+                                ·
+                              </span>
+                            </>
+                          )}
+                          {entry.name}
+                          {tag && <span class="tag">{tag}</span>}
+                        </h3>
+                        <p class="station-text">{entry.text}</p>
+                        {entry.status === "current" && (
+                          <a
+                            class="text-link"
+                            href={`${pathFor("dossier", language)}#gemeldet`}
+                            >{en ? "What DAC8 reports" : "Was DAC8 meldet"}</a
+                          >
+                        )}
+                        <details class="station-more">
+                          <summary>{labels.details}</summary>
+                          {detail}
+                        </details>
+                      </>
+                    )}
+                  </div>
+                </li>
+              )
+            })}
+          </ol>
         </section>
-      )
-    })}
+      ))}
+    </div>
 
-    <section id="gemeinsam" aria-labelledby="gemeinsam-heading">
-      <h2 id="gemeinsam-heading">
-        {en ? "What applies to every step" : "Was für alle Stufen gilt"}
-      </h2>
-      <div class="columns">
-        <p class="section-intro">
-          {en
-          ? "Every step amends the same 2011 directive. The exchange channels, official secrecy and the rules on what the data may be used for apply to all categories alike."
-          : "Jede Stufe ändert dieselbe Richtlinie von 2011. Übermittlungswege, Amtsgeheimnis und die Regeln, wofür die Daten verwendet werden dürfen, gelten für alle Kategorien gemeinsam."}
-        </p>
+    <section id="gemeinsam" class="common" aria-labelledby="gemeinsam-heading">
+      <div class="era-head">
         <div>
-          <p class="prose">
+          <p class="era-span">{en ? "DAC1 to DAC9" : "DAC1 bis DAC9"}</p>
+          <h2 id="gemeinsam-heading">
+            {en ? "What applies to every step" : "Was für alle Stufen gilt"}
+          </h2>
+          <p class="era-intro">
             {en
-          ? "Originally, exchanged information could be used for taxes, tax recovery, social security contributions and tax penalty proceedings; any other use needed the sending country’s consent. DAC8 added the fight against money laundering and terrorist financing, and for the purposes of EU sanctions acts under Article 215 TFEU, the sending country’s consent is no longer required. Purpose limits, official secrecy and data protection still apply. This covers all DAC data, including bank-account, salary, pension and platform data."
-          : "Ursprünglich durften ausgetauschte Informationen für Steuern, deren Beitreibung, Sozialversicherungsbeiträge und Steuerstrafverfahren verwendet werden; für alles andere brauchte es die Zustimmung des Herkunftsstaats. DAC8 hat die Bekämpfung von Geldwäsche und Terrorismusfinanzierung hinzugefügt, und für EU-Sanktionsrechtsakte nach Art. 215 AEUV braucht es keine Zustimmung des Herkunftsstaats mehr. Zweckbindung, Geheimhaltung und Datenschutz gelten weiter. Das betrifft alle DAC-Daten, auch Konto-, Lohn-, Pensions- und Plattformdaten."}
+              ? "Every step amends the same 2011 directive. The exchange channels, official secrecy and the rules on what the data may be used for apply to all categories alike."
+              : "Jede Stufe ändert dieselbe Richtlinie von 2011. Übermittlungswege, Amtsgeheimnis und die Regeln, wofür die Daten verwendet werden dürfen, gelten für alle Kategorien gemeinsam."}
           </p>
-          <p class="chronicle-sources">
-            {en ? "Article 16 of Directive 2011/16/EU, as amended by Article 1(7) of " : "Art. 16 der Richtlinie 2011/16/EU, geändert durch Art. 1 Nr. 7 der "}
+          <details class="station-more">
+            <summary>{labels.details}</summary>
+            <div class="station-detail">
+              <p>
+                {en
+                  ? "Originally, exchanged information could be used for taxes, tax recovery, social security contributions and tax penalty proceedings; any other use needed the sending country’s consent. DAC8 added the fight against money laundering and terrorist financing, and for the purposes of EU sanctions acts under Article 215 TFEU, the sending country’s consent is no longer required. Purpose limits, official secrecy and data protection still apply. This covers all DAC data, including bank-account, salary, pension and platform data."
+                  : "Ursprünglich durften ausgetauschte Informationen für Steuern, deren Beitreibung, Sozialversicherungsbeiträge und Steuerstrafverfahren verwendet werden; für alles andere brauchte es die Zustimmung des Herkunftsstaats. DAC8 hat die Bekämpfung von Geldwäsche und Terrorismusfinanzierung hinzugefügt, und für EU-Sanktionsrechtsakte nach Art. 215 AEUV braucht es keine Zustimmung des Herkunftsstaats mehr. Zweckbindung, Geheimhaltung und Datenschutz gelten weiter. Das betrifft alle DAC-Daten, auch Konto-, Lohn-, Pensions- und Plattformdaten."}
+              </p>
+              <p class="station-sources">
+                {en
+                  ? "Article 16 of Directive 2011/16/EU, as amended by Article 1(7) of "
+                  : "Art. 16 der Richtlinie 2011/16/EU, geändert durch Art. 1 Nr. 7 der "}
+                <a
+                  href={en
+                    ? "https://eur-lex.europa.eu/eli/dir/2023/2226/oj/eng"
+                    : "https://eur-lex.europa.eu/eli/dir/2023/2226/oj/deu"}
+                  >{en ? "Directive (EU) 2023/2226" : "Richtlinie (EU) 2023/2226"}</a
+                >.
+              </p>
+            </div>
+          </details>
+          <nav
+            class="hero-actions"
+            aria-label={en ? "Continue reading" : "Weiterlesen"}
+          >
             <a
-              href={en ? "https://eur-lex.europa.eu/eli/dir/2023/2226/oj/eng" : "https://eur-lex.europa.eu/eli/dir/2023/2226/oj/deu"}
-              >{en ? "Directive (EU) 2023/2226" : "Richtlinie (EU) 2023/2226"}</a
-            >.
+              class="button primary"
+              href={`${pathFor("dossier", language)}#gemeldet`}
+              >{en ? "What DAC8 reports" : "Was DAC8 meldet"}</a
+            >
+            <a class="button" href={`${pathFor("dossier", language)}#quellen`}
+              >{en ? "All sources" : "Alle Quellen"}</a
+            >
+          </nav>
+          <p class="research-note">
+            {en
+              ? `Research by Bitcoin Austria, as of ${historyResearchDate.en}. Every entry links to its primary sources. Not legal advice.`
+              : `Recherche von Bitcoin Austria, Stand: ${historyResearchDate.de}. Jeder Eintrag verweist auf seine Primärquellen. Keine Rechtsberatung.`}
           </p>
         </div>
       </div>
-      <nav
-        class="hero-actions"
-        aria-label={en ? "Continue reading" : "Weiterlesen"}
-      >
-        <a
-          class="button primary"
-          href={`${pathFor("dossier", language)}#gemeldet`}
-          >{en ? "What DAC8 reports" : "Was DAC8 meldet"}</a
-        >
-        <a class="button" href={`${pathFor("dossier", language)}#quellen`}
-          >{en ? "All sources" : "Alle Quellen"}</a
-        >
-      </nav>
-      <p class="research-note">
-        {en
-          ? `Research by Bitcoin Austria, as of ${historyResearchDate.en}. Every entry links to its primary sources. Not legal advice.`
-          : `Recherche von Bitcoin Austria, Stand: ${historyResearchDate.de}. Jeder Eintrag verweist auf seine Primärquellen. Keine Rechtsberatung.`}
-      </p>
     </section>
   </article>
 </Layout>
 
 <style>
-  .campaign > :global(.timeline-rail) {
-    margin-block-start: calc(var(--band-gap) * -0.5);
+  /* Die Geschichte ist eine Chronik, kein Plakat: ruhigere Schlagzeilen,
+     kleinere Schrift und engere Bänder als auf den übrigen Seiten. */
+  .history {
+    --band-gap: clamp(4rem, 2.5rem + 4vw, 6.5rem);
+    /* Drei Schriftgrößen für die ganze Zeitachse. */
+    --text-l: 1.375rem;
+    --text-m: 1.0625rem;
+    --text-s: 0.875rem;
+    font-size: 1rem;
   }
 
-  /* Neben der Schlagzeile: was die Steuerbehörden heute bekommen, nach der
-     Stufe, die es gebracht hat. Jede Zeile springt zu ihrem Eintrag. */
-  @container campaign (width >= 56rem) {
-    .history .hero:has(> .today) {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      align-items: center;
-    }
+  .history .hero {
+    row-gap: var(--space-xl);
+  }
 
-    /* Wie neben einem Bild eine Stufe kleiner, damit die Schlagzeile in
-       drei Zeilen bleibt. */
-    .history .hero:has(> .today) h1 {
-      font-size: clamp(2.25rem, 1.3rem + 3vw, 3.75rem);
+  .history h1 {
+    max-inline-size: 22ch;
+    font-size: clamp(2rem, 1.45rem + 2.2vw, 3.25rem);
+    line-height: 1.04;
+  }
+
+  .history .lead {
+    max-inline-size: 48ch;
+    margin-block-start: var(--space-s);
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  }
+
+  /* ---------- Raster der Zeitachse --------------------------------------- */
+
+  /* Zwei Spalten: links Jahr und Nut, rechts der Eintrag. Kapitel und der
+     Schluss stehen im selben Raster, damit alles an einer Kante hängt. */
+  .chronicle,
+  .common {
+    --year-col: 4rem;
+    --node-col: 1.25rem;
+    --col-gap: var(--space-s);
+    --spine: light-dark(#c6cbcf, #3d4248);
+    max-inline-size: calc(
+      var(--year-col) +
+      var(--node-col) +
+      38rem +
+      2 *
+      var(--col-gap)
+    );
+  }
+
+  /* Breit steht die Lesespalte mittig unter dem Diagramm, statt die rechte
+     Hälfte der Seite leer zu lassen. */
+  @media (width >= 64rem) {
+    .chronicle,
+    .common {
+      margin-inline: auto;
     }
   }
 
-  .today {
+  .era-head,
+  .station {
     display: grid;
-    gap: var(--space-m);
-    padding: var(--space-l);
-    border-radius: var(--radius);
-    background: var(--panel);
+    grid-template-columns: var(--year-col) var(--node-col) minmax(0, 38rem);
+    column-gap: var(--col-gap);
   }
 
-  .today h2 {
-    font-size: var(--step-1);
-    line-height: 1.3;
+  .era-head > div,
+  .station-body {
+    grid-column: 3;
+    grid-row: 1;
   }
 
-  .today h3 {
-    margin-block-end: var(--space-3xs);
+  /* Die Nut läuft ohne Unterbrechung durch Kapitel und Stationen. */
+  .era-head::before,
+  .station::before {
+    content: "";
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+    inline-size: 2px;
+    background: var(--spine);
+  }
+
+  .era.anfaenge .era-head::before,
+  .common .era-head::before {
+    content: none;
+  }
+
+  .era.anfaenge .station:first-child::before {
+    margin-block-start: 0.5rem;
+  }
+
+  /* Eine lange Pause: die Nut gestrichelt, mit mehr Luft. */
+  .station:has(+ .paused) .station-body {
+    margin-block-end: var(--space-2xl);
+  }
+
+  .station:has(+ .paused)::before,
+  .ausblick :is(.era-head, .station)::before {
+    inline-size: 0;
+    border-inline-start: 2px dashed var(--spine);
+    background: none;
+  }
+
+  .ausblick .station:last-child::before {
+    mask-image: linear-gradient(#000 40%, transparent);
+  }
+
+  /* ---------- Kapitel ---------------------------------------------------- */
+
+  .chronicle {
+    display: grid;
+  }
+
+  .era-head {
+    background: var(--metal-rule) top / 100% 1px no-repeat;
+  }
+
+  .era-head > div {
+    padding-block: var(--space-l);
+  }
+
+  .era.anfaenge .era-head > div {
+    padding-block-start: var(--space-m);
+  }
+
+  .era-span {
+    color: var(--accent);
+    font-size: var(--text-s);
+    font-weight: 600;
+  }
+
+  .history .era-head h2 {
+    max-inline-size: none;
+    font-size: var(--text-l);
+    font-stretch: 100%;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .era-intro {
+    max-inline-size: 56ch;
+    margin-block-start: var(--space-3xs);
     color: var(--ink-3);
-    font-size: var(--step--1);
-    font-weight: 560;
+    font-size: var(--text-s);
+    line-height: 1.5;
+    text-wrap: pretty;
   }
 
-  .today ul {
-    display: grid;
+  /* ---------- Stationen -------------------------------------------------- */
+
+  .spine {
+    margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .today li {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--space-s);
-    padding-block: var(--space-2xs);
-    border-block-end: 1px solid var(--line);
-  }
-
-  .today li a {
-    color: var(--ink);
-    text-decoration: none;
-  }
-
-  .today li a:hover {
-    color: var(--accent);
-  }
-
-  .today li span {
-    flex: none;
-    color: var(--ink-3);
-    font-size: var(--step--1);
-    white-space: nowrap;
-  }
-
-  .today li strong {
-    color: var(--ink);
-    font-weight: 600;
-  }
-
-  @media (width < 40rem) {
-    .today li {
-      flex-direction: column;
-      gap: 0;
-    }
-  }
-
-  .history .columns > div > :first-child {
-    margin-block-start: 0;
-  }
-
-  /* Die Stationen einer Epoche als Karten, ab mittlerer Breite zweispaltig.
-     Eine Metallkante oben statt grauer Flächen, wie bei der
-     Gegenüberstellung im Dossier. */
-  .era-grid {
-    display: grid;
-    gap: var(--space-xl) var(--space-2xl);
-  }
-
-  .era-head > :first-child {
-    margin-block-start: 0;
-  }
-
-  @container campaign (width >= 52rem) {
-    .era-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .era-head:not(.inline) {
-      grid-column: 1 / -1;
-    }
-
-    .era-head.inline {
-      align-self: start;
-    }
-  }
-
   .station {
+    --node: 0.75rem;
+    --lh: calc(var(--text-m) * 1.35);
+    --pad: 0rem;
+    scroll-margin-block-start: var(--space-l);
+  }
+
+  .station-year {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
+    padding-block-start: var(--pad);
+    color: var(--ink);
+    font-size: var(--text-m);
+    font-weight: 600;
+    line-height: var(--lh);
+  }
+
+  /* Ein Jahr steht nur einmal da; Vorleser hören es trotzdem. */
+  .station-year.repeat {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  /* Token wie auf der Startseite: Graphitkern, Titankante, Lichtkante. */
+  .station-node {
+    grid-column: 2;
+    grid-row: 1;
+    z-index: 1;
+    justify-self: center;
+    inline-size: var(--node);
+    block-size: var(--node);
+    margin-block-start: calc(var(--pad) + (var(--lh) - var(--node)) / 2);
+    border: 1px solid var(--material-edge);
+    border-radius: var(--radius-full);
+    background: linear-gradient(155deg, #4b5056, #25282d);
+    box-shadow:
+      inset 0 1px 0 #ffffff38,
+      0 0 0 4px var(--background);
+  }
+
+  .station-body {
     display: grid;
     align-content: start;
-    gap: var(--space-2xs);
-    padding-block-start: var(--space-s);
-    background: var(--metal-rule) top / 100% 2px no-repeat;
-    scroll-margin-block-start: calc(var(--space-2xl) + var(--space-xl));
+    justify-items: start;
+    gap: var(--space-3xs);
+    padding-block-start: var(--pad);
+    margin-block-end: var(--space-l);
   }
 
-  .station.current {
-    background-image: linear-gradient(var(--primary), var(--primary));
-  }
-
-  .station:target h3 {
-    color: var(--accent);
-  }
-
-  .station-date {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2xs);
-    color: var(--ink-3);
-    font-size: var(--step--1);
-  }
-
-  .station-date .tag {
-    margin: 0;
-  }
-
-  .station.current .tag {
-    color: var(--primary-foreground);
-    background: var(--primary);
-  }
-
-  .station h3 {
-    font-size: var(--step-1);
-    line-height: 1.3;
-  }
-
-  .station-text {
-    color: var(--ink-2);
+  .history .station-title {
+    color: var(--ink);
+    font-size: var(--text-m);
+    font-weight: 400;
+    line-height: var(--lh);
+    letter-spacing: -0.005em;
     text-wrap: pretty;
   }
 
-  .station-more {
+  /* Die Kennung trägt den Eintrag: fett und mit festen Ziffern, damit sich
+     DAC1 bis DAC9 untereinander zu einer Spalte fügen. */
+  .station-code {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .station-sep {
+    margin-inline: 0.4em;
+    color: var(--ink-3);
+  }
+
+  .station-title .tag {
+    margin: 0 0 0 0.6em;
+    padding: 0 0.5em;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-3);
+    font-size: var(--text-s);
+    font-weight: 600;
+    line-height: 1.5;
+    vertical-align: 0.1em;
+  }
+
+  .station-text {
+    max-inline-size: 60ch;
+    color: var(--ink-2);
+    font-size: var(--text-s);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  .station:target .station-title {
+    color: var(--accent);
+  }
+
+  /* Aufgehoben: der Token verblasst. */
+  .repealed .station-node {
+    opacity: 0.45;
+  }
+
+  .repealed .station-year {
+    color: var(--ink-3);
+  }
+
+  /* Umfeld: Standards außerhalb der Richtlinie. Eine leise Zeile, alles
+     Weitere aufklappbar. Hohler Ring statt Token. */
+  .context {
+    --node: 0.5rem;
+    --lh: calc(var(--text-s) * 1.5);
+  }
+
+  .context .station-node {
+    border-color: var(--ink-3);
+    background: var(--background);
+    box-shadow: 0 0 0 4px var(--background);
+  }
+
+  .context .station-year,
+  .history .context .station-title {
+    color: var(--ink-3);
+    font-size: var(--text-s);
+    font-weight: 400;
+  }
+
+  .context .station-more {
+    margin: 0;
+  }
+
+  /* DAC8: der Gipfel der Zeitachse, als einzige Station auf einer Fläche. */
+  .current {
+    --node: 1.125rem;
+    --lh: calc(var(--text-l) * 1.2);
+    --pad: var(--space-s);
+  }
+
+  .current .station-node {
+    border-color: light-dark(#b6000c, #fa5963);
+    background: linear-gradient(155deg, #e3000f, #be000c);
+    box-shadow:
+      inset 0 1px 0 #ffffff50,
+      0 0 0 5px color-mix(in oklab, var(--primary) 22%, var(--background)),
+      0 0 0 9px var(--background);
+  }
+
+  .current .station-year {
+    color: var(--accent);
+    font-size: var(--text-l);
+  }
+
+  .current .station-body {
+    gap: var(--space-2xs);
+    padding: var(--pad) var(--space-m) var(--space-s);
+    border-radius: var(--radius);
+    background: light-dark(
+      color-mix(in oklab, var(--primary) 5%, var(--paper)),
+      color-mix(in oklab, var(--primary) 9%, var(--paper))
+    );
+  }
+
+  .history .current .station-title {
+    font-size: var(--text-l);
+  }
+
+  .current .station-text {
+    color: var(--ink);
+    font-size: var(--text-m);
+  }
+
+  .current .station-title .tag {
+    border-color: transparent;
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .current .text-link {
     margin-block-start: var(--space-3xs);
-    font-size: var(--step--1);
+    font-size: var(--text-s);
+  }
+
+  /* Vorschlag: Glas statt Graphit. */
+  .proposed .station-node {
+    border-style: dashed;
+    border-color: var(--ink-3);
+    background: var(--background);
+    box-shadow: 0 0 0 4px var(--background);
+  }
+
+  .proposed .station-title .tag {
+    border-style: dashed;
+    border-color: var(--ink-3);
+  }
+
+  /* ---------- Aufklappbare Einzelheiten ---------------------------------- */
+
+  .station-more {
+    font-size: var(--text-s);
   }
 
   .station-more summary {
+    display: block;
+    inline-size: fit-content;
     color: var(--ink-3);
-    font-weight: 560;
     cursor: pointer;
+    list-style: none;
   }
 
-  .station-more summary:hover {
+  .station-more summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Ein kleiner Winkel, der beim Öffnen kippt. */
+  .station-more summary::after {
+    content: "";
+    display: inline-block;
+    inline-size: 0.4em;
+    block-size: 0.4em;
+    margin-inline-start: 0.5em;
+    vertical-align: 0.25em;
+    border-inline-end: 1.5px solid currentColor;
+    border-block-end: 1.5px solid currentColor;
+    rotate: 45deg;
+    transition: rotate 0.15s ease;
+  }
+
+  .station-more[open] > summary::after {
+    vertical-align: 0.05em;
+    rotate: -135deg;
+  }
+
+  .station-more summary:hover,
+  .station-more[open] > summary {
     color: var(--ink);
   }
 
-  .station-facts {
+  .station-more summary h3 {
+    display: inline;
+  }
+
+  .station-detail {
+    display: grid;
+    gap: var(--space-xs);
+    max-inline-size: 60ch;
+    margin-block: var(--space-xs) var(--space-3xs);
+    padding-inline-start: var(--space-s);
+    border-inline-start: 1px solid var(--line);
+    color: var(--ink-2);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  .station-detail dl {
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
     gap: var(--space-3xs) var(--space-s);
-    margin-block-start: var(--space-xs);
   }
 
-  .station-facts dt {
+  .station-detail dt {
     color: var(--ink-3);
-  }
-
-  .station-facts dd {
-    color: var(--ink-2);
-  }
-
-  @container campaign (width < 34rem) {
-    .station-facts {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .station-facts dd + dt {
-      margin-block-start: var(--space-2xs);
-    }
   }
 
   .station-sources {
     display: grid;
     gap: var(--space-3xs);
-    margin-block-start: var(--space-xs);
     padding: 0;
+    color: var(--ink-3);
     list-style: none;
   }
 
-  .station-sources a,
-  .chronicle-sources {
+  .station-sources a {
     color: var(--ink-3);
   }
 
-  .chronicle-sources {
-    margin-block-start: var(--space-s);
-    font-size: 0.875rem;
+  ul.station-sources a::before {
+    content: "↗ ";
+  }
+
+  /* ---------- Gemeinsame Regeln ----------------------------------------- */
+
+  .common .era-head > div {
+    padding-block-end: 0;
+  }
+
+  .common .era-intro {
+    color: var(--ink-2);
+  }
+
+  .common .station-more {
+    margin-block-start: var(--space-xs);
+  }
+
+  .common .hero-actions {
+    margin-block-start: var(--space-l);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .station-more summary::after {
+      transition: none;
+    }
+  }
+
+  /* ---------- Schmal ---------------------------------------------------- */
+
+  @container campaign (width < 40rem) {
+    .chronicle,
+    .common {
+      --year-col: 2.75rem;
+      --node-col: 1rem;
+      --col-gap: var(--space-2xs);
+    }
+
+    /* Kapitel über die volle Breite; die Nut setzt dort kurz aus. */
+    .era-head > div {
+      grid-column: 1 / -1;
+    }
+
+    .era-head::before {
+      content: none;
+    }
+
+    .current {
+      --lh: calc(var(--text-m) * 1.35);
+      --pad: var(--space-xs);
+    }
+
+    .current .station-year,
+    .history .current .station-title {
+      font-size: var(--text-m);
+    }
+
+    .history .current .station-title {
+      font-weight: 600;
+    }
+
+    .current .station-text {
+      font-size: var(--text-s);
+    }
+
+    .current .station-body {
+      padding-inline: var(--space-s);
+    }
+
+    .station-detail {
+      padding-inline-start: var(--space-xs);
+    }
+
+    .station-detail dl {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .station-detail dd + dt {
+      margin-block-start: var(--space-2xs);
+    }
   }
 </style>

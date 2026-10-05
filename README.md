@@ -68,7 +68,7 @@ Five main pages per language, with URLs that follow the navigation labels:
 | Angriffe: archive of known physical attacks, map and list | `/angriffe/` | `/en/attacks/` |
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
-| Geschichte: DAC timeline since 1977 as cards per era, with what tax authorities receive today; linked from dossier, home and footer | `/geschichte/` | `/en/history/` |
+| Geschichte: a chart of what tax authorities receive today and one chronology since 1977 by era; linked from dossier, home and footer | `/geschichte/` | `/en/history/` |
 
 A top bar carries the navigation and a permanent donate button that leads to
 `#spenden` on the participation page; on mobile a bottom bar keeps donating and
@@ -138,8 +138,11 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
 - The history page (`/geschichte/`, `/en/history/`) renders `src/data/history.ts`,
   a chronology from Directive 77/799/EEC to the pending DAC recast. Its claims
   are verified in the wiki reference `dac-history-timeline`. Update
-  `historyResearchDate` in the same file with every content change; the page
-  shows it as the research status. The home page shows a selection of the
+  `historyAsOf` in the same file with every content change; the page shows it
+  as the research status and places the chart's "today" line by it. Each
+  entry keeps a one-sentence summary visible and the rest under "Details";
+  `historyStack` in the same file feeds the chart
+  (`src/components/HistoryStack.astro`). The home page shows a selection of the
   same stations (`homeSteps`) through `src/components/TimelineRail.astro`.
 - Add confirmed public milestones to `src/data/updates.ts`, with a stable ID,
   publication timestamp including timezone, both translations and an optional
