@@ -91,15 +91,15 @@ band.
 `/angriffe/` and `/en/attacks/` (`src/components/pages/AttacksPage.astro`) are
 an archive of Jameson Lopp's public-domain list of
 [known physical attacks](https://github.com/jlopp/physical-bitcoin-attacks).
-The page leads with what was done to people: it says up front that the archive
-is far from complete, and every case links to the original report and, where
-available, an archive copy. A full-screen map shows numbered hotspots that
-split up as you zoom. A filter bar along the top of the map holds the world,
-Europe and Austria views, a two-handle year range over a histogram of the cases
-in view, and the legend; zoom sits in the map's bottom-right corner. The
-sidebar heads the list with the number of known cases in the current view and
-period, then lists them newest first; pointing at a case rings its place on
-the map. Without JavaScript the page shows the full list. The dossier's `#angriffe`
+The page shows what was done to people rather than case counts: it says up
+front that the archive is far from complete, and every case links to the
+original report and, where available, an archive copy. A full-screen map shows
+numbered hotspots that split up as you zoom. A filter bar along the top of the
+map holds the world, Europe and Austria views, a two-handle year range over a
+histogram of the cases in view, and the legend; zoom sits in the map's
+bottom-right corner. The list shows the cases in view, newest first; pointing
+at a case rings its place on the map. Without JavaScript the page shows the
+full list. The dossier's `#angriffe`
 block (`src/components/AttackSummary.astro`) gives the key figures and links
 to the archive.
 

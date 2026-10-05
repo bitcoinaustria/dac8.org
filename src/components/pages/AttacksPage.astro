@@ -29,8 +29,6 @@ const newestFirst = [...attacks].sort((a, b) =>
 // Texts the map script needs; everything else is rendered here.
 const strings = en
   ? {
-      one: "known case in this view",
-      many: "known cases in this view",
       newest: "newest first",
       more: "More cases in this view: zoom in or choose a shorter period.",
       none: "No known cases in this view. The archive is incomplete.",
@@ -38,8 +36,6 @@ const strings = en
       archive: "Archive copy",
     }
   : {
-      one: "bekannter Fall in diesem Ausschnitt",
-      many: "bekannte Fälle in diesem Ausschnitt",
       newest: "die neuesten zuerst",
       more: "Weitere Fälle in diesem Ausschnitt: Zoome hinein oder wähle einen kürzeren Zeitraum.",
       none: "Keine bekannten Fälle in diesem Ausschnitt. Das Archiv ist unvollständig.",
@@ -181,15 +177,9 @@ const strings = en
       </div>
     </div>
 
-    <section class="atlas-cases" aria-labelledby="atlas-count">
-      <h2 class="atlas-count" id="atlas-count" aria-live="polite">
-        <span class="atlas-count-number" data-count>{attacks.length}</span>
-        <span class="atlas-count-text">
-          <span data-count-label>{en ? "known cases" : "bekannte Fälle"}</span>
-          <span class="atlas-count-note" data-count-note
-            >{`${firstYear}–${latestYear}, ${strings.newest}`}</span
-          >
-        </span>
+    <section class="atlas-cases" aria-labelledby="atlas-list-title">
+      <h2 class="atlas-list-title" id="atlas-list-title" data-list-title>
+        {`${firstYear}–${latestYear}, ${strings.newest}`}
       </h2>
       <ol class="atlas-list" data-list>
         {newestFirst.map((attack) => (
@@ -468,13 +458,10 @@ const strings = en
     const fill = root.querySelector<HTMLElement>("[data-fill]")!
     const bars = [...root.querySelectorAll<HTMLElement>("[data-year]")]
     const rangeLabel = root.querySelector<HTMLElement>("[data-range-label]")!
-    const count = root.querySelector<HTMLElement>("[data-count]")!
-    const countLabel = root.querySelector<HTMLElement>("[data-count-label]")!
-    const countNote = root.querySelector<HTMLElement>("[data-count-note]")!
+    const listTitle = root.querySelector<HTMLElement>("[data-list-title]")!
     const list = root.querySelector<HTMLOListElement>("[data-list]")!
     const more = root.querySelector<HTMLElement>("[data-more]")!
     const presets = [...root.querySelectorAll<HTMLButtonElement>("[data-view]")]
-    const numbers = new Intl.NumberFormat(locale)
     const firstYear = Number(from.min)
     let low = firstYear
     let high = latestYear
@@ -521,10 +508,6 @@ const strings = en
             a.attack.date ?? `${a.attack.year}`,
           ),
         )
-      count.textContent = numbers.format(visible.length)
-      countLabel.textContent = visible.length === 1 ? strings.one : strings.many
-      countNote.textContent = `${rangeLabel.textContent}, ${strings.newest}`
-
       hideSpot()
       list.replaceChildren(
         ...visible.slice(0, listLimit).map(({ attack, marker, recent }) => {
@@ -568,6 +551,7 @@ const strings = en
       fill.style.insetInlineStart = `${((low - firstYear + 0.5) / years) * 100}%`
       fill.style.insetInlineEnd = `${((latestYear - high + 0.5) / years) * 100}%`
       rangeLabel.textContent = low === high ? `${low}` : `${low}–${high}`
+      listTitle.textContent = `${rangeLabel.textContent}, ${strings.newest}`
       render()
     }
 
@@ -684,8 +668,8 @@ const strings = en
     content: " →";
   }
 
-  /* Die Zahl der Fälle im Ausschnitt ist die Kennzahl der Seite; sie bleibt
-     über der Liste stehen, während die Fälle darunter scrollen. */
+  /* Die Liste zeigt die Fälle im Ausschnitt; ihr Kopf nennt Zeitraum und
+     Reihenfolge und bleibt stehen, während die Fälle darunter scrollen. */
   .atlas-cases {
     grid-area: cases;
     overflow-y: auto;
@@ -695,40 +679,18 @@ const strings = en
     border-inline-end: 1px solid var(--border);
   }
 
-  .atlas-count {
+  .atlas-list-title {
     position: sticky;
     z-index: 1;
     inset-block-start: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
     margin-inline: calc(-1 * var(--gutter));
-    padding: var(--space-xs) var(--gutter);
+    padding: 0.625rem var(--gutter);
     border-block-end: 1px solid var(--line);
-    background: var(--background);
-    letter-spacing: normal;
-  }
-
-  .atlas-count-number {
-    min-inline-size: 2ch;
-    font-size: 2.25rem;
-    font-weight: 650;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .atlas-count-text {
-    display: grid;
-    font-size: 0.875rem;
-    font-weight: 600;
-    line-height: 1.3;
-  }
-
-  .atlas-count-note {
     color: var(--ink-3);
+    background: var(--background);
     font-size: 0.8125rem;
-    font-weight: 400;
+    font-weight: 500;
+    letter-spacing: normal;
     font-variant-numeric: tabular-nums;
   }
 
@@ -1077,7 +1039,7 @@ const strings = en
       border-block-start: 0;
     }
 
-    .atlas-count {
+    .atlas-list-title {
       inset-block-start: var(--bar-height);
     }
 
