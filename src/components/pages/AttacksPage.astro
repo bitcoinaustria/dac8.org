@@ -479,6 +479,23 @@ const strings = en
     let low = firstYear
     let high = latestYear
 
+    // A ring marks the place of the case under the pointer or in focus, even
+    // while it sits inside a hotspot.
+    const spot = L.marker([0, 0], {
+      icon: L.divIcon({
+        className: "atlas-spot",
+        html: "<span></span>",
+        iconSize: [36, 36],
+      }),
+      interactive: false,
+      keyboard: false,
+      zIndexOffset: 1000,
+    })
+    const showSpot = (marker: L.Marker) => {
+      spot.setLatLng(marker.getLatLng()).addTo(map)
+    }
+    const hideSpot = () => spot.remove()
+
     const listLimit = 60
     const render = () => {
       const bounds = map.getBounds()
@@ -508,6 +525,7 @@ const strings = en
       countLabel.textContent = visible.length === 1 ? strings.one : strings.many
       countNote.textContent = `${rangeLabel.textContent}, ${strings.newest}`
 
+      hideSpot()
       list.replaceChildren(
         ...visible.slice(0, listLimit).map(({ attack, marker, recent }) => {
           const button = element("button", "atlas-place", place(attack))
@@ -520,6 +538,10 @@ const strings = en
           })
           const item = element("li", recent ? "recent" : "")
           item.append(...caseBody(attack, button))
+          item.addEventListener("pointerenter", () => showSpot(marker))
+          item.addEventListener("pointerleave", hideSpot)
+          item.addEventListener("focusin", () => showSpot(marker))
+          item.addEventListener("focusout", hideSpot)
           return item
         }),
       )
@@ -1168,6 +1190,42 @@ const strings = en
 
   .atlas .atlas-popup .leaflet-popup-close-button {
     color: var(--ink-3);
+  }
+
+  /* Der Ring markiert auf der Karte den Ort des Falls, auf den in der Liste
+     gezeigt wird, auch wenn er in einem Hotspot steckt. Es pulsiert nur der
+     innere Kreis; Leaflet positioniert das äußere Element per transform. */
+  .atlas .atlas-spot {
+    pointer-events: none;
+  }
+
+  .atlas .atlas-spot span {
+    display: block;
+    block-size: 100%;
+    border: 2px solid var(--foreground);
+    border-radius: var(--radius-full);
+    box-shadow:
+      0 0 0 3px color-mix(in oklab, var(--background) 70%, transparent),
+      inset 0 0 0 3px color-mix(in oklab, var(--background) 70%, transparent);
+    animation: atlas-spot 1.4s ease-out infinite;
+  }
+
+  @keyframes atlas-spot {
+    from {
+      scale: 0.7;
+    }
+    50% {
+      scale: 1;
+    }
+    to {
+      scale: 0.7;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .atlas .atlas-spot span {
+      animation: none;
+    }
   }
 
   /* Ein Fall: Datum und Ort klein, darunter, was passiert ist, und die Links
