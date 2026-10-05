@@ -427,6 +427,11 @@
   display: none;
 }
 
+/* Ein einzelner Knopf direkt unter dem Einleitungssatz eines Bands. */
+.campaign section > .section-intro + .button {
+  margin-block-start: var(--space-m);
+}
+
 .text-link {
   display: inline-flex;
   align-items: baseline;
@@ -1759,13 +1764,13 @@
 
 /* ---------- Leitsatz und Einwände -------------------------------------- */
 
+/* Der Leitsatz steht über den häufigsten Einwänden: vier kurze Antworten,
+   jede mit einem Beleg zum Weiterlesen. */
 .campaign .statement {
   max-inline-size: 20ch;
   font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.625rem);
   font-weight: 600;
   font-stretch: 94%;
-/* Der Leitsatz steht über den häufigsten Einwänden: vier kurze Antworten,
-   jede mit einem Beleg zum Weiterlesen. */
   line-height: 1.04;
   letter-spacing: -0.026em;
   text-wrap: balance;
@@ -1804,21 +1809,16 @@
   text-wrap: pretty;
 }
 
+.campaign .objections .text-link {
+  margin-block-start: var(--space-3xs);
+}
+
 @container campaign (width >= 46rem) {
   .campaign .objections {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-.campaign .objections .text-link {
-  margin-block-start: var(--space-3xs);
-}
 
-
-/* ---------- Präzedenzfall ---------------------------------------------- */
-
-/* Das Jahr steht in gefrästem Metall neben dem Absatz, der es erzählt. */
-.campaign .precedent {
-  display: grid;
 /* Die Ziele unter dem Rechtsweg: drei kurze Haken in einer Zeile. */
 .campaign .checklist.goals {
   margin-block-start: var(--space-l);
@@ -1835,6 +1835,11 @@
   }
 }
 
+/* ---------- Präzedenzfall ---------------------------------------------- */
+
+/* Das Jahr steht in gefrästem Metall neben dem Absatz, der es erzählt. */
+.campaign .precedent {
+  display: grid;
   align-items: start;
   gap: var(--space-2xs) var(--space-l);
   max-inline-size: 52rem;
