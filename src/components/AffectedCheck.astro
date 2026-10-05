@@ -205,8 +205,18 @@ const options = en
     max-inline-size: var(--measure-text);
   }
 
-  .check-answers > div[hidden] {
-    display: none;
+  /* Nur die Auskunft zur gewählten Antwort steht da, schon beim ersten
+     Rendern und ohne Skript. Browser ohne :has() zeigen alle drei. */
+  @supports selector(:has(*)) {
+    .check-answers > div {
+      display: none;
+    }
+
+    .check:has(input[value="provider"]:checked) [data-answer="provider"],
+    .check:has(input[value="self"]:checked) [data-answer="self"],
+    .check:has(input[value="unsure"]:checked) [data-answer="unsure"] {
+      display: grid;
+    }
   }
 
   .check-verdict {
@@ -238,21 +248,3 @@ const options = en
     font-size: var(--step--1);
   }
 </style>
-
-<script>
-  // Ohne JavaScript bleiben alle drei Auskünfte sichtbar.
-  for (const check of document.querySelectorAll<HTMLElement>(
-    "[data-affected-check]",
-  )) {
-    const answers = check.querySelectorAll<HTMLElement>("[data-answer]")
-    const show = (value: string | null) => {
-      for (const answer of answers)
-        answer.hidden = answer.dataset.answer !== value
-    }
-    show(null)
-    check.addEventListener("change", (event) => {
-      const input = event.target as HTMLInputElement
-      if (input.name === "affected") show(input.value)
-    })
-  }
-</script>
