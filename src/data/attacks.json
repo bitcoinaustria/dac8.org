@@ -189,7 +189,7 @@
     "city": "Florianópolis",
     "country": "Brazil",
     "countryCode": "BR",
-    "lat": -27.6,
+    "lat": 27.6,
     "lng": -48.55,
     "headline": "Wife of crypto exchange owner kidnapped and ransomed",
     "reports": [
@@ -773,7 +773,7 @@
     "city": "Lanseria (Johannesburg)",
     "country": "South Africa",
     "countryCode": "ZA",
-    "lat": -25.94,
+    "lat": 25.94,
     "lng": 27.93,
     "headline": "Bitcoin trader drugged, beaten, and tortured before transferring BTC to attackers",
     "reports": [
@@ -917,7 +917,7 @@
     "city": "Porto Velho",
     "country": "Brazil",
     "countryCode": "BR",
-    "lat": -8.74,
+    "lat": 8.74,
     "lng": -63.9,
     "headline": "Gang kidnaps, ties victim to a tree and beats him for hours. Attacks got nothing because his phone couldn't access funds. Attackers were arrested over next several years.",
     "reports": [
@@ -1529,7 +1529,7 @@
     "city": "São Pedro da Aldeia",
     "country": "Brazil",
     "countryCode": "BR",
-    "lat": -22.83,
+    "lat": 22.83,
     "lng": -42.1,
     "headline": "Crypto Trader's Murder Blamed On Social Media Bragging",
     "reports": [
@@ -1577,7 +1577,7 @@
     "city": "Westmere (Auckland)",
     "country": "New Zealand",
     "countryCode": "NZ",
-    "lat": -36.87,
+    "lat": 36.87,
     "lng": 174.72,
     "headline": "Safe containing $4M of cryptocurrency ripped from house",
     "reports": [
@@ -1721,7 +1721,7 @@
     "city": "Bali",
     "country": "Indonesia",
     "countryCode": "ID",
-    "lat": -8.41,
+    "lat": 8.41,
     "lng": 115.19,
     "headline": "Robbers take $400K in cash & bitcoin at knifepoint",
     "reports": [
@@ -2397,7 +2397,7 @@
     "city": "Melbourne",
     "country": "Australia",
     "countryCode": "AU",
-    "lat": -37.81,
+    "lat": 37.81,
     "lng": 144.96,
     "headline": "TikTok influencer lures Saudi royal to her home where he was imprisoned until he handed over $40K in BTC.",
     "reports": [
@@ -2413,7 +2413,7 @@
     "city": "Bali",
     "country": "Indonesia",
     "countryCode": "ID",
-    "lat": -8.41,
+    "lat": 8.41,
     "lng": 115.19,
     "headline": "4 men invade crypto blogger's home, beat him until he transfers $284,000 in BTC.",
     "reports": [
@@ -2445,7 +2445,7 @@
     "city": "Sydney",
     "country": "Australia",
     "countryCode": "AU",
-    "lat": -33.87,
+    "lat": 33.87,
     "lng": 151.21,
     "headline": "Gang kidnaps boyfriend of crypto trader's relative, demands $5M ransom while torturing him for 6 days.",
     "reports": [
@@ -3197,7 +3197,7 @@
     "city": "São Paulo",
     "country": "Brazil",
     "countryCode": "BR",
-    "lat": -23.55,
+    "lat": 23.55,
     "lng": -46.63,
     "headline": "Woman whose office was being renovated told construction worker about being a crypto investor; soon after a gang invaded her home and robbed her of over $50,000 USD in bitcoin along with other valuables.",
     "reports": [
@@ -3329,7 +3329,7 @@
     "city": "Melbourne",
     "country": "Australia",
     "countryCode": "AU",
-    "lat": -37.81,
+    "lat": 37.81,
     "lng": 144.96,
     "headline": "Crypto ATM stolen from shopping center.",
     "reports": [
@@ -3577,7 +3577,7 @@
     "city": "Campo Limpo Paulista",
     "country": "Brazil",
     "countryCode": "BR",
-    "lat": -23.21,
+    "lat": 23.21,
     "lng": -46.7,
     "headline": "Criminals invade home, hold family hostage, force transfer of $16,000 USD in cryptocurrencies",
     "reports": [
@@ -3609,7 +3609,7 @@
     "city": "São Paulo",
     "country": "Brazil",
     "countryCode": "BR",
-    "lat": -23.55,
+    "lat": 23.55,
     "lng": -46.63,
     "headline": "Man lured into OTC trade, ambushed and kidnapped at shopping center. Wife called police and gave them location of his phone; he was rescued.",
     "reports": [
@@ -3700,6 +3700,22 @@
     ]
   },
   {
+    "date": "2025-03-01",
+    "year": 2025,
+    "city": "Le Mont-sur-Lausanne",
+    "country": "Schweiz/Suisse/Svizzera/Svizra",
+    "countryCode": "CH",
+    "lat": 46.55,
+    "lng": 6.64,
+    "headline": "Victim was lured into a trap, beaten, tied up, forced to give access to his accounts, emptied of around $200,000.",
+    "reports": [
+      {
+        "url": "https://www.20min.ch/fr/story/vaud-un-francais-poursuivi-pour-agression-liee-a-un-vol-de-cryptos-103545470",
+        "archive": "https://archive.is/yYVpM"
+      }
+    ]
+  },
+  {
     "date": "2025-03-02",
     "year": 2025,
     "city": "Houston",
@@ -3737,7 +3753,7 @@
     "city": "Imbiribeira (Recife)",
     "country": "Brazil",
     "countryCode": "BR",
-    "lat": -8.09,
+    "lat": 8.09,
     "lng": -34.92,
     "headline": "Crypto manager surveilled, mother kidnapped, ransomed for 5 BTC. 4 people were later arrested.",
     "reports": [
@@ -3753,7 +3769,7 @@
     "city": "Ipiranga (São Paulo)",
     "country": "Brazil",
     "countryCode": "BR",
-    "lat": -23.63,
+    "lat": 23.63,
     "lng": -46.6,
     "headline": "Man kidnapped by 2 fake police officers, held for a week and drugged, demanded $50M, escaped on his own.",
     "reports": [
@@ -3905,7 +3921,7 @@
     "city": "Coronel Bogado",
     "country": "Paraguay",
     "countryCode": "PY",
-    "lat": -27.44,
+    "lat": 27.44,
     "lng": -55.66,
     "headline": "3 Chinese citizens entered Paraguay illegally, tried to rob a mining facility, got in a shootout with police, were deported.",
     "reports": [
@@ -4037,7 +4053,7 @@
     "city": "Goiânia",
     "country": "Brazil",
     "countryCode": "BR",
-    "lat": -16.68,
+    "lat": 16.68,
     "lng": -49.25,
     "headline": "Victim tricked into attending a business meeting that ended up being a wrench attack trap. Attack failed, 2 attackers were killed by police, mastermind was caught fleeing to Miami.",
     "reports": [
@@ -4541,7 +4557,7 @@
     "city": "Ciudad del Este",
     "country": "Paraguay",
     "countryCode": "PY",
-    "lat": -25.52,
+    "lat": 25.52,
     "lng": -54.64,
     "headline": "Armed assault on mining facility results in death of owner and 1 attacker.",
     "reports": [
@@ -4728,6 +4744,22 @@
       {
         "url": "https://www.dimsumdaily.hk/attempted-armed-robbery-at-mong-kok-crypto-exchange-owner-injured-but-no-losses/",
         "archive": "https://archive.is/60XPJ"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-13",
+    "year": 2025,
+    "city": "Solihull",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 52.41,
+    "lng": -1.78,
+    "headline": "Couple assaulted by 3 masked men when they returned home. Forced to transfer large sum of cryptocurrency and high value watches.",
+    "reports": [
+      {
+        "url": "https://www.bbc.com/news/articles/c60qxvngnjj8o",
+        "archive": "https://archive.is/fBbuM"
       }
     ]
   },
@@ -5537,7 +5569,7 @@
     "city": "Vitória",
     "country": "Brazil",
     "countryCode": "BR",
-    "lat": -20.32,
+    "lat": 20.32,
     "lng": -40.34,
     "headline": "Victim kidnapped out of his Porsche while on the street. Victim handed over $3K USD before escaping. 1 suspect arrested.",
     "reports": [
@@ -5656,6 +5688,22 @@
       {
         "url": "https://www.bandab.com.br/nacional/falsos-policiais-sequestram-empresario-extorquem-750-mil/amp/",
         "archive": "https://archive.is/uQZga"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-13",
+    "year": 2026,
+    "city": "Taverny",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 49.03,
+    "lng": 2.22,
+    "headline": "A family held hostage and assaulted over €100 in cryptocurrency.",
+    "reports": [
+      {
+        "url": "https://www.leparisien.fr/val-d-oise-95/une-famille-sequestree-et-violentee-pour-100-euros-de-cryptomonnaies-six-suspects-mis-en-examen-apres-un-home-jacking-a-taverny-23-09-2026-2PJADY7AEVD6FH2AW7KIAL4TWE.php",
+        "archive": "https://archive.is/rk0Oj"
       }
     ]
   },
