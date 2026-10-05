@@ -1,0 +1,485 @@
+---
+import { historyAsOf, historyFor, historyStack } from "@/data/history"
+import type { Language } from "@/lib/i18n"
+
+// The reporting duties as stacked bars: one row per step, from the year it
+// applies until today. Read top to bottom, the stack grows towards DAC8.
+// Each row is a link with its years spelled out; the bars only repeat them.
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+const en = language === "en"
+const status = Object.fromEntries(
+  historyFor(language).map((entry) => [entry.id, entry.status]),
+)
+
+const axisStart = 2002
+const axisEnd = 2031
+const asOf = new Date(historyAsOf)
+const yearStart = Date.UTC(asOf.getUTCFullYear(), 0, 1)
+const today =
+  asOf.getUTCFullYear() + (asOf.getTime() - yearStart) / (365 * 86_400_000)
+const x = (year: number) =>
+  `${(((year - axisStart) / (axisEnd - axisStart)) * 100).toFixed(2)}%`
+const ticks = [2005, 2010, 2015, 2020, 2030]
+
+const groups = historyStack.map((group) => ({
+  label: group.label[language],
+  rows: group.rows.map((row) => {
+    const kind = status[row.id] ?? "past"
+    const end =
+      row.until !== undefined
+        ? row.until + 1
+        : kind === "proposed"
+          ? axisEnd
+          : today
+    const span =
+      kind === "proposed"
+        ? en
+          ? `planned from ${row.from}`
+          : `geplant ab ${row.from}`
+        : row.until !== undefined
+          ? `${row.from}–${row.until}`
+          : en
+            ? `since ${row.from}`
+            : `seit ${row.from}`
+    return {
+      ...row,
+      kind,
+      step: typeof row.step === "string" ? row.step : row.step[language],
+      what: row.what[language],
+      span,
+      style: `--from: ${x(row.from)}; --to: ${x(end)}`,
+    }
+  }),
+}))
+
+let index = 0
+---
+
+<figure
+  class="stack"
+  aria-labelledby="stack-title"
+  style={`--today: ${x(today)}; ${ticks.map((tick, i) => `--tick-${i}: ${x(tick)}`).join("; ")}`}
+>
+  <figcaption>
+    <h2 id="stack-title">
+      {en ? "What tax authorities receive today" : "Was die Steuerbehörden heute bekommen"}
+    </h2>
+    <p>
+      {en
+        ? "One row per step, from the year it applies."
+        : "Eine Zeile je Stufe, ab dem Jahr, in dem sie angewendet wird."}
+    </p>
+    <ul class="stack-legend" aria-hidden="true">
+      <li class="past">{en ? "In force" : "In Kraft"}</li>
+      <li class="repealed">{en ? "Repealed" : "Aufgehoben"}</li>
+      <li class="proposed">{en ? "Proposal" : "Vorschlag"}</li>
+    </ul>
+  </figcaption>
+
+  <div class="stack-axis" aria-hidden="true">
+    <span class="stack-today">{en ? "Today" : "Heute"}</span>
+  </div>
+
+  {groups.map((group) => (
+    <section class="stack-group" aria-label={group.label}>
+      <h3><span>{group.label}</span></h3>
+      <ul>
+        {group.rows.map((row) => (
+          <li class={row.kind} style={`${row.style}; --i: ${index++}`}>
+            <a href={`#${row.id}`}>
+              <strong>{row.step}</strong>
+              <span class="stack-what">
+                {row.what}
+                <span class="visually-hidden">, {row.span}</span>
+              </span>
+              <span class="stack-track" aria-hidden="true">
+                <span class="stack-bar">
+                  <span class="stack-year">
+                    {row.from}
+                  </span>
+                </span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+
+  <div class="stack-axis bottom" aria-hidden="true">
+    {ticks.map((tick, i) => (
+      <span style={`--at: var(--tick-${i})`}>{tick}</span>
+    ))}
+  </div>
+</figure>
+
+<style>
+  .stack {
+    --stack-cols: 4.5rem minmax(0, 24rem) minmax(0, 1fr);
+    --bar: light-dark(#3b4147, #a7afb6);
+    --grid: color-mix(in oklab, var(--foreground) 9%, transparent);
+    --today-line: color-mix(in oklab, var(--foreground) 50%, transparent);
+    --row: 2.125rem;
+    display: grid;
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.3;
+  }
+
+  figcaption {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: var(--space-3xs) var(--space-m);
+    margin-block-end: var(--space-m);
+  }
+
+  figcaption h2 {
+    max-inline-size: none;
+    font-size: var(--step-1);
+    font-stretch: 100%;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  figcaption p {
+    grid-column: 1;
+    color: var(--ink-3);
+  }
+
+  .stack-legend {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-s);
+    padding: 0;
+    color: var(--ink-3);
+    font-size: 0.8125rem;
+    list-style: none;
+  }
+
+  .stack-legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+  }
+
+  .stack-legend li::before {
+    content: "";
+    inline-size: 1.5rem;
+    block-size: 0.5rem;
+    border-radius: 3px;
+    background: var(--swatch);
+  }
+
+  /* Gemeinsame Füllungen für Balken und Legende. */
+  .past,
+  .current {
+    --swatch: var(--bar);
+  }
+
+  .repealed {
+    --swatch: repeating-linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--bar) 55%, transparent) 0 2px,
+      transparent 2px 5px
+    );
+  }
+
+  .stack-legend .repealed::before {
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--bar) 45%, transparent);
+  }
+
+  .proposed {
+    --swatch: transparent;
+  }
+
+  .stack-legend .proposed::before {
+    border: 1.5px dashed var(--ink-3);
+  }
+
+  /* Achse: Jahre unten, „Heute“ oben, beide über der Spur. */
+  .stack-axis {
+    display: grid;
+    grid-template-columns: var(--stack-cols);
+    block-size: 1.5rem;
+    color: var(--ink-3);
+    font-size: 0.75rem;
+  }
+
+  .stack-axis > * {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: end;
+    justify-self: start;
+    margin-inline-start: var(--at);
+    translate: -50% 0;
+    white-space: nowrap;
+  }
+
+  .stack-axis .stack-today {
+    --at: var(--today);
+    color: var(--ink);
+    font-weight: 600;
+    padding-block-end: 0.2rem;
+  }
+
+  .stack-axis.bottom > * {
+    align-self: start;
+    padding-block-start: 0.35rem;
+  }
+
+  .stack-group h3 {
+    display: grid;
+    grid-template-columns: var(--stack-cols);
+    color: var(--ink-3);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    line-height: var(--row);
+    text-transform: uppercase;
+  }
+
+  .stack-group h3 span {
+    grid-column: 1 / 3;
+    padding-inline-start: var(--space-2xs);
+  }
+
+  .stack-group h3::after {
+    content: "";
+    grid-column: 3;
+    background: var(--track-bg);
+  }
+
+  .stack-group ul {
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Hilfslinien, Heute-Linie und die Zukunft rechts davon. Jede Spur trägt
+     sie selbst, damit sie schmal mit der Spur umbrechen. */
+  .stack {
+    --track-bg:
+      linear-gradient(var(--today-line), var(--today-line)) var(--today) 0 /
+      1px 100% no-repeat,
+      linear-gradient(var(--grid), var(--grid)) var(--tick-0) 0 / 1px 100%
+      no-repeat,
+      linear-gradient(var(--grid), var(--grid)) var(--tick-1) 0 / 1px 100%
+      no-repeat,
+      linear-gradient(var(--grid), var(--grid)) var(--tick-2) 0 / 1px 100%
+      no-repeat,
+      linear-gradient(var(--grid), var(--grid)) var(--tick-3) 0 / 1px 100%
+      no-repeat,
+      linear-gradient(var(--grid), var(--grid)) var(--tick-4) 0 / 1px 100%
+      no-repeat,
+      linear-gradient(
+        to right,
+        transparent var(--today),
+        color-mix(in oklab, var(--foreground) 4%, transparent) var(--today)
+      )
+      0 0 / 100% 100% no-repeat;
+  }
+
+  .stack-group li a {
+    display: grid;
+    grid-template-columns: var(--stack-cols);
+    align-items: center;
+    min-block-size: var(--row);
+    border-radius: var(--radius-sm);
+    color: var(--ink-2);
+    text-decoration: none;
+  }
+
+  .stack-group li a strong {
+    padding-inline-start: var(--space-2xs);
+    color: var(--ink);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .stack-what {
+    padding-inline-end: var(--space-s);
+    text-wrap: pretty;
+  }
+
+  .stack-track {
+    position: relative;
+    align-self: stretch;
+    background: var(--track-bg);
+  }
+
+  .stack-bar {
+    position: absolute;
+    inset-block: 50% auto;
+    inset-inline-start: var(--from);
+    inline-size: calc(var(--to) - var(--from));
+    block-size: 0.75rem;
+    translate: 0 -50%;
+    border-radius: 3px;
+    background: var(--swatch);
+    transform-origin: left center;
+  }
+
+  /* Was gilt, läuft über heute hinaus weiter: ein auslaufender Schweif. */
+  :is(.past, .current) .stack-track::after {
+    content: "";
+    position: absolute;
+    inset-block: 50% auto;
+    inset-inline: var(--today) 0;
+    block-size: 0.75rem;
+    translate: 0 -50%;
+    background: linear-gradient(
+      to right,
+      color-mix(in oklab, var(--swatch) 40%, transparent),
+      transparent 70%
+    );
+  }
+
+  .repealed .stack-bar {
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--bar) 45%, transparent);
+  }
+
+  .proposed .stack-bar {
+    border: 1.5px dashed var(--ink-3);
+  }
+
+  .stack-year {
+    position: absolute;
+    inset-inline-end: calc(100% + 0.4rem);
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    color: var(--ink-3);
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .repealed :is(strong, .stack-what) {
+    color: var(--ink-3);
+  }
+
+  .repealed .stack-what {
+    font-style: normal;
+  }
+
+  /* DAC8: die jüngste Pflicht über Privatpersonen, in Markenrot. */
+  li.current a {
+    background: color-mix(in oklab, var(--primary) 9%, transparent);
+  }
+
+  li.current a strong,
+  li.current .stack-year {
+    color: var(--accent);
+  }
+
+  li.current .stack-what {
+    color: var(--ink);
+    font-weight: 560;
+  }
+
+  li.current {
+    --swatch: var(--primary);
+  }
+
+  li.current .stack-bar {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 28%, transparent);
+  }
+
+  .stack-group li a:hover {
+    background: var(--panel);
+  }
+
+  .stack-group li a:hover .stack-what {
+    color: var(--ink);
+  }
+
+  .stack-group li.current a:hover {
+    background: color-mix(in oklab, var(--primary) 15%, transparent);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .stack-bar {
+      animation: stack-grow 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      animation-delay: calc(150ms + var(--i) * 55ms);
+    }
+
+    .stack-track::after {
+      animation: stack-fade 0.6s ease both;
+      animation-delay: calc(650ms + var(--i) * 55ms);
+    }
+  }
+
+  @keyframes stack-grow {
+    from {
+      scale: 0 1;
+    }
+  }
+
+  @keyframes stack-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* Schmal: Beschriftung über der Spur, die Spur über die volle Breite. */
+  @container campaign (width < 46rem) {
+    .stack {
+      --stack-cols: 4.5rem minmax(0, 1fr);
+    }
+
+    figcaption {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stack-legend {
+      grid-column: 1;
+      grid-row: auto;
+      margin-block-start: var(--space-2xs);
+    }
+
+    .stack-axis {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stack-axis > * {
+      grid-column: 1;
+    }
+
+    .stack-group h3 {
+      display: block;
+      padding-inline-start: 0;
+      margin-block-start: var(--space-xs);
+      line-height: 2;
+    }
+
+    .stack-group h3::after {
+      content: none;
+    }
+
+    .stack-group li a {
+      grid-template-columns: var(--stack-cols);
+      align-items: start;
+      padding-block: 0.35rem 0;
+      row-gap: 0.2rem;
+    }
+
+    .stack-track {
+      grid-column: 1 / -1;
+      block-size: 1rem;
+    }
+  }
+</style>
