@@ -2,13 +2,12 @@
 import Artwork from "@/components/Artwork.astro"
 import CampaignPartners from "@/components/CampaignPartners.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
+import HistoryStack from "@/components/HistoryStack.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import StoryScene from "@/components/StoryScene.astro"
-import TimelineRail from "@/components/TimelineRail.astro"
 import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
-import { homeSteps } from "@/data/history"
 ---
 
 <Layout>
@@ -111,6 +110,18 @@ import { homeSteps } from "@/data/history"
       >
     </section>
 
+    <section id="geschichte" aria-labelledby="geschichte-heading">
+      <h2 id="geschichte-heading">Wie es zu DAC8 kam</h2>
+      <p class="section-intro">
+        1977 begann es mit Amtshilfe im Einzelfall. Heute melden Banken,
+        Plattformen und Krypto-Anbieter jedes Jahr, Stufe um Stufe mehr.
+      </p>
+      <HistoryStack language="de" compact />
+      <a class="text-link" href="/geschichte/"
+        >Die ganze Geschichte seit 1977</a
+      >
+    </section>
+
     <section id="risiko" aria-labelledby="risiko-heading">
       <h2 id="risiko-heading">Was daraus werden kann</h2>
       <div class="story chain">
@@ -169,36 +180,40 @@ import { homeSteps } from "@/data/history"
       <h2 id="faelle-heading">Das ist schon passiert</h2>
       <ul class="cases">
         <li>
-          <span class="case-year">2020</span>
-          <strong>Ledger</strong>
+          <span class="case-kind">Hardware-Wallet-Shop</span>
+          <strong class="case-figure">272.000</strong>
           <p>
-            Adressen von 272.000 Wallet-Käufern gelangen ins Netz. Es folgen
-            Erpressungsdrohungen und Briefe an die Wohnadresse.
+            Namen und Adressen von Käufern im Netz. Danach Erpressungsdrohungen
+            und Briefe an die Wohnadresse.
           </p>
+          <span class="case-source">Ledger, 2020</span>
         </li>
         <li>
-          <span class="case-year">2025</span>
-          <strong>Coinbase</strong>
+          <span class="case-kind">Identifizierungsdienst</span>
+          <strong class="case-figure">≈ 6.300</strong>
           <p>
-            Bestochene Support-Mitarbeiter kopieren Kundendaten, Betrüger nutzen
-            sie. Coinbase rechnet mit bis zu 400 Millionen Dollar Kosten.
+            Nutzer mit Ausweisbild, Wohn- und Wallet-Adresse in einem Datensatz.
+            Danach eine Lösegeldforderung.
           </p>
+          <span class="case-source">Fractal ID, 2024</span>
         </li>
         <li>
-          <span class="case-year">2026</span>
-          <strong>Waltio</strong>
+          <span class="case-kind">Börse</span>
+          <strong class="case-figure">bis 400 Mio. $</strong>
           <p>
-            Steuerdaten eines französischen Krypto-Steuerdienstes werden
-            gestohlen. Laut Gendarmerie wählen Täter damit Opfer aus.
+            Kosten schätzt Coinbase, nachdem bestochene Mitarbeiter Kundendaten
+            an Betrüger gaben.
           </p>
+          <span class="case-source">Coinbase, 2025</span>
         </li>
         <li>
-          <span class="case-year">2026</span>
-          <strong>Französische Finanzverwaltung</strong>
+          <span class="case-kind">Finanzverwaltung</span>
+          <strong class="case-figure">1,2 Mio.</strong>
           <p>
-            Angreifer erbeuten 1,2 Millionen Datensätze aus dem Kontenregister
-            und Steuerdaten von 678.000 Menschen und Unternehmen.
+            Datensätze aus dem Kontenregister, mit IBAN, Namen und Anschrift,
+            abgegriffen mit gestohlenen Zugängen von Beamten.
           </p>
+          <span class="case-source">Frankreich, 2026</span>
         </li>
       </ul>
       <div class="link-row">
@@ -209,18 +224,6 @@ import { homeSteps } from "@/data/history"
           >Weitere Fälle und Quellen</a
         >
       </div>
-    </section>
-
-    <section id="geschichte" aria-labelledby="geschichte-heading">
-      <h2 id="geschichte-heading">Wie es dazu kam</h2>
-      <p class="section-intro">
-        Aus der Amtshilfe im Einzelfall von 1977 sind jährliche Meldungen über
-        Löhne, Bankkonten, Plattformverkäufe und Kryptowerte geworden.
-      </p>
-      <TimelineRail language="de" steps={homeSteps} />
-      <a class="text-link" href="/geschichte/"
-        >Die ganze Geschichte seit 1977</a
-      >
     </section>
 
     <section id="weg" aria-labelledby="weg-heading">

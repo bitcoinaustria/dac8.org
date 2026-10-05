@@ -854,14 +854,3 @@ export const historyFor = (language: Language) =>
       })),
     }
   })
-
-// The steps shown on the home page, each linking to its entry.
-export const homeSteps = [
-  "amtshilfe-1977",
-  "dac1",
-  "dac2",
-  "dac7",
-  "dac8",
-  "dac9",
-  "neufassung",
-]

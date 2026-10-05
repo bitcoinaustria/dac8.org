@@ -1803,36 +1803,47 @@
   }
 }
 
-/* Fälle: vier kurze Einträge in einer Zeile, Jahr über Name, gefräste
-   Kante darüber wie bei den Kennzahlen. */
+/* Fälle: vier Kacheln, jede mit einer Zahl als Einstieg. Oben steht, welche
+   Art Stelle die Daten verloren hat, unten Name und Jahr. */
 .campaign .cases {
   display: grid;
-  gap: var(--space-l) var(--space-l);
+  gap: var(--space-s);
   margin-block-start: var(--space-l);
   padding: 0;
   list-style: none;
 }
 
 .campaign .cases li {
-  display: grid;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-2xs);
-  padding-block-start: var(--space-s);
-  background: var(--metal-rule) top / 100% 2px no-repeat;
+  padding: var(--space-m);
+  border-radius: var(--radius-xl);
+  background: var(--panel);
 }
 
-.campaign .case-year {
-  color: var(--accent);
+.campaign .case-kind {
+  color: var(--ink-3);
   font-size: var(--step--1);
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-weight: 500;
 }
 
-.campaign .cases strong {
-  font-size: var(--step-1);
-  font-weight: 560;
-  line-height: 1.25;
-  letter-spacing: -0.012em;
+.campaign .case-figure {
+  inline-size: fit-content;
+  margin-block: var(--space-2xs) var(--space-3xs);
+  background: linear-gradient(
+    170deg,
+    light-dark(#59616a, #f2f4f5),
+    light-dark(#1f2429, #8d959c)
+  );
+  background-clip: text;
+  color: transparent;
+  font-size: clamp(2rem, 1.6rem + 1.4vw, 2.625rem);
+  font-weight: 600;
+  font-stretch: 94%;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
 }
 
 .campaign .cases p {
@@ -1842,7 +1853,15 @@
   text-wrap: pretty;
 }
 
-@container campaign (width >= 40rem) {
+.campaign .case-source {
+  margin-block-start: auto;
+  padding-block-start: var(--space-s);
+  color: var(--ink);
+  font-size: var(--step--1);
+  font-weight: 560;
+}
+
+@container campaign (width >= 36rem) {
   .campaign .cases {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

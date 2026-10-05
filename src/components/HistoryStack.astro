@@ -1,15 +1,18 @@
 ---
 import { historyAsOf, historyFor, historyStack } from "@/data/history"
-import type { Language } from "@/lib/i18n"
+import { type Language, pathFor } from "@/lib/i18n"
 
 // The reporting duties as stacked bars: one row per step, from the year it
 // applies until today. Read top to bottom, the stack grows towards DAC8.
 // Each row is a link with its years spelled out; the bars only repeat them.
+// "compact" is the homepage teaser: only the duties about individuals, no
+// caption or legend, rows linking into the history page.
 interface Props {
   language: Language
+  compact?: boolean
 }
 
-const { language } = Astro.props
+const { language, compact = false } = Astro.props
 const en = language === "en"
 const status = Object.fromEntries(
   historyFor(language).map((entry) => [entry.id, entry.status]),
@@ -25,7 +28,8 @@ const x = (year: number) =>
   `${(((year - axisStart) / (axisEnd - axisStart)) * 100).toFixed(2)}%`
 const ticks = [2005, 2010, 2015, 2020, 2030]
 
-const groups = historyStack.map((group) => ({
+const base = compact ? pathFor("history", language) : ""
+const groups = historyStack.slice(0, compact ? 1 : undefined).map((group) => ({
   label: group.label[language],
   rows: group.rows.map((row) => {
     const kind = status[row.id] ?? "past"
@@ -51,6 +55,7 @@ const groups = historyStack.map((group) => ({
       step: typeof row.step === "string" ? row.step : row.step[language],
       what: row.what[language],
       span,
+      href: `${base}#${row.id}`,
       style: `--from: ${x(row.from)}; --to: ${x(end)}`,
     }
   }),
@@ -60,10 +65,12 @@ let index = 0
 ---
 
 <figure
-  class="stack"
-  aria-labelledby="stack-title"
+  class:list={["stack", { compact }]}
+  aria-labelledby={compact ? undefined : "stack-title"}
+  aria-label={compact ? (en ? "Reporting duties about individuals since 2005" : "Meldepflichten über Privatpersonen seit 2005") : undefined}
   style={`--today: ${x(today)}`}
 >
+  {!compact && (
   <figcaption>
     <h2 id="stack-title">
       {en ? "What tax authorities receive today" : "Was die Steuerbehörden heute bekommen"}
@@ -79,6 +86,7 @@ let index = 0
       <li class="proposed">{en ? "Proposal" : "Vorschlag"}</li>
     </ul>
   </figcaption>
+  )}
 
   <div class="stack-axis" aria-hidden="true">
     <span class="stack-today">{en ? "Today" : "Heute"}</span>
@@ -86,11 +94,11 @@ let index = 0
 
   {groups.map((group) => (
     <section class="stack-group" aria-label={group.label}>
-      <h3><span>{group.label}</span></h3>
+      {!compact && <h3><span>{group.label}</span></h3>}
       <ul>
         {group.rows.map((row) => (
           <li class={row.kind} style={`${row.style}; --i: ${index++}`}>
-            <a href={`#${row.id}`}>
+            <a href={row.href}>
               <strong>{row.step}</strong>
               <span class="stack-what">
                 {row.what}
@@ -405,6 +413,19 @@ let index = 0
   @keyframes stack-grow {
     from {
       scale: 0 1;
+    }
+  }
+
+  /* Kompakt auf der Startseite: dieselben Zeilen, etwas mehr Luft, weil
+     keine Gruppenüberschrift sie gliedert. */
+  .stack.compact {
+    --row: 2.25rem;
+    max-inline-size: 60rem;
+  }
+
+  @container campaign (width >= 46rem) {
+    .stack.compact {
+      --stack-cols: 4.5rem minmax(0, 15rem) minmax(0, 1fr);
     }
   }
 
