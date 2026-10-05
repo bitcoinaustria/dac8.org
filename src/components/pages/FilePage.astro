@@ -1,0 +1,24 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import MetaPage from "@/components/MetaPage.astro"
+import { languageFor } from "@/lib/i18n"
+const language = languageFor(Astro.url.pathname)
+const en = language === "en"
+---
+
+<Layout>
+  <MetaPage slot="head" />
+  <article class="campaign">
+    <header class="hero">
+      <div class="hero-text">
+        <h1>
+          {en ? "Your DAC8 file." : "Deine DAC8-Akte."}
+          <span>{en ? "Year after year." : "Jahr für Jahr."}</span>
+        </h1>
+        <p class="lead">
+          {en ? "What your crypto provider reports about you every year, and what it keeps." : "Was dein Krypto-Anbieter jedes Jahr über dich meldet und was er aufbewahrt."}
+        </p>
+      </div>
+    </header>
+  </article>
+</Layout>
