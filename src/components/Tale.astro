@@ -1,0 +1,254 @@
+---
+import Artwork from "@/components/Artwork.astro"
+import type { ArtworkId } from "@/data/artwork"
+import type { Language } from "@/lib/i18n"
+
+// The homepage story: one numbered sequence from the account to the
+// doorstep. Each step is a picture, a line and one or two sentences. Narrow,
+// or without JavaScript, every step shows its own picture. Wide, the
+// pictures sit on one pinned stage and change as the steps scroll past.
+interface Step {
+  art: ArtworkId
+  title: string
+  text: string
+  // A short label above the first step of a chapter.
+  chapter?: string
+}
+
+interface Props {
+  language: Language
+  steps: Step[]
+}
+
+const { language, steps } = Astro.props
+const number = (index: number) => String(index + 1).padStart(2, "0")
+---
+
+<div class="tale" data-tale>
+  <ol class="tale-steps">
+    {steps.map((step, index) => (
+      <li class="tale-step" data-step={index}>
+        <Artwork id={step.art} language={language} size="scene" caption={false} />
+        <div class="tale-text">
+          {step.chapter && <p class="tale-chapter">{step.chapter}</p>}
+          <h3>
+            <span class="tale-number">{number(index)}</span>
+            {step.title}
+          </h3>
+          <p>{step.text}</p>
+        </div>
+      </li>
+    ))}
+  </ol>
+  <div class="tale-stage" aria-hidden="true" hidden>
+    {steps.map((step, index) => (
+      <div class="tale-frame" data-frame={index}>
+        <Artwork id={step.art} language={language} size="scene" caption={false} />
+      </div>
+    ))}
+    <p class="tale-count">
+      <span data-tale-current>01</span>
+      <span class="tale-total">/ {number(steps.length - 1)}</span>
+    </p>
+  </div>
+</div>
+
+<style>
+  .tale-steps {
+    display: grid;
+    gap: clamp(3rem, 2rem + 3vw, 4.5rem);
+    margin-block-start: var(--space-l);
+    padding: 0;
+    list-style: none;
+  }
+
+  .tale-step {
+    display: grid;
+    gap: var(--space-m);
+  }
+
+  .tale-step > :global(.artwork) {
+    --art-height: 17rem;
+    margin-block-start: 0;
+  }
+
+  .tale-chapter {
+    margin-block-end: var(--space-xs);
+    color: var(--ink-3);
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .tale-text h3 {
+    max-inline-size: 20ch;
+    font-size: clamp(1.375rem, 1.15rem + 0.8vw, 1.75rem);
+    font-weight: 600;
+    font-stretch: 94%;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .tale-number {
+    display: block;
+    margin-block-end: var(--space-2xs);
+    color: var(--accent);
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .tale-text > p:last-child {
+    max-inline-size: 42ch;
+    margin-block-start: var(--space-xs);
+    color: var(--ink-2);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  /* Mittel: Bild und Text nebeneinander, jede Szene für sich. */
+  @container campaign (width >= 46rem) {
+    .tale-step {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+      align-items: center;
+      column-gap: var(--space-xl);
+    }
+
+    .tale-step > :global(.artwork) {
+      --art-height: 19rem;
+    }
+  }
+
+  /* Breit mit Skript: links die Schritte, rechts die angeheftete Bühne. Der
+     aktive Schritt steht voll, die übrigen treten zurück. */
+  @media (width >= 64rem) {
+    .tale[data-staged] {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      align-items: start;
+      column-gap: var(--space-2xl);
+    }
+
+    /* Unten etwas Luft, damit auch der letzte Schritt die Mitte erreicht,
+       solange die Bühne noch steht. */
+    .tale[data-staged] .tale-steps {
+      gap: 0;
+      margin-block-start: 0;
+      padding-block-end: 12svh;
+    }
+
+    .tale[data-staged] .tale-step {
+      grid-template-columns: minmax(0, 1fr);
+      align-content: center;
+      min-block-size: 70svh;
+      opacity: 0.3;
+      transition: opacity 0.35s ease;
+    }
+
+    .tale[data-staged] .tale-step[data-active] {
+      opacity: 1;
+    }
+
+    .tale[data-staged] .tale-step > :global(.artwork) {
+      display: none;
+    }
+
+    .tale[data-staged] .tale-stage {
+      position: sticky;
+      inset-block-start: calc(var(--header-height) + var(--space-m));
+      grid-column: 2;
+      grid-row: 1;
+      display: grid;
+      place-items: center;
+      block-size: calc(100svh - var(--header-height) - 2 * var(--space-m));
+    }
+
+    .tale-frame {
+      grid-area: 1 / 1;
+      opacity: 0;
+      translate: 0 0.75rem;
+      transition:
+        opacity 0.45s ease,
+        translate 0.45s ease;
+    }
+
+    .tale-frame[data-active] {
+      opacity: 1;
+      translate: 0 0;
+    }
+
+    .tale-frame > :global(.artwork) {
+      --art-height: min(30rem, 60svh);
+      margin-block-start: 0;
+    }
+
+    .tale-count {
+      position: absolute;
+      inset-block-end: 0;
+      inset-inline-end: 0;
+      color: var(--accent);
+      font-size: var(--step--1);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+    }
+
+    .tale-total {
+      color: var(--ink-3);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tale-step,
+    .tale-frame {
+      transition: none;
+    }
+
+    .tale-frame {
+      translate: none;
+    }
+  }
+</style>
+
+<script>
+  const wide = matchMedia("(min-width: 64rem)")
+
+  for (const tale of document.querySelectorAll<HTMLElement>("[data-tale]")) {
+    const steps = [...tale.querySelectorAll<HTMLElement>("[data-step]")]
+    const frames = [...tale.querySelectorAll<HTMLElement>("[data-frame]")]
+    const stage = tale.querySelector<HTMLElement>(".tale-stage")
+    const current = tale.querySelector<HTMLElement>("[data-tale-current]")
+    if (!stage || !current || !("IntersectionObserver" in window)) continue
+
+    const show = (active: number) => {
+      for (const [index, frame] of frames.entries())
+        frame.toggleAttribute("data-active", index === active)
+      for (const [index, step] of steps.entries())
+        step.toggleAttribute("data-active", index === active)
+      current.textContent = String(active + 1).padStart(2, "0")
+    }
+
+    // A step becomes active when it crosses the middle of the viewport.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries)
+          if (entry.isIntersecting)
+            show(Number((entry.target as HTMLElement).dataset.step))
+      },
+      { rootMargin: "-45% 0px -45% 0px" },
+    )
+
+    const apply = () => {
+      const staged = wide.matches
+      tale.toggleAttribute("data-staged", staged)
+      stage.hidden = !staged
+      observer.disconnect()
+      if (staged) for (const step of steps) observer.observe(step)
+    }
+
+    show(0)
+    apply()
+    wide.addEventListener("change", apply)
+  }
+</script>

@@ -6,7 +6,7 @@ import HistoryStack from "@/components/HistoryStack.astro"
 import LeakMatrix from "@/components/LeakMatrix.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
-import StoryScene from "@/components/StoryScene.astro"
+import Tale from "@/components/Tale.astro"
 import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
 ---
@@ -30,7 +30,9 @@ import { campaignStatus } from "@/data/campaign"
           <a class="button primary" href="/en/get-involved/#spenden"
             >Support the case</a
           >
-          <a class="button" href="/en/dossier/">What DAC8 requires</a>
+          <a class="button" href="/en/your-file/"
+            >What DAC8 reports about you</a
+          >
         </nav>
       </div>
       <Artwork
@@ -67,101 +69,100 @@ import { campaignStatus } from "@/data/campaign"
       </dl>
     </section>
     <section id="problem" aria-labelledby="problem-heading">
-      <h2 id="problem-heading">What DAC8 does with your data</h2>
-      <div class="story trio">
-        <StoryScene
-          art="accountToRecord"
-          language="en"
-          title="Your account becomes a file."
+      <h2 id="problem-heading">What happens to your data</h2>
+      <Tale
+        language="en"
+        steps={[
+          {
+            art: "accountToRecord",
+            chapter: "What the provider collects",
+            title: "Your account becomes a file.",
+            text: "Name, address, tax number and date of birth, next to your annual totals per crypto-asset: bought, sold, exchanged and moved to your own wallets.",
+          },
+          {
+            art: "paragraphWatch",
+            title: "Everyone recorded. Without suspicion.",
+            text: "Providers prepare this for all customers, including those who will not ultimately be reported. Austrian law requires it, going beyond the EU directive.",
+          },
+          {
+            art: "yearsOnFile",
+            title: "More about you. Every year.",
+            text: "The provider keeps each annual report for ten years. Your ID, wallet addresses and transactions stay for up to ten years after the customer relationship ends.",
+          },
+          {
+            art: "dataHack",
+            chapter: "What it can lead to",
+            title: "Stored. Hacked. Sold.",
+            text: "The more data sits in one place, and the longer, the more a break-in pays. Exchanges, identity verification services and tax administrations have already lost such data.",
+          },
+          {
+            art: "profileFourSources",
+            title: "Every leak sharpens your profile.",
+            text: "Your face from the web, your wallet from a leak, your holdings from a hacked tax service. Together they reveal who you are, where you live and what you probably own.",
+          },
+          {
+            art: "rankedPortrait",
+            title: "The more you move, the higher you rank.",
+            text: "In Austria, fraudsters phish for crypto holders with fake tax-office messages. A breach at a provider would hand them the list ready-made, sorted by volume.",
+          },
+          {
+            art: "targetAtHome",
+            title: "Your profile. Your address. A target.",
+            text: "This is organised crime. In the first half of 2026, the French interior ministry counted 77 kidnappings, unlawful detentions and extortion cases involving crypto-assets.",
+          },
+        ]}
+      />
+      <div class="link-row">
+        <a class="text-link" href="/en/your-file/"
+          >What DAC8 reports about you</a
         >
-          <p>
-            Name, address, tax number and date of birth, next to your annual
-            totals per crypto-asset: bought, sold, exchanged and moved to your
-            own wallets.
-          </p>
-        </StoryScene>
-        <StoryScene
-          art="paragraphWatch"
-          language="en"
-          title="Everyone recorded. Without suspicion."
-        >
-          <p>
-            Providers prepare this for all customers, including those who will
-            not ultimately be reported. Austrian law requires it, going beyond
-            the EU directive.
-          </p>
-        </StoryScene>
-        <StoryScene
-          art="yearsOnFile"
-          language="en"
-          title="More about you. Every year."
-        >
-          <p>
-            The provider keeps each annual report for ten years. Your ID, wallet
-            addresses and transactions stay for up to ten years after the
-            customer relationship ends.
-          </p>
-        </StoryScene>
+        <a class="text-link" href="/en/dossier/#problem">Why it is a problem</a>
       </div>
-      <a class="text-link" href="/en/dossier/#gemeldet"
-        >What is reported and what the provider keeps</a
-      >
     </section>
-    <section id="geschichte" aria-labelledby="geschichte-heading">
-      <h2 id="geschichte-heading">How DAC8 came about</h2>
+
+    <section id="handeln" class="peak" aria-labelledby="handeln-heading">
+      <h2 id="handeln-heading">
+        We are fighting back.
+        <span>Join in.</span>
+      </h2>
       <p class="section-intro">
-        It began in 1977 with assistance in individual cases. Today banks,
-        platforms and crypto providers report every year, more with each step.
+        Bitcoin Austria is preparing a legal challenge to the blanket
+        collection. This is how you help most:
       </p>
-      <HistoryStack language="en" compact />
-      <a class="text-link" href="/en/history/">The full history since 1977</a>
-    </section>
-    <section id="risiko" aria-labelledby="risiko-heading">
-      <h2 id="risiko-heading">What it can lead to</h2>
-      <div class="story chain">
-        <StoryScene art="dataHack" language="en" title="Stored. Hacked. Sold.">
+      <ul class="peak-actions">
+        <li class="peak-lead">
+          <Artwork id="financeTheCase" language="en" caption={false} />
+          <h3>Help fund the case</h3>
+          <p>Your donation pays for the proceedings.</p>
+          <a class="button primary" href="/en/get-involved/#spenden">Donate</a>
+        </li>
+        <li>
+          <h3>Ask your provider</h3>
           <p>
-            The more data sits in one place, and the longer, the more a break-in
-            pays. Exchanges, identity verification services and tax
-            administrations have already lost such data.
+            A GDPR request: what it processes about you for DAC8, for how long
+            and for whom.
           </p>
-        </StoryScene>
-        <StoryScene
-          art="profileFourSources"
-          language="en"
-          title="Every leak sharpens your profile."
+          <a class="button" href="/en/access-request/">Request access</a>
+        </li>
+        <li>
+          <h3>Write to your MPs</h3>
+          <p>
+            A letter to the National Council, drafted in your browser and sent
+            by you.
+          </p>
+          <a class="button" href="/en/get-involved/#abgeordnete"
+            >Write a letter</a
+          >
+        </li>
+      </ul>
+      <div class="link-row">
+        <a class="text-link" href="/en/proceedings/">Follow the case</a>
+        <a class="text-link" href="/en/get-involved/#teilen"
+          >Share the campaign</a
         >
-          <p>
-            Your face from the web, your wallet from a leak, your holdings from
-            a hacked tax service. Together they reveal who you are, where you
-            live and what you probably own.
-          </p>
-        </StoryScene>
-        <StoryScene
-          art="rankedPortrait"
-          language="en"
-          title="The more you move, the higher you rank."
-        >
-          <p>
-            In Austria, fraudsters phish for crypto holders with fake tax-office
-            messages. A breach at a provider would hand them the list
-            ready-made, sorted by volume.
-          </p>
-        </StoryScene>
-        <StoryScene
-          art="targetAtHome"
-          language="en"
-          title="Your profile. Your address. A target."
-        >
-          <p>
-            This is organised crime. In the first half of 2026, the French
-            interior ministry counted 77 kidnappings, unlawful detentions and
-            extortion cases involving crypto-assets.
-          </p>
-        </StoryScene>
       </div>
-      <a class="text-link" href="/en/dossier/#problem">Why it is a problem</a>
     </section>
+
     <section id="faelle" aria-labelledby="faelle-heading">
       <h2 id="faelle-heading">This has already happened</h2>
       <p class="section-intro">
@@ -178,6 +179,65 @@ import { campaignStatus } from "@/data/campaign"
         >
       </div>
     </section>
+
+    <section id="geschichte" aria-labelledby="geschichte-heading">
+      <h2 id="geschichte-heading">How DAC8 came about</h2>
+      <p class="section-intro">
+        It began in 1977 with assistance in individual cases. Today banks,
+        platforms and crypto providers report every year, more with each step.
+      </p>
+      <HistoryStack language="en" compact />
+      <a class="text-link" href="/en/history/">The full history since 1977</a>
+    </section>
+
+    <section id="einwaende" aria-labelledby="einwaende-heading">
+      <h2 id="einwaende-heading" class="statement">
+        Privacy needs no justification.
+        <span>State interference does.</span>
+      </h2>
+      <ul class="objections">
+        <li>
+          <strong>“I have nothing to hide.”</strong>
+          <p>
+            You are recorded anyway, without suspicion and year after year. Such
+            data stores are lost again and again, and fraudsters and violent
+            criminals use them.
+          </p>
+          <a class="text-link" href="#faelle">This has already happened</a>
+        </li>
+        <li>
+          <strong>“It’s just tax data.”</strong>
+          <p>
+            The report contains identity and annual totals. The provider also
+            holds your ID, wallet addresses and individual transactions, for up
+            to ten years after the customer relationship ends.
+          </p>
+          <a class="text-link" href="/en/dossier/#gemeldet"
+            >What gets reported</a
+          >
+        </li>
+        <li>
+          <strong>“I only use my own wallet.”</strong>
+          <p>
+            Then DAC8 does not report you. But if you buy from a provider and
+            transfer to your wallet, the value and units appear in its annual
+            report, and it keeps the address.
+          </p>
+          <a class="text-link" href="/en/your-file/">Your DAC8 file</a>
+        </li>
+        <li>
+          <strong>“It’s about tax fairness.”</strong>
+          <p>
+            A goal does not justify every means. Where there is specific
+            suspicion of a crime, authorities should investigate that case, with
+            a legal basis and independent oversight. We reject collecting
+            everyone’s financial data as a precaution.
+          </p>
+          <a class="text-link" href="/en/dossier/#forderungen">Our demands</a>
+        </li>
+      </ul>
+    </section>
+
     <section id="weg" aria-labelledby="weg-heading">
       <h2 id="weg-heading">What we are doing</h2>
       <div class="columns">
@@ -192,79 +252,12 @@ import { campaignStatus } from "@/data/campaign"
         </p>
       </div>
       <LegalRoute language="en" />
+      <ul class="checklist goals" aria-label="What we aim to achieve">
+        <li>Overturn disproportionate obligations</li>
+        <li>Limit data collection</li>
+        <li>Secure effective protection for those affected</li>
+      </ul>
       <a class="text-link" href="/en/proceedings/">Where the case stands</a>
-    </section>
-    <section id="handeln" aria-labelledby="handeln-heading">
-      <h2 id="handeln-heading">How you can help</h2>
-      <div class="act">
-        <div class="act-lead">
-          <Artwork id="financeTheCase" language="en" caption={false} />
-          <div>
-            <h3>Help fund the case</h3>
-            <p>Your donation pays for the proceedings.</p>
-            <a class="button primary" href="/en/get-involved/#spenden"
-              >Donate</a
-            >
-          </div>
-        </div>
-        <ul class="act-list">
-          <li>
-            <a href="/en/get-involved/#abgeordnete">
-              <strong>Write to your MPs</strong>
-              <span
-                >A letter to the National Council, drafted in your browser and
-                sent by you.</span
-              >
-            </a>
-          </li>
-          <li>
-            <a href="/en/proceedings/">
-              <strong>Follow the case</strong>
-              <span>We publish news and next steps here and via RSS.</span>
-            </a>
-          </li>
-          <li>
-            <a href="/en/get-involved/#teilen">
-              <strong>Share the campaign</strong>
-              <span
-                >Ready-made graphics on the story, in German and English.</span
-              >
-            </a>
-          </li>
-        </ul>
-      </div>
-    </section>
-    <section id="vision" class="vision" aria-labelledby="vision-heading">
-      <h2 id="vision-heading" class="statement">
-        Privacy needs no justification.
-        <span>State interference does.</span>
-      </h2>
-      <p class="section-intro">
-        Where there is specific suspicion of a crime, authorities should
-        investigate that case, with a legal basis and independent oversight. We
-        reject collecting everyone’s financial data as a precaution.
-      </p>
-      <div class="vision-points">
-        <div>
-          <h3>What we aim to achieve</h3>
-          <ul class="checklist">
-            <li>Overturn disproportionate obligations</li>
-            <li>Limit data collection</li>
-            <li>Secure effective protection for those affected</li>
-          </ul>
-        </div>
-        <div class="precedent">
-          <h3>Why we are confident</h3>
-          <p class="precedent-year" aria-hidden="true">2014</p>
-          <div>
-            <p>
-              In 2014, the Court of Justice struck down the data retention
-              directive and Austria’s Constitutional Court struck down the
-              national law.
-            </p>
-          </div>
-        </div>
-      </div>
     </section>
 
     <section id="position" aria-labelledby="position-heading">

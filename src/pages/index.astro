@@ -6,7 +6,7 @@ import HistoryStack from "@/components/HistoryStack.astro"
 import LeakMatrix from "@/components/LeakMatrix.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
-import StoryScene from "@/components/StoryScene.astro"
+import Tale from "@/components/Tale.astro"
 import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
 ---
@@ -31,7 +31,7 @@ import { campaignStatus } from "@/data/campaign"
           <a class="button primary" href="/mitmachen/#spenden"
             >Prozess unterstützen</a
           >
-          <a class="button" href="/dossier/">Was DAC8 verlangt</a>
+          <a class="button" href="/deine-akte/">Was DAC8 über dich meldet</a>
         </nav>
       </div>
       <Artwork
@@ -70,111 +70,94 @@ import { campaignStatus } from "@/data/campaign"
     </section>
 
     <section id="problem" aria-labelledby="problem-heading">
-      <h2 id="problem-heading">Was DAC8 mit deinen Daten macht</h2>
-      <div class="story trio">
-        <StoryScene
-          art="accountToRecord"
-          language="de"
-          title="Dein Konto wird zur Akte."
+      <h2 id="problem-heading">Was mit deinen Daten passiert</h2>
+      <Tale
+        language="de"
+        steps={[
+          {
+            art: "accountToRecord",
+            chapter: "Was der Anbieter sammelt",
+            title: "Dein Konto wird zur Akte.",
+            text: "Name, Anschrift, Steuernummer und Geburtsdatum, daneben deine Jahreswerte je Kryptowert: gekauft, verkauft, getauscht und auf eigene Wallets übertragen.",
+          },
+          {
+            art: "paragraphWatch",
+            title: "Alle erfasst. Ohne Verdacht.",
+            text: "Der Anbieter bereitet das für alle Kunden auf, auch für jene, die am Ende nicht gemeldet werden. So verlangt es das österreichische Gesetz, über die EU-Richtlinie hinaus.",
+          },
+          {
+            art: "yearsOnFile",
+            title: "Jedes Jahr mehr über dich.",
+            text: "Jede Jahresmeldung bleibt zehn Jahre beim Anbieter. Ausweis, Wallet-Adressen und Transaktionen bleiben bis zehn Jahre nach Ende der Kundenbeziehung.",
+          },
+          {
+            art: "dataHack",
+            chapter: "Was daraus werden kann",
+            title: "Gespeichert. Gehackt. Verkauft.",
+            text: "Je mehr an einer Stelle liegt und je länger, desto lohnender der Einbruch. Börsen, Identifizierungsdienste und Finanzverwaltungen haben solche Daten schon verloren.",
+          },
+          {
+            art: "profileFourSources",
+            title: "Jedes Leck macht dein Profil genauer.",
+            text: "Gesicht aus dem Netz, Wallet aus einem Leck, Bestände aus einem gehackten Steuerdienst. Zusammen ergibt das, wer du bist, wo du wohnst und was du vermutlich besitzt.",
+          },
+          {
+            art: "rankedPortrait",
+            title: "Wer viel bewegt, steht oben auf der Liste.",
+            text: "Betrüger fischen in Österreich mit gefälschten FinanzOnline-Nachrichten nach Krypto-Besitzern. Ein Leck beim Anbieter würde ihnen die Liste fertig liefern, sortiert nach Volumen.",
+          },
+          {
+            art: "targetAtHome",
+            title: "Dein Profil. Deine Adresse. Ein Angriffsziel.",
+            text: "Dahinter steht organisierte Kriminalität. In Frankreich zählte das Innenministerium im ersten Halbjahr 2026 77 Entführungen, Freiheitsberaubungen und Erpressungen rund um Kryptowerte.",
+          },
+        ]}
+      />
+      <div class="link-row">
+        <a class="text-link" href="/deine-akte/">Was DAC8 über dich meldet</a>
+        <a class="text-link" href="/dossier/#problem"
+          >Was daran problematisch ist</a
         >
-          <p>
-            Name, Anschrift, Steuernummer und Geburtsdatum, daneben deine
-            Jahreswerte je Kryptowert: gekauft, verkauft, getauscht und auf
-            eigene Wallets übertragen.
-          </p>
-        </StoryScene>
-        <StoryScene
-          art="paragraphWatch"
-          language="de"
-          title="Alle erfasst. Ohne Verdacht."
-        >
-          <p>
-            Der Anbieter bereitet das für alle Kunden auf, auch für jene, die am
-            Ende nicht gemeldet werden. So verlangt es das österreichische
-            Gesetz, über die EU-Richtlinie hinaus.
-          </p>
-        </StoryScene>
-        <StoryScene
-          art="yearsOnFile"
-          language="de"
-          title="Jedes Jahr mehr über dich."
-        >
-          <p>
-            Jede Jahresmeldung bleibt zehn Jahre beim Anbieter. Ausweis,
-            Wallet-Adressen und Transaktionen bleiben bis zehn Jahre nach Ende
-            der Kundenbeziehung.
-          </p>
-        </StoryScene>
       </div>
-      <a class="text-link" href="/dossier/#gemeldet"
-        >Was gemeldet wird und was beim Anbieter bleibt</a
-      >
     </section>
 
-    <section id="geschichte" aria-labelledby="geschichte-heading">
-      <h2 id="geschichte-heading">Wie es zu DAC8 kam</h2>
+    <section id="handeln" class="peak" aria-labelledby="handeln-heading">
+      <h2 id="handeln-heading">
+        Wir gehen dagegen vor.
+        <span>Mach mit.</span>
+      </h2>
       <p class="section-intro">
-        1977 begann es mit Amtshilfe im Einzelfall. Heute melden Banken,
-        Plattformen und Krypto-Anbieter jedes Jahr, Stufe um Stufe mehr.
+        Bitcoin Austria bereitet ein Verfahren gegen die anlasslose Erfassung
+        vor. So hilfst du am meisten:
       </p>
-      <HistoryStack language="de" compact />
-      <a class="text-link" href="/geschichte/"
-        >Die ganze Geschichte seit 1977</a
-      >
-    </section>
-
-    <section id="risiko" aria-labelledby="risiko-heading">
-      <h2 id="risiko-heading">Was daraus werden kann</h2>
-      <div class="story chain">
-        <StoryScene
-          art="dataHack"
-          language="de"
-          title="Gespeichert. Gehackt. Verkauft."
-        >
+      <ul class="peak-actions">
+        <li class="peak-lead">
+          <Artwork id="financeTheCase" language="de" caption={false} />
+          <h3>Den Prozess mittragen</h3>
+          <p>Mit deiner Spende bezahlen wir das Verfahren.</p>
+          <a class="button primary" href="/mitmachen/#spenden">Spenden</a>
+        </li>
+        <li>
+          <h3>Frag deinen Anbieter</h3>
           <p>
-            Je mehr an einer Stelle liegt und je länger, desto lohnender der
-            Einbruch. Börsen, Identifizierungsdienste und Finanzverwaltungen
-            haben solche Daten schon verloren.
+            Eine Anfrage nach der DSGVO: was er über dich für DAC8 verarbeitet,
+            wie lange und an wen.
           </p>
-        </StoryScene>
-        <StoryScene
-          art="profileFourSources"
-          language="de"
-          title="Jedes Leck macht dein Profil genauer."
-        >
+          <a class="button" href="/auskunft/">Auskunft verlangen</a>
+        </li>
+        <li>
+          <h3>Schreib deinen Abgeordneten</h3>
           <p>
-            Gesicht aus dem Netz, Wallet aus einem Leck, Bestände aus einem
-            gehackten Steuerdienst. Zusammen ergibt das, wer du bist, wo du
-            wohnst und was du vermutlich besitzt.
+            Ein Brief an den Nationalrat, vorbereitet in deinem Browser, von dir
+            abgeschickt.
           </p>
-        </StoryScene>
-        <StoryScene
-          art="rankedPortrait"
-          language="de"
-          title="Wer viel bewegt, steht oben auf der Liste."
-        >
-          <p>
-            Betrüger fischen in Österreich mit gefälschten
-            FinanzOnline-Nachrichten nach Krypto-Besitzern. Ein Leck beim
-            Anbieter würde ihnen die Liste fertig liefern, sortiert nach
-            Volumen.
-          </p>
-        </StoryScene>
-        <StoryScene
-          art="targetAtHome"
-          language="de"
-          title="Dein Profil. Deine Adresse. Ein Angriffsziel."
-        >
-          <p>
-            Dahinter steht organisierte Kriminalität. In Frankreich zählte das
-            Innenministerium im ersten Halbjahr 2026 77 Entführungen,
-            Freiheitsberaubungen und Erpressungen rund um Kryptowerte.
-          </p>
-        </StoryScene>
+          <a class="button" href="/mitmachen/#abgeordnete">Brief schreiben</a>
+        </li>
+      </ul>
+      <div class="link-row">
+        <a class="text-link" href="/verfahren/">Das Verfahren verfolgen</a>
+        <a class="text-link" href="/mitmachen/#teilen">Die Kampagne teilen</a>
       </div>
-      <a class="text-link" href="/dossier/#problem"
-        >Was daran problematisch ist</a
-      >
     </section>
 
     <section id="faelle" aria-labelledby="faelle-heading">
@@ -194,6 +177,64 @@ import { campaignStatus } from "@/data/campaign"
       </div>
     </section>
 
+    <section id="geschichte" aria-labelledby="geschichte-heading">
+      <h2 id="geschichte-heading">Wie es zu DAC8 kam</h2>
+      <p class="section-intro">
+        1977 begann es mit Amtshilfe im Einzelfall. Heute melden Banken,
+        Plattformen und Krypto-Anbieter jedes Jahr, Stufe um Stufe mehr.
+      </p>
+      <HistoryStack language="de" compact />
+      <a class="text-link" href="/geschichte/"
+        >Die ganze Geschichte seit 1977</a
+      >
+    </section>
+
+    <section id="einwaende" aria-labelledby="einwaende-heading">
+      <h2 id="einwaende-heading" class="statement">
+        Privatsphäre braucht keine Rechtfertigung.
+        <span>Staatliche Eingriffe schon.</span>
+      </h2>
+      <ul class="objections">
+        <li>
+          <strong>„Ich habe nichts zu verbergen.“</strong>
+          <p>
+            Erfasst wirst du trotzdem, ohne Verdacht und Jahr für Jahr. Solche
+            Bestände gehen immer wieder verloren, und Betrüger und Gewalttäter
+            nutzen sie.
+          </p>
+          <a class="text-link" href="#faelle">Das ist schon passiert</a>
+        </li>
+        <li>
+          <strong>„Das sind doch nur Steuerdaten.“</strong>
+          <p>
+            Gemeldet werden Identität und Jahreswerte. Beim Anbieter liegen dazu
+            Ausweis, Wallet-Adressen und einzelne Transaktionen, bis zehn Jahre
+            nach Ende der Kundenbeziehung.
+          </p>
+          <a class="text-link" href="/dossier/#gemeldet">Was gemeldet wird</a>
+        </li>
+        <li>
+          <strong>„Ich nutze nur meine eigene Wallet.“</strong>
+          <p>
+            Dann meldet DAC8 dich nicht. Kaufst du aber bei einem Anbieter und
+            überträgst auf deine Wallet, stehen Wert und Stückzahl in seiner
+            Jahresmeldung, und er speichert die Adresse.
+          </p>
+          <a class="text-link" href="/deine-akte/">Deine DAC8-Akte</a>
+        </li>
+        <li>
+          <strong>„Es geht doch um Steuergerechtigkeit.“</strong>
+          <p>
+            Ein Ziel rechtfertigt nicht jedes Mittel. Bei konkretem Verdacht
+            sollen Behörden gezielt ermitteln, auf gesetzlicher Grundlage und
+            unter unabhängiger Kontrolle. Die Finanzdaten aller auf Vorrat zu
+            erfassen, lehnen wir ab.
+          </p>
+          <a class="text-link" href="/dossier/#forderungen">Was wir fordern</a>
+        </li>
+      </ul>
+    </section>
+
     <section id="weg" aria-labelledby="weg-heading">
       <h2 id="weg-heading">Was wir tun</h2>
       <div class="columns">
@@ -208,82 +249,12 @@ import { campaignStatus } from "@/data/campaign"
         </p>
       </div>
       <LegalRoute language="de" />
+      <ul class="checklist goals" aria-label="Was wir erreichen wollen">
+        <li>Unverhältnismäßige Pflichten aufheben</li>
+        <li>Die Datensammlung begrenzen</li>
+        <li>Wirksamen Schutz für Betroffene durchsetzen</li>
+      </ul>
       <a class="text-link" href="/verfahren/">Zum Stand des Verfahrens</a>
-    </section>
-
-    <section id="handeln" aria-labelledby="handeln-heading">
-      <h2 id="handeln-heading">Was du tun kannst</h2>
-      <div class="act">
-        <div class="act-lead">
-          <Artwork id="financeTheCase" language="de" caption={false} />
-          <div>
-            <h3>Den Prozess mittragen</h3>
-            <p>Mit deiner Spende bezahlen wir das Verfahren.</p>
-            <a class="button primary" href="/mitmachen/#spenden">Spenden</a>
-          </div>
-        </div>
-        <ul class="act-list">
-          <li>
-            <a href="/mitmachen/#abgeordnete">
-              <strong>Deinen Abgeordneten schreiben</strong>
-              <span
-                >Ein Brief an den Nationalrat, vorbereitet in deinem Browser,
-                von dir abgeschickt.</span
-              >
-            </a>
-          </li>
-          <li>
-            <a href="/verfahren/">
-              <strong>Das Verfahren verfolgen</strong>
-              <span
-                >Neuigkeiten und nächste Schritte veröffentlichen wir hier und
-                per RSS.</span
-              >
-            </a>
-          </li>
-          <li>
-            <a href="/mitmachen/#teilen">
-              <strong>Die Kampagne teilen</strong>
-              <span
-                >Fertige Grafiken zur Geschichte, auf Deutsch und Englisch.</span
-              >
-            </a>
-          </li>
-        </ul>
-      </div>
-    </section>
-
-    <section id="vision" class="vision" aria-labelledby="vision-heading">
-      <h2 id="vision-heading" class="statement">
-        Privatsphäre braucht keine Rechtfertigung.
-        <span>Staatliche Eingriffe schon.</span>
-      </h2>
-      <p class="section-intro">
-        Bei konkretem Verdacht auf eine Straftat sollen Behörden gezielt
-        ermitteln, auf gesetzlicher Grundlage und unter unabhängiger Kontrolle.
-        Die Finanzdaten aller auf Vorrat zu erfassen, lehnen wir ab.
-      </p>
-      <div class="vision-points">
-        <div>
-          <h3>Was wir erreichen wollen</h3>
-          <ul class="checklist">
-            <li>Unverhältnismäßige Pflichten aufheben</li>
-            <li>Die Datensammlung begrenzen</li>
-            <li>Wirksamen Schutz für Betroffene durchsetzen</li>
-          </ul>
-        </div>
-        <div class="precedent">
-          <h3>Warum wir zuversichtlich sind</h3>
-          <p class="precedent-year" aria-hidden="true">2014</p>
-          <div>
-            <p>
-              2014 hob der Europäische Gerichtshof die Richtlinie zur
-              Vorratsdatenspeicherung auf, der Verfassungsgerichtshof das
-              österreichische Gesetz.
-            </p>
-          </div>
-        </div>
-      </div>
     </section>
 
     <section id="position" aria-labelledby="position-heading">
