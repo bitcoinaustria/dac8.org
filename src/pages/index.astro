@@ -48,7 +48,7 @@ import { campaignStatus } from "@/data/campaign"
         <div>
           <dt>
             <strong>Kunden</strong>
-            werden erfasst, auch wenn am Ende nichts gemeldet wird.
+            werden erfasst, auch jene, die am Ende nicht gemeldet werden.
           </dt>
           <dd>Alle</dd>
         </div>
@@ -83,12 +83,12 @@ import { campaignStatus } from "@/data/campaign"
           {
             art: "paragraphWatch",
             title: "Alle erfasst. Ohne Verdacht.",
-            text: "Der Anbieter bereitet das für alle Kunden auf, auch für jene, die am Ende nicht gemeldet werden. So verlangt es das österreichische Gesetz, über die EU-Richtlinie hinaus.",
+            text: "Der Anbieter bereitet das für alle Kunden auf, auch für jene, die am Ende nicht gemeldet werden, etwa weil sie nur in einem Staat ohne Datenaustausch steuerlich ansässig sind. So verlangt es das österreichische Gesetz, über die EU-Richtlinie hinaus.",
           },
           {
             art: "yearsOnFile",
             title: "Jedes Jahr mehr über dich.",
-            text: "Jede Jahresmeldung bleibt zehn Jahre beim Anbieter. Ausweis, Wallet-Adressen und Transaktionen bleiben bis zehn Jahre nach Ende der Kundenbeziehung.",
+            text: "Schon die Geldwäschevorschriften verpflichten deinen Anbieter, Ausweis, Transaktionen und Angaben zu deinen Wallet-Adressen bis zehn Jahre nach Ende der Kundenbeziehung aufzubewahren. Das Krypto-Meldepflichtgesetz verknüpft diesen Bestand nun mit deinen Steuerdaten und verlangt eine weitere Aufbewahrung von zehn Jahren nach jedem Meldejahr.",
           },
           {
             art: "dataHack",
@@ -210,9 +210,10 @@ import { campaignStatus } from "@/data/campaign"
         <li>
           <strong>„Das sind doch nur Steuerdaten.“</strong>
           <p>
-            Gemeldet werden Identität und Jahreswerte. Beim Anbieter liegen dazu
-            Ausweis, Wallet-Adressen und einzelne Transaktionen, bis zehn Jahre
-            nach Ende der Kundenbeziehung.
+            Gemeldet werden Identität und Jahreswerte. Ausweis, Wallet-Adressen
+            und einzelne Transaktionen hat der Anbieter schon aus der
+            Geldwäscheprüfung, bis zehn Jahre nach Ende der Kundenbeziehung. Mit
+            DAC8 werden sie mit deinen Steuerdaten verknüpft.
           </p>
           <a class="text-link" href="/dossier/#gemeldet">Was gemeldet wird</a>
         </li>
@@ -221,7 +222,8 @@ import { campaignStatus } from "@/data/campaign"
           <p>
             Dann meldet DAC8 dich nicht. Kaufst du aber bei einem Anbieter und
             überträgst auf deine Wallet, stehen Wert und Stückzahl in der Regel
-            in seiner Jahresmeldung, und er speichert die Adresse.
+            in seiner Jahresmeldung. Die Adresse hat er ohnehin aus den
+            Geldwäscheunterlagen.
           </p>
           <a class="text-link" href="/deine-akte/">Deine DAC8-Akte</a>
         </li>

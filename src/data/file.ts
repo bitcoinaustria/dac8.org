@@ -8,8 +8,13 @@ import type { Language } from "@/lib/i18n"
 // campaign lawyer's notes, so change them together. Two rules from those
 // notes: the report never tells the tax office that a wallet is yours, and
 // what goes to the tax office stays apart from what the provider keeps.
+// Tax residence decides whether a report is sent at all (§ 7 Abs. 4 and
+// § 14 Abs. 1 Krypto-MPfG): residents of EU countries and of non-EU countries
+// that exchange crypto data with Austria are reported; the provider prepares
+// the data for everyone else too (§ 20 Abs. 1).
 
 export type ProviderAnswer = "provider" | "self" | "unsure"
+export type Residence = "at" | "eu" | "third"
 export type Activity = "buy" | "sell" | "swap" | "transfer"
 export type Asset = "btc" | "eth" | "other"
 export type Field = "value" | "units" | "count"
@@ -23,6 +28,7 @@ export type RowId =
 
 export type FileAnswers = {
   provider: ProviderAnswer
+  residence: Residence
   since: number
   until: number | "open"
   activities: Activity[]
@@ -55,6 +61,7 @@ export const chartTicks = span(firstYear, lastUntil + retention).filter(
 
 export const defaults: FileAnswers = {
   provider: "provider",
+  residence: "at",
   since: 2021,
   until: "open",
   activities: ["buy", "transfer"],
@@ -62,6 +69,7 @@ export const defaults: FileAnswers = {
 }
 
 export const providerAnswers: ProviderAnswer[] = ["provider", "self", "unsure"]
+export const residences: Residence[] = ["at", "eu", "third"]
 export const activities: Activity[] = ["buy", "sell", "swap", "transfer"]
 export const assets: Asset[] = ["btc", "eth", "other"]
 export const fields: Field[] = ["value", "units", "count"]
@@ -85,6 +93,11 @@ export const labels = {
       provider: "Ja",
       self: "Nein, nur eigene Wallet",
       unsure: "Weiß ich nicht",
+    },
+    residence: {
+      at: "Österreich",
+      eu: "Anderer EU-Staat",
+      third: "Außerhalb der EU",
     },
     activity: {
       buy: "Kaufen",
@@ -122,6 +135,11 @@ export const labels = {
       provider: "Yes",
       self: "No, only my own wallet",
       unsure: "Not sure",
+    },
+    residence: {
+      at: "Austria",
+      eu: "Another EU country",
+      third: "Outside the EU",
     },
     activity: {
       buy: "Buy",
@@ -273,9 +291,13 @@ export const fileTexts = (answers: FileAnswers, language: Language) => {
         ? en
           ? `If you use such a provider, it reports every year from 2026 how much ${assetPhrase} you ${verbPhrase}.`
           : `Nutzt du so einen Anbieter, meldet er ab 2026 jedes Jahr, wie viel ${assetPhrase} du ${verbPhrase}.`
-        : en
-          ? `From 2026, your provider reports every year how much ${assetPhrase} you ${verbPhrase}.`
-          : `Ab 2026 meldet dein Anbieter jedes Jahr, wie viel ${assetPhrase} du ${verbPhrase}.`
+        : answers.residence === "third"
+          ? en
+            ? `From 2026, your provider prepares every year how much ${assetPhrase} you ${verbPhrase}. It is reported only if your country exchanges crypto data with Austria.`
+            : `Ab 2026 bereitet dein Anbieter jedes Jahr auf, wie viel ${assetPhrase} du ${verbPhrase}. Gemeldet wird das nur, wenn dein Staat mit Österreich Kryptodaten austauscht.`
+          : en
+            ? `From 2026, your provider reports every year how much ${assetPhrase} you ${verbPhrase}.`
+            : `Ab 2026 meldet dein Anbieter jedes Jahr, wie viel ${assetPhrase} du ${verbPhrase}.`
 
   const count = numbers[language][keyCount]
   const key =
@@ -309,8 +331,56 @@ export const fileTexts = (answers: FileAnswers, language: Language) => {
       : "Das hängt davon ab, wo du Kryptowerte kaufst.",
   }[answers.provider]
 
+  const third = answers.residence === "third"
+
   return {
     what,
+    finanzamtHeading: third
+      ? en
+        ? "What your provider prepares every year"
+        : "Was dein Anbieter jedes Jahr aufbereitet"
+      : en
+        ? "What goes to the tax authority every year"
+        : "Was jedes Jahr ans Finanzamt geht",
+    sheetIntro: third
+      ? en
+        ? "This is the annual report your provider prepares for you. It goes to the tax authority only if your country exchanges crypto data with Austria. Nothing before 2026 is covered."
+        : "So sieht die Jahresmeldung aus, die dein Anbieter für dich aufbereitet. Ans Finanzamt geht sie nur, wenn dein Staat mit Österreich Kryptodaten austauscht. Vorgänge vor 2026 erfasst sie nicht."
+      : en
+        ? "This is your first annual report. Your provider fills in the fields with your data. Nothing before 2026 is reported."
+        : "So sieht deine erste Jahresmeldung aus. Die Felder füllt dein Anbieter mit deinen Daten. Vorgänge vor 2026 meldet er nicht.",
+    sheetTo: third
+      ? en
+        ? "To the tax authority only with data exchange"
+        : "Ans Finanzamt nur bei Datenaustausch"
+      : en
+        ? "To the tax authority by 31 July 2027"
+        : "An das Finanzamt bis 31. Juli 2027",
+    taxOfficeText: third
+      ? en
+        ? "Only if you are reported: the tax authority receives your report for 2026."
+        : "Nur wenn du gemeldet wirst: Das Finanzamt bekommt deine Meldung für 2026."
+      : en
+        ? "The tax authority receives your report for 2026 and analyses it."
+        : "Das Finanzamt bekommt deine Meldung für 2026 und wertet sie aus.",
+    exchangeText: {
+      at: en
+        ? "Other EU countries receive it if you are tax-resident there."
+        : "Andere EU-Staaten bekommen sie, wenn du dort steuerlich ansässig bist.",
+      eu: en
+        ? "Austria passes it on to the EU country where you are tax-resident."
+        : "Österreich gibt sie an den EU-Staat weiter, in dem du steuerlich ansässig bist.",
+      third: en
+        ? "Your country receives it only if it exchanges crypto data with Austria."
+        : "Dein Staat bekommt sie nur, wenn er mit Österreich Kryptodaten austauscht.",
+    }[answers.residence],
+    yearsIntro: third
+      ? en
+        ? "If you are reported, your provider keeps every annual report and deletes each one only ten years after its reporting period."
+        : "Wirst du gemeldet, behält dein Anbieter jede Jahresmeldung und löscht sie erst zehn Jahre nach ihrem Meldezeitraum."
+      : en
+        ? "Your provider keeps every annual report and deletes each one only ten years after its reporting period."
+        : "Dein Anbieter behält jede Jahresmeldung und löscht sie erst zehn Jahre nach ihrem Meldezeitraum.",
     key,
     keyFollow,
     keyYear: String(keyYear),
@@ -339,8 +409,8 @@ export const fileTexts = (answers: FileAnswers, language: Language) => {
             ? `Another report each year, the last one for ${last}.`
             : `Eine weitere Meldung pro Jahr, zuletzt die für ${last}.`,
     keptSince: en
-      ? `Not in the report, but held by your provider since ${answers.since}:`
-      : `Nicht in der Meldung, aber seit ${answers.since} bei deinem Anbieter:`,
+      ? `Not in the report, but held by your provider since ${answers.since}, already under anti-money-laundering rules. DAC8 links these records with your tax data:`
+      : `Nicht in der Meldung, aber seit ${answers.since} bei deinem Anbieter, schon aufgrund der Geldwäschevorschriften. Mit DAC8 werden sie mit deinen Steuerdaten verknüpft:`,
     keptFrom: String(answers.since),
     keptTurn: last === undefined ? (en ? "open" : "offen") : String(last),
     keptToLabel:
