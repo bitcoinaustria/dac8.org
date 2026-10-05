@@ -301,16 +301,16 @@ export const history: Entry[] = [
       de: {
         when: "8. Dezember 2015, angewendet ab 2017",
         title: "DAC3: Steuervorbescheide",
-        text: "Die Behörden tauschen Informationen über grenzüberschreitende Steuervorbescheide und Verrechnungspreis-Zusagen aus, darunter bestimmte aus den fünf Jahren vor 2017; für ältere gelten Grenzen nach Gültigkeit und Umsatz.",
-        more: "Der Vorschlag folgt auf die Debatte über Steuerabsprachen mit Konzernen. Die Richtlinie selbst nennt die „LuxLeaks“-Enthüllungen nicht.",
+        text: "Die Behörden tauschen Informationen über grenzüberschreitende Steuervorbescheide und Verrechnungspreis-Zusagen aus.",
+        more: "Darunter sind bestimmte aus den fünf Jahren vor 2017; für ältere gelten Grenzen nach Gültigkeit und Umsatz. Der Vorschlag folgt auf die Debatte über Steuerabsprachen mit Konzernen. Die Richtlinie selbst nennt die „LuxLeaks“-Enthüllungen nicht.",
         reporters: "Behörden",
         austria: "EU-Amtshilfegesetz, Änderung 2016",
       },
       en: {
         when: "8 December 2015, applied from 2017",
         title: "DAC3: tax rulings",
-        text: "Authorities exchange information on advance cross-border tax rulings and pricing agreements, including certain rulings from the five years before 2017; validity and turnover limits apply to older rulings.",
-        more: "The proposal follows the debate about tax deals with multinationals. The directive itself does not mention the LuxLeaks revelations.",
+        text: "Authorities exchange information on advance cross-border tax rulings and pricing agreements.",
+        more: "This includes certain rulings from the five years before 2017; validity and turnover limits apply to older rulings. The proposal follows the debate about tax deals with multinationals. The directive itself does not mention the LuxLeaks revelations.",
         reporters: "Authorities",
         austria: "EU-Amtshilfegesetz, 2016 amendment",
       },
@@ -504,14 +504,16 @@ export const history: Entry[] = [
       de: {
         when: "17. Oktober 2023, gilt seit 1. Jänner 2026",
         title: "DAC8: Kryptowerte",
-        text: "Krypto-Anbieter melden Identität und Jahreswerte je Kryptowert, auch für Kunden im eigenen Land. DAC8 bringt außerdem E-Geld in den Kontenaustausch und ändert Regeln, die für alle DAC-Daten gelten: Seither dürfen die Staaten alle ausgetauschten Informationen auch gegen Geldwäsche und Terrorismusfinanzierung einsetzen und, ohne Zustimmung des Herkunftsstaats, für EU-Sanktionen.",
+        text: "Krypto-Anbieter melden Identität und Jahreswerte je Kryptowert, auch für Kunden im eigenen Land. DAC8 ändert außerdem Regeln, die für alle DAC-Daten gelten.",
+        more: "Seither dürfen die Staaten alle ausgetauschten Informationen auch gegen Geldwäsche und Terrorismusfinanzierung einsetzen und, ohne Zustimmung des Herkunftsstaats, für EU-Sanktionen. Zudem bringt DAC8 E-Geld in den Kontenaustausch.",
         reporters: "Krypto-Börsen und Broker",
         austria: "Krypto-Meldepflichtgesetz, seit 1. Jänner 2026",
       },
       en: {
         when: "17 October 2023, applies since 1 January 2026",
         title: "DAC8: crypto-assets",
-        text: "Crypto-asset service providers report identity and annual values per crypto-asset, including for domestic customers. DAC8 also brings e-money into account reporting and changes rules that apply to all DAC data: since then, Member States may also use every item exchanged to fight money laundering and terrorist financing and, without the sending country’s consent, for EU sanctions.",
+        text: "Crypto-asset service providers report identity and annual values per crypto-asset, including for domestic customers. DAC8 also changes rules that apply to all DAC data.",
+        more: "Since then, Member States may also use every item exchanged to fight money laundering and terrorist financing and, without the sending country’s consent, for EU sanctions. DAC8 further brings e-money into account reporting.",
         reporters: "Crypto exchanges and brokers",
         austria: "Crypto-Asset Reporting Obligations Act, since 1 January 2026",
       },
@@ -535,16 +537,16 @@ export const history: Entry[] = [
       de: {
         when: "14. April 2025, erste Erklärungen für 2024 fällig bis 30. Juni 2026",
         title: "DAC9: Globale Mindeststeuer",
-        text: "Große Konzerne reichen die Erklärung zur Mindeststeuer von 15 % grundsätzlich in jedem Staat ein. Private sind nicht betroffen.",
-        more: "Unter Bedingungen genügt eine zentrale Einreichung, die Behörden tauschen die Angaben dann untereinander aus.",
+        text: "Große Konzerne reichen die Erklärung zur Mindeststeuer von 15 % grundsätzlich in jedem Staat ein.",
+        more: "Unter Bedingungen genügt eine zentrale Einreichung, die Behörden tauschen die Angaben dann untereinander aus. Private sind nicht betroffen.",
         reporters: "Große Konzerne",
         austria: "Abgabenänderungsgesetz 2025, seit 1. Jänner 2026",
       },
       en: {
         when: "14 April 2025, first 2024 returns due by 30 June 2026",
         title: "DAC9: global minimum tax",
-        text: "Large groups generally file the return for the 15% minimum tax in each country. Individuals are not affected.",
-        more: "Qualifying groups can file centrally instead, with authorities exchanging the relevant information.",
+        text: "Large groups generally file the return for the 15% minimum tax in each country.",
+        more: "Qualifying groups can file centrally instead, with authorities exchanging the relevant information. Individuals are not affected.",
         reporters: "Large groups",
         austria: "Tax Amendment Act 2025, since 1 January 2026",
       },
@@ -568,8 +570,8 @@ export const history: Entry[] = [
       de: {
         when: "Vorgeschlagen am 24. Juni 2026",
         title: "Die Neufassung, oft „DAC10“ genannt",
-        text: "Die Kommission will alle Stufen in einer neuen Richtlinie zusammenführen und vereinfachen. Zugleich sollen Steuerbehörden Zugang zu Geldwäsche-Registern, auch für Immobilien, und zu Pensionsregistern bekommen.",
-        more: "Zur Vereinfachung sollen bei Steuergestaltungen 90 statt 30 Tage gelten, Plattform-Schwellen sich ändern und ein EU-Werkzeug Steuernummern prüfen. Die Kryptofelder bleiben inhaltlich gleich. Der Datenschutzbeauftragte der EU hat im August 2026 engere Grenzen für diese Zugriffe und die Speicherdauer empfohlen.",
+        text: "Die Kommission will alle Stufen in einer neuen Richtlinie zusammenführen und vereinfachen.",
+        more: "Zur Vereinfachung sollen bei Steuergestaltungen 90 statt 30 Tage gelten, Plattform-Schwellen sich ändern und ein EU-Werkzeug Steuernummern prüfen. Zugleich sollen Steuerbehörden Zugang zu Geldwäsche-Registern, auch für Immobilien, und zu Pensionsregistern bekommen. Die Kryptofelder bleiben inhaltlich gleich. Der Datenschutzbeauftragte der EU hat im August 2026 engere Grenzen für diese Zugriffe und die Speicherdauer empfohlen.",
         reporters: "Noch kein Recht",
         austria:
           "Braucht die Zustimmung aller EU-Staaten im Rat; das Parlament wird nur angehört. Geplante Anwendung 2028 und 2030",
@@ -577,8 +579,8 @@ export const history: Entry[] = [
       en: {
         when: "Proposed on 24 June 2026",
         title: "The recast, often called “DAC10”",
-        text: "The Commission wants to merge all steps into one new directive and simplify them. At the same time, tax authorities would gain access to anti-money laundering registers, including for real estate, and to pension registers.",
-        more: "To simplify, it proposes 90 instead of 30 days for tax arrangements, changed platform thresholds and an EU tool to verify tax numbers. The crypto fields stay the same in substance. In August 2026, the European Data Protection Supervisor recommended tighter limits on this access and on retention.",
+        text: "The Commission wants to merge all steps into one new directive and simplify them.",
+        more: "To simplify, it proposes 90 instead of 30 days for tax arrangements, changed platform thresholds and an EU tool to verify tax numbers. At the same time, tax authorities would gain access to anti-money laundering registers, including for real estate, and to pension registers. The crypto fields stay the same in substance. In August 2026, the European Data Protection Supervisor recommended tighter limits on this access and on retention.",
         reporters: "Not yet law",
         austria:
           "Needs the agreement of every EU country in the Council; Parliament is only consulted. Planned to apply in 2028 and 2030",
@@ -742,35 +744,34 @@ export const historyEras: Record<
       label: "1977–2010",
       title: "Amtshilfe im Einzelfall",
       intro:
-        "Drei Jahrzehnte lang fragen Steuerbehörden einander zu bestimmten Fällen. Automatische Meldungen durch Banken gibt es nur für Zinsen.",
+        "Drei Jahrzehnte lang fragen Steuerbehörden einander zu bestimmten Fällen.",
     },
     {
       id: "automatik",
       label: "2011–2014",
       title: "Der automatische Austausch",
-      intro:
-        "Ab 2011 wird der automatische Austausch zur Regel: erst für Daten, die Behörden schon haben, dann für Kontodaten, die Banken über meldepflichtige Konten liefern.",
+      intro: "Ab 2011 wird der automatische Austausch zur Regel.",
     },
     {
       id: "konzerne",
       label: "2015–2018",
       title: "Konzerne und Berater",
       intro:
-        "Nach Enthüllungen über Steuerabsprachen und Briefkastenfirmen richten sich neue Stufen an Konzerne und Berater. Steuerbehörden erhalten Zugang zu Geldwäschedaten.",
+        "Nach Enthüllungen über Steuerabsprachen und Briefkastenfirmen richten sich neue Stufen an Konzerne und Berater.",
     },
     {
       id: "neue-bereiche",
       label: "2021–2025",
       title: "Plattformen, Krypto, Mindeststeuer",
       intro:
-        "Die Meldepflichten folgen der Wirtschaft in neue Bereiche. Jeweils kurz zuvor hat die OECD einen Standard beschlossen.",
+        "Die Meldepflichten folgen der Wirtschaft in neue Bereiche, jeweils kurz nach einem Standard der OECD.",
     },
     {
       id: "ausblick",
       label: "Ab 2026",
       title: "Was noch kommt",
       intro:
-        "Die Kommission will das ganze System neu fassen. Der Vorschlag ist noch kein Recht und kann sich in den Verhandlungen ändern.",
+        "Der Vorschlag ist noch kein Recht und kann sich in den Verhandlungen ändern.",
     },
   ],
   en: [
@@ -779,37 +780,43 @@ export const historyEras: Record<
       label: "1977–2010",
       title: "Assistance in individual cases",
       intro:
-        "For three decades, tax authorities ask each other about specific cases. Banks report automatically only on interest.",
+        "For three decades, tax authorities ask each other about specific cases.",
     },
     {
       id: "automatik",
       label: "2011–2014",
       title: "Automatic exchange",
-      intro:
-        "From 2011, automatic exchange becomes the rule: first for data authorities already hold, then for account data that banks supply on reportable accounts.",
+      intro: "From 2011, automatic exchange becomes the rule.",
     },
     {
       id: "konzerne",
       label: "2015–2018",
       title: "Multinationals and advisers",
       intro:
-        "After revelations about tax deals and shell companies, new steps target multinationals and advisers. Tax authorities gain access to anti-money laundering data.",
+        "After revelations about tax deals and shell companies, new steps target multinationals and advisers.",
     },
     {
       id: "neue-bereiche",
       label: "2021–2025",
       title: "Platforms, crypto, minimum tax",
       intro:
-        "Reporting follows the economy into new areas. Each time, the OECD had adopted a standard shortly before.",
+        "Reporting follows the economy into new areas, each time shortly after an OECD standard.",
     },
     {
       id: "ausblick",
       label: "From 2026",
       title: "What comes next",
-      intro:
-        "The Commission wants to recast the whole system. The proposal is not yet law and may change in negotiations.",
+      intro: "The proposal is not yet law and may change in negotiations.",
     },
   ],
+}
+
+// "DAC3: Steuervorbescheide" becomes code "DAC3" and name
+// "Steuervorbescheide", so the timeline can set the codes as a column.
+const splitTitle = (title: string, short: string) => {
+  if (!title.startsWith(`${short}: `)) return { code: undefined, name: title }
+  const name = title.slice(short.length + 2)
+  return { code: short, name: name.charAt(0).toUpperCase() + name.slice(1) }
 }
 
 export const historyFor = (language: Language) =>
@@ -822,6 +829,7 @@ export const historyFor = (language: Language) =>
       short: short[language],
       when: text.when,
       title: text.title,
+      ...splitTitle(text.title, short[language]),
       text: text.text,
       more: text.more,
       reporters: text.reporters,
