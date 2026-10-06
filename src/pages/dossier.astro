@@ -10,33 +10,6 @@ import { sourceGroups } from "@/data/sources"
 
 const researchDate = "30. September 2026"
 
-const concerns = [
-  {
-    title: "Alle Kunden, ohne Verdacht.",
-    text: "Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, bevor feststeht, wer überhaupt gemeldet wird. Diese Datensammlung auf Vorrat lehnen wir ab.",
-  },
-  {
-    title: "Eine Akte ohne Enddatum.",
-    text: "Jedes Jahr kommt eine Meldung dazu, und der Anbieter hebt jede zehn Jahre auf, entsprechende Bankkontendaten nur fünf. Bleibst du Kunde, liegen dort ab 2036 laufend zehn Jahresmeldungen, daneben Ausweis- und Transaktionsunterlagen aus der ganzen Kundenbeziehung, die er nach den Geldwäschevorschriften aufbewahren muss.",
-  },
-  {
-    title: "Sortierbar nach Vermögen.",
-    text: "Aus Summe und Anzahl der Käufe lässt sich grob schätzen, wie viel Geld jemand in Krypto bewegt. Wer die Daten in die Hände bekommt, kann so Menschen herausfiltern, die vermögend wirken, auch wenn die Schätzung falsch ist.",
-  },
-  {
-    title: "Der Anbieter wird zum Honeypot.",
-    text: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist ein Angriff. Beim Anbieter liegen schon Ausweis, Wallet-Adressen und Transaktionen, die er nach den Geldwäschevorschriften aufbewahren muss. Mit DAC8 kommen Steuernummer und Jahreswerte dazu. Ein Leck beim Anbieter verbindet deinen Namen mit deinen Wallet-Adressen. Wer diese Zuordnung einmal hat, behält sie und kann damit weitere Zahlungen verfolgen.",
-  },
-  {
-    title: "Der Zweck wächst mit.",
-    text: "Laut Richtlinie dürfen die Daten auch für Zoll, gegen Geldwäsche und für EU-Sanktionen verwendet werden. Was einmal gesammelt ist, findet neue Zwecke. Wir fordern für jeden eine eigene, klare Grenze.",
-  },
-  {
-    title: "Fehler reisen mit.",
-    text: "Ein falscher Steuerwohnsitz, eine falsche Bewertung oder ein missverstandener Transfer kann an andere Staaten gehen. Je mehr Stellen beteiligt sind, desto schwerer die Korrektur.",
-  },
-]
-
 // Belegte Fälle, in denen verlorene oder missbrauchte Daten den Schaden erst
 // möglich gemacht haben. Fälle ohne diesen Zusammenhang gehören nicht hierher.
 const leaks = [
@@ -262,10 +235,7 @@ const faqs = [
   sections={[
     { id: "was-ist-dac8", label: "DAC8" },
     { id: "gemeldet", label: "Meldung" },
-    { id: "problem", label: "Kritik" },
     { id: "faelle", label: "Fälle" },
-    { id: "ausblick", label: "Größeres Bild" },
-    { id: "forderungen", label: "Forderungen" },
     { id: "rechtsweg", label: "Rechtsweg" },
     { id: "faq", label: "Fragen" },
     { id: "quellen", label: "Quellen" },
@@ -279,8 +249,8 @@ const faqs = [
         <h1>Was DAC8 verlangt. <span>Und was daraus wird.</span></h1>
         <p class="lead">
           Welche Daten über dich gemeldet werden, was sich beim Anbieter über
-          die Jahre ansammelt, was damit passieren kann und warum wir dagegen
-          vorgehen.
+          die Jahre ansammelt und was damit passieren kann. Warum wir dagegen
+          vorgehen, steht in unseren <a href="/argumente/">Argumenten</a>.
         </p>
         <nav class="hero-actions" aria-label="Direkteinstieg">
           <a class="button primary" href="#gemeldet">Was gemeldet wird</a>
@@ -431,48 +401,6 @@ const faqs = [
       </div>
     </section>
 
-    <section id="problem" aria-labelledby="problem-heading">
-      <h2 id="problem-heading">Was daran problematisch ist</h2>
-      <p class="section-intro">
-        Die Gefahr ist nicht die einzelne Meldung. Es ist der Bestand, der über
-        Jahre wächst, ohne dass je ein Verdacht bestand, und alles, was sich
-        damit verknüpfen lässt.
-      </p>
-      <ul class="facts concerns">
-        {concerns.map((concern) => (
-          <li>
-            <strong>{concern.title}</strong>
-            <p>{concern.text}</p>
-          </li>
-        ))}
-      </ul>
-      <h3 id="verknuepfung">Wenn Datensätze zusammenkommen</h3>
-      <p class="prose">
-        Jede Quelle zeigt nur einen Ausschnitt. Ein öffentliches Profil zeigt
-        Gesicht und Familie, ein Leck beim Anbieter die Wallet-Adresse, ein
-        gehackter Steuerdienst die Bestände. Die Jahreswerte zeigen, wie viel
-        jemand bewegt. Zusammengeführt ergibt das ein Profil mit Gesicht,
-        Anschrift und mutmaßlichem Vermögen, und jedes weitere Leck macht es
-        genauer. Schon ein einzelnes Leck kann mehrere Bausteine enthalten: Bei
-        Fractal ID lagen Ausweis, Wohnadresse und Wallet-Adresse in einem
-        Datensatz.
-      </p>
-      <Artwork id="profileFourSources" language="de" size="wide" zoom />
-      <h3 id="zahlungsprofile">Wenn Zahlungen deinen Alltag offenlegen</h3>
-      <p class="prose">
-        Zahlst du mit Bitcoin, hinterlässt du Spuren deines Alltags, denn
-        On-Chain-Transaktionen bleiben öffentlich. Verbindet ein Anbieter deinen
-        Namen mit einer Adresse, kann jemand weitere Zahlungen dir zuordnen. Mit
-        Informationen über die Empfänger lassen Einkäufe, Spenden und
-        regelmäßige Zahlungen
-        <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
-          >Rückschlüsse auf Gewohnheiten und Beziehungen</a
-        >
-        zu.
-      </p>
-      <Artwork id="walletHistoryRevealed" language="de" size="wide" zoom />
-    </section>
-
     <section id="faelle" aria-labelledby="faelle-heading">
       <h2 id="faelle-heading">Was schon passiert ist</h2>
       <p class="section-intro">
@@ -509,8 +437,9 @@ const faqs = [
             wählen Ziele aus, wieder andere stehen vor der Tür. Lange
             Aufbewahrungspflichten halten diese Daten über Jahre bereit. Schon
             die falsche Annahme, jemand besitze viel Krypto, kann ihn und seine
-            Angehörigen gefährden. Deshalb fordern wir Datensparsamkeit und
-            kurze Speicherfristen.
+            Angehörigen gefährden. Deshalb
+            <a href="/argumente/#forderungen">fordern wir</a>
+            Datensparsamkeit und kurze Speicherfristen.
           </p>
         </div>
         <Artwork id="targetAtHome" language="de" />
@@ -531,113 +460,6 @@ const faqs = [
         ))}
       </ul>
       <AttackSummary language="de" />
-    </section>
-
-    <section id="ausblick" aria-labelledby="ausblick-heading">
-      <h2 id="ausblick-heading">Ein Baustein finanzieller Überwachung</h2>
-      <div class="columns">
-        <p class="section-intro">
-          Schritt für Schritt bauen die EU und Österreich eine Infrastruktur,
-          die Finanzdaten ohne Verdacht erfasst, lange speichert und immer enger
-          verknüpft. DAC8 ist ein Teil davon.
-        </p>
-        <p class="prose">
-          Wallet-Adressen, einzelne Transaktionen und Vorgänge vor 2026 muss
-          derzeit niemand melden, und auch der Vorschlag zur Neufassung der
-          Richtlinie sieht das nicht vor. Gespeichert sind sie trotzdem:
-          Anbieter bewahren sie nach den Geldwäschevorschriften auf, neben den
-          Daten für DAC8. Eine bestehende Infrastruktur kann der Gesetzgeber
-          jederzeit erweitern. Wir wollen ihr deshalb jetzt Grenzen setzen.
-          Welche Stufen schon beschlossen sind und was die Neufassung ändern
-          würde, zeigt die
-          <a href="/geschichte/#ausblick">Geschichte der DAC</a>.
-        </p>
-      </div>
-      <ol class="flow" aria-label="Die Bausteine">
-        <li>
-          <strong>Bei der Kontoeröffnung</strong>
-          <span
-            >identifiziert dich der Anbieter mit Ausweis. Nach den
-            Geldwäschevorschriften bleiben die Unterlagen derzeit bis zehn Jahre
-            nach Ende der Kundenbeziehung.</span
-          >
-        </li>
-        <li>
-          <strong>Bei jeder Übertragung</strong>
-          <span
-            >erfasst er Absender und Empfänger, auch bei Übertragungen auf deine
-            eigene Wallet.</span
-          >
-        </li>
-        <li class="accent">
-          <strong>Jedes Jahr</strong>
-          <span
-            >bereitet er Steuernummer und Jahreswerte aller Kunden für die
-            DAC8-Meldung auf.</span
-          >
-        </li>
-        <li>
-          <strong>Bis 2029</strong>
-          <span
-            >werden die Kontenregister EU-weit vernetzt, dann auch mit
-            Krypto-Konten.</span
-          >
-        </li>
-      </ol>
-    </section>
-
-    <section id="forderungen" aria-labelledby="forderungen-heading">
-      <h2 id="forderungen-heading">Was wir fordern</h2>
-      <p class="section-intro">
-        Der Staat muss begründen, warum ein Eingriff in dein Privatleben
-        notwendig ist. Der Verweis auf Geldwäsche oder Steuerhinterziehung
-        ersetzt diesen Nachweis nicht. Wir fordern gezielte Ermittlungen bei
-        konkretem Verdacht und wirksamen Schutz für Unbeteiligte.
-      </p>
-      <ul class="checklist">
-        <li>
-          <strong>Erst klären, wessen Daten gemeldet werden müssen.</strong>
-          Keine vorsorgliche Aufbereitung für alle Kunden.
-        </li>
-        <li>
-          <strong>Nur notwendige Daten erfassen.</strong>
-          Der zusätzliche Nutzen von Stückzahlen und Transaktionszahlen muss
-          belegt werden.
-        </li>
-        <li>
-          <strong>Die eigene Wallet ist keine Zahlung an Dritte.</strong>
-          Übertragungen auf selbst verwahrte Adressen sollen erkennbar getrennt
-          behandelt werden.
-        </li>
-        <li>
-          <strong>Daten nicht länger als nötig speichern.</strong>
-          Zehn Jahre statt fünf brauchen eine nachvollziehbare Begründung.
-        </li>
-        <li>
-          <strong>Zweck, Zugriff und Weitergabe eng begrenzen.</strong>
-          Zugriffe müssen nachvollziehbar sein und unabhängig kontrolliert
-          werden.
-        </li>
-        <li>
-          <strong>Deine Rechte müssen praktisch funktionieren.</strong>
-          Du musst Auskunft erhalten, Fehler korrigieren und unrechtmäßig
-          gespeicherte Daten bei allen Empfängern löschen lassen können.
-        </li>
-        <li>
-          <strong>Nutzen und Risiken unabhängig überprüfen.</strong>
-          Regelmäßig und öffentlich, damit unnötige Eingriffe beendet werden.
-        </li>
-      </ul>
-      <div class="precedent">
-        <p class="precedent-year" aria-hidden="true">2014</p>
-        <p class="prose">
-          <strong>Schon einmal fiel ein Überwachungsgesetz.</strong>
-          Die von AKVorrat, heute epicenter.works, organisierte Beschwerde gegen
-          die Vorratsdatenspeicherung führte über den Verfassungsgerichtshof zum
-          Europäischen Gerichtshof. 2014 hob der EuGH die EU-Richtlinie auf, der
-          VfGH die österreichischen Regeln.
-        </p>
-      </div>
     </section>
 
     <section id="rechtsweg" aria-labelledby="rechtsweg-heading">

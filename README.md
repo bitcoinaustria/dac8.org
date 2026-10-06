@@ -59,13 +59,14 @@ browser can share files, sharing as icon buttons.
 
 ## Site structure
 
-Five main pages per language, plus the history page and two tools, with URLs
+Six main pages per language, plus the history page and two tools, with URLs
 that follow the navigation labels:
 
 | Page | German | English |
 | --- | --- | --- |
 | Start: the case told as a story in scenes | `/` | `/en/` |
 | Dossier: the complete reference, FAQ and sources | `/dossier/` | `/en/dossier/` |
+| Argumente: our position by topic, with answers to objections and our demands | `/argumente/` | `/en/arguments/` |
 | Angriffe: archive of known physical attacks, map and list | `/angriffe/` | `/en/attacks/` |
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
@@ -84,8 +85,9 @@ then the three ways to help (donate, ask your provider, write to MPs),
 documented leaks as a table of which kinds of data each exposed
 (`src/components/LeakMatrix.astro`), how it came about (the duties about
 individuals from the history chart, `HistoryStack` in compact mode), the
-guiding statement with answers to common objections, what we do with the
-goals under the legal route, and who we are. The full case list with sources is in the dossier (`#faelle`). A case
+guiding statement with the two objections readers raise first (the rest are on
+the arguments page, `src/data/arguments.ts`), what we do with the goals under
+the legal route, and who we are. The full case list with sources is in the dossier (`#faelle`). A case
 belongs there only if lost or misused data made the harm possible, and it needs
 a public source. The dossier's "Am I affected?" check
 (`src/components/AffectedCheck.astro`) restates the FAQ. The footer closes
@@ -171,8 +173,8 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
 - The newsletter link points to Bitcoin Austria's existing newsletter form.
 - The letter to members of the National Council is on the participation page
   (`src/components/LetterGenerator.astro`, texts in `src/data/letter.ts`). It
-  runs entirely in the browser; its demands restate the dossier's "Was wir
-  fordern" list, so change both together.
+  runs entirely in the browser; its demands come from `src/data/arguments.ts`, the
+  same list the arguments page shows under "Was wir fordern".
 - The DAC8 file (`src/components/pages/FilePage.astro`) and the access
   request (`src/components/pages/AccessRequestPage.astro`) run entirely in the
   browser, like the letter. The file restates the dossier's reporting and

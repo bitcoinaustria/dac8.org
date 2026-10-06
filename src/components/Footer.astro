@@ -32,8 +32,12 @@ const sections = [
         href: pathFor("file", language),
       },
       {
+        label: en ? "Our arguments" : "Unsere Argumente",
+        href: pathFor("arguments", language),
+      },
+      {
         label: en ? "Our demands" : "Was wir fordern",
-        href: `${background}#forderungen`,
+        href: `${pathFor("arguments", language)}#forderungen`,
       },
       {
         label: en ? "History of the DAC" : "Geschichte der DAC",

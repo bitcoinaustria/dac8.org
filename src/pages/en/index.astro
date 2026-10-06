@@ -8,6 +8,7 @@ import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Tale from "@/components/Tale.astro"
 import Layout from "@/layouts/Layout.astro"
+import { homeObjections, points } from "@/data/arguments"
 import { campaignStatus } from "@/data/campaign"
 ---
 
@@ -117,7 +118,7 @@ import { campaignStatus } from "@/data/campaign"
         <a class="text-link" href="/en/your-file/"
           >What DAC8 reports about you</a
         >
-        <a class="text-link" href="/en/dossier/#problem">Why it is a problem</a>
+        <a class="text-link" href="/en/arguments/">Why it is a problem</a>
       </div>
     </section>
 
@@ -199,52 +200,20 @@ import { campaignStatus } from "@/data/campaign"
         <span>State interference does.</span>
       </h2>
       <ul class="objections">
-        <li>
-          <strong>“I have nothing to hide.”</strong>
-          <p>
-            Bitcoin in your own wallet is like cash in your pocket. Imagine your
-            bank telling the tax office every year how much cash you had
-            withdrawn: for every customer, every amount, without suspicion. For
-            bitcoin, DAC8 does exactly that. If you move coins from an exchange
-            to your own wallet, the annual total usually appears in the report.
-            In the wrong hands, it shows who probably keeps savings in
-            self-custody.
-          </p>
-          <a class="text-link" href="#faelle">This has already happened</a>
-        </li>
-        <li>
-          <strong>“It’s just tax data.”</strong>
-          <p>
-            The report contains identity and annual totals. Alongside them, the
-            provider holds your ID, wallet addresses and individual
-            transactions, kept under anti-money-laundering rules for up to ten
-            years after the relationship ends. DAC8 links them with your tax
-            data.
-          </p>
-          <a class="text-link" href="/en/dossier/#gemeldet"
-            >What gets reported</a
-          >
-        </li>
-        <li>
-          <strong>“I only use my own wallet.”</strong>
-          <p>
-            Then DAC8 does not report you. But if you buy from a provider and
-            transfer to your wallet, the value and units usually appear in its
-            annual report. The address is not in it, but the provider keeps it
-            under anti-money-laundering rules.
-          </p>
-          <a class="text-link" href="/en/your-file/">Your DAC8 file</a>
-        </li>
-        <li>
-          <strong>“It’s about tax fairness.”</strong>
-          <p>
-            Even then, the state may only demand data whose scope and retention
-            are justified. It must be able to explain why it needs which
-            financial data, and for how long.
-          </p>
-          <a class="text-link" href="/en/dossier/#forderungen">Our demands</a>
-        </li>
+        {homeObjections.map((id) => points.en[id]).map((point) => (
+          <li>
+            <strong>{point.title}</strong>
+            <p>{point.text}</p>
+            {point.link && <a class="text-link" href={point.link.href}>{point.link.label}</a>}
+          </li>
+        ))}
       </ul>
+      <div class="link-row">
+        <a class="text-link" href="/en/arguments/"
+          >All arguments and objections</a
+        >
+        <a class="text-link" href="/en/arguments/#forderungen">Our demands</a>
+      </div>
     </section>
 
     <section id="weg" aria-labelledby="weg-heading">

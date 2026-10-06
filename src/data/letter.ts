@@ -1,7 +1,8 @@
+import { letterDemands } from "@/data/arguments"
 import type { Language } from "@/lib/i18n"
 
-// Letter to members of the Austrian National Council. The demands restate the
-// vetted list in the dossier ("Was wir fordern"); keep both in sync. The
+// Letter to members of the Austrian National Council. The demands come from
+// the arguments page ("Was wir fordern", src/data/arguments.ts). The
 // letter is drafted in the browser and sent by the reader; nothing is
 // transmitted to dac8.org.
 
@@ -32,15 +33,6 @@ const text = {
     stance:
       "Ich lehne diese anlasslose Erfassung ab. Wer Informationen über mein Geld hat, kann Rückschlüsse auf mein Leben ziehen. Solche Datenbestände gehen immer wieder verloren, bei Börsen ebenso wie bei Finanzverwaltungen. Organisierte Banden nutzen sie, um Opfer für Betrug, Erpressung und Überfälle auszuwählen.",
     ask: "Ich ersuche Sie, sich im Nationalrat für folgende Punkte einzusetzen:",
-    demands: [
-      "Erst klären, wessen Daten gemeldet werden müssen. Keine vorsorgliche Aufbereitung für alle Kunden.",
-      "Nur notwendige Daten erfassen. Der zusätzliche Nutzen von Stückzahlen und Transaktionszahlen muss belegt werden.",
-      "Die eigene Wallet ist keine Zahlung an Dritte. Übertragungen auf selbst verwahrte Adressen sollen erkennbar getrennt behandelt werden.",
-      "Daten nicht länger als nötig speichern. Zehn Jahre statt fünf brauchen eine nachvollziehbare Begründung.",
-      "Zweck, Zugriff und Weitergabe eng begrenzen. Zugriffe müssen nachvollziehbar sein und unabhängig kontrolliert werden.",
-      "Die Rechte der Betroffenen müssen praktisch funktionieren: Auskunft, Korrektur und Löschung unrechtmäßig gespeicherter Daten bei allen Empfängern.",
-      "Nutzen und Risiken unabhängig überprüfen, regelmäßig und öffentlich, damit unnötige Eingriffe beendet werden.",
-    ],
     question:
       "Wie beurteilen Sie diese Fragen, und welche Schritte werden Sie unterstützen?",
     closing: "Mit freundlichen Grüßen",
@@ -58,15 +50,6 @@ const text = {
     stance:
       "I oppose this collection without any specific suspicion. Information about my money can reveal details about my life. Such data stores are lost again and again, at exchanges as well as at tax administrations. Organised gangs use them to select victims for fraud, extortion and robbery.",
     ask: "I ask you to support the following points in the National Council:",
-    demands: [
-      "Determine whose data must be reported first. No precautionary preparation of data for all customers.",
-      "Collect only necessary data. The additional value of units and transaction counts must be demonstrated.",
-      "Your own wallet is not a payment to someone else. Transfers to self-custodied addresses should be treated distinctly.",
-      "Keep data no longer than necessary. Ten years instead of five needs a clear justification.",
-      "Strictly limit purpose, access and onward disclosure. Access must be traceable and subject to independent oversight.",
-      "The rights of those affected must work in practice: access, correction and deletion of unlawfully stored data by every recipient.",
-      "Independently review benefits and risks, regularly and publicly, so unnecessary intrusions can be ended.",
-    ],
     question:
       "How do you assess these questions, and which steps will you support?",
     closing: "Kind regards",
@@ -87,7 +70,9 @@ export const buildLetter = (language: Language, fields: LetterFields) => {
     ...(fields.personal ? [fields.personal] : []),
     t.stance,
     t.ask,
-    t.demands.map((demand) => `- ${demand}`).join("\n"),
+    letterDemands(language)
+      .map((demand) => `- ${demand}`)
+      .join("\n"),
     t.question,
     `${t.closing}\n${signature}`,
   ].join("\n\n")

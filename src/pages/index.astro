@@ -8,6 +8,7 @@ import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Tale from "@/components/Tale.astro"
 import Layout from "@/layouts/Layout.astro"
+import { homeObjections, points } from "@/data/arguments"
 import { campaignStatus } from "@/data/campaign"
 ---
 
@@ -115,9 +116,7 @@ import { campaignStatus } from "@/data/campaign"
       />
       <div class="link-row">
         <a class="text-link" href="/deine-akte/">Was DAC8 über dich meldet</a>
-        <a class="text-link" href="/dossier/#problem"
-          >Was daran problematisch ist</a
-        >
+        <a class="text-link" href="/argumente/">Was daran problematisch ist</a>
       </div>
     </section>
 
@@ -197,50 +196,18 @@ import { campaignStatus } from "@/data/campaign"
         <span>Staatliche Eingriffe schon.</span>
       </h2>
       <ul class="objections">
-        <li>
-          <strong>„Ich habe nichts zu verbergen.“</strong>
-          <p>
-            Bitcoin in der eigenen Wallet ist wie Bargeld in der Brieftasche.
-            Stell dir vor, deine Bank würde dem Finanzamt jedes Jahr melden, wie
-            viel Bargeld du abgehoben hast: bei jedem Kunden, bei jedem Betrag,
-            ohne Verdacht. Bei Bitcoin macht DAC8 genau das. Überträgst du von
-            einer Börse auf die eigene Wallet, steht die Jahressumme in der
-            Regel in der Meldung. Gelangt sie in falsche Hände, zeigt sie, wer
-            vermutlich Erspartes selbst verwahrt.
-          </p>
-          <a class="text-link" href="#faelle">Das ist schon passiert</a>
-        </li>
-        <li>
-          <strong>„Das sind doch nur Steuerdaten.“</strong>
-          <p>
-            Gemeldet werden Identität und Jahreswerte. Beim Anbieter liegen aber
-            auch Ausweis, Wallet-Adressen und einzelne Transaktionen: Die
-            Geldwäschevorschriften verlangen, sie bis zehn Jahre nach Ende der
-            Kundenbeziehung aufzubewahren. Mit DAC8 werden sie mit deinen
-            Steuerdaten verknüpft.
-          </p>
-          <a class="text-link" href="/dossier/#gemeldet">Was gemeldet wird</a>
-        </li>
-        <li>
-          <strong>„Ich nutze nur meine eigene Wallet.“</strong>
-          <p>
-            Dann meldet DAC8 dich nicht. Kaufst du aber bei einem Anbieter und
-            überträgst auf deine Wallet, stehen Wert und Stückzahl in der Regel
-            in seiner Jahresmeldung. Die Adresse steht nicht darin, er speichert
-            sie aber nach den Geldwäschevorschriften.
-          </p>
-          <a class="text-link" href="/deine-akte/">Deine DAC8-Akte</a>
-        </li>
-        <li>
-          <strong>„Es geht doch um Steuergerechtigkeit.“</strong>
-          <p>
-            Auch dafür darf der Staat nur Daten verlangen, deren Umfang und
-            Speicherdauer gerechtfertigt sind. Er muss erklären können, weshalb
-            er welche Finanzdaten wie lange braucht.
-          </p>
-          <a class="text-link" href="/dossier/#forderungen">Was wir fordern</a>
-        </li>
+        {homeObjections.map((id) => points.de[id]).map((point) => (
+          <li>
+            <strong>{point.title}</strong>
+            <p>{point.text}</p>
+            {point.link && <a class="text-link" href={point.link.href}>{point.link.label}</a>}
+          </li>
+        ))}
       </ul>
+      <div class="link-row">
+        <a class="text-link" href="/argumente/">Alle Argumente und Einwände</a>
+        <a class="text-link" href="/argumente/#forderungen">Was wir fordern</a>
+      </div>
     </section>
 
     <section id="weg" aria-labelledby="weg-heading">

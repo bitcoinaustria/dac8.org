@@ -81,11 +81,13 @@
   letter-spacing: -0.012em;
 }
 
-.campaign.dossier > section > h3 {
+.campaign.dossier > section > h3,
+.campaign.arguments > section > h3 {
   margin-block-start: var(--space-xl);
 }
 
-.campaign.dossier > section > h3 + .prose {
+.campaign.dossier > section > h3 + .prose,
+.campaign.arguments > section > h3 + .prose {
   margin-block-start: var(--space-xs);
 }
 
