@@ -194,12 +194,12 @@ const faqs = [
   {
     question: "Bin ich betroffen, wenn ich Bitcoin besitze?",
     answer:
-      "Nur, wenn ein Krypto-Anbieter beteiligt ist, etwa eine Börse oder ein Broker. Anbieter mit Meldepflicht in Österreich müssen die Daten aller Kunden aufbereiten. Anbieter in anderen EU-Staaten melden dort; die Daten gehen an den Staat, in dem du steuerlich ansässig bist. Wer Bitcoin ausschließlich selbst verwahrt und keinen solchen Anbieter nutzt, wird durch DAC8 nicht gemeldet. Warst du früher Kunde bei einem Anbieter, muss er Ausweis, Wallet-Adressen und Transaktionen nach den Geldwäschevorschriften derzeit bis zehn Jahre nach Ende der Kundenbeziehung aufbewahren.",
+      "Nur, wenn ein Krypto-Anbieter beteiligt ist, etwa eine Börse oder ein Broker. Anbieter mit Meldepflicht in Österreich müssen die Daten aller Kunden aufbereiten. Anbieter in anderen EU-Staaten melden dort; die Daten gehen an den Staat, in dem du steuerlich ansässig bist. Wer Bitcoin ausschließlich selbst verwahrt und keinen solchen Anbieter nutzt, wird durch DAC8 nicht gemeldet. Warst du 2020 oder später Kunde bei einem Anbieter, muss er Ausweis, Wallet-Adressen und Transaktionen nach den Geldwäschevorschriften derzeit bis zehn Jahre nach Ende der Kundenbeziehung aufbewahren.",
   },
   {
     question: "Wird meine eigene Wallet-Adresse gemeldet?",
     answer:
-      "Nein, Wallet-Adressen sind nicht Teil der jährlichen DAC8-Meldung. Gemeldet werden aber Wert und Stückzahl von Übertragungen an Adressen, die dem Anbieter nicht als Adresse eines anderen Anbieters bekannt sind. Darunter fällt in der Regel auch deine eigene Wallet. Die Adresse und ihr Bezug zu dir bleiben aber beim Anbieter gespeichert, nach den Geldwäschevorschriften.",
+      "Nein, Wallet-Adressen sind nicht Teil der jährlichen DAC8-Meldung. Gemeldet werden aber Wert und Stückzahl von Übertragungen an Adressen, die dem Anbieter nicht als Adresse eines anderen Anbieters bekannt sind. Darunter fällt in der Regel auch deine eigene Wallet. Die Adresse und ihr Bezug zu dir bleiben nach den Geldwäschevorschriften trotzdem beim Anbieter gespeichert.",
   },
   {
     question:
@@ -210,12 +210,12 @@ const faqs = [
   {
     question: "Lässt sich aus DAC8-Daten mein Vermögen ablesen?",
     answer:
-      "Nicht direkt. Gemeldet werden Jahreswerte, kein aktueller Bestand und kein Gesamtvermögen. Deinen Kontostand kennt der Anbieter aber, und über die Jahre zeigen die Meldungen, wie viel du bewegst. Zusammen mit Kontenregister, Anbieteraufzeichnungen und Blockchain-Analyse können sie ein detailliertes Bild der Vermögensverhältnisse ergeben.",
+      "Nicht direkt. Gemeldet werden Jahreswerte, kein aktueller Bestand und kein Gesamtvermögen. Deinen Kontostand kennt der Anbieter aber, und über die Jahre zeigen die Meldungen, wie viel du bewegst. Wer sie mit Kontenregister und Blockchain-Analyse oder, nach einem Leck, mit Anbieteraufzeichnungen zusammenführt, kann ein detailliertes Bild der Vermögensverhältnisse gewinnen.",
   },
   {
     question: "Werden Transaktionen vor 2026 nachgemeldet?",
     answer:
-      "Nein. Der erste Meldezeitraum beginnt am 1. Jänner 2026. Eine rückwirkende Meldepflicht bräuchte ein neues Gesetz. Weder DAC9 noch der aktuelle Vorschlag für eine Neufassung der Richtlinie sehen das vor. Gespeichert sind ältere Transaktionen trotzdem: Nach den Geldwäschevorschriften muss der Anbieter sie derzeit bis zehn Jahre nach Ende der Kundenbeziehung aufbewahren.",
+      "Nein. Der erste Meldezeitraum beginnt am 1. Jänner 2026. Eine rückwirkende Meldepflicht bräuchte ein neues Gesetz. Weder DAC9 noch der aktuelle Vorschlag für eine Neufassung der Richtlinie sehen das vor. Beim Anbieter liegen ältere Transaktionen trotzdem: Seit 2020 verlangen die Geldwäschevorschriften, sie derzeit bis zehn Jahre nach Ende der Kundenbeziehung aufzubewahren.",
   },
   {
     question: "Wie lange bleiben meine Daten gespeichert?",
@@ -248,7 +248,7 @@ const faqs = [
   {
     question: "Ist DAC8 rechtswidrig?",
     answer:
-      "Wir sind überzeugt, dass die österreichische Erfassung aller Kunden gegen Grundrechte verstößt, und bringen die Frage über die Datenschutzbehörde vor die Gerichte. Ob die konkreten Pflichten verhältnismäßig sind, entscheiden die Gerichte.",
+      "Wir sind überzeugt, dass die österreichische Erfassung aller Kunden gegen Grundrechte verstößt, und wollen die Frage über die Datenschutzbehörde gerichtlich klären lassen. Ob die konkreten Pflichten verhältnismäßig sind, entscheiden die Gerichte.",
   },
   {
     question: "Was passiert mit meinen Daten auf dieser Website?",
@@ -347,8 +347,8 @@ const faqs = [
         Was gemeldet wird und was beim Anbieter bleibt
       </h2>
       <p class="section-intro">
-        Die Meldung enthält Identität und Jahreswerte. Die Einzelheiten bleiben
-        beim Anbieter.
+        Die Meldung enthält Identität und Jahreswerte. Die Einzelheiten liegen
+        beim Anbieter, die meisten schon wegen der Geldwäschevorschriften.
       </p>
       <Artwork id="reportAssets" language="de" size="wide" zoom />
       <div class="compare">
@@ -362,9 +362,9 @@ const faqs = [
               Übertragung
             </li>
             <li>
-              Wert und Stückzahl aller Übertragungen an Adressen, die keinem
-              bekannten Anbieter gehören. Dazu zählt in der Regel deine eigene
-              Wallet.
+              Wert und Stückzahl aller Übertragungen an Adressen, die dem
+              Anbieter nicht als Adresse eines Anbieters oder Finanzinstituts
+              bekannt sind. Dazu zählt in der Regel deine eigene Wallet.
             </li>
             <li>
               auch Vorgänge, die steuerlich meist keine Rolle spielen, etwa der
@@ -421,8 +421,10 @@ const faqs = [
             >
             verlangt derzeit, Identifizierungs- und Transaktionsunterlagen bis
             zehn Jahre nach Ende der Geschäftsbeziehung aufzubewahren. Die Frist
-            läuft erst ab deiner Kündigung. Solche Bestände gehen immer wieder
-            verloren, wie die <a href="#faelle">Fälle weiter unten</a> zeigen.
+            beginnt erst, wenn die Kundenbeziehung endet. Solche Bestände gehen
+            immer wieder verloren, wie die
+            <a href="#faelle">Fälle weiter unten</a>
+            zeigen.
           </p>
         </div>
         <Artwork id="linkedIdentity" language="de" />

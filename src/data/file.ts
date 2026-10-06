@@ -41,6 +41,9 @@ export const firstYear = 2026
 // period, and keeps identification and transaction records until ten years
 // after the customer relationship ends (§ 21 FM-GwG).
 export const retention = 10
+// Crypto providers have been obliged entities under the FM-GwG since
+// 10 January 2020 (AMLD5); their records start there at the earliest.
+export const amlSince = 2020
 
 const span = (from: number, to: number) =>
   Array.from({ length: to - from + 1 }, (_, index) => from + index)
@@ -125,7 +128,7 @@ export const labels = {
       },
       transfer: { title: "Übertragung", note: "Ausgang von deinem Konto" },
       unhosted: {
-        title: "An Adressen ohne bekannten Anbieter",
+        title: "An Adressen ohne bekannte Verbindung zu einem Anbieter",
         note: "in der Regel auch deine eigene Wallet",
       },
     },
@@ -344,11 +347,11 @@ export const fileTexts = (answers: FileAnswers, language: Language) => {
         : "Was jedes Jahr ans Finanzamt geht",
     sheetIntro: third
       ? en
-        ? "This is the annual report your provider prepares for you. It goes to the tax authority only if your country exchanges crypto data with Austria. Activity before 2026 is not in it, but your provider keeps records of it under anti-money-laundering rules."
-        : "So sieht die Jahresmeldung aus, die dein Anbieter für dich aufbereitet. Ans Finanzamt geht sie nur, wenn dein Staat mit Österreich Kryptodaten austauscht. Vorgänge vor 2026 stehen nicht darin, dein Anbieter bewahrt sie aber nach den Geldwäschevorschriften auf."
+        ? "This is the annual report your provider prepares for you. It goes to the tax authority only if your country exchanges crypto data with Austria. Activity before 2026 is not in it, but since 2020 anti-money-laundering rules have required your provider to keep records of it."
+        : "So sieht die Jahresmeldung aus, die dein Anbieter für dich aufbereitet. Ans Finanzamt geht sie nur, wenn dein Staat mit Österreich Kryptodaten austauscht. Vorgänge vor 2026 stehen nicht darin. Seit 2020 muss dein Anbieter sie aber nach den Geldwäschevorschriften aufbewahren."
       : en
-        ? "This is your first annual report. Your provider fills in the fields with your data. Activity before 2026 is not reported, but your provider keeps records of it under anti-money-laundering rules."
-        : "So sieht deine erste Jahresmeldung aus. Die Felder füllt dein Anbieter mit deinen Daten. Vorgänge vor 2026 meldet er nicht, er bewahrt sie aber nach den Geldwäschevorschriften auf.",
+        ? "This is your first annual report. Your provider fills in the fields with your data. Activity before 2026 is not reported, but since 2020 anti-money-laundering rules have required your provider to keep records of it."
+        : "So sieht deine erste Jahresmeldung aus. Die Felder füllt dein Anbieter mit deinen Daten. Vorgänge vor 2026 meldet er nicht. Seit 2020 muss er sie aber nach den Geldwäschevorschriften aufbewahren.",
     sheetTo: third
       ? en
         ? "To the tax authority only with data exchange"
@@ -408,9 +411,16 @@ export const fileTexts = (answers: FileAnswers, language: Language) => {
           : en
             ? `Another report each year, the last one for ${last}.`
             : `Eine weitere Meldung pro Jahr, zuletzt die für ${last}.`,
-    keptSince: en
-      ? `Not in the report, but held by your provider since ${answers.since}, already under anti-money-laundering rules. DAC8 links these records with your tax data:`
-      : `Nicht in der Meldung, aber seit ${answers.since} bei deinem Anbieter, schon aufgrund der Geldwäschevorschriften. Mit DAC8 werden sie mit deinen Steuerdaten verknüpft:`,
+    // Crypto providers have kept these records under the FM-GwG only since
+    // 10 January 2020, so earlier customers read the period from 2020.
+    keptSince:
+      answers.since < amlSince
+        ? en
+          ? `Not in the report, but held by your provider for the period since ${amlSince}, already under anti-money-laundering rules. DAC8 links these records with your tax data:`
+          : `Nicht in der Meldung, aber für die Zeit ab ${amlSince} bei deinem Anbieter, schon aufgrund der Geldwäschevorschriften. Mit DAC8 werden sie mit deinen Steuerdaten verknüpft:`
+        : en
+          ? `Not in the report, but held by your provider since ${answers.since}, already under anti-money-laundering rules. DAC8 links these records with your tax data:`
+          : `Nicht in der Meldung, aber seit ${answers.since} bei deinem Anbieter, schon aufgrund der Geldwäschevorschriften. Mit DAC8 werden sie mit deinen Steuerdaten verknüpft:`,
     keptFrom: String(answers.since),
     keptTurn: last === undefined ? (en ? "open" : "offen") : String(last),
     keptToLabel:
@@ -431,11 +441,11 @@ export const fileTexts = (answers: FileAnswers, language: Language) => {
     keptRule:
       keptUntil === undefined
         ? en
-          ? "identification and transaction records currently for up to ten years after the relationship ends. The clock only starts when you close your account."
-          : "Ausweis- und Transaktionsunterlagen derzeit bis zehn Jahre nach Ende der Kundenbeziehung. Die Frist beginnt erst, wenn du kündigst."
+          ? "identification and transaction records currently for up to ten years after the relationship ends. The clock only starts when the customer relationship ends."
+          : "Ausweis- und Transaktionsunterlagen derzeit bis zehn Jahre nach Ende der Kundenbeziehung. Die Frist beginnt erst, wenn die Kundenbeziehung endet."
         : en
-          ? `identification and transaction records currently until ${keptUntil}, ten years after you leave.`
-          : `Ausweis- und Transaktionsunterlagen derzeit bis ${keptUntil}, zehn Jahre nach deiner Kündigung.`,
+          ? `identification and transaction records currently until ${keptUntil}, ten years after the relationship ends.`
+          : `Ausweis- und Transaktionsunterlagen derzeit bis ${keptUntil}, zehn Jahre nach Ende der Kundenbeziehung.`,
     live:
       answers.provider === "self"
         ? verdict
