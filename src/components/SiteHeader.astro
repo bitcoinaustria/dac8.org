@@ -320,7 +320,7 @@ const current = navigation.find(
     }
   }
 
-  @media (width < 64rem) {
+  @media (width < 72rem) {
     .site-header[data-menu-ready] .site-bar > nav#site-navigation {
       display: none;
     }
@@ -441,7 +441,7 @@ const current = navigation.find(
   const menuClose = menu?.querySelector<HTMLButtonElement>(".menu-close")
   const navigationHome = navigation?.parentElement
   const navigationNext = navigation?.nextElementSibling
-  const mobile = matchMedia("(width < 64rem)")
+  const mobile = matchMedia("(width < 72rem)")
 
   const closeMenu = () => {
     if (!menu?.open) return

@@ -1,4 +1,5 @@
 ---
+import ArgumentPoints from "@/components/ArgumentPoints.astro"
 import Artwork from "@/components/Artwork.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
@@ -12,13 +13,19 @@ const en = language === "en"
 const dossier = pathFor("dossier", language)
 const listFor = (ids: readonly PointId[]) =>
   ids.map((id) => points[language][id])
+const sections = {
+  verdacht: listFor(topics.verdacht),
+  speicherdauer: listFor(topics.speicherdauer),
+  sicherheit: listFor(topics.sicherheit),
+  ausbau: listFor(topics.ausbau),
+}
 ---
 
 <Layout
   sections={[
     { id: "verdacht", label: en ? "No suspicion" : "Ohne Verdacht" },
-    { id: "sicherheit", label: en ? "Security" : "Sicherheit" },
     { id: "speicherdauer", label: en ? "Retention" : "Speicherdauer" },
+    { id: "sicherheit", label: en ? "Security" : "Sicherheit" },
     { id: "ausbau", label: en ? "Expansion" : "Ausbau" },
     { id: "forderungen", label: en ? "Demands" : "Forderungen" },
   ]}
@@ -33,14 +40,14 @@ const listFor = (ids: readonly PointId[]) =>
           <span>{en ? "And what we demand." : "Und was wir fordern."}</span>
         </h1>
         <p class="lead">
-          {en ? "Our arguments, sorted by topic. What the law requires in detail, and the cases that have already happened, are in the " : "Unsere Argumente, nach Themen geordnet. Was das Gesetz genau verlangt und welche Fälle es schon gibt, steht im "}<a
+          {en ? "Here is why we oppose collecting data on every crypto customer without suspicion, and which limits we demand. What the law requires in detail, and which data leaks have already happened, is set out in the " : "Hier steht, warum wir die Erfassung aller Krypto-Kunden ohne Verdacht ablehnen und welche Grenzen wir fordern. Was das Gesetz genau verlangt und welche Datenlecks es schon gab, steht im "}<a
             href={dossier}
             >{en ? "dossier" : "Dossier"}</a
           >.
         </p>
         <nav
           class="hero-actions"
-          aria-label={en ? "Jump to" : "Direkteinstieg"}
+          aria-label={en ? "Get started" : "Direkteinstieg"}
         >
           <a class="button primary" href="#forderungen"
             >{en ? "Our demands" : "Was wir fordern"}</a
@@ -66,16 +73,14 @@ const listFor = (ids: readonly PointId[]) =>
           >{en ? "State interference does." : "Staatliche Eingriffe schon."}</span
         >
       </h2>
-      <ul class="facts concerns">
-        {listFor(topics.verdacht).map((point) => (
-          <li>
-            <strong>{point.title}</strong>
-            <p>{point.text}</p>
-            {point.source && <small><a href={point.source.href}>{point.source.label}</a></small>}
-            {point.link && <a class="text-link" href={point.link.href}>{point.link.label}</a>}
-          </li>
-        ))}
-      </ul>
+      <ArgumentPoints points={sections.verdacht} />
+    </section>
+
+    <section id="speicherdauer" aria-labelledby="speicherdauer-heading">
+      <h2 id="speicherdauer-heading">
+        {en ? "Data is kept for years, and more is added every year" : "Gespeichert wird lange, und jedes Jahr kommt mehr dazu"}
+      </h2>
+      <ArgumentPoints points={sections.speicherdauer} />
     </section>
 
     <section id="sicherheit" aria-labelledby="sicherheit-heading">
@@ -85,26 +90,19 @@ const listFor = (ids: readonly PointId[]) =>
       <p class="section-intro">
         {en ? "The danger is not the single report. It is the store that grows over the years without any suspicion, and everything that can be linked to it." : "Die Gefahr ist nicht die einzelne Meldung. Es ist der Bestand, der über Jahre wächst, ohne dass je ein Verdacht bestand, und alles, was sich damit verknüpfen lässt."}
       </p>
-      <ul class="facts concerns">
-        {listFor(topics.sicherheit).map((point) => (
-          <li>
-            <strong>{point.title}</strong>
-            <p>{point.text}</p>
-          </li>
-        ))}
-      </ul>
+      <ArgumentPoints points={sections.sicherheit} />
       <h3 id="verknuepfung">
         {en ? "When datasets come together" : "Wenn Datensätze zusammenkommen"}
       </h3>
       <p class="prose">
-        {en ? "Each source shows only part of the picture. A public profile shows a face and family, a provider breach the wallet address, a hacked tax service the holdings. The annual totals show how much someone moves. Put together, they form a profile with a face, an address and presumed wealth, and every further leak makes it more precise. A single breach can already hold several of these pieces: at Fractal ID, ID documents, home addresses and wallet addresses sat in one dataset." : "Jede Quelle zeigt nur einen Ausschnitt. Ein öffentliches Profil zeigt Gesicht und Familie, ein Leck beim Anbieter die Wallet-Adresse, ein gehackter Steuerdienst die Bestände. Die Jahreswerte zeigen, wie viel jemand bewegt. Zusammengeführt ergibt das ein Profil mit Gesicht, Anschrift und mutmaßlichem Vermögen, und jedes weitere Leck macht es genauer. Schon ein einzelnes Leck kann mehrere Bausteine enthalten: Bei Fractal ID lagen Ausweis, Wohnadresse und Wallet-Adresse in einem Datensatz."}
+        {en ? "Each source shows only part of the picture. A public profile shows a face and family, a provider breach the wallet address, a hacked tax service the holdings. The annual totals show how much someone moves. Put together, they form a profile with a face, an address and presumed wealth, and every further leak makes it more precise. A single breach can already hold several of these pieces: at Fractal ID, ID documents, home addresses and wallet addresses sat in one dataset." : "Jede Quelle zeigt nur einen Ausschnitt. Ein öffentliches Profil zeigt Gesicht und Familie, ein Leck beim Anbieter die Wallet-Adresse, ein gehackter Steuerdienst die Bestände. Die Jahreswerte zeigen, wie viel jemand bewegt. Zusammengeführt ergibt das ein Profil mit Gesicht, Anschrift und mutmaßlichem Vermögen, und jedes weitere Leck macht es genauer. Schon ein einzelnes Leck kann mehrere dieser Teile enthalten: Bei Fractal ID lagen Ausweis, Wohnadresse und Wallet-Adresse in einem Datensatz."}
       </p>
       <Artwork id="profileFourSources" language={language} size="wide" zoom />
       <h3 id="zahlungsprofile">
         {en ? "When payments reveal everyday life" : "Wenn Zahlungen deinen Alltag offenlegen"}
       </h3>
       <p class="prose">
-        {en ? "Paying with bitcoin leaves traces of your everyday life, because on-chain transactions remain public. When a provider links your name to an address, further payments may become attributable to you. With information about recipients, purchases, donations and recurring payments can " : "Zahlst du mit Bitcoin, hinterlässt du Spuren deines Alltags, denn On-Chain-Transaktionen bleiben öffentlich. Verbindet ein Anbieter deinen Namen mit einer Adresse, kann jemand weitere Zahlungen dir zuordnen. Mit Informationen über die Empfänger lassen Einkäufe, Spenden und regelmäßige Zahlungen "}<a
+        {en ? "Paying with bitcoin leaves traces of your everyday life, because on-chain transactions remain public. Once someone knows which address belongs to which name, for instance from a provider breach, they can attribute further payments to you. Combined with information about the recipients, your purchases, donations and recurring payments can " : "Zahlst du mit Bitcoin, hinterlässt du Spuren deines Alltags, denn On-Chain-Transaktionen bleiben öffentlich. Kennt jemand die Zuordnung von Name und Adresse, etwa aus einem Leck beim Anbieter, kann er dir weitere Zahlungen zuordnen. Mit Informationen über die Empfänger lassen Einkäufe, Spenden und regelmäßige Zahlungen "}<a
           href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
           >{en ? "reveal habits and relationships" : "Rückschlüsse auf Gewohnheiten und Beziehungen"}</a
         >{en ? "." : " zu."}
@@ -125,31 +123,16 @@ const listFor = (ids: readonly PointId[]) =>
       </div>
     </section>
 
-    <section id="speicherdauer" aria-labelledby="speicherdauer-heading">
-      <h2 id="speicherdauer-heading">
-        {en ? "Kept for years, and more every year" : "Lange gespeichert, und jedes Jahr mehr"}
-      </h2>
-      <ul class="facts concerns">
-        {listFor(topics.speicherdauer).map((point) => (
-          <li>
-            <strong>{point.title}</strong>
-            <p>{point.text}</p>
-            {point.link && <a class="text-link" href={point.link.href}>{point.link.label}</a>}
-          </li>
-        ))}
-      </ul>
-    </section>
-
     <section id="ausbau" aria-labelledby="ausbau-heading">
       <h2 id="ausbau-heading">
-        {en ? "One building block of financial surveillance" : "Ein Baustein finanzieller Überwachung"}
+        {en ? "DAC8 is one building block of financial surveillance" : "DAC8 ist ein Baustein finanzieller Überwachung"}
       </h2>
       <div class="columns">
         <p class="section-intro">
-          {en ? "Step by step, the EU and Austria are building an infrastructure that collects financial data without suspicion, stores it for years and links it ever more closely. DAC8 is one part of it." : "Schritt für Schritt bauen die EU und Österreich eine Infrastruktur, die Finanzdaten ohne Verdacht erfasst, lange speichert und immer enger verknüpft. DAC8 ist ein Teil davon."}
+          {en ? "Step by step, the EU and Austria are building an infrastructure that collects financial data without suspicion, stores it for years and links it ever more closely." : "Schritt für Schritt bauen die EU und Österreich eine Infrastruktur, die Finanzdaten ohne Verdacht erfasst, lange speichert und immer enger verknüpft."}
         </p>
         <p class="prose">
-          {en ? "No one currently has to report wallet addresses, individual transactions or activities before 2026, and the proposal to recast the directive does not provide for it either. They are stored all the same: providers keep them under anti-money-laundering rules, next to the data prepared for DAC8. Lawmakers can expand existing infrastructure at any time. We want to limit it now. The " : "Wallet-Adressen, einzelne Transaktionen und Vorgänge vor 2026 muss derzeit niemand melden, und auch der Vorschlag zur Neufassung der Richtlinie sieht das nicht vor. Gespeichert sind sie trotzdem: Anbieter bewahren sie nach den Geldwäschevorschriften auf, neben den Daten für DAC8. Eine bestehende Infrastruktur kann der Gesetzgeber jederzeit erweitern. Wir wollen ihr deshalb jetzt Grenzen setzen. Welche Stufen schon beschlossen sind und was die Neufassung ändern würde, zeigt die "}<a
+          {en ? "Wallet addresses, individual transactions and activity before 2026 currently appear in no DAC8 report, and the proposal to recast the directive does not provide for that either. Providers hold them all the same, next to the data prepared for DAC8: anti-money-laundering rules have required it since 2020. Lawmakers can expand existing infrastructure. That is why we want to limit it now. The " : "Wallet-Adressen, einzelne Transaktionen und Vorgänge vor 2026 stehen derzeit in keiner DAC8-Meldung, und auch der Vorschlag zur Neufassung der Richtlinie sieht das nicht vor. Beim Anbieter liegen sie trotzdem, neben den Daten für DAC8: Seit 2020 verlangen das die Geldwäschevorschriften. Eine bestehende Infrastruktur kann der Gesetzgeber erweitern. Wir wollen ihr deshalb jetzt Grenzen setzen. Welche Stufen schon beschlossen sind und was die Neufassung ändern würde, zeigt die "}<a
             href={`${pathFor("history", language)}#ausblick`}
             >{en ? "history of the DAC" : "Geschichte der DAC"}</a
           >{en ? " shows which steps have been adopted and what the recast would change." : "."}
@@ -164,7 +147,7 @@ const listFor = (ids: readonly PointId[]) =>
             >{en ? "When you open an account" : "Bei der Kontoeröffnung"}</strong
           >
           <span
-            >{en ? "the provider identifies you with your ID. Under anti-money-laundering rules, the records are currently kept for up to ten years after the customer relationship ends." : "identifiziert dich der Anbieter mit Ausweis. Nach den Geldwäschevorschriften bleiben die Unterlagen derzeit bis zehn Jahre nach Ende der Kundenbeziehung."}</span
+            >{en ? "the provider identifies you with your ID, as anti-money-laundering rules require." : "identifiziert dich der Anbieter nach den Geldwäschevorschriften mit Ausweis."}</span
           >
         </li>
         <li>
@@ -172,7 +155,7 @@ const listFor = (ids: readonly PointId[]) =>
             >{en ? "With every transfer" : "Bei jeder Übertragung"}</strong
           >
           <span
-            >{en ? "it records the sender and recipient, including for transfers to your own wallet." : "erfasst er Absender und Empfänger, auch bei Übertragungen auf deine eigene Wallet."}</span
+            >{en ? "it records the sender and recipient under the EU transfer of funds regulation, including when you transfer to your own wallet." : "erfasst er nach der EU-Geldtransferverordnung Absender und Empfänger, auch wenn du auf deine eigene Wallet überträgst."}</span
           >
         </li>
         <li class="accent">
@@ -184,18 +167,11 @@ const listFor = (ids: readonly PointId[]) =>
         <li>
           <strong>{en ? "By 2029" : "Bis 2029"}</strong>
           <span
-            >{en ? "account registries will be connected across the EU, then including crypto-asset accounts." : "werden die Kontenregister EU-weit vernetzt, dann auch mit Krypto-Konten."}</span
+            >{en ? "account registries will be connected across the EU and will then also cover crypto-asset accounts." : "werden die Kontenregister EU-weit vernetzt. Sie erfassen dann auch Krypto-Konten."}</span
           >
         </li>
       </ol>
-      <ul class="facts concerns">
-        {listFor(topics.ausbau).map((point) => (
-          <li>
-            <strong>{point.title}</strong>
-            <p>{point.text}</p>
-          </li>
-        ))}
-      </ul>
+      <ArgumentPoints points={sections.ausbau} />
     </section>
 
     <section id="forderungen" aria-labelledby="forderungen-heading">
@@ -203,7 +179,7 @@ const listFor = (ids: readonly PointId[]) =>
         {en ? "Our demands" : "Was wir fordern"}
       </h2>
       <p class="section-intro">
-        {en ? "The state must justify why an intrusion into your private life is necessary. Invoking money laundering or tax evasion does not replace that justification. We call for targeted investigations based on specific suspicion and effective protection for uninvolved people." : "Der Staat muss begründen, warum ein Eingriff in dein Privatleben notwendig ist. Der Verweis auf Geldwäsche oder Steuerhinterziehung ersetzt diesen Nachweis nicht. Wir fordern gezielte Ermittlungen bei konkretem Verdacht und wirksamen Schutz für Unbeteiligte."}
+        {en ? "The state must justify why an intrusion into your private life is necessary. Invoking money laundering or tax evasion does not replace that justification. We call for targeted investigations based on specific suspicion and effective protection for uninvolved people." : "Der Staat muss begründen, warum ein Eingriff in dein Privatleben notwendig ist. Der Verweis auf Geldwäsche oder Steuerhinterziehung ersetzt diese Begründung nicht. Wir fordern gezielte Ermittlungen bei konkretem Verdacht und wirksamen Schutz für Unbeteiligte."}
       </p>
       <ul class="checklist">
         {demands[language].map((demand) => (
@@ -229,7 +205,7 @@ const listFor = (ids: readonly PointId[]) =>
         <a
           class="text-link"
           href={`${pathFor("participate", language)}#abgeordnete`}
-          >{en ? "Write to your MP" : "Deinen Abgeordneten schreiben"}</a
+          >{en ? "Write to MPs" : "Brief an Abgeordnete"}</a
         >
         <a class="text-link" href={`${dossier}#rechtsweg`}
           >{en ? "Our legal strategy" : "Wie wir vorgehen"}</a

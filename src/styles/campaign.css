@@ -1766,8 +1766,8 @@
 
 /* ---------- Leitsatz und Einwände -------------------------------------- */
 
-/* Der Leitsatz steht über den häufigsten Einwänden: vier kurze Antworten,
-   jede mit einem Beleg zum Weiterlesen. */
+/* Der Leitsatz steht über Einwänden und Argumenten: kurze Antworten, jede
+   mit einem Beleg zum Weiterlesen. */
 .campaign .statement {
   max-inline-size: 20ch;
   font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.625rem);

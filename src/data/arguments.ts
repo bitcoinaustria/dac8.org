@@ -30,15 +30,16 @@ export type PointId =
 // Which points each section of the arguments page shows, in order.
 export const topics = {
   verdacht: ["allCustomers", "nothingToHide", "taxFairness"],
+  speicherdauer: ["justTaxData", "noEndDate", "ownWallet"],
   sicherheit: ["honeypot", "sortable"],
-  speicherdauer: ["noEndDate", "justTaxData", "ownWallet"],
   ausbau: ["purpose", "errors"],
 } as const satisfies Record<string, readonly PointId[]>
 
-// The home page keeps the two objections readers raise first.
+// The home page keeps two objections: the cash comparison and the reply on
+// what the provider holds besides the report.
 export const homeObjections = [
   "nothingToHide",
-  "ownWallet",
+  "justTaxData",
 ] as const satisfies readonly PointId[]
 
 const section20 =
@@ -53,10 +54,10 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     nothingToHide: {
       title: "„Ich habe nichts zu verbergen.“",
-      text: "Bitcoin in der eigenen Wallet ist wie Bargeld in der Brieftasche. Stell dir vor, deine Bank würde dem Finanzamt jedes Jahr melden, wie viel Bargeld du abgehoben hast: bei jedem Kunden, bei jedem Betrag, ohne Verdacht. Bei Bitcoin macht DAC8 genau das. Überträgst du von einer Börse auf die eigene Wallet, steht die Jahressumme in der Regel in der Meldung. Gelangt sie in falsche Hände, zeigt sie, wer vermutlich Erspartes selbst verwahrt.",
+      text: "Bitcoin in der eigenen Wallet ist wie Bargeld daheim. Stell dir vor, deine Bank würde dem Finanzamt jedes Jahr melden, wie viel Bargeld du abgehoben hast, ab dem ersten Euro und ohne Verdacht. Bei Bitcoin verlangt DAC8 das: Überträgst du von einer Börse auf die eigene Wallet, steht die Jahressumme in der Regel in der Meldung. Gelangt so eine Meldung in falsche Hände, zeigt sie, wer vermutlich Erspartes selbst verwahrt.",
       link: {
         href: `${pathFor("dossier", "de")}#faelle`,
-        label: "Das ist schon passiert",
+        label: "Was schon passiert ist",
       },
     },
     taxFairness: {
@@ -69,7 +70,7 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     honeypot: {
       title: "Der Anbieter wird zum Honeypot.",
-      text: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist ein Angriff. Beim Anbieter liegen schon Ausweis, Wallet-Adressen und Transaktionen, die er nach den Geldwäschevorschriften aufbewahren muss. Mit DAC8 kommen Steuernummer und Jahreswerte dazu. Ein Leck beim Anbieter verbindet deinen Namen mit deinen Wallet-Adressen. Wer diese Zuordnung einmal hat, behält sie und kann damit weitere Zahlungen verfolgen.",
+      text: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist ein Angriff. Beim Anbieter liegen Ausweis, Wallet-Adressen und Transaktionen, mit DAC8 auch Steuernummer und Jahreswerte. Ein Leck verbindet deinen Namen mit deinen Wallet-Adressen. Wer diese Zuordnung einmal hat, behält sie und kann damit weitere Zahlungen verfolgen.",
     },
     sortable: {
       title: "Sortierbar nach Vermögen.",
@@ -77,11 +78,12 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     noEndDate: {
       title: "Eine Akte ohne Enddatum.",
-      text: "Jedes Jahr kommt eine Meldung dazu, und der Anbieter hebt jede zehn Jahre auf, entsprechende Bankkontendaten nur fünf. Bleibst du Kunde, liegen dort ab 2036 laufend zehn Jahresmeldungen, daneben Ausweis- und Transaktionsunterlagen aus der ganzen Kundenbeziehung, die er nach den Geldwäschevorschriften aufbewahren muss.",
+      text: "Jedes Jahr kommt eine Meldung dazu, und der Anbieter löscht jede erst zehn Jahre nach ihrem Meldejahr. Für Meldungen über Bankkonten gelten fünf Jahre. Bleibst du Kunde, liegen dort ab 2036 laufend zehn Jahresmeldungen.",
+      source: { href: section20, label: "§ 20 Abs. 4 Krypto-MPfG" },
     },
     justTaxData: {
       title: "„Das sind doch nur Steuerdaten.“",
-      text: "Gemeldet werden Identität und Jahreswerte. Beim Anbieter liegen aber auch Ausweis, Wallet-Adressen und einzelne Transaktionen: Die Geldwäschevorschriften verlangen, sie bis zehn Jahre nach Ende der Kundenbeziehung aufzubewahren. Mit DAC8 werden sie mit deinen Steuerdaten verknüpft.",
+      text: "Gemeldet werden Identität und Jahreswerte. Beim Anbieter liegen aber auch Ausweis, Wallet-Adressen und einzelne Transaktionen. Die Geldwäschevorschriften verlangen, sie bei allen Kunden aufzubewahren, ohne Verdacht und derzeit bis zehn Jahre nach Ende der Kundenbeziehung. DAC8 verknüpft diese Unterlagen mit deinen Steuerdaten.",
       link: {
         href: `${pathFor("dossier", "de")}#gemeldet`,
         label: "Was gemeldet wird",
@@ -89,7 +91,7 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     ownWallet: {
       title: "„Ich nutze nur meine eigene Wallet.“",
-      text: "Dann meldet DAC8 dich nicht. Kaufst du aber bei einem Anbieter und überträgst auf deine Wallet, stehen Wert und Stückzahl in der Regel in seiner Jahresmeldung. Die Adresse steht nicht darin, er speichert sie aber nach den Geldwäschevorschriften.",
+      text: "Solange du nie über einen Anbieter kaufst oder verkaufst, meldet DAC8 dich nicht. Kaufst du bei einem Anbieter und überträgst auf deine Wallet, stehen Wert und Stückzahl dieser Übertragungen in der Regel in seiner Jahresmeldung. Die Adresse wird nicht gemeldet, bleibt nach den Geldwäschevorschriften aber beim Anbieter gespeichert.",
       link: { href: pathFor("file", "de"), label: "Deine DAC8-Akte" },
     },
     purpose: {
@@ -109,10 +111,10 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     nothingToHide: {
       title: "“I have nothing to hide.”",
-      text: "Bitcoin in your own wallet is like cash in your pocket. Imagine your bank telling the tax office every year how much cash you had withdrawn: for every customer, every amount, without suspicion. For bitcoin, DAC8 does exactly that. If you move coins from an exchange to your own wallet, the annual total usually appears in the report. In the wrong hands, it shows who probably keeps savings in self-custody.",
+      text: "Bitcoin in your own wallet is like cash at home. Imagine your bank telling the tax authority every year how much cash you withdrew, from the first euro and without suspicion. For bitcoin, DAC8 requires just that: if you move coins from an exchange to your own wallet, the annual total usually appears in the report. In the wrong hands, such a report shows who probably keeps savings in self-custody.",
       link: {
         href: `${pathFor("dossier", "en")}#faelle`,
-        label: "This has already happened",
+        label: "What has already happened",
       },
     },
     taxFairness: {
@@ -125,7 +127,7 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     honeypot: {
       title: "The provider becomes a honeypot.",
-      text: "The more data sits in one place, and the longer it stays there, the more an attack pays off. The provider already holds your ID, wallet addresses and transactions, which anti-money-laundering rules require it to keep. DAC8 adds your tax number and annual totals. A provider breach ties your name to your wallet addresses. Whoever has that link keeps it and can use it to trace further payments.",
+      text: "The more data sits in one place, and the longer it stays there, the more an attack pays off. The provider holds your ID, wallet addresses and transactions, and with DAC8 also your tax identification number and annual totals. A breach ties your name to your wallet addresses. Whoever has that link keeps it and can use it to trace further payments.",
     },
     sortable: {
       title: "Sortable by wealth.",
@@ -133,11 +135,12 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     noEndDate: {
       title: "A file with no end date.",
-      text: "Every year adds another report, and the provider keeps each one for ten years, corresponding bank-account data only five. If you remain a customer, from 2036 ten annual reports will always be on file, next to the ID and transaction records from your entire customer relationship, which anti-money-laundering rules require it to keep.",
+      text: "Every year adds another report, and the provider deletes each one only ten years after its reporting year. For reports on bank accounts, the period is five years. If you remain a customer, from 2036 ten annual reports will always be on file.",
+      source: { href: section20, label: "Section 20(4) Krypto-MPfG" },
     },
     justTaxData: {
       title: "“It’s just tax data.”",
-      text: "The report contains identity and annual totals. Alongside them, the provider holds your ID, wallet addresses and individual transactions, kept under anti-money-laundering rules for up to ten years after the relationship ends. DAC8 links them with your tax data.",
+      text: "The report contains identity and annual totals. But the provider also holds your ID, wallet addresses and individual transactions. Anti-money-laundering rules require it to keep them for every customer, without suspicion, currently for up to ten years after the relationship ends. DAC8 links these records with your tax data.",
       link: {
         href: `${pathFor("dossier", "en")}#gemeldet`,
         label: "What gets reported",
@@ -145,7 +148,7 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     ownWallet: {
       title: "“I only use my own wallet.”",
-      text: "Then DAC8 does not report you. But if you buy from a provider and transfer to your wallet, the value and units usually appear in its annual report. The address is not in it, but the provider keeps it under anti-money-laundering rules.",
+      text: "As long as you never buy or sell through a provider, DAC8 does not report you. If you buy from a provider and transfer to your wallet, the value and units of those transfers usually appear in its annual report. The address is not reported, but it stays stored with the provider under anti-money-laundering rules.",
       link: { href: pathFor("file", "en"), label: "Your DAC8 file" },
     },
     purpose: {

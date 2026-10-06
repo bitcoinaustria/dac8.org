@@ -26,7 +26,7 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "DAC8 erklärt: Meldepflichten, Risiken und Rechtsweg",
       description:
-        "Was DAC8 in Österreich verlangt, welche Krypto-Daten Jahr für Jahr gemeldet werden, was sich beim Anbieter ansammelt und was mit solchen Daten schon passiert ist. Mit Primärquellen.",
+        "Was DAC8 in Österreich verlangt, welche Krypto-Daten Jahr für Jahr gemeldet werden, was sich beim Anbieter ansammelt und was mit solchen Daten passiert ist. Mit Primärquellen.",
       imageLines: ["Was DAC8 verlangt.", "Und was daraus wird."],
     },
     en: {
@@ -46,7 +46,7 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     en: {
       title: "Arguments against DAC8: what we oppose and demand",
       description:
-        "Why we oppose recording every crypto customer without suspicion: security, retention and expanding purposes, answers to common objections and our demands.",
+        "Why we oppose collecting data on every crypto customer without suspicion: security, retention and expanding purposes, answers to common objections and our demands.",
       imageLines: ["What we oppose.", "What we demand."],
     },
   },

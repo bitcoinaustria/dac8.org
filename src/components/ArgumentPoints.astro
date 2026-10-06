@@ -1,0 +1,24 @@
+---
+import type { Point } from "@/data/arguments"
+
+// One list of argument points, each with its source and further link when it
+// has them. The arguments page shows them as facts, the home page as
+// objections under the guiding statement.
+interface Props {
+  points: Point[]
+  variant?: "facts" | "objections"
+}
+
+const { points, variant = "facts" } = Astro.props
+---
+
+<ul class:list={variant === "facts" ? ["facts", "concerns"] : ["objections"]}>
+  {points.map((point) => (
+    <li>
+      <strong>{point.title}</strong>
+      <p>{point.text}</p>
+      {point.source && <small><a href={point.source.href}>{point.source.label}</a></small>}
+      {point.link && <a class="text-link" href={point.link.href}>{point.link.label}</a>}
+    </li>
+  ))}
+</ul>

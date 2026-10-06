@@ -512,3 +512,18 @@ const faqs = [
     </section>
   </article>
 </Layout>
+
+<script is:inline>
+  // The critique, outlook and demands moved to the arguments page in October 2026.
+  // Forward links shared before then to their new place.
+  ;(() => {
+    const moved = {
+      "#problem": "#sicherheit",
+      "#verknuepfung": "#verknuepfung",
+      "#zahlungsprofile": "#zahlungsprofile",
+      "#ausblick": "#ausbau",
+      "#forderungen": "#forderungen",
+    }[location.hash]
+    if (moved) location.replace("/en/arguments/" + moved)
+  })()
+</script>
