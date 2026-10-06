@@ -3,7 +3,6 @@ import ArgumentPoints from "@/components/ArgumentPoints.astro"
 import Artwork from "@/components/Artwork.astro"
 import CampaignPartners from "@/components/CampaignPartners.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
-import HistoryStack from "@/components/HistoryStack.astro"
 import LeakMatrix from "@/components/LeakMatrix.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
@@ -89,17 +88,12 @@ const objections = homeObjections.map((id) => {
             art: "accountToRecord",
             chapter: "Was der Anbieter sammelt",
             title: "Dein Konto wird zur Akte.",
-            text: "Ausweis, einzelne Transaktionen und Angaben zu deinen Wallet-Adressen hält dein Anbieter nach den Geldwäschevorschriften fest. Für DAC8 ergänzt er Steuernummer und Steuerwohnsitz und rechnet für die Meldung deine Jahreswerte je Kryptowert zusammen: gekauft, verkauft, getauscht. Auch Übertragungen auf die eigene Wallet stehen darin, obwohl sie für sich genommen keine Steuer auslösen.",
-          },
-          {
-            art: "paragraphWatch",
-            title: "Alle erfasst. Ohne Verdacht.",
-            text: "Der Anbieter bereitet diese Meldedaten für alle Kunden auf, auch für jene, die am Ende nicht gemeldet werden, etwa weil sie nur in einem Staat ohne Datenaustausch steuerlich ansässig sind. So verlangt es das österreichische Gesetz, über die EU-Richtlinie hinaus.",
+            text: "Ausweis, Transaktionen und Angaben zu deinen Wallet-Adressen hält dein Anbieter nach den Geldwäschevorschriften fest. Für DAC8 kommen Steuernummer, Steuerwohnsitz und deine Jahreswerte dazu, bei allen Kunden und ohne Verdacht.",
           },
           {
             art: "yearsOnFile",
             title: "Jedes Jahr mehr über dich.",
-            text: "Ausweis- und Transaktionsunterlagen muss dein Anbieter nach den Geldwäschevorschriften derzeit bis zehn Jahre nach Ende der Kundenbeziehung aufbewahren. Das Krypto-Meldepflichtgesetz verknüpft diesen Bestand mit deinen Steuerdaten. Dazu kommt jedes Jahr eine Meldung, die er erst zehn Jahre nach dem Meldejahr löscht.",
+            text: "Nach den Geldwäschevorschriften bewahrt dein Anbieter diese Unterlagen derzeit bis zehn Jahre nach Ende der Kundenbeziehung auf. Jede Jahresmeldung für DAC8 löscht er erst zehn Jahre nach dem Meldejahr.",
           },
           {
             art: "dataHack",
@@ -108,14 +102,9 @@ const objections = homeObjections.map((id) => {
             text: "Je mehr an einer Stelle liegt und je länger, desto lohnender der Einbruch. Börsen, Identifizierungsdienste und Finanzverwaltungen haben solche Daten schon verloren.",
           },
           {
-            art: "profileFourSources",
-            title: "Jedes Leck macht dein Profil genauer.",
-            text: "Gesicht aus dem Netz, Wallet aus einem Leck, Bestände aus einem gehackten Steuerdienst. Zusammen ergibt das, wer du bist, wo du wohnst und was du vermutlich besitzt.",
-          },
-          {
             art: "rankedPortrait",
             title: "Wer viel bewegt, steht oben auf der Liste.",
-            text: "Betrüger fischen in Österreich mit gefälschten FinanzOnline-Nachrichten nach Krypto-Besitzern. Ein Leck beim Anbieter würde ihnen die Liste fertig liefern, sortiert nach Volumen. Ob die Schätzung stimmt, ist Tätern egal.",
+            text: "Betrüger fischen in Österreich mit gefälschten FinanzOnline-Nachrichten nach Krypto-Besitzern. Ein Leck beim Anbieter würde ihnen die Liste fertig liefern, sortiert nach Volumen.",
           },
           {
             art: "targetAtHome",
@@ -188,18 +177,6 @@ const objections = homeObjections.map((id) => {
       </div>
     </section>
 
-    <section id="geschichte" aria-labelledby="geschichte-heading">
-      <h2 id="geschichte-heading">Wie es zu DAC8 kam</h2>
-      <p class="section-intro">
-        1977 begann es mit Amtshilfe im Einzelfall. Heute melden Banken,
-        Plattformen und Krypto-Anbieter jedes Jahr, Stufe um Stufe mehr.
-      </p>
-      <HistoryStack language="de" compact />
-      <a class="text-link" href="/geschichte/"
-        >Die ganze Geschichte seit 1977</a
-      >
-    </section>
-
     <section id="einwaende" aria-labelledby="einwaende-heading">
       <h2 id="einwaende-heading" class="statement">
         Privatsphäre braucht keine Rechtfertigung.
@@ -226,11 +203,6 @@ const objections = homeObjections.map((id) => {
         </p>
       </div>
       <LegalRoute language="de" />
-      <ul class="checklist goals" aria-label="Was wir erreichen wollen">
-        <li>Unverhältnismäßige Pflichten aufheben</li>
-        <li>Die Datensammlung begrenzen</li>
-        <li>Wirksamen Schutz für Betroffene durchsetzen</li>
-      </ul>
       <a class="text-link" href="/verfahren/">Zum Stand des Verfahrens</a>
     </section>
 

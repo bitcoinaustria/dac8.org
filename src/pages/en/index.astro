@@ -3,7 +3,6 @@ import ArgumentPoints from "@/components/ArgumentPoints.astro"
 import Artwork from "@/components/Artwork.astro"
 import CampaignPartners from "@/components/CampaignPartners.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
-import HistoryStack from "@/components/HistoryStack.astro"
 import LeakMatrix from "@/components/LeakMatrix.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
@@ -92,17 +91,12 @@ const objections = homeObjections.map((id) => {
             art: "accountToRecord",
             chapter: "What the provider collects",
             title: "Your account becomes a file.",
-            text: "Your provider records your ID, your individual transactions and details of your wallet addresses under anti-money-laundering rules. For DAC8 it adds your tax identification number and tax residence and, for the report, works out your annual totals per crypto-asset: bought, sold, exchanged. Transfers to your own wallet appear too, although they trigger no tax by themselves.",
-          },
-          {
-            art: "paragraphWatch",
-            title: "Everyone recorded. Without suspicion.",
-            text: "Providers prepare this reporting data for all customers, including those who will not ultimately be reported, for instance because they are tax-resident only in a country without data exchange. Austrian law requires it, going beyond the EU directive.",
+            text: "Your provider records your ID, your transactions and details of your wallet addresses under anti-money-laundering rules. For DAC8 it adds your tax identification number, tax residence and annual totals, for every customer and without suspicion.",
           },
           {
             art: "yearsOnFile",
             title: "More about you. Every year.",
-            text: "Anti-money-laundering rules currently require your provider to keep identification and transaction records for up to ten years after the customer relationship ends. Austria’s crypto reporting act (Krypto-MPfG) links this store with your tax data. On top of that comes a report every year, which the provider deletes only ten years after the reporting year.",
+            text: "Under anti-money-laundering rules, your provider currently keeps these records for up to ten years after the customer relationship ends. It deletes each annual DAC8 report only ten years after the reporting year.",
           },
           {
             art: "dataHack",
@@ -111,14 +105,9 @@ const objections = homeObjections.map((id) => {
             text: "The more data sits in one place, and the longer, the more a break-in pays. Exchanges, identity verification services and tax administrations have already lost such data.",
           },
           {
-            art: "profileFourSources",
-            title: "Every leak sharpens your profile.",
-            text: "Your face from the web, your wallet from a leak, your holdings from a hacked tax service. Together they reveal who you are, where you live and what you probably own.",
-          },
-          {
             art: "rankedPortrait",
             title: "The more you move, the higher you rank.",
-            text: "In Austria, fraudsters phish for crypto holders with fake tax-office messages. A breach at a provider would hand them the list ready-made, sorted by volume. Whether the estimate is right does not matter to criminals.",
+            text: "In Austria, fraudsters phish for crypto holders with fake tax-office messages. A breach at a provider would hand them the list ready-made, sorted by volume.",
           },
           {
             art: "targetAtHome",
@@ -197,16 +186,6 @@ const objections = homeObjections.map((id) => {
       </div>
     </section>
 
-    <section id="geschichte" aria-labelledby="geschichte-heading">
-      <h2 id="geschichte-heading">How DAC8 came about</h2>
-      <p class="section-intro">
-        It began in 1977 with assistance in individual cases. Today banks,
-        platforms and crypto providers report every year, more with each step.
-      </p>
-      <HistoryStack language="en" compact />
-      <a class="text-link" href="/en/history/">The full history since 1977</a>
-    </section>
-
     <section id="einwaende" aria-labelledby="einwaende-heading">
       <h2 id="einwaende-heading" class="statement">
         Privacy needs no justification.
@@ -235,11 +214,6 @@ const objections = homeObjections.map((id) => {
         </p>
       </div>
       <LegalRoute language="en" />
-      <ul class="checklist goals" aria-label="What we aim to achieve">
-        <li>Overturn disproportionate obligations</li>
-        <li>Limit data collection</li>
-        <li>Secure effective protection for those affected</li>
-      </ul>
       <a class="text-link" href="/en/proceedings/">Where the case stands</a>
     </section>
 

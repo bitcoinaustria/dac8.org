@@ -70,7 +70,7 @@ that follow the navigation labels:
 | Angriffe: archive of known physical attacks, map and list | `/angriffe/` | `/en/attacks/` |
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
-| Geschichte: a chart of what tax authorities receive today and one chronology since 1977 by era; linked from dossier, home and footer | `/geschichte/` | `/en/history/` |
+| Geschichte: a chart of what tax authorities receive today and one chronology since 1977 by era; linked from dossier and footer | `/geschichte/` | `/en/history/` |
 | Deine DAC8-Akte: what a provider reports and keeps about the reader, built from their answers in the browser | `/deine-akte/` | `/en/your-file/` |
 | Auskunft verlangen: a GDPR access request to the reader's provider about its DAC8 processing | `/auskunft/` | `/en/access-request/` |
 
@@ -79,14 +79,12 @@ A top bar carries the navigation and a permanent donate button that leads to
 sharing within reach. `/spenden` and `/en/donate` are short redirects for print
 and QR codes. The home page tells the case as one story and asks
 for help at its peak: the hero with three key figures, a numbered story of
-seven steps from the account to the doorstep (`src/components/Tale.astro`;
+five steps from the account to the doorstep (`src/components/Tale.astro`;
 on wide screens the pictures sit on a pinned stage that follows the steps),
 then the three ways to help (donate, ask your provider, write to MPs),
 documented leaks as a table of which kinds of data each exposed
-(`src/components/LeakMatrix.astro`), how it came about (the duties about
-individuals from the history chart, `HistoryStack` in compact mode), the
-guiding statement with the two objections readers raise first (the rest are on
-the arguments page, `src/data/arguments.ts`), what we do with the goals under
+(`src/components/LeakMatrix.astro`), the guiding statement with two objections
+(the rest are on the arguments page, `src/data/arguments.ts`), what we do with
 the legal route, and who we are. The full case list with sources is in the dossier (`#faelle`). A case
 belongs there only if lost or misused data made the harm possible, and it needs
 a public source. The dossier's "Am I affected?" check
@@ -152,8 +150,8 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   as the research status and places the chart's "today" line by it. Each
   entry keeps a one-sentence summary visible and the rest under "Details";
   `historyStack` in the same file feeds the chart
-  (`src/components/HistoryStack.astro`); the home page shows its rows about
-  individuals.
+  (`src/components/HistoryStack.astro`), which also has a compact mode with
+  only the rows about individuals for use as a teaser elsewhere.
 - Add confirmed public milestones to `src/data/updates.ts`, with a stable ID,
   publication timestamp including timezone, both translations and an optional
   source URL. Future-dated entries stay hidden until a build after that date.

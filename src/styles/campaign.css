@@ -1821,22 +1821,6 @@
   }
 }
 
-/* Die Ziele unter dem Rechtsweg: drei kurze Haken in einer Zeile. */
-.campaign .checklist.goals {
-  margin-block-start: var(--space-l);
-}
-
-.campaign .checklist.goals li {
-  color: var(--ink);
-  font-weight: 500;
-}
-
-@container campaign (width >= 52rem) {
-  .campaign .checklist.goals {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
 /* ---------- Präzedenzfall ---------------------------------------------- */
 
 /* Das Jahr steht in gefrästem Metall neben dem Absatz, der es erzählt. */

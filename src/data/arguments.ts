@@ -177,8 +177,8 @@ export const demands: Record<Language, Demand[]> = {
       text: "Der zusätzliche Nutzen von Stückzahlen und Transaktionszahlen muss belegt werden.",
     },
     {
-      title: "Die eigene Wallet ist keine Zahlung an Dritte.",
-      text: "Übertragungen auf selbst verwahrte Adressen sollen erkennbar getrennt behandelt werden.",
+      title: "Übertragungen auf die eigene Wallet nicht melden.",
+      text: "Sie lösen für sich genommen keine Steuer aus. Ihre Jahressumme deutet darauf hin, wer selbst verwahrt, und wird nach einem Leck zur Zielliste.",
     },
     {
       title: "Daten nicht länger als nötig speichern.",
@@ -211,8 +211,8 @@ export const demands: Record<Language, Demand[]> = {
       text: "The additional value of units and transaction counts must be demonstrated.",
     },
     {
-      title: "Your own wallet is not a payment to someone else.",
-      text: "Transfers to self-custodied addresses should be treated distinctly.",
+      title: "Do not report transfers to your own wallet.",
+      text: "They trigger no tax by themselves. Their annual total hints at who holds their own keys, and after a breach it becomes a target list.",
     },
     {
       title: "Keep data no longer than necessary.",
