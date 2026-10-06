@@ -178,7 +178,7 @@ export const demands: Record<Language, Demand[]> = {
     },
     {
       title: "Übertragungen auf die eigene Wallet nicht melden.",
-      text: "Sie lösen für sich genommen keine Steuer aus. Ihre Jahressumme deutet darauf hin, wer selbst verwahrt, und wird nach einem Leck zur Zielliste.",
+      text: "Sie lösen für sich genommen keine Steuer aus. Sie trotzdem zu melden ist, als würde die Bank dem Finanzamt sagen, wie viel Bargeld jemand nach Hause getragen hat. Nach einem Leck steht dann auf einer Liste, wer vermutlich wie viel Bitcoin daheim hat.",
     },
     {
       title: "Daten nicht länger als nötig speichern.",
@@ -212,7 +212,7 @@ export const demands: Record<Language, Demand[]> = {
     },
     {
       title: "Do not report transfers to your own wallet.",
-      text: "They trigger no tax by themselves. Their annual total hints at who holds their own keys, and after a breach it becomes a target list.",
+      text: "They trigger no tax by themselves. Reporting their total is like a bank telling the tax authority how much cash someone has carried home. After a breach, it becomes a list of who probably keeps how much bitcoin at home.",
     },
     {
       title: "Keep data no longer than necessary.",
