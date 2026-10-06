@@ -59,17 +59,18 @@ browser can share files, sharing as icon buttons.
 
 ## Site structure
 
-Five main pages per language, plus the history page and two tools, with URLs
+Six main pages per language, plus the history page and two tools, with URLs
 that follow the navigation labels:
 
 | Page | German | English |
 | --- | --- | --- |
 | Start: the case told as a story in scenes | `/` | `/en/` |
 | Dossier: the complete reference, FAQ and sources | `/dossier/` | `/en/dossier/` |
+| Argumente: our position by topic, with answers to objections and our demands | `/argumente/` | `/en/arguments/` |
 | Angriffe: archive of known physical attacks, map and list | `/angriffe/` | `/en/attacks/` |
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
-| Geschichte: a chart of what tax authorities receive today and one chronology since 1977 by era; linked from dossier, home and footer | `/geschichte/` | `/en/history/` |
+| Geschichte: a chart of what tax authorities receive today and one chronology since 1977 by era; linked from dossier and footer | `/geschichte/` | `/en/history/` |
 | Deine DAC8-Akte: what a provider reports and keeps about the reader, built from their answers in the browser | `/deine-akte/` | `/en/your-file/` |
 | Auskunft verlangen: a GDPR access request to the reader's provider about its DAC8 processing | `/auskunft/` | `/en/access-request/` |
 
@@ -78,14 +79,13 @@ A top bar carries the navigation and a permanent donate button that leads to
 sharing within reach. `/spenden` and `/en/donate` are short redirects for print
 and QR codes. The home page tells the case as one story and asks
 for help at its peak: the hero with three key figures, a numbered story of
-seven steps from the account to the doorstep (`src/components/Tale.astro`;
+five steps from the account to the doorstep (`src/components/Tale.astro`;
 on wide screens the pictures sit on a pinned stage that follows the steps),
 then the three ways to help (donate, ask your provider, write to MPs),
 documented leaks as a table of which kinds of data each exposed
-(`src/components/LeakMatrix.astro`), how it came about (the duties about
-individuals from the history chart, `HistoryStack` in compact mode), the
-guiding statement with answers to common objections, what we do with the
-goals under the legal route, and who we are. The full case list with sources is in the dossier (`#faelle`). A case
+(`src/components/LeakMatrix.astro`), the guiding statement with two objections
+(the rest are on the arguments page, `src/data/arguments.ts`), what we do with
+the legal route, and who we are. The full case list with sources is in the dossier (`#faelle`). A case
 belongs there only if lost or misused data made the harm possible, and it needs
 a public source. The dossier's "Am I affected?" check
 (`src/components/AffectedCheck.astro`) restates the FAQ. The footer closes
@@ -139,7 +139,7 @@ content and procedural context. No browser-language redirects or preference
 storage are used.
 
 Keep both language versions in sync when changing public claims. Navigation,
-the participation and proceedings pages share components; the home page and the
+the participation, proceedings and arguments pages share components; the home page and the
 dossier remain explicit Astro documents per language. Source URLs are shared in `src/data/sources.ts`.
 
 - Update `src/data/campaign.ts` when the procedural status changes.
@@ -150,8 +150,8 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   as the research status and places the chart's "today" line by it. Each
   entry keeps a one-sentence summary visible and the rest under "Details";
   `historyStack` in the same file feeds the chart
-  (`src/components/HistoryStack.astro`); the home page shows its rows about
-  individuals.
+  (`src/components/HistoryStack.astro`), which also has a compact mode with
+  only the rows about individuals for use as a teaser elsewhere.
 - Add confirmed public milestones to `src/data/updates.ts`, with a stable ID,
   publication timestamp including timezone, both translations and an optional
   source URL. Future-dated entries stay hidden until a build after that date.
@@ -171,8 +171,8 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
 - The newsletter link points to Bitcoin Austria's existing newsletter form.
 - The letter to members of the National Council is on the participation page
   (`src/components/LetterGenerator.astro`, texts in `src/data/letter.ts`). It
-  runs entirely in the browser; its demands restate the dossier's "Was wir
-  fordern" list, so change both together.
+  runs entirely in the browser; its demands come from `src/data/arguments.ts`, the
+  same list the arguments page shows under "Was wir fordern".
 - The DAC8 file (`src/components/pages/FilePage.astro`) and the access
   request (`src/components/pages/AccessRequestPage.astro`) run entirely in the
   browser, like the letter. The file restates the dossier's reporting and
@@ -197,8 +197,8 @@ entries. URLs always use the production origin from `astro.config.ts`.
 
 The build renders a 1200 × 630 PNG for each page and language under
 `/og/{de|en}/{page}.png`. The renderer uses Sharp and the bundled IBM Plex Sans
-font (SIL Open Font License), with no remote rendering service. The four main
-pages show their lead illustration on the right, mapped in
+font (SIL Open Font License), with no remote rendering service. Pages with a
+lead illustration show it on the right, mapped in
 `src/pages/og/[language]/[page].png.ts`; the legal pages stay text-only.
 Headlines have up to three explicit lines; a build fails if a line exceeds the
 available space, which is narrower beside an illustration.

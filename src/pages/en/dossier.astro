@@ -15,32 +15,6 @@ const sources = sourceGroups.map((group) => ({
     label: source.labelEn,
   })),
 }))
-const concerns = [
-  {
-    title: "All customers, no suspicion.",
-    text: "Providers must prepare reporting data for all customers before it is clear who will be reported at all. We reject this stockpiling of data.",
-  },
-  {
-    title: "A file with no end date.",
-    text: "Every year adds another report, and the provider keeps each one for ten years, corresponding bank-account data only five. If you remain a customer, from 2036 ten annual reports will always be on file, next to the ID and transaction records from your entire customer relationship, which anti-money-laundering rules require it to keep.",
-  },
-  {
-    title: "Sortable by wealth.",
-    text: "Total value and number of purchases give a rough estimate of how much money someone moves in crypto. Anyone who gets hold of the data can use it to single out people who appear wealthy, even when the estimate is wrong.",
-  },
-  {
-    title: "The provider becomes a honeypot.",
-    text: "The more data sits in one place, and the longer it stays there, the more an attack pays off. Under anti-money-laundering rules the provider already holds your ID, wallet addresses and transactions, and DAC8 adds your tax number and annual totals. A provider breach ties your name to your wallet addresses. Whoever has that link keeps it and can use it to trace further payments.",
-  },
-  {
-    title: "The purpose keeps expanding.",
-    text: "Under the directive, the data may also be used for customs, against money laundering and for EU sanctions. Once collected, data finds new purposes. We call for a clear limit on each one.",
-  },
-  {
-    title: "Errors travel too.",
-    text: "An incorrect tax residence, valuation or reading of a transfer can be passed to other countries. The more bodies involved, the harder the correction.",
-  },
-]
 // Documented cases in which lost or misused data made the harm possible.
 // Cases without that link do not belong here.
 const leaks = [
@@ -264,10 +238,7 @@ const faqs = [
   sections={[
   { id: "was-ist-dac8", label: "DAC8" },
   { id: "gemeldet", label: "The report" },
-  { id: "problem", label: "Concerns" },
   { id: "faelle", label: "Cases" },
-  { id: "ausblick", label: "Bigger picture" },
-  { id: "forderungen", label: "Demands" },
   { id: "rechtsweg", label: "Legal route" },
   { id: "faq", label: "Questions" },
   { id: "quellen", label: "Sources" },
@@ -280,7 +251,8 @@ const faqs = [
         <h1>What DAC8 requires. <span>And where it leads.</span></h1>
         <p class="lead">
           What data about you gets reported, what builds up at your provider
-          over the years, what can happen to it and why we are challenging it.
+          over the years and what can happen to it. Why we are challenging it is
+          set out in our <a href="/en/arguments/">arguments</a>.
         </p>
         <nav class="hero-actions" aria-label="Get started">
           <a class="button primary" href="#gemeldet">What gets reported</a
@@ -435,39 +407,6 @@ const faqs = [
         <Artwork id="linkedIdentity" language="en" />
       </div>
     </section>
-    <section id="problem" aria-labelledby="problem-heading">
-      <h2 id="problem-heading">Why it is a problem</h2>
-      <p class="section-intro">
-        The danger is not the single report. It is the store that grows over the
-        years without any suspicion, and everything that can be linked to it.
-      </p>
-      <ul class="facts concerns">
-        {concerns.map(concern => <li><strong>{concern.title}</strong><p>{concern.text}</p></li>)}
-      </ul>
-      <h3 id="verknuepfung">When datasets come together</h3>
-      <p class="prose">
-        Each source shows only part of the picture. A public profile shows a
-        face and family, a provider breach the wallet address, a hacked tax
-        service the holdings. The annual totals show how much someone moves. Put
-        together, they form a profile with a face, an address and presumed
-        wealth, and every further leak makes it more precise. A single breach
-        can already hold several of these pieces: at Fractal ID, ID documents,
-        home addresses and wallet addresses sat in one dataset.
-      </p>
-      <Artwork id="profileFourSources" language="en" size="wide" zoom />
-      <h3 id="zahlungsprofile">When payments reveal everyday life</h3>
-      <p class="prose">
-        Paying with bitcoin leaves traces of your everyday life, because
-        on-chain transactions remain public. When a provider links your name to
-        an address, further payments may become attributable to you. With
-        information about recipients, purchases, donations and recurring
-        payments can
-        <a href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
-          >reveal habits and relationships</a
-        >.
-      </p>
-      <Artwork id="walletHistoryRevealed" language="en" size="wide" zoom />
-    </section>
     <section id="faelle" aria-labelledby="faelle-heading">
       <h2 id="faelle-heading">What has already happened</h2>
       <p class="section-intro">
@@ -504,8 +443,9 @@ const faqs = [
             others again turn up at the door. Long retention obligations keep
             this data available for years. Even a mistaken assumption that
             someone owns a lot of crypto can put them and their family at risk.
-            That is why we call for data minimisation and short retention
-            periods.
+            That is why we
+            <a href="/en/arguments/#forderungen">call for</a>
+            data minimisation and short retention periods.
           </p>
         </div>
         <Artwork id="targetAtHome" language="en" />
@@ -526,110 +466,6 @@ const faqs = [
         ))}
       </ul>
       <AttackSummary language="en" />
-    </section>
-    <section id="ausblick" aria-labelledby="ausblick-heading">
-      <h2 id="ausblick-heading">
-        One building block of financial surveillance
-      </h2>
-      <div class="columns">
-        <p class="section-intro">
-          Step by step, the EU and Austria are building an infrastructure that
-          collects financial data without suspicion, stores it for years and
-          links it ever more closely. DAC8 is one part of it.
-        </p>
-        <p class="prose">
-          No one currently has to report wallet addresses, individual
-          transactions or activities before 2026, and the proposal to recast the
-          directive does not provide for it either. They are stored all the
-          same: providers keep them under anti-money-laundering rules, next to
-          the data prepared for DAC8. Lawmakers can expand existing
-          infrastructure at any time. We want to limit it now. The
-          <a href="/en/history/#ausblick">history of the DAC</a>
-          shows which steps have been adopted and what the recast would change.
-        </p>
-      </div>
-      <ol class="flow" aria-label="The building blocks">
-        <li>
-          <strong>When you open an account</strong>
-          <span
-            >the provider identifies you with your ID. Under
-            anti-money-laundering rules, the records are currently kept for up
-            to ten years after the customer relationship ends.</span
-          >
-        </li>
-        <li>
-          <strong>With every transfer</strong>
-          <span
-            >it records the sender and recipient, including for transfers to
-            your own wallet.</span
-          >
-        </li>
-        <li class="accent">
-          <strong>Every year</strong>
-          <span
-            >it prepares the tax identification numbers and annual totals of all
-            customers for the DAC8 report.</span
-          >
-        </li>
-        <li>
-          <strong>By 2029</strong>
-          <span
-            >account registries will be connected across the EU, then including
-            crypto-asset accounts.</span
-          >
-        </li>
-      </ol>
-    </section>
-    <section id="forderungen" aria-labelledby="forderungen-heading">
-      <h2 id="forderungen-heading">Our demands</h2>
-      <p class="section-intro">
-        The state must justify why an intrusion into your private life is
-        necessary. Invoking money laundering or tax evasion does not replace
-        that justification. We call for targeted investigations based on
-        specific suspicion and effective protection for uninvolved people.
-      </p>
-      <ul class="checklist">
-        <li>
-          <strong>Determine whose data must be reported first.</strong>
-          No precautionary preparation of data for all customers.
-        </li>
-        <li>
-          <strong>Collect only necessary data.</strong>
-          The additional value of units and transaction counts must be
-          demonstrated.
-        </li>
-        <li>
-          <strong>Your own wallet is not a payment to someone else.</strong>
-          Transfers to self-custodied addresses should be treated distinctly.
-        </li>
-        <li>
-          <strong>Keep data no longer than necessary.</strong>
-          Ten years instead of five needs a clear justification.
-        </li>
-        <li>
-          <strong>Strictly limit purpose, access and onward disclosure.</strong>
-          Access must be traceable and subject to independent oversight.
-        </li>
-        <li>
-          <strong>Your rights must work in practice.</strong>
-          You must be able to access your data, correct errors and have
-          unlawfully stored data deleted by every recipient.
-        </li>
-        <li>
-          <strong>Independently review benefits and risks.</strong>
-          Regularly and publicly, so unnecessary intrusions can be ended.
-        </li>
-      </ul>
-      <div class="precedent">
-        <p class="precedent-year" aria-hidden="true">2014</p>
-        <p class="prose">
-          <strong>A surveillance law has fallen before.</strong>
-          The challenge to data retention organised by AKVorrat, now
-          epicenter.works, reached the Court of Justice through Austria’s
-          Constitutional Court. In 2014, both the EU directive and Austrian
-          rules fell.
-        </p>
-      </div>
     </section>
     <section id="rechtsweg" aria-labelledby="rechtsweg-heading">
       <h2 id="rechtsweg-heading">Our legal strategy</h2>
@@ -676,3 +512,18 @@ const faqs = [
     </section>
   </article>
 </Layout>
+
+<script is:inline>
+  // The critique, outlook and demands moved to the arguments page in October 2026.
+  // Forward links shared before then to their new place.
+  ;(() => {
+    const moved = {
+      "#problem": "#sicherheit",
+      "#verknuepfung": "#verknuepfung",
+      "#zahlungsprofile": "#zahlungsprofile",
+      "#ausblick": "#ausbau",
+      "#forderungen": "#forderungen",
+    }[location.hash]
+    if (moved) location.replace("/en/arguments/" + moved)
+  })()
+</script>

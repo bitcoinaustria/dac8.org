@@ -5,8 +5,8 @@ import { type Language, pathFor } from "@/lib/i18n"
 // The reporting duties as stacked bars: one row per step, from the year it
 // applies until today. Read top to bottom, the stack grows towards DAC8.
 // Each row is a link with its years spelled out; the bars only repeat them.
-// "compact" is the homepage teaser: only the duties about individuals, no
-// caption or legend, rows linking into the history page.
+// "compact" is a teaser for other pages: only the duties about individuals,
+// no caption or legend, rows linking into the history page.
 interface Props {
   language: Language
   compact?: boolean
@@ -416,8 +416,8 @@ let index = 0
     }
   }
 
-  /* Kompakt auf der Startseite: dieselben Zeilen, etwas mehr Luft, weil
-     keine Gruppenüberschrift sie gliedert. */
+  /* Kompakt als Teaser: dieselben Zeilen, etwas mehr Luft, weil keine
+     Gruppenüberschrift sie gliedert. */
   .stack.compact {
     --row: 2.25rem;
     max-inline-size: 60rem;

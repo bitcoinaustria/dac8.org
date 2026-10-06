@@ -26,14 +26,28 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "DAC8 erklärt: Meldepflichten, Risiken und Rechtsweg",
       description:
-        "Was DAC8 in Österreich verlangt, welche Krypto-Daten Jahr für Jahr gemeldet werden, was sich beim Anbieter ansammelt und warum wir dagegen vorgehen. Mit Primärquellen.",
+        "Was DAC8 in Österreich verlangt, welche Krypto-Daten Jahr für Jahr gemeldet werden, was sich beim Anbieter ansammelt und was mit solchen Daten passiert ist. Mit Primärquellen.",
       imageLines: ["Was DAC8 verlangt.", "Und was daraus wird."],
     },
     en: {
       title: "DAC8 explained: reporting, risks and legal challenge",
       description:
-        "What DAC8 requires in Austria, which crypto-asset data is reported every year, what builds up at your provider and why we are challenging it. With primary sources.",
+        "What DAC8 requires in Austria, which crypto-asset data is reported every year, what builds up at your provider and what has already happened to such data. With primary sources.",
       imageLines: ["What DAC8 requires.", "And where it leads."],
+    },
+  },
+  arguments: {
+    de: {
+      title: "Argumente gegen DAC8: was wir ablehnen und fordern",
+      description:
+        "Warum wir die anlasslose Erfassung aller Krypto-Kunden ablehnen: Sicherheit, Speicherdauer und Zweckausweitung, Antworten auf häufige Einwände und unsere Forderungen.",
+      imageLines: ["Was wir ablehnen.", "Und was wir fordern."],
+    },
+    en: {
+      title: "Arguments against DAC8: what we oppose and demand",
+      description:
+        "Why we oppose collecting data on every crypto customer without suspicion: security, retention and expanding purposes, answers to common objections and our demands.",
+      imageLines: ["What we oppose.", "What we demand."],
     },
   },
   history: {

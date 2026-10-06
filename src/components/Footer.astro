@@ -17,7 +17,7 @@ const en = language === "en"
 const background = pathFor("dossier", language)
 const sections = [
   {
-    title: "Dossier",
+    title: en ? "Background" : "Hintergrund",
     links: [
       {
         label: en ? "What is DAC8?" : "Was ist DAC8?",
@@ -32,8 +32,12 @@ const sections = [
         href: pathFor("file", language),
       },
       {
+        label: en ? "Our arguments" : "Unsere Argumente",
+        href: pathFor("arguments", language),
+      },
+      {
         label: en ? "Our demands" : "Was wir fordern",
-        href: `${background}#forderungen`,
+        href: `${pathFor("arguments", language)}#forderungen`,
       },
       {
         label: en ? "History of the DAC" : "Geschichte der DAC",

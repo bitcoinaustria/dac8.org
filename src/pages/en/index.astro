@@ -1,14 +1,27 @@
 ---
+import ArgumentPoints from "@/components/ArgumentPoints.astro"
 import Artwork from "@/components/Artwork.astro"
 import CampaignPartners from "@/components/CampaignPartners.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
-import HistoryStack from "@/components/HistoryStack.astro"
 import LeakMatrix from "@/components/LeakMatrix.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Tale from "@/components/Tale.astro"
 import Layout from "@/layouts/Layout.astro"
+import { homeObjections, points } from "@/data/arguments"
 import { campaignStatus } from "@/data/campaign"
+
+// On the home page the cases are a section further up, so the cash
+// comparison links there instead of to the dossier.
+const objections = homeObjections.map((id) => {
+  const point = points.en[id]
+  return id === "nothingToHide"
+    ? {
+        ...point,
+        link: { href: "#faelle", label: "This has already happened" },
+      }
+    : point
+})
 ---
 
 <Layout>
@@ -78,17 +91,12 @@ import { campaignStatus } from "@/data/campaign"
             art: "accountToRecord",
             chapter: "What the provider collects",
             title: "Your account becomes a file.",
-            text: "Your provider records your ID, your individual transactions and details of your wallet addresses under anti-money-laundering rules. For DAC8 it adds your tax identification number and tax residence and, for the report, works out your annual totals per crypto-asset: bought, sold, exchanged. Transfers to your own wallet appear too, although they trigger no tax by themselves.",
-          },
-          {
-            art: "paragraphWatch",
-            title: "Everyone recorded. Without suspicion.",
-            text: "Providers prepare this reporting data for all customers, including those who will not ultimately be reported, for instance because they are tax-resident only in a country without data exchange. Austrian law requires it, going beyond the EU directive.",
+            text: "Your provider records your ID, your transactions and details of your wallet addresses under anti-money-laundering rules. For DAC8 it adds your tax identification number, tax residence and annual totals, for every customer and without suspicion.",
           },
           {
             art: "yearsOnFile",
             title: "More about you. Every year.",
-            text: "Anti-money-laundering rules currently require your provider to keep identification and transaction records for up to ten years after the customer relationship ends. Austria’s crypto reporting act (Krypto-MPfG) links this store with your tax data. On top of that comes a report every year, which the provider deletes only ten years after the reporting year.",
+            text: "Under anti-money-laundering rules, your provider currently keeps these records for up to ten years after the customer relationship ends. It deletes each annual DAC8 report only ten years after the reporting year.",
           },
           {
             art: "dataHack",
@@ -97,14 +105,9 @@ import { campaignStatus } from "@/data/campaign"
             text: "The more data sits in one place, and the longer, the more a break-in pays. Exchanges, identity verification services and tax administrations have already lost such data.",
           },
           {
-            art: "profileFourSources",
-            title: "Every leak sharpens your profile.",
-            text: "Your face from the web, your wallet from a leak, your holdings from a hacked tax service. Together they reveal who you are, where you live and what you probably own.",
-          },
-          {
             art: "rankedPortrait",
             title: "The more you move, the higher you rank.",
-            text: "In Austria, fraudsters phish for crypto holders with fake tax-office messages. A breach at a provider would hand them the list ready-made, sorted by volume. Whether the estimate is right does not matter to criminals.",
+            text: "In Austria, fraudsters phish for crypto holders with fake tax-office messages. A breach at a provider would hand them the list ready-made, sorted by volume.",
           },
           {
             art: "targetAtHome",
@@ -117,7 +120,7 @@ import { campaignStatus } from "@/data/campaign"
         <a class="text-link" href="/en/your-file/"
           >What DAC8 reports about you</a
         >
-        <a class="text-link" href="/en/dossier/#problem">Why it is a problem</a>
+        <a class="text-link" href="/en/arguments/">Why it is a problem</a>
       </div>
     </section>
 
@@ -183,65 +186,18 @@ import { campaignStatus } from "@/data/campaign"
       </div>
     </section>
 
-    <section id="geschichte" aria-labelledby="geschichte-heading">
-      <h2 id="geschichte-heading">How DAC8 came about</h2>
-      <p class="section-intro">
-        It began in 1977 with assistance in individual cases. Today banks,
-        platforms and crypto providers report every year, more with each step.
-      </p>
-      <HistoryStack language="en" compact />
-      <a class="text-link" href="/en/history/">The full history since 1977</a>
-    </section>
-
     <section id="einwaende" aria-labelledby="einwaende-heading">
       <h2 id="einwaende-heading" class="statement">
         Privacy needs no justification.
         <span>State interference does.</span>
       </h2>
-      <ul class="objections">
-        <li>
-          <strong>“I have nothing to hide.”</strong>
-          <p>
-            Imagine your cash withdrawals were analysed for years to see who
-            might keep a lot of cash at home. It proves nothing, yet it would
-            interest criminals. Reports that hint at self-custodied crypto raise
-            the same concern.
-          </p>
-          <a class="text-link" href="#faelle">This has already happened</a>
-        </li>
-        <li>
-          <strong>“It’s just tax data.”</strong>
-          <p>
-            The report contains identity and annual totals. Alongside them, the
-            provider holds your ID, wallet addresses and individual
-            transactions, kept under anti-money-laundering rules for up to ten
-            years after the relationship ends. DAC8 links them with your tax
-            data.
-          </p>
-          <a class="text-link" href="/en/dossier/#gemeldet"
-            >What gets reported</a
-          >
-        </li>
-        <li>
-          <strong>“I only use my own wallet.”</strong>
-          <p>
-            Then DAC8 does not report you. But if you buy from a provider and
-            transfer to your wallet, the value and units usually appear in its
-            annual report. The address is not in it, but the provider keeps it
-            under anti-money-laundering rules.
-          </p>
-          <a class="text-link" href="/en/your-file/">Your DAC8 file</a>
-        </li>
-        <li>
-          <strong>“It’s about tax fairness.”</strong>
-          <p>
-            Even then, the state may only demand data whose scope and retention
-            are justified. It must be able to explain why it needs which
-            financial data, and for how long.
-          </p>
-          <a class="text-link" href="/en/dossier/#forderungen">Our demands</a>
-        </li>
-      </ul>
+      <ArgumentPoints points={objections} variant="objections" />
+      <div class="link-row">
+        <a class="text-link" href="/en/arguments/"
+          >All arguments and objections</a
+        >
+        <a class="text-link" href="/en/arguments/#forderungen">Our demands</a>
+      </div>
     </section>
 
     <section id="weg" aria-labelledby="weg-heading">
@@ -258,11 +214,6 @@ import { campaignStatus } from "@/data/campaign"
         </p>
       </div>
       <LegalRoute language="en" />
-      <ul class="checklist goals" aria-label="What we aim to achieve">
-        <li>Overturn disproportionate obligations</li>
-        <li>Limit data collection</li>
-        <li>Secure effective protection for those affected</li>
-      </ul>
       <a class="text-link" href="/en/proceedings/">Where the case stands</a>
     </section>
 
