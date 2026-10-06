@@ -68,13 +68,13 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "Deine DAC8-Akte: was dein Anbieter über dich meldet",
       description:
-        "Sieh in einer Minute, was dein Krypto-Anbieter ab 2026 jedes Jahr über dich ans Finanzamt meldet und was er zehn Jahre lang aufbewahrt. Alles bleibt in deinem Browser.",
+        "Sieh in einer Minute, was dein Krypto-Anbieter ab 2026 jedes Jahr über dich ans Finanzamt meldet und was er über Jahre aufbewahrt. Alles bleibt in deinem Browser.",
       imageLines: ["Deine DAC8-Akte.", "Jahr für Jahr."],
     },
     en: {
       title: "Your DAC8 file: what your provider reports about you",
       description:
-        "See in a minute what your crypto provider reports about you to the tax authority every year from 2026, and what it keeps for ten years. Nothing leaves your browser.",
+        "See in a minute what your crypto provider reports about you to the tax authority every year from 2026, and what it keeps for years. Nothing leaves your browser.",
       imageLines: ["Your DAC8 file.", "Year after year."],
     },
   },

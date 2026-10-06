@@ -217,10 +217,10 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
             {en ? "This applies as long as you only self-custody and never buy or sell through a provider." : "Das gilt, solange du ausschließlich selbst verwahrst und nie über einen Anbieter kaufst oder verkaufst."}
           </li>
           <li>
-            {en ? "If you buy from a provider and transfer to your own wallet, the value and units of those transfers usually appear as sums in that provider’s annual report. The address is not in it, but the provider holds it in its anti-money-laundering records." : "Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, stehen Wert und Stückzahl dieser Übertragungen in der Regel als Summen in seiner Jahresmeldung. Die Adresse steht nicht darin, er hat sie aber aus den Geldwäscheunterlagen."}
+            {en ? "If you buy from a provider and transfer to your own wallet, the value and units of those transfers usually appear as sums in that provider’s annual report. The address is not in the report, but the provider keeps it under anti-money-laundering rules." : "Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, stehen Wert und Stückzahl dieser Übertragungen in der Regel als Summen in seiner Jahresmeldung. Die Adresse steht nicht darin, er speichert sie aber nach den Geldwäschevorschriften."}
           </li>
           <li>
-            {en ? "If you used a provider in the past, anti-money-laundering rules currently require it to keep your ID, wallet addresses and transactions for up to ten years after you left." : "Warst du früher Kunde bei einem Anbieter, muss er Ausweis, Wallet-Adressen und Transaktionen nach den Geldwäschevorschriften derzeit bis zehn Jahre nach Ende der Kundenbeziehung aufbewahren."}
+            {en ? "If you used a provider in 2020 or later, anti-money-laundering rules currently require it to keep your ID, wallet addresses and transactions for up to ten years after you left." : "Warst du 2020 oder später Kunde bei einem Anbieter, muss er Ausweis, Wallet-Adressen und Transaktionen nach den Geldwäschevorschriften derzeit bis zehn Jahre nach Ende der Kundenbeziehung aufbewahren."}
           </li>
         </ul>
       </div>
@@ -359,14 +359,14 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
           <strong
             >{en ? "Transfers to your own wallet." : "Übertragungen auf deine eigene Wallet."}</strong
           >
-          {en ? "They usually also appear in a separate category: transfers to addresses with no known link to a crypto-asset provider or financial institution, reported as sums of value and units. This can indicate self-custody. The address is not in the report, but your provider holds it in its anti-money-laundering records." : "Sie stehen in der Regel auch in einer eigenen Kategorie: Übertragungen an Adressen ohne bekannte Verbindung zu einem Krypto-Anbieter oder Finanzinstitut, gemeldet als Summe von Wert und Stückzahl. Das kann auf Selbstverwahrung hindeuten. Die Adresse steht nicht in der Meldung, dein Anbieter hat sie aber aus den Geldwäscheunterlagen."}
+          {en ? "They usually also appear in a separate category: transfers to addresses with no known link to a crypto-asset provider or financial institution, reported as sums of value and units. This can indicate self-custody. The address is not in the report, but your provider keeps it under anti-money-laundering rules." : "Sie stehen in der Regel auch in einer eigenen Kategorie: Übertragungen an Adressen ohne bekannte Verbindung zu einem Krypto-Anbieter oder Finanzinstitut, gemeldet als Summe von Wert und Stückzahl. Das kann auf Selbstverwahrung hindeuten. Die Adresse steht nicht in der Meldung, dein Anbieter speichert sie aber nach den Geldwäschevorschriften."}
         </li>
         <li
           data-note="transfer"
           hidden={!answers.activities.includes("transfer")}
         >
           <strong>{en ? "Even without tax." : "Auch ohne Steuerfolge."}</strong>
-          {en ? "Moving your own crypto-assets to your own wallet can be recorded, although that alone does not trigger any tax." : "Eine Übertragung deiner eigenen Kryptowerte auf deine eigene Wallet kann erfasst werden, obwohl sie für sich allein keine Steuer auslöst."}
+          {en ? "Moving your own crypto-assets to your own wallet is reported as a transfer, although that alone does not trigger any tax." : "Eine Übertragung deiner eigenen Kryptowerte auf deine eigene Wallet wird als Übertragung gemeldet, obwohl sie für sich allein keine Steuer auslöst."}
         </li>
         <li data-note="swap" hidden={!answers.activities.includes("swap")}>
           <strong>{en ? "Swaps." : "Tausch."}</strong>

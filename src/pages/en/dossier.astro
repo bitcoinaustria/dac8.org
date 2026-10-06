@@ -22,7 +22,7 @@ const concerns = [
   },
   {
     title: "A file with no end date.",
-    text: "Every year adds another report, and the provider keeps each one for ten years, corresponding bank-account data only five. If you remain a customer, from 2036 a full decade of your crypto activity will always be on file.",
+    text: "Every year adds another report, and the provider keeps each one for ten years, corresponding bank-account data only five. If you remain a customer, from 2036 ten annual reports will always be on file, next to the ID and transaction records from your entire customer relationship, which anti-money-laundering rules require it to keep.",
   },
   {
     title: "Sortable by wealth.",
@@ -30,7 +30,7 @@ const concerns = [
   },
   {
     title: "The provider becomes a honeypot.",
-    text: "The more data sits in one place, and the longer it stays there, the more an attack pays off. A provider breach ties your name to your wallet addresses. Whoever has that link keeps it and can use it to trace further payments.",
+    text: "The more data sits in one place, and the longer it stays there, the more an attack pays off. Under anti-money-laundering rules the provider already holds your ID, wallet addresses and transactions, and DAC8 adds your tax number and annual totals. A provider breach ties your name to your wallet addresses. Whoever has that link keeps it and can use it to trace further payments.",
   },
   {
     title: "The purpose keeps expanding.",
@@ -197,12 +197,12 @@ const faqs = [
   {
     question: "Am I affected just because I own bitcoin?",
     answer:
-      "Only if a crypto-asset provider is involved, such as an exchange or broker. Providers with Austrian reporting obligations must prepare data on all customers. Providers in other EU countries report there, and the data goes to the country where you are tax-resident. DAC8 does not report people who exclusively hold bitcoin in self-custody and do not use such a provider.",
+      "Only if a crypto-asset provider is involved, such as an exchange or broker. Providers with Austrian reporting obligations must prepare data on all customers. Providers in other EU countries report there, and the data goes to the country where you are tax-resident. DAC8 does not report people who exclusively hold bitcoin in self-custody and do not use such a provider. If you used a provider in 2020 or later, anti-money-laundering rules currently require it to keep your ID, wallet addresses and transactions for up to ten years after you left.",
   },
   {
     question: "Will my own wallet address be reported?",
     answer:
-      "No. Wallet addresses are not part of the annual DAC8 report. But the value and units transferred to addresses not known to belong to another provider are reported. This generally includes your own wallet. The address and its link to you do, however, remain in the provider’s records.",
+      "No. Wallet addresses are not part of the annual DAC8 report. But the value and units transferred to addresses not known to belong to another provider are reported. This usually includes your own wallet. The address and its link to you nevertheless remain stored with the provider under anti-money-laundering rules.",
   },
   {
     question: "Are exchanges of bitcoin for another crypto-asset reported?",
@@ -212,12 +212,12 @@ const faqs = [
   {
     question: "Can DAC8 data reveal my wealth?",
     answer:
-      "Not directly. It reports annual totals, not current balances or total wealth. Over the years, though, they show how much you move. Combined with account registries, provider records and blockchain analysis, they can reveal a detailed picture of a person’s assets.",
+      "Not directly. It reports annual totals, not current balances or total wealth. Your provider does know your balance, though, and over the years the reports show how much you move. Anyone who combines them with account registries and blockchain analysis or, after a breach, with provider records can build a detailed picture of a person’s assets.",
   },
   {
     question: "Will transactions before 2026 be reported retroactively?",
     answer:
-      "No. The first reporting period starts on 1 January 2026. A retroactive obligation would require a new law. Neither DAC9 nor the current proposal to recast the directive provides for this.",
+      "No. The first reporting period starts on 1 January 2026. A retroactive obligation would require a new law. Neither DAC9 nor the current proposal to recast the directive provides for this. The provider still holds older transactions: since 2020, anti-money-laundering rules have required it to keep them, currently for up to ten years after the customer relationship ends.",
   },
   {
     question: "How long is my data kept?",
@@ -250,7 +250,7 @@ const faqs = [
   {
     question: "Is DAC8 unlawful?",
     answer:
-      "We are convinced that Austria’s collection covering all customers violates fundamental rights, and we are taking the question through the Data Protection Authority to the courts. Whether these specific obligations are proportionate is for the courts to decide.",
+      "We are convinced that Austria’s collection covering all customers violates fundamental rights, and we want the question decided by the courts, starting with the Data Protection Authority. Whether these specific obligations are proportionate is for the courts to decide.",
   },
   {
     question: "What happens to my data on this website?",
@@ -347,7 +347,8 @@ const faqs = [
       </h2>
       <p class="section-intro">
         The report contains identities and annual aggregates. The details stay
-        with the provider.
+        with the provider, most of them already under anti-money-laundering
+        rules.
       </p>
       <Artwork id="reportAssets" language="en" size="wide" zoom />
       <div class="compare">
@@ -364,8 +365,9 @@ const faqs = [
               purchases, sales, exchanges and transfers
             </li>
             <li>
-              Value and units transferred to addresses not associated with a
-              known provider, generally including your own wallet
+              Value and units transferred to addresses the provider does not
+              know to belong to a provider or financial institution, usually
+              including your own wallet
             </li>
             <li>
               Activities that often have no tax consequences, such as
@@ -424,8 +426,10 @@ const faqs = [
             >
             currently requires identification and transaction records to be kept
             for up to ten years after the business relationship ends. The clock
-            only starts when you leave. Such stores are lost again and again, as
-            the <a href="#faelle">cases further down</a> show.
+            only starts when the customer relationship ends. Such stores are
+            lost again and again, as the
+            <a href="#faelle">cases further down</a>
+            show.
           </p>
         </div>
         <Artwork id="linkedIdentity" language="en" />
@@ -536,8 +540,10 @@ const faqs = [
         <p class="prose">
           No one currently has to report wallet addresses, individual
           transactions or activities before 2026, and the proposal to recast the
-          directive does not provide for it either. But lawmakers can expand
-          existing infrastructure at any time. We want to limit it now. The
+          directive does not provide for it either. They are stored all the
+          same: providers keep them under anti-money-laundering rules, next to
+          the data prepared for DAC8. Lawmakers can expand existing
+          infrastructure at any time. We want to limit it now. The
           <a href="/en/history/#ausblick">history of the DAC</a>
           shows which steps have been adopted and what the recast would change.
         </p>
