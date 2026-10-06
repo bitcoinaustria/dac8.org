@@ -344,11 +344,11 @@ export const fileTexts = (answers: FileAnswers, language: Language) => {
         : "Was jedes Jahr ans Finanzamt geht",
     sheetIntro: third
       ? en
-        ? "This is the annual report your provider prepares for you. It goes to the tax authority only if your country exchanges crypto data with Austria. Nothing before 2026 is covered."
-        : "So sieht die Jahresmeldung aus, die dein Anbieter für dich aufbereitet. Ans Finanzamt geht sie nur, wenn dein Staat mit Österreich Kryptodaten austauscht. Vorgänge vor 2026 erfasst sie nicht."
+        ? "This is the annual report your provider prepares for you. It goes to the tax authority only if your country exchanges crypto data with Austria. Activity before 2026 is not in it, but your provider keeps it under anti-money-laundering rules."
+        : "So sieht die Jahresmeldung aus, die dein Anbieter für dich aufbereitet. Ans Finanzamt geht sie nur, wenn dein Staat mit Österreich Kryptodaten austauscht. Vorgänge vor 2026 stehen nicht darin, dein Anbieter bewahrt sie aber nach den Geldwäschevorschriften auf."
       : en
-        ? "This is your first annual report. Your provider fills in the fields with your data. Nothing before 2026 is reported."
-        : "So sieht deine erste Jahresmeldung aus. Die Felder füllt dein Anbieter mit deinen Daten. Vorgänge vor 2026 meldet er nicht.",
+        ? "This is your first annual report. Your provider fills in the fields with your data. Activity before 2026 is not reported, but your provider keeps it under anti-money-laundering rules."
+        : "So sieht deine erste Jahresmeldung aus. Die Felder füllt dein Anbieter mit deinen Daten. Vorgänge vor 2026 meldet er nicht, er bewahrt sie aber nach den Geldwäschevorschriften auf.",
     sheetTo: third
       ? en
         ? "To the tax authority only with data exchange"
