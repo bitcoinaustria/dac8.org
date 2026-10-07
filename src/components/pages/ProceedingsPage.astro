@@ -50,6 +50,35 @@ const entries = publishedUpdates()
         {en ? "The court decides whether the case goes to the CJEU. We do not yet know how long it will take." : "Ob der Fall zum EuGH kommt, entscheidet das Gericht. Wie lange das dauert, wissen wir noch nicht."}
       </p>
     </section>
+    <section aria-labelledby="europe-heading">
+      <h2 id="europe-heading">
+        {en ? "Elsewhere in Europe" : "Anderswo in Europa"}
+      </h2>
+      <div class="columns">
+        <p class="section-intro">
+          <strong
+            >{en ? "In France, Bull Bitcoin led the way." : "In Frankreich ist Bull Bitcoin vorangegangen."}</strong
+          >
+          {en ? "In February 2026 it asked the Conseil d’État to annul the decree that implements DAC8 in France." : "Im Februar 2026 hat das Unternehmen beim Conseil d’État beantragt, das Dekret aufzuheben, mit dem Frankreich DAC8 umsetzt."}
+        </p>
+        <p class="prose">
+          {en ? "On 14 September 2026 the court refused to suspend the decree as an emergency measure. The action for annulment is still pending. Each country has its own procedure: Bull Bitcoin challenges the French decree directly, we go through the Austrian Data Protection Authority. Both cases ask whether collecting every customer’s data is compatible with fundamental rights." : "Am 14. September 2026 hat das Gericht abgelehnt, das Dekret im Eilverfahren auszusetzen. Über die Aufhebung ist noch nicht entschieden. Jedes Land hat sein eigenes Verfahren: Bull Bitcoin greift das französische Dekret direkt an, wir gehen über die österreichische Datenschutzbehörde. Beide Verfahren fragen, ob die Erfassung aller Kunden mit den Grundrechten vereinbar ist."}
+        </p>
+      </div>
+      <div class="link-row">
+        <a
+          class="text-link"
+          href={en ? "https://dac8.com/en/resources/legal-action-conseil-etat/" : "https://dac8.com/de/resources/legal-action-conseil-etat/"}
+          >{en ? "The French challenge on dac8.com" : "Die französische Klage auf dac8.com"}</a
+        >
+        <a
+          class="text-link"
+          href="https://www.conseil-etat.fr/fr/arianeweb/CE/decision/2026-09-14/519158"
+          hreflang="fr"
+          >{en ? "Conseil d’État ruling of 14 September 2026 (French)" : "Beschluss des Conseil d’État vom 14. September 2026 (französisch)"}</a
+        >
+      </div>
+    </section>
     <section aria-labelledby="updates-heading">
       <h2 id="updates-heading">{en ? "Updates" : "Neuigkeiten"}</h2>
       {entries.length === 0 && <p class="empty-state">
