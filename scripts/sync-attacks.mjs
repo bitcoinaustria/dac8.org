@@ -2,7 +2,7 @@
 // crypto-asset holders and keeps the fields the site shows. Victim names stay
 // out. .github/workflows/sync-attacks.yml runs this every week and opens a
 // pull request when the list has changed.
-import { writeFile } from "node:fs/promises"
+import { readdir, readFile, writeFile } from "node:fs/promises"
 
 const source =
   "https://raw.githubusercontent.com/jlopp/physical-bitcoin-attacks/master/attacks.json"
@@ -81,3 +81,21 @@ if (attacks.length < 300)
 
 await writeFile(target, `${JSON.stringify(attacks, null, 2)}\n`)
 console.log(`Wrote ${attacks.length} attacks to src/data/attacks.json`)
+
+// Translations are keyed by the English description (see
+// src/data/attacks-translation.md). New or edited descriptions show in English
+// until someone translates them, so list them for the pull request.
+const dataDirectory = new URL("../src/data/", import.meta.url)
+for (const file of await readdir(dataDirectory)) {
+  if (!/^attacks\.[a-z]{2}\.json$/.test(file)) continue
+  const translations = JSON.parse(
+    await readFile(new URL(file, dataDirectory), "utf8"),
+  )
+  const missing = attacks.filter(
+    (attack) => attack.headline && !translations[attack.headline],
+  )
+  if (missing.length === 0) continue
+  console.log(`\n${missing.length} descriptions lack a translation in ${file}:`)
+  for (const attack of missing)
+    console.log(`- ${attack.date ?? attack.year}: ${attack.headline}`)
+}
