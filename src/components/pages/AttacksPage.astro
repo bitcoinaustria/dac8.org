@@ -27,6 +27,10 @@ const newestFirst = [...attacks].sort((a, b) =>
   (b.date ?? `${b.year}`).localeCompare(a.date ?? `${a.year}`),
 )
 
+// The archive follows Jameson Lopp's list as written and keeps every case,
+// whatever made the victim known. The intro says so; the cases where a leak
+// made the attack possible are in the dossier (#faelle).
+
 // Texts the map script needs; everything else is rendered here.
 const strings = en
   ? {
@@ -61,19 +65,19 @@ const strings = en
       </h1>
       <p class="atlas-lead">
         {en
-            ? "An archive of physical attacks on people who hold crypto-assets, or are believed to."
-            : "Ein Archiv körperlicher Angriffe auf Menschen, die Kryptowerte besitzen oder besitzen sollen."}
+            ? "An archive of physical attacks on people who hold crypto-assets, or are believed to. It shows how dangerous it is to be known as a crypto holder."
+            : "Ein Archiv körperlicher Angriffe auf Menschen, die Kryptowerte besitzen oder besitzen sollen. Es zeigt, wie gefährlich es ist, als Krypto-Besitzer bekannt zu sein."}
       </p>
       <p class="atlas-caveat">
         <strong
           >{en ? "Far from complete." : "Bei Weitem nicht vollständig."}</strong
         >
         {en
-            ? " Most victims stay silent, and many cases never become public."
-            : " Die meisten Opfer schweigen, viele Fälle werden nie öffentlich."}
+            ? " Most victims stay silent, and many cases never become public. How the attackers knew about their victims is rarely reported."
+            : " Die meisten Opfer schweigen, viele Fälle werden nie öffentlich. Woher die Täter von ihren Opfern wussten, steht selten im Bericht."}
       </p>
       <a class="atlas-why" href={`${pathFor("dossier", language)}#faelle`}
-        >{en ? "What this has to do with DAC8" : "Was das mit DAC8 zu tun hat"}</a
+        >{en ? "Attacks after data leaks" : "Angriffe nach Datenlecks"}</a
       >
     </header>
 
