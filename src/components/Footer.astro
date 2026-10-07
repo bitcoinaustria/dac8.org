@@ -15,39 +15,19 @@ import {
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
 const background = pathFor("dossier", language)
+// Only what the top bar does not already offer: the main pages are one click
+// away there, so the footer keeps reference pages, ways to help and ways to
+// follow the campaign. The October 2026 feedback found 19 links here too many.
 const sections = [
   {
     title: en ? "Background" : "Hintergrund",
     links: [
-      {
-        label: en ? "What is DAC8?" : "Was ist DAC8?",
-        href: `${background}#was-ist-dac8`,
-      },
-      {
-        label: en ? "What gets reported" : "Was gemeldet wird",
-        href: `${background}#gemeldet`,
-      },
-      {
-        label: en ? "Your DAC8 file" : "Deine DAC8-Akte",
-        href: pathFor("file", language),
-      },
-      {
-        label: en ? "Our arguments" : "Unsere Argumente",
-        href: pathFor("arguments", language),
-      },
-      {
-        label: en ? "Our demands" : "Was wir fordern",
-        href: `${pathFor("arguments", language)}#forderungen`,
-      },
+      { label: en ? "Questions" : "Häufige Fragen", href: `${background}#faq` },
+      { label: en ? "Sources" : "Quellen", href: `${background}#quellen` },
       {
         label: en ? "History of the DAC" : "Geschichte der DAC",
         href: pathFor("history", language),
       },
-      {
-        label: en ? "Our legal strategy" : "Wie wir vorgehen",
-        href: `${background}#rechtsweg`,
-      },
-      { label: en ? "Sources" : "Quellen", href: `${background}#quellen` },
     ],
   },
   {
@@ -66,10 +46,12 @@ const sections = [
         label: en ? "For organisations" : "Für Organisationen",
         href: `${pathFor("participate", language)}#organisationen`,
       },
-      {
-        label: en ? "The proceedings" : "Das Verfahren",
-        href: pathFor("proceedings", language),
-      },
+    ],
+  },
+  {
+    title: en ? "Stay informed" : "Dranbleiben",
+    links: [
+      { label: en ? "Contact" : "Kontakt", href: "mailto:kontakt@dac8.org" },
       { label: en ? "RSS feed" : "RSS-Feed", href: feedFor(language) },
       {
         label: en
@@ -77,21 +59,10 @@ const sections = [
           : "Bitcoin-Austria-Newsletter",
         href: campaign.newsletter,
       },
-    ],
-  },
-  {
-    title: en ? "More" : "Mehr",
-    links: [
-      {
-        label: en ? "Who we are" : "Wer dahintersteht",
-        href: `${pathFor("home", language)}#position`,
-      },
-      { label: en ? "Contact" : "Kontakt", href: "mailto:kontakt@dac8.org" },
       {
         label: en ? "Source code on GitHub" : "Quellcode auf GitHub",
         href: "https://github.com/bitcoinaustria/dac8.org",
       },
-      { label: "Bitcoin Austria", href: "https://bitcoin-austria.at" },
     ],
   },
 ]
@@ -113,9 +84,6 @@ const sections = [
     <div class="sign-off-actions">
       <a class="button primary" href={donateFor(language)}
         >{en ? "Support the case" : "Prozess unterstützen"}</a
-      >
-      <a class="button" href={pathFor("proceedings", language)}
-        >{en ? "Follow the case" : "Verfahren verfolgen"}</a
       >
       <button
         class="button share-button"
@@ -205,8 +173,8 @@ const sections = [
 
 <style>
   /* Der Footer ist der Schluss der Seite: der Stand des Verfahrens, ein
-     Satz und drei gleich hohe Handlungen auf einer dunklen Fläche in beiden
-     Modi. Darunter die kompakte Linkliste. */
+     Satz, Spenden und Teilen auf einer dunklen Fläche in beiden Modi.
+     Darunter die kompakte Linkliste. */
   footer {
     max-inline-size: var(--page-max);
     margin-inline: auto;
