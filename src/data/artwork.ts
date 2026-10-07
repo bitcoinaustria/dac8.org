@@ -12,8 +12,6 @@ import financeTheCaseEn from "@/assets/artwork/finance-the-case-en.webp"
 import linkedIdentity from "@/assets/artwork/linked-identity.webp"
 import linkedIdentityEn from "@/assets/artwork/linked-identity-en.webp"
 import paragraphWatch from "@/assets/artwork/paragraph-watch.webp"
-import personalizedFraud from "@/assets/artwork/personalized-fraud.webp"
-import personalizedFraudEn from "@/assets/artwork/personalized-fraud-en.webp"
 import profileFourSources from "@/assets/artwork/profile-four-sources.webp"
 import profileFourSourcesEn from "@/assets/artwork/profile-four-sources-en.webp"
 import rankedPortrait from "@/assets/artwork/ranked-portrait.webp"
@@ -127,15 +125,6 @@ export const artwork = {
     },
     en: {
       alt: "Illustration: a card for Max Mustermann is connected to his attributed wallet bc1q…9f3a. Under the same address, public payments of 0.003, 0.008 and 0.002 BTC lead to three recipients: doctor 240 euros, family 600 euros, donation 120 euros.",
-    },
-  },
-  personalizedFraud: {
-    image: { de: personalizedFraud, en: personalizedFraudEn },
-    de: {
-      alt: "Illustration: Von einem Datenleck mit Name, Anschrift und Wallet-Adresse von Max Mustermann führt ein Pfeil zu einem Smartphone. Darauf eine als Betrug markierte Nachricht eines angeblichen Börsen-Service, die ihn mit denselben Angaben anspricht und auffordert, sein Konto zu prüfen.",
-    },
-    en: {
-      alt: "Illustration: an arrow leads from a data leak with Max Mustermann’s name, address and wallet address to a phone. On it, a message marked as fraud from a supposed exchange service addresses him with the same details and asks him to check his account.",
     },
   },
   linkedIdentity: {
