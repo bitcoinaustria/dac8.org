@@ -94,16 +94,16 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
   },
   attacks: {
     de: {
-      title: "Angriffsarchiv: Gewalt gegen Krypto-Besitzer weltweit",
+      title: "Angriffsarchiv: Angriffe auf Krypto-Besitzer weltweit",
       description:
-        "Überfälle, Entführungen und Folter von Menschen, die Kryptowerte besitzen oder besitzen sollen, weltweit, jeweils mit dem ursprünglichen Bericht. Bei Weitem nicht vollständig.",
-      imageLines: ["Überfallen,", "entführt,", "gefangen gehalten."],
+        "Bekannte körperliche Angriffe auf Menschen, die Kryptowerte besitzen oder besitzen sollen, weltweit und jeweils mit dem ursprünglichen Bericht. Bei Weitem nicht vollständig.",
+      imageLines: ["Angriffe auf", "Krypto-Besitzer,", "weltweit."],
     },
     en: {
-      title: "Attack archive: violence against crypto holders worldwide",
+      title: "Attack archive: attacks on crypto holders worldwide",
       description:
-        "Robberies, kidnappings and torture of people who hold crypto-assets, or are believed to, worldwide, each with the original report. Far from complete.",
-      imageLines: ["Robbed,", "kidnapped,", "held captive."],
+        "Known physical attacks on people who hold crypto-assets, or are believed to, worldwide and each with the original report. Far from complete.",
+      imageLines: ["Attacks on", "crypto holders,", "worldwide."],
     },
   },
   proceedings: {
