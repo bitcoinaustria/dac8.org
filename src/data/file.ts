@@ -128,8 +128,8 @@ export const labels = {
       },
       transfer: { title: "Übertragung", note: "Ausgang von deinem Konto" },
       unhosted: {
-        title: "An Adressen ohne bekannte Verbindung zu einem Anbieter",
-        note: "in der Regel auch deine eigene Wallet",
+        title: "Davon an Wallets ohne bekannten Anbieter",
+        note: "nur die Summe, keine Adressen; meist deine eigene Wallet",
       },
     },
   },
@@ -164,8 +164,8 @@ export const labels = {
       swapOut: { title: "Swaps, given", note: "for another crypto-asset" },
       transfer: { title: "Transfers", note: "out of your account" },
       unhosted: {
-        title: "To addresses not associated with a known provider",
-        note: "usually including your own wallet",
+        title: "Of which to wallets with no known provider",
+        note: "the total only, no addresses; usually your own wallet",
       },
     },
   },
@@ -416,11 +416,11 @@ export const fileTexts = (answers: FileAnswers, language: Language) => {
     keptSince:
       answers.since < amlSince
         ? en
-          ? `Not in the report, but held by your provider for the period since ${amlSince}, already under anti-money-laundering rules. DAC8 links these records with your tax data:`
-          : `Nicht in der Meldung, aber für die Zeit ab ${amlSince} bei deinem Anbieter, schon aufgrund der Geldwäschevorschriften. Mit DAC8 werden sie mit deinen Steuerdaten verknüpft:`
+          ? `Not in the report, but held by your provider for the period since ${amlSince}, already under anti-money-laundering rules. There they sit next to your DAC8 data:`
+          : `Nicht in der Meldung, aber für die Zeit ab ${amlSince} bei deinem Anbieter, schon aufgrund der Geldwäschevorschriften. Dort liegt das neben deinen Daten für DAC8:`
         : en
-          ? `Not in the report, but held by your provider since ${answers.since}, already under anti-money-laundering rules. DAC8 links these records with your tax data:`
-          : `Nicht in der Meldung, aber seit ${answers.since} bei deinem Anbieter, schon aufgrund der Geldwäschevorschriften. Mit DAC8 werden sie mit deinen Steuerdaten verknüpft:`,
+          ? `Not in the report, but held by your provider since ${answers.since}, already under anti-money-laundering rules. There they sit next to your DAC8 data:`
+          : `Nicht in der Meldung, aber seit ${answers.since} bei deinem Anbieter, schon aufgrund der Geldwäschevorschriften. Dort liegt das neben deinen Daten für DAC8:`,
     keptFrom: String(answers.since),
     keptTurn: last === undefined ? (en ? "open" : "offen") : String(last),
     keptToLabel:

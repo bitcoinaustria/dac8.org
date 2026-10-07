@@ -83,7 +83,7 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     justTaxData: {
       title: "„Das sind doch nur Steuerdaten.“",
-      text: "Gemeldet werden Identität und Jahreswerte. Beim Anbieter liegen aber auch Ausweis, Wallet-Adressen und einzelne Transaktionen. Die Geldwäschevorschriften verlangen, sie bei allen Kunden aufzubewahren, ohne Verdacht und derzeit bis zehn Jahre nach Ende der Kundenbeziehung. DAC8 verknüpft diese Unterlagen mit deinen Steuerdaten.",
+      text: "Gemeldet werden Identität und Jahreswerte. Beim Anbieter liegen aber auch Ausweis, Wallet-Adressen und einzelne Transaktionen. Die Geldwäschevorschriften verlangen, sie bei allen Kunden aufzubewahren, ohne Verdacht und derzeit bis zehn Jahre nach Ende der Kundenbeziehung. Für DAC8 kommen Steuernummer und Steuerwohnsitz dazu, im selben Kundenkonto.",
       link: {
         href: `${pathFor("dossier", "de")}#gemeldet`,
         label: "Was gemeldet wird",
@@ -140,7 +140,7 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     justTaxData: {
       title: "“It’s just tax data.”",
-      text: "The report contains identity and annual totals. But the provider also holds your ID, wallet addresses and individual transactions. Anti-money-laundering rules require it to keep them for every customer, without suspicion, currently for up to ten years after the relationship ends. DAC8 links these records with your tax data.",
+      text: "The report contains identity and annual totals. But the provider also holds your ID, wallet addresses and individual transactions. Anti-money-laundering rules require it to keep them for every customer, without suspicion, currently for up to ten years after the relationship ends. For DAC8, your tax identification number and tax residence are added to the same customer account.",
       link: {
         href: `${pathFor("dossier", "en")}#gemeldet`,
         label: "What gets reported",
