@@ -37,9 +37,9 @@ the English says: no more, no less, no sharper, no softer.
 - Use German typographic quotes („…“) and apostrophes (’).
 - If the English is garbled or ambiguous, do not guess silently. Keep the
   ambiguity in German where possible; otherwise check the linked report and
-  record the decision in the pull request. If the report shows the English
-  itself is wrong, still translate the English, and report the error upstream
-  so both languages are corrected together.
+  record the decision in the pull request. Lopp's list is the source of truth:
+  even where a report shows the English is wrong, translate the English as
+  written, so the German never says something the collection does not.
 
 ## Glossary
 
