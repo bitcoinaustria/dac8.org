@@ -27,7 +27,7 @@ const options = en
       },
       {
         value: "self",
-        label: "No, only my own wallet",
+        label: "No, never through a provider",
         verdict: "Then DAC8 does not report you.",
         points: [
           "This applies as long as you only self-custody and never buy or sell through a provider.",
@@ -61,7 +61,7 @@ const options = en
       },
       {
         value: "self",
-        label: "Nein, nur eigene Wallet",
+        label: "Nein, nie über einen Anbieter",
         verdict: "Dann meldet DAC8 dich nicht.",
         points: [
           "Das gilt, solange du ausschließlich selbst verwahrst und nie über einen Anbieter kaufst oder verkaufst.",
@@ -89,7 +89,7 @@ const options = en
       <span class="check-title"
         >{en ? "Am I affected?" : "Bin ich betroffen?"}</span
       >
-      {en ? "Do you use an exchange, broker or other crypto-asset provider?" : "Nutzt du eine Börse, einen Broker oder einen anderen Krypto-Anbieter?"}
+      {en ? "Do you buy, sell or hold crypto through an exchange, broker or app?" : "Kaufst, verkaufst oder verwahrst du Krypto über eine Börse, einen Broker oder eine App?"}
     </legend>
     <div class="check-options">
       {options.map((option) => (
