@@ -41,7 +41,7 @@ const self = answers.provider === "self"
 const identity = en
   ? [
       ["Name", "Your name"],
-      ["Address", "Your address"],
+      ["Postal address", "Your postal address"],
       ["Tax residence", "Your tax residence"],
       ["Tax identification number", "Your tax ID number"],
       ["Date of birth", "Your date of birth"],
@@ -217,7 +217,7 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
             {en ? "This applies as long as you only self-custody and never buy or sell through a provider." : "Das gilt, solange du ausschließlich selbst verwahrst und nie über einen Anbieter kaufst oder verkaufst."}
           </li>
           <li>
-            {en ? "If you buy from a provider and transfer to your own wallet, the value and units of those transfers usually appear as sums in that provider’s annual report. The address is not in the report, but the provider keeps it under anti-money-laundering rules." : "Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, stehen Wert und Stückzahl dieser Übertragungen in der Regel als Summen in seiner Jahresmeldung. Die Adresse steht nicht darin, er speichert sie aber nach den Geldwäschevorschriften."}
+            {en ? "If you buy from a provider and transfer to your own wallet, the value and units of those transfers usually appear as sums in that provider’s annual report. The wallet address is not in the report, but the provider keeps it under anti-money-laundering rules." : "Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, stehen Wert und Stückzahl dieser Übertragungen in der Regel als Summen in seiner Jahresmeldung. Die Wallet-Adresse steht nicht darin, er speichert sie aber nach den Geldwäschevorschriften."}
           </li>
           <li>
             {en ? "If you used a provider in 2020 or later, anti-money-laundering rules currently require it to keep your ID, wallet addresses and transactions for up to ten years after you left." : "Warst du 2020 oder später Kunde bei einem Anbieter, muss er Ausweis, Wallet-Adressen und Transaktionen nach den Geldwäschevorschriften derzeit bis zehn Jahre nach Ende der Kundenbeziehung aufbewahren."}
@@ -230,6 +230,9 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
       <div class="file-residence" data-unless-self hidden={self}>
         <p data-residence="at" hidden={answers.residence !== "at"}>
           {en ? "Whoever is tax-resident in Austria is reported." : "Wer in Österreich steuerlich ansässig ist, wird gemeldet."}
+        </p>
+        <p data-residence="de" hidden={answers.residence !== "de"}>
+          {en ? "You are reported, and Austria passes the report on to Germany’s Federal Central Tax Office. A German provider reports there directly, under the German Crypto-Asset Tax Transparency Act." : "Du wirst gemeldet, und Österreich gibt die Meldung an das deutsche Bundeszentralamt für Steuern weiter. Ein deutscher Anbieter meldet direkt dorthin, nach dem Kryptowerte-Steuertransparenzgesetz."}
         </p>
         <p data-residence="eu" hidden={answers.residence !== "eu"}>
           {en ? "You are reported, and Austria passes the report on to the EU country where you are tax-resident." : "Du wirst gemeldet, und Österreich gibt die Meldung an den EU-Staat weiter, in dem du steuerlich ansässig bist."}
@@ -359,7 +362,7 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
           <strong
             >{en ? "Transfers to your own wallet." : "Übertragungen auf deine eigene Wallet."}</strong
           >
-          {en ? "They usually also appear in a separate category: transfers to addresses with no known link to a crypto-asset provider or financial institution, reported as sums of value and units. This can indicate self-custody. The address is not in the report, but your provider keeps it under anti-money-laundering rules." : "Sie stehen in der Regel auch in einer eigenen Kategorie: Übertragungen an Adressen ohne bekannte Verbindung zu einem Krypto-Anbieter oder Finanzinstitut, gemeldet als Summe von Wert und Stückzahl. Das kann auf Selbstverwahrung hindeuten. Die Adresse steht nicht in der Meldung, dein Anbieter speichert sie aber nach den Geldwäschevorschriften."}
+          {en ? "They usually also appear in a separate category: transfers to wallet addresses with no known link to a crypto-asset provider or financial institution, reported as sums of value and units. This can indicate self-custody. The wallet address is not in the report, but your provider keeps it under anti-money-laundering rules." : "Sie stehen in der Regel auch in einer eigenen Kategorie: Übertragungen an Wallet-Adressen ohne bekannte Verbindung zu einem Krypto-Anbieter oder Finanzinstitut, gemeldet als Summe von Wert und Stückzahl. Das kann auf Selbstverwahrung hindeuten. Die Wallet-Adresse steht nicht in der Meldung, dein Anbieter speichert sie aber nach den Geldwäschevorschriften."}
         </li>
         <li
           data-note="transfer"

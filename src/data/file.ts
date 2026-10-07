@@ -11,12 +11,14 @@ import type { Language } from "@/lib/i18n"
 // Tax residence decides whether a report is sent at all (§ 7 Abs. 4 and
 // § 14 Abs. 1 Krypto-MPfG): residents of EU countries and of non-EU countries
 // that exchange crypto data with Austria are reported; the provider prepares
-// the data for everyone else too (§ 20 Abs. 1).
+// the data for everyone else too (§ 20 Abs. 1). Germany is its own answer
+// because many readers are German customers of Austrian providers. The asset
+// question only separates bitcoin from everything else.
 
 export type ProviderAnswer = "provider" | "self" | "unsure"
-export type Residence = "at" | "eu" | "third"
+export type Residence = "at" | "de" | "eu" | "third"
 export type Activity = "buy" | "sell" | "swap" | "transfer"
-export type Asset = "btc" | "eth" | "other"
+export type Asset = "btc" | "other"
 export type Field = "value" | "units" | "count"
 export type RowId =
   | "buy"
@@ -72,9 +74,9 @@ export const defaults: FileAnswers = {
 }
 
 export const providerAnswers: ProviderAnswer[] = ["provider", "self", "unsure"]
-export const residences: Residence[] = ["at", "eu", "third"]
+export const residences: Residence[] = ["at", "de", "eu", "third"]
 export const activities: Activity[] = ["buy", "sell", "swap", "transfer"]
-export const assets: Asset[] = ["btc", "eth", "other"]
+export const assets: Asset[] = ["btc", "other"]
 export const fields: Field[] = ["value", "units", "count"]
 
 // One row per reported category, as on the report specimen. A swap is
@@ -99,6 +101,7 @@ export const labels = {
     },
     residence: {
       at: "Österreich",
+      de: "Deutschland",
       eu: "Anderer EU-Staat",
       third: "Außerhalb der EU",
     },
@@ -108,10 +111,9 @@ export const labels = {
       swap: "Krypto gegen Krypto tauschen",
       transfer: "Auf eigene Wallet übertragen",
     },
-    asset: { btc: "Bitcoin", eth: "Ether", other: "Andere" },
+    asset: { btc: "Bitcoin", other: "Andere" },
     sheetAsset: {
       btc: "Bitcoin (BTC)",
-      eth: "Ether (ETH)",
       other: "Jeder weitere Kryptowert",
     },
     field: { value: "Wert in Euro", units: "Stückzahl", count: "Anzahl" },
@@ -128,8 +130,8 @@ export const labels = {
       },
       transfer: { title: "Übertragung", note: "Ausgang von deinem Konto" },
       unhosted: {
-        title: "An Adressen ohne bekannte Verbindung zu einem Anbieter",
-        note: "in der Regel auch deine eigene Wallet",
+        title: "Davon an Wallets ohne bekannten Anbieter",
+        note: "nur die Summe, keine Wallet-Adressen; meist deine eigene Wallet",
       },
     },
   },
@@ -141,6 +143,7 @@ export const labels = {
     },
     residence: {
       at: "Austria",
+      de: "Germany",
       eu: "Another EU country",
       third: "Outside the EU",
     },
@@ -150,10 +153,9 @@ export const labels = {
       swap: "Swap crypto for crypto",
       transfer: "Transfer to my own wallet",
     },
-    asset: { btc: "Bitcoin", eth: "Ether", other: "Others" },
+    asset: { btc: "Bitcoin", other: "Others" },
     sheetAsset: {
       btc: "Bitcoin (BTC)",
-      eth: "Ether (ETH)",
       other: "Every other crypto-asset",
     },
     field: { value: "Euro value", units: "Units", count: "Count" },
@@ -164,8 +166,8 @@ export const labels = {
       swapOut: { title: "Swaps, given", note: "for another crypto-asset" },
       transfer: { title: "Transfers", note: "out of your account" },
       unhosted: {
-        title: "To addresses not associated with a known provider",
-        note: "usually including your own wallet",
+        title: "Of which to wallets with no known provider",
+        note: "the total only, no wallet addresses; usually your own wallet",
       },
     },
   },
@@ -257,8 +259,8 @@ const verbs = {
 }
 
 const assetWords = {
-  de: { btc: "Bitcoin", eth: "Ether", other: "andere Kryptowerte" },
-  en: { btc: "bitcoin", eth: "ether", other: "other crypto-assets" },
+  de: { btc: "Bitcoin", other: "andere Kryptowerte" },
+  en: { btc: "bitcoin", other: "other crypto-assets" },
 }
 
 // Every sentence the answers change, keyed like the [data-text] slots.
@@ -370,6 +372,9 @@ export const fileTexts = (answers: FileAnswers, language: Language) => {
       at: en
         ? "Other EU countries receive it if you are tax-resident there."
         : "Andere EU-Staaten bekommen sie, wenn du dort steuerlich ansässig bist.",
+      de: en
+        ? "Austria passes it on to Germany’s Federal Central Tax Office."
+        : "Österreich gibt sie an das deutsche Bundeszentralamt für Steuern weiter.",
       eu: en
         ? "Austria passes it on to the EU country where you are tax-resident."
         : "Österreich gibt sie an den EU-Staat weiter, in dem du steuerlich ansässig bist.",
@@ -416,11 +421,11 @@ export const fileTexts = (answers: FileAnswers, language: Language) => {
     keptSince:
       answers.since < amlSince
         ? en
-          ? `Not in the report, but held by your provider for the period since ${amlSince}, already under anti-money-laundering rules. DAC8 links these records with your tax data:`
-          : `Nicht in der Meldung, aber für die Zeit ab ${amlSince} bei deinem Anbieter, schon aufgrund der Geldwäschevorschriften. Mit DAC8 werden sie mit deinen Steuerdaten verknüpft:`
+          ? `Not in the report, but held by your provider for the period since ${amlSince}, already under anti-money-laundering rules. There they sit next to your DAC8 data:`
+          : `Nicht in der Meldung, aber für die Zeit ab ${amlSince} bei deinem Anbieter, schon aufgrund der Geldwäschevorschriften. Dort liegt das neben deinen Daten für DAC8:`
         : en
-          ? `Not in the report, but held by your provider since ${answers.since}, already under anti-money-laundering rules. DAC8 links these records with your tax data:`
-          : `Nicht in der Meldung, aber seit ${answers.since} bei deinem Anbieter, schon aufgrund der Geldwäschevorschriften. Mit DAC8 werden sie mit deinen Steuerdaten verknüpft:`,
+          ? `Not in the report, but held by your provider since ${answers.since}, already under anti-money-laundering rules. There they sit next to your DAC8 data:`
+          : `Nicht in der Meldung, aber seit ${answers.since} bei deinem Anbieter, schon aufgrund der Geldwäschevorschriften. Dort liegt das neben deinen Daten für DAC8:`,
     keptFrom: String(answers.since),
     keptTurn: last === undefined ? (en ? "open" : "offen") : String(last),
     keptToLabel:

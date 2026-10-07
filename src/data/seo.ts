@@ -92,20 +92,6 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       imageLines: ["Your DAC8 file.", "Year after year."],
     },
   },
-  access: {
-    de: {
-      title: "Auskunft verlangen: Was weiß dein Krypto-Anbieter?",
-      description:
-        "Erstelle eine Auskunftsanfrage nach Art. 15 DSGVO an deinen Krypto-Anbieter: welche Daten er für DAC8 über dich verarbeitet, wie lange und an wen. Du schickst sie selbst.",
-      imageLines: ["Was weiß", "dein Anbieter", "über dich?"],
-    },
-    en: {
-      title: "Request access: what does your crypto provider hold?",
-      description:
-        "Create a GDPR Article 15 access request to your crypto provider: what data it processes about you for DAC8, for how long and for whom. You send it yourself.",
-      imageLines: ["What does", "your provider", "know about you?"],
-    },
-  },
   attacks: {
     de: {
       title: "Angriffsarchiv: Gewalt gegen Krypto-Besitzer weltweit",

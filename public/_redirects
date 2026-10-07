@@ -4,3 +4,9 @@
 /spenden/                    /mitmachen/#spenden              301
 /en/donate                   /en/get-involved/#spenden        301
 /en/donate/                  /en/get-involved/#spenden        301
+
+# Die Auskunftsanfrage gibt es seit Oktober 2026 nicht mehr.
+/auskunft                    /mitmachen/                      301
+/auskunft/                   /mitmachen/                      301
+/en/access-request           /en/get-involved/                301
+/en/access-request/          /en/get-involved/                301

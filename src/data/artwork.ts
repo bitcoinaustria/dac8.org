@@ -11,20 +11,15 @@ import financeTheCase from "@/assets/artwork/finance-the-case.webp"
 import financeTheCaseEn from "@/assets/artwork/finance-the-case-en.webp"
 import linkedIdentity from "@/assets/artwork/linked-identity.webp"
 import linkedIdentityEn from "@/assets/artwork/linked-identity-en.webp"
-import paragraphWatch from "@/assets/artwork/paragraph-watch.webp"
-import personalizedFraud from "@/assets/artwork/personalized-fraud.webp"
-import personalizedFraudEn from "@/assets/artwork/personalized-fraud-en.webp"
-import profileFourSources from "@/assets/artwork/profile-four-sources.webp"
-import profileFourSourcesEn from "@/assets/artwork/profile-four-sources-en.webp"
 import rankedPortrait from "@/assets/artwork/ranked-portrait.webp"
 import rankedPortraitEn from "@/assets/artwork/ranked-portrait-en.webp"
 import reportAssets from "@/assets/artwork/report-assets.webp"
 import reportAssetsEn from "@/assets/artwork/report-assets-en.webp"
 import targetAtHome from "@/assets/artwork/target-at-home.webp"
 import targetAtHomeEn from "@/assets/artwork/target-at-home-en.webp"
-import walletHistoryRevealed from "@/assets/artwork/wallet-history-revealed.webp"
-import walletHistoryRevealedEn from "@/assets/artwork/wallet-history-revealed-en.webp"
 import yearsOnFile from "@/assets/artwork/years-on-file.webp"
+import withoutSuspicion from "@/assets/artwork/without-suspicion.webp"
+import withoutSuspicionEn from "@/assets/artwork/without-suspicion-en.webp"
 import yearsOnFileEn from "@/assets/artwork/years-on-file-en.webp"
 
 type ArtworkText = {
@@ -56,14 +51,13 @@ export const artwork = {
       alt: "Illustration: a phone with an exchange app and Max Mustermann’s ID card are connected to the provider’s financial record, which lists annual totals: purchases 0.35 BTC, transfers 0.18 BTC.",
     },
   },
-  paragraphWatch: {
-    // Text-free, so one render serves both languages.
-    image: paragraphWatch,
+  withoutSuspicion: {
+    image: { de: withoutSuspicion, en: withoutSuspicionEn },
     de: {
-      alt: "Illustration: Eine Person der Börse reicht einer Kundin über einen Schalter mit Bitcoin-Zeichen eine Bitcoin-Münze. Dahinter steht ein großes Paragrafenzeichen, an dem sechs Überwachungskameras befestigt sind, alle auf den Kauf gerichtet. Rechts steht eine maskierte Person mit einem Schraubenschlüssel.",
+      alt: "Illustration: Eine Leiste mit der Aufschrift „100 %, alle Kunden, ohne Verdacht“ ist über rote Leitungen mit zehn Personenkarten verbunden. Darüber steckt eine Finanzakte von Max Mustermann mit Anschrift und Jahreswerten: Käufe 0,35 BTC, Transfers 0,18 BTC.",
     },
     en: {
-      alt: "Illustration: an exchange employee hands a customer a Bitcoin coin across a desk marked with the Bitcoin sign. Behind them stands a large paragraph sign with six surveillance cameras attached, all aimed at the purchase. To the right stands a masked person holding a wrench.",
+      alt: "Illustration: a bar labelled 100 %, all customers, without suspicion, is connected by red lines to ten personal record cards. Above it sits a financial record on Max Mustermann with his home address and annual totals: purchases 0.35 BTC, transfers 0.18 BTC.",
     },
   },
   reportAssets: {
@@ -72,7 +66,7 @@ export const artwork = {
       alt: "Illustration: Musterblatt einer Jahresmeldung 2026 für Max Mustermann mit Name, Anschrift, Steuerwohnsitz, maskierter Steuernummer, Geburtsdatum und Angaben zum meldenden Anbieter. Daneben je ein Blatt für Bitcoin, Ether und Litecoin mit Gesamtwert, Stückzahl und meist der Anzahl je Vorgangsart.",
     },
     en: {
-      alt: "Illustration: specimen of a 2026 annual report on Max Mustermann with name, address, tax residence, masked tax identification number, date of birth and the reporting provider’s details. Beside it, one sheet each for Bitcoin, Ether and Litecoin with total value, units and, for most categories, the count per transaction category.",
+      alt: "Illustration: specimen of a 2026 annual report on Max Mustermann with name, postal address, tax residence, masked tax identification number, date of birth and the reporting provider’s details. Beside it, one sheet each for Bitcoin, Ether and Litecoin with total value, units and, for most categories, the count per transaction category.",
     },
   },
   yearsOnFile: {
@@ -90,16 +84,7 @@ export const artwork = {
       alt: "Illustration: Aus einem gesprungenen Glasarchiv mit der Aufschrift Personendaten führt ein roter Pfeil zu einem Blatt „Datenleck, offengelegt“ mit Name, Wiener Anschrift, 7,2 BTC und Familienstand von Max Mustermann.",
     },
     en: {
-      alt: "Illustration: a red arrow leads from a cracked glass archive labelled personal data to a sheet marked data leak, exposed, with Max Mustermann’s name, Vienna address, 7.2 BTC and family status.",
-    },
-  },
-  profileFourSources: {
-    image: { de: profileFourSources, en: profileFourSourcesEn },
-    de: {
-      alt: "Illustration: Vier kleine Karten, ein öffentliches Profil, eine Wallet-Zuordnung, ein Steuertool-Import und die Meldedaten 2026, sind mit einer großen Akte „Verknüpfte Daten“ verbunden. Darin stehen Foto, Name und Wiener Anschrift von Max Mustermann, Familienstand, eine zugeordnete Wallet mit rund 7,2 BTC, Rang 07, 1.284 importierte Vorgänge und die Jahreswerte aus der Meldung.",
-    },
-    en: {
-      alt: "Illustration: four small cards, a public profile, a wallet link, a tax tool import and the 2026 report data, are connected to a large file labelled linked data. It shows Max Mustermann’s photo, name and Vienna address, family status, an attributed wallet with about 7.2 BTC, rank 07, 1,284 imported records and the annual totals from the report.",
+      alt: "Illustration: a red arrow leads from a cracked glass archive labelled personal data to a sheet marked data leak, exposed, with Max Mustermann’s name, Vienna home address, 7.2 BTC and family status.",
     },
   },
   rankedPortrait: {
@@ -108,7 +93,7 @@ export const artwork = {
       alt: "Illustration: Ein Schraubenschlüssel neben einer Zielliste für Wien mit verknüpften Vermögensdaten. Rot markiert ist Platz 07, Max Mustermann mit 7,2 BTC; darunter Anschrift, Familienstand und ein Porträtfoto.",
     },
     en: {
-      alt: "Illustration: a wrench beside a target list for Vienna with linked wealth data. Number 07, Max Mustermann with 7.2 BTC, is highlighted in red, with his address, family status and a portrait photo below.",
+      alt: "Illustration: a wrench beside a target list for Vienna with linked wealth data. Number 07, Max Mustermann with 7.2 BTC, is highlighted in red, with his home address, family status and a portrait photo below.",
     },
   },
   targetAtHome: {
@@ -118,24 +103,6 @@ export const artwork = {
     },
     en: {
       alt: "Illustration: a wrench beside a linked profile of Max Mustermann with photo, family status and an attributed wallet with about 7.2 BTC. A red card lists him as number 07 on a target list for Vienna. Below, a door sign reading Musterstraße 7 with a location marker.",
-    },
-  },
-  walletHistoryRevealed: {
-    image: { de: walletHistoryRevealed, en: walletHistoryRevealedEn },
-    de: {
-      alt: "Illustration: Eine Karte von Max Mustermann ist mit seiner zugeordneten Wallet bc1q…9f3a verbunden. Unter derselben Adresse stehen öffentliche Zahlungen von 0,003, 0,008 und 0,002 BTC, die zu drei Empfängern führen: Praxis 240 Euro, Familie 600 Euro, Spende 120 Euro.",
-    },
-    en: {
-      alt: "Illustration: a card for Max Mustermann is connected to his attributed wallet bc1q…9f3a. Under the same address, public payments of 0.003, 0.008 and 0.002 BTC lead to three recipients: doctor 240 euros, family 600 euros, donation 120 euros.",
-    },
-  },
-  personalizedFraud: {
-    image: { de: personalizedFraud, en: personalizedFraudEn },
-    de: {
-      alt: "Illustration: Von einem Datenleck mit Name, Anschrift und Wallet-Adresse von Max Mustermann führt ein Pfeil zu einem Smartphone. Darauf eine als Betrug markierte Nachricht eines angeblichen Börsen-Service, die ihn mit denselben Angaben anspricht und auffordert, sein Konto zu prüfen.",
-    },
-    en: {
-      alt: "Illustration: an arrow leads from a data leak with Max Mustermann’s name, address and wallet address to a phone. On it, a message marked as fraud from a supposed exchange service addresses him with the same details and asks him to check his account.",
     },
   },
   linkedIdentity: {

@@ -19,7 +19,7 @@ const sources = sourceGroups.map((group) => ({
 // Cases without that link do not belong here.
 const leaks = [
   {
-    title: "Ledger, 2020: the addresses of 272,000 wallet buyers.",
+    title: "Ledger, 2020: the home addresses of 272,000 wallet buyers.",
     text: "Names, postal addresses and phone numbers leaked from the hardware wallet maker’s online shop. Phishing emails, text messages and letters to home addresses followed, asking for the recovery phrase. In a University of Innsbruck survey, 93 of 104 affected customers reported scam attempts and 33 reported extortion threats.",
     sources: [
       {
@@ -34,7 +34,7 @@ const leaks = [
   },
   {
     title: "Kroll, 2023: the balances of crypto creditors.",
-    text: "Through an employee’s hijacked phone number, attackers at the FTX bankruptcy’s claims agent accessed the names, addresses and balances of creditors of three crypto companies. Kroll warned of fraudsters asking people to connect a wallet or enter their recovery phrase.",
+    text: "Through an employee’s hijacked phone number, attackers at the FTX bankruptcy’s claims agent accessed the names, postal addresses and balances of creditors of three crypto companies. Kroll warned of fraudsters asking people to connect a wallet or enter their recovery phrase.",
     sources: [
       {
         label: "Kroll",
@@ -82,7 +82,7 @@ const leaks = [
   },
   {
     title: "France, 2026: the tax administration is breached twice.",
-    text: "Using officials’ stolen credentials, attackers extracted 1.2 million records from the national bank-account register in February, with IBAN, name and address. In the summer, income, address and property data on 678,000 individuals and businesses followed from the tax system.",
+    text: "Using officials’ stolen credentials, attackers extracted 1.2 million records from the national bank-account register in February, with IBAN, name and postal address. In the summer, data on income, postal address and property on 678,000 individuals and businesses followed from the tax system.",
     sources: [
       {
         label: "account register",
@@ -91,6 +91,16 @@ const leaks = [
       {
         label: "tax system",
         href: "https://presse.economie.gouv.fr/acces-illegitime-au-systeme-dinformation-de-la-direction-generale-des-finances-publiques/",
+      },
+    ],
+  },
+  {
+    title: "Netherlands, 2026: court data used for extortion.",
+    text: "A court employee sold confidential data from the justice system and used such data herself to extort a man, threatening his family. He paid more than 92,000 euros. She was sentenced to four years in prison.",
+    sources: [
+      {
+        label: "Rechtbank Overijssel",
+        href: "https://www.rechtspraak.nl/organisatie-en-contact/organisatie/rechtbanken/rechtbank-overijssel/nieuws/2026/05/oud-medewerker-rechtbank-amsterdam-krijgt-vier-jaar-cel-voor-het-verkopen-van-vertrouwelijke-gegevens-en-afpersing",
       },
     ],
   },
@@ -132,22 +142,12 @@ const attacks = [
     ],
   },
   {
-    title: "USA, 2022: a police officer supplies the address.",
-    text: "A detective obtains a location warrant under false pretences and gives a client the address of a man believed to hold a lot of crypto. Soon after, three armed men try to force their way into his home and only flee when the victim fires a shot.",
+    title: "USA, 2022: a police officer supplies the home address.",
+    text: "A detective obtains a location warrant under false pretences and gives a client the home address of a man believed to hold a lot of crypto. Soon after, three armed men try to force their way into his home and only flee when the victim fires a shot.",
     sources: [
       {
         label: "US Department of Justice",
         href: "https://www.justice.gov/usao-cdca/pr/crypto-godfather-and-lasd-detective-agree-plead-guilty-violating-civil-rights-business",
-      },
-    ],
-  },
-  {
-    title: "Netherlands, 2026: court data used for extortion.",
-    text: "A court employee sold confidential data from the justice system and used such data herself to extort a man, threatening his family. He paid more than 92,000 euros. She was sentenced to four years in prison.",
-    sources: [
-      {
-        label: "Rechtbank Overijssel",
-        href: "https://www.rechtspraak.nl/organisatie-en-contact/organisatie/rechtbanken/rechtbank-overijssel/nieuws/2026/05/oud-medewerker-rechtbank-amsterdam-krijgt-vier-jaar-cel-voor-het-verkopen-van-vertrouwelijke-gegevens-en-afpersing",
       },
     ],
   },
@@ -176,7 +176,7 @@ const faqs = [
   {
     question: "Will my own wallet address be reported?",
     answer:
-      "No. Wallet addresses are not part of the annual DAC8 report. But the value and units transferred to addresses not known to belong to another provider are reported. This usually includes your own wallet. The address and its link to you nevertheless remain stored with the provider under anti-money-laundering rules.",
+      "No. Wallet addresses are not part of the annual DAC8 report. But the value and units transferred to wallet addresses not known to belong to another provider are reported. This usually includes your own wallet. The wallet address and its link to you nevertheless remain stored with the provider under anti-money-laundering rules.",
   },
   {
     question: "Are exchanges of bitcoin for another crypto-asset reported?",
@@ -241,7 +241,6 @@ const faqs = [
   { id: "faelle", label: "Cases" },
   { id: "rechtsweg", label: "Legal route" },
   { id: "faq", label: "Questions" },
-  { id: "quellen", label: "Sources" },
 ]}
 >
   <MetaPage slot="head" />
@@ -328,8 +327,8 @@ const faqs = [
           <h3>Included in the report</h3>
           <ul>
             <li>
-              Name, address, tax residence, tax identification number and date
-              of birth
+              Name, postal address, tax residence, tax identification number and
+              date of birth
             </li>
             <li>
               For each crypto-asset and activity category: euro value, units
@@ -337,8 +336,9 @@ const faqs = [
               purchases, sales, exchanges and transfers
             </li>
             <li>
-              Value and units transferred to addresses the provider does not
-              know to belong to a provider or financial institution, usually
+              Value and units transferred to wallet addresses the provider does
+              not know to belong to a provider or financial institution, as a
+              total and without the wallet addresses themselves, usually
               including your own wallet
             </li>
             <li>
@@ -429,9 +429,6 @@ const faqs = [
             </small>
           </li>
         ))}
-        <li class="facts-figure">
-          <Artwork id="personalizedFraud" language="en" />
-        </li>
       </ul>
       <div class="art-split even reverse">
         <div>

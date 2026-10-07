@@ -42,22 +42,24 @@ const en = language === "en"
       <div class="next-grid">
         <div class="next-lead">
           <h3>
-            {en ? "Ask your provider what it really holds on you." : "Frag deinen Anbieter, was er wirklich über dich gespeichert hat."}
+            {en ? "Help fund the case against the blanket collection." : "Trag den Prozess gegen die anlasslose Erfassung mit."}
           </h3>
-          <p>
-            {en ? "With a GDPR access request, prepared in your browser. You send it yourself." : "Mit einer Auskunftsanfrage nach der DSGVO, vorbereitet in deinem Browser. Du schickst sie selbst."}
-          </p>
-          <a class="button primary" href={pathFor("access", language)}
-            >{en ? "Prepare an access request" : "Auskunftsanfrage vorbereiten"}</a
-          >
-        </div>
-        <div class="next-item">
-          <h3>{en ? "Help fund the case" : "Den Prozess mittragen"}</h3>
           <p>
             {en ? "Your donation pays for the proceedings." : "Mit deiner Spende bezahlen wir das Verfahren."}
           </p>
-          <a class="button" href={donateFor(language)}
+          <a class="button primary" href={donateFor(language)}
             >{en ? "Donate" : "Spenden"}</a
+          >
+        </div>
+        <div class="next-item">
+          <h3>{en ? "Write to your MPs" : "Schreib deinen Abgeordneten"}</h3>
+          <p>
+            {en ? "A letter to the National Council, drafted in your browser and sent by you." : "Ein Brief an den Nationalrat, vorbereitet in deinem Browser, von dir abgeschickt."}
+          </p>
+          <a
+            class="button"
+            href={`${pathFor("participate", language)}#abgeordnete`}
+            >{en ? "Write a letter" : "Brief schreiben"}</a
           >
         </div>
         <div class="next-item" data-share-scope>
@@ -77,8 +79,8 @@ const en = language === "en"
 </Layout>
 
 <style>
-  /* Der Schluss der Akte: die Auskunft beim eigenen Anbieter als nächster
-     Schritt auf einer Fläche, Spenden und Teilen daneben. */
+  /* Der Schluss der Akte: Spenden als nächster Schritt auf einer Fläche,
+     Brief und Teilen daneben. */
   .next-grid {
     display: grid;
     gap: var(--space-l) var(--space-xl);
