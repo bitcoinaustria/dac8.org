@@ -1,22 +1,11 @@
 ---
 import {
   activities,
-  assets,
-  chartTicks,
-  chartYears,
   defaults,
-  fields,
-  fileModel,
   fileTexts,
-  firstYear,
-  isComplete,
   labels,
   providerAnswers,
   residences,
-  retention,
-  rows,
-  showsAsset,
-  showsRow,
   sinceYears,
   untilYears,
 } from "@/data/file"
@@ -26,36 +15,21 @@ interface Props {
   language: Language
 }
 
-// The reader answers a few questions; the file beside them shows what the
-// provider reports to the tax office every year and, apart from that, what
-// the provider keeps. The server renders the default answers so the page
-// reads without JavaScript; the script below recomputes the same model from
-// src/data/file.ts as the answers change. Nothing leaves the browser.
+// The reader answers a few questions; beside them stand three figures and two
+// lists: what goes to the tax office every year and what stays with the
+// provider. The server renders the default answers so the page reads without
+// JavaScript; the script below recomputes the texts from src/data/file.ts as
+// the answers change. Nothing leaves the browser.
 const { language } = Astro.props
 const en = language === "en"
 const text = labels[language]
 const answers = defaults
-const model = fileModel(answers)
 const texts = fileTexts(answers, language)
 const self = answers.provider === "self"
-const identity = en
-  ? [
-      ["Name", "Your name"],
-      ["Postal address", "Your postal address"],
-      ["Tax residence", "Your tax residence"],
-      ["Tax identification number", "Your tax ID number"],
-      ["Date of birth", "Your date of birth"],
-    ]
-  : [
-      ["Name", "Dein Name"],
-      ["Anschrift", "Deine Anschrift"],
-      ["Steuerwohnsitz", "Dein Steuerwohnsitz"],
-      ["Steuernummer", "Deine Steuernummer"],
-      ["Geburtsdatum", "Dein Geburtsdatum"],
-    ]
+const section20 =
+  "https://www.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40273819/NOR40273819.pdf"
 const fmgwg =
   "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009769"
-const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
 ---
 
 <section
@@ -158,28 +132,11 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
           ))}
         </div>
       </fieldset>
-
-      <fieldset class="file-question">
-        <legend>{en ? "Which crypto-assets?" : "Welche Kryptowerte?"}</legend>
-        <div class="file-options">
-          {assets.map((value) => (
-            <label>
-              <input
-                type="checkbox"
-                name="asset"
-                value={value}
-                checked={answers.assets.includes(value)}
-              />
-              <span>{text.asset[value]}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
     </div>
 
     <noscript>
       <p class="file-noscript">
-        {en ? "Without JavaScript, this page shows an example: tax-resident in Austria, bitcoin, bought and transferred to your own wallet, customer since 2021." : "Ohne JavaScript zeigt diese Seite ein Beispiel: in Österreich steuerlich ansässig, Bitcoin, gekauft und auf die eigene Wallet übertragen, Kunde seit 2021."}
+        {en ? "Without JavaScript, this page shows an example: tax-resident in Austria, bought and transferred to your own wallet, customer since 2021." : "Ohne JavaScript zeigt diese Seite ein Beispiel: in Österreich steuerlich ansässig, gekauft und auf die eigene Wallet übertragen, Kunde seit 2021."}
       </p>
     </noscript>
   </form>
@@ -237,326 +194,100 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
         <p data-residence="eu" hidden={answers.residence !== "eu"}>
           {en ? "You are reported, and Austria passes the report on to the EU country where you are tax-resident." : "Du wirst gemeldet, und Österreich gibt die Meldung an den EU-Staat weiter, in dem du steuerlich ansässig bist."}
         </p>
-        <ul data-residence="third" hidden={answers.residence !== "third"}>
+        <p data-residence="third" hidden={answers.residence !== "third"}>
+          {en ? "Only people tax-resident in a participating country are reported: an EU country, or a non-EU country that exchanges crypto data with Austria. Your provider must prepare the data for you anyway." : "Gemeldet wird nur, wer in einem teilnehmenden Staat steuerlich ansässig ist: in einem EU-Staat oder in einem Drittstaat, der mit Österreich Kryptodaten austauscht. Aufbereiten muss dein Anbieter die Daten trotzdem."}
+        </p>
+      </div>
+    </div>
+
+    <dl class="keyfigures" data-unless-self hidden={self}>
+      <div>
+        <dt>
+          <strong>{en ? "First report" : "Erste Meldung"}</strong>
+          <span data-text="firstText">{texts.firstText}</span>
+        </dt>
+        <dd>
+          <time datetime="2027-07-31"
+            >{en ? "31 July 2027" : "31. Juli 2027"}</time
+          >
+        </dd>
+      </div>
+      <div>
+        <dt>
+          <strong data-text="reportsTerm">{texts.reportsTerm}</strong>
+          <span data-text="reportsText">{texts.reportsText}</span>
+        </dt>
+        <dd>
+          <span data-text="reportsValue">{texts.reportsValue}</span>
+          <small data-text="reportsUnit">{texts.reportsUnit}</small>
+        </dd>
+      </div>
+      <div>
+        <dt>
+          <strong data-text="keptTerm">{texts.keptTerm}</strong>
+          <span data-text="keptText">{texts.keptText}</span>
+        </dt>
+        <dd>
+          <span data-text="keptValue">{texts.keptValue}</span>
+          <small data-text="keptUnit">{texts.keptUnit}</small>
+        </dd>
+      </div>
+    </dl>
+
+    <div class="compare" data-unless-self hidden={self}>
+      <div>
+        <h3 data-text="reportedHeading">{texts.reportedHeading}</h3>
+        <ul>
           <li>
-            {en ? "Only people tax-resident in a participating country are reported: an EU country, or a non-EU country that exchanges crypto data with Austria. Which non-EU countries take part depends on the agreements in force." : "Gemeldet wird nur, wer in einem teilnehmenden Staat steuerlich ansässig ist: in einem EU-Staat oder in einem Drittstaat, der mit Österreich Kryptodaten austauscht. Welche Drittstaaten das sind, hängt von den geltenden Abkommen ab."}
+            {en ? "Name, postal address, tax residence, tax identification number and date of birth" : "Name, Anschrift, Steuerwohnsitz, Steuernummer und Geburtsdatum"}
+          </li>
+          {activities.map((activity) => (
+            <li
+              data-activity={activity}
+              hidden={!answers.activities.includes(activity)}
+            >
+              {text.reported[activity]}
+            </li>
+          ))}
+          <li data-no-activity hidden={answers.activities.length > 0}>
+            {en ? "Choose what you do with your provider." : "Wähle, was du bei deinem Anbieter machst."}
+          </li>
+        </ul>
+      </div>
+      <div class="absent">
+        <h3>
+          {en ? "Stays with your provider" : "Bleibt bei deinem Anbieter"}
+        </h3>
+        <ul>
+          <li>
+            {en ? "Every annual report, for ten years" : "Jede Jahresmeldung, zehn Jahre lang"}
           </li>
           <li>
-            {en ? "Your provider must prepare the reporting data for you anyway. The law requires this for all customers, including those who are never reported." : "Aufbereiten muss dein Anbieter die Meldedaten trotzdem. Das Gesetz verlangt es für alle Kunden, auch für jene, die nie gemeldet werden."}
-            <small
-              >{en ? "Section 20(1) Krypto-MPfG" : "§ 20 Abs. 1 Krypto-MPfG"}</small
-            >
+            {en ? "Your ID and the records of your identification" : "Dein Ausweis und die Unterlagen aus der Identifizierung"}
+          </li>
+          <li>
+            {en ? "Wallet addresses, including those of your own wallet" : "Wallet-Adressen, auch die deiner eigenen Wallet"}
+          </li>
+          <li data-text="transactionsSince">{texts.transactionsSince}</li>
+          <li>
+            {en ? "Your balance with the provider" : "Dein Kontostand beim Anbieter"}
           </li>
         </ul>
       </div>
     </div>
 
-    <section
-      id="finanzamt"
-      class="file-block"
-      data-unless-self
-      hidden={self}
-      aria-labelledby="finanzamt-heading"
-    >
-      <h2 id="finanzamt-heading" data-text="finanzamtHeading">
-        {texts.finanzamtHeading}
-      </h2>
-
-      <h3>{en ? "Your report for 2026" : "Deine Meldung für 2026"}</h3>
-      <p class="file-intro" data-text="sheetIntro">{texts.sheetIntro}</p>
-
-      <article class="sheet" aria-labelledby="sheet-title">
-        <header class="sheet-bar">
-          <h4 id="sheet-title">
-            {en ? "Annual report 2026" : "Jahresmeldung 2026"}
-          </h4>
-          <span>DAC8 · Krypto-MPfG</span>
-        </header>
-        <div class="sheet-part">
-          <p class="sheet-label">
-            <span>01</span>{" "}{en ? "Your identity" : "Deine Identität"}
-          </p>
-          <dl class="sheet-identity">
-            {identity.map(([term, value]) => (
-              <div>
-                <dt>{term}</dt>
-                <dd><span class="mine">{value}</span></dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-        <div class="sheet-part sheet-values">
-          <p class="sheet-label">
-            <span>02</span>{" "}
-            {en ? "Your annual totals" : "Deine Jahreswerte"}
-          </p>
-          {assets.map((asset) => (
-            <div
-              class="sheet-asset"
-              data-asset={asset}
-              hidden={!showsAsset(answers, asset)}
-            >
-              <p class="sheet-asset-name" id={`sheet-${asset}`}>
-                <span class="asset-no" aria-hidden="true"></span>
-                {text.sheetAsset[asset]}
-              </p>
-              <table aria-labelledby={`sheet-${asset}`}>
-                <thead>
-                  <tr>
-                    <th scope="col">{en ? "Activity" : "Vorgang"}</th>
-                    {fields.map((field) => (
-                      <th scope="col">{text.field[field]}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row) => {
-                    const label = text.row[row.id]
-                    return (
-                      <tr data-row={row.id} hidden={!showsRow(answers, row.id)}>
-                        <th scope="row">
-                          {label.title}
-                          {"note" in label && <small>{label.note}</small>}
-                        </th>
-                        {fields.map((field) =>
-                          row.fields.includes(field) ? (
-                            <td data-label={text.field[field]}>
-                              <span class="slot" aria-hidden="true"></span>
-                              <span class="visually-hidden">
-                                {en ? "reported" : "gemeldet"}
-                              </span>
-                            </td>
-                          ) : (
-                            <td class="none">
-                              <span aria-hidden="true">–</span>
-                              <span class="visually-hidden">
-                                {en ? "not reported" : "nicht gemeldet"}
-                              </span>
-                            </td>
-                          ),
-                        )}
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          ))}
-          <p class="sheet-empty" data-incomplete hidden={isComplete(answers)}>
-            {en ? "Choose a crypto-asset and what you do with it, and your annual totals appear here." : "Wähle einen Kryptowert und was du damit machst, dann stehen hier deine Jahreswerte."}
-          </p>
-        </div>
-        <footer class="sheet-foot">
-          <span>
-            {en ? "Reporting provider: your provider" : "Meldender Anbieter: dein Anbieter"}
-          </span>
-          <span data-text="sheetTo">{texts.sheetTo}</span>
-        </footer>
-      </article>
-
-      <ul class="file-notes">
-        <li
-          data-note="transfer"
-          hidden={!answers.activities.includes("transfer")}
-        >
-          <strong
-            >{en ? "Transfers to your own wallet." : "Übertragungen auf deine eigene Wallet."}</strong
-          >
-          {en ? "They usually also appear in a separate category: transfers to wallet addresses with no known link to a crypto-asset provider or financial institution, reported as sums of value and units. This can indicate self-custody. The wallet address is not in the report, but your provider keeps it under anti-money-laundering rules." : "Sie stehen in der Regel auch in einer eigenen Kategorie: Übertragungen an Wallet-Adressen ohne bekannte Verbindung zu einem Krypto-Anbieter oder Finanzinstitut, gemeldet als Summe von Wert und Stückzahl. Das kann auf Selbstverwahrung hindeuten. Die Wallet-Adresse steht nicht in der Meldung, dein Anbieter speichert sie aber nach den Geldwäschevorschriften."}
-        </li>
-        <li
-          data-note="transfer"
-          hidden={!answers.activities.includes("transfer")}
-        >
-          <strong>{en ? "Even without tax." : "Auch ohne Steuerfolge."}</strong>
-          {en ? "Moving your own crypto-assets to your own wallet is reported as a transfer, although that alone does not trigger any tax." : "Eine Übertragung deiner eigenen Kryptowerte auf deine eigene Wallet wird als Übertragung gemeldet, obwohl sie für sich allein keine Steuer auslöst."}
-        </li>
-        <li data-note="swap" hidden={!answers.activities.includes("swap")}>
-          <strong>{en ? "Swaps." : "Tausch."}</strong>
-          {en ? "A swap is reported on both sides, for the crypto-asset you give and the one you receive, even though in Austria it usually is not a taxable disposal for individuals." : "Er wird auf beiden Seiten gemeldet, beim abgegebenen und beim erhaltenen Kryptowert, obwohl er für Privatpersonen in Österreich steuerlich meist kein Verkauf ist."}
-        </li>
-        <li>
-          <strong
-            >{en ? "What the sums do not show." : "Was die Summen nicht zeigen."}</strong
-          >
-          {en ? "Neither your current balance nor, with any certainty, your profit. If you trade the same money several times, high turnover does not mean high wealth. Even so, a merely supposed balance can be enough for criminals to pick a target." : "Weder deinen aktuellen Bestand noch sicher deinen Gewinn. Wer dasselbe Geld mehrmals handelt, hat viel Umsatz, aber nicht unbedingt viel Vermögen. Kriminellen kann trotzdem schon ein vermuteter Bestand reichen, um jemanden auszuwählen."}
-        </li>
-      </ul>
-
-      <h3>{en ? "Who receives it" : "Wer sie bekommt"}</h3>
-      <ol class="timeline file-timeline">
-        <li>
-          <strong>{en ? "By 31 July 2027" : "bis 31. Juli 2027"}</strong>
-          <span data-text="taxOfficeText">{texts.taxOfficeText}</span>
-        </li>
-        <li>
-          <strong
-            >{en ? "By 30 September 2027" : "bis 30. September 2027"}</strong
-          >
-          <span data-text="exchangeText">{texts.exchangeText}</span>
-        </li>
-        <li>
-          <strong data-text="nextWhen">{texts.nextWhen}</strong>
-          <span data-text="nextText">{texts.nextText}</span>
-        </li>
-      </ol>
-      <p class="file-rule">
-        <strong>{en ? "Retention: " : "Aufbewahrung: "}</strong>
-        {en ? "The tax authority stores the reports. For copies received by tax authorities in other EU countries, the directive sets no fixed maximum, only a minimum of five years." : "Das Finanzamt speichert die Meldungen. Für Kopien, die Steuerbehörden anderer EU-Staaten erhalten, nennt die Richtlinie keine feste Höchstfrist, nur mindestens fünf Jahre."}
-      </p>
-      <p class="file-aside">
-        {en ? "If your provider reports in another EU country, the report goes to the tax authority there and on to the country where you are tax-resident." : "Meldet dein Anbieter in einem anderen EU-Staat, geht die Meldung an die Steuerbehörde dort und von dort an den Staat, in dem du steuerlich ansässig bist."}
-      </p>
-    </section>
-
-    <section
-      id="anbieter"
-      class="file-block"
-      data-unless-self
-      hidden={self}
-      aria-labelledby="anbieter-heading"
-    >
-      <h2 id="anbieter-heading">
-        {en ? "What stays with your provider" : "Was bei deinem Anbieter bleibt"}
-      </h2>
-
-      <h3>{en ? "Year after year" : "Jahr für Jahr"}</h3>
-      <p class="file-intro" data-text="yearsIntro">{texts.yearsIntro}</p>
-      <p class="file-key">
-        <strong data-text="key">{texts.key}</strong>
-        <span data-text="keyFollow">{texts.keyFollow}</span>
-      </p>
-
-      <figure
-        class="years"
-        data-chart
-        data-open={model.last === undefined ? "" : undefined}
-        style={`--span: ${model.axisEnd - firstYear + 1}; --key: ${model.keyYear}`}
-      >
-        <div class="years-plot">
-          <div class="years-key" aria-hidden="true">
-            <span
-              ><strong data-text="keyYear">{texts.keyYear}</strong>
-              ·
-              <span data-text="keyCount">{texts.keyCount}</span></span
-            >
-          </div>
-          <ol
-            class="years-rows"
-            aria-label={en ? "Annual reports kept by your provider" : "Jahresmeldungen beim Anbieter"}
-          >
-            {chartYears.map((year) => (
-              <li
-                data-year={year}
-                style={`--y: ${year}`}
-                class:list={{ on: onFile(year) }}
-                hidden={year > model.lastRow}
-              >
-                <span class="years-label" aria-hidden="true">{year}</span>
-                <span class="years-track" aria-hidden="true">
-                  <span class="years-period"></span>
-                  <span class="years-bar">
-                    {year === firstYear && (
-                      <span>
-                        {en ? `until ${year + retention}` : `bis ${year + retention}`}
-                      </span>
-                    )}
-                  </span>
-                  <span class="years-hit"></span>
-                </span>
-                <span class="visually-hidden">
-                  {en ? `Annual report ${year}, kept until ${year + retention}` : `Jahresmeldung ${year}, aufbewahrt bis ${year + retention}`}
-                </span>
-              </li>
-            ))}
-          </ol>
-          <div class="years-axis" aria-hidden="true">
-            {chartTicks.map((tick) => (
-              <span
-                data-tick={tick}
-                style={`--at: ${tick}`}
-                hidden={tick > model.axisEnd}
-              >
-                {tick}
-              </span>
-            ))}
-          </div>
-        </div>
-        <figcaption aria-hidden="true">
-          <span class="legend-period"
-            >{en ? "Reporting period" : "Meldezeitraum"}</span
-          >
-          <span class="legend-held"
-            >{en ? "Kept by your provider" : "Beim Anbieter"}</span
-          >
-          <span class="legend-on" data-text="legendOn">{texts.legendOn}</span>
-        </figcaption>
-      </figure>
-
-      <h3>
-        {en ? "What else your provider holds" : "Was zusätzlich beim Anbieter liegt"}
-      </h3>
-      <p class="file-intro" data-text="keptSince">{texts.keptSince}</p>
-      <ul class="kept-list">
-        <li>
-          {en ? "Your ID and the records of your identification" : "Dein Ausweis und die Unterlagen aus der Identifizierung"}
-        </li>
-        <li>
-          {en ? "Wallet addresses, including those of your own wallet" : "Wallet-Adressen, auch die deiner eigenen Wallet"}
-        </li>
-        <li>
-          {en ? "Individual transactions with time and amount, and for transfers, details of the sender and recipient" : "Einzelne Transaktionen mit Zeitpunkt und Betrag, bei Übertragungen auch Angaben zu Absender und Empfänger"}
-        </li>
-        <li>
-          {en ? "Your balance with the provider" : "Dein Kontostand beim Anbieter"}
-        </li>
-      </ul>
-      <div
-        class="kept"
-        data-kept
-        data-open={model.last === undefined ? "" : undefined}
-        style={`--customer: ${model.customerYears}; --after: ${retention}`}
-        aria-hidden="true"
-      >
-        <div class="kept-seg kept-customer">
-          <span class="kept-bar">{en ? "Customer" : "Kunde"}</span>
-          <span class="kept-mark"
-            ><small>{en ? "Customer since" : "Kunde seit"}</small
-            ><strong data-text="keptFrom">{texts.keptFrom}</strong></span
-          >
-        </div>
-        <div class="kept-seg kept-after">
-          <span class="kept-bar"
-            >{en ? "ten years after" : "zehn Jahre danach"}</span
-          >
-          <span class="kept-mark"
-            ><small>{en ? "Leaving" : "Kündigung"}</small
-            ><strong data-text="keptTurn">{texts.keptTurn}</strong></span
-          >
-          <span class="kept-mark kept-end"
-            ><small data-text="keptToLabel">{texts.keptToLabel}</small
-            ><strong data-text="keptTo">{texts.keptTo}</strong></span
-          >
-        </div>
-      </div>
-      <p class="file-rule">
-        <strong>{en ? "Retention: " : "Aufbewahrung: "}</strong>
-        <span data-text="keptRule">{texts.keptRule}</span>
-        <a href={fmgwg}>§ 21 FM-GwG</a>
-      </p>
-      <p class="file-aside">
-        {en ? "Before it is established who will be reported, the provider must prepare reporting data for all customers, all transactions and all crypto-assets." : "Bevor feststeht, wer überhaupt gemeldet wird, muss der Anbieter die Meldedaten für alle Kunden, alle Transaktionen und alle Kryptowerte aufbereiten."}
-        <small
-          >{en ? "Section 20(1) Krypto-MPfG" : "§ 20 Abs. 1 Krypto-MPfG"}</small
-        >
-      </p>
-    </section>
+    <p class="file-aside" data-unless-self hidden={self}>
+      {en ? "The provider prepares these data for all customers, including those who are never reported, and keeps identification and transaction records until ten years after the relationship ends. " : "Der Anbieter bereitet diese Daten für alle Kunden auf, auch für jene, die nie gemeldet werden, und bewahrt Ausweis- und Transaktionsunterlagen derzeit bis zehn Jahre nach Ende der Kundenbeziehung auf. "}
+      <a href={section20}
+        >{en ? "Section 20 Krypto-MPfG" : "§ 20 Krypto-MPfG"}</a
+      >, <a href={fmgwg}>{en ? "Section 21 FM-GwG" : "§ 21 FM-GwG"}</a>
+    </p>
   </div>
 </section>
 
 <style>
-  /* Links die Fragen auf einer ruhigen Fläche, rechts die Akte, die jeder
-     Antwort folgt. Schmal steht die Akte unter den Fragen. */
+  /* Links die Fragen auf einer ruhigen Fläche, rechts das Ergebnis: drei
+     Zahlen und zwei Listen. Schmal steht das Ergebnis unter den Fragen. */
   .dac-file {
     display: grid;
     align-items: start;
@@ -586,17 +317,6 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
     padding: var(--space-m);
     border-radius: var(--radius-xl);
     background: var(--panel);
-  }
-
-  /* Breit bleiben die Fragen beim Lesen der Akte im Blick, sofern das
-     Fenster hoch genug für alle ist (die Fläche ist rund 46rem hoch). */
-  @media (height >= 53rem) {
-    @container campaign (width >= 60rem) {
-      .file-form {
-        position: sticky;
-        inset-block-start: calc(var(--header-height) + var(--space-s));
-      }
-    }
   }
 
   .file-form-head h2 {
@@ -721,7 +441,7 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
 
   .file-result {
     display: grid;
-    gap: var(--space-2xl);
+    gap: var(--space-xl);
     min-inline-size: 0;
   }
 
@@ -767,8 +487,7 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
     text-wrap: pretty;
   }
 
-  /* Ob gemeldet wird, hängt von der Steueransässigkeit ab: ein Satz, für
-     Drittstaaten zwei Punkte mit dem Zusatz nach § 20 Abs. 1. */
+  /* Ob gemeldet wird, hängt von der Steueransässigkeit ab: ein Satz. */
   .file-residence p {
     max-inline-size: var(--measure-text);
     color: var(--ink);
@@ -776,701 +495,32 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
     text-wrap: pretty;
   }
 
-  .file-residence small {
-    display: block;
-    margin-block-start: var(--space-3xs);
-    color: var(--ink-3);
-    font-size: var(--step--1);
-  }
-
-  /* Zwei getrennte Blöcke: was ans Finanzamt geht, und was beim Anbieter
-     bleibt. Jeder beginnt an einer Metallkante wie ein neues Kapitel. */
-  .file-block {
-    min-inline-size: 0;
-    padding-block-start: var(--space-m);
-    background: var(--metal-rule) top / 100% 2px no-repeat;
-    scroll-margin-block-start: calc(var(--header-height) + var(--space-s));
-  }
-
-  .file-block h2 {
-    max-inline-size: 40ch;
-    font-size: clamp(1.5rem, 1.2rem + 1.1vw, 2rem);
-  }
-
-  .file-block h3 {
-    margin-block-start: var(--space-xl);
-  }
-
-  .file-block h2 + h3 {
-    margin-block-start: var(--space-l);
-  }
-
-  .file-intro {
-    max-inline-size: var(--measure-lead);
-    margin-block-start: var(--space-2xs);
-    color: var(--ink-2);
-    text-wrap: pretty;
-  }
-
-  .file-rule,
-  .file-aside {
-    max-inline-size: var(--measure-text);
-    margin-block-start: var(--space-m);
-    color: var(--ink-2);
-    text-wrap: pretty;
-  }
-
-  .file-rule strong {
-    color: var(--ink);
-    font-weight: 560;
-  }
-
-  .file-rule a {
-    margin-inline-start: 0.25em;
-    white-space: nowrap;
+  /* Die drei Zahlen und die zwei Listen kommen aus campaign.css
+     (.keyfigures, .compare); hier nur der Abstand im Ergebnis. */
+  .file-result .compare {
+    margin-block-start: 0;
   }
 
   .file-aside {
+    max-inline-size: var(--measure-text);
     color: var(--ink-3);
     font-size: var(--step--1);
-  }
-
-  .file-aside small {
-    display: block;
-    margin-block-start: var(--space-3xs);
-    font-size: inherit;
-  }
-
-  /* ---------- Die Meldung als Blatt ------------------------------------- */
-
-  /* Gesetzt wie das Musterblatt: dunkle Titelleiste, rote Rubriken,
-     beschriftete Felder. Was dein Anbieter einträgt, ist hell rot
-     hinterlegt. */
-  .sheet {
-    container: sheet / inline-size;
-    margin-block-start: var(--space-m);
-    overflow: hidden;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-xl);
-    background: var(--paper);
-    box-shadow: 0 1.25rem 2.5rem -1.75rem var(--material-shade);
-  }
-
-  .sheet-bar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-3xs) var(--space-s);
-    padding: var(--space-s) var(--space-m);
-    color: #f4f5f6;
-    background: linear-gradient(155deg, #3d4248, #1f2226);
-  }
-
-  .sheet-bar h4 {
-    font-size: var(--step-2);
-    font-weight: 600;
-    letter-spacing: -0.015em;
-  }
-
-  .sheet-bar span {
-    color: #b9bdc1;
-    font-size: 0.8125rem;
-  }
-
-  .sheet-part {
-    padding: var(--space-m);
-  }
-
-  .sheet-part + .sheet-part {
-    border-block-start: 1px solid var(--line);
-  }
-
-  .sheet-label {
-    display: flex;
-    gap: 0.75em;
-    color: var(--accent);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .sheet-label span {
-    color: var(--ink-3);
-  }
-
-  .sheet-identity {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12.5rem), 1fr));
-    gap: var(--space-s) var(--space-m);
-    margin-block-start: var(--space-s);
-  }
-
-  .sheet-identity dt {
-    color: var(--ink-3);
-    font-size: 0.8125rem;
-  }
-
-  .sheet-identity dd {
-    margin-block-start: 0.2rem;
-  }
-
-  .mine {
-    display: inline-block;
-    padding: 0.05em 0.45em;
-    border-radius: var(--radius-sm);
-    color: var(--ink);
-    background: color-mix(in oklab, var(--primary) 11%, transparent);
-    font-size: var(--step-1);
-    font-weight: 560;
-    line-height: 1.35;
-  }
-
-  .sheet-values {
-    counter-reset: asset;
-  }
-
-  .sheet-asset {
-    margin-block-start: var(--space-m);
-    counter-increment: asset;
-  }
-
-  .sheet-asset-name {
-    display: flex;
-    align-items: center;
-    gap: 0.6em;
-    font-size: var(--step-1);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-
-  .asset-no::before {
-    content: counter(asset, decimal-leading-zero);
-    display: inline-grid;
-    place-items: center;
-    inline-size: 1.75rem;
-    block-size: 1.75rem;
-    border-radius: var(--radius-sm);
-    color: #ffffff;
-    background: var(--primary);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0;
-  }
-
-  .sheet-asset table {
-    inline-size: 100%;
-    margin-block-start: var(--space-xs);
-    border-collapse: collapse;
-    font-size: var(--step--1);
-    line-height: 1.35;
-  }
-
-  .sheet-asset thead th {
-    padding: 0.5rem 0.75rem;
-    color: #f4f5f6;
-    background: #2b2f34;
-    font-weight: 500;
-    text-align: start;
-    white-space: nowrap;
-  }
-
-  .sheet-asset thead th:first-child {
-    border-start-start-radius: var(--radius-sm);
-    border-end-start-radius: var(--radius-sm);
-  }
-
-  .sheet-asset thead th:last-child {
-    border-start-end-radius: var(--radius-sm);
-    border-end-end-radius: var(--radius-sm);
-  }
-
-  .sheet-asset thead th:not(:first-child) {
-    inline-size: 17%;
-  }
-
-  .sheet-asset tbody th,
-  .sheet-asset td {
-    padding: 0.65rem 0.75rem;
-    vertical-align: middle;
-  }
-
-  .sheet-asset tbody th {
-    font-weight: 560;
-    text-align: start;
-    overflow-wrap: normal;
-  }
-
-  .sheet-asset tbody th small {
-    display: block;
-    color: var(--ink-3);
-    font-size: 0.8125rem;
-    font-weight: 400;
-  }
-
-  .sheet-asset tbody tr:not([hidden]) ~ tr {
-    border-block-start: 1px solid var(--line);
-  }
-
-  .slot {
-    display: block;
-    inline-size: min(100%, 5.5rem);
-    block-size: 0.75rem;
-    border-radius: var(--radius-full);
-    background: color-mix(in oklab, var(--primary) 16%, transparent);
-  }
-
-  .none {
-    color: var(--ink-3);
-  }
-
-  .sheet-empty {
-    margin-block-start: var(--space-s);
-    padding: var(--space-s);
-    border: 1px dashed color-mix(in oklab, var(--ink) 22%, transparent);
-    border-radius: var(--radius);
-    color: var(--ink-2);
-  }
-
-  .sheet-foot {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: var(--space-3xs) var(--space-m);
-    padding: var(--space-xs) var(--space-m);
-    border-block-start: 1px solid var(--line);
-    color: var(--ink-3);
-    font-size: 0.8125rem;
-  }
-
-  /* Schmal wird jede Zeile ein Block: der Vorgang, darunter die gemeldeten
-     Felder als kleine Marken. */
-  @container sheet (width < 32rem) {
-    .sheet-part {
-      padding: var(--space-s);
-    }
-
-    .sheet-asset table,
-    .sheet-asset tbody,
-    .sheet-asset tbody th {
-      display: block;
-    }
-
-    .sheet-asset thead {
-      display: none;
-    }
-
-    .sheet-asset tbody tr {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-      padding-block: var(--space-xs);
-    }
-
-    .sheet-asset tbody th {
-      flex-basis: 100%;
-      padding: 0 0 0.15rem;
-    }
-
-    .sheet-asset td {
-      display: inline-flex;
-      padding: 0.15em 0.6em;
-      border-radius: var(--radius-full);
-      color: var(--ink);
-      background: color-mix(in oklab, var(--primary) 11%, transparent);
-      font-size: 0.8125rem;
-    }
-
-    .sheet-asset td::before {
-      content: attr(data-label);
-    }
-
-    .sheet-asset td .slot,
-    .sheet-asset td.none {
-      display: none;
-    }
-  }
-
-  /* Hinweise unter dem Blatt: fetter Einstieg, dann ein bis drei Sätze. */
-  .file-notes {
-    display: grid;
-    gap: var(--space-s);
-    max-inline-size: var(--measure-text);
-    margin-block-start: var(--space-l);
-    padding: 0;
-    list-style: none;
-  }
-
-  .file-notes li {
-    position: relative;
-    padding-inline-start: 1.25rem;
-    color: var(--ink-2);
     text-wrap: pretty;
   }
 
-  .file-notes li::before {
-    content: "";
-    position: absolute;
-    inset-block-start: 0.6em;
-    inset-inline-start: 0;
-    inline-size: 0.5rem;
-    block-size: 0.5rem;
-    border-radius: var(--radius-full);
-    background: var(--primary);
-  }
-
-  .file-notes strong {
-    color: var(--ink);
-    font-weight: 560;
-  }
-
-  .file-timeline {
-    margin-block-start: var(--space-s);
-  }
-
-  /* ---------- Jahr für Jahr ---------------------------------------------- */
-
-  .file-key {
-    display: grid;
-    gap: var(--space-2xs);
-    max-inline-size: 46ch;
-    margin-block-start: var(--space-m);
-    color: var(--ink-2);
-    text-wrap: pretty;
-  }
-
-  .file-key strong {
-    color: var(--ink);
-    font-size: var(--step-2);
-    font-weight: 600;
-    line-height: 1.2;
-    letter-spacing: -0.015em;
-    text-wrap: balance;
-  }
-
-  /* Eine Zeile je Jahresmeldung auf einer Achse der Kalenderjahre: umrandet
-     das Jahr, über das sie berichtet, voll die zehn Jahre beim Anbieter.
-     Die Spalte des Schlüsseljahrs ist hinterlegt; wo sie eine Meldung
-     kreuzt, ist die Zelle rot. Meldungen, die es in diesem Jahr noch nicht
-     gibt, treten zurück. Ohne geplantes Ende laufen die Zeilen über den
-     Rand hinaus. */
-  .years {
-    --label: 2.75rem;
-    --row: 1.125rem;
-    --bar: light-dark(#5b626a, #7d858d);
-    --track: calc(100% - var(--label));
-    margin-block-start: var(--space-l);
-  }
-
-  .years-plot {
-    position: relative;
-    padding-block-start: 1.75rem;
-  }
-
-  .years-key {
-    position: absolute;
-    inset-block: 0 1.5rem;
-    inset-inline-start: calc(
-      var(--label) +
-      var(--track) *
-      (var(--key) - 2026) /
-      var(--span)
-    );
-    inline-size: calc(var(--track) / var(--span));
-    border-radius: var(--radius-sm);
-    background: color-mix(in oklab, var(--primary) 12%, transparent);
-  }
-
-  .years-key > span {
-    position: absolute;
-    inset-block-start: 0.2rem;
-    inset-inline-start: 50%;
-    translate: -50% 0;
-    color: var(--ink-2);
-    font-size: 0.8125rem;
-    line-height: 1.2;
-    white-space: nowrap;
-  }
-
-  .years-key strong {
-    color: var(--accent);
-    font-weight: 600;
-  }
-
-  .years-rows {
-    position: relative;
-    display: grid;
-    gap: 0.3125rem;
-    padding: 0;
-    list-style: none;
-  }
-
-  .years-rows li {
-    display: grid;
-    grid-template-columns: var(--label) minmax(0, 1fr);
-    align-items: center;
-    block-size: var(--row);
-  }
-
-  .years-label {
-    color: var(--ink-3);
-    font-size: 0.75rem;
-    line-height: 1;
-  }
-
-  .years-track {
-    position: relative;
-    block-size: 100%;
-    overflow: hidden;
-  }
-
-  .years-period,
-  .years-bar {
-    position: absolute;
-    inset-block: 0;
-    border-radius: 3px;
-  }
-
-  .years-period {
-    inset-inline-start: calc((var(--y) - 2026) / var(--span) * 100%);
-    inline-size: calc(100% / var(--span) - 2px);
-    box-shadow: inset 0 0 0 1.5px var(--bar);
-    opacity: 0.55;
-  }
-
-  .years-bar {
-    display: flex;
-    align-items: center;
-    inset-inline-start: calc((var(--y) - 2025) / var(--span) * 100%);
-    inline-size: calc(100% * 10 / var(--span));
-    padding-inline: 0.4rem;
-    overflow: hidden;
-    background: var(--bar);
-    color: #ffffff;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .years-hit {
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: calc((var(--key) - 2026) / var(--span) * 100%);
-    inline-size: calc(100% / var(--span));
-    display: none;
-    border-radius: 2px;
-    background: var(--primary);
-  }
-
-  .years-rows li.on .years-hit {
-    display: block;
-  }
-
-  .years-rows li:not(.on) .years-track {
-    opacity: 0.4;
-  }
-
-  .years[data-open] .years-rows::after {
-    content: "";
-    position: absolute;
-    inset-block: 0;
-    inset-inline-end: 0;
-    inline-size: 2.5rem;
-    background: linear-gradient(to right, transparent, var(--background));
-  }
-
-  .years-axis {
-    position: relative;
-    block-size: 1.5rem;
-    margin-inline-start: var(--label);
-    color: var(--ink-3);
-    font-size: 0.75rem;
-  }
-
-  .years-axis span {
-    position: absolute;
-    inset-block-start: 0.4rem;
-    inset-inline-start: calc((var(--at) - 2026 + 0.5) / var(--span) * 100%);
-    translate: -50% 0;
-    white-space: nowrap;
-  }
-
-  .years figcaption {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3xs) var(--space-m);
-    margin-block-start: var(--space-xs);
-    color: var(--ink-3);
-    font-size: 0.8125rem;
-  }
-
-  .years figcaption > span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45em;
-  }
-
-  .years figcaption > span::before {
-    content: "";
-    inline-size: 1.25rem;
-    block-size: 0.625rem;
-    border-radius: 3px;
-  }
-
-  .legend-period::before {
-    box-shadow: inset 0 0 0 1.5px var(--bar);
-    opacity: 0.6;
-  }
-
-  .legend-held::before {
-    background: var(--bar);
-  }
-
-  .legend-on::before {
-    inline-size: 0.625rem;
-    background: var(--primary);
-  }
-
-  /* ---------- Was zusätzlich beim Anbieter liegt ---------------------- */
-
-  /* Wie im Dossier: offene Punkte für das, was nicht in der Meldung steht,
-     jeder Punkt eine Zeile zwischen Haarlinien. */
-  .kept-list {
-    display: grid;
-    max-inline-size: var(--measure-text);
-    margin-block-start: var(--space-xs);
-    padding: 0;
-    list-style: none;
-  }
-
-  .kept-list li {
-    position: relative;
-    padding-block: var(--space-xs);
-    padding-inline-start: 1.5rem;
-    color: var(--ink-2);
-    text-wrap: pretty;
-  }
-
-  .kept-list li + li {
-    border-block-start: 1px solid var(--line);
-  }
-
-  .kept-list li::before {
-    content: "";
-    position: absolute;
-    inset-block-start: calc(var(--space-xs) + 0.55em);
-    inset-inline-start: 0;
-    inline-size: 0.5rem;
-    block-size: 0.5rem;
-    border-radius: var(--radius-full);
-    box-shadow: inset 0 0 0 1.5px var(--ink-3);
-  }
-
-  /* Die Kundenbeziehung als Balken, danach die zehn Jahre, in denen die
-     Unterlagen bleiben. */
-  .kept {
-    display: flex;
-    max-inline-size: 44rem;
-    margin-block-start: var(--space-l);
-    padding-block-end: 2.75rem;
-  }
-
-  .kept-seg {
-    position: relative;
-    min-inline-size: 7rem;
-  }
-
-  .kept-customer {
-    flex: var(--customer) 1 0;
-  }
-
-  .kept-after {
-    flex: var(--after) 1 0;
-  }
-
-  .kept-bar {
-    display: flex;
-    align-items: center;
-    block-size: 2rem;
-    padding-inline: 0.75rem;
-    overflow: hidden;
-    font-size: 0.8125rem;
-    font-weight: 560;
-    white-space: nowrap;
-  }
-
-  .kept-customer .kept-bar {
-    border-start-start-radius: var(--radius-md);
-    border-end-start-radius: var(--radius-md);
-    color: #f4f5f6;
-    background: linear-gradient(155deg, #4b5056, #25282d);
-  }
-
-  .kept-after .kept-bar {
-    border-start-end-radius: var(--radius-md);
-    border-end-end-radius: var(--radius-md);
-    color: var(--ink);
-    background: repeating-linear-gradient(
-      135deg,
-      color-mix(in oklab, var(--primary) 24%, transparent) 0 0.375rem,
-      color-mix(in oklab, var(--primary) 11%, transparent) 0.375rem 0.75rem
-    );
-  }
-
-  /* Ohne geplantes Ende bricht der Balken offen ab, eine Lücke steht für
-     die Jahre, die noch kommen. */
-  .kept[data-open] .kept-customer .kept-bar {
-    mask-image: linear-gradient(to right, #000 70%, transparent);
-  }
-
-  .kept[data-open] .kept-after {
-    margin-inline-start: var(--space-s);
-  }
-
-  .kept[data-open] .kept-after .kept-bar {
-    border-radius: var(--radius-md);
-  }
-
-  .kept-mark {
-    position: absolute;
-    inset-block-start: calc(100% + 0.4rem);
-    inset-inline-start: 0;
-    display: grid;
-    color: var(--ink-3);
-    font-size: 0.75rem;
-    line-height: 1.25;
-    white-space: nowrap;
-  }
-
-  .kept-mark strong {
-    color: var(--ink);
-    font-size: var(--step-0);
-    font-weight: 600;
-  }
-
-  .kept-end {
-    inset-inline-start: auto;
-    inset-inline-end: 0;
-    text-align: end;
+  [hidden] {
+    display: none !important;
   }
 </style>
 
 <script>
   import {
     type Activity,
-    type Asset,
     type FileAnswers,
     type FileTexts,
-    fileModel,
     fileTexts,
-    firstYear,
-    isComplete,
     type ProviderAnswer,
     type Residence,
-    type RowId,
-    showsAsset,
-    showsRow,
   } from "@/data/file"
 
   // Ohne JavaScript bleibt das Beispiel des Servers stehen.
@@ -1494,60 +544,30 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
         since: Number(data.get("since")),
         until: until === "open" ? "open" : Number(until),
         activities: data.getAll("activity").map(String) as Activity[],
-        assets: data.getAll("asset").map(String) as Asset[],
       }
     }
 
     const render = () => {
       const answers = read()
-      const model = fileModel(answers)
       const texts = fileTexts(answers, language)
       const self = answers.provider === "self"
-      const open = model.last === undefined
 
       for (const element of all("[data-verdict]"))
         element.hidden = element.dataset.verdict !== answers.provider
       for (const element of all("[data-unless-self]")) element.hidden = self
       for (const element of all("[data-residence]"))
         element.hidden = element.dataset.residence !== answers.residence
+      for (const element of all("[data-activity]"))
+        element.hidden = !answers.activities.includes(
+          element.dataset.activity as Activity,
+        )
+      for (const element of all("[data-no-activity]"))
+        element.hidden = answers.activities.length > 0
       // Only changed text is written, so the live summary speaks once per
       // change and not on load.
       for (const element of all("[data-text]")) {
         const value = texts[element.dataset.text as keyof FileTexts]
         if (element.textContent?.trim() !== value) element.textContent = value
-      }
-      for (const element of all("[data-asset]"))
-        element.hidden = !showsAsset(answers, element.dataset.asset as Asset)
-      for (const element of all("[data-row]"))
-        element.hidden = !showsRow(answers, element.dataset.row as RowId)
-      for (const element of all("[data-note]"))
-        element.hidden = !answers.activities.includes(
-          element.dataset.note as Activity,
-        )
-      for (const element of all("[data-incomplete]"))
-        element.hidden = isComplete(answers)
-
-      const chart = root.querySelector<HTMLElement>("[data-chart]")
-      if (chart) {
-        chart.style.setProperty("--span", String(model.axisEnd - firstYear + 1))
-        chart.style.setProperty("--key", String(model.keyYear))
-        chart.toggleAttribute("data-open", open)
-        for (const row of chart.querySelectorAll<HTMLElement>("[data-year]")) {
-          const year = Number(row.dataset.year)
-          row.hidden = year > model.lastRow
-          row.classList.toggle(
-            "on",
-            year >= model.keyFrom && year <= model.keyTo,
-          )
-        }
-        for (const tick of chart.querySelectorAll<HTMLElement>("[data-tick]"))
-          tick.hidden = Number(tick.dataset.tick) > model.axisEnd
-      }
-
-      const kept = root.querySelector<HTMLElement>("[data-kept]")
-      if (kept) {
-        kept.style.setProperty("--customer", String(model.customerYears))
-        kept.toggleAttribute("data-open", open)
       }
     }
 

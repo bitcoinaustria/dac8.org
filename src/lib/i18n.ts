@@ -51,6 +51,10 @@ export const navigationFor = (language: Language) => [
     label: language === "en" ? "Arguments" : "Argumente",
   },
   {
+    href: pathFor("file", language),
+    label: language === "en" ? "Your file" : "Deine Akte",
+  },
+  {
     href: pathFor("attacks", language),
     label: language === "en" ? "Attacks" : "Angriffe",
   },
