@@ -1,339 +1,152 @@
 ---
-import {
-  activities,
-  defaults,
-  fileTexts,
-  labels,
-  providerAnswers,
-  residences,
-  sinceYears,
-  untilYears,
-} from "@/data/file"
 import type { Language } from "@/lib/i18n"
 
 interface Props {
   language: Language
 }
 
-// The reader answers a few questions; beside them stand three figures and two
-// lists: what goes to the tax office every year and what stays with the
-// provider. The server renders the default answers so the page reads without
-// JavaScript; the script below recomputes the texts from src/data/file.ts as
-// the answers change. Nothing leaves the browser.
+// "Your DAC8 file": one question and a plain answer. Earlier versions asked
+// for residence, years and activities and answered with a mock report, a
+// chart and key figures; readers found that too hard to follow (October 2026
+// feedback). The answer restates the vetted wording of the dossier
+// (#gemeldet, FAQ) and of AffectedCheck.astro in everyday words, so change
+// them together. Two rules from the campaign lawyer's notes still hold: the
+// report never says which wallet is yours, and what goes to the tax office
+// stays apart from what the provider keeps. CSS :has() shows the answer to
+// the chosen option, so the page needs no script.
 const { language } = Astro.props
 const en = language === "en"
-const text = labels[language]
-const answers = defaults
-const texts = fileTexts(answers, language)
-const self = answers.provider === "self"
 const section20 =
   "https://www.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40273819/NOR40273819.pdf"
 const fmgwg =
   "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009769"
+
+const options = en
+  ? [
+      {
+        value: "provider",
+        label: "Yes",
+        title: "Then you are affected.",
+        text: [
+          "From 2026, your provider tells the tax authority every year who you are and how much crypto you bought, sold, swapped and sent. Wallet addresses are not in the report. If you live in Germany or another EU country, it goes on to the tax authority there.",
+          "It keeps every report for ten years. If you stay a customer, from 2036 it will always hold ten reports on you.",
+          "It already holds your ID, your wallet addresses and every single transaction. Anti-money-laundering rules currently require that until ten years after you leave.",
+        ],
+      },
+      {
+        value: "self",
+        label: "No, never through a provider",
+        title: "Then DAC8 does not report you.",
+        text: [
+          "That holds as long as you never buy, sell or hold crypto through an exchange, broker or app.",
+          "If you have done so since 2020, that provider still holds your ID, your wallet addresses and your transactions, currently until ten years after you leave.",
+        ],
+      },
+      {
+        value: "unsure",
+        label: "Not sure",
+        title: "It depends on where you buy crypto.",
+        text: [
+          "Exchanges, brokers and apps where you buy crypto or leave it count as providers, including banks that offer crypto.",
+          "Your provider has to tell you before it reports for the first time. If in doubt, ask it.",
+        ],
+      },
+    ]
+  : [
+      {
+        value: "provider",
+        label: "Ja",
+        title: "Dann bist du betroffen.",
+        text: [
+          "Dein Anbieter meldet ab 2026 jedes Jahr ans Finanzamt, wer du bist und wie viel Krypto du gekauft, verkauft, getauscht und verschickt hast. Wallet-Adressen stehen nicht darin. Lebst du in Deutschland oder einem anderen EU-Land, geht die Meldung an die Steuerbehörde dort weiter.",
+          "Jede Meldung hebt er zehn Jahre auf. Bleibst du Kunde, liegen bei ihm ab 2036 immer zehn Meldungen über dich.",
+          "Deinen Ausweis, deine Wallet-Adressen und jede einzelne Transaktion hat er schon jetzt. Das verlangen die Regeln gegen Geldwäsche, derzeit bis zehn Jahre nach deiner Kündigung.",
+        ],
+      },
+      {
+        value: "self",
+        label: "Nein, nie über einen Anbieter",
+        title: "Dann meldet DAC8 dich nicht.",
+        text: [
+          "Das gilt, solange du nie über eine Börse, einen Broker oder eine App Krypto kaufst, verkaufst oder verwahrst.",
+          "Hast du das seit 2020 getan, hat dieser Anbieter deinen Ausweis, deine Wallet-Adressen und deine Transaktionen noch, derzeit bis zehn Jahre nach deiner Kündigung.",
+        ],
+      },
+      {
+        value: "unsure",
+        label: "Weiß ich nicht",
+        title: "Das hängt davon ab, wo du Krypto kaufst.",
+        text: [
+          "Als Anbieter zählen Börsen, Broker und Apps, bei denen du Krypto kaufst oder liegen lässt, auch Banken mit Krypto-Angebot.",
+          "Dein Anbieter muss dich informieren, bevor er zum ersten Mal meldet. Frag im Zweifel nach.",
+        ],
+      },
+    ]
 ---
 
 <section
   id="akte"
   class="dac-file"
-  data-dac-file
   aria-label={en ? "Your DAC8 file" : "Deine DAC8-Akte"}
 >
-  <form class="file-form" data-file-form aria-labelledby="file-form-title">
-    <div class="file-form-head">
-      <h2 id="file-form-title">{en ? "Your answers" : "Deine Angaben"}</h2>
-      <p>
-        {en ? "No names, no amounts. Your answers stay in your browser." : "Ohne Namen, ohne Beträge. Deine Angaben bleiben in deinem Browser."}
-      </p>
+  <fieldset class="file-question">
+    <legend>
+      {en ? "Do you buy, sell or hold crypto through an exchange, broker or app?" : "Kaufst, verkaufst oder verwahrst du Krypto über eine Börse, einen Broker oder eine App?"}
+    </legend>
+    <div class="file-options">
+      {options.map((option, index) => (
+        <label>
+          <input
+            type="radio"
+            name="provider"
+            value={option.value}
+            checked={index === 0}
+          />
+          <span>{option.label}</span>
+        </label>
+      ))}
     </div>
+  </fieldset>
 
-    <fieldset class="file-question">
-      <legend>
-        {en ? "Do you buy, sell or hold crypto through an exchange, broker or app?" : "Kaufst, verkaufst oder verwahrst du Krypto über eine Börse, einen Broker oder eine App?"}
-      </legend>
-      <div class="file-options">
-        {providerAnswers.map((value) => (
-          <label>
-            <input
-              type="radio"
-              name="provider"
-              value={value}
-              checked={value === answers.provider}
-            />
-            <span>{text.provider[value]}</span>
-          </label>
-        ))}
-      </div>
-    </fieldset>
-
-    <div class="file-more" data-unless-self hidden={self}>
-      <fieldset class="file-question">
-        <legend>
-          {en ? "Where are you tax-resident?" : "Wo bist du steuerlich ansässig?"}
-        </legend>
-        <div class="file-options">
-          {residences.map((value) => (
-            <label>
-              <input
-                type="radio"
-                name="residence"
-                value={value}
-                checked={value === answers.residence}
-              />
-              <span>{text.residence[value]}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
-      <fieldset class="file-question">
-        <legend>
-          {en ? "Since when, and for how long?" : "Wie lange bist du bei diesem Anbieter?"}
-        </legend>
-        <div class="file-years">
-          <label class="field">
-            <span>{en ? "Since" : "Seit"}</span>
-            <select name="since">
-              {sinceYears.map((year) => (
-                <option value={year} selected={year === answers.since}>
-                  {year}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label class="field">
-            <span>{en ? "Until" : "Bis"}</span>
-            <select name="until">
-              <option value="open" selected={answers.until === "open"}>
-                {en ? "open" : "offen"}
-              </option>
-              {untilYears.map((year) => (
-                <option value={year} selected={year === answers.until}>
-                  {year}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-      </fieldset>
-
-      <fieldset class="file-question">
-        <legend>{en ? "What do you do there?" : "Was machst du dort?"}</legend>
-        <div class="file-options">
-          {activities.map((value) => (
-            <label>
-              <input
-                type="checkbox"
-                name="activity"
-                value={value}
-                checked={answers.activities.includes(value)}
-              />
-              <span>{text.activity[value]}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
+  {options.map((option) => (
+    <div class="file-answer" data-answer={option.value}>
+      <p class="file-answer-title">{option.title}</p>
+      {option.text.map((paragraph) => <p>{paragraph}</p>)}
     </div>
+  ))}
 
-    <noscript>
-      <p class="file-noscript">
-        {en ? "Without JavaScript, this page shows an example: tax-resident in Austria, bought and transferred to your own wallet, customer since 2021." : "Ohne JavaScript zeigt diese Seite ein Beispiel: in Österreich steuerlich ansässig, gekauft und auf die eigene Wallet übertragen, Kunde seit 2021."}
-      </p>
-    </noscript>
-  </form>
-
-  <div class="file-result">
-    <p class="visually-hidden" aria-live="polite" data-text="live">
-      {texts.live}
-    </p>
-
-    <div class="file-verdict">
-      <div data-verdict="provider" hidden={answers.provider !== "provider"}>
-        <p class="file-verdict-title">
-          {en ? "Then you are affected." : "Dann bist du betroffen."}
-        </p>
-      </div>
-      <div data-verdict="unsure" hidden={answers.provider !== "unsure"}>
-        <p class="file-verdict-title">
-          {en ? "It depends on where you buy crypto-assets." : "Das hängt davon ab, wo du Kryptowerte kaufst."}
-        </p>
-        <ul>
-          <li>
-            {en ? "Exchanges, brokers and apps that buy or hold crypto-assets for you count as providers, including banks with a crypto offer." : "Als Anbieter gelten Börsen, Broker und Apps, bei denen du Kryptowerte kaufst oder verwahren lässt, auch Banken mit Krypto-Angebot."}
-          </li>
-          <li>
-            {en ? "Your provider has to tell you before it reports for the first time. If in doubt, ask it whether it reports under DAC8." : "Dein Anbieter muss dich informieren, bevor er erstmals meldet. Frag im Zweifel nach, ob er nach DAC8 meldet."}
-          </li>
-        </ul>
-      </div>
-      <div data-verdict="self" hidden={answers.provider !== "self"}>
-        <p class="file-verdict-title">
-          {en ? "Then DAC8 does not report you." : "Dann meldet DAC8 dich nicht."}
-        </p>
-        <ul>
-          <li>
-            {en ? "This applies as long as you only self-custody and never buy or sell through a provider." : "Das gilt, solange du ausschließlich selbst verwahrst und nie über einen Anbieter kaufst oder verkaufst."}
-          </li>
-          <li>
-            {en ? "If you buy from a provider and transfer to your own wallet, the value and units of those transfers usually appear as sums in that provider’s annual report. The wallet address is not in the report, but the provider keeps it under anti-money-laundering rules." : "Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, stehen Wert und Stückzahl dieser Übertragungen in der Regel als Summen in seiner Jahresmeldung. Die Wallet-Adresse steht nicht darin, er speichert sie aber nach den Geldwäschevorschriften."}
-          </li>
-          <li>
-            {en ? "If you used a provider in 2020 or later, anti-money-laundering rules currently require it to keep your ID, wallet addresses and transactions for up to ten years after you left." : "Warst du 2020 oder später Kunde bei einem Anbieter, muss er Ausweis, Wallet-Adressen und Transaktionen nach den Geldwäschevorschriften derzeit bis zehn Jahre nach Ende der Kundenbeziehung aufbewahren."}
-          </li>
-        </ul>
-      </div>
-      <p class="file-what" data-unless-self hidden={self} data-text="what">
-        {texts.what}
-      </p>
-      <div class="file-residence" data-unless-self hidden={self}>
-        <p data-residence="at" hidden={answers.residence !== "at"}>
-          {en ? "Whoever is tax-resident in Austria is reported." : "Wer in Österreich steuerlich ansässig ist, wird gemeldet."}
-        </p>
-        <p data-residence="de" hidden={answers.residence !== "de"}>
-          {en ? "You are reported, and Austria passes the report on to Germany’s Federal Central Tax Office. A German provider reports there directly, under the German Crypto-Asset Tax Transparency Act." : "Du wirst gemeldet, und Österreich gibt die Meldung an das deutsche Bundeszentralamt für Steuern weiter. Ein deutscher Anbieter meldet direkt dorthin, nach dem Kryptowerte-Steuertransparenzgesetz."}
-        </p>
-        <p data-residence="eu" hidden={answers.residence !== "eu"}>
-          {en ? "You are reported, and Austria passes the report on to the EU country where you are tax-resident." : "Du wirst gemeldet, und Österreich gibt die Meldung an den EU-Staat weiter, in dem du steuerlich ansässig bist."}
-        </p>
-        <p data-residence="third" hidden={answers.residence !== "third"}>
-          {en ? "Only people tax-resident in a participating country are reported: an EU country, or a non-EU country that exchanges crypto data with Austria. Your provider must prepare the data for you anyway." : "Gemeldet wird nur, wer in einem teilnehmenden Staat steuerlich ansässig ist: in einem EU-Staat oder in einem Drittstaat, der mit Österreich Kryptodaten austauscht. Aufbereiten muss dein Anbieter die Daten trotzdem."}
-        </p>
-      </div>
-    </div>
-
-    <dl class="keyfigures" data-unless-self hidden={self}>
-      <div>
-        <dt>
-          <strong>{en ? "First report" : "Erste Meldung"}</strong>
-          <span data-text="firstText">{texts.firstText}</span>
-        </dt>
-        <dd>
-          <time datetime="2027-07-31"
-            >{en ? "31 July 2027" : "31. Juli 2027"}</time
-          >
-        </dd>
-      </div>
-      <div>
-        <dt>
-          <strong data-text="reportsTerm">{texts.reportsTerm}</strong>
-          <span data-text="reportsText">{texts.reportsText}</span>
-        </dt>
-        <dd>
-          <span data-text="reportsValue">{texts.reportsValue}</span>
-          <small data-text="reportsUnit">{texts.reportsUnit}</small>
-        </dd>
-      </div>
-      <div>
-        <dt>
-          <strong data-text="keptTerm">{texts.keptTerm}</strong>
-          <span data-text="keptText">{texts.keptText}</span>
-        </dt>
-        <dd>
-          <span data-text="keptValue">{texts.keptValue}</span>
-          <small data-text="keptUnit">{texts.keptUnit}</small>
-        </dd>
-      </div>
-    </dl>
-
-    <div class="compare" data-unless-self hidden={self}>
-      <div>
-        <h3 data-text="reportedHeading">{texts.reportedHeading}</h3>
-        <ul>
-          <li>
-            {en ? "Name, postal address, tax residence, tax identification number and date of birth" : "Name, Anschrift, Steuerwohnsitz, Steuernummer und Geburtsdatum"}
-          </li>
-          {activities.map((activity) => (
-            <li
-              data-activity={activity}
-              hidden={!answers.activities.includes(activity)}
-            >
-              {text.reported[activity]}
-            </li>
-          ))}
-          <li data-no-activity hidden={answers.activities.length > 0}>
-            {en ? "Choose what you do with your provider." : "Wähle, was du bei deinem Anbieter machst."}
-          </li>
-        </ul>
-      </div>
-      <div class="absent">
-        <h3>
-          {en ? "Stays with your provider" : "Bleibt bei deinem Anbieter"}
-        </h3>
-        <ul>
-          <li>
-            {en ? "Every annual report, for ten years" : "Jede Jahresmeldung, zehn Jahre lang"}
-          </li>
-          <li>
-            {en ? "Your ID and the records of your identification" : "Dein Ausweis und die Unterlagen aus der Identifizierung"}
-          </li>
-          <li>
-            {en ? "Wallet addresses, including those of your own wallet" : "Wallet-Adressen, auch die deiner eigenen Wallet"}
-          </li>
-          <li data-text="transactionsSince">{texts.transactionsSince}</li>
-          <li>
-            {en ? "Your balance with the provider" : "Dein Kontostand beim Anbieter"}
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <p class="file-aside" data-unless-self hidden={self}>
-      {en ? "The provider prepares these data for all customers, including those who are never reported, and keeps identification and transaction records until ten years after the relationship ends. " : "Der Anbieter bereitet diese Daten für alle Kunden auf, auch für jene, die nie gemeldet werden, und bewahrt Ausweis- und Transaktionsunterlagen derzeit bis zehn Jahre nach Ende der Kundenbeziehung auf. "}
-      <a href={section20}
-        >{en ? "Section 20 Krypto-MPfG" : "§ 20 Krypto-MPfG"}</a
-      >, <a href={fmgwg}>{en ? "Section 21 FM-GwG" : "§ 21 FM-GwG"}</a>
-    </p>
-  </div>
+  <p class="file-sources">
+    <a href={section20}
+      >{en ? "Section 20 Krypto-MPfG" : "§ 20 Krypto-MPfG"}</a
+    >, <a href={fmgwg}>{en ? "Section 21 FM-GwG" : "§ 21 FM-GwG"}</a>
+  </p>
 </section>
 
 <style>
-  /* Links die Fragen auf einer ruhigen Fläche, rechts das Ergebnis: drei
-     Zahlen und zwei Listen. Schmal steht das Ergebnis unter den Fragen. */
+  /* Eine Frage auf einer ruhigen Fläche, die Antwort in ein paar Sätzen.
+     Breit steht die Antwort neben der Frage, schmal darunter. */
   .dac-file {
     display: grid;
-    align-items: start;
-    gap: var(--space-xl) var(--space-2xl);
-  }
-
-  @container campaign (width >= 60rem) {
-    .dac-file {
-      grid-template-columns: minmax(19rem, 24rem) minmax(0, 1fr);
-    }
-  }
-
-  .visually-hidden {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  /* ---------- Fragen ---------------------------------------------------- */
-
-  .file-form {
-    display: grid;
-    gap: var(--space-m);
-    padding: var(--space-m);
+    gap: var(--space-l) var(--space-2xl);
+    padding: var(--space-l) var(--space-m-l);
     border-radius: var(--radius-xl);
     background: var(--panel);
   }
 
-  .file-form-head h2 {
-    max-inline-size: none;
-    font-size: var(--step-2);
-    letter-spacing: -0.015em;
-  }
+  @container campaign (width >= 60rem) {
+    .dac-file {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+      align-items: start;
+    }
 
-  .file-form-head p {
-    margin-block-start: var(--space-3xs);
-    color: var(--ink-2);
-    font-size: var(--step--1);
-  }
+    .file-question {
+      grid-row: 1 / span 2;
+    }
 
-  .file-more {
-    display: grid;
-    gap: var(--space-m);
+    .file-answer,
+    .file-sources {
+      grid-column: 2;
+    }
   }
 
   .file-question {
@@ -345,20 +158,18 @@ const fmgwg =
 
   .file-question legend {
     padding: 0;
-    font-weight: 560;
-    line-height: 1.35;
+    font-size: var(--step-2);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
     text-wrap: balance;
-  }
-
-  .file-options,
-  .file-years {
-    margin-block-start: var(--space-xs);
   }
 
   .file-options {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2xs);
+    gap: var(--space-xs);
+    margin-block-start: var(--space-m);
   }
 
   .file-options label {
@@ -376,26 +187,17 @@ const fmgwg =
   .file-options span {
     display: inline-flex;
     align-items: center;
-    gap: 0.45em;
-    min-block-size: 2.375rem;
-    padding: 0.35em 0.95em;
+    min-block-size: 2.75rem;
+    padding: 0.4em 1.1em;
     border: 1px solid color-mix(in oklab, var(--ink) 28%, transparent);
     border-radius: var(--radius-full);
     background: var(--paper);
-    font-size: var(--step--1);
     font-weight: 560;
     line-height: 1.25;
     transition:
       background-color 140ms ease,
       color 140ms ease,
       border-color 140ms ease;
-  }
-
-  /* Auf Touchscreens bleiben die Knöpfe fingergroß. */
-  @media (pointer: coarse) {
-    .file-options span {
-      min-block-size: 2.75rem;
-    }
   }
 
   .file-options label:hover span {
@@ -413,50 +215,19 @@ const fmgwg =
     outline-offset: 0.2rem;
   }
 
-  /* Mehrfachauswahl: ein Plus, das zum Haken wird. */
-  .file-options input[type="checkbox"] + span::before {
-    content: "+" / "";
-    display: inline-grid;
-    place-items: center;
-    inline-size: 1em;
-    font-weight: 600;
-  }
-
-  .file-options input[type="checkbox"]:checked + span::before {
-    content: "✓" / "";
-  }
-
-  .file-years {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-xs);
-  }
-
-  .file-noscript {
-    color: var(--ink-3);
-    font-size: var(--step--1);
-  }
-
-  /* ---------- Ergebnis --------------------------------------------------- */
-
-  .file-result {
-    display: grid;
-    gap: var(--space-xl);
-    min-inline-size: 0;
-  }
-
-  .file-verdict {
-    display: grid;
+  /* Nur die Antwort zur gewählten Option ist zu sehen. */
+  .file-answer {
+    display: none;
     gap: var(--space-s);
   }
 
-  .file-verdict > div {
+  .dac-file:has(input[value="provider"]:checked) [data-answer="provider"],
+  .dac-file:has(input[value="self"]:checked) [data-answer="self"],
+  .dac-file:has(input[value="unsure"]:checked) [data-answer="unsure"] {
     display: grid;
-    gap: var(--space-s);
   }
 
-  .file-verdict-title {
-    max-inline-size: 24ch;
+  .file-answer-title {
     font-size: clamp(1.625rem, 1.25rem + 1.5vw, 2.25rem);
     font-weight: 600;
     font-stretch: 94%;
@@ -465,115 +236,16 @@ const fmgwg =
     text-wrap: balance;
   }
 
-  .file-verdict ul {
-    display: grid;
-    gap: var(--space-2xs);
+  .file-answer p:not(.file-answer-title) {
     max-inline-size: var(--measure-text);
-    padding-inline-start: 1.2em;
-    list-style: disc;
-    color: var(--ink-2);
-    text-wrap: pretty;
-  }
-
-  .file-verdict li::marker {
-    color: var(--primary);
-  }
-
-  .file-what {
-    max-inline-size: 50ch;
     color: var(--ink-2);
     font-size: var(--step-1);
-    line-height: 1.45;
+    line-height: 1.5;
     text-wrap: pretty;
   }
 
-  /* Ob gemeldet wird, hängt von der Steueransässigkeit ab: ein Satz. */
-  .file-residence p {
-    max-inline-size: var(--measure-text);
-    color: var(--ink);
-    font-weight: 500;
-    text-wrap: pretty;
-  }
-
-  /* Die drei Zahlen und die zwei Listen kommen aus campaign.css
-     (.keyfigures, .compare); hier nur der Abstand im Ergebnis. */
-  .file-result .compare {
-    margin-block-start: 0;
-  }
-
-  .file-aside {
-    max-inline-size: var(--measure-text);
+  .file-sources {
     color: var(--ink-3);
     font-size: var(--step--1);
-    text-wrap: pretty;
-  }
-
-  [hidden] {
-    display: none !important;
   }
 </style>
-
-<script>
-  import {
-    type Activity,
-    type FileAnswers,
-    type FileTexts,
-    fileTexts,
-    type ProviderAnswer,
-    type Residence,
-  } from "@/data/file"
-
-  // Ohne JavaScript bleibt das Beispiel des Servers stehen.
-  for (const root of document.querySelectorAll<HTMLElement>(
-    "[data-dac-file]",
-  )) {
-    const form = root.querySelector<HTMLFormElement>("[data-file-form]")
-    if (!form) continue
-    const language = document.documentElement.lang.startsWith("en")
-      ? "en"
-      : "de"
-    const all = (selector: string) =>
-      root.querySelectorAll<HTMLElement>(selector)
-
-    const read = (): FileAnswers => {
-      const data = new FormData(form)
-      const until = String(data.get("until") ?? "open")
-      return {
-        provider: String(data.get("provider") ?? "provider") as ProviderAnswer,
-        residence: String(data.get("residence") ?? "at") as Residence,
-        since: Number(data.get("since")),
-        until: until === "open" ? "open" : Number(until),
-        activities: data.getAll("activity").map(String) as Activity[],
-      }
-    }
-
-    const render = () => {
-      const answers = read()
-      const texts = fileTexts(answers, language)
-      const self = answers.provider === "self"
-
-      for (const element of all("[data-verdict]"))
-        element.hidden = element.dataset.verdict !== answers.provider
-      for (const element of all("[data-unless-self]")) element.hidden = self
-      for (const element of all("[data-residence]"))
-        element.hidden = element.dataset.residence !== answers.residence
-      for (const element of all("[data-activity]"))
-        element.hidden = !answers.activities.includes(
-          element.dataset.activity as Activity,
-        )
-      for (const element of all("[data-no-activity]"))
-        element.hidden = answers.activities.length > 0
-      // Only changed text is written, so the live summary speaks once per
-      // change and not on load.
-      for (const element of all("[data-text]")) {
-        const value = texts[element.dataset.text as keyof FileTexts]
-        if (element.textContent?.trim() !== value) element.textContent = value
-      }
-    }
-
-    form.addEventListener("change", render)
-    form.addEventListener("submit", (event) => event.preventDefault())
-    // Browsers restore changed answers on back navigation.
-    render()
-  }
-</script>

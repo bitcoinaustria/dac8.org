@@ -67,6 +67,10 @@ to new copy, graphics and tools, not only to the pages they were found on.
   criminals both remote and in person, and turn them into the argument for
   keeping holdings private. Headlines name the data problem; sourced cases
   may stay in full in the body text.
+- Write for readers who know neither the law nor crypto jargon. Avoid terms
+  such as KYC, self-custody or self-hosting, and ask about what people do
+  ("buy through an exchange, broker or app"), not about how they store coins.
+  Tools ask as few questions as possible and answer in plain sentences.
 - Many readers are German customers of Austrian providers. Where a tool asks
   about residence or a text names authorities, cover Germany explicitly.
 
