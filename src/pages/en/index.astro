@@ -11,17 +11,7 @@ import Layout from "@/layouts/Layout.astro"
 import { homeObjections, points } from "@/data/arguments"
 import { campaignStatus } from "@/data/campaign"
 
-// On the home page the cases are a section further up, so the cash
-// comparison links there instead of to the dossier.
-const objections = homeObjections.map((id) => {
-  const point = points.en[id]
-  return id === "nothingToHide"
-    ? {
-        ...point,
-        link: { href: "#faelle", label: "This has already happened" },
-      }
-    : point
-})
+const objections = homeObjections.map((id) => points.en[id])
 ---
 
 <Layout>
@@ -116,12 +106,7 @@ const objections = homeObjections.map((id) => {
           },
         ]}
       />
-      <div class="link-row">
-        <a class="text-link" href="/en/your-file/"
-          >What DAC8 reports about you</a
-        >
-        <a class="text-link" href="/en/arguments/">Why it is a problem</a>
-      </div>
+      <a class="text-link" href="/en/your-file/">What DAC8 reports about you</a>
     </section>
 
     <section id="handeln" class="peak" aria-labelledby="handeln-heading">
@@ -167,14 +152,7 @@ const objections = homeObjections.map((id) => {
         not show that DAC8 caused them.
       </p>
       <LeakMatrix language="en" />
-      <div class="link-row">
-        <a class="text-link" href="/en/attacks/"
-          >Attacks on crypto holders worldwide</a
-        >
-        <a class="text-link" href="/en/dossier/#faelle"
-          >More cases and sources</a
-        >
-      </div>
+      <a class="text-link" href="/en/dossier/#faelle">More cases and sources</a>
     </section>
 
     <section id="einwaende" aria-labelledby="einwaende-heading">
@@ -183,12 +161,9 @@ const objections = homeObjections.map((id) => {
         <span>State interference does.</span>
       </h2>
       <ArgumentPoints points={objections} variant="objections" />
-      <div class="link-row">
-        <a class="text-link" href="/en/arguments/"
-          >All arguments and objections</a
-        >
-        <a class="text-link" href="/en/arguments/#forderungen">Our demands</a>
-      </div>
+      <a class="text-link" href="/en/arguments/"
+        >All arguments and objections</a
+      >
     </section>
 
     <section id="weg" aria-labelledby="weg-heading">

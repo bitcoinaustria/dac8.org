@@ -1,9 +1,11 @@
-import { type Language, pathFor } from "@/lib/i18n"
+import type { Language } from "@/lib/i18n"
 
 // Our position, sorted by topic. The arguments page renders all of it, the
 // home page shows two of the objections, and the letter to members of the
 // National Council takes its demands from here. The dossier states what the
-// law requires; keep the facts there and link to them. The wording restates
+// law requires; keep the facts there. Points carry a legal source where they
+// have one, but no "read more" links: the feedback round of October 2026
+// found that these cross-references bloated every page. The wording restates
 // vetted texts, including the campaign lawyer's notes on what the
 // anti-money-laundering rules already require, so change claims in both
 // languages together.
@@ -11,7 +13,6 @@ import { type Language, pathFor } from "@/lib/i18n"
 export type Point = {
   title: string
   text: string
-  link?: { href: string; label: string }
   source?: { href: string; label: string }
 }
 
@@ -55,18 +56,10 @@ export const points: Record<Language, Record<PointId, Point>> = {
     nothingToHide: {
       title: "„Ich habe nichts zu verbergen.“",
       text: "Bitcoin in der eigenen Wallet ist wie Bargeld daheim. Stell dir vor, deine Bank würde dem Finanzamt jedes Jahr melden, wie viel Bargeld du abgehoben hast, ab dem ersten Euro und ohne Verdacht. Bei Bitcoin verlangt DAC8 das: Überträgst du von einer Börse auf die eigene Wallet, steht die Jahressumme in der Regel in der Meldung. Gelangt so eine Meldung in falsche Hände, zeigt sie, wer vermutlich Erspartes selbst verwahrt.",
-      link: {
-        href: `${pathFor("dossier", "de")}#faelle`,
-        label: "Was schon passiert ist",
-      },
     },
     taxFairness: {
       title: "„Es geht doch um Steuergerechtigkeit.“",
       text: "Auch dafür darf der Staat nur Daten verlangen, deren Umfang und Speicherdauer gerechtfertigt sind. Er muss erklären können, weshalb er welche Finanzdaten wie lange braucht.",
-      link: {
-        href: `${pathFor("arguments", "de")}#forderungen`,
-        label: "Was wir fordern",
-      },
     },
     honeypot: {
       title: "Der Anbieter wird zum Honeypot.",
@@ -84,15 +77,10 @@ export const points: Record<Language, Record<PointId, Point>> = {
     justTaxData: {
       title: "„Das sind doch nur Steuerdaten.“",
       text: "Gemeldet werden Identität und Jahreswerte. Beim Anbieter liegen aber auch Ausweis, Wallet-Adressen und einzelne Transaktionen. Die Geldwäschevorschriften verlangen, sie bei allen Kunden aufzubewahren, ohne Verdacht und derzeit bis zehn Jahre nach Ende der Kundenbeziehung. Für DAC8 kommen Steuernummer und Steuerwohnsitz dazu, im selben Kundenkonto.",
-      link: {
-        href: `${pathFor("dossier", "de")}#gemeldet`,
-        label: "Was gemeldet wird",
-      },
     },
     ownWallet: {
       title: "„Ich nutze nur meine eigene Wallet.“",
       text: "Solange du nie über einen Anbieter kaufst oder verkaufst, meldet DAC8 dich nicht. Kaufst du bei einem Anbieter und überträgst auf deine Wallet, stehen Wert und Stückzahl dieser Übertragungen in der Regel in seiner Jahresmeldung. Die Adresse wird nicht gemeldet, bleibt nach den Geldwäschevorschriften aber beim Anbieter gespeichert.",
-      link: { href: pathFor("file", "de"), label: "Deine DAC8-Akte" },
     },
     purpose: {
       title: "Der Zweck wächst mit.",
@@ -112,18 +100,10 @@ export const points: Record<Language, Record<PointId, Point>> = {
     nothingToHide: {
       title: "“I have nothing to hide.”",
       text: "Bitcoin in your own wallet is like cash at home. Imagine your bank telling the tax authority every year how much cash you withdrew, from the first euro and without suspicion. For bitcoin, DAC8 requires just that: if you move coins from an exchange to your own wallet, the annual total usually appears in the report. In the wrong hands, such a report shows who probably keeps savings in self-custody.",
-      link: {
-        href: `${pathFor("dossier", "en")}#faelle`,
-        label: "What has already happened",
-      },
     },
     taxFairness: {
       title: "“It’s about tax fairness.”",
       text: "Even then, the state may only demand data whose scope and retention are justified. It must be able to explain why it needs which financial data, and for how long.",
-      link: {
-        href: `${pathFor("arguments", "en")}#forderungen`,
-        label: "Our demands",
-      },
     },
     honeypot: {
       title: "The provider becomes a honeypot.",
@@ -141,15 +121,10 @@ export const points: Record<Language, Record<PointId, Point>> = {
     justTaxData: {
       title: "“It’s just tax data.”",
       text: "The report contains identity and annual totals. But the provider also holds your ID, wallet addresses and individual transactions. Anti-money-laundering rules require it to keep them for every customer, without suspicion, currently for up to ten years after the relationship ends. For DAC8, your tax identification number and tax residence are added to the same customer account.",
-      link: {
-        href: `${pathFor("dossier", "en")}#gemeldet`,
-        label: "What gets reported",
-      },
     },
     ownWallet: {
       title: "“I only use my own wallet.”",
       text: "As long as you never buy or sell through a provider, DAC8 does not report you. If you buy from a provider and transfer to your wallet, the value and units of those transfers usually appear in its annual report. The address is not reported, but it stays stored with the provider under anti-money-laundering rules.",
-      link: { href: pathFor("file", "en"), label: "Your DAC8 file" },
     },
     purpose: {
       title: "The purpose keeps expanding.",
