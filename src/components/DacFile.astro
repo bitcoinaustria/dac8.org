@@ -231,6 +231,9 @@ const onFile = (year: number) => year >= model.keyFrom && year <= model.keyTo
         <p data-residence="at" hidden={answers.residence !== "at"}>
           {en ? "Whoever is tax-resident in Austria is reported." : "Wer in Österreich steuerlich ansässig ist, wird gemeldet."}
         </p>
+        <p data-residence="de" hidden={answers.residence !== "de"}>
+          {en ? "You are reported, and Austria passes the report on to Germany’s Federal Central Tax Office. A German provider reports there directly, under the German Crypto-Asset Tax Transparency Act." : "Du wirst gemeldet, und Österreich gibt die Meldung an das deutsche Bundeszentralamt für Steuern weiter. Ein deutscher Anbieter meldet direkt dorthin, nach dem Kryptowerte-Steuertransparenzgesetz."}
+        </p>
         <p data-residence="eu" hidden={answers.residence !== "eu"}>
           {en ? "You are reported, and Austria passes the report on to the EU country where you are tax-resident." : "Du wirst gemeldet, und Österreich gibt die Meldung an den EU-Staat weiter, in dem du steuerlich ansässig bist."}
         </p>
