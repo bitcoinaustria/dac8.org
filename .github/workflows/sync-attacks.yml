@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: "22"
           cache: pnpm
-      - run: node scripts/sync-attacks.mjs
+      - run: node scripts/sync-attacks.mjs | tee "$RUNNER_TEMP/sync.log"
       - id: diff
         run: |
           if git diff --quiet -- src/data/attacks.json; then
@@ -53,8 +53,20 @@ jobs:
             -m "Weekly update from jlopp/physical-bitcoin-attacks." \
             -- src/data/attacks.json
           git push --force origin "$branch"
-          if ! gh pr view "$branch" --json state --jq .state | grep -q OPEN; then
+          body="$RUNNER_TEMP/body.md"
+          {
+            echo "Weekly update of \`src/data/attacks.json\` from https://github.com/jlopp/physical-bitcoin-attacks. The site built successfully with the new data. Check the diff, then merge to publish."
+            echo
+            echo "Cases without a translation show in English. Translate them by following \`src/data/attacks-translation.md\`."
+            echo
+            echo '```'
+            cat "$RUNNER_TEMP/sync.log"
+            echo '```'
+          } > "$body"
+          if gh pr view "$branch" --json state --jq .state | grep -q OPEN; then
+            gh pr edit "$branch" --body-file "$body"
+          else
             gh pr create --base main --head "$branch" \
               --title "Sync the list of known physical attacks" \
-              --body "Weekly update of \`src/data/attacks.json\` from https://github.com/jlopp/physical-bitcoin-attacks. The site built successfully with the new data. Check the diff, then merge to publish."
+              --body-file "$body"
           fi

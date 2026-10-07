@@ -1,3 +1,4 @@
+import de from "@/data/attacks.de.json"
 import attacks from "@/data/attacks.json"
 import type { Language } from "@/lib/i18n"
 
@@ -71,6 +72,18 @@ export const placeOf = (attack: Attack, language: Language) => {
   return attack.city && attack.city !== country
     ? `${attack.city}, ${country}`
     : (country ?? "")
+}
+
+// Translations are keyed by the English description, so one that Lopp has
+// since edited stops matching and the case shows the current English text.
+const translations: Partial<Record<Language, Record<string, string>>> = { de }
+
+export const headlineOf = (attack: Attack, language: Language) => {
+  const english = attack.headline ?? ""
+  const translated = translations[language]?.[english]
+  return translated
+    ? { text: translated, lang: language }
+    : { text: english, lang: "en" }
 }
 
 // The publisher's domain, shown as the link text so readers see where a

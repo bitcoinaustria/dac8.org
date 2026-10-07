@@ -5,6 +5,7 @@ import {
   attacks,
   countIn,
   formatDate,
+  headlineOf,
   hostOf,
   latestDate,
   latestYear,
@@ -190,8 +191,8 @@ const strings = en
                 </span>
                 <span class="atlas-place">{placeOf(attack, language)}</span>
               </p>
-              <p class="atlas-headline" lang="en">
-                {attack.headline}
+              <p class="atlas-headline" lang={headlineOf(attack, language).lang}>
+                {headlineOf(attack, language).text}
               </p>
               <p class="atlas-links">
                 {attack.reports.map((report) => [
@@ -217,8 +218,8 @@ const strings = en
         <a href="https://github.com/jlopp/physical-bitcoin-attacks"
           >Jameson Lopp, Known Physical Bitcoin Attacks</a
         >{en
-            ? `, as of ${through}. Descriptions in English as given in the collection. Victims’ names are left out.`
-            : `, Stand ${through}. Beschreibungen auf Englisch aus der Sammlung. Namen der Opfer lassen wir weg.`}
+            ? `, as of ${through}. Descriptions as given in the collection; the linked reports are authoritative. Victims’ names are left out.`
+            : `, Stand ${through}. Beschreibungen aus der Sammlung übersetzt, neue Fälle zunächst auf Englisch; maßgeblich sind die verlinkten Berichte. Namen der Opfer lassen wir weg.`}
       </p>
     </section>
   </div>
@@ -226,6 +227,7 @@ const strings = en
 
 <script>
   import attacks from "@/data/attacks.json"
+  import { headlineOf } from "@/lib/attacks"
   import L from "leaflet"
   import "leaflet/dist/leaflet.css"
   import "leaflet.markercluster/dist/MarkerCluster.css"
@@ -294,8 +296,9 @@ const strings = en
     const caseBody = (attack: Attack, placeElement: HTMLElement) => {
       const meta = element("p", "atlas-meta")
       meta.append(element("span", "atlas-date", dateOf(attack)), placeElement)
-      const headline = element("p", "atlas-headline", attack.headline ?? "")
-      headline.lang = "en"
+      const { text, lang } = headlineOf(attack, language)
+      const headline = element("p", "atlas-headline", text)
+      headline.lang = lang
       const links = element("p", "atlas-links")
       for (const report of attack.reports) {
         if (report.url)
