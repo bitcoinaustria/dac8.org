@@ -80,7 +80,7 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     ownWallet: {
       title: "„Ich nutze nur meine eigene Wallet.“",
-      text: "Solange du nie über einen Anbieter kaufst oder verkaufst, meldet DAC8 dich nicht. Kaufst du bei einem Anbieter und überträgst auf deine Wallet, stehen Wert und Stückzahl dieser Übertragungen in der Regel in seiner Jahresmeldung. Die Adresse wird nicht gemeldet, bleibt nach den Geldwäschevorschriften aber beim Anbieter gespeichert.",
+      text: "Solange du nie über einen Anbieter kaufst oder verkaufst, meldet DAC8 dich nicht. Kaufst du bei einem Anbieter und überträgst auf deine Wallet, stehen Wert und Stückzahl dieser Übertragungen in der Regel in seiner Jahresmeldung. Die Wallet-Adresse wird nicht gemeldet, bleibt nach den Geldwäschevorschriften aber beim Anbieter gespeichert.",
     },
     purpose: {
       title: "Der Zweck wächst mit.",
@@ -124,7 +124,7 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     ownWallet: {
       title: "“I only use my own wallet.”",
-      text: "As long as you never buy or sell through a provider, DAC8 does not report you. If you buy from a provider and transfer to your wallet, the value and units of those transfers usually appear in its annual report. The address is not reported, but it stays stored with the provider under anti-money-laundering rules.",
+      text: "As long as you never buy or sell through a provider, DAC8 does not report you. If you buy from a provider and transfer to your wallet, the value and units of those transfers usually appear in its annual report. The wallet address is not reported, but it stays stored with the provider under anti-money-laundering rules.",
     },
     purpose: {
       title: "The purpose keeps expanding.",

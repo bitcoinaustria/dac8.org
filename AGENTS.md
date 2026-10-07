@@ -48,6 +48,9 @@ to new copy, graphics and tools, not only to the pages they were found on.
   Do not write that DAC8 "links" ID, wallet addresses or transactions with
   tax data; the provider adds tax number and tax residence next to the
   records it already keeps under anti-money-laundering rules.
+- Never write a bare "Adresse" or "address": readers cannot tell a home from
+  a wallet. Use Anschrift or Wohnadresse (postal or home address) for where
+  someone lives, and Wallet-Adresse (wallet address) for the blockchain.
 - Do not end points or sections with "read more" cross-references. A section
   gets at most one link to the obvious next step; the navigation and footer
   carry the rest, including the sources.

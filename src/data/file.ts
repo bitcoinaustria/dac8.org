@@ -131,7 +131,7 @@ export const labels = {
       transfer: { title: "Übertragung", note: "Ausgang von deinem Konto" },
       unhosted: {
         title: "Davon an Wallets ohne bekannten Anbieter",
-        note: "nur die Summe, keine Adressen; meist deine eigene Wallet",
+        note: "nur die Summe, keine Wallet-Adressen; meist deine eigene Wallet",
       },
     },
   },
@@ -167,7 +167,7 @@ export const labels = {
       transfer: { title: "Transfers", note: "out of your account" },
       unhosted: {
         title: "Of which to wallets with no known provider",
-        note: "the total only, no addresses; usually your own wallet",
+        note: "the total only, no wallet addresses; usually your own wallet",
       },
     },
   },

@@ -57,7 +57,7 @@ export const artwork = {
       alt: "Illustration: Eine Leiste mit der Aufschrift „100 %, alle Kunden, ohne Verdacht“ ist über rote Leitungen mit zehn Personenkarten verbunden. Darüber steckt eine Finanzakte von Max Mustermann mit Anschrift und Jahreswerten: Käufe 0,35 BTC, Transfers 0,18 BTC.",
     },
     en: {
-      alt: "Illustration: a bar labelled 100 %, all customers, without suspicion, is connected by red lines to ten personal record cards. Above it sits a financial record on Max Mustermann with his address and annual totals: purchases 0.35 BTC, transfers 0.18 BTC.",
+      alt: "Illustration: a bar labelled 100 %, all customers, without suspicion, is connected by red lines to ten personal record cards. Above it sits a financial record on Max Mustermann with his home address and annual totals: purchases 0.35 BTC, transfers 0.18 BTC.",
     },
   },
   reportAssets: {
@@ -66,7 +66,7 @@ export const artwork = {
       alt: "Illustration: Musterblatt einer Jahresmeldung 2026 für Max Mustermann mit Name, Anschrift, Steuerwohnsitz, maskierter Steuernummer, Geburtsdatum und Angaben zum meldenden Anbieter. Daneben je ein Blatt für Bitcoin, Ether und Litecoin mit Gesamtwert, Stückzahl und meist der Anzahl je Vorgangsart.",
     },
     en: {
-      alt: "Illustration: specimen of a 2026 annual report on Max Mustermann with name, address, tax residence, masked tax identification number, date of birth and the reporting provider’s details. Beside it, one sheet each for Bitcoin, Ether and Litecoin with total value, units and, for most categories, the count per transaction category.",
+      alt: "Illustration: specimen of a 2026 annual report on Max Mustermann with name, postal address, tax residence, masked tax identification number, date of birth and the reporting provider’s details. Beside it, one sheet each for Bitcoin, Ether and Litecoin with total value, units and, for most categories, the count per transaction category.",
     },
   },
   yearsOnFile: {
@@ -84,7 +84,7 @@ export const artwork = {
       alt: "Illustration: Aus einem gesprungenen Glasarchiv mit der Aufschrift Personendaten führt ein roter Pfeil zu einem Blatt „Datenleck, offengelegt“ mit Name, Wiener Anschrift, 7,2 BTC und Familienstand von Max Mustermann.",
     },
     en: {
-      alt: "Illustration: a red arrow leads from a cracked glass archive labelled personal data to a sheet marked data leak, exposed, with Max Mustermann’s name, Vienna address, 7.2 BTC and family status.",
+      alt: "Illustration: a red arrow leads from a cracked glass archive labelled personal data to a sheet marked data leak, exposed, with Max Mustermann’s name, Vienna home address, 7.2 BTC and family status.",
     },
   },
   rankedPortrait: {
@@ -93,7 +93,7 @@ export const artwork = {
       alt: "Illustration: Ein Schraubenschlüssel neben einer Zielliste für Wien mit verknüpften Vermögensdaten. Rot markiert ist Platz 07, Max Mustermann mit 7,2 BTC; darunter Anschrift, Familienstand und ein Porträtfoto.",
     },
     en: {
-      alt: "Illustration: a wrench beside a target list for Vienna with linked wealth data. Number 07, Max Mustermann with 7.2 BTC, is highlighted in red, with his address, family status and a portrait photo below.",
+      alt: "Illustration: a wrench beside a target list for Vienna with linked wealth data. Number 07, Max Mustermann with 7.2 BTC, is highlighted in red, with his home address, family status and a portrait photo below.",
     },
   },
   targetAtHome: {

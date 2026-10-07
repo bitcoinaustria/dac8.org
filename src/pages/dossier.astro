@@ -14,7 +14,7 @@ const researchDate = "30. September 2026"
 // möglich gemacht haben. Fälle ohne diesen Zusammenhang gehören nicht hierher.
 const leaks = [
   {
-    title: "Ledger 2020: Die Adressen von 272.000 Wallet-Käufern.",
+    title: "Ledger 2020: Die Wohnadressen von 272.000 Wallet-Käufern.",
     text: "Aus dem Onlineshop des Hardware-Wallet-Herstellers gelangten Namen, Anschriften und Telefonnummern ins Netz. Es folgten Phishing-Mails, SMS und Briefe an die Wohnadresse, die nach der Wiederherstellungsphrase fragten. In einer Umfrage der Universität Innsbruck berichteten 93 von 104 Betroffenen von Betrugsversuchen, 33 von Erpressungsdrohungen.",
     sources: [
       {
@@ -78,7 +78,7 @@ const leaks = [
   },
   {
     title: "Frankreich 2026: Die Finanzverwaltung verliert zweimal.",
-    text: "Mit gestohlenen Zugangsdaten von Beamten zogen Angreifer im Februar 1,2 Millionen Datensätze aus dem nationalen Kontenregister, mit IBAN, Namen und Anschrift. Im Sommer folgten Einkommens-, Adress- und Grundbesitzdaten von 678.000 Menschen und Unternehmen aus dem Steuersystem.",
+    text: "Mit gestohlenen Zugangsdaten von Beamten zogen Angreifer im Februar 1,2 Millionen Datensätze aus dem nationalen Kontenregister, mit IBAN, Namen und Anschrift. Im Sommer folgten Daten zu Einkommen, Anschrift und Grundbesitz von 678.000 Menschen und Unternehmen aus dem Steuersystem.",
     sources: [
       {
         label: "Kontenregister",
@@ -128,8 +128,8 @@ const attacks = [
     ],
   },
   {
-    title: "USA 2022: Ein Polizist liefert die Adresse.",
-    text: "Ein Detective erschleicht sich einen Ortungsbeschluss und verschafft einem Auftraggeber die Adresse eines Mannes, der viel Krypto besitzen soll. Wenig später versuchen drei Bewaffnete, in dessen Haus einzudringen, und fliehen erst, als das Opfer schießt.",
+    title: "USA 2022: Ein Polizist liefert die Wohnadresse.",
+    text: "Ein Detective erschleicht sich einen Ortungsbeschluss und verschafft einem Auftraggeber die Wohnadresse eines Mannes, der viel Krypto besitzen soll. Wenig später versuchen drei Bewaffnete, in dessen Haus einzudringen, und fliehen erst, als das Opfer schießt.",
     sources: [
       {
         label: "US-Justizministerium",
@@ -172,7 +172,7 @@ const faqs = [
   {
     question: "Wird meine eigene Wallet-Adresse gemeldet?",
     answer:
-      "Nein, Wallet-Adressen sind nicht Teil der jährlichen DAC8-Meldung. Gemeldet werden aber Wert und Stückzahl von Übertragungen an Adressen, die dem Anbieter nicht als Adresse eines anderen Anbieters bekannt sind. Darunter fällt in der Regel auch deine eigene Wallet. Die Adresse und ihr Bezug zu dir bleiben nach den Geldwäschevorschriften trotzdem beim Anbieter gespeichert.",
+      "Nein, Wallet-Adressen sind nicht Teil der jährlichen DAC8-Meldung. Gemeldet werden aber Wert und Stückzahl von Übertragungen an Wallet-Adressen, von denen der Anbieter nicht weiß, dass sie zu einem anderen Anbieter gehören. Darunter fällt in der Regel auch deine eigene Wallet. Die Wallet-Adresse und ihr Bezug zu dir bleiben nach den Geldwäschevorschriften trotzdem beim Anbieter gespeichert.",
   },
   {
     question:
@@ -331,10 +331,10 @@ const faqs = [
               Übertragung
             </li>
             <li>
-              Wert und Stückzahl aller Übertragungen an Adressen, die dem
-              Anbieter nicht als Adresse eines Anbieters oder Finanzinstituts
-              bekannt sind, als Summe und ohne die Adressen selbst. Dazu zählt
-              in der Regel deine eigene Wallet.
+              Wert und Stückzahl aller Übertragungen an Wallet-Adressen, von
+              denen der Anbieter nicht weiß, dass sie zu einem Anbieter oder
+              Finanzinstitut gehören, als Summe und ohne die Wallet-Adressen
+              selbst. Dazu zählt in der Regel deine eigene Wallet.
             </li>
             <li>
               auch Vorgänge, die steuerlich meist keine Rolle spielen, etwa der

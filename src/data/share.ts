@@ -49,8 +49,8 @@ export const shareScenes: {
   {
     id: "scene-10-target",
     title: {
-      de: "Dein Profil. Deine Adresse. Ein Angriffsziel.",
-      en: "Your profile. Your address. A target.",
+      de: "Dein Profil. Deine Wohnadresse. Ein Angriffsziel.",
+      en: "Your profile. Your home address. A target.",
     },
     text: {
       de: "Eine US-Bande hackte Datenbanken, suchte vermeintlich reiche Krypto-Besitzer heraus und brach bei ihnen ein. Beute insgesamt: über 250 Millionen Dollar.",
