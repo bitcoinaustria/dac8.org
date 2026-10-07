@@ -13,23 +13,16 @@ type Text = Record<Language, string>
 // together.
 // A story gets a few seconds of attention: the title carries the point, the
 // text adds one concrete fact in one or two short sentences.
+// The kit stays small on purpose: in October 2026 reviewers asked to cut it
+// down to four scenes. Each scene needs its own picture; scene-10 uses the
+// lab's dac8-leaked-target motif instead of the home page's target-at-home,
+// which repeated the linked profile from scene-09.
 export const shareScenes: {
   id: string
   title: Text
   text: Text
   note?: Text
 }[] = [
-  {
-    id: "scene-04-retention",
-    title: {
-      de: "Jedes Jahr mehr über dich.",
-      en: "More about you. Every year.",
-    },
-    text: {
-      de: "Seit 2026 hält deine Börse jedes Jahr fürs Finanzamt fest, wer du bist und was du kaufst, verkaufst und tauschst. Bei allen Kunden, ohne Verdacht: finanzielle Massenüberwachung.",
-      en: "Since 2026, your exchange has recorded every year for the tax office who you are and what you buy, sell and swap. For every customer, without suspicion: financial mass surveillance.",
-    },
-  },
   {
     id: "scene-05-leak",
     title: {
@@ -54,17 +47,6 @@ export const shareScenes: {
     },
   },
   {
-    id: "scene-06-risk",
-    title: {
-      de: "Wer viel bewegt, steht oben auf der Liste.",
-      en: "The more you move, the higher you rank.",
-    },
-    text: {
-      de: "Betrüger suchen in Österreich schon per gefälschter FinanzOnline-SMS nach Krypto-Besitzern. Ein Leck beim Anbieter wäre die fertige Liste.",
-      en: "In Austria, fraudsters already hunt for crypto holders with fake tax-office texts. A breach at a provider would be the finished list.",
-    },
-  },
-  {
     id: "scene-10-target",
     title: {
       de: "Dein Profil. Deine Adresse. Ein Angriffsziel.",
@@ -86,17 +68,6 @@ export const shareScenes: {
     text: {
       de: "Wir bereiten ein Verfahren gegen die anlasslose Erfassung vor. Unser Ziel: die Frage bis vor den Europäischen Gerichtshof bringen.",
       en: "We are preparing proceedings against recording everyone without suspicion. Our aim: take the question all the way to the EU Court of Justice.",
-    },
-  },
-  {
-    id: "scene-08-support",
-    title: {
-      de: "Gemeinsam Privatsphäre verteidigen.",
-      en: "Together, defend privacy.",
-    },
-    text: {
-      de: "Spende für das Verfahren und schreib deinen Abgeordneten. Alles auf dac8.org/mitmachen",
-      en: "Donate to the case and write to your MPs. Everything at dac8.org/en/get-involved",
     },
   },
 ]
