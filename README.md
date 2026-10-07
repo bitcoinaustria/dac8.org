@@ -59,7 +59,7 @@ browser can share files, sharing as icon buttons.
 
 ## Site structure
 
-Six main pages per language, plus the history page and two tools, with URLs
+Six main pages per language, plus the history page and one tool, with URLs
 that follow the navigation labels:
 
 | Page | German | English |
@@ -72,7 +72,6 @@ that follow the navigation labels:
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
 | Geschichte: a chart of what tax authorities receive today and one chronology since 1977 by era; linked from dossier and footer | `/geschichte/` | `/en/history/` |
 | Deine DAC8-Akte: what a provider reports and keeps about the reader, built from their answers in the browser | `/deine-akte/` | `/en/your-file/` |
-| Auskunft verlangen: a GDPR access request to the reader's provider about its DAC8 processing | `/auskunft/` | `/en/access-request/` |
 
 A top bar carries the navigation and a permanent donate button that leads to
 `#spenden` on the participation page; on mobile a bottom bar keeps donating and
@@ -173,12 +172,13 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   (`src/components/LetterGenerator.astro`, texts in `src/data/letter.ts`). It
   runs entirely in the browser; its demands come from `src/data/arguments.ts`, the
   same list the arguments page shows under "Was wir fordern".
-- The DAC8 file (`src/components/pages/FilePage.astro`) and the access
-  request (`src/components/pages/AccessRequestPage.astro`) run entirely in the
-  browser, like the letter. The file restates the dossier's reporting and
-  retention facts; change them together. The access-request template asks
-  what a provider processes under the Krypto-MPfG; have a lawyer review any
-  change to its wording.
+- The DAC8 file (`src/components/pages/FilePage.astro`) runs entirely in the
+  browser, like the letter. It restates the dossier's reporting and retention
+  facts; change them together.
+- There is no GDPR access-request tool. It was removed in October 2026: it
+  did little for the campaign and put a heavy load on the providers who
+  received it. `/auskunft/` and `/en/access-request/` redirect to the
+  participation page.
 - The earlier individual complaint generator is preserved in
   `src/components/ParticipationTools.astro`, but is not exposed as a public
   route while individual participation in the proceedings remains undefined.
