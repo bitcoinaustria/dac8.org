@@ -61,6 +61,9 @@ to new copy, graphics and tools, not only to the pages they were found on.
 - Do not build calls to action that put load on crypto-asset providers, such
   as mass access requests. The campaign targets the law, and providers are
   potential supporters.
+- Never frighten readers away from bitcoin. Explain risks through bitcoin
+  being a bearer asset like cash, which draws criminals both remote and in
+  person, and turn them into the argument for keeping holdings private.
 - Many readers are German customers of Austrian providers. Where a tool asks
   about residence or a text names authorities, cover Germany explicitly.
 

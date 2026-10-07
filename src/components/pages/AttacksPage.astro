@@ -28,8 +28,10 @@ const newestFirst = [...attacks].sort((a, b) =>
 )
 
 // The archive follows Jameson Lopp's list as written and keeps every case,
-// whatever made the victim known. The intro says so; the cases where a leak
-// made the attack possible are in the dossier (#faelle).
+// whatever made the victim known; the cases where a leak made the attack
+// possible are in the dossier (#faelle). The intro explains the risk through
+// bitcoin as a bearer asset and argues for keeping holdings private. It must
+// not read as a warning against owning bitcoin.
 
 // Texts the map script needs; everything else is rendered here.
 const strings = en
@@ -65,8 +67,8 @@ const strings = en
       </h1>
       <p class="atlas-lead">
         {en
-            ? "An archive of physical attacks on people who hold crypto-assets, or are believed to. It shows how dangerous it is to be known as a crypto holder."
-            : "Ein Archiv körperlicher Angriffe auf Menschen, die Kryptowerte besitzen oder besitzen sollen. Es zeigt, wie gefährlich es ist, als Krypto-Besitzer bekannt zu sein."}
+            ? "An archive of known physical attacks on people who hold crypto-assets, or are believed to. Bitcoin works like cash: whoever holds the keys can move it. That draws criminals, hackers far away as well as attackers in person. So nobody should know who holds how much."
+            : "Ein Archiv bekannter körperlicher Angriffe auf Menschen, die Kryptowerte besitzen oder besitzen sollen. Bitcoin funktioniert wie Bargeld: Wer die Schlüssel hat, kann ihn übertragen. Das zieht Kriminelle an, Hacker aus der Ferne ebenso wie Täter vor Ort. Darum sollte niemand wissen, wer wie viel besitzt."}
       </p>
       <p class="atlas-caveat">
         <strong
