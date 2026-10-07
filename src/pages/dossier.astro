@@ -1,6 +1,7 @@
 ---
 import AffectedCheck from "@/components/AffectedCheck.astro"
 import AttackSummary from "@/components/AttackSummary.astro"
+import Glossary from "@/components/Glossary.astro"
 import Artwork from "@/components/Artwork.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
@@ -238,6 +239,7 @@ const faqs = [
     { id: "faelle", label: "Fälle" },
     { id: "rechtsweg", label: "Rechtsweg" },
     { id: "faq", label: "Fragen" },
+    { id: "begriffe", label: "Begriffe" },
   ]}
 >
   <MetaPage slot="head" />
@@ -502,6 +504,8 @@ const faqs = [
         ))}
       </div>
     </section>
+
+    <Glossary language="de" />
 
     <section id="quellen" class="sources" aria-labelledby="sources-heading">
       <h2 id="sources-heading">Quellen</h2>
