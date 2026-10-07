@@ -37,6 +37,30 @@ permanent product boundary.
 - Check the current diff and active parallel work before editing shared files.
   Preserve unrelated changes rather than rewriting another contributor's work.
 
+## Editorial Rules
+
+These come from reviewer feedback on the live site (October 2026). Apply them
+to new copy, graphics and tools, not only to the pages they were found on.
+
+- Keep what goes to the tax office apart from what stays with the provider,
+  and never word it so that readers think wallet addresses are reported. For
+  own-wallet transfers, say that the report carries a sum without addresses.
+  Do not write that DAC8 "links" ID, wallet addresses or transactions with
+  tax data; the provider adds tax number and tax residence next to the
+  records it already keeps under anti-money-laundering rules.
+- Do not end points or sections with "read more" cross-references. A section
+  gets at most one link to the obvious next step; the navigation and footer
+  carry the rest, including the sources.
+- Use each picture once across the pages and the share kit, and never put two
+  near-identical motifs side by side. A picture must fit the headline beside
+  it at a glance; drop it rather than keep a decorative or ambiguous one.
+- Keep the share kit to a few scenes that work on their own.
+- Do not build calls to action that put load on crypto-asset providers, such
+  as mass access requests. The campaign targets the law, and providers are
+  potential supporters.
+- Many readers are German customers of Austrian providers. Where a tool asks
+  about residence or a text names authorities, cover Germany explicitly.
+
 ## Common Gotchas
 
 No repository-specific traps have been recorded yet. Add one only after a real
