@@ -59,7 +59,7 @@ browser can share files, sharing as icon buttons.
 
 ## Site structure
 
-Six main pages per language, plus the history page and one tool, with URLs
+Seven pages in the navigation per language, plus the history page, with URLs
 that follow the navigation labels:
 
 | Page | German | English |
@@ -67,11 +67,11 @@ that follow the navigation labels:
 | Start: the case told as a story in scenes | `/` | `/en/` |
 | Dossier: the complete reference, FAQ and sources | `/dossier/` | `/en/dossier/` |
 | Argumente: our position by topic, with answers to objections and our demands | `/argumente/` | `/en/arguments/` |
+| Deine Akte: one question and a plain answer on what a provider reports and keeps about the reader | `/deine-akte/` | `/en/your-file/` |
 | Angriffe: archive of known physical attacks, map and list | `/angriffe/` | `/en/attacks/` |
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
 | Geschichte: a chart of what tax authorities receive today and one chronology since 1977 by era; linked from dossier and footer | `/geschichte/` | `/en/history/` |
-| Deine DAC8-Akte: what a provider reports and keeps about the reader, built from their answers in the browser | `/deine-akte/` | `/en/your-file/` |
 
 A top bar carries the navigation and a permanent donate button that leads to
 `#spenden` on the participation page; on mobile a bottom bar keeps donating and
@@ -174,7 +174,10 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   same list the arguments page shows under "Was wir fordern".
 - The DAC8 file (`src/components/pages/FilePage.astro`) runs entirely in the
   browser, like the letter. It restates the dossier's reporting and retention
-  facts; change them together.
+  facts in everyday words; change them together. It asks one question and
+  shows the matching answer with CSS `:has()`, without a script. A mock
+  report, key figures and questions on residence, years and activities were
+  removed in October 2026 because readers found them too hard to follow.
 - There is no GDPR access-request tool. It was removed in October 2026: it
   did little for the campaign and put a heavy load on the providers who
   received it. `/auskunft/` and `/en/access-request/` redirect to the
