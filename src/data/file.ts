@@ -96,7 +96,7 @@ export const labels = {
   de: {
     provider: {
       provider: "Ja",
-      self: "Nein, nur eigene Wallet",
+      self: "Nein, nie über einen Anbieter",
       unsure: "Weiß ich nicht",
     },
     residence: {
@@ -138,7 +138,7 @@ export const labels = {
   en: {
     provider: {
       provider: "Yes",
-      self: "No, only my own wallet",
+      self: "No, never through a provider",
       unsure: "Not sure",
     },
     residence: {
