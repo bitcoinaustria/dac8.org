@@ -11,7 +11,10 @@ const artwork: Partial<Record<Page, Record<Language, string>>> = {
     en: "collection-review-en.webp",
   },
   dossier: { de: "report-assets.webp", en: "report-assets-en.webp" },
-  arguments: { de: "paragraph-watch.webp", en: "paragraph-watch.webp" },
+  arguments: {
+    de: "without-suspicion.webp",
+    en: "without-suspicion-en.webp",
+  },
   attacks: { de: "target-at-home.webp", en: "target-at-home-en.webp" },
   proceedings: {
     de: "collection-review.webp",
