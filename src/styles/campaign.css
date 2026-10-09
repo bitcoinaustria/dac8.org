@@ -650,16 +650,11 @@
   font-size: var(--step--1);
 }
 
-/* Belegte Fälle: jede Karte beginnt an einer Haarlinie mit einer Datumszeile
-   (wer, wann), darunter die Schlagzeile. Die Liste lässt sich so allein über
-   die Zeilen in Großbuchstaben und die fetten Titel überfliegen. */
+/* Belegte Fälle: jeder beginnt mit einer Datumszeile (wer, wann), darunter
+   die Schlagzeile. Die Liste lässt sich so allein über die Zeilen in
+   Großbuchstaben und die fetten Titel überfliegen. */
 .campaign .facts.cases {
   row-gap: var(--space-xl);
-}
-
-.campaign .cases li {
-  padding-block-start: var(--space-s);
-  border-block-start: 1px solid var(--line);
 }
 
 @media (width >= 48rem) {
@@ -1017,18 +1012,16 @@
   margin-block-start: var(--space-xl);
 }
 
-/* Was ans Finanzamt geht, liegt als Blatt mit Metallkante auf der Seite;
-   was beim Anbieter bleibt, ist nur umrissen. So trennt man beide schon
-   beim Überfliegen, bevor man eine Zeile liest. */
+/* Was ans Finanzamt geht, liegt als Blatt auf der Seite; was beim Anbieter
+   bleibt, ist nur umrissen. So trennt man beide schon beim Überfliegen,
+   bevor man eine Zeile liest. Karten tragen keine einseitige Kante. */
 .campaign .compare > div {
   padding: var(--space-m) var(--space-m-l) var(--space-s);
   border-radius: var(--radius-xl);
 }
 
 .campaign .compare > .reported {
-  background:
-    var(--metal-rule) top / 100% 3px no-repeat,
-    var(--panel);
+  background: var(--panel);
   box-shadow: 0 1px 2px var(--material-shade);
 }
 
@@ -1842,8 +1835,8 @@
 /* ---------- Mitmachen am Höhepunkt ------------------------------------ */
 
 /* Direkt nach der Geschichte, wo sie am stärksten wirkt: eine Fläche mit
-   drei Wegen. Spenden trägt das Verfahren und steht deshalb mit Bild
-   vorne, die anderen zwei sind gleich schwer. */
+   drei Wegen. Spenden trägt das Verfahren und steht deshalb vorne, die
+   anderen zwei sind gleich schwer. */
 .campaign .peak {
   padding: var(--space-l) var(--space-m-l);
   border-radius: var(--radius-xl);
@@ -1890,26 +1883,11 @@
   margin-block-start: auto;
 }
 
-.campaign .peak-lead .artwork {
-  --art-height: 9rem;
-  justify-items: start;
-  margin-block: 0 var(--space-2xs);
-}
-
-/* Breit steht Spenden mit Bild links über zwei Zeilen, die beiden anderen
-   Wege rechts übereinander. So füllt jede Karte ihre Höhe, ohne Lücke
-   zwischen Text und Knopf. */
+/* Breit stehen die drei Wege nebeneinander, gleich gebaut und ohne Bild.
+   Spenden steht vorne und trägt als einziger den roten Knopf. */
 @container campaign (width >= 52rem) {
   .campaign .peak-actions {
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-  }
-
-  .campaign .peak-actions .peak-lead {
-    grid-row: span 2;
-  }
-
-  .campaign .peak-lead .artwork {
-    --art-height: 12rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
