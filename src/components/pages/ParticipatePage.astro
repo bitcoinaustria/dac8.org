@@ -66,7 +66,11 @@ const other = en ? "de" : "en"
       </div>
       <Artwork id="financeTheCase" language={language} size="hero" />
     </header>
-    <section id="spenden" aria-labelledby="donate-heading">
+    <section
+      id="spenden"
+      data-chapter={en ? "Donate" : "Spenden"}
+      aria-labelledby="donate-heading"
+    >
       <h2 id="donate-heading">{en ? "Donate" : "Spenden"}</h2>
       <p class="section-intro">
         {en ? "Your donation goes directly to Bitcoin Austria, the association behind dac8.org. We use it mainly to fund the case against indiscriminate collection of our financial data." : "Deine Spende geht direkt an Bitcoin Austria, den Verein hinter dac8.org. Wir bezahlen damit vor allem das Verfahren gegen die anlasslose Erfassung unserer Finanzdaten."}
@@ -77,7 +81,12 @@ const other = en ? "de" : "en"
         <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>
       </p>
     </section>
-    <section id="abgeordnete" aria-labelledby="letter-heading">
+    <section
+      id="abgeordnete"
+      class="band"
+      data-chapter={en ? "Write to MPs" : "Abgeordnete anschreiben"}
+      aria-labelledby="letter-heading"
+    >
       <h2 id="letter-heading">
         {en ? "Write to your MPs" : "Schreib deinen Abgeordneten"}
       </h2>
@@ -86,7 +95,11 @@ const other = en ? "de" : "en"
       </p>
       <LetterGenerator language={language} />
     </section>
-    <section id="teilen" aria-labelledby="share-heading">
+    <section
+      id="teilen"
+      data-chapter={en ? "Share" : "Teilen"}
+      aria-labelledby="share-heading"
+    >
       <h2 id="share-heading">
         {en ? "Share the campaign" : "Teile die Kampagne"}
       </h2>
@@ -102,7 +115,12 @@ const other = en ? "de" : "en"
         {en ? "Die Grafiken auf Deutsch" : "The graphics in English"}
       </a>
     </section>
-    <section id="organisationen" aria-labelledby="organisations-heading">
+    <section
+      id="organisationen"
+      class="band"
+      data-chapter={en ? "For organisations" : "Für Organisationen"}
+      aria-labelledby="organisations-heading"
+    >
       <h2 id="organisations-heading">
         {en ? "For organisations and experts" : "Für Organisationen und Fachleute"}
       </h2>

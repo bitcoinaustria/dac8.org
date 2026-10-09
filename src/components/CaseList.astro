@@ -1,0 +1,58 @@
+---
+import type { Language } from "@/lib/i18n"
+
+// The dossier's sourced cases. Titles read "Ledger 2020: headline." The part
+// before the colon becomes a dateline above the headline, so a reader can
+// run down the list by who and when before reading any sentence.
+export interface Case {
+  title: string
+  text: string
+  sources: { label: string; href: string }[]
+}
+
+interface Props {
+  items: Case[]
+  language: Language
+}
+
+const { items, language } = Astro.props
+const en = language === "en"
+
+const split = (title: string) => {
+  const at = title.indexOf(": ")
+  if (at < 0) return { headline: title }
+  const lead = title.slice(0, at)
+  const year = lead.match(/^(.+?),?\s(\d{4})$/)
+  const rest = title.slice(at + 2)
+  return {
+    dateline: year ? `${year[1]} · ${year[2]}` : lead,
+    headline: rest.charAt(0).toUpperCase() + rest.slice(1),
+  }
+}
+---
+
+<ul class="facts cases">
+  {items.map((item) => {
+    const { dateline, headline } = split(item.title)
+    return (
+      <li>
+        {dateline && <p class="dateline">{dateline}</p>}
+        <strong>{headline}</strong>
+        <p>{item.text}</p>
+        <small>
+          {item.sources.length > 1
+            ? en
+              ? "Sources:"
+              : "Quellen:"
+            : en
+              ? "Source:"
+              : "Quelle:"}{" "}
+          {item.sources.map((source, index) => [
+            index > 0 && ", ",
+            <a href={source.href}>{source.label}</a>,
+          ])}
+        </small>
+      </li>
+    )
+  })}
+</ul>

@@ -41,6 +41,47 @@
   scroll-margin-block-start: var(--space-xl);
 }
 
+/* Kapitelmarke über der H2 auf Seiten mit Kapitelleiste: Nummer und der
+   Name aus der Leiste, damit man beim Scrollen sieht, wo ein Kapitel
+   beginnt und welcher Eintrag oben dazu gehört. Screenreader lesen sie
+   nicht, die Leiste nennt die Kapitel schon. */
+.campaign {
+  counter-reset: chapter;
+}
+
+.campaign > section[data-chapter] {
+  counter-increment: chapter;
+}
+
+.campaign > section[data-chapter]::before {
+  content: counter(chapter, decimal-leading-zero) "\2002" attr(data-chapter) /
+    "";
+  display: block;
+  /* In zweispaltigen Kapiteln wie den Fragen steht sie über beiden Spalten. */
+  grid-column: 1 / -1;
+  margin-block-end: var(--space-s);
+  color: var(--ink-3);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Jedes zweite Kapitel liegt auf einer Fläche über die ganze Breite, damit
+   lange Seiten in Abschnitte zerfallen statt in eine Textstrecke. Die
+   Fläche reicht per border-image bis an den Rand, ohne die Seite breiter zu
+   machen. Flächen im Band werden Papier, damit Karten sichtbar bleiben. */
+.campaign > section.band {
+  --band-fill: var(--panel);
+  margin-block: calc(var(--band-gap) * -0.4);
+  padding-block: calc(var(--band-gap) * 0.6);
+  border-image: linear-gradient(var(--band-fill) 0 0) fill 0 / / 0 100vw;
+}
+
+.campaign > section.band > * {
+  --panel: var(--paper);
+}
+
 .campaign :where(h1, h2, h3, h4, p, ul, ol, dl, dd, blockquote, figure) {
   margin: 0;
 }
@@ -81,14 +122,29 @@
   letter-spacing: -0.012em;
 }
 
-.campaign.dossier > section > h3,
-.campaign.arguments > section > h3 {
-  margin-block-start: var(--space-xl);
+/* Drei Stufen unter der H1: Band (H2), Abschnitt im Band (diese H3) und
+   Karte oder Fakt (fette Zeile in Fließtextnähe). Die Abschnittsüberschrift
+   liegt deutlich zwischen beiden, damit Gruppen über ihren Einträgen stehen
+   statt neben ihnen. */
+.campaign > section > h3,
+.campaign > section > .art-split > div > h3,
+.campaign .attacks > h3 {
+  max-inline-size: 30ch;
+  font-size: clamp(1.375rem, 1.15rem + 0.75vw, 1.75rem);
+  font-weight: 600;
+  font-stretch: 94%;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
-.campaign.dossier > section > h3 + .prose,
-.campaign.arguments > section > h3 + .prose {
-  margin-block-start: var(--space-xs);
+.campaign > section > h3 {
+  margin-block-start: var(--space-2xl);
+}
+
+.campaign > section > h3 + .prose,
+.campaign > section > .art-split > div > h3 + .prose {
+  margin-block-start: var(--space-s);
 }
 
 .campaign h4 {
@@ -106,12 +162,15 @@
   text-wrap: pretty;
 }
 
+/* Einleitung eines Bands: so groß wie der Vorspann im Hero und damit eine
+   Spur kleiner als die fetten Titel der Karten, damit sie nicht mit ihnen
+   um den Blick konkurriert. */
 .campaign .section-intro {
   max-inline-size: var(--measure-lead);
   margin-block-start: var(--space-m);
   color: var(--ink-2);
-  font-size: var(--step-1);
-  line-height: 1.45;
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+  line-height: 1.5;
   text-wrap: pretty;
 }
 
@@ -571,7 +630,7 @@
   display: block;
   margin-block-end: var(--space-2xs);
   font-size: var(--step-1);
-  font-weight: 560;
+  font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.012em;
 }
@@ -591,15 +650,90 @@
   font-size: var(--step--1);
 }
 
-/* Die Kritikpunkte: mehr Luft zwischen den Zeilen, weil sie die dichteste
-   Textstrecke sind. */
-.campaign .facts.concerns {
-  row-gap: clamp(2rem, 3vw, 3rem);
+/* Belegte Fälle: jede Karte beginnt an einer Haarlinie mit einer Datumszeile
+   (wer, wann), darunter die Schlagzeile. Die Liste lässt sich so allein über
+   die Zeilen in Großbuchstaben und die fetten Titel überfliegen. */
+.campaign .facts.cases {
+  row-gap: var(--space-xl);
+}
+
+.campaign .cases li {
+  padding-block-start: var(--space-s);
+  border-block-start: 1px solid var(--line);
 }
 
 @media (width >= 48rem) {
   .campaign .facts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Marke über einem Eintrag: Datumszeile eines Falls, „Häufiger Einwand“
+   über einem Zitat. Klein und gesperrt, damit sie ordnet, ohne zu rufen. */
+.campaign :is(.cases .dateline, .point-label) {
+  display: block;
+  margin-block-end: var(--space-2xs);
+  color: var(--ink-3);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Die Kritikpunkte sind die dichteste Textstrecke. Breit stehen sie als
+   Zeilen zwischen Haarlinien: links die Aussage mit ihrem Beleg, rechts die
+   Begründung. Wer nur die linke Spalte liest, hat das Argument. Einwände in
+   Anführungszeichen stehen leichter gesetzt als unsere eigenen Aussagen. */
+.campaign .facts.concerns {
+  row-gap: clamp(2rem, 3vw, 3rem);
+}
+
+.campaign .concerns .objection > strong {
+  font-weight: 450;
+}
+
+@container campaign (width >= 52rem) {
+  .campaign .facts.concerns {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0;
+  }
+
+  .campaign .facts.concerns > li {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-rows: auto auto 1fr;
+    column-gap: var(--space-2xl);
+    max-inline-size: none;
+    padding-block: var(--space-l);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .campaign .facts.concerns > li:last-child {
+    border-block-end: 1px solid var(--line);
+  }
+
+  .campaign .concerns > li > .point-label {
+    grid-area: 1 / 1;
+  }
+
+  .campaign .concerns > li > strong {
+    grid-area: 2 / 1;
+    margin-block-end: 0;
+    font-size: clamp(1.1875rem, 1.05rem + 0.5vw, 1.375rem);
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .campaign .concerns > li > p {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    max-inline-size: var(--measure-text);
+  }
+
+  .campaign .concerns > li > small {
+    grid-area: 3 / 1;
+    align-self: start;
+    margin-block-start: var(--space-xs);
   }
 }
 
@@ -758,8 +892,8 @@
   line-height: 1;
 }
 
-/* Die hervorgehobene Station bleibt eindeutig rot. */
-.campaign .flow li.accent::before,
+/* Rot heißt auf Stationen immer „hier stehen wir“: nur die aktuelle Station
+   des Rechtswegs. Andere Hervorhebungen tragen eine Marke wie „DAC8“. */
 .campaign .route li.current::before {
   border-color: light-dark(#b6000c, #fa5963);
   color: #ffffff;
@@ -824,7 +958,7 @@
   background: var(--panel-strong);
 }
 
-.campaign .route .tag {
+.campaign .flow .tag {
   margin: 0 0 0 0.6em;
   padding-block: 0.05em;
   vertical-align: 0.1em;
@@ -879,25 +1013,45 @@
 
 .campaign .compare {
   display: grid;
-  gap: var(--space-l) var(--space-2xl);
+  gap: var(--space-m) var(--space-l);
   margin-block-start: var(--space-xl);
 }
 
-/* Zwei Spalten wie ein Datenblatt: eine Metallkante über der Meldung, eine
-   feine Linie über dem, was fehlt; jeder Punkt eine Zeile zwischen
-   Haarlinien. Keine Flächen. */
+/* Was ans Finanzamt geht, liegt als Blatt mit Metallkante auf der Seite;
+   was beim Anbieter bleibt, ist nur umrissen. So trennt man beide schon
+   beim Überfliegen, bevor man eine Zeile liest. */
 .campaign .compare > div {
-  padding-block-start: var(--space-s);
-  background: var(--metal-rule) top / 100% 2px no-repeat;
+  padding: var(--space-m) var(--space-m-l) var(--space-s);
+  border-radius: var(--radius-xl);
+}
+
+.campaign .compare > .reported {
+  background:
+    var(--metal-rule) top / 100% 3px no-repeat,
+    var(--panel);
+  box-shadow: 0 1px 2px var(--material-shade);
 }
 
 .campaign .compare > .absent {
-  background: linear-gradient(var(--line), var(--line)) top / 100% 1px
-    no-repeat;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.campaign .compare-label {
+  margin-block-end: var(--space-2xs);
+  color: var(--ink);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.campaign .absent .compare-label {
+  color: var(--ink-3);
 }
 
 .campaign .compare h3 {
   margin-block-end: var(--space-2xs);
+  font-weight: 600;
 }
 
 .campaign .compare ul {
@@ -914,6 +1068,11 @@
   text-wrap: pretty;
 }
 
+.campaign .compare li strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
 .campaign .compare li + li {
   border-block-start: 1px solid var(--line);
 }
@@ -926,7 +1085,7 @@
   inline-size: 0.5rem;
   block-size: 0.5rem;
   border-radius: var(--radius-full);
-  background: var(--primary);
+  background: var(--ink);
 }
 
 .campaign .compare .absent li::before {
@@ -1024,7 +1183,7 @@
 .campaign .faq-list summary::after {
   content: "+";
   flex: none;
-  color: var(--accent);
+  color: var(--ink-3);
   font-size: var(--step-2);
   font-weight: 500;
   line-height: 1;
@@ -1737,9 +1896,20 @@
   margin-block: 0 var(--space-2xs);
 }
 
+/* Breit steht Spenden mit Bild links über zwei Zeilen, die beiden anderen
+   Wege rechts übereinander. So füllt jede Karte ihre Höhe, ohne Lücke
+   zwischen Text und Knopf. */
 @container campaign (width >= 52rem) {
   .campaign .peak-actions {
-    grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  }
+
+  .campaign .peak-actions .peak-lead {
+    grid-row: span 2;
+  }
+
+  .campaign .peak-lead .artwork {
+    --art-height: 12rem;
   }
 }
 
@@ -1782,6 +1952,17 @@
   font-size: var(--step-1);
   font-weight: 560;
   line-height: 1.3;
+}
+
+.campaign .objections .point-label {
+  margin-block-end: 0;
+}
+
+.campaign .objections .objection > strong {
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  font-weight: 450;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
 }
 
 .campaign .objections p {

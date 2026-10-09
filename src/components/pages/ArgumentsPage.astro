@@ -66,32 +66,45 @@ const sections = {
       />
     </header>
 
-    <section id="verdacht" aria-labelledby="verdacht-heading">
+    <section
+      id="verdacht"
+      data-chapter={en ? "No suspicion" : "Ohne Verdacht"}
+      aria-labelledby="verdacht-heading"
+    >
       <h2 id="verdacht-heading" class="statement">
         {en ? "Privacy needs no justification." : "Privatsphäre braucht keine Rechtfertigung."}
         <span
           >{en ? "State interference does." : "Staatliche Eingriffe schon."}</span
         >
       </h2>
-      <ArgumentPoints points={sections.verdacht} />
+      <ArgumentPoints points={sections.verdacht} language={language} />
     </section>
 
-    <section id="speicherdauer" aria-labelledby="speicherdauer-heading">
+    <section
+      id="speicherdauer"
+      class="band"
+      data-chapter={en ? "Retention" : "Speicherdauer"}
+      aria-labelledby="speicherdauer-heading"
+    >
       <h2 id="speicherdauer-heading">
         {en ? "Data is kept for years, and more is added every year" : "Gespeichert wird lange, und jedes Jahr kommt mehr dazu"}
       </h2>
-      <ArgumentPoints points={sections.speicherdauer} />
+      <ArgumentPoints points={sections.speicherdauer} language={language} />
     </section>
 
-    <section id="sicherheit" aria-labelledby="sicherheit-heading">
+    <section
+      id="sicherheit"
+      data-chapter={en ? "Security" : "Sicherheit"}
+      aria-labelledby="sicherheit-heading"
+    >
       <h2 id="sicherheit-heading">
         {en ? "Every data store is a target" : "Jeder Datenbestand ist ein Angriffsziel"}
       </h2>
       <p class="section-intro">
         {en ? "The danger is not the single report. It is the store that grows over the years without any suspicion, and everything that can be linked to it." : "Die Gefahr ist nicht die einzelne Meldung. Es ist der Bestand, der über Jahre wächst, ohne dass je ein Verdacht bestand, und alles, was sich damit verknüpfen lässt."}
       </p>
-      <ArgumentPoints points={sections.sicherheit} />
-      <ul class="facts">
+      <ArgumentPoints points={sections.sicherheit} language={language} />
+      <ul class="facts concerns">
         <li id="verknuepfung">
           <strong
             >{en ? "When datasets come together" : "Wenn Datensätze zusammenkommen"}</strong
@@ -114,7 +127,12 @@ const sections = {
       </ul>
     </section>
 
-    <section id="ausbau" aria-labelledby="ausbau-heading">
+    <section
+      id="ausbau"
+      class="band"
+      data-chapter={en ? "Expansion" : "Ausbau"}
+      aria-labelledby="ausbau-heading"
+    >
       <h2 id="ausbau-heading">
         {en ? "DAC8 is one building block of financial surveillance" : "DAC8 ist ein Baustein finanzieller Überwachung"}
       </h2>
@@ -149,8 +167,11 @@ const sections = {
             >{en ? "it records the sender and recipient under the EU transfer of funds regulation, including when you transfer to your own wallet." : "erfasst er nach der EU-Geldtransferverordnung Absender und Empfänger, auch wenn du auf deine eigene Wallet überträgst."}</span
           >
         </li>
-        <li class="accent">
-          <strong>{en ? "Every year" : "Jedes Jahr"}</strong>
+        <li>
+          <strong
+            >{en ? "Every year" : "Jedes Jahr"}
+            <span class="tag">DAC8</span></strong
+          >
           <span
             >{en ? "it prepares the tax identification numbers and annual totals of all customers for the DAC8 report." : "bereitet er Steuernummer und Jahreswerte aller Kunden für die DAC8-Meldung auf."}</span
           >
@@ -162,10 +183,14 @@ const sections = {
           >
         </li>
       </ol>
-      <ArgumentPoints points={sections.ausbau} />
+      <ArgumentPoints points={sections.ausbau} language={language} />
     </section>
 
-    <section id="forderungen" aria-labelledby="forderungen-heading">
+    <section
+      id="forderungen"
+      data-chapter={en ? "Demands" : "Forderungen"}
+      aria-labelledby="forderungen-heading"
+    >
       <h2 id="forderungen-heading">
         {en ? "Our demands" : "Was wir fordern"}
       </h2>

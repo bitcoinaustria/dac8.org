@@ -94,7 +94,7 @@ const number = (index: number) => String(index + 1).padStart(2, "0")
   .tale-number {
     display: block;
     margin-block-end: var(--space-2xs);
-    color: var(--accent);
+    color: var(--ink-3);
     font-size: var(--step--1);
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -142,8 +142,8 @@ const number = (index: number) => String(index + 1).padStart(2, "0")
     .tale[data-staged] .tale-step {
       grid-template-columns: minmax(0, 1fr);
       align-content: center;
-      min-block-size: 70svh;
-      opacity: 0.3;
+      min-block-size: 55svh;
+      opacity: 0.4;
       transition: opacity 0.35s ease;
     }
 
@@ -188,7 +188,7 @@ const number = (index: number) => String(index + 1).padStart(2, "0")
       position: absolute;
       inset-block-end: 0;
       inset-inline-end: 0;
-      color: var(--accent);
+      color: var(--ink);
       font-size: var(--step--1);
       font-weight: 600;
       letter-spacing: 0.06em;

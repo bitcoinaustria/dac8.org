@@ -1,19 +1,28 @@
 ---
 import type { Point } from "@/data/arguments"
+import type { Language } from "@/lib/i18n"
 
 // One list of argument points, each with its legal source when it has one. The arguments page shows them as facts, the home page as
-// objections under the guiding statement.
+// objections under the guiding statement. A title in quotation marks is an
+// objection we answer; it carries a label so it does not read as our claim.
 interface Props {
   points: Point[]
+  language: Language
   variant?: "facts" | "objections"
 }
 
-const { points, variant = "facts" } = Astro.props
+const { points, language, variant = "facts" } = Astro.props
+const objectionLabel =
+  language === "en" ? "Common objection" : "Häufiger Einwand"
+const isObjection = (title: string) => /^[„“"]/.test(title)
 ---
 
 <ul class:list={variant === "facts" ? ["facts", "concerns"] : ["objections"]}>
   {points.map((point) => (
-    <li>
+    <li class:list={{ objection: isObjection(point.title) }}>
+      {isObjection(point.title) && (
+        <span class="point-label">{objectionLabel}</span>
+      )}
       <strong>{point.title}</strong>
       <p>{point.text}</p>
       {point.source && <small><a href={point.source.href}>{point.source.label}</a></small>}

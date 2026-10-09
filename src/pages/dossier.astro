@@ -1,6 +1,7 @@
 ---
 import AffectedCheck from "@/components/AffectedCheck.astro"
 import AttackSummary from "@/components/AttackSummary.astro"
+import CaseList from "@/components/CaseList.astro"
 import Glossary from "@/components/Glossary.astro"
 import Artwork from "@/components/Artwork.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
@@ -267,7 +268,11 @@ const faqs = [
       <AffectedCheck language="de" />
     </header>
 
-    <section id="was-ist-dac8" aria-labelledby="was-heading">
+    <section
+      id="was-ist-dac8"
+      data-chapter="DAC8"
+      aria-labelledby="was-heading"
+    >
       <h2 id="was-heading">Was ist DAC8?</h2>
       <p class="section-intro">
         DAC8 ist eine EU-Richtlinie. Sie erweitert den automatischen Austausch
@@ -288,7 +293,7 @@ const faqs = [
             >nutzt eine Börse oder einen Broker mit Meldepflicht in Österreich</span
           >
         </li>
-        <li class="accent">
+        <li>
           <strong>Der Anbieter</strong>
           <span
             >bereitet Identität und Jahreswerte für alle Kunden auf und meldet
@@ -313,7 +318,12 @@ const faqs = [
       </p>
     </section>
 
-    <section id="gemeldet" aria-labelledby="gemeldet-heading">
+    <section
+      id="gemeldet"
+      class="band"
+      data-chapter="Meldung"
+      aria-labelledby="gemeldet-heading"
+    >
       <h2 id="gemeldet-heading">
         Was gemeldet wird und was beim Anbieter bleibt
       </h2>
@@ -323,7 +333,8 @@ const faqs = [
       </p>
       <Artwork id="reportAssets" language="de" size="wide" zoom />
       <div class="compare">
-        <div>
+        <div class="reported">
+          <p class="compare-label">Geht ans Finanzamt</p>
           <h3>Das steht in der Meldung</h3>
           <ul>
             <li>Name, Anschrift, Steuerwohnsitz, Steuernummer, Geburtsdatum</li>
@@ -335,8 +346,9 @@ const faqs = [
             <li>
               Wert und Stückzahl aller Übertragungen an Wallet-Adressen, von
               denen der Anbieter nicht weiß, dass sie zu einem Anbieter oder
-              Finanzinstitut gehören, als Summe und ohne die Wallet-Adressen
-              selbst. Dazu zählt in der Regel deine eigene Wallet.
+              Finanzinstitut gehören,
+              <strong>als Summe und ohne die Wallet-Adressen selbst</strong>.
+              Dazu zählt in der Regel deine eigene Wallet.
             </li>
             <li>
               auch Vorgänge, die steuerlich meist keine Rolle spielen, etwa der
@@ -346,6 +358,7 @@ const faqs = [
           </ul>
         </div>
         <div class="absent">
+          <p class="compare-label">Bleibt beim Anbieter</p>
           <h3>Nicht in der Meldung, aber beim Anbieter</h3>
           <ul>
             <li>
@@ -403,7 +416,7 @@ const faqs = [
       </div>
     </section>
 
-    <section id="faelle" aria-labelledby="faelle-heading">
+    <section id="faelle" data-chapter="Fälle" aria-labelledby="faelle-heading">
       <h2 id="faelle-heading">Was schon passiert ist</h2>
       <p class="section-intro">
         Anbieter und Behörden verlieren immer wieder Daten über Vermögen.
@@ -411,21 +424,7 @@ const faqs = [
         Gefahren. Sie belegen nicht, dass DAC8 sie verursacht hat.
       </p>
       <h3>Wenn Anbieter und Behörden Daten verlieren</h3>
-      <ul class="facts">
-        {leaks.map((item) => (
-          <li>
-            <strong>{item.title}</strong>
-            <p>{item.text}</p>
-            <small>
-              {item.sources.length > 1 ? "Quellen:" : "Quelle:"}{" "}
-              {item.sources.map((source, index) => [
-                index > 0 && ", ",
-                <a href={source.href}>{source.label}</a>,
-              ])}
-            </small>
-          </li>
-        ))}
-      </ul>
+      <CaseList items={leaks} language="de" />
       <div class="art-split even reverse">
         <div>
           <h3>Vom Datenleck zur Wohnungstür</h3>
@@ -443,25 +442,16 @@ const faqs = [
         </div>
         <Artwork id="targetAtHome" language="de" />
       </div>
-      <ul class="facts">
-        {attacks.map((item) => (
-          <li>
-            <strong>{item.title}</strong>
-            <p>{item.text}</p>
-            <small>
-              {item.sources.length > 1 ? "Quellen:" : "Quelle:"}{" "}
-              {item.sources.map((source, index) => [
-                index > 0 && ", ",
-                <a href={source.href}>{source.label}</a>,
-              ])}
-            </small>
-          </li>
-        ))}
-      </ul>
+      <CaseList items={attacks} language="de" />
       <AttackSummary language="de" />
     </section>
 
-    <section id="rechtsweg" aria-labelledby="rechtsweg-heading">
+    <section
+      id="rechtsweg"
+      class="band"
+      data-chapter="Rechtsweg"
+      aria-labelledby="rechtsweg-heading"
+    >
       <h2 id="rechtsweg-heading">Wie wir vorgehen</h2>
       <p class="section-intro">
         {campaignStatus.de.text}
@@ -490,7 +480,12 @@ const faqs = [
       </ul>
     </section>
 
-    <section id="faq" class="faq" aria-labelledby="faq-heading">
+    <section
+      id="faq"
+      class="faq"
+      data-chapter="Fragen"
+      aria-labelledby="faq-heading"
+    >
       <h2 id="faq-heading">Häufige Fragen</h2>
       <div class="faq-list">
         {faqs.map((faq) => (
