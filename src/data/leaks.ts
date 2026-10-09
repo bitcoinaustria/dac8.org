@@ -2,8 +2,8 @@ import type { Language } from "@/lib/i18n"
 
 // Documented cases in which companies, authorities or their service
 // providers lost data on people, or let it be misused. This is the only
-// copy: the leak page lists every case, the dossier and the home page's
-// matrix show the featured ones. Add new cases here, in both languages and
+// copy: the leak page lists every case, the dossier shows the featured ones
+// and the home page counts the cases per field. Add new cases here, in both languages and
 // with at least one primary source (the body's own notice, a court ruling,
 // a prosecutor, regulator or parliamentary record). Press may only add to
 // it. Say "accused" or "suspected" until a court has ruled.
@@ -27,7 +27,8 @@ export interface Leak {
   lost: Field[]
   headline: Record<Language, string>
   text: Record<Language, string>
-  // One short line for the matrix; needed for featured cases.
+  // One short line on what followed; needed where a field names the case
+  // as its example.
   then?: Record<Language, string>
   sources: { label: Record<Language, string>; href: string }[]
   featured?: boolean
@@ -35,16 +36,31 @@ export interface Leak {
 
 const same = (label: string) => ({ de: label, en: label })
 
-export const fields: { id: Field; label: Record<Language, string> }[] = [
+// Each field names one case for the home page, with what followed.
+export const fields: {
+  id: Field
+  label: Record<Language, string>
+  example: string
+}[] = [
   {
     id: "identity",
     label: { de: "Name und Anschrift", en: "Name and home address" },
+    example: "ledger",
   },
-  { id: "document", label: { de: "Ausweis", en: "ID document" } },
-  { id: "wallet", label: { de: "Wallet", en: "Wallet" } },
+  {
+    id: "document",
+    label: { de: "Ausweis", en: "ID document" },
+    example: "coinbase",
+  },
+  {
+    id: "wallet",
+    label: { de: "Wallet", en: "Wallet" },
+    example: "fractal-id",
+  },
   {
     id: "holdings",
     label: { de: "Bestände oder Steuerdaten", en: "Holdings or tax data" },
+    example: "waltio",
   },
 ]
 

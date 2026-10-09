@@ -631,8 +631,7 @@
   row-gap: var(--space-xl);
 }
 
-/* Was verloren ging, als kleine Marken unter dem Titel, wie in der
-   schmalen Fassung der Leck-Tabelle. */
+/* Was verloren ging, als kleine Marken unter dem Titel. */
 .campaign .case-tags {
   display: flex;
   flex-wrap: wrap;
