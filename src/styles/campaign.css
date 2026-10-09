@@ -625,10 +625,29 @@
 }
 
 /* Belegte Fälle: jeder beginnt mit einer Datumszeile (wer, wann), darunter
-   die Schlagzeile. Die Liste lässt sich so allein über die Zeilen in
-   Großbuchstaben und die fetten Titel überfliegen. */
+   die Schlagzeile. Die Liste lässt sich so allein über die Datumszeilen und
+   die fetten Titel überfliegen. */
 .campaign .facts.cases {
   row-gap: var(--space-xl);
+}
+
+/* Was verloren ging, als kleine Marken unter dem Titel, wie in der
+   schmalen Fassung der Leck-Tabelle. */
+.campaign .case-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3xs);
+  margin-block: var(--space-2xs) var(--space-xs);
+  padding: 0;
+  list-style: none;
+}
+
+.campaign .case-tags li {
+  padding: 0.1em 0.6em;
+  border-radius: var(--radius-full);
+  color: var(--ink);
+  background: color-mix(in oklab, var(--primary) 14%, transparent);
+  font-size: var(--step--1);
 }
 
 @media (width >= 48rem) {

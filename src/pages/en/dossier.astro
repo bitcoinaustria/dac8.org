@@ -8,6 +8,7 @@ import Layout from "@/layouts/Layout.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import { campaignStatus } from "@/data/campaign"
+import { asCase, featuredLeaks, leaks as allLeaks } from "@/data/leaks"
 import { sourceGroups } from "@/data/sources"
 const researchDate = "30 September 2026"
 const sources = sourceGroups.map((group) => ({
@@ -17,111 +18,10 @@ const sources = sourceGroups.map((group) => ({
     label: source.labelEn,
   })),
 }))
-// Documented cases in which lost or misused data made the harm possible.
-// Cases without that link do not belong here.
-const leaks = [
-  {
-    title: "Ledger, 2020: the home addresses of 272,000 wallet buyers.",
-    text: "Names, postal addresses and phone numbers leaked from the hardware wallet maker’s online shop. Phishing emails, text messages and letters to home addresses followed, asking for the recovery phrase. In a University of Innsbruck survey, 93 of 104 affected customers reported scam attempts and 33 reported extortion threats.",
-    sources: [
-      {
-        label: "Ledger",
-        href: "https://www.ledger.com/message-ledgers-ceo-data-leak",
-      },
-      {
-        label: "Abramova and Böhme",
-        href: "https://www.usenix.org/system/files/usenixsecurity23-abramova.pdf",
-      },
-    ],
-  },
-  {
-    title: "Kroll, 2023: the balances of crypto creditors.",
-    text: "Through an employee’s hijacked phone number, attackers at the FTX bankruptcy’s claims agent accessed the names, postal addresses and balances of creditors of three crypto companies. Kroll warned of fraudsters asking people to connect a wallet or enter their recovery phrase.",
-    sources: [
-      {
-        label: "Kroll",
-        href: "https://ftxquestions.kroll.com/docs/Kroll_Notice_to_FTX_Claimants_4879-3276-7625-2.pdf",
-      },
-    ],
-  },
-  {
-    title: "Fractal ID, 2024: ID, home address and wallet in one record.",
-    text: "Using an administrator’s reused password, an attacker took the data of around 6,300 users from the Berlin identity verification service: names, ID images, home addresses and wallet addresses. The attackers then demanded a ransom.",
-    sources: [
-      {
-        label: "Fractal ID",
-        href: "http://web.archive.org/web/20240726003733/https://web.fractal.id/fractal-id-data-breach-post-mortem/",
-      },
-    ],
-  },
-  {
-    title: "Coinbase, 2025: defrauded with real customer data.",
-    text: "Bribed support staff copied customer data, down to ID images and balances. Fraudsters then posed as Coinbase and persuaded customers to send them money. Coinbase estimates the costs, including reimbursements, at 180 to 400 million dollars. Phishing in Coinbase’s name then also rose in Austria.",
-    sources: [
-      {
-        label: "Coinbase (Form 8-K)",
-        href: "https://www.sec.gov/Archives/edgar/data/1679788/000167978825000094/coin-20250514.htm",
-      },
-      {
-        label: "Watchlist Internet",
-        href: "https://www.watchlist-internet.at/news/datenleck-bei-coinbase-phishing",
-      },
-    ],
-  },
-  {
-    title: "Waltio, 2026: tax data as a target list.",
-    text: "At the French crypto tax service, customers’ email addresses, gains and losses and year-end balances fell into the wrong hands. According to the Gendarmerie, criminals use the data to select victims of violent crime, sometimes misjudging what they actually hold.",
-    sources: [
-      {
-        label: "Waltio",
-        href: "https://help.waltio.com/en/articles/13482134-questions-answers-security-incident",
-      },
-      {
-        label: "Gendarmerie",
-        href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2",
-      },
-    ],
-  },
-  {
-    title: "France, 2026: the tax administration is breached twice.",
-    text: "Using officials’ stolen credentials, attackers extracted 1.2 million records from the national bank-account register in February, with IBAN, name and postal address. In the summer, data on income, postal address and property on 678,000 individuals and businesses followed from the tax system.",
-    sources: [
-      {
-        label: "account register",
-        href: "https://www.impots.gouv.fr/actualite/acces-illegitimes-au-fichier-national-des-comptes-bancaires-ficoba",
-      },
-      {
-        label: "tax system",
-        href: "https://presse.economie.gouv.fr/acces-illegitime-au-systeme-dinformation-de-la-direction-generale-des-finances-publiques/",
-      },
-    ],
-  },
-  {
-    title: "Netherlands, 2026: court data used for extortion.",
-    text: "A court employee sold confidential data from the justice system and used such data herself to extort a man, threatening his family. He paid more than 92,000 euros. She was sentenced to four years in prison.",
-    sources: [
-      {
-        label: "Rechtbank Overijssel",
-        href: "https://www.rechtspraak.nl/organisatie-en-contact/organisatie/rechtbanken/rechtbank-overijssel/nieuws/2026/05/oud-medewerker-rechtbank-amsterdam-krijgt-vier-jaar-cel-voor-het-verkopen-van-vertrouwelijke-gegevens-en-afpersing",
-      },
-    ],
-  },
-  {
-    title: "Austria: thousands of private queries in the tax system.",
-    text: "For six years, a tax official accessed tax records several thousand times without any official reason, including those of more than 1,000 people from his home town. In 2024, Austria’s anti-corruption office registered 116 new cases of unauthorised data queries and disclosures in the public sector.",
-    sources: [
-      {
-        label: "Finance Ministry disciplinary board",
-        href: "https://www.ris.bka.gv.at/Dokumente/Dok/DKT_BMF_20160930_01069_7_DK_14_01072_7_DK_15_00/DKT_BMF_20160930_01069_7_DK_14_01072_7_DK_15_00.html",
-      },
-      {
-        label: "BAK annual report 2024",
-        href: "https://www.bak.gv.at/Downloads/files/Jahresberichte/BAK_Jahresbericht_2024_bf_20250422.pdf",
-      },
-    ],
-  },
-]
+const leaks = featuredLeaks.map((leak) => asCase(leak, "en"))
 
+// Cases in which a leak or betrayed data led criminals to the front door.
+// The leaks themselves are in src/data/leaks.ts.
 const attacks = [
   {
     title: "USA, 2026: a gang of hackers and burglars.",
@@ -240,7 +140,8 @@ const faqs = [
   sections={[
   { id: "was-ist-dac8", label: "DAC8" },
   { id: "gemeldet", label: "The report" },
-  { id: "faelle", label: "Cases" },
+  { id: "faelle", label: "Leaks" },
+  { id: "angriffe", label: "Attacks" },
   { id: "rechtsweg", label: "Legal route" },
   { id: "faq", label: "Questions" },
   { id: "begriffe", label: "Terms" },
@@ -412,17 +313,22 @@ const faqs = [
       </div>
     </section>
     <section id="faelle" aria-labelledby="faelle-heading">
-      <h2 id="faelle-heading">What has already happened</h2>
+      <h2 id="faelle-heading">When providers and authorities lose data</h2>
       <p class="section-intro">
         Providers and authorities lose data on people’s wealth again and again.
         Fraudsters and violent criminals use it. These cases show concrete
         dangers. They do not show that DAC8 caused them.
       </p>
-      <h3>When providers and authorities lose data</h3>
       <CaseList items={leaks} language="en" />
+      <a class="text-link" href="/en/data-leaks/"
+        >All {allLeaks.length} documented data leaks</a
+      >
+    </section>
+
+    <section id="angriffe" aria-labelledby="angriffe-heading">
+      <h2 id="angriffe-heading">From data leak to front door</h2>
       <div class="art-split even reverse">
         <div>
-          <h3>From data leak to front door</h3>
           <p class="prose">
             A data leak gives criminals what they would otherwise have to work
             hard to find out: who holds crypto and where they live. Organised

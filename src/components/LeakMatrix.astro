@@ -1,91 +1,20 @@
 ---
+import { featuredLeaks, fields, type Leak } from "@/data/leaks"
 import type { Language } from "@/lib/i18n"
 
 // Belegte Lecks, gezeigt nach dem, was verloren ging: Name und Anschrift,
 // Ausweis, Wallet, Bestände oder Steuerdaten. Die Spalten sind die Teile,
 // die bei einem Anbieter für DAC8 zusammenliegen. Keine Fallzahlen, weil
 // die Größe eines Lecks nichts darüber sagt, wie gefährlich es ist.
-// Wortlaut und Quellen folgen den Fällen im Dossier (#faelle).
+// Die Fälle stehen in src/data/leaks.ts; ohne items zeigt die Tabelle die
+// hervorgehobenen.
 interface Props {
   language: Language
+  items?: Leak[]
 }
 
-const { language } = Astro.props
+const { language, items = featuredLeaks } = Astro.props
 const en = language === "en"
-
-type Field = "identity" | "document" | "wallet" | "holdings"
-
-const fields: { id: Field; label: Record<Language, string> }[] = [
-  {
-    id: "identity",
-    label: { de: "Name und Anschrift", en: "Name and home address" },
-  },
-  { id: "document", label: { de: "Ausweis", en: "ID document" } },
-  { id: "wallet", label: { de: "Wallet", en: "Wallet" } },
-  {
-    id: "holdings",
-    label: { de: "Bestände oder Steuerdaten", en: "Holdings or tax data" },
-  },
-]
-
-const leaks: {
-  name: string
-  year: number
-  kind: Record<Language, string>
-  lost: Field[]
-  then: Record<Language, string>
-}[] = [
-  {
-    name: "Ledger",
-    year: 2020,
-    kind: { de: "Hardware-Wallet-Shop", en: "Hardware wallet shop" },
-    lost: ["identity"],
-    then: {
-      de: "Danach Erpressungsdrohungen und Briefe an die Wohnadresse",
-      en: "Then extortion threats and letters to home addresses",
-    },
-  },
-  {
-    name: "Fractal ID",
-    year: 2024,
-    kind: { de: "Identifizierungsdienst", en: "Identity verification" },
-    lost: ["identity", "document", "wallet"],
-    then: {
-      de: "Danach verlangten die Angreifer Lösegeld",
-      en: "Then the attackers demanded a ransom",
-    },
-  },
-  {
-    name: "Coinbase",
-    year: 2025,
-    kind: { de: "Börse", en: "Exchange" },
-    lost: ["identity", "document", "holdings"],
-    then: {
-      de: "Betrüger nutzten die Daten, Kosten bis zu 400 Mio. $",
-      en: "Fraudsters used the data, costs of up to $400m",
-    },
-  },
-  {
-    name: "Waltio",
-    year: 2026,
-    kind: { de: "Krypto-Steuerdienst", en: "Crypto tax service" },
-    lost: ["holdings"],
-    then: {
-      de: "Laut Gendarmerie wählen Täter damit Opfer für Gewalttaten aus",
-      en: "According to the Gendarmerie, criminals use it to pick victims",
-    },
-  },
-  {
-    name: en ? "France" : "Frankreich",
-    year: 2026,
-    kind: { de: "Finanzverwaltung", en: "Tax administration" },
-    lost: ["identity", "holdings"],
-    then: {
-      de: "Zwei Einbrüche, ins Kontenregister und ins Steuersystem",
-      en: "Two breaches, of the bank-account register and the tax system",
-    },
-  },
-]
 ---
 
 <table class="leak-matrix">
@@ -107,12 +36,12 @@ const leaks: {
     </tr>
   </thead>
   <tbody>
-    {leaks.map((leak) => (
+    {items.map((leak) => (
       <tr>
         <th scope="row">
-          <strong>{leak.name}</strong>
+          <strong>{leak.name[language]}</strong>
           <span>
-            {leak.kind[language]}, {leak.year}
+            {[leak.kind[language], leak.year].filter(Boolean).join(", ")}
           </span>
         </th>
         {fields.map((field) => {

@@ -106,6 +106,20 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       imageLines: ["Attacks on", "crypto holders,", "worldwide."],
     },
   },
+  leaks: {
+    de: {
+      title: "Datenlecks: wenn Daten über Krypto-Besitz verloren gehen",
+      description:
+        "Belegte Fälle, in denen Unternehmen und Behörden Daten über Krypto-Kunden verloren haben, von Ledger bis zur Finanzverwaltung. Mit Primärquellen, nach Datenart filterbar.",
+      imageLines: ["Wenn Daten über", "Vermögen verloren", "gehen."],
+    },
+    en: {
+      title: "Data leaks: when data on crypto holdings gets lost",
+      description:
+        "Documented cases in which companies and authorities lost data on crypto customers, from Ledger to the tax administration. With primary sources, filterable by kind of data.",
+      imageLines: ["When data", "on holdings", "gets lost."],
+    },
+  },
   proceedings: {
     de: {
       title: "DAC8-Verfahren: Aktuelles und nächste Schritte",

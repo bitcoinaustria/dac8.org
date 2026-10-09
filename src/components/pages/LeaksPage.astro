@@ -1,0 +1,241 @@
+---
+import CaseList from "@/components/CaseList.astro"
+import MetaPage from "@/components/MetaPage.astro"
+import Layout from "@/layouts/Layout.astro"
+import { asCase, fields, holders, newestLeaksFirst } from "@/data/leaks"
+import { languageFor, pathFor } from "@/lib/i18n"
+
+// Every documented leak, newest first. The dossier shows a few of them; this
+// page grows with the collection. Filters narrow the list by who lost the
+// data and what was lost, the two questions that matter for DAC8: the data
+// sits at the provider and, as reports, with the tax authority. Without
+// JavaScript the full list shows and the filters stay hidden.
+const language = languageFor(Astro.url.pathname)
+const en = language === "en"
+
+const total = newestLeaksFirst.length
+const byAuthorities = newestLeaksFirst.filter(
+  (leak) => leak.holder === "authority",
+).length
+const labelFor = (id: string) =>
+  fields.find((field) => field.id === id)?.label[language] ?? id
+const items = newestLeaksFirst.map((leak) => ({
+  ...asCase(leak, language),
+  dateline: [leak.name[language], leak.kind[language], leak.year]
+    .filter(Boolean)
+    .join(" · "),
+  tags: leak.lost.map(labelFor),
+  data: { holder: leak.holder, lost: leak.lost.join(" ") },
+}))
+
+const strings = en
+  ? { all: `${total} cases`, some: "{shown} of {total} cases" }
+  : { all: `${total} Fälle`, some: "{shown} von {total} Fällen" }
+---
+
+<Layout>
+  <MetaPage slot="head" />
+
+  <article class="campaign leaks">
+    <header class="hero">
+      <div class="hero-text">
+        <h1>
+          {en ? "When data on holdings gets lost." : "Wenn Daten über Vermögen verloren gehen."}
+          <span>{en ? "Documented cases." : "Belegte Fälle."}</span>
+        </h1>
+        <p class="lead">
+          {en
+              ? "What companies and authorities store about crypto customers gets lost again and again, through hackers, bribed staff or officials looking where they should not. Bitcoin works like cash, so nobody should know who holds how much. DAC8 adds tax data to what every provider already keeps, and its reports go to the tax authority."
+              : "Was Unternehmen und Behörden über Krypto-Kunden speichern, geht immer wieder verloren: durch Hacker, bestochene Mitarbeiter oder Beamte, die nachsehen, wo sie nicht sollen. Bitcoin funktioniert wie Bargeld, darum sollte niemand wissen, wer wie viel besitzt. DAC8 legt zu dem, was jeder Anbieter ohnehin aufbewahrt, Steuerdaten dazu, und die Meldungen gehen an das Finanzamt."}
+        </p>
+        <dl class="glance" aria-label={en ? "At a glance" : "Auf einen Blick"}>
+          <dt>{en ? "Documented leaks" : "Belegte Lecks"}</dt>
+          <dd>{total}</dd>
+          <dt>{en ? "Of these at authorities" : "Davon bei Behörden"}</dt>
+          <dd>{byAuthorities}</dd>
+        </dl>
+        <p class="hero-note">
+          {en
+              ? "Only cases with a primary source in which lost or misused data made the harm possible. The list is incomplete, and the cases do not show that DAC8 caused them."
+              : "Nur Fälle mit Primärquelle, in denen verlorene oder missbrauchte Daten den Schaden möglich gemacht haben. Die Liste ist unvollständig, und die Fälle belegen nicht, dass DAC8 sie verursacht hat."}
+        </p>
+      </div>
+    </header>
+
+    <section id="faelle" aria-labelledby="faelle-heading" data-leaks>
+      <h2 id="faelle-heading">
+        {en ? "All cases, newest first" : "Alle Fälle, die neuesten zuerst"}
+      </h2>
+
+      <div
+        class="leak-filters"
+        role="group"
+        aria-label={en ? "Filter cases" : "Fälle filtern"}
+        data-filters
+        data-strings={JSON.stringify(strings)}
+        hidden
+      >
+        <div class="leak-filter" role="group" aria-labelledby="filter-holder">
+          <span class="leak-filter-label" id="filter-holder"
+            >{en ? "Who lost it" : "Wer sie verlor"}</span
+          >
+          <div class="leak-options">
+            <button type="button" data-holder="" aria-pressed="true">
+              {en ? "All" : "Alle"}
+            </button>
+            {holders.map((holder) => (
+                <button type="button" data-holder={holder.id} aria-pressed="false">
+                  {holder.label[language]}
+                </button>
+              ))}
+          </div>
+        </div>
+        <div class="leak-filter" role="group" aria-labelledby="filter-lost">
+          <span class="leak-filter-label" id="filter-lost"
+            >{en ? "What was lost" : "Was verloren ging"}</span
+          >
+          <div class="leak-options">
+            <button type="button" data-lost="" aria-pressed="true">
+              {en ? "All" : "Alle"}
+            </button>
+            {fields.map((field) => (
+                <button type="button" data-lost={field.id} aria-pressed="false">
+                  {field.label[language]}
+                </button>
+              ))}
+          </div>
+        </div>
+        <p class="leak-count" aria-live="polite" data-count>{strings.all}</p>
+      </div>
+
+      <CaseList items={items} language={language} />
+
+      <a class="text-link" href={`${pathFor("dossier", language)}#angriffe`}
+        >{en ? "From data leak to front door" : "Vom Datenleck zur Wohnungstür"}</a
+      >
+    </section>
+  </article>
+</Layout>
+
+<script>
+  // Two filters that combine: who lost the data and what was lost.
+  for (const root of document.querySelectorAll<HTMLElement>("[data-leaks]")) {
+    const bar = root.querySelector<HTMLElement>("[data-filters]")
+    const count = root.querySelector<HTMLElement>("[data-count]")
+    const cases = [
+      ...root.querySelectorAll<HTMLElement>(".cases > li[data-holder]"),
+    ]
+    if (!bar || !count) continue
+    const strings = JSON.parse(bar.dataset.strings ?? "{}")
+    const state = { holder: "", lost: "" }
+
+    const render = () => {
+      let shown = 0
+      for (const item of cases) {
+        const visible =
+          (!state.holder || item.dataset.holder === state.holder) &&
+          (!state.lost ||
+            (item.dataset.lost ?? "").split(" ").includes(state.lost))
+        item.hidden = !visible
+        if (visible) shown++
+      }
+      count.textContent =
+        shown === cases.length
+          ? strings.all
+          : strings.some
+              .replace("{shown}", String(shown))
+              .replace("{total}", String(cases.length))
+    }
+
+    for (const key of ["holder", "lost"] as const) {
+      const buttons = [
+        ...bar.querySelectorAll<HTMLButtonElement>(`button[data-${key}]`),
+      ]
+      for (const button of buttons)
+        button.addEventListener("click", () => {
+          state[key] = button.dataset[key] ?? ""
+          for (const other of buttons)
+            other.setAttribute("aria-pressed", String(other === button))
+          render()
+        })
+    }
+    bar.hidden = false
+  }
+</script>
+
+<style>
+  .leak-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-m) var(--space-xl);
+    margin-block-start: var(--space-xl);
+  }
+
+  .leak-filters[hidden] {
+    display: none;
+  }
+
+  .leak-filter {
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .leak-filter-label {
+    color: var(--ink-3);
+    font-size: var(--step--1);
+  }
+
+  /* Wie die Ausschnitt-Wahl im Angriffsarchiv: eine Schiene, die gewählte
+     Option hebt sich hell ab. */
+  .leak-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 3px;
+    border-radius: var(--radius-lg);
+    background: var(--gray-3);
+  }
+
+  .leak-options button {
+    min-block-size: 2.25rem;
+    padding: 0 0.875rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    color: var(--ink-3);
+    background: transparent;
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 560;
+    cursor: pointer;
+    transition:
+      color 140ms ease,
+      background-color 140ms ease;
+  }
+
+  .leak-options button:hover {
+    color: var(--ink);
+  }
+
+  .leak-options button[aria-pressed="true"] {
+    color: var(--ink);
+    background: light-dark(var(--gray-1), var(--gray-6));
+    box-shadow: 0 1px 2px
+      color-mix(in oklab, var(--foreground) 14%, transparent);
+  }
+
+  .leak-options button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+  }
+
+  .leak-count {
+    margin-inline-start: auto;
+    color: var(--ink-3);
+    font-size: var(--step--1);
+  }
+
+  .leaks .text-link {
+    margin-block-start: var(--space-2xl);
+  }
+</style>
