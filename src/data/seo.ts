@@ -110,13 +110,13 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "Datenlecks: wenn Daten über Krypto-Besitz verloren gehen",
       description:
-        "Belegte Fälle, in denen Unternehmen und Behörden Daten über Krypto-Kunden verloren haben, von Ledger bis zur Finanzverwaltung. Mit Primärquellen, nach Datenart filterbar.",
+        "Belegte Datenlecks bei Krypto-Anbietern, Steuertools, Behörden und ihren Dienstleistern, von Ledger bis zum Kontenaustausch der Steuerbehörden. Mit Primärquellen.",
       imageLines: ["Wenn Daten über", "Vermögen verloren", "gehen."],
     },
     en: {
       title: "Data leaks: when data on crypto holdings gets lost",
       description:
-        "Documented cases in which companies and authorities lost data on crypto customers, from Ledger to the tax administration. With primary sources, filterable by kind of data.",
+        "Documented data leaks at crypto providers, tax tools, authorities and their service providers, from Ledger to the tax authorities’ account exchange. With primary sources.",
       imageLines: ["When data", "on holdings", "gets lost."],
     },
   },

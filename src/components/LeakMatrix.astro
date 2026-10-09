@@ -55,7 +55,7 @@ const en = language === "en"
             </td>
           )
         })}
-        <td class="then">{leak.then[language]}</td>
+        <td class="then">{leak.then?.[language]}</td>
       </tr>
     ))}
   </tbody>
