@@ -3,7 +3,7 @@ import type { Language } from "@/lib/i18n"
 // Documented cases in which companies, authorities or their service
 // providers lost data on people, or let it be misused. This is the only
 // copy: the leak page lists every case, the dossier shows the featured ones
-// and the home page counts the cases per field. Add new cases here, in both languages and
+// and the home page the few in homeLeaks. Add new cases here, in both languages and
 // with at least one primary source (the body's own notice, a court ruling,
 // a prosecutor, regulator or parliamentary record). Press may only add to
 // it. Say "accused" or "suspected" until a court has ruled.
@@ -27,8 +27,7 @@ export interface Leak {
   lost: Field[]
   headline: Record<Language, string>
   text: Record<Language, string>
-  // One short line on what followed; needed where a field names the case
-  // as its example.
+  // One short line on what followed; needed for the cases on the home page.
   then?: Record<Language, string>
   sources: { label: Record<Language, string>; href: string }[]
   featured?: boolean
@@ -36,31 +35,16 @@ export interface Leak {
 
 const same = (label: string) => ({ de: label, en: label })
 
-// Each field names one case for the home page, with what followed.
-export const fields: {
-  id: Field
-  label: Record<Language, string>
-  example: string
-}[] = [
+export const fields: { id: Field; label: Record<Language, string> }[] = [
   {
     id: "identity",
     label: { de: "Name und Anschrift", en: "Name and home address" },
-    example: "ledger",
   },
-  {
-    id: "document",
-    label: { de: "Ausweis", en: "ID document" },
-    example: "coinbase",
-  },
-  {
-    id: "wallet",
-    label: { de: "Wallet", en: "Wallet" },
-    example: "fractal-id",
-  },
+  { id: "document", label: { de: "Ausweis", en: "ID document" } },
+  { id: "wallet", label: { de: "Wallet", en: "Wallet" } },
   {
     id: "holdings",
     label: { de: "Bestände oder Steuerdaten", en: "Holdings or tax data" },
-    example: "waltio",
   },
 ]
 
@@ -327,8 +311,8 @@ export const leaks: Leak[] = [
       en: "Attackers broke into the Bulgarian tax authority’s systems, and tax and social security data on more than six million people then appeared online. It included account data that Bulgaria had received from other states through the automatic exchange of information, including on accounts in Switzerland and Germany. Exchanges with Bulgaria were suspended. DAC8 reports on crypto-assets will travel through the same exchange.",
     },
     then: {
-      de: "Der Kontenaustausch mit Bulgarien wurde ausgesetzt",
-      en: "Account data exchange with Bulgaria was suspended",
+      de: "Über denselben Austausch gehen künftig die DAC8-Meldungen",
+      en: "DAC8 reports will travel through the same exchange",
     },
     sources: [
       {
@@ -1075,6 +1059,13 @@ export const leaks: Leak[] = [
 ]
 
 export const featuredLeaks = leaks.filter((leak) => leak.featured)
+
+// The home page shows four headlines: a tax tool, an exchange, a wallet
+// shop and a tax authority, so readers see that every kind of holder has
+// lost such data. Newest first.
+export const homeLeaks = ["waltio", "coinbase", "ledger", "bulgaria"]
+  .map((id) => leaks.find((leak) => leak.id === id))
+  .filter((leak): leak is Leak => Boolean(leak?.then))
 
 // Newest first; cases without a single year go last.
 export const newestLeaksFirst = [...leaks].sort(

@@ -1,0 +1,73 @@
+---
+import { homeLeaks } from "@/data/leaks"
+import type { Language } from "@/lib/i18n"
+
+// Die Fälle der Startseite als Schlagzeilen: Jahr und Wer darüber, eine
+// Zeile darunter, was danach geschah. Keine Rahmen und keine Linien; die
+// Schlagzeilen tragen die Fläche. Die Auswahl steht in src/data/leaks.ts.
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+---
+
+<ul class="leak-headlines">
+  {homeLeaks.map((leak) => (
+    <li>
+      <p class="dateline">
+        {leak.year && <span class="year">{leak.year}</span>}
+        {leak.year && " · "}
+        {leak.name[language]}, {leak.kind[language]}
+      </p>
+      <h3>{leak.headline[language]}</h3>
+      <p class="then">{leak.then?.[language]}.</p>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .leak-headlines {
+    display: grid;
+    gap: var(--space-xl) var(--space-2xl);
+    margin-block-start: var(--space-xl);
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    max-inline-size: var(--measure-text);
+  }
+
+  .dateline {
+    margin-block-end: var(--space-3xs);
+    color: var(--ink-3);
+    font-size: var(--step--1);
+  }
+
+  .year {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Spezifischer als die globalen Kampagnen-Überschriften. */
+  .leak-headlines h3 {
+    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+    font-weight: 620;
+    line-height: 1.22;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .then {
+    margin-block-start: var(--space-2xs);
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  @container campaign (width >= 46rem) {
+    .leak-headlines {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

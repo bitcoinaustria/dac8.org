@@ -314,79 +314,31 @@
 
 /* ---------- Kennzahlen ------------------------------------------------ */
 
-/* Kennzahlen: drei große Werte, die den Fall in einer Zeile erzählen. */
-.campaign .keyfigures {
-  display: grid;
-  gap: var(--space-m) var(--space-l);
-}
-
-/* Die obere Kante ist gefrästes Metall statt einer schwarzen Linie; die
-   Zahlen selbst stehen direkt auf der Fläche. */
-.campaign .keyfigures > div {
-  --rule: 2px;
-  display: grid;
-  align-content: start;
-  gap: var(--space-xs);
-  padding-block-start: var(--space-s);
-  background: var(--metal-rule) top / 100% var(--rule) no-repeat;
-}
-
-.campaign .keyfigures dd {
-  order: -1;
-  font-size: clamp(1.75rem, 3cqi, 2.25rem);
-  font-weight: 600;
-  font-stretch: 94%;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-}
-
-.campaign .keyfigures dd small {
-  display: inline-block;
-  margin-inline-start: 0.2em;
-  font-size: 0.45em;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  vertical-align: 0.1em;
-}
-
-.campaign .keyfigures dt {
-  color: var(--ink-2);
-  line-height: 1.4;
+/* Kennzahlen stehen in einem Satz statt in Kacheln: groß gesetzt, die
+   Werte dunkel und rot unterlegt. So liest man eine Aussage, kein
+   Dashboard. */
+.campaign .figure-line {
+  max-inline-size: 40ch;
+  color: var(--ink-3);
+  font-size: clamp(1.375rem, 1.1rem + 1.2vw, 1.875rem);
+  font-weight: 450;
+  line-height: 1.3;
+  letter-spacing: -0.018em;
   text-wrap: pretty;
 }
 
-.campaign .keyfigures dt strong {
+.campaign .figure-line strong {
   color: var(--ink);
-  font-weight: 560;
-}
-
-.campaign .keyfigures time {
+  font-weight: 620;
+  background: linear-gradient(
+      color-mix(in oklab, var(--primary) 18%, transparent) 0 0
+    )
+    0 88% / 100% 0.32em no-repeat;
   white-space: nowrap;
 }
 
-@container campaign (width >= 46rem) {
-  .campaign .keyfigures {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* Kennzahlen am Handy: kompakter, damit die drei Werte nicht einen ganzen
-   Bildschirm füllen. */
-@container campaign (width < 46rem) {
-  .campaign .keyfigures {
-    gap: var(--space-s);
-  }
-
-  .campaign .keyfigures > div {
-    --rule: 1px;
-    gap: var(--space-3xs);
-    padding-block-start: var(--space-xs);
-  }
-
-  .campaign .keyfigures dd {
-    font-size: 1.75rem;
-  }
+.campaign .hero-text > .figure-line {
+  margin-block-start: var(--space-xl);
 }
 
 /* Auf einen Blick: kurze Tabelle aus Begriff und Wert. */
@@ -397,8 +349,6 @@
   inline-size: fit-content;
   max-inline-size: 100%;
   margin-block-start: var(--space-xl);
-  padding-block-start: var(--space-s);
-  background: var(--metal-rule) top / 100% 2px no-repeat;
   line-height: 1.45;
 }
 
@@ -1788,8 +1738,8 @@
   --band-gap: clamp(4rem, 2.5rem + 4vw, 6.5rem);
 }
 
-/* Die Kennzahlen gehören zum Hero und stehen deshalb dicht darunter, ohne
-   eigene Fläche. */
+/* Der Satz mit den Kennzahlen gehört zum Hero und steht deshalb dicht
+   darunter, ohne eigene Fläche. */
 .campaign.landing > .hero + .figures {
   margin-block-start: calc(var(--space-l) - var(--band-gap));
 }

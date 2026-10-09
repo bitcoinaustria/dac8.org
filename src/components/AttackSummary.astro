@@ -43,23 +43,21 @@ const showFrance = latestYear === 2026 && franceNow < 77
             : ` Allein Frankreichs Innenminister zählte im ersten Halbjahr ${latestYear} 77 Entführungen, Freiheitsberaubungen und Erpressungen oder Versuche; die Sammlung kennt für Frankreich bisher ${franceNow} im ganzen Jahr.`)}
     </p>
   </div>
-  <dl class="keyfigures">
-    {years.map((year) => (
-        <div>
-          <dt>
-            <strong>{year}</strong>
-            {year === latestYear
-              ? en
-                ? ` known attacks up to ${throughShort}`
-                : ` bekannte Angriffe bis ${throughShort}`
-              : en
-                ? " known attacks"
-                : " bekannte Angriffe"}
-          </dt>
-          <dd>{countIn(year)}</dd>
-        </div>
-      ))}
-  </dl>
+  <p class="figure-line">
+    {en ? (
+      <>
+        In {years[0]}, <strong>{countIn(years[0])} attacks</strong> became
+        known, in {years[1]} <strong>{countIn(years[1])}</strong>, and in{" "}
+        {years[2]} <strong>{countIn(years[2])}</strong> up to {throughShort}.
+      </>
+    ) : (
+      <>
+        {years[0]} wurden <strong>{countIn(years[0])} Angriffe</strong>{" "}
+        bekannt, {years[1]} <strong>{countIn(years[1])}</strong>, {years[2]}{" "}
+        bis {throughShort} schon <strong>{countIn(years[2])}</strong>.
+      </>
+    )}
+  </p>
   <a class="button primary" href={pathFor("attacks", language)}
     >{en ? "Open the attack archive" : "Zum Angriffsarchiv"}</a
   >
@@ -70,7 +68,7 @@ const showFrance = latestYear === 2026 && franceNow < 77
     margin-block-start: var(--space-2xl);
   }
 
-  .keyfigures {
+  .figure-line {
     margin-block: var(--space-xl);
   }
 </style>

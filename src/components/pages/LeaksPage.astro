@@ -55,14 +55,23 @@ const strings = en
               ? "What companies, authorities and their service providers store about people gets lost again and again: through hackers, bribed staff, careless contractors or officials looking where they should not. Bitcoin works like cash, so nobody should know who holds how much. DAC8 adds tax data to what every provider already keeps, and its reports go to the tax authority."
               : "Was Unternehmen, Behörden und ihre Dienstleister über Menschen speichern, geht immer wieder verloren: durch Hacker, bestochene Mitarbeiter, nachlässige Auftragnehmer oder Beamte, die nachsehen, wo sie nicht sollen. Bitcoin funktioniert wie Bargeld, darum sollte niemand wissen, wer wie viel besitzt. DAC8 legt zu dem, was jeder Anbieter ohnehin aufbewahrt, Steuerdaten dazu, und die Meldungen gehen an das Finanzamt."}
         </p>
-        <dl class="glance" aria-label={en ? "At a glance" : "Auf einen Blick"}>
-          <dt>{en ? "Documented leaks" : "Belegte Lecks"}</dt>
-          <dd>{total}</dd>
-          <dt>{en ? "Of these at authorities" : "Davon bei Behörden"}</dt>
-          <dd>{countBy("holders", "authority")}</dd>
-          <dt>{en ? "Through service providers" : "Über Dienstleister"}</dt>
-          <dd>{countBy("holders", "vendor")}</dd>
-        </dl>
+        <p class="figure-line">
+          {en ? (
+            <>
+              <strong>{total} documented leaks</strong>,{" "}
+              <strong>{countBy("holders", "authority")}</strong> of them at
+              authorities and <strong>{countBy("holders", "vendor")}</strong>{" "}
+              through service providers.
+            </>
+          ) : (
+            <>
+              <strong>{total} belegte Lecks</strong>, davon{" "}
+              <strong>{countBy("holders", "authority")}</strong> bei Behörden
+              und <strong>{countBy("holders", "vendor")}</strong> über
+              Dienstleister.
+            </>
+          )}
+        </p>
         <p class="hero-note">
           {en
               ? "Only cases with a primary source: the company’s or authority’s own notice, a court, a prosecutor, a regulator or a parliament. Where no court has ruled, we say so. The list is incomplete, and the cases do not show that DAC8 caused them."
