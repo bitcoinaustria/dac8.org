@@ -11,8 +11,6 @@ interface Step {
   art: ArtworkId
   title: string
   text: string
-  // A short label above the first step of a chapter.
-  chapter?: string
 }
 
 interface Props {
@@ -30,7 +28,6 @@ const number = (index: number) => String(index + 1).padStart(2, "0")
       <li class="tale-step" data-step={index}>
         <Artwork id={step.art} language={language} size="scene" caption={false} />
         <div class="tale-text">
-          {step.chapter && <p class="tale-chapter">{step.chapter}</p>}
           <h3>
             <span class="tale-number">{number(index)}</span>
             {step.title}
@@ -70,15 +67,6 @@ const number = (index: number) => String(index + 1).padStart(2, "0")
   .tale-step > :global(.artwork) {
     --art-height: 17rem;
     margin-block-start: 0;
-  }
-
-  .tale-chapter {
-    margin-block-end: var(--space-xs);
-    color: var(--ink-3);
-    font-size: var(--step--1);
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
   }
 
   .tale-text h3 {

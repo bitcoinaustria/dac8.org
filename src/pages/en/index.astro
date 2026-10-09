@@ -79,7 +79,6 @@ const objections = homeObjections.map((id) => points.en[id])
         steps={[
           {
             art: "accountToRecord",
-            chapter: "What the provider collects",
             title: "Your account becomes a file.",
             text: "Your provider records your ID, your transactions and details of your wallet addresses under anti-money-laundering rules. For DAC8 it adds your tax identification number, tax residence and annual totals, for every customer and without suspicion.",
           },
@@ -90,7 +89,6 @@ const objections = homeObjections.map((id) => points.en[id])
           },
           {
             art: "dataHack",
-            chapter: "What it can lead to",
             title: "Stored. Hacked. Sold.",
             text: "The more data sits in one place, and the longer, the more a break-in pays. Exchanges, identity verification services and tax administrations have already lost such data.",
           },
@@ -159,7 +157,7 @@ const objections = homeObjections.map((id) => points.en[id])
         Privacy needs no justification.
         <span>State interference does.</span>
       </h2>
-      <ArgumentPoints points={objections} language="en" variant="objections" />
+      <ArgumentPoints points={objections} variant="objections" />
       <a class="text-link" href="/en/arguments/"
         >All arguments and objections</a
       >

@@ -269,11 +269,7 @@ const faqs = [
       </div>
       <AffectedCheck language="en" />
     </header>
-    <section
-      id="was-ist-dac8"
-      data-chapter="DAC8"
-      aria-labelledby="was-heading"
-    >
+    <section id="was-ist-dac8" aria-labelledby="was-heading">
       <h2 id="was-heading">What is DAC8?</h2>
       <p class="section-intro">
         DAC8 is an EU directive extending automatic exchange of tax information
@@ -319,12 +315,7 @@ const faqs = [
         >
       </p>
     </section>
-    <section
-      id="gemeldet"
-      class="band"
-      data-chapter="The report"
-      aria-labelledby="gemeldet-heading"
-    >
+    <section id="gemeldet" class="band" aria-labelledby="gemeldet-heading">
       <h2 id="gemeldet-heading">
         What gets reported and what the provider keeps
       </h2>
@@ -336,8 +327,7 @@ const faqs = [
       <Artwork id="reportAssets" language="en" size="wide" zoom />
       <div class="compare">
         <div class="reported">
-          <p class="compare-label">Goes to the tax authority</p>
-          <h3>Included in the report</h3>
+          <h3>Goes to the tax authority</h3>
           <ul>
             <li>
               Name, postal address, tax residence, tax identification number and
@@ -363,8 +353,7 @@ const faqs = [
           </ul>
         </div>
         <div class="absent">
-          <p class="compare-label">Stays with the provider</p>
-          <h3>Not in the report, but held by the provider</h3>
+          <h3>Stays with the provider</h3>
           <ul>
             <li>
               Your ID and the records of your identification (already required
@@ -422,7 +411,7 @@ const faqs = [
         <Artwork id="linkedIdentity" language="en" />
       </div>
     </section>
-    <section id="faelle" data-chapter="Cases" aria-labelledby="faelle-heading">
+    <section id="faelle" aria-labelledby="faelle-heading">
       <h2 id="faelle-heading">What has already happened</h2>
       <p class="section-intro">
         Providers and authorities lose data on people’s wealth again and again.
@@ -451,12 +440,7 @@ const faqs = [
       <CaseList items={attacks} language="en" />
       <AttackSummary language="en" />
     </section>
-    <section
-      id="rechtsweg"
-      class="band"
-      data-chapter="Legal route"
-      aria-labelledby="rechtsweg-heading"
-    >
+    <section id="rechtsweg" class="band" aria-labelledby="rechtsweg-heading">
       <h2 id="rechtsweg-heading">Our legal strategy</h2>
       <p class="section-intro">
         {campaignStatus.en.text}
@@ -482,12 +466,7 @@ const faqs = [
         </li>
       </ul>
     </section>
-    <section
-      id="faq"
-      class="faq"
-      data-chapter="Questions"
-      aria-labelledby="faq-heading"
-    >
+    <section id="faq" class="faq" aria-labelledby="faq-heading">
       <h2 id="faq-heading">Questions and answers</h2>
       <div class="faq-list">
         {faqs.map(faq => <details name="faq"><summary>{faq.question}</summary><p>{faq.answer} {faq.link && <a href={faq.link.href}>{faq.link.label}</a>}</p></details>)}

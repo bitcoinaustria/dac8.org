@@ -12,12 +12,7 @@ const { language } = Astro.props
 const en = language === "en"
 ---
 
-<section
-  id="begriffe"
-  class="glossary band"
-  data-chapter={en ? "Terms" : "Begriffe"}
-  aria-labelledby="glossary-heading"
->
+<section id="begriffe" class="glossary band" aria-labelledby="glossary-heading">
   <h2 id="glossary-heading">{en ? "Terms" : "Begriffe"}</h2>
   <dl>
     {glossary[language].map((entry) => (

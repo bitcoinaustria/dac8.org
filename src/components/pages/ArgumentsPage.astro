@@ -66,44 +66,35 @@ const sections = {
       />
     </header>
 
-    <section
-      id="verdacht"
-      data-chapter={en ? "No suspicion" : "Ohne Verdacht"}
-      aria-labelledby="verdacht-heading"
-    >
+    <section id="verdacht" aria-labelledby="verdacht-heading">
       <h2 id="verdacht-heading" class="statement">
         {en ? "Privacy needs no justification." : "Privatsphäre braucht keine Rechtfertigung."}
         <span
           >{en ? "State interference does." : "Staatliche Eingriffe schon."}</span
         >
       </h2>
-      <ArgumentPoints points={sections.verdacht} language={language} />
+      <ArgumentPoints points={sections.verdacht} />
     </section>
 
     <section
       id="speicherdauer"
       class="band"
-      data-chapter={en ? "Retention" : "Speicherdauer"}
       aria-labelledby="speicherdauer-heading"
     >
       <h2 id="speicherdauer-heading">
         {en ? "Data is kept for years, and more is added every year" : "Gespeichert wird lange, und jedes Jahr kommt mehr dazu"}
       </h2>
-      <ArgumentPoints points={sections.speicherdauer} language={language} />
+      <ArgumentPoints points={sections.speicherdauer} />
     </section>
 
-    <section
-      id="sicherheit"
-      data-chapter={en ? "Security" : "Sicherheit"}
-      aria-labelledby="sicherheit-heading"
-    >
+    <section id="sicherheit" aria-labelledby="sicherheit-heading">
       <h2 id="sicherheit-heading">
         {en ? "Every data store is a target" : "Jeder Datenbestand ist ein Angriffsziel"}
       </h2>
       <p class="section-intro">
         {en ? "The danger is not the single report. It is the store that grows over the years without any suspicion, and everything that can be linked to it." : "Die Gefahr ist nicht die einzelne Meldung. Es ist der Bestand, der über Jahre wächst, ohne dass je ein Verdacht bestand, und alles, was sich damit verknüpfen lässt."}
       </p>
-      <ArgumentPoints points={sections.sicherheit} language={language} />
+      <ArgumentPoints points={sections.sicherheit} />
       <ul class="facts concerns">
         <li id="verknuepfung">
           <strong
@@ -127,12 +118,7 @@ const sections = {
       </ul>
     </section>
 
-    <section
-      id="ausbau"
-      class="band"
-      data-chapter={en ? "Expansion" : "Ausbau"}
-      aria-labelledby="ausbau-heading"
-    >
+    <section id="ausbau" class="band" aria-labelledby="ausbau-heading">
       <h2 id="ausbau-heading">
         {en ? "DAC8 is one building block of financial surveillance" : "DAC8 ist ein Baustein finanzieller Überwachung"}
       </h2>
@@ -183,14 +169,10 @@ const sections = {
           >
         </li>
       </ol>
-      <ArgumentPoints points={sections.ausbau} language={language} />
+      <ArgumentPoints points={sections.ausbau} />
     </section>
 
-    <section
-      id="forderungen"
-      data-chapter={en ? "Demands" : "Forderungen"}
-      aria-labelledby="forderungen-heading"
-    >
+    <section id="forderungen" aria-labelledby="forderungen-heading">
       <h2 id="forderungen-heading">
         {en ? "Our demands" : "Was wir fordern"}
       </h2>
