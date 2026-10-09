@@ -6,17 +6,16 @@ import { asCase, fields, holders, newestLeaksFirst } from "@/data/leaks"
 import { languageFor, pathFor } from "@/lib/i18n"
 
 // Every documented leak, newest first. The dossier shows a few of them; this
-// page grows with the collection. Filters narrow the list by who lost the
-// data and what was lost, the two questions that matter for DAC8: the data
-// sits at the provider and, as reports, with the tax authority. Without
-// JavaScript the full list shows and the filters stay hidden.
+// page grows with the collection. A search and two filters narrow it by who
+// lost the data and what was lost, the two questions that matter for DAC8:
+// the data sits at the provider and, as reports, with the tax authority.
+// Without JavaScript the full list shows and the filters stay hidden.
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
 
 const total = newestLeaksFirst.length
-const countBy = (holder: string) =>
-  newestLeaksFirst.filter((leak) => leak.holders.some((id) => id === holder))
-    .length
+const countBy = (key: "holders" | "lost", id: string) =>
+  newestLeaksFirst.filter((leak) => (leak[key] as string[]).includes(id)).length
 const labelFor = (id: string) =>
   fields.find((field) => field.id === id)?.label[language] ?? id
 const items = newestLeaksFirst.map((leak) => ({
@@ -29,8 +28,16 @@ const items = newestLeaksFirst.map((leak) => ({
 }))
 
 const strings = en
-  ? { all: `${total} cases`, some: "{shown} of {total} cases" }
-  : { all: `${total} Fälle`, some: "{shown} von {total} Fällen" }
+  ? {
+      all: `${total} cases`,
+      some: "{shown} of {total} cases",
+      none: "No case matches these filters.",
+    }
+  : {
+      all: `${total} Fälle`,
+      some: "{shown} von {total} Fällen",
+      none: "Kein Fall passt zu diesen Filtern.",
+    }
 ---
 
 <Layout>
@@ -52,9 +59,9 @@ const strings = en
           <dt>{en ? "Documented leaks" : "Belegte Lecks"}</dt>
           <dd>{total}</dd>
           <dt>{en ? "Of these at authorities" : "Davon bei Behörden"}</dt>
-          <dd>{countBy("authority")}</dd>
+          <dd>{countBy("holders", "authority")}</dd>
           <dt>{en ? "Through service providers" : "Über Dienstleister"}</dt>
-          <dd>{countBy("vendor")}</dd>
+          <dd>{countBy("holders", "vendor")}</dd>
         </dl>
         <p class="hero-note">
           {en
@@ -71,44 +78,51 @@ const strings = en
 
       <div
         class="leak-filters"
-        role="group"
+        role="search"
         aria-label={en ? "Filter cases" : "Fälle filtern"}
         data-filters
         data-strings={JSON.stringify(strings)}
         hidden
       >
-        <div class="leak-filter" role="group" aria-labelledby="filter-holder">
-          <span class="leak-filter-label" id="filter-holder"
-            >{en ? "Who lost it" : "Wer sie verlor"}</span
+        <label class="field leak-search">
+          <span>{en ? "Search" : "Suchen"}</span>
+          <input
+            type="search"
+            name="q"
+            placeholder={en ? "e.g. Coinbase, tax office" : "z. B. Coinbase, Steuerbehörde"}
+            autocomplete="off"
+            data-query
           >
-          <div class="leak-options">
-            <button type="button" data-holder="" aria-pressed="true">
-              {en ? "All" : "Alle"}
-            </button>
+        </label>
+        <label class="field">
+          <span>{en ? "Lost by" : "Verloren bei"}</span>
+          <select name="holder" data-holder>
+            <option value="">{en ? "All" : "Alle"}</option>
             {holders.map((holder) => (
-                <button type="button" data-holder={holder.id} aria-pressed="false">
-                  {holder.label[language]}
-                </button>
+                <option value={holder.id}>
+                  {holder.label[language]} ({countBy("holders", holder.id)})
+                </option>
               ))}
-          </div>
-        </div>
-        <div class="leak-filter" role="group" aria-labelledby="filter-lost">
-          <span class="leak-filter-label" id="filter-lost"
-            >{en ? "What was lost" : "Was verloren ging"}</span
-          >
-          <div class="leak-options">
-            <button type="button" data-lost="" aria-pressed="true">
-              {en ? "All" : "Alle"}
-            </button>
+          </select>
+        </label>
+        <label class="field">
+          <span>{en ? "Data lost" : "Verlorene Daten"}</span>
+          <select name="lost" data-lost>
+            <option value="">{en ? "Any" : "Alle"}</option>
             {fields.map((field) => (
-                <button type="button" data-lost={field.id} aria-pressed="false">
-                  {field.label[language]}
-                </button>
+                <option value={field.id}>
+                  {field.label[language]} ({countBy("lost", field.id)})
+                </option>
               ))}
-          </div>
-        </div>
-        <p class="leak-count" aria-live="polite" data-count>{strings.all}</p>
+          </select>
+        </label>
       </div>
+      <p class="leak-status" data-status hidden>
+        <span aria-live="polite" data-count>{strings.all}</span>
+        <button type="button" class="leak-reset" data-reset hidden>
+          {en ? "Clear filters" : "Filter zurücksetzen"}
+        </button>
+      </p>
 
       <CaseList items={items} language={language} />
 
@@ -120,122 +134,135 @@ const strings = en
 </Layout>
 
 <script>
-  // Two filters that combine: who lost the data and what was lost.
+  // Search and two filters that combine: who lost the data and what was
+  // lost. Search matches anywhere in a case, ignoring case and accents.
+  const fold = (text: string) =>
+    text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase()
+
   for (const root of document.querySelectorAll<HTMLElement>("[data-leaks]")) {
     const bar = root.querySelector<HTMLElement>("[data-filters]")
+    const status = root.querySelector<HTMLElement>("[data-status]")
     const count = root.querySelector<HTMLElement>("[data-count]")
+    const reset = root.querySelector<HTMLButtonElement>("[data-reset]")
+    const query = root.querySelector<HTMLInputElement>("[data-query]")
+    const holder = root.querySelector<HTMLSelectElement>("[data-holder]")
+    const lost = root.querySelector<HTMLSelectElement>("[data-lost]")
+    if (!bar || !status || !count || !reset || !query || !holder || !lost)
+      continue
+    const strings = JSON.parse(bar.dataset.strings ?? "{}")
     const cases = [
       ...root.querySelectorAll<HTMLElement>(".cases > li[data-holder]"),
-    ]
-    if (!bar || !count) continue
-    const strings = JSON.parse(bar.dataset.strings ?? "{}")
-    const state = { holder: "", lost: "" }
+    ].map((item) => ({ item, text: fold(item.textContent ?? "") }))
+
+    const has = (list: string | undefined, value: string) =>
+      !value || (list ?? "").split(" ").includes(value)
 
     const render = () => {
+      const words = fold(query.value).split(/\s+/).filter(Boolean)
       let shown = 0
-      for (const item of cases) {
+      for (const { item, text } of cases) {
         const visible =
-          (!state.holder ||
-            (item.dataset.holder ?? "").split(" ").includes(state.holder)) &&
-          (!state.lost ||
-            (item.dataset.lost ?? "").split(" ").includes(state.lost))
+          has(item.dataset.holder, holder.value) &&
+          has(item.dataset.lost, lost.value) &&
+          words.every((word) => text.includes(word))
         item.hidden = !visible
         if (visible) shown++
       }
-      count.textContent =
-        shown === cases.length
-          ? strings.all
+      const filtered = Boolean(words.length || holder.value || lost.value)
+      count.textContent = !filtered
+        ? strings.all
+        : shown === 0
+          ? strings.none
           : strings.some
               .replace("{shown}", String(shown))
               .replace("{total}", String(cases.length))
+      reset.hidden = !filtered
     }
 
-    for (const key of ["holder", "lost"] as const) {
-      const buttons = [
-        ...bar.querySelectorAll<HTMLButtonElement>(`button[data-${key}]`),
-      ]
-      for (const button of buttons)
-        button.addEventListener("click", () => {
-          state[key] = button.dataset[key] ?? ""
-          for (const other of buttons)
-            other.setAttribute("aria-pressed", String(other === button))
-          render()
-        })
-    }
+    query.addEventListener("input", render)
+    holder.addEventListener("change", render)
+    lost.addEventListener("change", render)
+    reset.addEventListener("click", () => {
+      query.value = ""
+      holder.value = ""
+      lost.value = ""
+      render()
+      query.focus()
+    })
+    // Browsers may restore form values on back navigation.
+    render()
     bar.hidden = false
+    status.hidden = false
   }
 </script>
 
 <style>
+  /* Die übliche Filterleiste über einer Liste: Suche, zwei Auswahlen, darunter
+     die Trefferzahl. Schmal steht die Suche über den beiden Auswahlen. */
   .leak-filters {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: end;
-    gap: var(--space-m) var(--space-xl);
+    gap: var(--space-s);
     margin-block-start: var(--space-xl);
   }
 
-  .leak-filters[hidden] {
+  .leak-search {
+    grid-column: 1 / -1;
+  }
+
+  .leak-filters[hidden],
+  .leak-status[hidden],
+  .leak-reset[hidden] {
     display: none;
   }
 
-  .leak-filter {
-    display: grid;
-    gap: var(--space-2xs);
+  .leak-filters :is(input, select) {
+    block-size: 3rem;
   }
 
-  .leak-filter-label {
-    color: var(--ink-3);
-    font-size: var(--step--1);
+  @container campaign (width >= 46rem) {
+    .leak-filters {
+      grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+    }
+
+    .leak-search {
+      grid-column: auto;
+    }
   }
 
-  /* Wie die Ausschnitt-Wahl im Angriffsarchiv: eine Schiene, die gewählte
-     Option hebt sich hell ab. */
-  .leak-options {
+  .leak-status {
     display: flex;
     flex-wrap: wrap;
-    gap: 2px;
-    padding: 3px;
-    border-radius: var(--radius-lg);
-    background: var(--gray-3);
-  }
-
-  .leak-options button {
-    min-block-size: 2.25rem;
-    padding: 0 0.875rem;
-    border: 0;
-    border-radius: var(--radius-md);
-    color: var(--ink-3);
-    background: transparent;
-    font: inherit;
-    font-size: 0.875rem;
-    font-weight: 560;
-    cursor: pointer;
-    transition:
-      color 140ms ease,
-      background-color 140ms ease;
-  }
-
-  .leak-options button:hover {
-    color: var(--ink);
-  }
-
-  .leak-options button[aria-pressed="true"] {
-    color: var(--ink);
-    background: light-dark(var(--gray-1), var(--gray-6));
-    box-shadow: 0 1px 2px
-      color-mix(in oklab, var(--foreground) 14%, transparent);
-  }
-
-  .leak-options button:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: -2px;
-  }
-
-  .leak-count {
-    margin-inline-start: auto;
+    align-items: baseline;
+    gap: var(--space-2xs) var(--space-s);
+    margin-block-start: var(--space-s);
     color: var(--ink-3);
     font-size: var(--step--1);
+  }
+
+  .leak-reset {
+    padding: 0;
+    border: 0;
+    color: var(--ink-2);
+    background: none;
+    font: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  .leak-reset:hover {
+    color: var(--ink);
+  }
+
+  .leak-reset:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  .leaks .cases {
+    margin-block-start: var(--space-l);
   }
 
   .leaks .text-link {
