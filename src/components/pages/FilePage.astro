@@ -80,7 +80,7 @@ const en = language === "en"
 
 <style>
   /* Der Schluss der Akte: Spenden als nächster Schritt auf einer Fläche,
-     Brief und Teilen daneben. */
+     Brief und Teilen daneben ohne Rahmen. */
   .next-grid {
     display: grid;
     gap: var(--space-l) var(--space-xl);
@@ -93,9 +93,9 @@ const en = language === "en"
     background: var(--panel);
   }
 
+  /* Ohne Fläche, aber auf der Höhe der Überschrift daneben. */
   .next-item {
-    padding-block-start: var(--space-s);
-    border-block-start: 1px solid var(--line);
+    padding-block-start: var(--space-m-l);
   }
 
   .next h3 {

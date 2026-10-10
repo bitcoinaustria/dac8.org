@@ -1341,12 +1341,14 @@
   margin-block-start: var(--space-xl);
 }
 
+/* Jeder Spendenweg steht auf einer eigenen Fläche. */
 .campaign .donation-method {
   display: flex;
   flex-direction: column;
   min-inline-size: 0;
-  padding-block-start: 1.5rem;
-  border-block-start: 1px solid var(--ink);
+  padding: var(--space-m-l);
+  border-radius: var(--radius-xl);
+  background: var(--panel);
   scroll-margin-block-start: 5rem;
 }
 
@@ -1404,8 +1406,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  padding-block-start: 1.25rem;
-  border-block-start: 1px solid var(--line);
   font-size: 1rem;
 }
 
@@ -1836,8 +1836,8 @@
 
 .campaign .objections {
   display: grid;
-  gap: var(--space-l) var(--space-xl);
-  margin-block-start: var(--space-l);
+  gap: var(--space-xl) var(--space-2xl);
+  margin-block-start: var(--space-xl);
   padding: 0;
   list-style: none;
 }
@@ -1846,8 +1846,6 @@
   display: grid;
   align-content: start;
   gap: var(--space-xs);
-  padding-block-start: var(--space-s);
-  border-block-start: 1px solid var(--line);
 }
 
 .campaign .objections strong {
