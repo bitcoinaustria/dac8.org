@@ -28,7 +28,7 @@
   --destructive:        var(--red-11);
   --border:             var(--gray-6);
   --ring:               var(--brand-red);
-  /* Gefräste Metallkante aus den Illustrationen: Kapitel, Kennzahlen, Footer. */
+  /* Gefräste Metallkante aus den Illustrationen, für die Kapitel der Geschichte. */
   --metal-rule: linear-gradient(
     90deg,
     light-dark(#5d656c, #7d858c),

@@ -76,7 +76,11 @@ const sections = {
       <ArgumentPoints points={sections.verdacht} />
     </section>
 
-    <section id="speicherdauer" aria-labelledby="speicherdauer-heading">
+    <section
+      id="speicherdauer"
+      class="band"
+      aria-labelledby="speicherdauer-heading"
+    >
       <h2 id="speicherdauer-heading">
         {en ? "Data is kept for years, and more is added every year" : "Gespeichert wird lange, und jedes Jahr kommt mehr dazu"}
       </h2>
@@ -91,7 +95,7 @@ const sections = {
         {en ? "The danger is not the single report. It is the store that grows over the years without any suspicion, and everything that can be linked to it." : "Die Gefahr ist nicht die einzelne Meldung. Es ist der Bestand, der über Jahre wächst, ohne dass je ein Verdacht bestand, und alles, was sich damit verknüpfen lässt."}
       </p>
       <ArgumentPoints points={sections.sicherheit} />
-      <ul class="facts">
+      <ul class="facts concerns">
         <li id="verknuepfung">
           <strong
             >{en ? "When datasets come together" : "Wenn Datensätze zusammenkommen"}</strong
@@ -114,7 +118,7 @@ const sections = {
       </ul>
     </section>
 
-    <section id="ausbau" aria-labelledby="ausbau-heading">
+    <section id="ausbau" class="band" aria-labelledby="ausbau-heading">
       <h2 id="ausbau-heading">
         {en ? "DAC8 is one building block of financial surveillance" : "DAC8 ist ein Baustein finanzieller Überwachung"}
       </h2>
@@ -149,8 +153,11 @@ const sections = {
             >{en ? "it records the sender and recipient under the EU transfer of funds regulation, including when you transfer to your own wallet." : "erfasst er nach der EU-Geldtransferverordnung Absender und Empfänger, auch wenn du auf deine eigene Wallet überträgst."}</span
           >
         </li>
-        <li class="accent">
-          <strong>{en ? "Every year" : "Jedes Jahr"}</strong>
+        <li>
+          <strong
+            >{en ? "Every year" : "Jedes Jahr"}
+            <span class="tag">DAC8</span></strong
+          >
           <span
             >{en ? "it prepares the tax identification numbers and annual totals of all customers for the DAC8 report." : "bereitet er Steuernummer und Jahreswerte aller Kunden für die DAC8-Meldung auf."}</span
           >

@@ -13,6 +13,7 @@ export const routes = {
   dossier: { de: "/dossier/", en: "/en/dossier/" },
   arguments: { de: "/argumente/", en: "/en/arguments/" },
   attacks: { de: "/angriffe/", en: "/en/attacks/" },
+  leaks: { de: "/datenlecks/", en: "/en/data-leaks/" },
   history: { de: "/geschichte/", en: "/en/history/" },
   proceedings: { de: "/verfahren/", en: "/en/proceedings/" },
   participate: { de: "/mitmachen/", en: "/en/get-involved/" },

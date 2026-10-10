@@ -11,8 +11,6 @@ interface Step {
   art: ArtworkId
   title: string
   text: string
-  // A short label above the first step of a chapter.
-  chapter?: string
 }
 
 interface Props {
@@ -30,7 +28,6 @@ const number = (index: number) => String(index + 1).padStart(2, "0")
       <li class="tale-step" data-step={index}>
         <Artwork id={step.art} language={language} size="scene" caption={false} />
         <div class="tale-text">
-          {step.chapter && <p class="tale-chapter">{step.chapter}</p>}
           <h3>
             <span class="tale-number">{number(index)}</span>
             {step.title}
@@ -72,15 +69,6 @@ const number = (index: number) => String(index + 1).padStart(2, "0")
     margin-block-start: 0;
   }
 
-  .tale-chapter {
-    margin-block-end: var(--space-xs);
-    color: var(--ink-3);
-    font-size: var(--step--1);
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
   .tale-text h3 {
     max-inline-size: 20ch;
     font-size: clamp(1.375rem, 1.15rem + 0.8vw, 1.75rem);
@@ -94,7 +82,7 @@ const number = (index: number) => String(index + 1).padStart(2, "0")
   .tale-number {
     display: block;
     margin-block-end: var(--space-2xs);
-    color: var(--accent);
+    color: var(--ink-3);
     font-size: var(--step--1);
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -142,8 +130,8 @@ const number = (index: number) => String(index + 1).padStart(2, "0")
     .tale[data-staged] .tale-step {
       grid-template-columns: minmax(0, 1fr);
       align-content: center;
-      min-block-size: 70svh;
-      opacity: 0.3;
+      min-block-size: 55svh;
+      opacity: 0.4;
       transition: opacity 0.35s ease;
     }
 
@@ -188,7 +176,7 @@ const number = (index: number) => String(index + 1).padStart(2, "0")
       position: absolute;
       inset-block-end: 0;
       inset-inline-end: 0;
-      color: var(--accent);
+      color: var(--ink);
       font-size: var(--step--1);
       font-weight: 600;
       letter-spacing: 0.06em;

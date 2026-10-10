@@ -1,0 +1,72 @@
+---
+import type { Language } from "@/lib/i18n"
+
+// Sourced cases. Each has a dateline above the headline ("Ledger · 2020"),
+// so a reader can run down the list by who and when before reading any
+// sentence. Titles written as "Ledger 2020: headline." are split into both.
+// Tags name what was lost; data attributes let the leak page filter.
+export interface Case {
+  dateline?: string
+  title: string
+  text: string
+  sources: { label: string; href: string }[]
+  tags?: string[]
+  data?: Record<string, string>
+}
+
+interface Props {
+  items: Case[]
+  language: Language
+}
+
+const { items, language } = Astro.props
+const en = language === "en"
+
+const split = (title: string) => {
+  const at = title.indexOf(": ")
+  if (at < 0) return { headline: title }
+  const lead = title.slice(0, at)
+  const year = lead.match(/^(.+?),?\s(\d{4})$/)
+  const rest = title.slice(at + 2)
+  return {
+    dateline: year ? `${year[1]} · ${year[2]}` : lead,
+    headline: rest.charAt(0).toUpperCase() + rest.slice(1),
+  }
+}
+---
+
+<ul class="facts cases">
+  {items.map((item) => {
+    const { dateline, headline } = item.dateline
+      ? { dateline: item.dateline, headline: item.title }
+      : split(item.title)
+    const data = Object.fromEntries(
+      Object.entries(item.data ?? {}).map(([key, value]) => [`data-${key}`, value]),
+    )
+    return (
+      <li {...data}>
+        {dateline && <p class="dateline">{dateline}</p>}
+        <strong>{headline}</strong>
+        {item.tags && item.tags.length > 0 && (
+          <ul class="case-tags" aria-label={en ? "Data lost" : "Verlorene Daten"}>
+            {item.tags.map((tag) => <li>{tag}</li>)}
+          </ul>
+        )}
+        <p>{item.text}</p>
+        <small>
+          {item.sources.length > 1
+            ? en
+              ? "Sources:"
+              : "Quellen:"
+            : en
+              ? "Source:"
+              : "Quelle:"}{" "}
+          {item.sources.map((source, index) => [
+            index > 0 && ", ",
+            <a href={source.href}>{source.label}</a>,
+          ])}
+        </small>
+      </li>
+    )
+  })}
+</ul>
