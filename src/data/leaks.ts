@@ -29,6 +29,10 @@ export interface Leak {
   text: Record<Language, string>
   // One short line on what followed; needed for the cases on the home page.
   then?: Record<Language, string>
+  // How many people a source names as affected, at the lower figure it
+  // gives. Left out where the sources only count accounts, email addresses,
+  // files or queries, or give no number at all; never guess.
+  people?: number
   sources: { label: Record<Language, string>; href: string }[]
   featured?: boolean
 }
@@ -75,6 +79,7 @@ export const leaks: Leak[] = [
       de: "Danach Erpressungsdrohungen und Briefe an die Wohnadresse",
       en: "Then extortion threats and letters to home addresses",
     },
+    people: 272000,
     sources: [
       {
         label: same("Ledger"),
@@ -132,6 +137,7 @@ export const leaks: Leak[] = [
       de: "Danach verlangten die Angreifer Lösegeld",
       en: "Then the attackers demanded a ransom",
     },
+    people: 6300,
     sources: [
       {
         label: same("Fractal ID"),
@@ -159,6 +165,7 @@ export const leaks: Leak[] = [
       de: "Betrüger nutzten die Daten, Kosten bis zu 400 Mio. $",
       en: "Fraudsters used the data, costs of up to $400m",
     },
+    people: 69461,
     sources: [
       {
         label: same("Coinbase (Form 8-K)"),
@@ -277,6 +284,7 @@ export const leaks: Leak[] = [
       de: "Tausende Abfragen ohne dienstlichen Grund",
       en: "Thousands of queries without any official reason",
     },
+    people: 1000,
     sources: [
       {
         label: {
@@ -314,6 +322,7 @@ export const leaks: Leak[] = [
       de: "Über denselben Austausch gehen künftig die DAC8-Meldungen",
       en: "DAC8 reports will travel through the same exchange",
     },
+    people: 6000000,
     sources: [
       {
         label: same("OECD Global Forum"),
@@ -352,6 +361,7 @@ export const leaks: Leak[] = [
       de: "Ein IT-Auftragnehmer der US-Steuerbehörde IRS tarnte seine Abfragen mit breit angelegten Suchen und kopierte die Steuerdaten tausender der reichsten Menschen des Landes. Er gab sie an Medien weiter. Laut einem späteren Prüfbericht waren rund 406.000 Steuerpflichtige betroffen. Er wurde 2024 zu fünf Jahren Haft verurteilt.",
       en: "An IT contractor at the US tax authority, the IRS, hid his queries behind broad searches and copied the tax data of thousands of the country’s wealthiest people. He passed it to news organisations. According to a later audit, around 406,000 taxpayers were affected. In 2024 he was sentenced to five years in prison.",
     },
+    people: 8418,
     sources: [
       {
         label: { de: "US-Justizministerium", en: "US Department of Justice" },
@@ -378,6 +388,7 @@ export const leaks: Leak[] = [
       de: "Laut dem Staatsanwalt von Perugia sah ein Offizier der Finanzpolizei Guardia di Finanza von 2019 bis 2022 mehr als 4.000 Geldwäsche-Verdachtsmeldungen von Banken ein und fragte über 1.100 Personen in der Steuerdatenbank ab. Ins Rollen kam der Fall, als Details über die Finanzen des Verteidigungsministers in der Zeitung standen. 2026 beantragte die Staatsanwaltschaft Rom einen Prozess; verurteilt ist bisher niemand.",
       en: "According to the Perugia prosecutor, an officer of the financial police, the Guardia di Finanza, viewed more than 4,000 money-laundering suspicion reports from banks between 2019 and 2022 and searched more than 1,100 people in the tax database. The case began when details of the defence minister’s finances appeared in the press. In 2026 Rome prosecutors asked for a trial; no one has been convicted so far.",
     },
+    people: 1123,
     sources: [
       {
         label: {
@@ -454,6 +465,7 @@ export const leaks: Leak[] = [
       de: "Mit anderswo gestohlenen Passwörtern meldeten sich Kriminelle in rund 26.000 Online-Konten der kanadischen Steuerbehörde an und sahen Daten von etwa 34.000 Menschen ein, darunter Anschrift, Steuer- und Bankdaten. Sie änderten Bankverbindungen und Anschriften und kassierten Rückzahlungen und Sozialleistungen. Bis 2025 zählte die Behörde 42.755 bestätigte Fälle, in denen Dritte Steuerdaten unbefugt nutzten; der Datenschutzbeauftragte stellte 2026 Verstöße gegen das Datenschutzgesetz fest.",
       en: "Using passwords stolen elsewhere, criminals logged into around 26,000 online accounts at the Canada Revenue Agency and saw data on about 34,000 people, including postal address, tax and banking details. They changed bank details and addresses and collected refunds and benefits. By 2025 the agency counted 42,755 confirmed cases of third parties using taxpayer data without authorisation; in 2026 the privacy commissioner found breaches of the Privacy Act.",
     },
+    people: 34000,
     sources: [
       {
         label: {
@@ -486,6 +498,7 @@ export const leaks: Leak[] = [
       de: "Mit Identitätsdaten, die sie anderswo per Phishing erbeutet hatten, legten Kriminelle Steuerkonten bei der britischen Steuerbehörde HMRC an oder übernahmen bestehende und forderten Rückzahlungen. HMRC schrieb rund 100.000 Betroffene an und nannte dem Parlament einen Schaden von 47 Millionen Pfund. Die eigenen Systeme seien dabei nicht gehackt worden.",
       en: "Using identity data phished elsewhere, criminals created or took over tax accounts at HMRC, the British tax authority, and claimed repayments. HMRC wrote to around 100,000 people affected and told Parliament that £47 million had been taken. It says its own systems were not hacked.",
     },
+    people: 100000,
     sources: [
       {
         label: same("HMRC"),
@@ -515,6 +528,7 @@ export const leaks: Leak[] = [
       de: "Mit anderswo gestohlenen persönlichen Daten bestanden Betrüger die Online-Identitätsprüfung der US-Steuerbehörde und luden Steuerauszüge herunter. Laut Prüfbericht gelang ihnen das bei weiteren 355.262 Steuerpflichtigen, über die rund 220.000 hinaus, die die Behörde selbst gemeldet hatte. Bei später damit eingereichten Steuererklärungen stoppte die Behörde Rückzahlungen über 119 Millionen Dollar.",
       en: "Using personal data stolen elsewhere, fraudsters passed the US tax authority’s online identity check and downloaded tax transcripts. According to the audit, they succeeded for another 355,262 taxpayers beyond the roughly 220,000 the authority had reported itself. On tax returns later filed with this data, the authority stopped refunds of 119 million dollars.",
     },
+    people: 575262,
     sources: [
       {
         label: { de: "TIGTA-Prüfbericht", en: "TIGTA audit" },
@@ -537,6 +551,7 @@ export const leaks: Leak[] = [
       de: "Die britische Steuerbehörde HMRC schickte die gesamte Kindergeld-Datenbank auf zwei CDs per Kurier an den Rechnungshof. Sie kamen nie an: Namen, Anschriften, Geburtsdaten und Versicherungsnummern von 25 Millionen Menschen, teils mit Bankverbindung. Ein Untersuchungsbericht nannte den Verlust „völlig vermeidbar“. Der Behördenchef trat zurück.",
       en: "HMRC, the British tax authority, sent the entire child benefit database on two CDs by courier to the National Audit Office. They never arrived: names, postal addresses, dates of birth and National Insurance numbers of 25 million people, some with bank details. A review called the loss “entirely avoidable”. The chairman of HMRC resigned.",
     },
+    people: 25000000,
     sources: [
       {
         label: {
@@ -566,6 +581,7 @@ export const leaks: Leak[] = [
       de: "Die niederländische Steuerbehörde führte mehr als sechs Jahre lang rechtswidrig eine Liste mit rund 270.000 Menschen, die sie des Betrugs verdächtigte, oft auf falscher Grundlage. Wer darauf stand, bekam zum Beispiel keine Ratenzahlung. Die Datenschutzbehörde verhängte 2022 eine Strafe von 3,7 Millionen Euro, auch wegen mangelhafter Sicherung der Liste.",
       en: "For more than six years, the Dutch tax authority unlawfully kept a list of around 270,000 people it suspected of fraud, often on wrong grounds. Those on it were, for example, refused payment plans. In 2022 the data protection authority fined it 3.7 million euros, in part for failing to secure the list.",
     },
+    people: 270000,
     sources: [
       {
         label: {
@@ -591,6 +607,7 @@ export const leaks: Leak[] = [
       de: "Ein Vollstreckungsbeamter der niederländischen Steuerbehörde fragte von 2020 bis 2022 außerhalb der Dienstzeit Kennzeichen samt Personendaten ab und verkaufte sie an Kriminelle. Kurz nach zweien seiner Abfragen wurde ein Fahrzeughalter nahe seiner Wohnung erschossen; einen direkten Zusammenhang konnte die Staatsanwaltschaft nicht nachweisen. 2024 wurde er zu drei Jahren Haft verurteilt.",
       en: "Between 2020 and 2022, a bailiff at the Dutch tax authority looked up licence plates with the owners’ personal data outside working hours and sold them to criminals. Shortly after two of his lookups, a vehicle owner was shot dead near his home; the prosecution could not establish a direct link. In 2024 he was sentenced to three years in prison.",
     },
+    people: 90,
     sources: [
       {
         label: {
@@ -703,6 +720,7 @@ export const leaks: Leak[] = [
       de: "Unbekannte missbrauchten den rechtmäßigen Suchzugang eines privaten Unternehmens zum dänischen Personenregister. Sie holten Namen, Anschriften und Personennummern von rund 8,8 Millionen Menschen, Lebenden, Ausgewanderten und Verstorbenen. Die Polizei ermittelt.",
       en: "Unknown parties misused a private company’s lawful search access to the Danish population register. They obtained names, postal addresses and personal ID numbers of around 8.8 million people, living, emigrated and dead. The police are investigating.",
     },
+    people: 8800000,
     sources: [
       {
         label: { de: "Dänisches Ministerium", en: "Danish ministry" },
@@ -845,6 +863,7 @@ export const leaks: Leak[] = [
       de: "Angreifer gelangten in das externe Support-Portal des Hardware-Wallet-Herstellers. Dort lagen Name oder Spitzname und E-Mail-Adresse von bis zu 66.000 Menschen, die seit Dezember 2021 den Support kontaktiert hatten. 41 von ihnen schrieben die Angreifer direkt an und fragten nach der Wiederherstellungsphrase.",
       en: "Attackers got into the hardware wallet maker’s third-party support portal. It held the name or nickname and email address of up to 66,000 people who had contacted support since December 2021. The attackers wrote to 41 of them directly, asking for their recovery phrase.",
     },
+    people: 41,
     sources: [
       {
         label: same("Trezor"),
@@ -998,6 +1017,7 @@ export const leaks: Leak[] = [
       de: "Mit E-Mail-Adresse, Passwort und Telefonnummer, die laut Coinbase aus Phishing stammten, und einer Lücke in der Kontowiederherstellung per SMS übernahmen Angreifer die Konten von mindestens 6.000 Kunden. Dort sahen sie Name, Wohnadresse, Kontostände und Transaktionen und zogen Guthaben ab. Coinbase erstattete die Verluste.",
       en: "Using email addresses, passwords and phone numbers that Coinbase says came from phishing, and a flaw in its SMS account recovery, attackers took over the accounts of at least 6,000 customers. There they saw name, home address, balances and transactions, and drained funds. Coinbase reimbursed the losses.",
     },
+    people: 6000,
     sources: [
       {
         label: {
@@ -1066,6 +1086,27 @@ export const featuredLeaks = leaks.filter((leak) => leak.featured)
 export const homeLeaks = ["waltio", "coinbase", "ledger", "bulgaria"]
   .map((id) => leaks.find((leak) => leak.id === id))
   .filter((leak): leak is Leak => Boolean(leak?.then))
+
+// People affected across all cases, as the sources count them. One person
+// can be in several cases, so this is a sum of cases, not of people.
+export const peopleAffected = leaks.reduce(
+  (sum, leak) => sum + (leak.people ?? 0),
+  0,
+)
+
+// "rund 41 Millionen" / "about 41 million", rounded down; from a thousand
+// million on in billions with one decimal.
+export const roundPeople = (count: number, language: Language) => {
+  const en = language === "en"
+  if (count >= 1e9) {
+    const billions = (Math.floor(count / 1e8) / 10).toLocaleString(
+      en ? "en-GB" : "de-AT",
+    )
+    return en ? `${billions} billion` : `${billions} Milliarden`
+  }
+  const millions = Math.floor(count / 1e6)
+  return en ? `${millions} million` : `${millions} Millionen`
+}
 
 // Newest first; cases without a single year go last.
 export const newestLeaksFirst = [...leaks].sort(
