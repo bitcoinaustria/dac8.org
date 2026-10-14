@@ -130,15 +130,15 @@ export const steps: Step[] = [
       de: "Hacker stehlen von einem Webserver der Gebührenstelle GIS rund 214.000 Kundendatensätze, 96.000 davon mit Kontodaten.",
       en: "Hackers steal around 214,000 customer records from a web server of GIS, the fee office, 96,000 of them with bank account details.",
     },
-    adds: ["name", "bank"],
+    adds: ["bank"],
   },
   {
     year: 2014,
     name: same("eBay"),
     source: { de: "eBay, Mai 2014", en: "eBay, May 2014" },
     text: {
-      de: "Angreifer kopieren die Kundendatenbank von eBay: Name, E-Mail, Anschrift, Telefonnummer und Geburtsdatum.",
-      en: "Attackers copy eBay’s customer database: name, email, postal address, phone number and date of birth.",
+      de: "Angreifer verschaffen sich Zugriff auf die Kundendatenbank von eBay: Name, E-Mail, Anschrift, Telefonnummer und Geburtsdatum.",
+      en: "Attackers get into eBay’s customer database: name, email, postal address, phone number and date of birth.",
     },
     adds: ["name", "birth", "home", "email", "phone"],
   },
@@ -150,8 +150,8 @@ export const steps: Step[] = [
       en: "Supreme Administrative Court, 24 June 2026",
     },
     text: {
-      de: "Die Post schätzt für rund 2,2 Millionen Menschen, wie nah sie welcher Partei stehen, und verkauft solche Werte weiter. 2026 bestätigt der Verwaltungsgerichtshof 13 Millionen Euro Strafe.",
-      en: "Austrian Post estimates for around 2.2 million people how close they are to each party, and sells such scores on. In 2026 the Supreme Administrative Court confirms a fine of 13 million euros.",
+      de: "Die Post schätzt für rund 2,2 Millionen Menschen, wie nah sie welcher Partei stehen, und verkauft einen Teil davon. 2026 setzt der Verwaltungsgerichtshof die Strafe auf 13 Millionen Euro herab.",
+      en: "Austrian Post estimates for around 2.2 million people how close they are to each party, and sells some of the scores. In 2026 the Supreme Administrative Court reduces the fine to 13 million euros.",
     },
     adds: ["party"],
   },
@@ -200,8 +200,8 @@ export const steps: Step[] = [
     year: 2027,
     label: { de: "Erste Meldung", en: "First report" },
     text: {
-      de: "Sein Anbieter meldet das Jahr 2026 ans Finanzamt: Name, Anschrift, Geburtsdatum, Steuernummer und je Kryptowert die Summen aus Käufen, Verkäufen, Tausch und Auszahlungen an Wallets, ohne Wallet-Adressen.",
-      en: "His provider reports 2026 to the tax office: name, postal address, date of birth, tax number and, per crypto-asset, the totals of purchases, sales, swaps and withdrawals to wallets, without wallet addresses.",
+      de: "Sein Anbieter meldet das Jahr 2026 ans Finanzamt: Name, Anschrift, Geburtsdatum, Steuerwohnsitz, Steuernummer und je Kryptowert die Summen aus Käufen, Verkäufen, Tausch und Auszahlungen an Wallets, ohne Wallet-Adressen.",
+      en: "His provider reports 2026 to the tax authority: name, postal address, date of birth, tax residence, tax number and, per crypto-asset, the totals of purchases, sales, swaps and withdrawals to wallets, without wallet addresses.",
     },
     adds: [],
     reports: 1,
@@ -218,7 +218,8 @@ export const steps: Step[] = [
   },
   {
     year: 2036,
-    label: { de: "Zehn Meldungen", en: "Ten reports" },
+    leak: "bulgaria",
+    name: { de: "Zehn Meldungen", en: "Ten reports" },
     text: {
       de: "Ab jetzt liegen beim Anbieter immer zehn Jahresmeldungen über Max. Auch Steuerbehörden haben schon Daten verloren: In Bulgarien gelangten 2019 Steuerdaten von mehr als sechs Millionen Menschen ins Netz.",
       en: "From now on the provider always holds ten annual reports on Max. Tax authorities have lost data too: in Bulgaria in 2019, tax data on more than six million people ended up online.",

@@ -53,6 +53,7 @@ const sheets = steps.map((step, index) => {
 // "GIS ’20": the latest case that lost a piece.
 const tag = (at: number) =>
   `${named[at].short} ’${String(steps[at].year).slice(2)}`
+const nameRow = rows.find((row) => row.id === "name")
 const pieceLabel = (piece: Piece) =>
   rows.find((row) => row.id === piece)?.label[language] ?? piece
 // The portrait comes into focus with every piece and is sharp once an ID
@@ -68,14 +69,14 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
   aria-labelledby="time-machine-heading"
   data-time-machine
   data-play={en ? "Play" : "Abspielen"}
-  data-pause={en ? "Pause" : "Pause"}
+  data-pause="Pause"
 >
   <div class="intro">
     <h2 id="time-machine-heading">
       {en ? "Your file over time." : "Deine Akte über die Zeit."}
     </h2>
     <p>
-      {en ? "Max is invented and unlucky: he was in every one of these real cases. Each piece on its own looks harmless. Travel through the years and watch them add up to a picture." : "Max ist erfunden und hatte Pech: Er war bei jedem dieser echten Fälle dabei. Jedes Stück für sich wirkt harmlos. Reise durch die Jahre und sieh zu, wie daraus ein Bild wird."}
+      {en ? "Max is invented and unlucky: he was in every one of these real cases. Many pieces look harmless on their own. Travel through the years and watch them add up to a picture." : "Max ist erfunden und hatte Pech: Er war bei jedem dieser echten Fälle dabei. Viele Stücke wirken für sich harmlos. Reise durch die Jahre und sieh zu, wie daraus ein Bild wird."}
     </p>
   </div>
 
@@ -108,7 +109,7 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
             <p class="sheet-name">
               {found.has("name") ? (
                 <span class:list={{ "is-new": found.get("name")?.[0] === index }}>
-                  {rows[0].value[language]}
+                  {nameRow?.value[language]}
                 </span>
               ) : (
                 <span class="redacted" style="--w: 11ch" />
@@ -116,7 +117,7 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
             </p>
           </div>
           <dl class="sheet-rows">
-            {rows.slice(1).map((row) => {
+            {rows.filter((row) => row !== nameRow).map((row) => {
               const by = found.get(row.id) ?? []
               const latest = by.at(-1)
               return (
@@ -155,7 +156,7 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
                 {reports === 0
                   ? en ? "none yet" : "noch keine"
                   : en
-                    ? `${reports} to the tax office`
+                    ? `${reports} to the tax authority`
                     : `${reports} ans Finanzamt`}
               </span>
             </p>
@@ -171,7 +172,7 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
                 <i class:list={{ "is-known": found.has(row.id) }} />
               ))}
             </span>
-            {en ? `${found.size} of ${rows.length} details leaked` : `${found.size} von ${rows.length} Angaben geleakt`}
+            {en ? `${found.size} of ${rows.length} details out of his hands` : `${found.size} von ${rows.length} Angaben in fremden Händen`}
           </p>
         </div>
       ))}
@@ -182,6 +183,7 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
         class="ruler-step"
         type="button"
         data-prev
+        disabled
         aria-label={en ? "Back in time" : "Zurück in der Zeit"}
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -197,13 +199,14 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
           step="1"
           value={last}
           data-range
+          disabled
           aria-label={en ? "Year" : "Jahr"}
           aria-valuetext={`${steps[last].year}: ${named[last].name}`}
         >
         <ol class="ticks" aria-hidden="true">
           {steps.map((step, index) => (
             <li
-              class:list={{ "is-current": index === last, "is-dac8": !step.leak && step.reports }}
+              class:list={{ "is-current": index === last, "is-dac8": Boolean(step.reports) }}
               data-tick
               data-valuetext={`${step.year}: ${named[index].name}`}
             >
@@ -216,6 +219,7 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
         class="ruler-step"
         type="button"
         data-next
+        disabled
         aria-label={en ? "Forward in time" : "Vor in der Zeit"}
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -241,10 +245,13 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
               {named[index].name}
             </p>
             <p class="caption-text">{step.text[language]}</p>
-            {step.adds.length > 0 && (
+            {index > 0 && (
               <p class="caption-adds">
-                {en ? "On the file: " : "In der Akte: "}
-                {step.adds.map(pieceLabel).join(", ")}.
+                {step.adds.length > 0 &&
+                  `${en ? "On the file" : "In der Akte"}: ${step.adds.map(pieceLabel).join(", ")}. `}
+                {en
+                  ? `Now ${sheets[index].found.size} of ${rows.length} details out of his hands.`
+                  : `Jetzt ${sheets[index].found.size} von ${rows.length} Angaben in fremden Händen.`}
                 {named[index].source &&
                   (en
                     ? ` Source: ${named[index].source}.`
@@ -293,6 +300,8 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
     --sheet-ink-3: #5f676d;
     --sheet-red: #c9000d;
     --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
+    /* Ein hellerer Fokusring, der auf dem dunklen Raum sichtbar bleibt. */
+    --ring: #ff3b45;
     position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -375,7 +384,7 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
     line-height: 1.35;
     transform-origin: 50% 0;
     transform: translate3d(0, calc(var(--d) * 1.15rem), calc(var(--d) * 70px));
-    opacity: max(0, 1 + var(--d) * 0.13);
+    opacity: max(0, 1 + var(--d) * 0.17);
     transition:
       transform 0.8s var(--ease),
       opacity 0.6s var(--ease);
@@ -437,6 +446,7 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
     fill: #e9edef;
     filter: blur(var(--blur));
     transform: scale(1.15);
+    transition: filter 1.2s var(--ease);
   }
 
   .sheet-name {
@@ -557,7 +567,7 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
     border-radius: 0.15rem;
     background: #23282c14;
     color: transparent;
-    font-size: 0.5625rem;
+    font-size: 0.625rem;
     font-weight: 600;
     text-align: center;
   }
@@ -632,10 +642,6 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
     }
   }
 
-  .portrait svg {
-    transition: filter 1.2s var(--ease);
-  }
-
   /* ---------- Lineal ---------- */
 
   .ruler {
@@ -684,7 +690,8 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
     position: relative;
     flex: 1;
     min-inline-size: 0;
-    touch-action: none;
+    /* Quer lässt das Lineal senkrechtes Scrollen der Seite durch. */
+    touch-action: pan-y;
     cursor: pointer;
   }
 
@@ -816,15 +823,6 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
       vertical-align: 0.1em;
     }
 
-    /* Wie oft eine Angabe schon im Netz stand. */
-    .source b {
-      margin-inline-start: 0.4em;
-      padding: 0.05em 0.35em;
-      border-radius: 0.2rem;
-      background: #c9000d1f;
-      font-weight: 700;
-    }
-
     .sheet-tax {
       margin-block-start: 0.6rem;
       padding: 0.5rem 0.6rem;
@@ -856,6 +854,7 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
 
     .track {
       inline-size: 100%;
+      touch-action: none;
     }
 
     .range {
@@ -872,7 +871,12 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
       grid-template-columns: 1fr auto;
       align-items: center;
       justify-items: end;
-      font-size: calc(0.75rem * var(--zoom, 1));
+    }
+
+    .ticks li span {
+      transform: scale(var(--zoom, 1));
+      transform-origin: 100% 50%;
+      transition: transform 0.15s;
     }
 
     .ticks li::before {
@@ -940,11 +944,11 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
   }
 
   .play .icon-pause,
-  .play[aria-pressed="true"] .icon-play {
+  [data-playing] .play .icon-play {
     display: none;
   }
 
-  .play[aria-pressed="true"] .icon-pause {
+  [data-playing] .play .icon-pause {
     display: block;
   }
 
@@ -988,13 +992,14 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
     font-weight: 560;
   }
 
-  /* Mit Script steht nur die Erzählung zum gewählten Jahr da. */
-  .time-machine.is-live [data-caption]:not(.is-current) {
-    display: none;
+  /* Mit Script steht nur die Erzählung zum gewählten Jahr da. Alle liegen
+     übereinander, damit die Höhe beim Abspielen nicht springt. */
+  .time-machine.is-live [data-caption] {
+    grid-area: 1 / 1;
   }
 
-  .time-machine.is-live .captions {
-    min-block-size: 11rem;
+  .time-machine.is-live [data-caption]:not(.is-current) {
+    visibility: hidden;
   }
 
   /* Die gewählte Station blendet sanft ein. */
@@ -1008,39 +1013,37 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
       translate: 0 0.4rem;
     }
   }
-
-  @media (prefers-reduced-motion: reduce) {
-    .sheet,
-    .space,
-    .portrait svg {
-      transition: none;
-    }
-
-    .sheet.is-current .is-new .value,
-    .sheet.is-current .sheet-name .is-new,
-    .sheet.is-current .is-new .source,
-    .sheet.is-current .is-again .source,
-    .time-machine.is-live [data-caption].is-current {
-      animation: none;
-    }
-  }
 </style>
 
 <script>
   // Moves the stack to the chosen step. The range is the single source of
-  // truth: buttons, the ruler and playback all set it. Playback starts once
-  // when the machine comes into view and stops at the first touch.
+  // truth: buttons, the ruler and playback all set it. Until playback starts
+  // the last sheet stays in front, so nobody is left with an empty file.
+  // Playback starts once when the stack comes into view, unless the reader
+  // has already moved it, and stops at the first touch.
   for (const root of document.querySelectorAll<HTMLElement>(
     "[data-time-machine]",
   )) {
     const machine = root.querySelector<HTMLElement>(".machine")
+    const stage = root.querySelector<HTMLElement>(".stage")
     const range = root.querySelector<HTMLInputElement>("[data-range]")
     const track = root.querySelector<HTMLElement>(".track")
     const prev = root.querySelector<HTMLButtonElement>("[data-prev]")
     const next = root.querySelector<HTMLButtonElement>("[data-next]")
     const play = root.querySelector<HTMLButtonElement>("[data-play-button]")
     const playLabel = root.querySelector<HTMLElement>("[data-play-label]")
-    if (!machine || !range || !track || !prev || !next || !play || !playLabel)
+    const live = root.querySelector<HTMLElement>(".captions")
+    if (
+      !machine ||
+      !stage ||
+      !range ||
+      !track ||
+      !prev ||
+      !next ||
+      !play ||
+      !playLabel ||
+      !live
+    )
       continue
     const sheets = [...root.querySelectorAll<HTMLElement>("[data-sheet]")]
     const ticks = [...root.querySelectorAll<HTMLElement>("[data-tick]")]
@@ -1048,6 +1051,7 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
     const last = sheets.length - 1
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches
     let timer: number | undefined
+    let touched = false
 
     const show = (index: number) => {
       const current = Math.max(0, Math.min(last, index))
@@ -1070,16 +1074,20 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
       next.disabled = current === last
     }
 
+    // While playing, captions change every few seconds; screen readers only
+    // hear them when the reader moves through the years themselves.
     const stop = () => {
       window.clearInterval(timer)
       timer = undefined
-      play.setAttribute("aria-pressed", "false")
+      root.removeAttribute("data-playing")
+      live.setAttribute("aria-live", "polite")
       playLabel.textContent = root.dataset.play ?? ""
     }
 
     const start = () => {
       if (Number(range.value) >= last) show(0)
-      play.setAttribute("aria-pressed", "true")
+      root.setAttribute("data-playing", "")
+      live.setAttribute("aria-live", "off")
       playLabel.textContent = root.dataset.pause ?? ""
       timer = window.setInterval(() => {
         const at = Number(range.value) + 1
@@ -1088,19 +1096,20 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
       }, 2600)
     }
 
-    range.addEventListener("input", () => {
+    const move = (index: number) => {
+      touched = true
       stop()
-      show(Number(range.value))
+      show(index)
+    }
+
+    range.addEventListener("input", () => move(Number(range.value)))
+    prev.addEventListener("click", () => move(Number(range.value) - 1))
+    next.addEventListener("click", () => move(Number(range.value) + 1))
+    play.addEventListener("click", () => {
+      touched = true
+      if (timer) stop()
+      else start()
     })
-    prev.addEventListener("click", () => {
-      stop()
-      show(Number(range.value) - 1)
-    })
-    next.addEventListener("click", () => {
-      stop()
-      show(Number(range.value) + 1)
-    })
-    play.addEventListener("click", () => (timer ? stop() : start()))
 
     // The ruler: pick the tick nearest to the pointer, along whichever axis
     // it runs, and magnify the ticks around it like the macOS Dock.
@@ -1140,37 +1149,41 @@ const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
       }
     }
     let dragging = false
+    const release = () => {
+      dragging = false
+    }
     track.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0) return
       dragging = true
       track.setPointerCapture(event.pointerId)
-      stop()
-      show(nearest(event))
+      move(nearest(event))
     })
     track.addEventListener("pointermove", (event) => {
       if (!still) magnify(event)
       if (dragging) show(nearest(event))
     })
-    track.addEventListener("pointerup", () => {
-      dragging = false
-    })
+    track.addEventListener("pointerup", release)
+    track.addEventListener("pointercancel", release)
+    track.addEventListener("lostpointercapture", release)
     track.addEventListener("pointerleave", () => magnify())
 
     root.classList.add("is-live")
+    for (const control of [range, prev, next]) control.disabled = false
     play.hidden = false
     stop()
-    show(still ? last : 0)
+    show(last)
 
-    // Play once when the machine first comes into view.
+    // Play once when the stack first comes into view.
     if (!still) {
       const watch = new IntersectionObserver(
         ([entry]) => {
           if (!entry?.isIntersecting) return
           watch.disconnect()
-          if (Number(range.value) === 0) start()
+          if (!touched) start()
         },
-        { threshold: 0.6 },
+        { threshold: 0.35 },
       )
-      watch.observe(machine)
+      watch.observe(stage)
     }
   }
 </script>
