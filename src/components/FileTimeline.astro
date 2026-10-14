@@ -1,1189 +1,1533 @@
 ---
+import {
+  breaches,
+  end,
+  intro,
+  match,
+  type Piece,
+  reports,
+  rows,
+} from "@/data/file-timeline"
 import { leaks } from "@/data/leaks"
-import { rows, steps, type Piece } from "@/data/file-timeline"
-import { pathFor, type Language } from "@/lib/i18n"
+import { type Language, pathFor } from "@/lib/i18n"
 
-// "Your file over time", built like Apple's Time Machine: one sheet per step,
-// stacked into the depth, and a ruler to travel along them. Every sheet is
-// rendered here, so the page works without script and shows the last one;
-// the script below only moves the stack. The captions are the readable
-// version of the same story, so the sheets stay hidden from screen readers.
+// "How scattered leaks become a file", told as a scroll story: the cards
+// scroll past a pinned stage, and the scroll position drives the stage. The
+// cards are the readable version, so the stage stays hidden from screen
+// readers. The page renders the stage in its final state; the script below
+// rewinds it and plays it along with the scroll.
 interface Props {
   language: Language
 }
 
 const { language } = Astro.props
 const en = language === "en"
-const last = steps.length - 1
-const leakFor = (id?: string) => leaks.find((leak) => leak.id === id)
 
-// What the ruler, the bar under the stack and the caption call a step, and
-// whom the caption names as source.
-const named = steps.map((step) => {
-  const leak = leakFor(step.leak)
-  const name =
-    step.name?.[language] ??
-    leak?.name[language] ??
-    step.label?.[language] ??
-    ""
+const leakFor = (id: string) => {
+  const leak = leaks.find((candidate) => candidate.id === id)
+  if (!leak) throw new Error(`Unknown leak: ${id}`)
+  return leak
+}
+const label = (piece: Piece) =>
+  rows.find((row) => row.id === piece)?.label[language] ?? piece
+// Inside a sentence, English labels go lower case, except abbreviations
+// such as "ID".
+const inline = (text: string) =>
+  en && !/^[A-Z]{2}/.test(text) ? text[0].toLowerCase() + text.slice(1) : text
+const list = (pieces: Piece[]) =>
+  new Intl.ListFormat(language, { type: "conjunction" }).format(
+    pieces.map((piece) => inline(label(piece))),
+  )
+
+// Each piece lands once, with the first case that had it; later cases only
+// match it.
+const seen = new Set<Piece>()
+const cases = breaches.map((breach, index) => {
+  const leak = leakFor(breach.leak)
+  const fields = breach.fields.map((field) => ({
+    ...field,
+    matched: seen.has(field.piece),
+  }))
+  for (const field of fields) seen.add(field.piece)
   return {
-    name,
-    // The tag on the sheet keeps the case's own short name.
-    short: leak?.name[language] ?? name,
-    source: leak?.sources[0]?.label[language] ?? step.source?.[language],
+    ...breach,
+    index,
+    leak,
+    fields,
+    added: fields.filter((field) => !field.matched).map((field) => field.piece),
+    matched: fields
+      .filter((field) => field.matched)
+      .map((field) => field.piece),
   }
 })
+const origin = new Map<Piece, number>(
+  cases.flatMap((item) =>
+    item.added.map((piece) => [piece, item.index] as const),
+  ),
+)
+const tag = (index: number) =>
+  `${cases[index].leak.name[language]} ’${String(cases[index].leak.year).slice(2)}`
 
-// For each step: which steps had put each piece on the file by then, and how
-// many reports exist.
-const sheets = steps.map((step, index) => {
-  const found = new Map<Piece, number[]>()
-  steps.slice(0, index + 1).forEach((earlier, at) => {
-    for (const piece of earlier.adds)
-      found.set(piece, [...(found.get(piece) ?? []), at])
-  })
-  const reports =
-    steps
-      .slice(0, index + 1)
-      .reverse()
-      .find((earlier) => earlier.reports)?.reports ?? 0
-  return { step, index, found, reports }
-})
+const ending = leakFor(end.leak)
+const today = en ? "Today" : "Heute"
+const sheets = Array.from(
+  { length: reports.count },
+  (_, index) => reports.first + index,
+)
+const last = reports.first + reports.count
+// A slightly different tilt for every report on the pile.
+const tilt = [-2.2, 1.4, -0.6, 2, -1.6, 0.8, -2.6, 1.8, -1, 0.4]
 
-// "GIS ’20": the latest case that lost a piece.
-const tag = (at: number) =>
-  `${named[at].short} ’${String(steps[at].year).slice(2)}`
-const nameRow = rows.find((row) => row.id === "name")
-const pieceLabel = (piece: Piece) =>
-  rows.find((row) => row.id === piece)?.label[language] ?? piece
-// The portrait comes into focus with every piece and is sharp once an ID
-// image is out.
-const blur = (known: number, document: boolean) =>
-  document ? 0 : Math.max(1.5, 14 - known * 1.6)
-const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
+// The scenes after the intro, for the timeline and its anchors.
+const scenes = [
+  ...cases.map((item) => ({
+    id: item.leak.id,
+    year: String(item.leak.year),
+    name: item.leak.name[language],
+  })),
+  { id: "abgleich", year: today, name: match.short[language] },
+  {
+    id: "dac8",
+    year: String(reports.first + 1),
+    name: reports.short[language],
+  },
+  { id: "ende", year: String(last), name: end.short[language] },
+]
+const source = en ? "Source" : "Quelle"
 ---
 
 <section
   id="zeitreise"
-  class="time-machine"
-  aria-labelledby="time-machine-heading"
-  data-time-machine
-  data-play={en ? "Play" : "Abspielen"}
-  data-pause="Pause"
+  class="journey"
+  aria-labelledby="journey-heading"
+  data-journey
+  data-first={reports.first}
 >
-  <div class="intro">
-    <h2 id="time-machine-heading">
-      {en ? "Your file over time." : "Deine Akte über die Zeit."}
-    </h2>
-    <p>
-      {en ? "Max is invented and unlucky: he was in every one of these real cases. Many pieces look harmless on their own. Travel through the years and watch them add up to a picture." : "Max ist erfunden und hatte Pech: Er war bei jedem dieser echten Fälle dabei. Viele Stücke wirken für sich harmlos. Reise durch die Jahre und sieh zu, wie daraus ein Bild wird."}
-    </p>
-  </div>
+  <div class="steps">
+    <div class="step" id="akte-start" data-step data-year="" style="--len: 100">
+      <div class="card intro" tabindex="-1">
+        <h2 id="journey-heading">{intro.heading[language]}</h2>
+        <p>{intro.text[language]}</p>
+      </div>
+    </div>
 
-  <div class="machine" style={`--t: ${last}; --last: ${last}`}>
-    <div class="space" aria-hidden="true"></div>
-
-    <div class="stage" aria-hidden="true">
-      {sheets.map(({ step, index, found, reports }) => (
+    {cases.map((item) => (
         <div
-          class:list={["sheet", { "is-current": index === last }]}
-          data-sheet
-          style={`--d: ${index - last}`}
+          class="step"
+          id={`akte-${item.leak.id}`}
+          data-step
+          data-year={item.leak.year}
+          style="--len: 150"
         >
-          <div class="sheet-head">
-            <span class="sheet-kind">{en ? "File" : "Akte"}</span>
-            <span class="sheet-date">
-              {en ? "As of" : "Stand"} {step.year}
-            </span>
-          </div>
-          <div class="sheet-id">
-            <div
-              class="portrait"
-              style={`--blur: ${blur(found.size, found.has("document"))}px`}
-            >
-              <svg viewBox="0 0 64 80">
-                <circle cx="32" cy="29" r="14" />
-                <path d="M6 80c0-17 11.6-28 26-28s26 11 26 28z" />
-              </svg>
-            </div>
-            <p class="sheet-name">
-              {found.has("name") ? (
-                <span class:list={{ "is-new": found.get("name")?.[0] === index }}>
-                  {nameRow?.value[language]}
-                </span>
-              ) : (
-                <span class="redacted" style="--w: 11ch" />
-              )}
+          <div class="card" tabindex="-1">
+            <p class="kicker">
+              <span>{item.leak.year}</span> {item.leak.name[language]}
             </p>
-          </div>
-          <dl class="sheet-rows">
-            {rows.filter((row) => row !== nameRow).map((row) => {
-              const by = found.get(row.id) ?? []
-              const latest = by.at(-1)
-              return (
-                <div
-                  class:list={{
-                    "is-known": latest !== undefined,
-                    "is-new": by[0] === index,
-                    "is-again": by.length > 1 && latest === index,
-                  }}
-                >
-                  <dt>{row.label[language]}</dt>
-                  <dd>
-                    {latest !== undefined ? (
-                      <>
-                        <span class="value">{row.value[language]}</span>
-                        <span class="source">
-                          {tag(latest)}
-                          {by.length > 1 && <b>{by.length}×</b>}
-                        </span>
-                      </>
-                    ) : (
-                      <span
-                        class="redacted"
-                        style={`--w: ${Math.min(row.value[language].length, 22)}ch`}
-                      />
-                    )}
-                  </dd>
+            <h3>{item.leak.headline[language]}</h3>
+            <p>{item.text[language]}</p>
+            <dl class="delta">
+              <div>
+                <dt>{en ? "New in the file" : "Neu in der Akte"}</dt>
+                <dd>{list(item.added)}</dd>
+              </div>
+              {item.matched.length > 0 && (
+                <div>
+                  <dt>{en ? "Matched on" : "Abgeglichen über"}</dt>
+                  <dd>{list(item.matched)}</dd>
                 </div>
-              )
-            })}
-          </dl>
-          <div class:list={["sheet-tax", { "is-on": reports > 0 }]}>
-            <p class="sheet-tax-title">
-              {en ? "DAC8 reports" : "DAC8-Meldungen"}
-              <span>
-                {reports === 0
-                  ? en ? "none yet" : "noch keine"
-                  : en
-                    ? `${reports} to the tax authority`
-                    : `${reports} ans Finanzamt`}
-              </span>
+              )}
+            </dl>
+            <p class="source">
+              {source}: {item.leak.sources[0].label[language]}
             </p>
-            <ol class="sheet-reports">
-              {reportYears.map((year, at) => (
-                <li class:list={{ "is-filed": at < reports }}>{year}</li>
-              ))}
-            </ol>
           </div>
-          <p class="sheet-count">
-            <span class="dots">
-              {rows.map((row) => (
-                <i class:list={{ "is-known": found.has(row.id) }} />
-              ))}
-            </span>
-            {en ? `${found.size} of ${rows.length} details out of his hands` : `${found.size} von ${rows.length} Angaben in fremden Händen`}
-          </p>
         </div>
       ))}
+
+    <div
+      class="step"
+      id="akte-abgleich"
+      data-step
+      data-year={today}
+      style="--len: 130"
+    >
+      <div class="card" tabindex="-1">
+        <p class="kicker"><span>{today}</span> {match.short[language]}</p>
+        <h3>{match.heading[language]}</h3>
+        <p>{match.text[language]}</p>
+      </div>
     </div>
 
-    <div class="ruler">
-      <button
-        class="ruler-step"
-        type="button"
-        data-prev
-        disabled
-        aria-label={en ? "Back in time" : "Zurück in der Zeit"}
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m6 15 6-6 6 6" />
-        </svg>
-      </button>
-      <div class="track">
-        <input
-          class="range"
-          type="range"
-          min="0"
-          max={last}
-          step="1"
-          value={last}
-          data-range
-          disabled
-          aria-label={en ? "Year" : "Jahr"}
-          aria-valuetext={`${steps[last].year}: ${named[last].name}`}
-        >
-        <ol class="ticks" aria-hidden="true">
-          {steps.map((step, index) => (
-            <li
-              class:list={{ "is-current": index === last, "is-dac8": Boolean(step.reports) }}
-              data-tick
-              data-valuetext={`${step.year}: ${named[index].name}`}
-            >
-              <span>{step.year}</span>
-            </li>
-          ))}
-        </ol>
+    <div class="step" id="akte-dac8" data-step style="--len: 170">
+      <div class="card" tabindex="-1">
+        <p class="kicker">
+          <span>{reports.first + 1}</span>
+          {reports.short[language]}
+        </p>
+        <h3>{reports.heading[language]}</h3>
+        <p>{reports.text[language]}</p>
       </div>
-      <button
-        class="ruler-step"
-        type="button"
-        data-next
-        disabled
-        aria-label={en ? "Forward in time" : "Vor in der Zeit"}
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m6 9 6 6 6-6" />
-        </svg>
-      </button>
     </div>
-    <div class="story">
-      <button class="play" type="button" data-play-button hidden>
-        <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M8 5v14l11-7z" />
-        </svg>
-        <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M7 5h4v14H7zM13 5h4v14h-4z" />
-        </svg>
-        <span data-play-label>{en ? "Play" : "Abspielen"}</span>
-      </button>
-      <ol class="captions" aria-live="polite">
-        {steps.map((step, index) => (
-          <li data-caption>
-            <p class="caption-when">
-              <span>{step.year}</span>
-              {named[index].name}
-            </p>
-            <p class="caption-text">{step.text[language]}</p>
-            {index > 0 && (
-              <p class="caption-adds">
-                {step.adds.length > 0 &&
-                  `${en ? "On the file" : "In der Akte"}: ${step.adds.map(pieceLabel).join(", ")}. `}
-                {en
-                  ? `Now ${sheets[index].found.size} of ${rows.length} details out of his hands.`
-                  : `Jetzt ${sheets[index].found.size} von ${rows.length} Angaben in fremden Händen.`}
-                {named[index].source &&
-                  (en
-                    ? ` Source: ${named[index].source}.`
-                    : ` Quelle: ${named[index].source}.`)}
-              </p>
-            )}
-          </li>
-        ))}
-      </ol>
+
+    <div class="step" id="akte-ende" data-step style="--len: 120">
+      <div class="card" tabindex="-1">
+        <p class="kicker"><span>{last}</span> {end.short[language]}</p>
+        <h3>{end.heading[language]}</h3>
+        <p>{end.text[language]}</p>
+        <p class="source">{source}: {ending.sources[0].label[language]}</p>
+        <a class="more" href={pathFor("leaks", language)}
+          >{en ? "More cases with sources" : "Mehr Fälle mit Quellen"}</a
+        >
+      </div>
     </div>
   </div>
 
-  <p class="time-machine-foot">
-    <a href={pathFor("leaks", language)}
-      >{en ? "More cases with sources" : "Mehr Fälle mit Quellen"}</a
-    >
-  </p>
+  <div class="pin">
+    <canvas class="crowd" aria-hidden="true"></canvas>
+    <div class="frame">
+      <p class="year" aria-hidden="true" data-year-label>{last}</p>
+
+      <div class="desk" aria-hidden="true">
+        <div class="records">
+          {cases.map((item) => (
+              <div class="record" data-record>
+                <p class="record-head">
+                  <b>{item.leak.name[language]}</b>
+                  <span>{item.where[language]}</span>
+                  <span>{item.size[language]}</span>
+                </p>
+                <span class="noise" style="--w: 86%" />
+                <p class="line">
+                  {item.fields.map((field) => (
+                    <span
+                      class="chip"
+                      data-piece={field.piece}
+                      data-matched={field.matched ? "" : undefined}
+                    >
+                      {field.raw[language]}
+                    </span>
+                  ))}
+                </p>
+                <span class="noise" style="--w: 71%" />
+                <span class="noise" style="--w: 79%" />
+              </div>
+            ))}
+          <p class="pile-count">
+            <b data-reports>{reports.count}</b>
+            {en
+                ? `of ${reports.count} annual reports, with the provider and the tax authority`
+                : `von ${reports.count} Jahresmeldungen, beim Anbieter und beim Finanzamt`}
+          </p>
+        </div>
+
+        <div class="file-wrap">
+          <article
+            class="file"
+            style={`--hit-label: "${en ? "match" : "Treffer"}"`}
+          >
+            <header class="file-head">
+              <b>{en ? "File" : "Akte"}</b>
+              <span class="as-of">
+                {en ? "As of" : "Stand"} <span data-year-label>{last}</span>
+              </span>
+            </header>
+            <div class="file-body">
+              <div class="portrait">
+                <svg viewBox="0 0 64 80">
+                  <circle cx="32" cy="29" r="14"></circle>
+                  <path d="M6 80c0-17 11.6-28 26-28s26 11 26 28z"></path>
+                </svg>
+              </div>
+              <dl>
+                {rows.map((row) => (
+                    <div
+                      class="row"
+                      data-piece={row.id}
+                      data-from={origin.get(row.id)}
+                    >
+                      <dt>{row.label[language]}</dt>
+                      <dd>
+                        <span class="slot">
+                          <span class="value">{row.value[language]}</span>
+                          <span class="bar" />
+                        </span>
+                        {origin.has(row.id) && (
+                          <span class="from">
+                            {tag(origin.get(row.id) ?? 0)}
+                          </span>
+                        )}
+                      </dd>
+                    </div>
+                  ))}
+              </dl>
+            </div>
+            <p class="stamp">{en ? "Matched" : "Abgeglichen"}</p>
+            <p class="file-foot">
+              <b data-known>{rows.length}</b>
+              {en
+                  ? ` of ${rows.length} details in other hands`
+                  : ` von ${rows.length} Angaben in fremden Händen`}
+            </p>
+          </article>
+
+          <div class="pile">
+            {sheets.map((year, index) => (
+                <div
+                  class="sheet"
+                  style={`--i: ${index}; --r: ${tilt[index % tilt.length]}deg`}
+                >
+                  <p class="sheet-head">
+                    <b>{en ? `DAC8 report ${year}` : `DAC8-Meldung ${year}`}</b>
+                    <span>{en ? "to the tax authority" : "ans Finanzamt"}</span>
+                  </p>
+                  <ul>
+                    {reports.sheet[language].map((line) => (
+                      <li>{line}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+
+      <nav
+        class="rail"
+        aria-label={en ? "Timeline" : "Zeitleiste"}
+        style={`--ticks: ${scenes.length}`}
+      >
+        <ol>
+          {scenes.map((scene) => (
+              <li>
+                <a href={`#akte-${scene.id}`} data-goto>
+                  <span class="tick-year">{scene.year}</span>
+                  <span class="tick-name">{scene.name}</span>
+                </a>
+              </li>
+            ))}
+        </ol>
+      </nav>
+    </div>
+  </div>
 </section>
 
 <style>
-  /* Die Zeitmaschine: ein dunkler Raum, darin die Aktenblätter von Max als
-     Stapel in die Tiefe, rechts das Lineal mit den Jahren. Die Blätter sind
-     helle Glasplatten mit dunkler Kante wie in den Illustrationen und
-     bleiben in beiden Farbmodi hell. --d ist der Abstand eines Blatts zum
-     gewählten Jahr: 0 vorne, negativ dahinter, positiv noch nicht da. */
-  .time-machine {
-    container: time-machine / inline-size;
+  /* Die Akte als Scroll-Geschichte: Ein dunkler Raum bleibt stehen, die
+     Karten mit dem Text ziehen darüber. Hinten eine Menge aus Punkten, die
+     Menschen in den Datenbeständen; davor der Datensatz aus dem jeweiligen
+     Leck und die Akte, in die seine neuen Angaben fliegen. Was die Akte schon
+     kennt, wird nur abgeglichen. Danach legt DAC8 jedes Jahr eine Meldung
+     obenauf. Das Skript setzt die Variablen pro Bild; ohne Skript steht der
+     Endstand da. */
+  .journey {
+    --stage: #060709;
+    --hi: #ff3b45;
+    --text: #f3f2ee;
+    --text-2: rgb(243 242 238 / 0.74);
+    --text-3: rgb(243 242 238 / 0.52);
+    --glass: rgb(16 17 20 / 0.76);
+    --edge: rgb(255 255 255 / 0.1);
+    --paper-ink: #1d1d1b;
+    --paper-ink-3: #736f66;
+    --paper-red: #c9000d;
+    --mono:
+      ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+    --pin-top: var(--header-height);
+    --pin-height: calc(100svh - var(--pin-top));
+    --ring: var(--hi);
     display: grid;
-    gap: var(--space-l);
+    color-scheme: dark;
+    color: var(--text);
   }
 
-  .intro {
-    display: grid;
-    gap: var(--space-m);
+  .steps,
+  .pin {
+    grid-area: 1 / 1;
   }
 
-  .intro p {
-    max-inline-size: var(--measure-lead);
-    color: var(--ink-2);
-    font-size: var(--step-1);
-    text-wrap: pretty;
+  /* ---------- Bühne ---------------------------------------------------- */
+
+  /* Die Fläche reicht per border-image bis an den Rand, ohne die Seite
+     breiter zu machen. */
+  .pin {
+    position: sticky;
+    inset-block-start: var(--pin-top);
+    align-self: start;
+    block-size: var(--pin-height);
+    overflow-y: clip;
+    border-image: linear-gradient(var(--stage) 0 0) fill 0 / / 0 100vw;
   }
 
-  .machine {
-    --sheet-ink: #23282c;
-    --sheet-ink-3: #5f676d;
-    --sheet-red: #c9000d;
-    --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
-    /* Ein hellerer Fokusring, der auf dem dunklen Raum sichtbar bleibt. */
-    --ring: #ff3b45;
+  .crowd {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: calc(var(--grid-gutter) * -1);
+    inline-size: calc(100% + var(--grid-gutter) * 2);
+    block-size: 100%;
+    mask-image: radial-gradient(
+      ellipse 80% 90% at 60% 50%,
+      #000 50%,
+      transparent 100%
+    );
+  }
+
+  .frame {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "stage" "ruler" "story";
-    overflow: hidden;
-    isolation: isolate;
-    padding: var(--space-xl) var(--space-s) var(--space-m);
-    border-radius: var(--radius-3xl);
-    background: radial-gradient(
-      120% 80% at 50% 0%,
-      #3b4652 0%,
-      #1a1f26 48%,
-      #0c0e11 100%
-    );
-    color: #f3f5f6;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: var(--space-xs);
+    block-size: 100%;
+    padding-block: var(--space-xs);
   }
 
-  /* Sterne wie im Original. Sie ziehen beim Reisen langsam mit. */
-  .space {
-    position: absolute;
-    inset: -20%;
-    z-index: -1;
-    background-image:
-      radial-gradient(1px 1px at 12% 18%, #fff9 50%, transparent 51%),
-      radial-gradient(1px 1px at 72% 12%, #fff7 50%, transparent 51%),
-      radial-gradient(1.5px 1.5px at 38% 64%, #fff6 50%, transparent 51%),
-      radial-gradient(1px 1px at 86% 48%, #fff8 50%, transparent 51%),
-      radial-gradient(1px 1px at 22% 82%, #fff5 50%, transparent 51%),
-      radial-gradient(1.5px 1.5px at 58% 30%, #fff5 50%, transparent 51%),
-      radial-gradient(1px 1px at 92% 86%, #fff6 50%, transparent 51%),
-      radial-gradient(1px 1px at 6% 44%, #fff4 50%, transparent 51%);
-    background-size: 23rem 19rem;
-    opacity: 0.7;
-    transform: scale(calc(1 + (var(--last) - var(--t)) * 0.035));
-    transition: transform 1.4s var(--ease);
+  .year {
+    display: none;
   }
 
-  /* ---------- Stapel ---------- */
-
-  .stage {
-    grid-area: stage;
+  .desk {
     display: grid;
-    justify-items: center;
-    padding-block-start: 4.75rem;
-    perspective: 1600px;
-    perspective-origin: 50% -20%;
-  }
-
-  .sheet {
-    grid-area: 1 / 1;
+    align-content: start;
+    gap: var(--space-xs);
     inline-size: min(100%, 34rem);
-    padding: 1.1rem 1.25rem 1rem;
-    border-radius: 0.9rem;
-    background:
-      radial-gradient(circle at 0.75rem 0.75rem, #8b9399 2px, transparent 2.5px),
-      radial-gradient(
-        circle at calc(100% - 0.75rem) 0.75rem,
-        #8b9399 2px,
-        transparent 2.5px
-      ),
-      radial-gradient(
-        circle at 0.75rem calc(100% - 0.75rem),
-        #8b9399 2px,
-        transparent 2.5px
-      ),
-      radial-gradient(
-        circle at calc(100% - 0.75rem) calc(100% - 0.75rem),
-        #8b9399 2px,
-        transparent 2.5px
-      ),
-      linear-gradient(165deg, #f6f8f9 0%, #dfe4e7 55%, #cfd5d9 100%);
-    box-shadow:
-      0 0 0 1px #ffffffb0 inset,
-      0 0 0 1px #6f787e,
-      0 0 0 5px #30363b,
-      0 0 0 6px #50575d,
-      0 2.5rem 4rem -1.5rem #000c;
-    color: var(--sheet-ink);
-    font-size: 0.9375rem;
-    line-height: 1.35;
-    transform-origin: 50% 0;
-    transform: translate3d(0, calc(var(--d) * 1.15rem), calc(var(--d) * 70px));
-    opacity: max(0, 1 + var(--d) * 0.17);
-    transition:
-      transform 0.8s var(--ease),
-      opacity 0.6s var(--ease);
-    will-change: transform, opacity;
+    margin-inline: auto;
   }
 
-  /* Was noch nicht geschehen ist, liegt hinter der Kamera. */
-  .sheet[data-future] {
-    transform: translate3d(0, 3rem, 420px);
-    opacity: 0;
-    pointer-events: none;
+  /* Die Datensätze liegen übereinander in einer Zelle über der Akte; die
+     Flugbahn der Angaben misst das Skript. */
+  .records {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    min-block-size: 5rem;
   }
 
-  .sheet:not(.is-current) > * {
+  .records > * {
+    grid-area: 1 / 1;
+  }
+
+  .record {
+    --show: 0;
+    --hit: 0;
+    --fly: 0;
+    --land: 0;
+    display: grid;
+    align-content: start;
+    gap: 0.3rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--edge);
+    border-radius: var(--radius-lg);
+    background: rgb(12 13 16 / 0.88);
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    line-height: 1.4;
+    opacity: var(--show);
     visibility: hidden;
   }
 
-  .sheet:not(.is-current) > .sheet-head {
+  [data-ready] .record {
     visibility: visible;
   }
 
-  .sheet-head {
+  .record-head {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding-inline: 0.6rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
+    flex-wrap: wrap;
+    gap: 0 0.75rem;
+    color: var(--text-3);
+    letter-spacing: 0.06em;
     text-transform: uppercase;
   }
 
-  .sheet-date {
-    color: var(--sheet-red);
+  .record-head b {
+    color: var(--hi);
+    font-weight: 600;
   }
 
-  .sheet-id {
+  .noise {
+    display: block;
+    inline-size: var(--w);
+    block-size: 0.4rem;
+    border-radius: 2px;
+    background: repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.13) 0 2.6rem,
+      transparent 2.6rem 3rem
+    );
+  }
+
+  /* Auf dem Telefon reicht eine Zeile Rauschen unter Max. */
+  .noise:last-child {
+    display: none;
+  }
+
+  .line {
     display: flex;
-    align-items: center;
-    gap: 0.9rem;
-    margin-block: 0.8rem 0.7rem;
-    padding-block-end: 0.8rem;
-    border-block-end: 2px solid var(--sheet-red);
+    flex-wrap: wrap;
+    gap: 0.25rem 0.4rem;
+    color: var(--text);
+  }
+
+  .chip {
+    padding: 0.05rem 0.3rem;
+    border-radius: var(--radius-sm);
+    background: rgb(255 255 255 / 0.08);
+    white-space: nowrap;
+  }
+
+  /* Neue Angaben fliegen in ihre Zeile und glühen dabei auf. */
+  .chip:not([data-matched]) {
+    background: color-mix(
+      in oklab,
+      rgb(255 255 255 / 0.08),
+      var(--hi) calc(var(--fly) * 100%)
+    );
+    box-shadow: 0 0 calc(var(--fly) * 1.2rem) rgb(255 59 69 / 0.6);
+    opacity: calc(1 - var(--land));
+    translate: calc(var(--dx, 0px) * var(--fly))
+      calc(var(--dy, 0px) * var(--fly));
+    scale: calc(1 + var(--fly) * 0.15);
+  }
+
+  .chip[data-matched] {
+    outline: 1px solid rgb(255 59 69 / var(--hit));
+    background: rgb(255 59 69 / calc(var(--hit) * 0.25));
+  }
+
+  .pile-count {
+    --pile: 0;
+    align-self: center;
+    max-inline-size: 32ch;
+    color: var(--text-2);
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    opacity: var(--pile);
+  }
+
+  .pile-count b {
+    display: block;
+    color: var(--text);
+    font-size: 2.25rem;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  /* ---------- Akte ------------------------------------------------------ */
+
+  .file-wrap {
+    position: relative;
+  }
+
+  /* Papier bleibt in beiden Farbmodi hell. */
+  .file {
+    --blur: 0;
+    --dim: 0;
+    --stamp: 1;
+    position: relative;
+    display: grid;
+    gap: 0.45rem;
+    padding: 0.7rem 0.8rem 0.6rem;
+    border-radius: var(--radius-md);
+    background:
+      linear-gradient(rgb(255 255 255 / 0.5), transparent 30%), #f2efe7;
+    color: var(--paper-ink);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.6) inset,
+      0 30px 60px -20px rgb(0 0 0 / 0.8),
+      0 0 0 1px rgb(0 0 0 / 0.4);
+    overflow: clip;
+    color-scheme: light;
+    opacity: calc(1 - var(--dim) * 0.5);
+  }
+
+  .file-head {
+    display: flex;
+    justify-content: space-between;
+    padding-block-end: 0.35rem;
+    border-block-end: 2px solid var(--paper-ink);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .file-head b {
+    font-weight: 650;
+    letter-spacing: 0.3em;
+  }
+
+  .as-of:has(> :empty) {
+    visibility: hidden;
+  }
+
+  .file-body {
+    display: grid;
+    gap: 0.75rem;
   }
 
   .portrait {
-    flex: none;
-    inline-size: 3.6rem;
-    aspect-ratio: 4 / 5;
-    overflow: hidden;
-    border-radius: 0.3rem;
-    background: #30363b;
+    display: none;
   }
 
-  .portrait svg {
-    display: block;
-    inline-size: 100%;
-    block-size: 100%;
-    fill: #e9edef;
-    filter: blur(var(--blur));
-    transform: scale(1.15);
-    transition: filter 1.2s var(--ease);
-  }
-
-  .sheet-name {
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: -0.015em;
-  }
-
-  .redacted {
-    display: inline-block;
-    inline-size: var(--w);
-    max-inline-size: 100%;
-    block-size: 0.8em;
-    border-radius: 0.15em;
-    background: repeating-linear-gradient(
-      90deg,
-      #2d3337 0 0.9ch,
-      #3a4146 0.9ch 1ch
-    );
-    vertical-align: -0.05em;
-  }
-
-  .sheet-rows {
+  .file dl {
     display: grid;
-    margin: 0;
   }
 
-  .sheet-rows > div {
+  .row {
+    --fill: 1;
+    --hit: 0;
+    position: relative;
     display: grid;
-    grid-template-columns: 8.5rem minmax(0, 1fr);
-    gap: 0.75rem;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
     align-items: baseline;
-    min-block-size: 1.85rem;
-    padding-block: 0.28rem;
+    gap: 0.5rem;
+    padding: 0.1rem 0.3rem;
+    border-block-end: 1px solid rgb(0 0 0 / 0.08);
+    border-radius: var(--radius-xs);
+    background: rgb(201 0 13 / calc(var(--hit) * 0.12));
+    box-shadow: inset 0 0 0 1px rgb(201 0 13 / var(--hit));
+    font-size: 0.75rem;
+    line-height: 1.35;
   }
 
-  .sheet-rows > div + div {
-    border-block-start: 1px solid #23282c1c;
+  .row::after {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-end: 0.3rem;
+    padding: 0 0.3rem;
+    border-radius: var(--radius-xs);
+    background: var(--paper-red);
+    color: #fff;
+    content: var(--hit-label);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: var(--hit);
+    translate: 0 -50%;
   }
 
-  .sheet-rows dt {
-    color: var(--sheet-ink-3);
-    font-size: 0.8125rem;
+  .row dt {
+    overflow: hidden;
+    color: var(--paper-ink-3);
+    font-size: 0.5625rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
-  .sheet-rows dd {
+  .row dd {
     display: flex;
-    justify-content: space-between;
-    gap: 0.6rem;
+    align-items: baseline;
+    gap: 0.5rem;
     min-inline-size: 0;
     margin: 0;
-    font-weight: 560;
+  }
+
+  /* Der Balken deckt genau den Wert ab und gibt ihn von links frei. */
+  .slot {
+    display: inline-grid;
+    min-inline-size: 0;
+  }
+
+  .slot > * {
+    grid-area: 1 / 1;
   }
 
   .value {
     overflow: hidden;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: var(--fill);
+  }
+
+  .bar {
+    align-self: center;
+    block-size: 0.85em;
+    border-radius: 1px;
+    background: var(--paper-ink);
+    transform-origin: right;
+    scale: calc(1 - var(--fill)) 1;
+  }
+
+  .from {
+    margin-inline-start: auto;
+    color: var(--paper-red);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    opacity: calc(var(--fill) * (1 - var(--hit)));
+  }
+
+  .stamp {
+    position: absolute;
+    inset-block-end: 1.6rem;
+    inset-inline-end: 0.9rem;
+    padding: 0.1rem 0.45rem;
+    border: 3px solid var(--paper-red);
+    border-radius: var(--radius-sm);
+    color: var(--paper-red);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    mix-blend-mode: multiply;
+    opacity: calc(var(--stamp) * 0.85);
+    rotate: -9deg;
+    scale: calc(1.8 - var(--stamp) * 0.8);
+    pointer-events: none;
+  }
+
+  .file-foot {
+    color: var(--paper-ink-3);
+    font-size: 0.6875rem;
+  }
+
+  .file-foot b {
+    color: var(--paper-ink);
+  }
+
+  /* Die Jahresmeldungen kommen von unten und landen versetzt auf der Akte. */
+  .pile {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .sheet {
+    --in: 1;
+    position: absolute;
+    inset-block-start: 16%;
+    inset-inline: 7%;
+    display: grid;
+    gap: 0.45rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: var(--radius-sm);
+    background: #fbfaf6;
+    color: var(--paper-ink);
+    box-shadow:
+      0 18px 40px -16px rgb(0 0 0 / 0.7),
+      0 0 0 1px rgb(0 0 0 / 0.25);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    opacity: min(1, calc(var(--in) * 3));
+    translate: calc(var(--i) * 0.3rem)
+      calc((1 - var(--in)) * 80svh + var(--i) * -0.25rem);
+    rotate: calc(var(--r) * var(--in));
+  }
+
+  .sheet-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0 0.75rem;
+    padding-block-end: 0.35rem;
+    border-block-end: 1px solid rgb(0 0 0 / 0.15);
+  }
+
+  .sheet-head b {
+    font-weight: 650;
+  }
+
+  .sheet-head span {
+    color: var(--paper-ink-3);
+  }
+
+  .sheet ul {
+    display: grid;
+    gap: 0.15rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sheet li:last-child {
+    color: var(--paper-red);
+    font-weight: 600;
+  }
+
+  /* ---------- Zeitleiste ------------------------------------------------ */
+
+  /* Jede Marke ist ein Link zu ihrem Abschnitt; ziehen muss man nichts. */
+  .rail {
+    --rail: 1;
+    grid-row: 1;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .rail ol {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--ticks), minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Die Linie läuft von der ersten zur letzten Marke. */
+  .rail ol::before,
+  .rail ol::after {
+    position: absolute;
+    inset-block-start: 0.45rem;
+    inset-inline: calc(50% / var(--ticks));
+    block-size: 2px;
+    border-radius: 1px;
+    background: rgb(255 255 255 / 0.16);
+    content: "";
+  }
+
+  .rail ol::after {
+    background: var(--hi);
+    transform-origin: left;
+    scale: var(--rail) 1;
+  }
+
+  .rail a {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    padding-block: 1.15rem 0;
+    color: var(--text-3);
+    font-size: 0.625rem;
+    line-height: 1.25;
+    text-align: center;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .rail a::before {
+    position: absolute;
+    inset-block-start: 0.15rem;
+    inline-size: 0.65rem;
+    block-size: 0.65rem;
+    border: 2px solid rgb(255 255 255 / 0.32);
+    border-radius: 50%;
+    background: var(--stage);
+    content: "";
+    transition:
+      scale 0.2s,
+      background-color 0.2s,
+      border-color 0.2s;
+  }
+
+  .rail a:hover,
+  .rail a[aria-current] {
+    color: var(--text);
+  }
+
+  .rail a[data-passed]::before {
+    border-color: var(--hi);
+    background: var(--hi);
+  }
+
+  .rail a[aria-current]::before {
+    border-color: var(--hi);
+    background: var(--hi);
+    box-shadow: 0 0 0 4px rgb(255 59 69 / 0.25);
+    scale: 1.3;
+  }
+
+  .tick-name {
+    max-inline-size: 100%;
+    overflow: hidden;
+    font-weight: 600;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .source {
-    color: var(--sheet-red);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
+  /* ---------- Karten ---------------------------------------------------- */
 
-  /* Wie oft eine Angabe schon im Netz stand. */
-  .source b {
-    margin-inline-start: 0.4em;
-    padding: 0.05em 0.35em;
-    border-radius: 0.2rem;
-    background: #c9000d1f;
-    font-weight: 700;
-  }
-
-  .sheet-tax {
-    margin-block-start: 0.8rem;
-    padding: 0.6rem 0.75rem;
-    border-radius: 0.45rem;
-    background: #23282c10;
-    color: var(--sheet-ink-3);
-  }
-
-  .sheet-tax.is-on {
-    background: #23282c;
-    color: #eef1f2;
-  }
-
-  .sheet-tax-title {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .sheet-tax-title span {
-    letter-spacing: 0.02em;
-    text-transform: none;
-  }
-
-  .sheet-reports {
-    display: grid;
-    grid-template-columns: repeat(10, minmax(0, 1fr));
-    gap: 0.2rem;
-    margin: 0.5rem 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .sheet-reports li {
-    padding-block: 0.15rem;
-    border-radius: 0.15rem;
-    background: #23282c14;
-    color: transparent;
-    font-size: 0.625rem;
-    font-weight: 600;
-    text-align: center;
-  }
-
-  .sheet-tax.is-on .sheet-reports li {
-    background: #ffffff14;
-  }
-
-  .sheet-tax.is-on .sheet-reports li.is-filed {
-    background: #dfe4e7;
-    color: #23282c;
-  }
-
-  .sheet-count {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin-block-start: 0.75rem;
-    padding-inline: 0.4rem;
-    color: var(--sheet-ink-3);
-    font-size: 0.75rem;
-    font-weight: 560;
-  }
-
-  .dots {
-    display: flex;
-    gap: 0.2rem;
-  }
-
-  .dots i {
-    inline-size: 0.5rem;
-    block-size: 0.5rem;
-    border-radius: 50%;
-    background: #23282c26;
-  }
-
-  .dots i.is-known {
-    background: var(--sheet-red);
-  }
-
-  /* Was dieser Schritt neu hinzufügt, leuchtet kurz rot auf. */
-  .sheet.is-current .is-new .value,
-  .sheet.is-current .sheet-name .is-new {
-    animation: reveal 1.4s var(--ease) both;
-  }
-
-  .sheet.is-current .is-new .source,
-  .sheet.is-current .is-again .source {
-    animation: reveal-tag 1.4s var(--ease) both;
-  }
-
-  @keyframes reveal {
-    0% {
-      opacity: 0;
-      color: var(--sheet-red);
-      filter: blur(6px);
-    }
-    45% {
-      opacity: 1;
-      color: var(--sheet-red);
-      filter: blur(0);
-    }
-    100% {
-      color: var(--sheet-ink);
-    }
-  }
-
-  @keyframes reveal-tag {
-    0%,
-    30% {
-      opacity: 0;
-    }
-  }
-
-  /* ---------- Lineal ---------- */
-
-  .ruler {
-    grid-area: ruler;
+  /* Die Karten liegen über der Bühne, lassen aber Klicks auf die Zeitleiste
+     durch. Auf dem Telefon bleiben sie unten stehen, solange ihr Abschnitt
+     läuft. */
+  .steps {
     position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    margin-block-start: var(--space-s);
-  }
-
-  .ruler-step {
+    z-index: 1;
     display: grid;
-    flex: none;
-    place-items: center;
-    inline-size: 2.75rem;
-    block-size: 2.75rem;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    rotate: -90deg;
-  }
-
-  .ruler-step:hover:not(:disabled) {
-    background: #ffffff1a;
-  }
-
-  .ruler-step:disabled {
-    opacity: 0.3;
-    cursor: default;
-  }
-
-  .ruler-step svg {
-    inline-size: 1.4rem;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .track {
-    position: relative;
-    flex: 1;
-    min-inline-size: 0;
-    /* Quer lässt das Lineal senkrechtes Scrollen der Seite durch. */
-    touch-action: pan-y;
-    cursor: pointer;
-  }
-
-  .range {
-    position: absolute;
-    inset: 0;
-    inline-size: 100%;
-    block-size: 100%;
-    margin: 0;
-    opacity: 0;
     pointer-events: none;
   }
 
-  .track:has(.range:focus-visible) {
-    border-radius: var(--radius-lg);
-    outline: 2px solid #ff3b45;
-    outline-offset: 0.25rem;
+  .step {
+    min-block-size: calc(var(--len) * 0.85svh);
   }
 
-  .ticks {
-    display: flex;
-    justify-content: space-between;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .ticks li {
+  /* Auf dem Telefon ist unter der Akte ein Fenster für den Text: Das Skript
+     setzt --top an seinen oberen Rand, und was darüber hinausscrollt,
+     schneidet --cut ab. So verdeckt keine Karte die Akte. */
+  .card {
+    position: sticky;
+    inset-block-start: var(--top, auto);
+    clip-path: inset(var(--cut, 0px) 0 0 0 round var(--radius-xl));
     display: grid;
-    justify-items: center;
     gap: 0.35rem;
-    min-inline-size: 0;
-    color: #ffffff80;
-    font-size: 0.75rem;
-    transition: color 0.3s;
+    max-inline-size: 30rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--edge);
+    border-radius: var(--radius-xl);
+    background: var(--glass);
+    box-shadow: 0 20px 50px -20px rgb(0 0 0 / 0.8);
+    backdrop-filter: blur(18px) saturate(1.3);
+    font-size: 0.875rem;
+    line-height: 1.45;
+    pointer-events: auto;
   }
 
-  .ticks li::before {
-    content: "";
-    inline-size: 2px;
-    block-size: 0.9rem;
-    border-radius: 1px;
-    background: currentColor;
-    transform: scaleY(var(--zoom, 1));
-    transform-origin: 50% 100%;
-    transition: transform 0.15s;
+  .card:focus {
+    outline: none;
   }
 
-  .ticks li.is-dac8::before {
-    background: #dfe4e7;
+  .card h2 {
+    color: var(--text);
+    font-size: clamp(1.6rem, 1.2rem + 2vw, 2.75rem);
   }
 
-  .ticks li span {
-    font-variant-numeric: tabular-nums;
-  }
-
-  .ticks li.is-current {
-    color: #ff3b45;
+  .card h3 {
+    color: var(--text);
+    font-size: 1rem;
     font-weight: 600;
-  }
-
-  .ticks li.is-current::before {
-    block-size: 1.4rem;
-  }
-
-  /* Schmal trägt nur die Jetzt-Leiste das Jahr, das Lineal zeigt Striche. */
-  @container time-machine (width < 52rem) {
-    .ticks li span {
-      display: none;
-    }
-  }
-
-  @container time-machine (width < 40rem) {
-    /* Schmal muss das Blatt samt Lineal auf einen Bildschirm passen: eine
-       Zeile je Angabe, die Herkunft steht in der Erzählung darunter. */
-    .machine {
-      padding-block-start: var(--space-m);
-    }
-
-    .stage {
-      padding-block-start: 4.25rem;
-    }
-
-    .sheet {
-      padding: 0.85rem 0.85rem 0.75rem;
-      font-size: 0.8125rem;
-    }
-
-    .sheet-id {
-      gap: 0.7rem;
-      margin-block: 0.55rem 0.45rem;
-      padding-block-end: 0.55rem;
-    }
-
-    .portrait {
-      inline-size: 2.6rem;
-    }
-
-    .sheet-name {
-      font-size: 1.125rem;
-    }
-
-    .sheet-rows > div {
-      grid-template-columns: 6.75rem minmax(0, 1fr);
-      gap: 0.5rem;
-      min-block-size: 1.6rem;
-      padding-block: 0.22rem;
-    }
-
-    .sheet-rows dt {
-      overflow: hidden;
-      font-size: 0.75rem;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .source {
-      display: none;
-    }
-
-    .sheet-rows > .is-known dt::before {
-      content: "";
-      display: inline-block;
-      inline-size: 0.4rem;
-      block-size: 0.4rem;
-      margin-inline-end: 0.35rem;
-      border-radius: 50%;
-      background: var(--sheet-red);
-      vertical-align: 0.1em;
-    }
-
-    .sheet-tax {
-      margin-block-start: 0.6rem;
-      padding: 0.5rem 0.6rem;
-    }
-
-    .sheet-count {
-      margin-block-start: 0.55rem;
-    }
-  }
-
-  /* Breit steht das Lineal senkrecht rechts wie bei Time Machine: oben die
-     Vergangenheit, unten das Neueste. */
-  @container time-machine (width >= 52rem) {
-    .machine {
-      grid-template-columns: minmax(0, 1fr) 6.5rem;
-      grid-template-areas: "stage ruler" "story story";
-      column-gap: var(--space-m);
-      padding: var(--space-xl) var(--space-l) var(--space-l);
-    }
-
-    .ruler {
-      flex-direction: column;
-      margin: 0;
-    }
-
-    .ruler-step {
-      rotate: none;
-    }
-
-    .track {
-      inline-size: 100%;
-      touch-action: none;
-    }
-
-    .range {
-      writing-mode: vertical-lr;
-    }
-
-    .ticks {
-      flex-direction: column;
-      block-size: 100%;
-      min-block-size: 22rem;
-    }
-
-    .ticks li {
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      justify-items: end;
-    }
-
-    .ticks li span {
-      transform: scale(var(--zoom, 1));
-      transform-origin: 100% 50%;
-      transition: transform 0.15s;
-    }
-
-    .ticks li::before {
-      order: 2;
-      inline-size: 1rem;
-      block-size: 2px;
-      transform: scaleX(var(--zoom, 1));
-      transform-origin: 100% 50%;
-    }
-
-    .ticks li.is-current::before {
-      inline-size: 1.6rem;
-      block-size: 2px;
-    }
-  }
-
-  /* ---------- Erzählung in der Maschine ---------- */
-
-  .story {
-    grid-area: story;
-    display: grid;
-    align-content: start;
-    gap: var(--space-s);
-    max-inline-size: var(--measure-text);
-    margin-block-start: var(--space-s);
-  }
-
-  /* Ganz breit steht die Erzählung links neben dem Stapel. */
-  @container time-machine (width >= 70rem) {
-    .machine {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 34rem) 6.5rem;
-      grid-template-areas: "story stage ruler";
-    }
-
-    .story {
-      align-content: center;
-      margin: 0;
-      padding-block-start: 4.75rem;
-    }
-  }
-
-  .play {
-    display: inline-flex;
-    align-items: center;
-    justify-self: start;
-    gap: 0.45rem;
-    padding: 0.4rem 0.95rem 0.4rem 0.75rem;
-    border: 1px solid #ffffff3d;
-    border-radius: var(--radius-full);
-    background: #ffffff0f;
-    color: inherit;
-    font: inherit;
-    font-size: var(--step--1);
-    font-weight: 560;
-    cursor: pointer;
-  }
-
-  .play:hover {
-    border-color: #ffffff80;
-  }
-
-  .play svg {
-    inline-size: 1rem;
-    fill: currentColor;
-  }
-
-  .play .icon-pause,
-  [data-playing] .play .icon-play {
-    display: none;
-  }
-
-  [data-playing] .play .icon-pause {
-    display: block;
-  }
-
-  .captions {
-    display: grid;
-    gap: var(--space-m);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .caption-when {
-    display: grid;
-    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
-    font-weight: 600;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+    line-height: 1.25;
     text-wrap: balance;
   }
 
-  .caption-when span {
-    color: #ff3b45;
-    font-size: 0.75em;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .caption-text {
-    margin-block-start: var(--space-2xs);
-    color: #d3d8db;
+  .card p {
+    color: var(--text-2);
     text-wrap: pretty;
   }
 
-  .caption-adds {
-    margin-block-start: var(--space-2xs);
-    color: #9aa3a9;
-    font-size: var(--step--1);
-    text-wrap: pretty;
+  .card.intro p {
+    color: var(--text);
+    font-size: var(--step-1);
   }
 
-  .time-machine-foot {
-    font-weight: 560;
+  .card .kicker {
+    display: flex;
+    gap: 0.5rem;
+    color: var(--hi);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
-  /* Mit Script steht nur die Erzählung zum gewählten Jahr da. Alle liegen
-     übereinander, damit die Höhe beim Abspielen nicht springt. */
-  .time-machine.is-live [data-caption] {
-    grid-area: 1 / 1;
+  .kicker span {
+    color: var(--text);
   }
 
-  .time-machine.is-live [data-caption]:not(.is-current) {
-    visibility: hidden;
+  .delta {
+    display: grid;
+    gap: 0.15rem;
+    margin: 0;
+    font-size: 0.8125rem;
   }
 
-  /* Die gewählte Station blendet sanft ein. */
-  .time-machine.is-live [data-caption].is-current {
-    animation: caption-in 0.6s var(--ease) both;
+  .delta div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.4rem;
   }
 
-  @keyframes caption-in {
-    from {
-      opacity: 0;
-      translate: 0 0.4rem;
+  .delta dt {
+    color: var(--text-3);
+  }
+
+  .delta dt::after {
+    content: ":";
+  }
+
+  .delta dd {
+    margin: 0;
+    color: var(--text);
+    font-weight: 550;
+  }
+
+  .card .source {
+    color: var(--text-3);
+    font-size: 0.75rem;
+  }
+
+  .more {
+    justify-self: start;
+    color: var(--text);
+    font-weight: 600;
+    text-decoration-color: var(--hi);
+    text-underline-offset: 0.2em;
+  }
+
+  /* Solange die Geschichte den Bildschirm füllt, weicht die mobile Leiste
+     mit Spenden und Teilen. */
+  :global(html[data-immersive] [data-action-bar]) {
+    translate: 0 110%;
+  }
+
+  /* ---------- Breitere Bildschirme ------------------------------------- */
+
+  @container campaign (width >= 30rem) {
+    .file-body {
+      grid-template-columns: 4rem minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .portrait {
+      display: block;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      border-radius: var(--radius-xs);
+      background: #d9d4c8;
+    }
+
+    .portrait svg {
+      display: block;
+      inline-size: 100%;
+      block-size: 100%;
+      fill: #8c877c;
+      filter: blur(calc(var(--blur) * 1px));
+    }
+  }
+
+  /* Text links, Bühne rechts, die Jahreszahl groß über der Karte. */
+  @container campaign (width >= 56rem) {
+    .frame {
+      grid-template-columns: minmax(19rem, 0.8fr) minmax(0, 1.2fr);
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: var(--space-s) var(--space-xl);
+      padding-block: var(--space-m);
+    }
+
+    .year {
+      display: block;
+      grid-area: 1 / 1;
+      align-self: start;
+      background: linear-gradient(180deg, #fff, rgb(255 255 255 / 0.2));
+      background-clip: text;
+      color: transparent;
+      font-size: clamp(3.5rem, 2rem + 4.5vw, 6.5rem);
+      font-weight: 250;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .desk {
+      grid-area: 1 / 2;
+      align-self: center;
+      gap: var(--space-m);
+      inline-size: min(100%, 36rem);
+    }
+
+    .records {
+      min-block-size: 6.75rem;
+    }
+
+    .record {
+      font-size: 0.75rem;
+    }
+
+    .noise:last-child {
+      display: block;
+    }
+
+    .file {
+      gap: 0.6rem;
+      padding: 1rem 1.25rem 0.9rem;
+    }
+
+    .file-head {
+      font-size: 0.75rem;
+    }
+
+    .file-body {
+      grid-template-columns: 5.5rem minmax(0, 1fr);
+      gap: 1rem;
+    }
+
+    .row {
+      grid-template-columns: 8rem minmax(0, 1fr);
+      padding-block: 0.3rem;
+      font-size: 0.875rem;
+    }
+
+    .row dt {
+      font-size: 0.6875rem;
+      white-space: normal;
+    }
+
+    .stamp {
+      inset-block-end: 2.2rem;
+      font-size: 1.125rem;
+    }
+
+    .sheet {
+      padding: 1rem 1.25rem;
+      font-size: 0.875rem;
+    }
+
+    .rail {
+      grid-area: 2 / 2;
+    }
+
+    .rail a {
+      font-size: 0.75rem;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: minmax(19rem, 0.8fr) minmax(0, 1.2fr);
+      align-content: start;
+      column-gap: var(--space-xl);
+    }
+
+    .step:last-child {
+      padding-block-end: var(--space-xl);
+    }
+
+    .card {
+      inset-block: calc(var(--pin-top) + 24svh) auto;
+      padding: var(--space-m);
+      font-size: var(--step-0);
+    }
+
+    .card.intro {
+      inset-block-start: calc(var(--pin-top) + 20svh);
+      margin-block-start: 20svh;
+    }
+
+    .card h3 {
+      font-size: var(--step-1);
+    }
+
+    .delta {
+      font-size: 0.875rem;
     }
   }
 </style>
 
 <script>
-  // Moves the stack to the chosen step. The range is the single source of
-  // truth: buttons, the ruler and playback all set it. Until playback starts
-  // the last sheet stays in front, so nobody is left with an empty file.
-  // Playback starts once when the stack comes into view, unless the reader
-  // has already moved it, and stops at the first touch.
-  for (const root of document.querySelectorAll<HTMLElement>(
-    "[data-time-machine]",
-  )) {
-    const machine = root.querySelector<HTMLElement>(".machine")
-    const stage = root.querySelector<HTMLElement>(".stage")
-    const range = root.querySelector<HTMLInputElement>("[data-range]")
-    const track = root.querySelector<HTMLElement>(".track")
-    const prev = root.querySelector<HTMLButtonElement>("[data-prev]")
-    const next = root.querySelector<HTMLButtonElement>("[data-next]")
-    const play = root.querySelector<HTMLButtonElement>("[data-play-button]")
-    const playLabel = root.querySelector<HTMLElement>("[data-play-label]")
-    const live = root.querySelector<HTMLElement>(".captions")
+  // Turns the scroll position into one progress value p: 0 is the intro,
+  // then one unit per card, each with its fraction. Every frame derives the
+  // whole stage from p, so scrolling back rewinds it. With reduced motion,
+  // nothing flies or zooms and every change snaps.
+  const root = document.querySelector<HTMLElement>("[data-journey]")
+  if (root) start(root)
+
+  interface Dot {
+    x: number
+    y: number
+    distance: number
+    // 0: in no list, 1: in the first, 2: also the second, 3: also the
+    // third, 4: Max.
+    depth: number
+  }
+
+  function start(root: HTMLElement) {
+    const motion = matchMedia("(prefers-reduced-motion: reduce)")
+    const steps = [...root.querySelectorAll<HTMLElement>("[data-step]")]
+    const pin = root.querySelector<HTMLElement>(".pin")
+    const canvas = root.querySelector<HTMLCanvasElement>(".crowd")
+    const context = canvas?.getContext("2d")
+    const recordBox = root.querySelector<HTMLElement>(".records")
+    const frame = root.querySelector<HTMLElement>(".frame")
+    const desk = root.querySelector<HTMLElement>(".desk")
+    const cards = [...root.querySelectorAll<HTMLElement>(".card")]
+    const file = root.querySelector<HTMLElement>(".file")
+    const records = [...root.querySelectorAll<HTMLElement>("[data-record]")]
+    const rows = [...root.querySelectorAll<HTMLElement>(".row")]
+    const sheets = [...root.querySelectorAll<HTMLElement>(".sheet")]
+    const yearLabels = [
+      ...root.querySelectorAll<HTMLElement>("[data-year-label]"),
+    ]
+    const known = root.querySelector<HTMLElement>("[data-known]")
+    const filedCount = root.querySelector<HTMLElement>("[data-reports]")
+    const pileCount = root.querySelector<HTMLElement>(".pile-count")
+    const rail = root.querySelector<HTMLElement>(".rail")
+    const links = [...root.querySelectorAll<HTMLAnchorElement>("[data-goto]")]
     if (
-      !machine ||
-      !stage ||
-      !range ||
-      !track ||
-      !prev ||
-      !next ||
-      !play ||
-      !playLabel ||
-      !live
+      !pin ||
+      !canvas ||
+      !context ||
+      !recordBox ||
+      !file ||
+      !known ||
+      !filedCount ||
+      !pileCount ||
+      !rail
     )
-      continue
-    const sheets = [...root.querySelectorAll<HTMLElement>("[data-sheet]")]
-    const ticks = [...root.querySelectorAll<HTMLElement>("[data-tick]")]
-    const captions = [...root.querySelectorAll<HTMLElement>("[data-caption]")]
-    const last = sheets.length - 1
-    const still = matchMedia("(prefers-reduced-motion: reduce)").matches
-    let timer: number | undefined
-    let touched = false
+      return
 
-    const show = (index: number) => {
-      const current = Math.max(0, Math.min(last, index))
-      range.value = String(current)
-      range.setAttribute(
-        "aria-valuetext",
-        ticks[current].dataset.valuetext ?? "",
-      )
-      machine.style.setProperty("--t", String(current))
-      sheets.forEach((sheet, at) => {
-        sheet.style.setProperty("--d", String(at - current))
-        sheet.toggleAttribute("data-future", at > current)
-        sheet.classList.toggle("is-current", at === current)
+    const matchScene = records.length + 1
+    const reportScene = records.length + 2
+    const firstReport = Number(root.dataset.first)
+    // Where a click on the timeline lands within each scene: the record
+    // already in the file, the match stamped, a few reports filed, the end.
+    const landing = [...records.map(() => 0.8), 0.55, 0.45, 0.9]
+
+    // The records that only match a piece, so its row lights up meanwhile.
+    const matches = new Map<string, number[]>()
+    records.forEach((record, index) => {
+      for (const chip of record.querySelectorAll<HTMLElement>(
+        "[data-matched]",
+      )) {
+        const piece = chip.dataset.piece ?? ""
+        matches.set(piece, [...(matches.get(piece) ?? []), index])
+      }
+    })
+
+    const clamp = (value: number) => Math.min(1, Math.max(0, value))
+    const ramp = (value: number, from: number, to: number) =>
+      clamp((value - from) / (to - from))
+    const ease = (value: number) =>
+      value < 0.5 ? 4 * value ** 3 : 1 - (-2 * value + 2) ** 3 / 2
+    const snap = (value: number) =>
+      motion.matches ? (value >= 0.5 ? 1 : 0) : value
+    // A record's own clock: in, matched pieces lit, new pieces flying,
+    // landed, out.
+    const phases = (t: number) => ({
+      show: snap(ramp(t, 0, 0.14) * (1 - ramp(t, 0.86, 1))),
+      hit: snap(ramp(t, 0.12, 0.28) * (1 - ramp(t, 0.6, 0.74))),
+      fly: motion.matches ? 0 : ease(ramp(t, 0.3, 0.66)),
+      land: snap(ramp(t, 0.62, 0.72)),
+    })
+
+    let tops: number[] = []
+    let heights: number[] = []
+    let dots: Dot[] = []
+    let center = { x: 0, y: 0 }
+    let reach = 1
+    let pinTop = 0
+    // How far below the top of the window the scenes are read: the middle
+    // on wide screens, the top of the text window on phones.
+    let reading = 0
+    let wide = true
+    let ratio = 1
+    let queued = false
+    let visible = false
+
+    // Deterministic noise, so the crowd looks the same on every visit.
+    const noise = (seed: number) => {
+      const value = Math.sin(seed * 127.1 + 311.7) * 43758.5453
+      return value - Math.floor(value)
+    }
+
+    function measure() {
+      const scroll = window.scrollY
+      tops = steps.map((step) => step.getBoundingClientRect().top + scroll)
+      heights = steps.map((step) => step.offsetHeight)
+      if (pin) pinTop = Number.parseFloat(getComputedStyle(pin).top) || 0
+
+      // On phones the cards stop just below the file, or higher where a
+      // card would not fit on the screen.
+      wide = frame
+        ? getComputedStyle(frame).gridTemplateColumns.split(" ").length > 1
+        : true
+      const below =
+        (desk?.getBoundingClientRect().bottom ?? 0) -
+        (pin?.getBoundingClientRect().top ?? 0) +
+        pinTop +
+        8
+      reading = wide ? window.innerHeight * 0.5 : below
+      for (const card of cards) {
+        card.style.removeProperty("--cut")
+        if (wide) card.style.removeProperty("--top")
+        else
+          card.style.setProperty(
+            "--top",
+            `${Math.min(below, window.innerHeight - card.offsetHeight - 8)}px`,
+          )
+      }
+
+      // Where the new pieces of each record fly to.
+      for (const record of records) {
+        record.style.setProperty("--fly", "0")
+        for (const chip of record.querySelectorAll<HTMLElement>(
+          ".chip:not([data-matched])",
+        )) {
+          const target = root
+            .querySelector(`.row[data-piece="${chip.dataset.piece}"] .slot`)
+            ?.getBoundingClientRect()
+          if (!target) continue
+          const from = chip.getBoundingClientRect()
+          chip.style.setProperty("--dx", `${target.left - from.left}px`)
+          chip.style.setProperty(
+            "--dy",
+            `${target.top + target.height / 2 - (from.top + from.height / 2)}px`,
+          )
+        }
+      }
+
+      // The crowd fills the canvas; Max stands where the records appear.
+      if (!canvas || !recordBox) return
+      const box = canvas.getBoundingClientRect()
+      const spot = recordBox.getBoundingClientRect()
+      ratio = Math.min(2, window.devicePixelRatio || 1)
+      canvas.width = Math.round(box.width * ratio)
+      canvas.height = Math.round(box.height * ratio)
+      center = {
+        x: spot.left + spot.width / 2 - box.left,
+        y: spot.top + spot.height / 2 - box.top,
+      }
+      const gap = box.width < 640 ? 11 : 13
+      let seed = 1
+      let nearest: Dot | undefined
+      dots = []
+      for (let y = gap / 2; y < box.height; y += gap)
+        for (let x = gap / 2; x < box.width; x += gap) {
+          seed += 1
+          const dot: Dot = {
+            x: x + (noise(seed) - 0.5) * gap * 0.7,
+            y: y + (noise(seed + 0.5) - 0.5) * gap * 0.7,
+            distance: 0,
+            depth: 0,
+          }
+          if (noise(seed + 0.25) < 0.72) dot.depth = 1
+          if (dot.depth && noise(seed + 0.75) < 0.05) dot.depth = 2
+          if (dot.depth === 2 && noise(seed + 0.125) < 0.25) dot.depth = 3
+          dot.distance = Math.hypot(dot.x - center.x, dot.y - center.y)
+          if (!nearest || dot.distance < nearest.distance) nearest = dot
+          dots.push(dot)
+        }
+      if (nearest) nearest.depth = 4
+      reach = dots.reduce((most, dot) => Math.max(most, dot.distance), 1)
+    }
+
+    function progress() {
+      const line = window.scrollY + reading
+      let value = 0
+      steps.forEach((_, index) => {
+        if (line >= tops[index])
+          value = index + clamp((line - tops[index]) / heights[index])
       })
-      for (const [at, tick] of ticks.entries())
-        tick.classList.toggle("is-current", at === current)
-      for (const [at, caption] of captions.entries())
-        caption.classList.toggle("is-current", at === current)
-      prev.disabled = current === 0
-      next.disabled = current === last
+      return value
     }
 
-    // While playing, captions change every few seconds; screen readers only
-    // hear them when the reader moves through the years themselves.
-    const stop = () => {
-      window.clearInterval(timer)
-      timer = undefined
-      root.removeAttribute("data-playing")
-      live.setAttribute("aria-live", "polite")
-      playLabel.textContent = root.dataset.play ?? ""
-    }
+    // The crowd: everyone dim, then the first list lights up in a wave
+    // from Max, and each further list leaves fewer people lit, until only
+    // Max remains and the view closes in on him.
+    function draw(p: number) {
+      if (!context || !canvas) return
+      const width = canvas.width / ratio
+      const height = canvas.height / ratio
+      const wave = snap(ramp(p, 1, 1.7))
+      const second = snap(ramp(p, 2.1, 2.6))
+      const third = snap(ramp(p, 3.1, 3.6))
+      const alone = snap(ramp(p, matchScene, matchScene + 0.45))
+      // With the reports, the crowd dims and Max leaves the picture.
+      const away = snap(ramp(p, reportScene - 0.1, reportScene + 0.4))
+      const fade = 1 - away * 0.85
+      const zoom = motion.matches ? 1 : 1 + ease(alone) * 0.9
 
-    const start = () => {
-      if (Number(range.value) >= last) show(0)
-      root.setAttribute("data-playing", "")
-      live.setAttribute("aria-live", "off")
-      playLabel.textContent = root.dataset.pause ?? ""
-      timer = window.setInterval(() => {
-        const at = Number(range.value) + 1
-        show(at)
-        if (at >= last) stop()
-      }, 2600)
-    }
-
-    const move = (index: number) => {
-      touched = true
-      stop()
-      show(index)
-    }
-
-    range.addEventListener("input", () => move(Number(range.value)))
-    prev.addEventListener("click", () => move(Number(range.value) - 1))
-    next.addEventListener("click", () => move(Number(range.value) + 1))
-    play.addEventListener("click", () => {
-      touched = true
-      if (timer) stop()
-      else start()
-    })
-
-    // The ruler: pick the tick nearest to the pointer, along whichever axis
-    // it runs, and magnify the ticks around it like the macOS Dock.
-    const vertical = () =>
-      getComputedStyle(track.querySelector(".ticks") ?? track).flexDirection ===
-      "column"
-    const nearest = (event: PointerEvent) => {
-      const axis = vertical() ? "y" : "x"
-      let best = 0
-      let distance = Number.POSITIVE_INFINITY
-      for (const [at, tick] of ticks.entries()) {
-        const box = tick.getBoundingClientRect()
-        const center =
-          axis === "y" ? box.top + box.height / 2 : box.left + box.width / 2
-        const gap = Math.abs(
-          (axis === "y" ? event.clientY : event.clientX) - center,
-        )
-        if (gap < distance) {
-          distance = gap
-          best = at
-        }
-      }
-      return best
-    }
-    const magnify = (event?: PointerEvent) => {
-      for (const tick of ticks) {
-        if (!event || !vertical()) {
-          tick.style.removeProperty("--zoom")
-          continue
-        }
-        const box = tick.getBoundingClientRect()
-        const gap = Math.abs(event.clientY - (box.top + box.height / 2))
-        tick.style.setProperty(
-          "--zoom",
-          String(1 + 0.6 * Math.max(0, 1 - gap / 70)),
-        )
-      }
-    }
-    let dragging = false
-    const release = () => {
-      dragging = false
-    }
-    track.addEventListener("pointerdown", (event) => {
-      if (event.button !== 0) return
-      dragging = true
-      track.setPointerCapture(event.pointerId)
-      move(nearest(event))
-    })
-    track.addEventListener("pointermove", (event) => {
-      if (!still) magnify(event)
-      if (dragging) show(nearest(event))
-    })
-    track.addEventListener("pointerup", release)
-    track.addEventListener("pointercancel", release)
-    track.addEventListener("lostpointercapture", release)
-    track.addEventListener("pointerleave", () => magnify())
-
-    root.classList.add("is-live")
-    for (const control of [range, prev, next]) control.disabled = false
-    play.hidden = false
-    stop()
-    show(last)
-
-    // Play once when the stack first comes into view.
-    if (!still) {
-      const watch = new IntersectionObserver(
-        ([entry]) => {
-          if (!entry?.isIntersecting) return
-          watch.disconnect()
-          if (!touched) start()
-        },
-        { threshold: 0.35 },
+      context.setTransform(ratio, 0, 0, ratio, 0, 0)
+      context.clearRect(0, 0, width, height)
+      context.setTransform(
+        ratio * zoom,
+        0,
+        0,
+        ratio * zoom,
+        ratio * center.x * (1 - zoom),
+        ratio * center.y * (1 - zoom),
       )
-      watch.observe(stage)
+
+      // Bucket the dots by colour and brightness, so the canvas changes
+      // its fill only a few dozen times per frame.
+      const buckets = new Map<number, Dot[]>()
+      for (const dot of dots) {
+        if (dot.depth === 4) continue
+        const lit =
+          dot.depth > 0 ? clamp((wave * reach * 1.15 - dot.distance) / 80) : 0
+        let alpha = 0.13 + lit * 0.4
+        if (dot.depth < 2) alpha *= 1 - second * 0.75
+        if (dot.depth === 2) alpha *= 1 - third * 0.7
+        if (dot.depth === 3) alpha += third * 0.3
+        alpha *= (1 - alone * 0.92) * fade
+        const red = dot.depth >= 2 && second > 0.5 ? 100 : 0
+        const key = red + Math.round(alpha * 20)
+        const bucket = buckets.get(key)
+        if (bucket) bucket.push(dot)
+        else buckets.set(key, [dot])
+      }
+      for (const [key, bucket] of buckets) {
+        const red = key >= 100
+        const alpha = (key % 100) / 20
+        if (alpha === 0) continue
+        context.fillStyle = red
+          ? `rgb(255 59 69 / ${alpha})`
+          : `rgb(255 244 230 / ${alpha})`
+        const size = red ? 2.4 : 1.8
+        for (const dot of bucket)
+          context.fillRect(dot.x - size / 2, dot.y - size / 2, size, size)
+      }
+
+      // Max: lit with the first list, red once he is on the second,
+      // ringed and named at the match.
+      context.fillStyle =
+        second > 0.5
+          ? `rgb(255 59 69 / ${1 - away})`
+          : `rgb(255 244 230 / ${wave > 0 ? 0.6 : 0.2})`
+      context.beginPath()
+      context.arc(
+        center.x,
+        center.y,
+        (1.4 + second * 1.2 + alone * 1.4) / Math.sqrt(zoom),
+        0,
+        Math.PI * 2,
+      )
+      context.fill()
+      if (alone > 0) {
+        const strength = alone * (1 - away)
+        context.strokeStyle = `rgb(255 59 69 / ${strength * 0.8})`
+        context.lineWidth = 1.5 / zoom
+        context.beginPath()
+        context.arc(
+          center.x,
+          center.y,
+          (12 + (1 - alone) * 40) / zoom,
+          0,
+          Math.PI * 2,
+        )
+        context.stroke()
+        context.fillStyle = `rgb(243 242 238 / ${strength})`
+        context.font = `600 ${13 / zoom}px "IBM Plex Sans", sans-serif`
+        context.textAlign = "center"
+        context.fillText("Max", center.x, center.y - 22 / zoom)
+      }
     }
+
+    const render = () => {
+      queued = false
+      const p = progress()
+      const at = (scene: number) => clamp(p - scene)
+
+      records.forEach((record, index) => {
+        const phase = phases(at(index + 1))
+        record.style.setProperty("--show", String(phase.show))
+        record.style.setProperty("--hit", String(phase.hit))
+        record.style.setProperty("--fly", String(phase.fly))
+        record.style.setProperty("--land", String(phase.land))
+      })
+
+      let count = 0
+      let identified = false
+      for (const row of rows) {
+        const fill = phases(at(Number(row.dataset.from) + 1)).land
+        const hit = Math.max(
+          0,
+          ...(matches.get(row.dataset.piece ?? "") ?? []).map(
+            (index) => phases(at(index + 1)).hit,
+          ),
+        )
+        row.style.setProperty("--fill", String(fill))
+        row.style.setProperty("--hit", String(hit))
+        if (fill < 0.5) continue
+        count += 1
+        if (row.dataset.piece === "document") identified = true
+      }
+      known.textContent = String(count)
+
+      // The portrait sharpens with every piece and is clear once an ID
+      // image is out.
+      file.style.setProperty(
+        "--blur",
+        String(identified ? 0 : Math.max(2, 12 - count * 1.6)),
+      )
+      file.style.setProperty(
+        "--stamp",
+        String(snap(ramp(at(matchScene), 0.15, 0.4))),
+      )
+      file.style.setProperty(
+        "--dim",
+        String(snap(ramp(p, reportScene, reportScene + 0.3))),
+      )
+
+      // One report a year over the last two scenes.
+      const stack =
+        ramp(p, reportScene + 0.08, reportScene + 1.35) * sheets.length
+      let filed = 0
+      sheets.forEach((sheet, index) => {
+        const into = motion.matches
+          ? Number(stack >= index + 1)
+          : clamp(stack - index)
+        sheet.style.setProperty("--in", String(into))
+        if (into >= 0.5) filed += 1
+      })
+      filedCount.textContent = String(filed)
+      pileCount.style.setProperty(
+        "--pile",
+        String(snap(ramp(p, reportScene, reportScene + 0.15))),
+      )
+
+      // The year, big beside the card and small on the file.
+      const scene = Math.min(Math.floor(p), steps.length - 1)
+      const year =
+        p >= reportScene
+          ? String(firstReport + Math.max(1, filed))
+          : (steps[scene].dataset.year ?? "")
+      for (const label of yearLabels)
+        if (label.textContent !== year) label.textContent = year
+
+      // The timeline: a line up to the current scene, and its mark.
+      rail.style.setProperty(
+        "--rail",
+        String(clamp((p - 1.5) / (links.length - 1))),
+      )
+      links.forEach((link, index) => {
+        link.toggleAttribute("data-passed", scene - 1 > index)
+        if (scene - 1 === index) link.setAttribute("aria-current", "step")
+        else link.removeAttribute("aria-current")
+      })
+
+      if (!wide)
+        for (const card of cards) {
+          const top = Number.parseFloat(card.style.getPropertyValue("--top"))
+          const cut = Math.max(0, top - card.getBoundingClientRect().top)
+          card.style.setProperty("--cut", `${cut}px`)
+        }
+
+      const box = root.getBoundingClientRect()
+      document.documentElement.toggleAttribute(
+        "data-immersive",
+        box.top <= pinTop + 1 && box.bottom >= window.innerHeight,
+      )
+
+      draw(p)
+    }
+
+    function queue() {
+      if (queued || !visible) return
+      queued = true
+      requestAnimationFrame(render)
+    }
+
+    function refresh() {
+      measure()
+      render()
+    }
+
+    links.forEach((link, index) => {
+      link.addEventListener("click", (event) => {
+        const scene = index + 1
+        if (tops[scene] === undefined) return
+        event.preventDefault()
+        window.scrollTo({
+          top: tops[scene] + heights[scene] * landing[index] - reading,
+          behavior: motion.matches ? "auto" : "smooth",
+        })
+        steps[scene]
+          .querySelector<HTMLElement>(".card")
+          ?.focus({ preventScroll: true })
+      })
+    })
+
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      if (!visible) document.documentElement.removeAttribute("data-immersive")
+      queue()
+    }).observe(root)
+    // The page above can grow, for example when the file is answered.
+    new ResizeObserver(refresh).observe(document.body)
+    window.addEventListener("scroll", queue, { passive: true })
+    motion.addEventListener("change", render)
+    document.fonts.ready.then(refresh)
+
+    root.toggleAttribute("data-ready", true)
+    refresh()
   }
 </script>

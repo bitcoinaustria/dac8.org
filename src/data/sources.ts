@@ -155,31 +155,6 @@ export const sourceGroups = [
     titleEn: "Data breaches, attacks and fraud",
     sources: [
       {
-        label: "GIS (2011): Informationen zum Hackerangriff auf die GIS",
-        labelEn: "GIS (2011): information on the hacker attack on GIS",
-        href: "https://www.ots.at/presseaussendung/OTS_20110725_OTS0105/informationen-zum-hackerangriff-auf-gis",
-      },
-      {
-        label:
-          "eBay (2014): Fragen und Antworten zum Angriff auf die Kundendatenbank",
-        labelEn: "eBay (2014): FAQ on the attack on the customer database",
-        href: "https://www.ebayinc.com/stories/news/faq-ebay-password-change/",
-      },
-      {
-        label:
-          "VwGH Ro 2025/04/0007 (2026): Partei-Affinitäten bei der Österreichischen Post",
-        labelEn:
-          "VwGH Ro 2025/04/0007 (2026): party affinities at Austrian Post",
-        href: "https://www.vwgh.gv.at/medien/mitteilungen/ro2025-04-0007.html",
-      },
-      {
-        label:
-          "Irische Datenschutzbehörde (2022): Entscheidung zu 533 Millionen Facebook-Datensätzen",
-        labelEn:
-          "Irish Data Protection Commission (2022): decision on 533 million Facebook records",
-        href: "https://www.dataprotection.ie/sites/default/files/uploads/2022-12/Final%20Decision_IN-21-4-2_Redacted.pdf",
-      },
-      {
         label:
           "Watchlist Internet: Phishing im Namen von FinanzOnline fragt nach Krypto-Beständen",
         labelEn:

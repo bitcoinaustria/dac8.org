@@ -1,12 +1,10 @@
 import type { Language } from "@/lib/i18n"
 
-// "Your file over time": an invented reader, Max Mustermann, who was unlucky
-// enough to be in every one of these real cases. Each step puts on his file
-// only the pieces its source says were lost, so a piece can come up again in
-// a later case. From 2027 DAC8 adds a yearly report; those are stored, not
-// leaked, and look different on the page. Cases in src/data/leaks.ts carry
-// their sources there; the others name theirs here, and their links stand
-// in the dossier's source list (src/data/sources.ts).
+// "How scattered leaks become a file": an invented reader, Max Mustermann,
+// who was in three real cases. Each case brings a record; what the file
+// already knows is only matched, so every piece lands once, with the case
+// that brought it. Then DAC8 adds a yearly report, which is stored, not
+// leaked. The cases and their sources live in src/data/leaks.ts.
 
 export type Piece =
   | "name"
@@ -14,8 +12,6 @@ export type Piece =
   | "home"
   | "email"
   | "phone"
-  | "bank"
-  | "party"
   | "wallet"
   | "document"
   | "balance"
@@ -50,24 +46,9 @@ export const rows: Row[] = [
     },
   },
   {
-    id: "email",
-    label: { de: "E-Mail", en: "Email" },
-    value: { de: "max.m@example.com", en: "max.m@example.com" },
-  },
-  {
     id: "phone",
     label: { de: "Handynummer", en: "Mobile number" },
     value: { de: "+43 660 ··· ·· 07", en: "+43 660 ··· ·· 07" },
-  },
-  {
-    id: "bank",
-    label: { de: "Kontodaten", en: "Bank account" },
-    value: { de: "AT·· ···· ···· ···· 0815", en: "AT·· ···· ···· ···· 0815" },
-  },
-  {
-    id: "party",
-    label: { de: "Parteinähe", en: "Party affinity" },
-    value: { de: "geschätzt, je Partei", en: "estimated, per party" },
   },
   {
     id: "wallet",
@@ -78,12 +59,14 @@ export const rows: Row[] = [
     },
   },
   {
+    id: "email",
+    label: { de: "E-Mail", en: "Email" },
+    value: { de: "max.m@example.com", en: "max.m@example.com" },
+  },
+  {
     id: "document",
     label: { de: "Ausweis", en: "ID document" },
-    value: {
-      de: "Bild von Vorder- und Rückseite",
-      en: "image, front and back",
-    },
+    value: { de: "Bild, Vorder- und Rückseite", en: "image, front and back" },
   },
   {
     id: "balance",
@@ -95,140 +78,133 @@ export const rows: Row[] = [
   },
 ]
 
-export interface Step {
-  year: number
-  // A case in src/data/leaks.ts, or a name and source given here. A name
-  // given here wins over the case's own.
-  leak?: string
-  name?: Text
-  source?: Text
-  // Short label for steps without a case, such as the DAC8 milestones.
-  label?: Text
-  // What happened, in one or two plain sentences. Name the data problem,
-  // not bitcoin.
+export interface Breach {
+  // The case in src/data/leaks.ts, which carries name, year and sources.
+  leak: string
+  // Where the data came from and how many people it held, for the head of
+  // the record.
+  where: Text
+  size: Text
+  // Max's line in the record, field by field, as it might look in the
+  // copied data. Pieces the file already holds are matched, not added.
+  fields: { piece: Piece; raw: Text }[]
   text: Text
-  adds: Piece[]
-  // DAC8 steps: how many annual reports on Max exist by then.
-  reports?: number
 }
 
-export const steps: Step[] = [
+export const breaches: Breach[] = [
   {
-    year: 2010,
-    label: { de: "Anfang", en: "Start" },
-    text: {
-      de: "Max ist erfunden: 30 Jahre alt, wohnt in Wien, zahlt Rundfunkgebühr und kauft online ein. Über ihn steht noch nichts im Netz.",
-      en: "Max is invented: 30, lives in Vienna, pays the broadcasting fee and shops online. Nothing about him is on the net yet.",
-    },
-    adds: [],
-  },
-  {
-    year: 2011,
-    name: { de: "GIS-Website", en: "GIS website" },
-    source: { de: "GIS, 25. Juli 2011", en: "GIS, 25 July 2011" },
-    text: {
-      de: "Hacker stehlen von einem Webserver der Gebührenstelle GIS rund 214.000 Kundendatensätze, 96.000 davon mit Kontodaten.",
-      en: "Hackers steal around 214,000 customer records from a web server of GIS, the fee office, 96,000 of them with bank account details.",
-    },
-    adds: ["bank"],
-  },
-  {
-    year: 2014,
-    name: same("eBay"),
-    source: { de: "eBay, Mai 2014", en: "eBay, May 2014" },
-    text: {
-      de: "Angreifer verschaffen sich Zugriff auf die Kundendatenbank von eBay: Name, E-Mail, Anschrift, Telefonnummer und Geburtsdatum.",
-      en: "Attackers get into eBay’s customer database: name, email, postal address, phone number and date of birth.",
-    },
-    adds: ["name", "birth", "home", "email", "phone"],
-  },
-  {
-    year: 2019,
-    name: { de: "Post", en: "Austrian Post" },
-    source: {
-      de: "Verwaltungsgerichtshof, 24. Juni 2026",
-      en: "Supreme Administrative Court, 24 June 2026",
-    },
-    text: {
-      de: "Die Post schätzt für rund 2,2 Millionen Menschen, wie nah sie welcher Partei stehen, und verkauft einen Teil davon. 2026 setzt der Verwaltungsgerichtshof die Strafe auf 13 Millionen Euro herab.",
-      en: "Austrian Post estimates for around 2.2 million people how close they are to each party, and sells some of the scores. In 2026 the Supreme Administrative Court reduces the fine to 13 million euros.",
-    },
-    adds: ["party"],
-  },
-  {
-    year: 2020,
     leak: "gis",
-    name: { de: "GIS-Meldedaten", en: "GIS registration data" },
+    where: { de: "Testserver", en: "Test server" },
+    size: { de: "≥ 5 Mio. Menschen", en: "≥ 5m people" },
+    fields: [
+      { piece: "name", raw: same("MUSTERMANN;MAX") },
+      { piece: "birth", raw: same("1980-01-01") },
+      { piece: "home", raw: same("MUSTERSTRASSE 7;1010;WIEN") },
+    ],
     text: {
-      de: "Ein IT-Dienstleister der GIS lädt echte Meldedaten zum Testen auf einen ungesicherten Server. Name, Anschrift und Geburtsdatum von mindestens fünf Millionen Menschen werden im Netz zum Kauf angeboten.",
-      en: "An IT contractor of GIS loads real registration data onto an unsecured server for a test. Name, postal address and date of birth of at least five million people are offered for sale online.",
+      de: "Ein IT-Dienstleister der GIS, der Stelle für die Rundfunkgebühr, lädt echte Meldedaten zum Testen auf einen ungesicherten Server. Daten von mindestens fünf Millionen Menschen werden danach im Netz zum Kauf angeboten.",
+      en: "An IT contractor of GIS, the office that collected Austria’s broadcasting fee, loads real registration data onto an unsecured server for a test. Records on at least five million people are then offered for sale online.",
     },
-    adds: ["name", "birth", "home"],
   },
   {
-    year: 2020,
     leak: "ledger",
+    where: { de: "Shop-Bestellungen", en: "Shop orders" },
+    size: { de: "272.000 Käufer", en: "272,000 buyers" },
+    fields: [
+      { piece: "name", raw: same("Max Mustermann") },
+      { piece: "home", raw: same("Musterstrasse 7, Wien") },
+      { piece: "phone", raw: same("+43660·····07") },
+      { piece: "wallet", raw: same("order #·····") },
+    ],
     text: {
-      de: "Aus dem Onlineshop eines Hardware-Wallet-Herstellers gelangen Namen, Anschriften und Telefonnummern von 272.000 Käufern ins Netz.",
-      en: "Names, postal addresses and phone numbers of 272,000 buyers leak from a hardware wallet maker’s online shop.",
+      de: "Aus dem Onlineshop eines Herstellers von Hardware-Wallets, kleinen Geräten, auf denen man Bitcoin selbst verwahrt, gelangen Namen, Anschriften und Telefonnummern von 272.000 Käufern ins Netz. Name und Anschrift passen zur ersten Liste.",
+      en: "Names, postal addresses and phone numbers of 272,000 buyers leak from the online shop of a hardware wallet maker; such a wallet is a small device for keeping your bitcoin yourself. Name and home address match the first list.",
     },
-    adds: ["name", "home", "phone", "email", "wallet"],
   },
   {
-    year: 2021,
-    name: same("Facebook"),
-    source: {
-      de: "Irische Datenschutzbehörde, 2022",
-      en: "Irish Data Protection Commission, 2022",
-    },
-    text: {
-      de: "Handynummern und Namen von rund 533 Millionen Facebook-Nutzern stehen frei im Netz.",
-      en: "Mobile numbers and names of around 533 million Facebook users are freely available online.",
-    },
-    adds: ["name", "phone"],
-  },
-  {
-    year: 2025,
     leak: "coinbase",
+    where: { de: "Support-Zugang", en: "Support access" },
+    size: { de: "69.461 Kunden", en: "69,461 customers" },
+    fields: [
+      { piece: "name", raw: same("Max Mustermann") },
+      { piece: "phone", raw: same("+43 660 ··· ·· 07") },
+      { piece: "email", raw: same("max.m@example.com") },
+      { piece: "document", raw: same("id_front.jpg, id_back.jpg") },
+      { piece: "balance", raw: same("balance · 214 tx") },
+    ],
     text: {
-      de: "Bestochene Support-Mitarbeiter einer Krypto-Börse geben Daten von 69.461 Kunden weiter, mit Ausweisbildern, Kontostand und Transaktionen.",
-      en: "Bribed support staff at a crypto exchange pass on data on 69,461 customers, with ID images, balances and transactions.",
+      de: "Bestochene Support-Mitarbeiter einer Krypto-Börse geben Daten von 69.461 Kunden weiter, bis hin zu Ausweisbildern, Kontostand und Transaktionen. Über Name und Handynummer lässt sich das Max zuordnen.",
+      en: "Bribed support staff at a crypto exchange pass on data on 69,461 customers, down to ID images, balances and transactions. Name and mobile number tie it to Max.",
     },
-    adds: ["name", "home", "email", "phone", "document", "balance"],
-  },
-  {
-    year: 2027,
-    label: { de: "Erste Meldung", en: "First report" },
-    text: {
-      de: "Sein Anbieter meldet das Jahr 2026 ans Finanzamt: Name, Anschrift, Geburtsdatum, Steuerwohnsitz, Steuernummer und je Kryptowert die Summen aus Käufen, Verkäufen, Tausch und Auszahlungen an Wallets, ohne Wallet-Adressen.",
-      en: "His provider reports 2026 to the tax authority: name, postal address, date of birth, tax residence, tax number and, per crypto-asset, the totals of purchases, sales, swaps and withdrawals to wallets, without wallet addresses.",
-    },
-    adds: [],
-    reports: 1,
-  },
-  {
-    year: 2031,
-    label: { de: "Fünf Meldungen", en: "Five reports" },
-    text: {
-      de: "Jedes Jahr kommt eine Meldung dazu, und der Anbieter hebt jede zehn Jahre auf.",
-      en: "Every year another report is added, and the provider keeps each one for ten years.",
-    },
-    adds: [],
-    reports: 5,
-  },
-  {
-    year: 2036,
-    leak: "bulgaria",
-    name: { de: "Zehn Meldungen", en: "Ten reports" },
-    text: {
-      de: "Ab jetzt liegen beim Anbieter immer zehn Jahresmeldungen über Max. Auch Steuerbehörden haben schon Daten verloren: In Bulgarien gelangten 2019 Steuerdaten von mehr als sechs Millionen Menschen ins Netz.",
-      en: "From now on the provider always holds ten annual reports on Max. Tax authorities have lost data too: in Bulgaria in 2019, tax data on more than six million people ended up online.",
-    },
-    adds: [],
-    reports: 10,
   },
 ]
 
-function same(label: string): Text {
-  return { de: label, en: label }
+// The scenes around the cases, in order: before, the match, DAC8 and the
+// end. Each has a short name for the timeline.
+export const intro = {
+  heading: {
+    de: "Wie aus verstreuten Datenlecks eine Akte wird.",
+    en: "How scattered data leaks become a file.",
+  },
+  text: {
+    de: "Max ist erfunden, die drei Datenlecks sind echt. Jedes für sich verrät wenig über ihn. Scroll weiter und sieh zu, wie daraus ein Bild wird.",
+    en: "Max is invented, the three leaks are real. Each on its own gives away little about him. Scroll on and watch them add up to a picture.",
+  },
+}
+
+export const match = {
+  short: { de: "Abgleich", en: "Match" },
+  heading: { de: "Drei Lecks, ein Profil.", en: "Three leaks, one profile." },
+  text: {
+    de: "Listen über Name, Anschrift oder Handynummer zusammenzuführen, erledigt gewöhnliche Software in Minuten, mit KI geht es noch leichter. Aus Millionen Menschen bleiben die übrig, die Bitcoin haben, mit Wohnadresse und Kontostand. Bitcoin ist wie Bargeld ein Inhaberwert, deshalb ziehen solche Listen Kriminelle an.",
+    en: "Joining lists on name, home address or mobile number takes ordinary software minutes, and AI makes it easier still. Out of millions of people, those who hold bitcoin remain, with home address and balance. Like cash, bitcoin is a bearer asset, which is why such lists draw criminals.",
+  },
+}
+
+export const reports = {
+  // The first report covers 2026 and is due in 2027; the provider keeps
+  // each for ten years.
+  first: 2026,
+  count: 10,
+  short: { de: "DAC8", en: "DAC8" },
+  heading: {
+    de: "Ab 2027: jedes Jahr eine Meldung.",
+    en: "From 2027: a report every year.",
+  },
+  text: {
+    de: "Sein Anbieter meldet jedes Jahr ans Finanzamt: Name, Anschrift, Geburtsdatum, Steuerwohnsitz, Steuernummer und je Kryptowert die Summen aus Käufen, Verkäufen, Tausch und Auszahlungen an Wallets, ohne Wallet-Adressen. Das ist kein Leck. Die Meldungen werden aufbewahrt, beim Anbieter zehn Jahre lang.",
+    en: "His provider reports to the tax authority every year: name, postal address, date of birth, tax residence, tax number and, per crypto-asset, the totals of purchases, sales, swaps and withdrawals to wallets, without wallet addresses. This is no leak. The reports are kept, by the provider for ten years.",
+  },
+  sheet: {
+    de: [
+      "Name, Anschrift, Geburtsdatum",
+      "Steuerwohnsitz, Steuernummer",
+      "Summen je Kryptowert",
+      "ohne Wallet-Adressen",
+    ],
+    en: [
+      "Name, postal address, date of birth",
+      "Tax residence, tax number",
+      "Totals per crypto-asset",
+      "no wallet addresses",
+    ],
+  },
+}
+
+export const end = {
+  // The case that shows authorities lose data too, from src/data/leaks.ts.
+  leak: "bulgaria",
+  short: { de: "10 Jahre", en: "10 years" },
+  heading: {
+    de: "Zehn Meldungen, an zwei Stellen.",
+    en: "Ten reports, in two places.",
+  },
+  text: {
+    de: "Ab jetzt liegen über Max immer zehn Jahresmeldungen beim Anbieter und beim Finanzamt. Auch Steuerbehörden verlieren Daten: In Bulgarien gelangten 2019 Steuerdaten von mehr als sechs Millionen Menschen ins Netz. Je weniger über dich gesammelt wird, desto weniger kann verloren gehen.",
+    en: "From now on, ten annual reports on Max always sit with the provider and the tax authority. Tax authorities lose data too: in Bulgaria in 2019, tax data on more than six million people ended up online. The less is collected about you, the less can be lost.",
+  },
+}
+
+function same(text: string): Text {
+  return { de: text, en: text }
 }
