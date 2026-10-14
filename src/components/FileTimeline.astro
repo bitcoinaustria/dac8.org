@@ -1,0 +1,1176 @@
+---
+import { leaks } from "@/data/leaks"
+import { rows, steps, type Piece } from "@/data/file-timeline"
+import { pathFor, type Language } from "@/lib/i18n"
+
+// "Your file over time", built like Apple's Time Machine: one sheet per step,
+// stacked into the depth, and a ruler to travel along them. Every sheet is
+// rendered here, so the page works without script and shows the last one;
+// the script below only moves the stack. The captions are the readable
+// version of the same story, so the sheets stay hidden from screen readers.
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+const en = language === "en"
+const last = steps.length - 1
+const leakFor = (id?: string) => leaks.find((leak) => leak.id === id)
+
+// What the ruler, the bar under the stack and the caption call a step, and
+// whom the caption names as source.
+const named = steps.map((step) => {
+  const leak = leakFor(step.leak)
+  const name =
+    step.name?.[language] ??
+    leak?.name[language] ??
+    step.label?.[language] ??
+    ""
+  return {
+    name,
+    // The tag on the sheet keeps the case's own short name.
+    short: leak?.name[language] ?? name,
+    source: leak?.sources[0]?.label[language] ?? step.source?.[language],
+  }
+})
+
+// For each step: which steps had put each piece on the file by then, and how
+// many reports exist.
+const sheets = steps.map((step, index) => {
+  const found = new Map<Piece, number[]>()
+  steps.slice(0, index + 1).forEach((earlier, at) => {
+    for (const piece of earlier.adds)
+      found.set(piece, [...(found.get(piece) ?? []), at])
+  })
+  const reports =
+    steps
+      .slice(0, index + 1)
+      .reverse()
+      .find((earlier) => earlier.reports)?.reports ?? 0
+  return { step, index, found, reports }
+})
+
+// "GIS ’20": the latest case that lost a piece.
+const tag = (at: number) =>
+  `${named[at].short} ’${String(steps[at].year).slice(2)}`
+const pieceLabel = (piece: Piece) =>
+  rows.find((row) => row.id === piece)?.label[language] ?? piece
+// The portrait comes into focus with every piece and is sharp once an ID
+// image is out.
+const blur = (known: number, document: boolean) =>
+  document ? 0 : Math.max(1.5, 14 - known * 1.6)
+const reportYears = Array.from({ length: 10 }, (_, index) => 2026 + index)
+---
+
+<section
+  id="zeitreise"
+  class="time-machine"
+  aria-labelledby="time-machine-heading"
+  data-time-machine
+  data-play={en ? "Play" : "Abspielen"}
+  data-pause={en ? "Pause" : "Pause"}
+>
+  <div class="intro">
+    <h2 id="time-machine-heading">
+      {en ? "Your file over time." : "Deine Akte über die Zeit."}
+    </h2>
+    <p>
+      {en ? "Max is invented and unlucky: he was in every one of these real cases. Each piece on its own looks harmless. Travel through the years and watch them add up to a picture." : "Max ist erfunden und hatte Pech: Er war bei jedem dieser echten Fälle dabei. Jedes Stück für sich wirkt harmlos. Reise durch die Jahre und sieh zu, wie daraus ein Bild wird."}
+    </p>
+  </div>
+
+  <div class="machine" style={`--t: ${last}; --last: ${last}`}>
+    <div class="space" aria-hidden="true"></div>
+
+    <div class="stage" aria-hidden="true">
+      {sheets.map(({ step, index, found, reports }) => (
+        <div
+          class:list={["sheet", { "is-current": index === last }]}
+          data-sheet
+          style={`--d: ${index - last}`}
+        >
+          <div class="sheet-head">
+            <span class="sheet-kind">{en ? "File" : "Akte"}</span>
+            <span class="sheet-date">
+              {en ? "As of" : "Stand"} {step.year}
+            </span>
+          </div>
+          <div class="sheet-id">
+            <div
+              class="portrait"
+              style={`--blur: ${blur(found.size, found.has("document"))}px`}
+            >
+              <svg viewBox="0 0 64 80">
+                <circle cx="32" cy="29" r="14" />
+                <path d="M6 80c0-17 11.6-28 26-28s26 11 26 28z" />
+              </svg>
+            </div>
+            <p class="sheet-name">
+              {found.has("name") ? (
+                <span class:list={{ "is-new": found.get("name")?.[0] === index }}>
+                  {rows[0].value[language]}
+                </span>
+              ) : (
+                <span class="redacted" style="--w: 11ch" />
+              )}
+            </p>
+          </div>
+          <dl class="sheet-rows">
+            {rows.slice(1).map((row) => {
+              const by = found.get(row.id) ?? []
+              const latest = by.at(-1)
+              return (
+                <div
+                  class:list={{
+                    "is-known": latest !== undefined,
+                    "is-new": by[0] === index,
+                    "is-again": by.length > 1 && latest === index,
+                  }}
+                >
+                  <dt>{row.label[language]}</dt>
+                  <dd>
+                    {latest !== undefined ? (
+                      <>
+                        <span class="value">{row.value[language]}</span>
+                        <span class="source">
+                          {tag(latest)}
+                          {by.length > 1 && <b>{by.length}×</b>}
+                        </span>
+                      </>
+                    ) : (
+                      <span
+                        class="redacted"
+                        style={`--w: ${Math.min(row.value[language].length, 22)}ch`}
+                      />
+                    )}
+                  </dd>
+                </div>
+              )
+            })}
+          </dl>
+          <div class:list={["sheet-tax", { "is-on": reports > 0 }]}>
+            <p class="sheet-tax-title">
+              {en ? "DAC8 reports" : "DAC8-Meldungen"}
+              <span>
+                {reports === 0
+                  ? en ? "none yet" : "noch keine"
+                  : en
+                    ? `${reports} to the tax office`
+                    : `${reports} ans Finanzamt`}
+              </span>
+            </p>
+            <ol class="sheet-reports">
+              {reportYears.map((year, at) => (
+                <li class:list={{ "is-filed": at < reports }}>{year}</li>
+              ))}
+            </ol>
+          </div>
+          <p class="sheet-count">
+            <span class="dots">
+              {rows.map((row) => (
+                <i class:list={{ "is-known": found.has(row.id) }} />
+              ))}
+            </span>
+            {en ? `${found.size} of ${rows.length} details leaked` : `${found.size} von ${rows.length} Angaben geleakt`}
+          </p>
+        </div>
+      ))}
+    </div>
+
+    <div class="ruler">
+      <button
+        class="ruler-step"
+        type="button"
+        data-prev
+        aria-label={en ? "Back in time" : "Zurück in der Zeit"}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 15 6-6 6 6" />
+        </svg>
+      </button>
+      <div class="track">
+        <input
+          class="range"
+          type="range"
+          min="0"
+          max={last}
+          step="1"
+          value={last}
+          data-range
+          aria-label={en ? "Year" : "Jahr"}
+          aria-valuetext={`${steps[last].year}: ${named[last].name}`}
+        >
+        <ol class="ticks" aria-hidden="true">
+          {steps.map((step, index) => (
+            <li
+              class:list={{ "is-current": index === last, "is-dac8": !step.leak && step.reports }}
+              data-tick
+              data-valuetext={`${step.year}: ${named[index].name}`}
+            >
+              <span>{step.year}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <button
+        class="ruler-step"
+        type="button"
+        data-next
+        aria-label={en ? "Forward in time" : "Vor in der Zeit"}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+    </div>
+    <div class="story">
+      <button class="play" type="button" data-play-button hidden>
+        <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+        <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 5h4v14H7zM13 5h4v14h-4z" />
+        </svg>
+        <span data-play-label>{en ? "Play" : "Abspielen"}</span>
+      </button>
+      <ol class="captions" aria-live="polite">
+        {steps.map((step, index) => (
+          <li data-caption>
+            <p class="caption-when">
+              <span>{step.year}</span>
+              {named[index].name}
+            </p>
+            <p class="caption-text">{step.text[language]}</p>
+            {step.adds.length > 0 && (
+              <p class="caption-adds">
+                {en ? "On the file: " : "In der Akte: "}
+                {step.adds.map(pieceLabel).join(", ")}.
+                {named[index].source &&
+                  (en
+                    ? ` Source: ${named[index].source}.`
+                    : ` Quelle: ${named[index].source}.`)}
+              </p>
+            )}
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+
+  <p class="time-machine-foot">
+    <a href={pathFor("leaks", language)}
+      >{en ? "More cases with sources" : "Mehr Fälle mit Quellen"}</a
+    >
+  </p>
+</section>
+
+<style>
+  /* Die Zeitmaschine: ein dunkler Raum, darin die Aktenblätter von Max als
+     Stapel in die Tiefe, rechts das Lineal mit den Jahren. Die Blätter sind
+     helle Glasplatten mit dunkler Kante wie in den Illustrationen und
+     bleiben in beiden Farbmodi hell. --d ist der Abstand eines Blatts zum
+     gewählten Jahr: 0 vorne, negativ dahinter, positiv noch nicht da. */
+  .time-machine {
+    container: time-machine / inline-size;
+    display: grid;
+    gap: var(--space-l);
+  }
+
+  .intro {
+    display: grid;
+    gap: var(--space-m);
+  }
+
+  .intro p {
+    max-inline-size: var(--measure-lead);
+    color: var(--ink-2);
+    font-size: var(--step-1);
+    text-wrap: pretty;
+  }
+
+  .machine {
+    --sheet-ink: #23282c;
+    --sheet-ink-3: #5f676d;
+    --sheet-red: #c9000d;
+    --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "stage" "ruler" "story";
+    overflow: hidden;
+    isolation: isolate;
+    padding: var(--space-xl) var(--space-s) var(--space-m);
+    border-radius: var(--radius-3xl);
+    background: radial-gradient(
+      120% 80% at 50% 0%,
+      #3b4652 0%,
+      #1a1f26 48%,
+      #0c0e11 100%
+    );
+    color: #f3f5f6;
+  }
+
+  /* Sterne wie im Original. Sie ziehen beim Reisen langsam mit. */
+  .space {
+    position: absolute;
+    inset: -20%;
+    z-index: -1;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, #fff9 50%, transparent 51%),
+      radial-gradient(1px 1px at 72% 12%, #fff7 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 38% 64%, #fff6 50%, transparent 51%),
+      radial-gradient(1px 1px at 86% 48%, #fff8 50%, transparent 51%),
+      radial-gradient(1px 1px at 22% 82%, #fff5 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 58% 30%, #fff5 50%, transparent 51%),
+      radial-gradient(1px 1px at 92% 86%, #fff6 50%, transparent 51%),
+      radial-gradient(1px 1px at 6% 44%, #fff4 50%, transparent 51%);
+    background-size: 23rem 19rem;
+    opacity: 0.7;
+    transform: scale(calc(1 + (var(--last) - var(--t)) * 0.035));
+    transition: transform 1.4s var(--ease);
+  }
+
+  /* ---------- Stapel ---------- */
+
+  .stage {
+    grid-area: stage;
+    display: grid;
+    justify-items: center;
+    padding-block-start: 4.75rem;
+    perspective: 1600px;
+    perspective-origin: 50% -20%;
+  }
+
+  .sheet {
+    grid-area: 1 / 1;
+    inline-size: min(100%, 34rem);
+    padding: 1.1rem 1.25rem 1rem;
+    border-radius: 0.9rem;
+    background:
+      radial-gradient(circle at 0.75rem 0.75rem, #8b9399 2px, transparent 2.5px),
+      radial-gradient(
+        circle at calc(100% - 0.75rem) 0.75rem,
+        #8b9399 2px,
+        transparent 2.5px
+      ),
+      radial-gradient(
+        circle at 0.75rem calc(100% - 0.75rem),
+        #8b9399 2px,
+        transparent 2.5px
+      ),
+      radial-gradient(
+        circle at calc(100% - 0.75rem) calc(100% - 0.75rem),
+        #8b9399 2px,
+        transparent 2.5px
+      ),
+      linear-gradient(165deg, #f6f8f9 0%, #dfe4e7 55%, #cfd5d9 100%);
+    box-shadow:
+      0 0 0 1px #ffffffb0 inset,
+      0 0 0 1px #6f787e,
+      0 0 0 5px #30363b,
+      0 0 0 6px #50575d,
+      0 2.5rem 4rem -1.5rem #000c;
+    color: var(--sheet-ink);
+    font-size: 0.9375rem;
+    line-height: 1.35;
+    transform-origin: 50% 0;
+    transform: translate3d(0, calc(var(--d) * 1.15rem), calc(var(--d) * 70px));
+    opacity: max(0, 1 + var(--d) * 0.13);
+    transition:
+      transform 0.8s var(--ease),
+      opacity 0.6s var(--ease);
+    will-change: transform, opacity;
+  }
+
+  /* Was noch nicht geschehen ist, liegt hinter der Kamera. */
+  .sheet[data-future] {
+    transform: translate3d(0, 3rem, 420px);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sheet:not(.is-current) > * {
+    visibility: hidden;
+  }
+
+  .sheet:not(.is-current) > .sheet-head {
+    visibility: visible;
+  }
+
+  .sheet-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-inline: 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .sheet-date {
+    color: var(--sheet-red);
+  }
+
+  .sheet-id {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-block: 0.8rem 0.7rem;
+    padding-block-end: 0.8rem;
+    border-block-end: 2px solid var(--sheet-red);
+  }
+
+  .portrait {
+    flex: none;
+    inline-size: 3.6rem;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 0.3rem;
+    background: #30363b;
+  }
+
+  .portrait svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    fill: #e9edef;
+    filter: blur(var(--blur));
+    transform: scale(1.15);
+  }
+
+  .sheet-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  .redacted {
+    display: inline-block;
+    inline-size: var(--w);
+    max-inline-size: 100%;
+    block-size: 0.8em;
+    border-radius: 0.15em;
+    background: repeating-linear-gradient(
+      90deg,
+      #2d3337 0 0.9ch,
+      #3a4146 0.9ch 1ch
+    );
+    vertical-align: -0.05em;
+  }
+
+  .sheet-rows {
+    display: grid;
+    margin: 0;
+  }
+
+  .sheet-rows > div {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: baseline;
+    min-block-size: 1.85rem;
+    padding-block: 0.28rem;
+  }
+
+  .sheet-rows > div + div {
+    border-block-start: 1px solid #23282c1c;
+  }
+
+  .sheet-rows dt {
+    color: var(--sheet-ink-3);
+    font-size: 0.8125rem;
+  }
+
+  .sheet-rows dd {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.6rem;
+    min-inline-size: 0;
+    margin: 0;
+    font-weight: 560;
+  }
+
+  .value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .source {
+    color: var(--sheet-red);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* Wie oft eine Angabe schon im Netz stand. */
+  .source b {
+    margin-inline-start: 0.4em;
+    padding: 0.05em 0.35em;
+    border-radius: 0.2rem;
+    background: #c9000d1f;
+    font-weight: 700;
+  }
+
+  .sheet-tax {
+    margin-block-start: 0.8rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.45rem;
+    background: #23282c10;
+    color: var(--sheet-ink-3);
+  }
+
+  .sheet-tax.is-on {
+    background: #23282c;
+    color: #eef1f2;
+  }
+
+  .sheet-tax-title {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .sheet-tax-title span {
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  .sheet-reports {
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 0.2rem;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sheet-reports li {
+    padding-block: 0.15rem;
+    border-radius: 0.15rem;
+    background: #23282c14;
+    color: transparent;
+    font-size: 0.5625rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .sheet-tax.is-on .sheet-reports li {
+    background: #ffffff14;
+  }
+
+  .sheet-tax.is-on .sheet-reports li.is-filed {
+    background: #dfe4e7;
+    color: #23282c;
+  }
+
+  .sheet-count {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-block-start: 0.75rem;
+    padding-inline: 0.4rem;
+    color: var(--sheet-ink-3);
+    font-size: 0.75rem;
+    font-weight: 560;
+  }
+
+  .dots {
+    display: flex;
+    gap: 0.2rem;
+  }
+
+  .dots i {
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 50%;
+    background: #23282c26;
+  }
+
+  .dots i.is-known {
+    background: var(--sheet-red);
+  }
+
+  /* Was dieser Schritt neu hinzufügt, leuchtet kurz rot auf. */
+  .sheet.is-current .is-new .value,
+  .sheet.is-current .sheet-name .is-new {
+    animation: reveal 1.4s var(--ease) both;
+  }
+
+  .sheet.is-current .is-new .source,
+  .sheet.is-current .is-again .source {
+    animation: reveal-tag 1.4s var(--ease) both;
+  }
+
+  @keyframes reveal {
+    0% {
+      opacity: 0;
+      color: var(--sheet-red);
+      filter: blur(6px);
+    }
+    45% {
+      opacity: 1;
+      color: var(--sheet-red);
+      filter: blur(0);
+    }
+    100% {
+      color: var(--sheet-ink);
+    }
+  }
+
+  @keyframes reveal-tag {
+    0%,
+    30% {
+      opacity: 0;
+    }
+  }
+
+  .portrait svg {
+    transition: filter 1.2s var(--ease);
+  }
+
+  /* ---------- Lineal ---------- */
+
+  .ruler {
+    grid-area: ruler;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-block-start: var(--space-s);
+  }
+
+  .ruler-step {
+    display: grid;
+    flex: none;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    rotate: -90deg;
+  }
+
+  .ruler-step:hover:not(:disabled) {
+    background: #ffffff1a;
+  }
+
+  .ruler-step:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  .ruler-step svg {
+    inline-size: 1.4rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .track {
+    position: relative;
+    flex: 1;
+    min-inline-size: 0;
+    touch-action: none;
+    cursor: pointer;
+  }
+
+  .range {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .track:has(.range:focus-visible) {
+    border-radius: var(--radius-lg);
+    outline: 2px solid #ff3b45;
+    outline-offset: 0.25rem;
+  }
+
+  .ticks {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ticks li {
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+    min-inline-size: 0;
+    color: #ffffff80;
+    font-size: 0.75rem;
+    transition: color 0.3s;
+  }
+
+  .ticks li::before {
+    content: "";
+    inline-size: 2px;
+    block-size: 0.9rem;
+    border-radius: 1px;
+    background: currentColor;
+    transform: scaleY(var(--zoom, 1));
+    transform-origin: 50% 100%;
+    transition: transform 0.15s;
+  }
+
+  .ticks li.is-dac8::before {
+    background: #dfe4e7;
+  }
+
+  .ticks li span {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ticks li.is-current {
+    color: #ff3b45;
+    font-weight: 600;
+  }
+
+  .ticks li.is-current::before {
+    block-size: 1.4rem;
+  }
+
+  /* Schmal trägt nur die Jetzt-Leiste das Jahr, das Lineal zeigt Striche. */
+  @container time-machine (width < 52rem) {
+    .ticks li span {
+      display: none;
+    }
+  }
+
+  @container time-machine (width < 40rem) {
+    /* Schmal muss das Blatt samt Lineal auf einen Bildschirm passen: eine
+       Zeile je Angabe, die Herkunft steht in der Erzählung darunter. */
+    .machine {
+      padding-block-start: var(--space-m);
+    }
+
+    .stage {
+      padding-block-start: 4.25rem;
+    }
+
+    .sheet {
+      padding: 0.85rem 0.85rem 0.75rem;
+      font-size: 0.8125rem;
+    }
+
+    .sheet-id {
+      gap: 0.7rem;
+      margin-block: 0.55rem 0.45rem;
+      padding-block-end: 0.55rem;
+    }
+
+    .portrait {
+      inline-size: 2.6rem;
+    }
+
+    .sheet-name {
+      font-size: 1.125rem;
+    }
+
+    .sheet-rows > div {
+      grid-template-columns: 6.75rem minmax(0, 1fr);
+      gap: 0.5rem;
+      min-block-size: 1.6rem;
+      padding-block: 0.22rem;
+    }
+
+    .sheet-rows dt {
+      overflow: hidden;
+      font-size: 0.75rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .source {
+      display: none;
+    }
+
+    .sheet-rows > .is-known dt::before {
+      content: "";
+      display: inline-block;
+      inline-size: 0.4rem;
+      block-size: 0.4rem;
+      margin-inline-end: 0.35rem;
+      border-radius: 50%;
+      background: var(--sheet-red);
+      vertical-align: 0.1em;
+    }
+
+    /* Wie oft eine Angabe schon im Netz stand. */
+    .source b {
+      margin-inline-start: 0.4em;
+      padding: 0.05em 0.35em;
+      border-radius: 0.2rem;
+      background: #c9000d1f;
+      font-weight: 700;
+    }
+
+    .sheet-tax {
+      margin-block-start: 0.6rem;
+      padding: 0.5rem 0.6rem;
+    }
+
+    .sheet-count {
+      margin-block-start: 0.55rem;
+    }
+  }
+
+  /* Breit steht das Lineal senkrecht rechts wie bei Time Machine: oben die
+     Vergangenheit, unten das Neueste. */
+  @container time-machine (width >= 52rem) {
+    .machine {
+      grid-template-columns: minmax(0, 1fr) 6.5rem;
+      grid-template-areas: "stage ruler" "story story";
+      column-gap: var(--space-m);
+      padding: var(--space-xl) var(--space-l) var(--space-l);
+    }
+
+    .ruler {
+      flex-direction: column;
+      margin: 0;
+    }
+
+    .ruler-step {
+      rotate: none;
+    }
+
+    .track {
+      inline-size: 100%;
+    }
+
+    .range {
+      writing-mode: vertical-lr;
+    }
+
+    .ticks {
+      flex-direction: column;
+      block-size: 100%;
+      min-block-size: 22rem;
+    }
+
+    .ticks li {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      justify-items: end;
+      font-size: calc(0.75rem * var(--zoom, 1));
+    }
+
+    .ticks li::before {
+      order: 2;
+      inline-size: 1rem;
+      block-size: 2px;
+      transform: scaleX(var(--zoom, 1));
+      transform-origin: 100% 50%;
+    }
+
+    .ticks li.is-current::before {
+      inline-size: 1.6rem;
+      block-size: 2px;
+    }
+  }
+
+  /* ---------- Erzählung in der Maschine ---------- */
+
+  .story {
+    grid-area: story;
+    display: grid;
+    align-content: start;
+    gap: var(--space-s);
+    max-inline-size: var(--measure-text);
+    margin-block-start: var(--space-s);
+  }
+
+  /* Ganz breit steht die Erzählung links neben dem Stapel. */
+  @container time-machine (width >= 70rem) {
+    .machine {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 34rem) 6.5rem;
+      grid-template-areas: "story stage ruler";
+    }
+
+    .story {
+      align-content: center;
+      margin: 0;
+      padding-block-start: 4.75rem;
+    }
+  }
+
+  .play {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 0.45rem;
+    padding: 0.4rem 0.95rem 0.4rem 0.75rem;
+    border: 1px solid #ffffff3d;
+    border-radius: var(--radius-full);
+    background: #ffffff0f;
+    color: inherit;
+    font: inherit;
+    font-size: var(--step--1);
+    font-weight: 560;
+    cursor: pointer;
+  }
+
+  .play:hover {
+    border-color: #ffffff80;
+  }
+
+  .play svg {
+    inline-size: 1rem;
+    fill: currentColor;
+  }
+
+  .play .icon-pause,
+  .play[aria-pressed="true"] .icon-play {
+    display: none;
+  }
+
+  .play[aria-pressed="true"] .icon-pause {
+    display: block;
+  }
+
+  .captions {
+    display: grid;
+    gap: var(--space-m);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .caption-when {
+    display: grid;
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .caption-when span {
+    color: #ff3b45;
+    font-size: 0.75em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .caption-text {
+    margin-block-start: var(--space-2xs);
+    color: #d3d8db;
+    text-wrap: pretty;
+  }
+
+  .caption-adds {
+    margin-block-start: var(--space-2xs);
+    color: #9aa3a9;
+    font-size: var(--step--1);
+    text-wrap: pretty;
+  }
+
+  .time-machine-foot {
+    font-weight: 560;
+  }
+
+  /* Mit Script steht nur die Erzählung zum gewählten Jahr da. */
+  .time-machine.is-live [data-caption]:not(.is-current) {
+    display: none;
+  }
+
+  .time-machine.is-live .captions {
+    min-block-size: 11rem;
+  }
+
+  /* Die gewählte Station blendet sanft ein. */
+  .time-machine.is-live [data-caption].is-current {
+    animation: caption-in 0.6s var(--ease) both;
+  }
+
+  @keyframes caption-in {
+    from {
+      opacity: 0;
+      translate: 0 0.4rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sheet,
+    .space,
+    .portrait svg {
+      transition: none;
+    }
+
+    .sheet.is-current .is-new .value,
+    .sheet.is-current .sheet-name .is-new,
+    .sheet.is-current .is-new .source,
+    .sheet.is-current .is-again .source,
+    .time-machine.is-live [data-caption].is-current {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // Moves the stack to the chosen step. The range is the single source of
+  // truth: buttons, the ruler and playback all set it. Playback starts once
+  // when the machine comes into view and stops at the first touch.
+  for (const root of document.querySelectorAll<HTMLElement>(
+    "[data-time-machine]",
+  )) {
+    const machine = root.querySelector<HTMLElement>(".machine")
+    const range = root.querySelector<HTMLInputElement>("[data-range]")
+    const track = root.querySelector<HTMLElement>(".track")
+    const prev = root.querySelector<HTMLButtonElement>("[data-prev]")
+    const next = root.querySelector<HTMLButtonElement>("[data-next]")
+    const play = root.querySelector<HTMLButtonElement>("[data-play-button]")
+    const playLabel = root.querySelector<HTMLElement>("[data-play-label]")
+    if (!machine || !range || !track || !prev || !next || !play || !playLabel)
+      continue
+    const sheets = [...root.querySelectorAll<HTMLElement>("[data-sheet]")]
+    const ticks = [...root.querySelectorAll<HTMLElement>("[data-tick]")]
+    const captions = [...root.querySelectorAll<HTMLElement>("[data-caption]")]
+    const last = sheets.length - 1
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches
+    let timer: number | undefined
+
+    const show = (index: number) => {
+      const current = Math.max(0, Math.min(last, index))
+      range.value = String(current)
+      range.setAttribute(
+        "aria-valuetext",
+        ticks[current].dataset.valuetext ?? "",
+      )
+      machine.style.setProperty("--t", String(current))
+      sheets.forEach((sheet, at) => {
+        sheet.style.setProperty("--d", String(at - current))
+        sheet.toggleAttribute("data-future", at > current)
+        sheet.classList.toggle("is-current", at === current)
+      })
+      for (const [at, tick] of ticks.entries())
+        tick.classList.toggle("is-current", at === current)
+      for (const [at, caption] of captions.entries())
+        caption.classList.toggle("is-current", at === current)
+      prev.disabled = current === 0
+      next.disabled = current === last
+    }
+
+    const stop = () => {
+      window.clearInterval(timer)
+      timer = undefined
+      play.setAttribute("aria-pressed", "false")
+      playLabel.textContent = root.dataset.play ?? ""
+    }
+
+    const start = () => {
+      if (Number(range.value) >= last) show(0)
+      play.setAttribute("aria-pressed", "true")
+      playLabel.textContent = root.dataset.pause ?? ""
+      timer = window.setInterval(() => {
+        const at = Number(range.value) + 1
+        show(at)
+        if (at >= last) stop()
+      }, 2600)
+    }
+
+    range.addEventListener("input", () => {
+      stop()
+      show(Number(range.value))
+    })
+    prev.addEventListener("click", () => {
+      stop()
+      show(Number(range.value) - 1)
+    })
+    next.addEventListener("click", () => {
+      stop()
+      show(Number(range.value) + 1)
+    })
+    play.addEventListener("click", () => (timer ? stop() : start()))
+
+    // The ruler: pick the tick nearest to the pointer, along whichever axis
+    // it runs, and magnify the ticks around it like the macOS Dock.
+    const vertical = () =>
+      getComputedStyle(track.querySelector(".ticks") ?? track).flexDirection ===
+      "column"
+    const nearest = (event: PointerEvent) => {
+      const axis = vertical() ? "y" : "x"
+      let best = 0
+      let distance = Number.POSITIVE_INFINITY
+      for (const [at, tick] of ticks.entries()) {
+        const box = tick.getBoundingClientRect()
+        const center =
+          axis === "y" ? box.top + box.height / 2 : box.left + box.width / 2
+        const gap = Math.abs(
+          (axis === "y" ? event.clientY : event.clientX) - center,
+        )
+        if (gap < distance) {
+          distance = gap
+          best = at
+        }
+      }
+      return best
+    }
+    const magnify = (event?: PointerEvent) => {
+      for (const tick of ticks) {
+        if (!event || !vertical()) {
+          tick.style.removeProperty("--zoom")
+          continue
+        }
+        const box = tick.getBoundingClientRect()
+        const gap = Math.abs(event.clientY - (box.top + box.height / 2))
+        tick.style.setProperty(
+          "--zoom",
+          String(1 + 0.6 * Math.max(0, 1 - gap / 70)),
+        )
+      }
+    }
+    let dragging = false
+    track.addEventListener("pointerdown", (event) => {
+      dragging = true
+      track.setPointerCapture(event.pointerId)
+      stop()
+      show(nearest(event))
+    })
+    track.addEventListener("pointermove", (event) => {
+      if (!still) magnify(event)
+      if (dragging) show(nearest(event))
+    })
+    track.addEventListener("pointerup", () => {
+      dragging = false
+    })
+    track.addEventListener("pointerleave", () => magnify())
+
+    root.classList.add("is-live")
+    play.hidden = false
+    stop()
+    show(still ? last : 0)
+
+    // Play once when the machine first comes into view.
+    if (!still) {
+      const watch = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry?.isIntersecting) return
+          watch.disconnect()
+          if (Number(range.value) === 0) start()
+        },
+        { threshold: 0.6 },
+      )
+      watch.observe(machine)
+    }
+  }
+</script>
