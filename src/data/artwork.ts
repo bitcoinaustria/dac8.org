@@ -60,6 +60,11 @@ export const artwork = {
       alt: "Illustration: a bar labelled 100 %, all customers, without suspicion, is connected by red lines to ten personal record cards. Above it sits a financial record on Max Mustermann with his home address and annual totals: purchases 0.35 BTC, transfers 0.18 BTC.",
     },
   },
+  // The wallet row and the postal address labels were retouched after the
+  // render: "Auszahlungen an Wallets" / "Withdrawals to wallets" for the
+  // law's transfers to addresses with no known provider (DAC8 Annex VI,
+  // II.B.3(i); § 18 Abs. 1 Z 3 lit. i Krypto-MPfG), and "Anschrift" /
+  // "Postal address". Keep these labels when the lab renders it again.
   reportAssets: {
     image: { de: reportAssets, en: reportAssetsEn },
     de: {
