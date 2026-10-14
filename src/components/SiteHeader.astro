@@ -16,6 +16,7 @@ const current = navigation.find(
   ({ href }) =>
     (normalizePath(new URL(href, Astro.url).pathname) || "/") === pathname,
 )
+const home = pathname === (normalizePath(pathFor("home", language)) || "/")
 ---
 
 <header class="site-header" data-site-header>
@@ -24,6 +25,7 @@ const current = navigation.find(
       class="site-brand"
       href={pathFor("home", language)}
       aria-label={SITE.title}
+      aria-current={home ? "page" : undefined}
     >
       dac8<span>.org</span>
     </a>

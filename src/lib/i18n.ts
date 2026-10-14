@@ -40,20 +40,17 @@ export const shareKitFor = (language: Language) =>
   `${pathFor("participate", language)}#teilen`
 export const feedFor = (language: Language) =>
   language === "en" ? "/en/feed.xml" : "/feed.xml"
-// Main navigation. Donating is a separate, always visible action.
+// Main navigation. The logo leads home, and donating is a separate, always
+// visible action.
 export const navigationFor = (language: Language) => [
-  {
-    href: pathFor("home", language),
-    label: language === "en" ? "Home" : "Start",
-  },
   { href: pathFor("dossier", language), label: "Dossier" },
-  {
-    href: pathFor("arguments", language),
-    label: language === "en" ? "Arguments" : "Argumente",
-  },
   {
     href: pathFor("file", language),
     label: language === "en" ? "Your file" : "Deine Akte",
+  },
+  {
+    href: pathFor("arguments", language),
+    label: language === "en" ? "Arguments" : "Argumente",
   },
   {
     href: pathFor("attacks", language),
