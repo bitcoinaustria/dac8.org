@@ -87,7 +87,7 @@ export const rows: Row[] = [
   },
   {
     id: "balance",
-    label: { de: "Bei der Börse", en: "At the exchange" },
+    label: { de: "Börsenkonto", en: "Exchange account" },
     value: {
       de: "Kontostand und Transaktionen",
       en: "balance and transactions",
