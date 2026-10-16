@@ -51,6 +51,8 @@ to new copy, graphics and tools, not only to the pages they were found on.
 - Never write a bare "Adresse" or "address": readers cannot tell a home from
   a wallet. Use Anschrift or Wohnadresse (postal or home address) for where
   someone lives, and Wallet-Adresse (wallet address) for the blockchain.
+- In German, write Datenleck, never a bare Leck: German readers do not use
+  Leck for data, only for pipes and boats.
 - Do not end points or sections with "read more" cross-references. A section
   gets at most one link to the obvious next step; the navigation and footer
   carry the rest, including the sources.
