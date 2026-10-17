@@ -36,7 +36,9 @@ const render = (name: string) =>
 const art: Partial<Record<Place, string>> = Object.fromEntries(
   nodes.map((node) => [node.id, render(node.id.toLowerCase())]),
 )
+const board = render("file-board")
 const doorstep = render("doorstep")
+const doorstepOpen = render("doorstep-open")
 const en = language === "en"
 
 const leakFor = (id: string) => {
@@ -198,8 +200,9 @@ const roads = [
         ))}
     </div>
 
-    <div class="view" aria-hidden="true">
+    <div class="view">
       <svg
+        aria-hidden="true"
         class="net"
         viewBox="0 0 1200 600"
         preserveAspectRatio="xMidYMid meet"
@@ -405,13 +408,16 @@ const roads = [
         </g>
       </svg>
 
-      <article class="file">
-        <header>
-          <b>{en ? "File" : "Akte"}</b>
-          <span>{en ? "joined from leaks" : "aus Lecks zusammengeführt"}</span>
-        </header>
-        <dl>
-          {profile.map((row, index) => (
+      <article class="file" aria-hidden="true">
+        <img class="board" src={board} alt="">
+        <div class="file-head">
+          <p>{en ? "Linked profile" : "Verknüpftes Profil"}</p>
+          <b>Max Mustermann</b>
+          <span>{profile[1].value[language]}</span>
+        </div>
+        <span class="file-plate">{en ? "Match" : "Treffer"}</span>
+        <dl class="file-rows">
+          {profile.slice(2).map((row, index) => (
               <div class="row" style={`--r: ${index}`}>
                 <dt>{row.label[language]}</dt>
                 <dd>{row.value[language]}</dd>
@@ -421,7 +427,7 @@ const roads = [
         </dl>
       </article>
 
-      <div class="prompt">
+      <div class="prompt" aria-hidden="true">
         <p class="prompt-head"><span>✦</span> {search.label[language]}</p>
         <p class="prompt-text">
           <span data-typed data-text={search.query[language]}
@@ -433,7 +439,12 @@ const roads = [
 
       <div class="map">
         {doorstep ? (
-          <img class="doorstep" src={doorstep} alt="" />
+          <div class="house">
+            <img class="doorstep" src={doorstep} alt="" />
+            {doorstepOpen && (
+              <img class="doorstep inside" src={doorstepOpen} alt="" />
+            )}
+          </div>
         ) : (
           <svg viewBox="0 0 420 320" preserveAspectRatio="xMidYMid slice">
             <defs>
@@ -456,7 +467,12 @@ const roads = [
             </g>
           </svg>
         )}
-        <div class="address">
+        {doorstepOpen && (
+          <button class="peek" type="button" aria-pressed="false" data-peek>
+            {en ? "Look inside" : "Ins Haus schauen"}
+          </button>
+        )}
+        <div class="address" aria-hidden="true">
           <b>Musterstraße 7</b>
           <span>{en ? "1010 Vienna" : "1010 Wien"}</span>
           <span class="chips">
@@ -766,15 +782,78 @@ const roads = [
     filter: drop-shadow(0 6px 8px var(--material-shade));
   }
 
-  .doorstep {
+  /* Das Haus am Ende: Wer darauf zeigt oder den Knopf drückt, sieht
+     hinein, auf Schreibtisch, Hardware-Wallet und Tresor. */
+  .house {
+    display: grid;
     align-self: center;
     justify-self: center;
     inline-size: min(100%, 52rem);
-    block-size: auto;
-    max-block-size: 100%;
-    object-fit: contain;
+    min-block-size: 0;
     opacity: var(--pin);
     translate: 0 calc((1 - var(--draw)) * 1.5rem);
+    transform-origin: 46% 36%;
+    transition: scale 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+    cursor: zoom-in;
+  }
+
+  /* Offen fährt die Ansicht an das Haus heran, damit man das Innere sieht. */
+  .map[data-open] .house {
+    scale: 2;
+    cursor: zoom-out;
+  }
+
+  .doorstep {
+    grid-area: 1 / 1;
+    inline-size: 100%;
+    block-size: 100%;
+    min-block-size: 0;
+    object-fit: contain;
+  }
+
+  .inside {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .map[data-open] .inside {
+    opacity: 1;
+  }
+
+  @media (hover: hover) {
+    .house:hover .inside {
+      opacity: 1;
+    }
+  }
+
+  .peek {
+    position: absolute;
+    inset-block-start: var(--space-s);
+    inset-inline-start: 50%;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--paper);
+    color: var(--foreground);
+    font: inherit;
+    font-size: var(--step--1);
+    font-weight: 560;
+    opacity: var(--pin);
+    translate: -50% 0;
+    cursor: pointer;
+  }
+
+  .address {
+    transition: opacity 0.4s;
+  }
+
+  .map[data-open] .address {
+    opacity: 0;
+  }
+
+  .peek[aria-pressed="true"] {
+    border-color: var(--signal);
+    color: var(--signal);
   }
 
   /* Weitere Stellen, die auch Daten halten, stehen klein und blass im
@@ -933,80 +1012,123 @@ const roads = [
 
   /* ---------- Akte, Suche, Karte ---------------------------------------- */
 
-  /* Die Akte als weiße Karte wie die Karten der Startseite. */
+  /* Die Akte als gerenderte Tafel wie das verknüpfte Profil der
+     Illustrationen (artwork-lab/network). Kopf, Schild und Zeilen liegen
+     genau auf den freien Flächen der Tafel; die Maße stammen aus
+     artwork-lab/network/file-board.json, umgerechnet auf 900 × 1100. */
   .file {
     --file: 1;
+    position: relative;
     align-self: center;
     justify-self: center;
-    display: grid;
-    gap: 0.5rem;
-    inline-size: min(calc(100% - 2rem), 30rem);
-    padding: var(--space-s) var(--space-m);
-    border-radius: var(--radius-lg);
-    background: var(--paper);
-    box-shadow:
-      0 0 0 1px var(--line),
-      0 12px 32px -18px var(--material-shade);
+    block-size: min(90%, 40rem);
+    aspect-ratio: 900 / 1100;
+    container-type: inline-size;
+    color: #1d1d1b;
+    filter: drop-shadow(0 18px 24px var(--material-shade));
     opacity: var(--file);
-    translate: 0 calc((1 - var(--file)) * 1rem + var(--q-up, 0) * -3.5rem);
+    translate: 0 calc((1 - var(--file)) * 1rem - var(--q-up, 0) * 14%);
+    scale: calc(0.94 + var(--file) * 0.06 - var(--q-up, 0) * 0.14);
   }
 
-  .file header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-    padding-block-end: 0.4rem;
-    border-block-end: 2px solid var(--foreground);
-    font-size: var(--step--1);
+  .board {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
   }
 
-  .file header b {
+  .file-head {
+    position: absolute;
+    inset-block-start: 12.1%;
+    inset-inline-start: 37.4%;
+    inline-size: 41.7%;
+    block-size: 23%;
+    display: grid;
+    align-content: center;
+    gap: 1.2cqi;
+  }
+
+  .file-head p {
+    color: #6b6f73;
+    font-size: 3cqi;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
-  .file header span {
-    color: var(--muted-foreground);
+  .file-head b {
+    font-size: 6.4cqi;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
   }
 
-  .file dl {
+  .file-head span {
+    font-size: 3.6cqi;
+    line-height: 1.25;
+  }
+
+  .file-plate {
+    position: absolute;
+    inset-block-start: 7.3%;
+    inset-inline-start: 80.7%;
+    inline-size: 16.9%;
+    block-size: 9.3%;
     display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 2.9cqi;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .file-rows {
+    position: absolute;
+    inset-block-start: 43.9%;
+    inset-inline-start: 10.3%;
+    inline-size: 70.6%;
+    block-size: 43.5%;
+    display: grid;
+    align-content: space-evenly;
     margin: 0;
   }
 
   .row {
     --in: 1;
     display: grid;
-    grid-template-columns: 6.5rem minmax(0, 1fr) auto;
-    align-items: baseline;
-    gap: 0.5rem;
-    padding-block: 0.3rem;
-    border-block-end: 1px solid var(--line);
-    font-size: 0.875rem;
+    grid-template-columns: 30% minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: 2cqi;
+    padding-block: 1.2cqi;
+    border-block-end: 1px solid rgb(0 0 0 / 0.1);
     opacity: var(--in);
     translate: calc((1 - var(--in)) * 1rem) 0;
   }
 
   .row dt {
-    color: var(--muted-foreground);
-    font-size: 0.75rem;
+    grid-row: 1 / 3;
+    align-self: center;
+    color: #6b6f73;
+    font-size: 3cqi;
   }
 
   .row dd {
     overflow: hidden;
     margin: 0;
+    font-size: 3.9cqi;
     font-weight: 560;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .from {
-    color: var(--signal);
-    font-size: 0.75rem;
-    font-weight: 600;
-    white-space: nowrap;
+    color: #c9000d;
+    font-size: 2.7cqi;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   .prompt {
@@ -1215,6 +1337,11 @@ const roads = [
       animation: none;
     }
 
+    .house,
+    .inside {
+      transition: none;
+    }
+
     .packet {
       display: none;
     }
@@ -1253,9 +1380,18 @@ const roads = [
       font-size: var(--step-1);
     }
 
-    .row {
-      grid-template-columns: 8rem minmax(0, 1fr) auto;
-      font-size: 0.9375rem;
+    /* Breit stehen Akte und Suchauftrag nebeneinander. */
+    .file {
+      justify-self: start;
+      margin-inline-start: 5%;
+      translate: 0 calc((1 - var(--file)) * 1rem);
+      scale: calc(0.94 + var(--file) * 0.06);
+    }
+
+    .prompt {
+      justify-self: end;
+      inline-size: min(46%, 24rem);
+      margin-inline-end: 4%;
     }
   }
 </style>
@@ -1558,6 +1694,9 @@ const roads = [
         motion.matches ? 1 : out(ramp(p, riskScene, riskScene + 0.35)),
       )
       set(map, "--pin", snap(out(ramp(p, riskScene + 0.3, riskScene + 0.45))))
+      // The house only takes clicks while it is on screen.
+      const shown = ramp(p, riskScene - 0.04, riskScene + 0.1) >= 0.5
+      if (map.inert === shown) map.inert = !shown
 
       // The timeline marks the scene and keeps it in view in the pill.
       if (scene !== current) {
@@ -1581,6 +1720,16 @@ const roads = [
         box.top <= window.innerHeight * 0.2 && box.bottom >= window.innerHeight,
       )
     }
+
+    // Looking inside the house: a press keeps it open, another closes it.
+    const peek = map.querySelector<HTMLButtonElement>("[data-peek]")
+    peek?.addEventListener("click", () => {
+      const open = !map.hasAttribute("data-open")
+      map.toggleAttribute("data-open", open)
+      peek.setAttribute("aria-pressed", String(open))
+    })
+    // On touch screens a tap on the house does the same.
+    map.querySelector(".house")?.addEventListener("click", () => peek?.click())
 
     const queue = () => {
       if (queued || !visible) return
