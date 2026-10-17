@@ -3,7 +3,7 @@ import type { Language } from "@/lib/i18n"
 // Our position, sorted by topic. The arguments page renders all of it, the
 // home page shows two of the objections, and the letter to members of the
 // National Council takes its demands from here. The dossier states what the
-// law requires; keep the facts there. Points carry a legal source where they
+// law requires; keep the facts there. Points carry their source where they
 // have one, but no "read more" links: the feedback round of October 2026
 // found that these cross-references bloated every page. The wording restates
 // vetted texts, including the campaign lawyer's notes on what the
@@ -19,6 +19,8 @@ export type Point = {
 export type PointId =
   | "allCustomers"
   | "nothingToHide"
+  | "power"
+  | "noExit"
   | "taxFairness"
   | "honeypot"
   | "sortable"
@@ -26,14 +28,15 @@ export type PointId =
   | "justTaxData"
   | "ownWallet"
   | "purpose"
+  | "keptAndUsed"
   | "errors"
 
 // Which points each section of the arguments page shows, in order.
 export const topics = {
-  verdacht: ["allCustomers", "nothingToHide", "taxFairness"],
+  verdacht: ["allCustomers", "nothingToHide", "power", "noExit", "taxFairness"],
   speicherdauer: ["justTaxData", "noEndDate", "ownWallet"],
   sicherheit: ["honeypot", "sortable"],
-  ausbau: ["purpose", "errors"],
+  ausbau: ["purpose", "keptAndUsed", "errors"],
 } as const satisfies Record<string, readonly PointId[]>
 
 // The home page keeps two objections: the cash comparison and the reply on
@@ -45,6 +48,12 @@ export const homeObjections = [
 
 const section20 =
   "https://www.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40273819/NOR40273819.pdf"
+// Federal government's answer on account lookups, with figures per authority
+// since 2005. It warns that 2005 and 2023 totals are not comparable because
+// the counting changed, so compare users, not totals.
+const accountLookups = "https://dserver.bundestag.de/btd/20/108/2010841.pdf"
+const dutchFine =
+  "https://www.autoriteitpersoonsgegevens.nl/actueel/boete-belastingdienst-voor-discriminerende-en-onrechtmatige-werkwijze"
 
 export const points: Record<Language, Record<PointId, Point>> = {
   de: {
@@ -57,9 +66,17 @@ export const points: Record<Language, Record<PointId, Point>> = {
       title: "„Ich habe nichts zu verbergen.“",
       text: "Bitcoin in der eigenen Wallet ist wie Bargeld daheim. Stell dir vor, deine Bank würde dem Finanzamt jedes Jahr melden, wie viel Bargeld du abgehoben hast, ab dem ersten Euro und ohne Verdacht. Bei Bitcoin verlangt DAC8 das: Überträgst du von einer Börse auf die eigene Wallet, steht die Jahressumme in der Regel in der Meldung. Gelangt so eine Meldung in falsche Hände, zeigt sie, wer vermutlich Erspartes selbst verwahrt.",
     },
+    power: {
+      title: "Wer viel über dich weiß, hat Macht über dich.",
+      text: "Wer weiß, was du besitzt und bewegst, kann dich erpressen, betrügen oder zu Unrecht verdächtigen. Das gilt für Kriminelle nach einem Datenleck ebenso wie für Stellen, die Daten später anders nutzen als gedacht. Darum muss jede Sammlung begründet und begrenzt sein.",
+    },
+    noExit: {
+      title: "„Dann kauf halt nicht über eine Börse.“",
+      text: "Für die meisten ist eine Börse, ein Broker oder eine App der einfachste Weg zu Bitcoin. Privatsphäre, die man nur behält, wenn man auf diesen Weg verzichtet, schützt niemanden. Der Schutz muss im Gesetz stehen.",
+    },
     taxFairness: {
       title: "„Es geht doch um Steuergerechtigkeit.“",
-      text: "Auch dafür darf der Staat nur Daten verlangen, deren Umfang und Speicherdauer gerechtfertigt sind. Er muss erklären können, weshalb er welche Finanzdaten wie lange braucht.",
+      text: "Steuern zahlen soll jeder, das bestreiten wir nicht. Aber auch dafür darf der Staat nur so viele Daten verlangen und so lange speichern, wie er begründen kann.",
     },
     honeypot: {
       title: "Der Anbieter wird zum Honeypot.",
@@ -84,7 +101,16 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     purpose: {
       title: "Der Zweck wächst mit.",
-      text: "Laut Richtlinie dürfen die Daten auch für Zoll, gegen Geldwäsche und für EU-Sanktionen verwendet werden. Was einmal gesammelt ist, findet neue Zwecke. Wir fordern für jeden eine eigene, klare Grenze.",
+      text: "Laut Richtlinie dürfen die Daten auch für Zoll, gegen Geldwäsche und für EU-Sanktionen verwendet werden. Wie so etwas wächst, zeigt Deutschland: Seit 2005 dürfen Finanzämter und Sozialbehörden abfragen, wer welche Konten hat. 2013 kamen Gerichtsvollzieher dazu, 2023 fragten sie 844.427 Mal ab. Wir fordern für jeden Zweck eine eigene, klare Grenze.",
+      source: { href: accountLookups, label: "BT-Drucksache 20/10841" },
+    },
+    keptAndUsed: {
+      title: "Was liegen bleibt, wird benutzt.",
+      text: "Die niederländische Steuerverwaltung hätte gespeicherte Angaben über doppelte Staatsbürgerschaften 2014 löschen müssen. 2018 lagen sie noch für 1,4 Millionen Menschen vor. Außerdem markierte sie Anträge auf Zuschuss zur Kinderbetreuung auch nach der Staatsangehörigkeit als riskant. Die Datenschutzbehörde nannte das diskriminierend und verhängte 2,75 Millionen Euro Strafe.",
+      source: {
+        href: dutchFine,
+        label: "Autoriteit Persoonsgegevens, 7. Dezember 2021",
+      },
     },
     errors: {
       title: "Fehler reisen mit.",
@@ -101,9 +127,17 @@ export const points: Record<Language, Record<PointId, Point>> = {
       title: "“I have nothing to hide.”",
       text: "Bitcoin in your own wallet is like cash at home. Imagine your bank telling the tax authority every year how much cash you withdrew, from the first euro and without suspicion. For bitcoin, DAC8 requires just that: if you move coins from an exchange to your own wallet, the annual total usually appears in the report. In the wrong hands, such a report shows who probably keeps savings in self-custody.",
     },
+    power: {
+      title: "Whoever knows a lot about you has power over you.",
+      text: "Whoever knows what you own and move can blackmail you, defraud you or wrongly suspect you. That goes for criminals after a data breach as much as for bodies that later use the data in ways no one intended. That is why every collection needs a justification and a limit.",
+    },
+    noExit: {
+      title: "“Then don’t buy through an exchange.”",
+      text: "For most people, an exchange, broker or app is the easiest way to buy bitcoin. Privacy you only keep by avoiding that route protects nobody. The protection has to be in the law.",
+    },
     taxFairness: {
       title: "“It’s about tax fairness.”",
-      text: "Even then, the state may only demand data whose scope and retention are justified. It must be able to explain why it needs which financial data, and for how long.",
+      text: "Everyone should pay their taxes; we do not dispute that. But even for that, the state may only demand as much data, and keep it as long, as it can justify.",
     },
     honeypot: {
       title: "The provider becomes a honeypot.",
@@ -128,7 +162,16 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     purpose: {
       title: "The purpose keeps expanding.",
-      text: "Under the directive, the data may also be used for customs, against money laundering and for EU sanctions. Once collected, data finds new purposes. We call for a clear limit on each one.",
+      text: "Under the directive, the data may also be used for customs, against money laundering and for EU sanctions. Germany shows how such uses grow: since 2005, tax offices and social benefit agencies may look up who holds which bank accounts. Bailiffs were added in 2013, and in 2023 they ran 844,427 lookups. We call for a clear limit on each purpose.",
+      source: { href: accountLookups, label: "Bundestag paper 20/10841" },
+    },
+    keptAndUsed: {
+      title: "What stays on file gets used.",
+      text: "The Dutch tax administration should have deleted its records of dual citizenship in 2014. In 2018 it still held them for 1.4 million people. It also used nationality to flag applications for childcare benefit as risky. The data protection authority called this discriminatory and imposed a fine of 2.75 million euros.",
+      source: {
+        href: dutchFine,
+        label: "Autoriteit Persoonsgegevens, 7 December 2021",
+      },
     },
     errors: {
       title: "Errors travel too.",
