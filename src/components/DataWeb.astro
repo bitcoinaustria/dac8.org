@@ -120,15 +120,19 @@ const cameras = {
 }
 const at = (id: Place) => layout.wide[id]
 // A gentle curve from one place to another.
+// The lines run on the ground, from plinth to plinth.
+const ground = 36
 const curve = (from: Place, to: Place, bend = 0.12) => {
-  const [x1, y1] = at(from)
-  const [x2, y2] = at(to)
+  const [x1, y1] = [at(from)[0], at(from)[1] + ground]
+  const [x2, y2] = [at(to)[0], at(to)[1] + ground]
   const mx = (x1 + x2) / 2 - (y2 - y1) * bend
   const my = (y1 + y2) / 2 + (x2 - x1) * bend
   return `M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}`
 }
 
 const leaked = nodes.filter((node) => node.leak)
+// The red plate behind a case name, sized to its capitals.
+const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
 const peopleIn = leaked.reduce(
   (sum, node) => sum + (leakFor(node.leak ?? "").people ?? 0),
   0,
@@ -160,6 +164,7 @@ const roads = [
   class="web"
   data-web
   data-locale={en ? "en" : "de-DE"}
+  data-ground={ground}
   data-layout={JSON.stringify(layout)}
   data-cameras={JSON.stringify(cameras)}
 >
@@ -211,6 +216,10 @@ const roads = [
             <stop offset="0" stop-color="#4b5056" />
             <stop offset="1" stop-color="#25282d" />
           </linearGradient>
+          <linearGradient id="web-plinth" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#fdfdfd" />
+            <stop offset="1" stop-color="#d9dde1" />
+          </linearGradient>
           <linearGradient id="web-signal" x1="0.2" y1="0" x2="0.8" y2="1">
             <stop offset="0" stop-color="#e3000f" />
             <stop offset="1" stop-color="#be000c" />
@@ -218,68 +227,83 @@ const roads = [
         </defs>
 
         <g class="edges">
-          {edges.map((edge) => (
-              <path
-                id={`edge-${edge.from}-${edge.to}`}
-                class="edge"
-                d={curve(edge.from, edge.to)}
-                pathLength="1"
+          {edges.map((edge) => {
+            const target = nodes.find((node) => node.id === edge.to)
+            const d = curve(edge.from, edge.to)
+            return (
+              <g
+                class="link"
                 data-edge
                 data-from={edge.from}
                 data-to={edge.to}
-                data-scene={nodes.find((node) => node.id === edge.to)?.scene}
-                data-order={nodes.find((node) => node.id === edge.to)?.order ?? 0}
-                data-maybe={nodes.find((node) => node.id === edge.to)?.maybe
-                  ? ""
-                  : undefined}
-              />
-            ))}
-          {leaked.map((node) => (
-              <path
-                id={`edge-${node.id}-crooks`}
-                class="edge leak"
-                d={curve(node.id, "crooks", 0.18)}
-                pathLength="1"
+                data-scene={target?.scene}
+                data-order={target?.order ?? 0}
+                data-maybe={target?.maybe ? "" : undefined}
+              >
+                <path class="bed" d={d} pathLength="1" />
+                <path
+                  class="core"
+                  id={`edge-${edge.from}-${edge.to}`}
+                  d={d}
+                  pathLength="1"
+                />
+              </g>
+            )
+          })}
+          {leaked.map((node) => {
+            const d = curve(node.id, "crooks", 0.18)
+            return (
+              <g
+                class="link leak"
                 data-edge
                 data-from={node.id}
                 data-to="crooks"
-              />
-            ))}
+              >
+                <path class="bed" d={d} pathLength="1" />
+                <path
+                  class="core"
+                  id={`edge-${node.id}-crooks`}
+                  d={d}
+                  pathLength="1"
+                />
+              </g>
+            )
+          })}
         </g>
 
         <g class="packets">
           {edges.map((edge) =>
               [0, 1].map((packet) => (
-                <circle
-                  class="packet"
-                  r="3.2"
-                  data-packet={`${edge.from}-${edge.to}`}
-                >
+                <g class="packet" data-packet={`${edge.from}-${edge.to}`}>
+                  <rect class="card" x="-7" y="-4.5" width="14" height="9" rx="1.5" />
+                  <rect class="stripe" x="-7" y="-4.5" width="3.5" height="9" rx="1" />
                   <animateMotion
-                    dur={edge.to === "taxOffice" ? "1.6s" : "2.8s"}
-                    begin={`${-packet * 1.4}s`}
+                    dur={edge.to === "taxOffice" ? "1.8s" : "3s"}
+                    begin={`${-packet * 1.5}s`}
                     repeatCount="indefinite"
+                    rotate="auto"
                   >
                     <mpath href={`#edge-${edge.from}-${edge.to}`} />
                   </animateMotion>
-                </circle>
+                </g>
               )),
             )}
-          {leaked.map((node, index) => (
-              <circle
-                class="packet red"
-                r="3.6"
-                data-packet={`${node.id}-crooks`}
-              >
-                <animateMotion
-                  dur="2.2s"
-                  begin={`${-(index % 3) * 0.7}s`}
-                  repeatCount="indefinite"
-                >
-                  <mpath href={`#edge-${node.id}-crooks`} />
-                </animateMotion>
-              </circle>
-            ))}
+          {leaked.map((node, index) =>
+              [0, 1].map((packet) => (
+                <g class="packet red" data-packet={`${node.id}-crooks`}>
+                  <rect class="card" x="-7" y="-4.5" width="14" height="9" rx="1.5" />
+                  <rect class="stripe" x="-7" y="-4.5" width="3.5" height="9" rx="1" />
+                  <animateMotion
+                    dur="2.4s"
+                    begin={`${-((index % 3) * 0.5 + packet * 1.2)}s`}
+                    repeatCount="indefinite"
+                    rotate="auto"
+                  >
+                    <mpath href={`#edge-${node.id}-crooks`} />
+                  </animateMotion>
+                </g>
+              )),
+            )}
         </g>
 
         <g class="nodes">
@@ -294,10 +318,11 @@ const roads = [
                 transform={`translate(${at(node.id)[0]} ${at(node.id)[1]})`}
               >
                 <g class="body">
-                  <circle class="breach" r="48" />
+                  <ellipse class="plinth" cy={ground} rx="48" ry="14" />
+                  <ellipse class="breach" cy={ground} rx="52" ry="16" />
+                  <ellipse class="ripple" cy={ground} rx="52" ry="16" />
                   {art[node.id] ? (
                     <>
-                      <circle class="plate" r="44" />
                       <image
                         class="art"
                         href={art[node.id]}
@@ -366,8 +391,18 @@ const roads = [
                 </g>
                 {node.leak && (
                   <g class="tag">
-                    <text class="tag-case" y="-70">{caseName(node.leak)}</text>
-                    <text class="tag-what" y="-55">{node.tag?.[language]}</text>
+                    <rect
+                      class="tag-plate"
+                      x={-plateWidth(caseName(node.leak)) / 2}
+                      y="-94"
+                      width={plateWidth(caseName(node.leak))}
+                      height="20"
+                      rx="3"
+                    />
+                    <text class="tag-case" y="-80">
+                      {caseName(node.leak).toUpperCase()}
+                    </text>
+                    <text class="tag-what" y="-60">{node.tag?.[language]}</text>
                   </g>
                 )}
               </g>
@@ -666,37 +701,68 @@ const roads = [
     opacity: var(--net);
   }
 
-  /* Linien als schmale Nut, die sich beim Auftauchen zeichnet. */
-  .edge {
+  /* Die Verbindungen laufen am Boden von Sockel zu Sockel: ein breites
+     helles Bett mit einer schmalen dunklen Nut darin, die sich beim
+     Auftauchen zeichnet. */
+  .link {
     --draw: 1;
-    fill: none;
-    stroke: var(--groove);
-    stroke-width: calc(var(--unit, 1) * 2);
-    stroke-linecap: round;
-    stroke-dasharray: 1;
-    stroke-dashoffset: calc(1 - var(--draw));
     opacity: var(--fade, 1);
   }
 
-  .edge[data-maybe] {
-    stroke-dasharray: 0.018 0.016;
+  .bed,
+  .core {
+    fill: none;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--draw));
+  }
+
+  .bed {
+    stroke: light-dark(#e6e8eb, #2b3035);
+    stroke-width: calc(var(--unit, 1) * 6);
+  }
+
+  .core {
+    stroke: light-dark(#a3aab1, #5d656d);
+    stroke-width: calc(var(--unit, 1) * 1.6);
+  }
+
+  .link[data-maybe] .core {
+    stroke-dasharray: 0.02 0.016;
     stroke-dashoffset: 0;
-    opacity: calc(var(--draw) * var(--fade, 1));
+    opacity: var(--draw);
   }
 
-  .edge.leak {
+  .link[data-maybe] .bed {
+    opacity: calc(var(--draw) * 0.6);
+  }
+
+  .link.leak .bed {
+    stroke: light-dark(#f8e1e2, #4a161a);
+  }
+
+  .link.leak .core {
     stroke: var(--signal);
-    stroke-width: calc(var(--unit, 1) * 1.5);
   }
 
-  /* Was über die Linien wandert: kleine Graphitpunkte, rote auf dem Weg
-     zu den Tätern. */
+  /* Was über die Verbindungen wandert: kleine Datenkarten wie die
+     Karteikarten der Illustrationen, rot markiert auf dem Weg zu den
+     Tätern. */
   .packet {
-    fill: var(--foreground);
     opacity: 0;
   }
 
-  .packet.red {
+  .card {
+    fill: light-dark(#ffffff, #e9ebed);
+    stroke: light-dark(#8f979e, #8f979e);
+    stroke-width: 0.8;
+  }
+
+  .stripe {
+    fill: #3a3f45;
+  }
+
+  .packet.red .stripe {
     fill: var(--signal);
   }
 
@@ -721,11 +787,6 @@ const roads = [
      Illustrationen. */
   .art {
     filter: drop-shadow(0 6px 8px var(--material-shade));
-  }
-
-  /* Eine Scheibe in der Farbe der Fläche hält die Linien vom Bild fern. */
-  .plate {
-    fill: var(--panel);
   }
 
   .doorstep {
@@ -774,15 +835,46 @@ const roads = [
     stroke-dasharray: 4 3;
   }
 
-  /* Ein Leck: ein roter Ring um das Token und das Etikett darüber. */
-  .breach {
+  /* Jede Station steht auf einem flachen Sockel. Ein Leck legt einen roten
+     Ring um den Sockel, der einmal ausschwingt. */
+  .plinth {
+    fill: url(#web-plinth);
+    stroke: light-dark(#c6cbcf, #454b51);
+    stroke-width: 1;
+  }
+
+  .breach,
+  .ripple {
     fill: none;
     stroke: var(--signal);
-    stroke-width: 2.5;
-    opacity: var(--leak);
-    scale: calc(0.8 + var(--leak) * 0.2);
     transform-box: fill-box;
     transform-origin: center;
+  }
+
+  .breach {
+    stroke-width: 3;
+    opacity: var(--leak);
+  }
+
+  .ripple {
+    stroke-width: 2;
+    opacity: 0;
+  }
+
+  .node[data-leaked] .ripple {
+    animation: ripple-once 1.2s ease-out 1 both;
+  }
+
+  @keyframes ripple-once {
+    from {
+      opacity: 0.9;
+      scale: 1;
+    }
+
+    to {
+      opacity: 0;
+      scale: 1.9;
+    }
   }
 
   .name,
@@ -822,10 +914,20 @@ const roads = [
     translate: 0 calc((1 - var(--leak)) * 6px);
   }
 
-  .tag-case {
-    fill: var(--signal);
-    font-size: 14px;
+  /* Das Etikett wie das rote Schild „Datenleck“ der Illustrationen. */
+  .tag-plate {
+    fill: url(#web-signal);
+    stroke: light-dark(#b6000c, #fa5963);
+    stroke-width: 1;
+  }
+
+  .tag .tag-case {
+    fill: #fff;
+    font-size: 11.5px;
     font-weight: 650;
+    letter-spacing: 0.06em;
+    paint-order: normal;
+    stroke: none;
   }
 
   .tag-what {
@@ -834,7 +936,7 @@ const roads = [
   }
 
   .net[data-shape="tall"] .tag-case {
-    font-size: 13px;
+    font-size: 11px;
   }
 
   .net[data-shape="tall"] .tag-what {
@@ -1150,6 +1252,7 @@ const roads = [
 
   @media (prefers-reduced-motion: reduce) {
     .pulse,
+    .ripple,
     .caret {
       animation: none;
     }
@@ -1226,7 +1329,7 @@ const roads = [
     const spacers = all(".spacer")
     const says = all("[data-say]")
     const nodeEls = all("[data-node]")
-    const edgeEls = [...root.querySelectorAll<SVGPathElement>("[data-edge]")]
+    const edgeEls = [...root.querySelectorAll<SVGGElement>("[data-edge]")]
     const packets = all("[data-packet]")
     const rows = all(".row")
     const links = [...root.querySelectorAll<HTMLAnchorElement>("[data-goto]")]
@@ -1272,6 +1375,7 @@ const roads = [
       Shape,
       [number, number, number][]
     >
+    const ground = Number(root.dataset.ground)
     const stateScene = 1
     const leakScene = 2
     const matchScene = 3
@@ -1330,8 +1434,8 @@ const roads = [
         node.setAttribute("transform", `translate(${x} ${y})`)
       }
       const bend = (from: string, to: string, amount: number) => {
-        const [x1, y1] = at[from]
-        const [x2, y2] = at[to]
+        const [x1, y1] = [at[from][0], at[from][1] + ground]
+        const [x2, y2] = [at[to][0], at[to][1] + ground]
         const mx = (x1 + x2) / 2 - (y2 - y1) * amount
         const my = (y1 + y2) / 2 + (x2 - x1) * amount
         return `M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}`
@@ -1339,14 +1443,13 @@ const roads = [
       for (const edge of edgeEls) {
         const from = edge.dataset.from ?? ""
         const to = edge.dataset.to ?? ""
-        edge.setAttribute(
-          "d",
-          bend(
-            from,
-            to,
-            to === "crooks" ? (shape === "tall" ? 0.3 : 0.18) : 0.12,
-          ),
+        const d = bend(
+          from,
+          to,
+          to === "crooks" ? (shape === "tall" ? 0.3 : 0.18) : 0.12,
         )
+        for (const path of edge.querySelectorAll("path"))
+          path.setAttribute("d", d)
       }
     }
 
@@ -1422,6 +1525,7 @@ const roads = [
               )
         set(node, "--show", shown)
         set(node, "--leak", leak)
+        node.toggleAttribute("data-leaked", leak >= 0.5)
         set(node, "--fade", id === "crooks" ? 1 : 1 - away * 0.9)
         if (shown >= 0.5 && id !== "you" && id !== "crooks") count += 1
         if (leak >= 0.5) lost += Number(node.dataset.people) || 0
@@ -1439,9 +1543,9 @@ const roads = [
         set(edge, "--fade", toCrooks ? 1 : 1 - away * 0.85)
       }
       for (const packet of packets) {
-        const edge = root.querySelector<SVGPathElement>(
+        const edge = root.querySelector(
           `#edge-${packet.dataset.packet}`,
-        )
+        )?.parentElement
         const draw = edge
           ? Number.parseFloat(edge.style.getPropertyValue("--draw"))
           : 0
