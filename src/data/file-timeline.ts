@@ -4,7 +4,8 @@ import type { Language } from "@/lib/i18n"
 // who was in three real cases. Each case brings a record; what the file
 // already knows is only matched, so every piece lands once, with the case
 // that brought it. Then DAC8 adds a yearly report, which is stored, not
-// leaked. The cases and their sources live in src/data/leaks.ts.
+// leaked. The cases and their sources live in src/data/leaks.ts. Texts
+// may mark one key phrase with **…**, which the page sets in bold.
 
 export type Piece =
   | "name"
@@ -81,14 +82,13 @@ export const rows: Row[] = [
 export interface Breach {
   // The case in src/data/leaks.ts, which carries name, year and sources.
   leak: string
-  // Where the data came from, for the head of the record, and what the
-  // people in it were, for the counter. The count comes from leaks.ts.
+  // Where the data came from, and how many people it held: a big figure
+  // and what it counts.
   where: Text
+  figure: Text
   unit: Text
   // The source names a lower bound.
   atLeast?: boolean
-  // Other lines of the copied data, masked, which scroll past before Max's.
-  others: string[]
   // Max's line in the record, field by field, as it might look in the
   // copied data. Pieces the file already holds are matched, not added.
   fields: { piece: Piece; raw: Text }[]
@@ -99,16 +99,12 @@ export const breaches: Breach[] = [
   {
     leak: "gis",
     where: { de: "Testserver", en: "Test server" },
-    unit: { de: "Menschen", en: "people" },
+    figure: { de: "5 Mio.", en: "5 million" },
+    unit: {
+      de: "Menschen in den Meldedaten",
+      en: "people in the registration data",
+    },
     atLeast: true,
-    others: [
-      "H••••;J••••••;1958-••-••;••••GASSE ••;1100;WIEN",
-      "K•••••;M•••;1991-••-••;••••STRASSE •;8010;GRAZ",
-      "P••••••;A••••;1973-••-••;••••WEG ••;4020;LINZ",
-      "W•••;S••••••;1986-••-••;••••PLATZ •;5020;SALZBURG",
-      "B•••••;T•••;1965-••-••;••••GASSE •;6020;INNSBRUCK",
-      "G•••••;L••••;1999-••-••;••••ZEILE ••;1210;WIEN",
-    ],
     fields: [
       { piece: "name", raw: same("MUSTERMANN;MAX") },
       { piece: "birth", raw: same("1980-01-01") },
@@ -122,15 +118,11 @@ export const breaches: Breach[] = [
   {
     leak: "ledger",
     where: { de: "Shop-Bestellungen", en: "Shop orders" },
-    unit: { de: "Käufer", en: "buyers" },
-    others: [
-      "M•••• K••••, ••••weg 3, Graz, +43664·····12, order #·····",
-      "J•••• S••••••, ••••str. 18, München, +49151·····40, order #·····",
-      "A•••• P•••, ••••gasse 2, Linz, +43676·····85, order #·····",
-      "T•••• B•••••, ••••platz 9, Wien, +43699·····03, order #·····",
-      "L•••• H•••, ••••allee 5, Berlin, +49170·····66, order #·····",
-      "S•••• W•••••, ••••ring 11, Salzburg, +43664·····29, order #·····",
-    ],
+    figure: { de: "272.000", en: "272,000" },
+    unit: {
+      de: "Käufer mit Name, Anschrift und Telefonnummer",
+      en: "buyers with name, postal address and phone number",
+    },
     fields: [
       { piece: "name", raw: same("Max Mustermann") },
       { piece: "home", raw: same("Musterstrasse 7, Wien") },
@@ -145,15 +137,11 @@ export const breaches: Breach[] = [
   {
     leak: "coinbase",
     where: { de: "Support-Zugang", en: "Support access" },
-    unit: { de: "Kunden", en: "customers" },
-    others: [
-      "S•••• P•••, +49 151 ··· ·· 31, s••••@•••.de, id_front.jpg, balance · 37 tx",
-      "D•••• R••••, +43 664 ··· ·· 58, d••••@•••.at, passport.jpg, balance · 112 tx",
-      "E•••• N•••••, +41 79 ··· ·· 20, e••••@•••.ch, id_front.jpg, balance · 9 tx",
-      "F•••• M••••, +49 160 ··· ·· 77, f••••@•••.com, id_front.jpg, balance · 341 tx",
-      "C•••• L•••, +43 676 ··· ·· 14, c••••@•••.at, passport.jpg, balance · 56 tx",
-      "R•••• K•••••, +49 176 ··· ·· 92, r••••@•••.de, id_front.jpg, balance · 23 tx",
-    ],
+    figure: { de: "69.461", en: "69,461" },
+    unit: {
+      de: "Kunden, bis hin zu Ausweisbildern",
+      en: "customers, down to ID images",
+    },
     fields: [
       { piece: "name", raw: same("Max Mustermann") },
       { piece: "phone", raw: same("+43 660 ··· ·· 07") },
@@ -176,8 +164,8 @@ export const intro = {
     en: "How scattered data leaks become a file.",
   },
   text: {
-    de: "Max ist erfunden, die drei Datenlecks sind echt. Jedes für sich verrät wenig über ihn. Scroll weiter und sieh zu, wie daraus ein Bild wird.",
-    en: "Max is invented, the three leaks are real. Each on its own gives away little about him. Scroll on and watch them add up to a picture.",
+    de: "Max ist erfunden, die drei Datenlecks sind echt. **Jedes für sich verrät wenig über ihn.** Zusammen ergeben sie eine Akte, Angabe für Angabe.",
+    en: "Max is invented, the three leaks are real. **Each on its own gives away little about him.** Together they make a file, detail by detail.",
   },
 }
 
@@ -185,8 +173,8 @@ export const match = {
   short: { de: "Abgleich", en: "Match" },
   heading: { de: "Drei Lecks, ein Profil.", en: "Three leaks, one profile." },
   text: {
-    de: "Listen über Name, Anschrift oder Handynummer zusammenzuführen, erledigt gewöhnliche Software in Minuten, einer KI genügt dafür ein Satz. Aus Millionen Menschen bleibt übrig, wer Bitcoin hat, mit Wohnadresse und Kontostand. Bitcoin ist wie Bargeld ein Inhaberwert, deshalb ziehen solche Listen Kriminelle an.",
-    en: "Ordinary software joins lists on name, home address or mobile number in minutes, and an AI needs a single sentence. Out of millions of people, those who hold bitcoin remain, with home address and balance. Like cash, bitcoin is a bearer asset, which is why such lists draw criminals.",
+    de: "Listen über Name, Anschrift oder Handynummer zusammenzuführen, erledigt gewöhnliche Software in Minuten, **einer KI genügt dafür ein Satz.** Aus Millionen Menschen bleibt übrig, wer Bitcoin hat, mit Wohnadresse und Kontostand. Bitcoin ist wie Bargeld ein Inhaberwert, deshalb ziehen solche Listen Kriminelle an.",
+    en: "Ordinary software joins lists on name, home address or mobile number in minutes, and **an AI needs a single sentence.** Out of millions of people, those who hold bitcoin remain, with home address and balance. Like cash, bitcoin is a bearer asset, which is why such lists draw criminals.",
   },
   // The sentence typed into the search on the stage, and what it finds.
   prompt: { de: "Suchauftrag an eine KI", en: "Prompt to an AI" },
@@ -198,7 +186,6 @@ export const match = {
     de: "1 Treffer · Max Mustermann · 1010 Wien · Hardware-Wallet · Kontostand",
     en: "1 match · Max Mustermann · 1010 Vienna · hardware wallet · balance",
   },
-  found: { de: "in allen drei Listen", en: "in all three lists" },
 }
 
 export const reports = {
@@ -212,8 +199,8 @@ export const reports = {
     en: "From 2027: a report every year.",
   },
   text: {
-    de: "Sein Anbieter meldet jedes Jahr ans Finanzamt: Name, Anschrift, Geburtsdatum, Steuerwohnsitz, Steuernummer und je Kryptowert die Summen aus Käufen, Verkäufen, Tausch und Auszahlungen an Wallets, ohne Wallet-Adressen. Das ist kein Leck. Die Meldungen werden aufbewahrt, beim Anbieter zehn Jahre lang.",
-    en: "His provider reports to the tax authority every year: name, postal address, date of birth, tax residence, tax number and, per crypto-asset, the totals of purchases, sales, swaps and withdrawals to wallets, without wallet addresses. This is no leak. The reports are kept, by the provider for ten years.",
+    de: "Sein Anbieter meldet jedes Jahr ans Finanzamt: Name, Anschrift, Geburtsdatum, Steuerwohnsitz, Steuernummer und je Kryptowert die Summen aus Käufen, Verkäufen, Tausch und Auszahlungen an Wallets, **ohne Wallet-Adressen. Das ist kein Leck.** Die Meldungen werden aufbewahrt, beim Anbieter zehn Jahre lang.",
+    en: "His provider reports to the tax authority every year: name, postal address, date of birth, tax residence, tax number and, per crypto-asset, the totals of purchases, sales, swaps and withdrawals to wallets, **without wallet addresses. This is no leak.** The reports are kept, by the provider for ten years.",
   },
   sheet: {
     de: [
