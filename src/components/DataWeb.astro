@@ -108,13 +108,13 @@ const cameras = {
   tall: [
     [200, 130, 330],
     [200, 170, 380],
-    [200, 240, 430],
-    [200, 330, 430],
-    [200, 410, 430],
-    [200, 430, 430],
-    [200, 560, 430],
-    [200, 560, 430],
-    [200, 430, 430],
+    [200, 240, 400],
+    [200, 330, 400],
+    [200, 410, 400],
+    [200, 430, 400],
+    [200, 560, 400],
+    [200, 560, 400],
+    [200, 430, 400],
   ],
 }
 const at = (id: Place) => layout.wide[id]
@@ -201,7 +201,7 @@ const roads = [
               )}
             </p>
             {index === scenes.length - 1 && (
-              <a class="next" href="#weiter">
+              <a class="next button primary" href="#weiter">
                 {en ? "What you can do" : "Was du tun kannst"}
               </a>
             )}
@@ -216,17 +216,16 @@ const roads = [
         preserveAspectRatio="xMidYMid meet"
         data-net
       >
-        <g class="radar">
-          {[0, 1, 2].map((ring) => (
-              <circle
-                class="ring"
-                cx={at("you")[0]}
-                cy={at("you")[1]}
-                r="40"
-                style={`--ring: ${ring}`}
-              />
-            ))}
-        </g>
+        <defs>
+          <linearGradient id="web-graphite" x1="0.2" y1="0" x2="0.8" y2="1">
+            <stop offset="0" stop-color="#4b5056" />
+            <stop offset="1" stop-color="#25282d" />
+          </linearGradient>
+          <linearGradient id="web-signal" x1="0.2" y1="0" x2="0.8" y2="1">
+            <stop offset="0" stop-color="#e3000f" />
+            <stop offset="1" stop-color="#be000c" />
+          </linearGradient>
+        </defs>
 
         <g class="edges">
           {edges.map((edge) => (
@@ -303,7 +302,7 @@ const roads = [
                 transform={`translate(${at(node.id)[0]} ${at(node.id)[1]})`}
               >
                 <g class="body">
-                  <circle class="halo" r="46" />
+                  <circle class="breach" r="38" />
                   <circle class="disc" r="31" />
                   <g class="icon" transform="scale(1.15)">
                     {node.id === "you" && (
@@ -396,6 +395,12 @@ const roads = [
 
       <div class="map">
         <svg viewBox="0 0 420 320" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="web-pin" x1="0.2" y1="0" x2="0.8" y2="1">
+              <stop offset="0" stop-color="#e3000f" />
+              <stop offset="1" stop-color="#be000c" />
+            </linearGradient>
+          </defs>
           <g class="streets">
             {streets.map((d) => <path d={d} pathLength="1" />)}
           </g>
@@ -444,24 +449,21 @@ const roads = [
 </section>
 
 <style>
-  /* Das Datennetz als Film im Vollbild: Oben steht der Satz der Szene,
-     darunter wächst das Netz, unten zählen drei Zahlen mit. Die Kamera
-     fährt dabei von Max bis zu den Tätern. Das Skript setzt die Variablen;
-     ohne Skript stehen die Texte untereinander und das Netz im Endstand. */
+  /* Das Datennetz als Scroll-Geschichte in der Formensprache der Seite:
+     helle Fläche, Stationen als Graphit-Token mit Titankante wie im
+     Datenweg des Dossiers, Linien als schmale Nut. Rot heißt wie überall
+     „hier stehst du“ (Max) oder markiert ein Leck. Die Kopfleiste bleibt
+     stehen; oben links der Satz der Szene, rechts das Netz, unten drei
+     Zahlen. Das Skript setzt die Variablen; ohne Skript stehen die Texte
+     untereinander und das Netz im Endstand. */
   .web {
-    --stage: #05060a;
-    --hi: #ff3b45;
-    --text: #f4f3ef;
-    --text-2: rgb(244 243 239 / 0.68);
-    --text-3: rgb(244 243 239 / 0.45);
-    --edge: rgb(255 255 255 / 0.1);
+    --groove: light-dark(#c6cbcf, #454b51);
+    --groove-light: light-dark(#ffffff, #ffffff08);
+    --signal: var(--accent);
     --mono:
       ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    color-scheme: dark;
-    color: var(--text);
-    border-image: linear-gradient(var(--stage) 0 0) fill 0 / / 0 100vw;
   }
 
   .track,
@@ -477,22 +479,14 @@ const roads = [
 
   .stage {
     position: sticky;
-    inset-block-start: 0;
+    inset-block-start: var(--header-height);
     align-self: start;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto auto minmax(0, 1fr) auto;
-    block-size: 100svh;
-    padding-block: 0.6rem 0.9rem;
-    overflow: clip;
-    background:
-      radial-gradient(
-        ellipse 70% 55% at 50% 62%,
-        rgb(255 255 255 / 0.045),
-        transparent 70%
-      ),
-      radial-gradient(rgb(255 255 255 / 0.07) 1px, transparent 1.4px) 0 0 / 22px
-      22px;
+    gap: var(--space-xs);
+    block-size: calc(100svh - var(--header-height));
+    padding-block: var(--space-xs) var(--space-s);
   }
 
   /* Ohne Skript stehen die Szenen als Text untereinander. */
@@ -508,18 +502,22 @@ const roads = [
   .web:not([data-ready]) .says {
     display: grid;
     gap: var(--space-xl);
-    padding-block: var(--space-xl);
+  }
+
+  .web:not([data-ready]) .say {
+    grid-area: auto;
   }
 
   .web:not([data-ready]) .view {
     min-block-size: 70svh;
   }
 
-  /* ---------- Zeitleiste ------------------------------------------------ */
+  /* ---------- Szenen-Leiste --------------------------------------------- */
 
+  /* Wie die Unterleiste des Dossiers: Text, die aktuelle Szene mit roter
+     Kante darunter. Jede ist ein Link, ziehen muss man nichts. */
   .rail {
-    display: flex;
-    justify-content: center;
+    border-block-end: 1px solid var(--line);
     user-select: none;
     -webkit-user-select: none;
   }
@@ -527,118 +525,121 @@ const roads = [
   .rail ol {
     position: relative;
     display: flex;
-    gap: 0.1rem;
-    max-inline-size: 100%;
+    gap: var(--space-2xs);
     margin: 0;
-    padding: 0.22rem;
+    padding: 0;
     overflow-x: auto;
-    border: 1px solid rgb(255 255 255 / 0.12);
-    border-radius: 999px;
-    background: rgb(20 21 26 / 0.72);
-    backdrop-filter: blur(16px) saturate(1.4);
     list-style: none;
     scrollbar-width: none;
   }
 
   .rail a {
     display: block;
-    padding: 0.32rem 0.7rem;
-    border-radius: 999px;
-    color: var(--text-3);
-    font-size: 0.75rem;
-    font-weight: 600;
+    padding: 0.55rem 0.5rem 0.6rem;
+    color: var(--muted-foreground);
+    font-size: var(--step--1);
     white-space: nowrap;
     text-decoration: none;
+    box-shadow: inset 0 -2px transparent;
     transition:
-      background-color 0.25s,
-      color 0.25s;
+      color 0.2s,
+      box-shadow 0.2s;
     -webkit-tap-highlight-color: transparent;
   }
 
   .rail a:hover {
-    color: var(--text);
+    color: var(--foreground);
   }
 
   .rail a[aria-current] {
-    background: var(--text);
-    color: var(--stage);
+    color: var(--foreground);
+    box-shadow: inset 0 -2px var(--signal);
   }
 
   /* ---------- Sätze ----------------------------------------------------- */
 
   .says {
     display: grid;
-    padding-block: 0.9rem 0.3rem;
-    text-align: center;
   }
 
   .say {
     --o: 1;
     grid-area: 1 / 1;
     display: grid;
-    justify-items: center;
     align-content: start;
-    gap: 0.45rem;
+    gap: var(--space-2xs);
     opacity: var(--o);
-    filter: blur(calc((1 - var(--o)) * 10px));
-    translate: 0 calc((1 - var(--o)) * 0.8rem);
+    translate: 0 calc((1 - var(--o)) * 0.75rem);
   }
 
-  .web[data-ready] .say {
-    pointer-events: none;
+  .web[data-ready] .say:not([data-current]) {
+    visibility: hidden;
   }
 
-  .web[data-ready] .say[data-current] {
-    pointer-events: auto;
+  .web[data-ready] .say[data-fading] {
+    visibility: visible;
   }
 
+  /* Die Marke wie im Kopf der Startseite: roter Punkt, Versalien. */
   .eyebrow {
-    color: var(--hi);
-    font-size: 0.875rem;
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--foreground);
+    font-size: var(--step--1);
+    font-weight: 560;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .eyebrow::before {
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 50%;
+    background: var(--signal);
+    content: "";
   }
 
   .say h2,
   .say h3 {
-    max-inline-size: 22ch;
-    color: var(--text);
-    font-size: clamp(1.6rem, 1.05rem + 2.6vw, 3.4rem);
-    font-weight: 650;
-    line-height: 1.05;
-    letter-spacing: -0.035em;
+    max-inline-size: 20ch;
+    color: var(--foreground);
+    font-size: clamp(1.5rem, 1.1rem + 1.8vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
     text-wrap: balance;
   }
 
   .say .text {
-    max-inline-size: 52ch;
-    color: var(--text-2);
-    font-size: clamp(0.9375rem, 0.85rem + 0.35vw, 1.125rem);
-    line-height: 1.42;
+    max-inline-size: 46ch;
+    color: var(--ink-2);
+    font-size: var(--step-0);
+    line-height: 1.45;
     text-wrap: pretty;
   }
 
   .say strong {
-    color: var(--text);
-    font-weight: 550;
+    color: var(--foreground);
+    font-weight: 560;
   }
 
   .next {
-    margin-block-start: 0.4rem;
-    padding: 0.55rem 1.1rem;
-    border-radius: 999px;
-    background: var(--hi);
-    color: #fff;
-    font-weight: 600;
-    text-decoration: none;
+    justify-self: start;
+    margin-block-start: var(--space-2xs);
   }
 
   /* ---------- Netz ------------------------------------------------------ */
 
+  /* Das Netz liegt auf einer hellen Fläche wie die anderen Bänder. */
   .view {
     position: relative;
     display: grid;
     grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     min-block-size: 0;
+    border-radius: var(--radius-xl);
+    background: var(--panel);
+    overflow: hidden;
   }
 
   .view > * {
@@ -650,67 +651,41 @@ const roads = [
     --net: 1;
     inline-size: 100%;
     block-size: 100%;
-    overflow: hidden;
     opacity: var(--net);
   }
 
-  /* Radarringe um Max: Hier fängt die Erfassung an. */
-  .ring {
-    fill: none;
-    stroke: rgb(255 255 255 / 0.16);
-    stroke-width: 1;
-    vector-effect: non-scaling-stroke;
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: radar 4.5s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
-    animation-delay: calc(var(--ring) * -1.5s);
-  }
-
-  @keyframes radar {
-    from {
-      opacity: 0.9;
-      scale: 0.6;
-    }
-
-    to {
-      opacity: 0;
-      scale: 3.2;
-    }
-  }
-
-  .radar {
-    opacity: var(--radar, 1);
-  }
-
+  /* Linien als schmale Nut, die sich beim Auftauchen zeichnet. */
   .edge {
     --draw: 1;
     fill: none;
-    stroke: rgb(255 255 255 / 0.3);
-    stroke-width: calc(var(--unit, 1) * 1.4);
+    stroke: var(--groove);
+    stroke-width: calc(var(--unit, 1) * 2);
+    stroke-linecap: round;
     stroke-dasharray: 1;
     stroke-dashoffset: calc(1 - var(--draw));
     opacity: var(--fade, 1);
   }
 
   .edge[data-maybe] {
-    stroke-dasharray: 0.02 0.015;
+    stroke-dasharray: 0.018 0.016;
     stroke-dashoffset: 0;
     opacity: calc(var(--draw) * var(--fade, 1));
   }
 
   .edge.leak {
-    stroke: rgb(255 59 69 / 0.55);
+    stroke: var(--signal);
+    stroke-width: calc(var(--unit, 1) * 1.5);
   }
 
+  /* Was über die Linien wandert: kleine Graphitpunkte, rote auf dem Weg
+     zu den Tätern. */
   .packet {
-    fill: #fff;
+    fill: var(--foreground);
     opacity: 0;
-    filter: drop-shadow(0 0 4px rgb(255 255 255 / 0.9));
   }
 
   .packet.red {
-    fill: var(--hi);
-    filter: drop-shadow(0 0 5px rgb(255 59 69 / 0.95));
+    fill: var(--signal);
   }
 
   .node {
@@ -727,63 +702,53 @@ const roads = [
 
   .node .body {
     opacity: calc(var(--show) * var(--fade));
-    scale: calc(0.6 + var(--show) * 0.4);
+    scale: calc(0.7 + var(--show) * 0.3);
   }
 
-  .halo {
-    fill: rgb(255 59 69 / calc(var(--leak) * 0.22));
-    stroke: rgb(255 59 69 / calc(var(--leak) * 0.8));
-    stroke-width: 1;
-    vector-effect: non-scaling-stroke;
-    scale: calc(0.7 + var(--leak) * 0.3);
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-
+  /* Stationen als Token: Graphitkern, schmale Titankante. */
   .disc {
-    fill: color-mix(in oklab, #121318, #3a0a0e calc(var(--leak) * 100%));
-    stroke: color-mix(
-      in oklab,
-      rgb(255 255 255 / 0.45),
-      var(--hi) calc(var(--leak) * 100%)
-    );
+    fill: url(#web-graphite);
+    stroke: light-dark(#a4abb1, #596168);
     stroke-width: 1.5;
-    vector-effect: non-scaling-stroke;
   }
 
   .icon {
     fill: none;
-    stroke: color-mix(in oklab, #fff, var(--hi) calc(var(--leak) * 100%));
+    stroke: #f7f8f9;
     stroke-width: 1.6;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
 
+  /* Max ist der rote Punkt: hier stehst du. */
   .node[data-node="you"] .disc {
-    fill: #fff;
-    stroke: #fff;
-  }
-
-  .node[data-node="you"] .icon {
-    stroke: var(--stage);
+    fill: url(#web-signal);
+    stroke: light-dark(#b6000c, #fa5963);
   }
 
   .node[data-node="crooks"] .disc {
-    fill: #3a0a0e;
-    stroke: var(--hi);
+    fill: #1a1c1f;
+    stroke: var(--signal);
+    stroke-width: 2;
   }
 
   .node[data-node="crooks"] .icon {
-    stroke: var(--hi);
-  }
-
-  .node[data-node="crooks"] .halo {
-    fill: rgb(255 59 69 / 0.18);
-    stroke: var(--hi);
+    stroke: var(--signal);
   }
 
   .node[data-maybe] .disc {
-    stroke-dasharray: 3 3;
+    stroke-dasharray: 4 3;
+  }
+
+  /* Ein Leck: ein roter Ring um das Token und das Etikett darüber. */
+  .breach {
+    fill: none;
+    stroke: var(--signal);
+    stroke-width: 2.5;
+    opacity: var(--leak);
+    scale: calc(0.8 + var(--leak) * 0.2);
+    transform-box: fill-box;
+    transform-origin: center;
   }
 
   .name,
@@ -791,15 +756,20 @@ const roads = [
   .tag text {
     text-anchor: middle;
     paint-order: stroke;
-    stroke: var(--stage);
-    stroke-width: 4px;
+    stroke: var(--panel);
+    stroke-width: 5px;
     stroke-linejoin: round;
   }
 
   .name {
-    fill: var(--text);
+    fill: var(--foreground);
     font-size: 16px;
-    font-weight: 650;
+    font-weight: 600;
+  }
+
+  .holds {
+    fill: var(--muted-foreground);
+    font-size: 12.5px;
   }
 
   .brief,
@@ -813,6 +783,22 @@ const roads = [
     font-size: 14px;
   }
 
+  .tag {
+    opacity: calc(var(--leak) * var(--fade));
+    translate: 0 calc((1 - var(--leak)) * 6px);
+  }
+
+  .tag-case {
+    fill: var(--signal);
+    font-size: 14px;
+    font-weight: 650;
+  }
+
+  .tag-what {
+    fill: var(--foreground);
+    font-size: 12.5px;
+  }
+
   .net[data-shape="tall"] .tag-case {
     font-size: 13px;
   }
@@ -821,64 +807,44 @@ const roads = [
     font-size: 11px;
   }
 
-  .holds {
-    fill: var(--text-3);
-    font-size: 12.5px;
-  }
-
-  .tag {
-    opacity: calc(var(--leak) * var(--fade));
-    scale: calc(0.85 + var(--leak) * 0.15);
-  }
-
-  .tag-case {
-    fill: var(--hi);
-    font-size: 15px;
-    font-weight: 700;
-  }
-
-  .tag-what {
-    fill: rgb(255 140 146);
-    font-size: 12.5px;
-  }
-
   /* ---------- Akte, Suche, Karte ---------------------------------------- */
 
+  /* Die Akte als weiße Karte wie die Karten der Startseite. */
   .file {
     --file: 1;
     align-self: center;
     justify-self: center;
     display: grid;
     gap: 0.5rem;
-    inline-size: min(100%, 26rem);
-    padding: 0.9rem 1.1rem 0.8rem;
+    inline-size: min(calc(100% - 2rem), 30rem);
+    padding: var(--space-s) var(--space-m);
     border-radius: var(--radius-lg);
-    background:
-      linear-gradient(rgb(255 255 255 / 0.55), transparent 30%), #f4f1ea;
-    color: #1d1d1b;
+    background: var(--paper);
     box-shadow:
-      0 0 0 2px rgb(201 0 13 / 0.85),
-      0 0 80px rgb(255 59 69 / 0.35),
-      0 40px 80px -30px rgb(0 0 0 / 0.9);
-    color-scheme: light;
+      0 0 0 1px var(--line),
+      0 12px 32px -18px var(--material-shade);
     opacity: var(--file);
-    scale: calc(0.85 + var(--file) * 0.15);
-    translate: 0 calc(var(--q-up, 0) * -3.5rem);
+    translate: 0 calc((1 - var(--file)) * 1rem + var(--q-up, 0) * -3.5rem);
   }
 
   .file header {
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
     gap: 1rem;
-    padding-block-end: 0.35rem;
-    border-block-end: 2px solid #1d1d1b;
-    font-size: 0.6875rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    padding-block-end: 0.4rem;
+    border-block-end: 2px solid var(--foreground);
+    font-size: var(--step--1);
   }
 
   .file header b {
-    letter-spacing: 0.3em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .file header span {
+    color: var(--muted-foreground);
   }
 
   .file dl {
@@ -892,32 +858,30 @@ const roads = [
     grid-template-columns: 6.5rem minmax(0, 1fr) auto;
     align-items: baseline;
     gap: 0.5rem;
-    padding-block: 0.22rem;
-    border-block-end: 1px solid rgb(0 0 0 / 0.08);
-    font-size: 0.8125rem;
+    padding-block: 0.3rem;
+    border-block-end: 1px solid var(--line);
+    font-size: 0.875rem;
     opacity: var(--in);
-    translate: calc((1 - var(--in)) * 1.5rem) 0;
+    translate: calc((1 - var(--in)) * 1rem) 0;
   }
 
   .row dt {
-    color: #736f66;
-    font-size: 0.625rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
   }
 
   .row dd {
     overflow: hidden;
     margin: 0;
-    font-weight: 550;
+    font-weight: 560;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .from {
-    color: #c9000d;
-    font-size: 0.625rem;
-    font-weight: 650;
+    color: var(--signal);
+    font-size: 0.75rem;
+    font-weight: 600;
     white-space: nowrap;
   }
 
@@ -927,37 +891,32 @@ const roads = [
     align-self: end;
     justify-self: center;
     display: grid;
-    gap: 0.45rem;
-    inline-size: min(100%, 30rem);
-    padding: 0.75rem 1rem 0.8rem;
-    border: 1px solid rgb(255 255 255 / 0.14);
-    border-radius: 1.1rem;
-    background: rgb(22 23 28 / 0.94);
+    gap: 0.4rem;
+    inline-size: min(calc(100% - 2rem), 30rem);
+    margin-block-end: var(--space-s);
+    padding: var(--space-xs) var(--space-s);
+    border-radius: var(--radius-lg);
+    background: var(--paper);
     box-shadow:
-      0 0 0 calc(var(--res) * 1.5px) rgb(255 59 69 / 0.7),
-      0 20px 50px -20px rgb(0 0 0 / 0.9);
+      0 0 0 1px var(--line),
+      0 12px 32px -18px var(--material-shade);
     opacity: var(--q);
-    translate: 0 calc((1 - var(--q)) * 0.8rem);
+    translate: 0 calc((1 - var(--q)) * 0.75rem);
   }
 
   .prompt-head {
-    display: flex;
-    gap: 0.4rem;
-    color: var(--text-3);
-    font-size: 0.625rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
   }
 
   .prompt-head span {
-    color: var(--hi);
+    color: var(--signal);
   }
 
   .prompt-text {
     min-block-size: 2.7em;
-    color: var(--text);
-    font-size: 0.9375rem;
+    color: var(--foreground);
+    font-size: var(--step-0);
     line-height: 1.35;
   }
 
@@ -966,7 +925,7 @@ const roads = [
     inline-size: 2px;
     block-size: 1.05em;
     margin-inline-start: 2px;
-    background: var(--hi);
+    background: var(--signal);
     vertical-align: -0.15em;
     animation: blink 1.1s steps(1) infinite;
   }
@@ -982,24 +941,24 @@ const roads = [
   }
 
   .prompt-result {
-    color: var(--hi);
+    padding-block-start: 0.4rem;
+    border-block-start: 1px solid var(--line);
+    color: var(--signal);
     font-family: var(--mono);
     font-size: 0.75rem;
+    font-weight: 600;
     opacity: var(--res);
   }
 
-  /* Die Karte: Straßen zeichnen sich, die Nadel fällt auf die Wohnadresse. */
+  /* Die Karte: Straßen als Nut, die sich zeichnen, dann fällt der rote
+     Punkt auf die Wohnadresse. */
   .map {
     --map: 1;
     --draw: 1;
     --pin: 1;
     position: relative;
     display: grid;
-    border-radius: var(--radius-xl);
-    overflow: hidden;
     opacity: var(--map);
-    scale: calc(0.94 + var(--map) * 0.06);
-    mask-image: radial-gradient(closest-side, #000 55%, transparent);
   }
 
   .map svg {
@@ -1015,13 +974,13 @@ const roads = [
   }
 
   .streets path {
-    stroke: rgb(255 255 255 / 0.16);
-    stroke-width: 1;
+    stroke: var(--groove);
+    stroke-width: 1.5;
   }
 
   .roads path {
-    stroke: rgb(255 255 255 / 0.32);
-    stroke-width: 3;
+    stroke: var(--groove);
+    stroke-width: 5;
   }
 
   .pin {
@@ -1030,49 +989,69 @@ const roads = [
 
   .pin > path,
   .pin > circle:not(.pulse) {
-    translate: 0 calc((1 - var(--pin)) * -40px);
+    translate: 0 calc((1 - var(--pin)) * -30px);
   }
 
   .pin > path {
-    fill: var(--hi);
-    filter: drop-shadow(0 0 10px rgb(255 59 69 / 0.8));
+    fill: url(#web-pin);
+    stroke: light-dark(#b6000c, #fa5963);
+    stroke-width: 1;
   }
 
   .pin > circle:not(.pulse) {
-    fill: var(--stage);
+    fill: #fff;
   }
 
   .pulse {
     fill: none;
-    stroke: var(--hi);
+    stroke: var(--signal);
     stroke-width: 1.5;
     transform-box: fill-box;
     transform-origin: center;
-    animation: radar 2.4s ease-out infinite;
+    animation: ripple 2.4s ease-out infinite;
   }
 
   .pulse.late {
     animation-delay: -1.2s;
   }
 
+  @keyframes ripple {
+    from {
+      opacity: 0.8;
+      scale: 0.6;
+    }
+
+    to {
+      opacity: 0;
+      scale: 3;
+    }
+  }
+
   .address {
     position: absolute;
-    inset-block-start: 58%;
+    inset-block-start: 57%;
     inset-inline-start: 50%;
     display: grid;
     justify-items: center;
-    gap: 0.15rem;
+    gap: 0.1rem;
+    padding: var(--space-xs) var(--space-s);
+    border-radius: var(--radius-lg);
+    background: var(--paper);
+    box-shadow:
+      0 0 0 1px var(--line),
+      0 12px 32px -18px var(--material-shade);
     translate: -50% 0;
     opacity: var(--pin);
     text-align: center;
   }
 
   .address b {
-    font-size: 1.125rem;
+    font-size: var(--step-0);
+    font-weight: 600;
   }
 
   .address span {
-    color: var(--text-2);
+    color: var(--muted-foreground);
     font-size: 0.8125rem;
   }
 
@@ -1083,10 +1062,10 @@ const roads = [
   }
 
   .chips i {
-    padding: 0.12rem 0.5rem;
-    border-radius: 999px;
-    background: rgb(255 59 69 / 0.16);
-    color: #ff8c92;
+    padding: 0.1rem 0.45rem;
+    border-radius: var(--radius-sm);
+    box-shadow: inset 0 0 0 1px var(--signal);
+    color: var(--signal);
     font-size: 0.6875rem;
     font-style: normal;
     font-weight: 600;
@@ -1097,66 +1076,45 @@ const roads = [
   .counters {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.5rem;
+    gap: var(--space-xs);
     margin: 0;
-    text-align: center;
   }
 
   .counters > div {
     --on: 1;
     display: grid;
     gap: 0.1rem;
-    opacity: calc(0.2 + var(--on) * 0.8);
+    opacity: calc(0.35 + var(--on) * 0.65);
   }
 
   .counters dt {
     order: 2;
-    color: var(--text-3);
-    font-size: 0.6875rem;
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
     line-height: 1.25;
   }
 
   .counters dd {
     margin: 0;
-    color: var(--text);
-    font-size: clamp(1.35rem, 1rem + 1.6vw, 2.5rem);
-    font-weight: 650;
+    color: var(--foreground);
+    font-size: clamp(1.35rem, 1rem + 1.4vw, 2.25rem);
+    font-weight: 600;
     line-height: 1;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
   }
 
   [data-counter="people"] dd {
-    color: color-mix(in oklab, var(--text), var(--hi) calc(var(--on) * 100%));
+    color: var(--signal);
   }
 
-  /* Solange der Film den Bildschirm füllt, weichen die Kopfleiste und die
-     mobile Leiste mit Spenden und Teilen; wer mit der Tastatur in die
-     Kopfleiste springt, holt sie zurück. */
-  :global(.site-header) {
-    transition: translate 0.35s ease;
-  }
-
-  :global(html[data-immersive]:not([data-menu-open]) .site-header) {
-    translate: 0 -100%;
-  }
-
-  :global(
-    html[data-immersive]:not([data-menu-open]) .site-header:focus-within
-  ) {
-    translate: none;
-  }
-
+  /* Solange die Geschichte den Bildschirm füllt, weicht die mobile Leiste
+     mit Spenden und Teilen. */
   :global(html[data-immersive] [data-action-bar]) {
     translate: 0 110%;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :global(.site-header) {
-      transition: none;
-    }
-
-    .ring,
     .pulse,
     .caret {
       animation: none;
@@ -1169,13 +1127,13 @@ const roads = [
 
   /* ---------- Breitere Bildschirme ------------------------------------- */
 
-  /* Auf breiten Schirmen steht der Satz links, das Netz bekommt die
-     ganze Höhe daneben. */
-  @container campaign (width >= 64rem) {
+  /* Der Satz links, das Netz rechts über die ganze Höhe. */
+  @container campaign (width >= 56rem) {
     .stage {
-      grid-template-columns: minmax(20rem, 0.72fr) minmax(0, 1.28fr);
+      grid-template-columns: minmax(18rem, 0.7fr) minmax(0, 1.3fr);
       grid-template-rows: auto minmax(0, 1fr) auto;
-      column-gap: var(--space-l);
+      gap: var(--space-s) var(--space-l);
+      padding-block: var(--space-s) var(--space-m);
     }
 
     .rail,
@@ -1185,44 +1143,20 @@ const roads = [
 
     .says {
       align-self: center;
-      padding-block: 0 4svh;
-      text-align: start;
-    }
-
-    .say {
-      justify-items: start;
+      padding-block-end: 6svh;
     }
 
     .say h2,
     .say h3 {
-      font-size: clamp(2rem, 1rem + 2.2vw, 3.25rem);
+      font-size: clamp(1.75rem, 0.9rem + 1.9vw, 2.75rem);
     }
 
     .say .text {
-      max-inline-size: 40ch;
-    }
-  }
-
-  @container campaign (width >= 48rem) {
-    .stage {
-      padding-block: 0.9rem 1.4rem;
-    }
-
-    .says {
-      padding-block: 1.6rem 0.4rem;
-    }
-
-    .counters {
-      inline-size: min(100%, 52rem);
-      justify-self: center;
+      font-size: var(--step-1);
     }
 
     .counters dt {
-      font-size: 0.8125rem;
-    }
-
-    .prompt-text {
-      font-size: 1.0625rem;
+      font-size: 0.875rem;
     }
 
     .row {
@@ -1264,7 +1198,6 @@ const roads = [
     const links = [...root.querySelectorAll<HTMLAnchorElement>("[data-goto]")]
     const net = root.querySelector<SVGSVGElement>("[data-net]")
     const view = one(".view")
-    const radar = one(".radar")
     const file = one(".file")
     const prompt = one(".prompt")
     const typed = one("[data-typed]")
@@ -1277,7 +1210,6 @@ const roads = [
     if (
       !net ||
       !view ||
-      !radar ||
       !file ||
       !prompt ||
       !typed ||
@@ -1366,10 +1298,6 @@ const roads = [
           ),
         )
       }
-      for (const ring of radar.querySelectorAll("circle")) {
-        ring.setAttribute("cx", String(at.you[0]))
-        ring.setAttribute("cy", String(at.you[1]))
-      }
     }
 
     const progress = () => {
@@ -1398,6 +1326,7 @@ const roads = [
         const shown = snap(into * (1 - leave))
         set(say, "--o", shown)
         say.toggleAttribute("data-current", shown > 0.5)
+        say.toggleAttribute("data-fading", shown > 0 && shown <= 0.5)
       })
 
       // The camera moves to the scene's view in the first part of it.
@@ -1453,7 +1382,6 @@ const roads = [
         if (shown >= 0.5 && id !== "you" && id !== "crooks") count += 1
         if (leak >= 0.5) lost += Number(node.dataset.people) || 0
       }
-      set(radar, "--radar", 1 - snap(ramp(p, 2, 3)) * 0.7)
 
       for (const edge of edgeEls) {
         const toCrooks = edge.dataset.to === "crooks"
@@ -1570,7 +1498,7 @@ const roads = [
       const box = root.getBoundingClientRect()
       document.documentElement.toggleAttribute(
         "data-immersive",
-        box.top <= 1 && box.bottom >= window.innerHeight,
+        box.top <= window.innerHeight * 0.2 && box.bottom >= window.innerHeight,
       )
     }
 

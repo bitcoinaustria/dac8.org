@@ -272,8 +272,8 @@ export const scenes: Scene[] = [
       en: "The list leads to the front door.",
     },
     text: {
-      de: "Bitcoin ist wie Bargeld ein Inhaberwert. Laut Gendarmerie wählen Täter ihre Opfer anhand geleakter Daten aus. **In Frankreich zählte das Innenministerium im ersten Halbjahr 2026 77 Entführungen, Freiheitsberaubungen und Erpressungen** rund um Kryptowerte.",
-      en: "Like cash, bitcoin is a bearer asset. According to the Gendarmerie, offenders pick their victims from leaked data. **In France, the interior ministry counted 77 kidnappings, unlawful detentions and extortions** around crypto-assets in the first half of 2026.",
+      de: "Bitcoin ist wie Bargeld ein Inhaberwert. Laut Gendarmerie wählen Täter ihre Opfer anhand geleakter Daten aus. **Allein im ersten Halbjahr 2026 zählte das französische Innenministerium 77 Entführungen, Freiheitsberaubungen und Erpressungen** rund um Kryptowerte.",
+      en: "Like cash, bitcoin is a bearer asset. According to the Gendarmerie, offenders pick their victims from leaked data. **In the first half of 2026 alone, France’s interior ministry counted 77 kidnappings, unlawful detentions and extortions** around crypto-assets.",
     },
   },
   {
