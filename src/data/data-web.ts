@@ -1,25 +1,27 @@
 import type { Language } from "@/lib/i18n"
 
-// "Where your data goes": an invented reader, Max Mustermann, buys bitcoin
-// once. The story follows his data to every place that keeps a copy, by
-// law or in practice, shows that places like each of them have lost data
-// in a real case, and how the copies come together again in the wrong
-// hands. The cases and their sources live in src/data/leaks.ts; the legal
-// facts follow the dossier (§ 21 FM-GwG, § 18 and § 20 Krypto-MPfG,
-// Directive (EU) 2024/1640).
+// "What happens to your data", told as one thread: an invented customer,
+// Max, opens an account with a crypto provider. The provider keeps his
+// records and reports him to the tax authority every year; his home
+// address also sits in the population register and with the shop that
+// sent his hardware wallet. Then each of these three places is shown
+// losing data in a real case, and the three copies are joined into one
+// file that leads to his front door. Further places that hold data appear
+// faintly as context. The cases and their sources live in
+// src/data/leaks.ts; the legal facts follow the dossier (§ 21 FM-GwG,
+// § 18 and § 20 Krypto-MPfG, Directive (EU) 2024/1640).
 
 type Text = Record<Language, string>
 
 export type Place =
   | "you"
   | "provider"
-  | "vendor"
-  | "shop"
-  | "taxApp"
   | "taxOffice"
-  | "foreign"
-  | "accounts"
   | "residents"
+  | "shop"
+  | "vendor"
+  | "accounts"
+  | "foreign"
   | "crooks"
 
 export interface Node {
@@ -28,12 +30,14 @@ export interface Node {
   // A shorter name for narrow screens, where the name is longer.
   brief?: Text
   // What the place keeps, in at most two short lines.
-  holds: Record<Language, string[]>
+  holds?: Record<Language, string[]>
   // The scene in which the place appears, and its turn within it.
   scene: number
   order?: number
-  // A real case at a place of this kind, from src/data/leaks.ts, and a
-  // short line for the tag beside the node.
+  // Further places that also hold data: shown faintly, without a case.
+  context?: boolean
+  // A real case at a place of this kind, from src/data/leaks.ts, and the
+  // short line under it.
   leak?: string
   tag?: Text
   // Only if Max lived in another EU country.
@@ -44,7 +48,7 @@ export const nodes: Node[] = [
   {
     id: "you",
     name: { de: "Max", en: "Max" },
-    holds: { de: ["kauft einmal Bitcoin"], en: ["buys bitcoin once"] },
+    holds: { de: ["kauft Bitcoin"], en: ["buys bitcoin"] },
     scene: 0,
   },
   {
@@ -56,84 +60,19 @@ export const nodes: Node[] = [
       en: ["ID, wallet addresses,", "every transaction"],
     },
     scene: 0,
-    order: 0,
+    order: 1,
     leak: "coinbase",
     tag: { de: "69.461 Kunden", en: "69,461 customers" },
-  },
-  {
-    id: "vendor",
-    name: { de: "Dienstleister", en: "Contractors" },
-    holds: {
-      de: ["Ausweisprüfung, Support,", "Newsletter"],
-      en: ["ID checks, support,", "newsletters"],
-    },
-    scene: 0,
-    order: 1,
-    leak: "fractal-id",
-    tag: { de: "Ausweisbilder", en: "ID images" },
-  },
-  {
-    id: "shop",
-    name: { de: "Wallet-Shop", en: "Wallet shop" },
-    holds: {
-      de: ["Name, Wohnadresse,", "Telefonnummer"],
-      en: ["name, home address,", "phone number"],
-    },
-    scene: 0,
-    order: 2,
-    leak: "ledger",
-    tag: { de: "272.000 Käufer", en: "272,000 buyers" },
-  },
-  {
-    id: "taxApp",
-    name: { de: "Steuer-App", en: "Tax app" },
-    holds: {
-      de: ["Bestände, Gewinne", "und Verluste"],
-      en: ["holdings, gains", "and losses"],
-    },
-    scene: 0,
-    order: 3,
-    leak: "waltio",
-    tag: { de: "Jahresendbestände", en: "year-end holdings" },
   },
   {
     id: "taxOffice",
     name: { de: "Finanzamt", en: "Tax authority" },
     holds: {
-      de: ["ab 2027 jedes Jahr", "eine DAC8-Meldung"],
-      en: ["from 2027 a DAC8", "report every year"],
+      de: ["jedes Jahr eine Meldung,", "ohne Wallet-Adressen"],
+      en: ["a report every year,", "no wallet addresses"],
     },
     scene: 1,
     order: 0,
-    leak: "austria",
-    tag: { de: "private Abfragen", en: "private queries" },
-  },
-  {
-    id: "foreign",
-    name: { de: "Steuerbehörde im EU-Ausland", en: "Tax authority elsewhere" },
-    brief: { de: "EU-Steuerbehörde", en: "EU tax authority" },
-    holds: {
-      de: ["wenn du dort lebst,", "mindestens 5 Jahre"],
-      en: ["if you live there,", "at least 5 years"],
-    },
-    scene: 1,
-    order: 1,
-    leak: "bulgaria",
-    tag: { de: "6 Mio. Menschen", en: "6 million people" },
-    maybe: true,
-  },
-  {
-    id: "accounts",
-    name: { de: "Kontenregister", en: "Account register" },
-    brief: { de: "Kontenregister", en: "Accounts" },
-    holds: {
-      de: ["bis 2029 EU-weit vernetzt,", "auch Krypto-Konten"],
-      en: ["linked EU-wide by 2029,", "crypto accounts too"],
-    },
-    scene: 1,
-    order: 2,
-    leak: "france",
-    tag: { de: "1,2 Mio. Datensätze", en: "1.2 million records" },
   },
   {
     id: "residents",
@@ -144,18 +83,50 @@ export const nodes: Node[] = [
       en: ["name, date of birth,", "home address"],
     },
     scene: 1,
-    order: 3,
+    order: 1,
     leak: "gis",
     tag: { de: "5 Mio. Menschen", en: "5 million people" },
+  },
+  {
+    id: "shop",
+    name: { de: "Wallet-Shop", en: "Wallet shop" },
+    holds: {
+      de: ["Name, Wohnadresse,", "Telefonnummer"],
+      en: ["name, home address,", "phone number"],
+    },
+    scene: 1,
+    order: 2,
+    leak: "ledger",
+    tag: { de: "272.000 Käufer", en: "272,000 buyers" },
+  },
+  {
+    id: "vendor",
+    name: { de: "Dienstleister", en: "Contractors" },
+    scene: 1,
+    order: 3,
+    context: true,
+  },
+  {
+    id: "accounts",
+    name: { de: "Kontenregister", en: "Account register" },
+    brief: { de: "Kontenregister", en: "Accounts" },
+    scene: 1,
+    order: 4,
+    context: true,
+  },
+  {
+    id: "foreign",
+    name: { de: "Steuerbehörde im EU-Ausland", en: "Tax authority abroad" },
+    brief: { de: "EU-Ausland", en: "Abroad" },
+    scene: 1,
+    order: 5,
+    context: true,
+    maybe: true,
   },
   {
     id: "crooks",
     name: { de: "Betrüger und Erpresser", en: "Fraudsters, extortionists" },
     brief: { de: "Betrüger, Erpresser", en: "Fraudsters" },
-    holds: {
-      de: ["kaufen und tauschen", "geleakte Listen"],
-      en: ["buy and trade", "leaked lists"],
-    },
     scene: 2,
   },
 ]
@@ -164,13 +135,12 @@ export const nodes: Node[] = [
 // report line carries a packet a year.
 export const edges: { from: Place; to: Place }[] = [
   { from: "you", to: "provider" },
-  { from: "provider", to: "vendor" },
-  { from: "you", to: "shop" },
-  { from: "you", to: "taxApp" },
   { from: "provider", to: "taxOffice" },
-  { from: "taxOffice", to: "foreign" },
-  { from: "provider", to: "accounts" },
   { from: "you", to: "residents" },
+  { from: "you", to: "shop" },
+  { from: "provider", to: "vendor" },
+  { from: "provider", to: "accounts" },
+  { from: "taxOffice", to: "foreign" },
 ]
 
 export interface Scene {
@@ -193,8 +163,8 @@ export const scenes: Scene[] = [
       en: "Your account becomes a file.",
     },
     text: {
-      de: "Ausweis, Wallet-Adressen und jede Transaktion speichert dein Anbieter nach den Geldwäschevorschriften, **bis zehn Jahre nach Ende der Kundenbeziehung.** Dazu kommen Dienstleister, Shop und Steuer-App.",
-      en: "Your provider keeps your ID, wallet addresses and every transaction under anti-money-laundering rules, **until ten years after you leave.** Contractors, the wallet shop and the tax app add more.",
+      de: "Max eröffnet ein Konto bei einer Krypto-Börse und zeigt dafür seinen Ausweis. Der Anbieter speichert ihn mit Wallet-Adressen und jeder Transaktion, **bis zehn Jahre nach Ende der Kundenbeziehung.**",
+      en: "Max opens an account with a crypto exchange and shows his ID. The provider keeps it with his wallet addresses and every transaction, **until ten years after he leaves.**",
     },
   },
   {
@@ -206,8 +176,8 @@ export const scenes: Scene[] = [
       en: "More about you. Every year.",
     },
     text: {
-      de: "Ab 2027 meldet der Anbieter jedes Jahr ans Finanzamt, **ohne Wallet-Adressen,** und hebt jede Meldung zehn Jahre auf. Lebst du in einem anderen EU-Staat, geht sie dorthin weiter.",
-      en: "From 2027 the provider reports to the tax authority every year, **without wallet addresses,** and keeps each report for ten years. If you live in another EU country, it goes on there.",
+      de: "Ab 2027 meldet der Anbieter jedes Jahr ans Finanzamt, ohne Wallet-Adressen, und hebt jede Meldung zehn Jahre auf. **Seine Wohnadresse kennen auch Melderegister und Wallet-Shop.**",
+      en: "From 2027 the provider reports to the tax authority every year, without wallet addresses, and keeps each report for ten years. **The population register and the wallet shop know his home address too.**",
     },
   },
   {
@@ -219,8 +189,8 @@ export const scenes: Scene[] = [
       en: "Stored. Hacked. Sold.",
     },
     text: {
-      de: "Je mehr an einer Stelle liegt und je länger, desto lohnender der Einbruch. **Stellen wie diese haben alle schon Daten verloren.**",
-      en: "The more sits in one place and the longer, the more a break-in pays. **Places like these have all lost data before.**",
+      de: "2025 gaben bestochene Support-Mitarbeiter einer Börse Daten von 69.461 Kunden weiter, bis hin zu Ausweisbildern. **Auch Wallet-Shops und Melderegister haben schon Daten verloren.**",
+      en: "In 2025, bribed support staff at an exchange passed on data on 69,461 customers, down to ID images. **Wallet shops and population registers have lost data too.**",
     },
   },
   {
@@ -232,8 +202,8 @@ export const scenes: Scene[] = [
       en: "Apart, each list says little. Together, a file.",
     },
     text: {
-      de: "Listen über Name, Anschrift oder Handynummer zusammenzuführen, erledigt Software in Minuten. **Einer KI genügt ein Satz.**",
-      en: "Software joins lists on name, home address or mobile number in minutes. **An AI needs one sentence.**",
+      de: "Wohnadresse aus dem Melderegister, Hardware-Wallet aus dem Shop, Ausweis und Kontostand von der Börse. **Software führt das in Minuten zusammen, einer KI genügt ein Satz.**",
+      en: "Home address from the population register, hardware wallet from the shop, ID and balance from the exchange. **Software joins them in minutes, and an AI needs one sentence.**",
     },
   },
   {
@@ -283,9 +253,9 @@ export const profile: { label: Text; value: Text; from: string }[] = [
     from: "coinbase",
   },
   {
-    label: { de: "Bestände", en: "Holdings" },
-    value: { de: "Stand Jahresende", en: "at year end" },
-    from: "waltio",
+    label: { de: "Kontostand", en: "Balance" },
+    value: { de: "mit allen Transaktionen", en: "with all transactions" },
+    from: "coinbase",
   },
 ]
 
@@ -293,13 +263,19 @@ export const profile: { label: Text; value: Text; from: string }[] = [
 export const search = {
   label: { de: "Suchauftrag an eine KI", en: "Prompt to an AI" },
   query: {
-    de: "Gleiche die Listen ab und zeig mir, wer Bitcoin hat, mit Wohnadresse und Beständen.",
-    en: "Match the lists and show me who holds bitcoin, with home address and holdings.",
+    de: "Gleiche die Listen ab und zeig mir, wer Bitcoin hat, mit Wohnadresse und Kontostand.",
+    en: "Match the lists and show me who holds bitcoin, with home address and balance.",
   },
   result: {
     de: "1 Treffer · Max Mustermann · 1010 Wien",
     en: "1 match · Max Mustermann · 1010 Vienna",
   },
+}
+
+// A short note under the network.
+export const note = {
+  de: "Max ist erfunden, die Fälle sind echt.",
+  en: "Max is invented, the cases are real.",
 }
 
 function same(text: string): Text {
