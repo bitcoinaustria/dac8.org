@@ -29,8 +29,9 @@ export interface Node {
   brief?: Text
   // What the place keeps, in at most two short lines.
   holds: Record<Language, string[]>
-  // The scene in which the place appears.
+  // The scene in which the place appears, and its turn within it.
   scene: number
+  order?: number
   // A real case at a place of this kind, from src/data/leaks.ts, and a
   // short line for the tag beside the node.
   leak?: string
@@ -54,7 +55,8 @@ export const nodes: Node[] = [
       de: ["Ausweis, Wallet-Adressen,", "jede Transaktion"],
       en: ["ID, wallet addresses,", "every transaction"],
     },
-    scene: 1,
+    scene: 0,
+    order: 0,
     leak: "coinbase",
     tag: { de: "69.461 Kunden", en: "69,461 customers" },
   },
@@ -65,7 +67,8 @@ export const nodes: Node[] = [
       de: ["Ausweisprüfung, Support,", "Newsletter"],
       en: ["ID checks, support,", "newsletters"],
     },
-    scene: 2,
+    scene: 0,
+    order: 1,
     leak: "fractal-id",
     tag: { de: "Ausweisbilder", en: "ID images" },
   },
@@ -76,7 +79,8 @@ export const nodes: Node[] = [
       de: ["Name, Wohnadresse,", "Telefonnummer"],
       en: ["name, home address,", "phone number"],
     },
-    scene: 2,
+    scene: 0,
+    order: 2,
     leak: "ledger",
     tag: { de: "272.000 Käufer", en: "272,000 buyers" },
   },
@@ -87,7 +91,8 @@ export const nodes: Node[] = [
       de: ["Bestände, Gewinne", "und Verluste"],
       en: ["holdings, gains", "and losses"],
     },
-    scene: 2,
+    scene: 0,
+    order: 3,
     leak: "waltio",
     tag: { de: "Jahresendbestände", en: "year-end holdings" },
   },
@@ -98,7 +103,8 @@ export const nodes: Node[] = [
       de: ["ab 2027 jedes Jahr", "eine DAC8-Meldung"],
       en: ["from 2027 a DAC8", "report every year"],
     },
-    scene: 3,
+    scene: 1,
+    order: 0,
     leak: "austria",
     tag: { de: "private Abfragen", en: "private queries" },
   },
@@ -110,7 +116,8 @@ export const nodes: Node[] = [
       de: ["wenn du dort lebst,", "mindestens 5 Jahre"],
       en: ["if you live there,", "at least 5 years"],
     },
-    scene: 4,
+    scene: 1,
+    order: 1,
     leak: "bulgaria",
     tag: { de: "6 Mio. Menschen", en: "6 million people" },
     maybe: true,
@@ -123,7 +130,8 @@ export const nodes: Node[] = [
       de: ["bis 2029 EU-weit vernetzt,", "auch Krypto-Konten"],
       en: ["linked EU-wide by 2029,", "crypto accounts too"],
     },
-    scene: 4,
+    scene: 1,
+    order: 2,
     leak: "france",
     tag: { de: "1,2 Mio. Datensätze", en: "1.2 million records" },
   },
@@ -135,7 +143,8 @@ export const nodes: Node[] = [
       de: ["Name, Geburtsdatum,", "Wohnadresse"],
       en: ["name, date of birth,", "home address"],
     },
-    scene: 4,
+    scene: 1,
+    order: 3,
     leak: "gis",
     tag: { de: "5 Mio. Menschen", en: "5 million people" },
   },
@@ -147,21 +156,21 @@ export const nodes: Node[] = [
       de: ["kaufen und tauschen", "geleakte Listen"],
       en: ["buy and trade", "leaked lists"],
     },
-    scene: 5,
+    scene: 2,
   },
 ]
 
-// Who passes data to whom, and in which scene the line appears. The
+// Who passes data to whom. A line appears with the place it leads to; the
 // report line carries a packet a year.
-export const edges: { from: Place; to: Place; scene: number }[] = [
-  { from: "you", to: "provider", scene: 1 },
-  { from: "provider", to: "vendor", scene: 2 },
-  { from: "you", to: "shop", scene: 2 },
-  { from: "you", to: "taxApp", scene: 2 },
-  { from: "provider", to: "taxOffice", scene: 3 },
-  { from: "taxOffice", to: "foreign", scene: 4 },
-  { from: "provider", to: "accounts", scene: 4 },
-  { from: "you", to: "residents", scene: 4 },
+export const edges: { from: Place; to: Place }[] = [
+  { from: "you", to: "provider" },
+  { from: "provider", to: "vendor" },
+  { from: "you", to: "shop" },
+  { from: "you", to: "taxApp" },
+  { from: "provider", to: "taxOffice" },
+  { from: "taxOffice", to: "foreign" },
+  { from: "provider", to: "accounts" },
+  { from: "you", to: "residents" },
 ]
 
 export interface Scene {
@@ -176,117 +185,68 @@ export interface Scene {
 
 export const scenes: Scene[] = [
   {
-    id: "start",
-    short: { de: "Start", en: "Start" },
-    eyebrow: { de: "Wo deine Daten liegen", en: "Where your data goes" },
+    id: "konto",
+    short: { de: "Konto", en: "Account" },
+    eyebrow: { de: "01 Dein Anbieter", en: "01 Your provider" },
     heading: {
-      de: "Einmal Bitcoin kaufen. Wer weiß danach alles davon?",
-      en: "Buy bitcoin once. Who knows about it afterwards?",
+      de: "Dein Konto wird zur Akte.",
+      en: "Your account becomes a file.",
     },
     text: {
-      de: "Max ist erfunden, **die Stellen und die Datenlecks sind echt.** Scroll und sieh zu, wohin seine Daten wandern.",
-      en: "Max is invented, **the places and the leaks are real.** Scroll and watch where his data travels.",
-    },
-  },
-  {
-    id: "anbieter",
-    short: { de: "Anbieter", en: "Provider" },
-    eyebrow: { de: "Der Anbieter", en: "The provider" },
-    heading: {
-      de: "Ausweis, Wallet-Adressen, jede Transaktion.",
-      en: "ID, wallet addresses, every transaction.",
-    },
-    text: {
-      de: "Wer über eine Börse oder App kauft, zeigt seinen Ausweis. Der Anbieter speichert ihn mit deinen Wallet-Adressen und jeder Übertragung, nach den Regeln gegen Geldwäsche **bis zehn Jahre nach der Kündigung.**",
-      en: "Buying through an exchange or app means showing your ID. The provider keeps it with your wallet addresses and every transfer, under anti-money-laundering rules **until ten years after you leave.**",
-    },
-  },
-  {
-    id: "rundherum",
-    short: { de: "Rundherum", en: "Around it" },
-    eyebrow: { de: "Rundherum", en: "All around" },
-    heading: {
-      de: "Deine Daten bleiben nicht an einem Ort.",
-      en: "Your data does not stay in one place.",
-    },
-    text: {
-      de: "Dienstleister prüfen Ausweise, beantworten Supportanfragen und verschicken Newsletter. **Der Shop kennt deine Wohnadresse, die Steuer-App deine Bestände.**",
-      en: "Contractors check IDs, answer support requests and send newsletters. **The wallet shop knows your home address, the tax app your holdings.**",
-    },
-  },
-  {
-    id: "dac8",
-    short: { de: "DAC8", en: "DAC8" },
-    eyebrow: { de: "DAC8", en: "DAC8" },
-    heading: {
-      de: "Ab 2027 geht jedes Jahr eine Meldung ans Finanzamt.",
-      en: "From 2027, a report goes to the tax authority every year.",
-    },
-    text: {
-      de: "Name, Anschrift, Geburtsdatum, Steuernummer und die Summen je Kryptowert, **ohne Wallet-Adressen.** Der Anbieter hebt jede Meldung zehn Jahre auf.",
-      en: "Name, postal address, date of birth, tax number and the totals per crypto-asset, **without wallet addresses.** The provider keeps each report for ten years.",
+      de: "Ausweis, Wallet-Adressen und jede Transaktion speichert dein Anbieter nach den Geldwäschevorschriften, **bis zehn Jahre nach Ende der Kundenbeziehung.** Dazu kommen Dienstleister, Shop und Steuer-App.",
+      en: "Your provider keeps your ID, wallet addresses and every transaction under anti-money-laundering rules, **until ten years after you leave.** Contractors, the wallet shop and the tax app add more.",
     },
   },
   {
     id: "staat",
-    short: { de: "Staat", en: "State" },
-    eyebrow: { de: "Der Staat", en: "The state" },
-    heading: { de: "Und von dort weiter.", en: "And on from there." },
+    short: { de: "Jedes Jahr", en: "Every year" },
+    eyebrow: { de: "02 DAC8", en: "02 DAC8" },
+    heading: {
+      de: "Jedes Jahr mehr über dich.",
+      en: "More about you. Every year.",
+    },
     text: {
-      de: "Lebst du in einem anderen EU-Staat, geht die Meldung an die Steuerbehörde dort. **Bis 2029 werden die Kontenregister EU-weit vernetzt** und erfassen auch Krypto-Konten. Deine Wohnadresse steht ohnehin im Melderegister.",
-      en: "If you live in another EU country, the report goes to the tax authority there. **By 2029, account registers will be linked across the EU** and cover crypto accounts too. Your home address is in the population register anyway.",
+      de: "Ab 2027 meldet der Anbieter jedes Jahr ans Finanzamt, **ohne Wallet-Adressen,** und hebt jede Meldung zehn Jahre auf. Lebst du in einem anderen EU-Staat, geht sie dorthin weiter.",
+      en: "From 2027 the provider reports to the tax authority every year, **without wallet addresses,** and keeps each report for ten years. If you live in another EU country, it goes on there.",
     },
   },
   {
     id: "lecks",
     short: { de: "Lecks", en: "Leaks" },
-    eyebrow: { de: "Datenlecks", en: "Data leaks" },
+    eyebrow: { de: "03 Datenlecks", en: "03 Data leaks" },
     heading: {
-      de: "Stellen wie diese haben alle schon Daten verloren.",
-      en: "Places like these have all lost data before.",
+      de: "Gespeichert. Gehackt. Verkauft.",
+      en: "Stored. Hacked. Sold.",
     },
     text: {
-      de: "Echte Fälle, von Börsen bis zu Finanzverwaltungen. **Was ausläuft, landet bei Betrügern und Erpressern.**",
-      en: "Real cases, from exchanges to tax administrations. **What leaks ends up with fraudsters and extortionists.**",
+      de: "Je mehr an einer Stelle liegt und je länger, desto lohnender der Einbruch. **Stellen wie diese haben alle schon Daten verloren.**",
+      en: "The more sits in one place and the longer, the more a break-in pays. **Places like these have all lost data before.**",
     },
   },
   {
     id: "abgleich",
     short: { de: "Abgleich", en: "Matching" },
-    eyebrow: { de: "Abgleich", en: "Matching" },
+    eyebrow: { de: "04 Abgleich", en: "04 Matching" },
     heading: {
       de: "Getrennt verrät jede Liste wenig. Zusammen eine Akte.",
       en: "Apart, each list says little. Together, a file.",
     },
     text: {
-      de: "Listen über Name, Anschrift oder Handynummer zusammenzuführen, erledigt gewöhnliche Software in Minuten. **Einer KI genügt ein Satz.**",
-      en: "Ordinary software joins lists on name, home address or mobile number in minutes. **An AI needs one sentence.**",
+      de: "Listen über Name, Anschrift oder Handynummer zusammenzuführen, erledigt Software in Minuten. **Einer KI genügt ein Satz.**",
+      en: "Software joins lists on name, home address or mobile number in minutes. **An AI needs one sentence.**",
     },
   },
   {
     id: "risiko",
-    short: { de: "Risiko", en: "Risk" },
-    eyebrow: { de: "Das Risiko", en: "The risk" },
+    short: { de: "Haustür", en: "Front door" },
+    eyebrow: { de: "05 Das Risiko", en: "05 The risk" },
     heading: {
-      de: "Die Liste führt zur Haustür.",
-      en: "The list leads to the front door.",
+      de: "Dein Profil. Deine Wohnadresse. Ein Angriffsziel.",
+      en: "Your profile. Your home address. A target.",
     },
     text: {
-      de: "Bitcoin ist wie Bargeld ein Inhaberwert. Laut Gendarmerie wählen Täter ihre Opfer anhand geleakter Daten aus. **Allein im ersten Halbjahr 2026 zählte das französische Innenministerium 77 Entführungen, Freiheitsberaubungen und Erpressungen** rund um Kryptowerte.",
-      en: "Like cash, bitcoin is a bearer asset. According to the Gendarmerie, offenders pick their victims from leaked data. **In the first half of 2026 alone, France’s interior ministry counted 77 kidnappings, unlawful detentions and extortions** around crypto-assets.",
-    },
-  },
-  {
-    id: "ende",
-    short: { de: "Darum", en: "So" },
-    eyebrow: { de: "Darum", en: "That is why" },
-    heading: {
-      de: "Was nie gesammelt wird, kann nie verloren gehen.",
-      en: "What is never collected can never be lost.",
-    },
-    text: {
-      de: "DAC8 legt jedes Jahr eine weitere Kopie an. **Dagegen gehen wir vor, mit Verfahren und mit dir.**",
-      en: "DAC8 adds another copy every year. **We are challenging it, in proceedings and with you.**",
+      de: "Bitcoin funktioniert wie Bargeld. Laut Gendarmerie wählen Täter ihre Opfer anhand geleakter Daten aus. **Allein im ersten Halbjahr 2026 zählte Frankreich 77 Entführungen, Freiheitsberaubungen und Erpressungen** rund um Kryptowerte.",
+      en: "Bitcoin works like cash. According to the Gendarmerie, offenders pick their victims from leaked data. **In the first half of 2026 alone, France counted 77 kidnappings, unlawful detentions and extortions** around crypto-assets.",
     },
   },
 ]

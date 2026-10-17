@@ -23,6 +23,19 @@ interface Props {
 }
 
 const { language } = Astro.props
+
+// Rendered pictures of the places, from artwork-lab/network; where one is
+// missing, the place shows as a plain token with an icon.
+const renders = import.meta.glob<{ default: { src: string } }>(
+  "../assets/network/*.webp",
+  { eager: true },
+)
+const render = (name: string) =>
+  renders[`../assets/network/${name}.webp`]?.default.src
+const art: Partial<Record<Place, string>> = Object.fromEntries(
+  nodes.map((node) => [node.id, render(node.id.toLowerCase())]),
+)
+const doorstep = render("doorstep")
 const en = language === "en"
 
 const leakFor = (id: string) => {
@@ -84,37 +97,25 @@ const layout: Record<
 // Where the camera looks in each scene: centre and width.
 const cameras = {
   wide: [
-    [150, 300, 760],
-    [280, 300, 820],
-    [300, 300, 860],
-    [440, 300, 1000],
+    [320, 310, 1000],
     [460, 300, 1080],
     [600, 300, 1260],
     [880, 300, 1000],
     [880, 300, 1000],
-    [600, 300, 1260],
   ],
   mid: [
-    [140, 350, 620],
-    [240, 350, 680],
-    [300, 350, 780],
-    [400, 350, 880],
-    [420, 350, 920],
+    [320, 360, 860],
+    [420, 350, 940],
     [460, 350, 1000],
     [640, 350, 820],
     [640, 350, 820],
-    [460, 350, 1000],
   ],
   tall: [
-    [200, 130, 330],
-    [200, 170, 380],
-    [200, 240, 400],
-    [200, 330, 400],
-    [200, 410, 400],
-    [200, 430, 400],
+    [200, 170, 400],
+    [200, 420, 410],
+    [200, 440, 420],
     [200, 560, 400],
     [200, 560, 400],
-    [200, 430, 400],
   ],
 }
 const at = (id: Place) => layout.wide[id]
@@ -155,10 +156,8 @@ const roads = [
 ]
 ---
 
-<section
-  id="zeitreise"
+<div
   class="web"
-  aria-labelledby="web-heading"
   data-web
   data-locale={en ? "en" : "de-DE"}
   data-layout={JSON.stringify(layout)}
@@ -169,7 +168,7 @@ const roads = [
         <div
           class="spacer"
           id={`netz-${scene.id}`}
-          style={`--len: ${[110, 150, 150, 200, 160, 230, 210, 180, 150][index] ?? 150}`}
+          style={`--len: ${[100, 110, 120, 110, 110][index] ?? 110}`}
         >
         </div>
       ))}
@@ -178,7 +177,7 @@ const roads = [
   <div class="stage">
     <nav class="rail" aria-label={en ? "Scenes" : "Szenen"}>
       <ol>
-        {scenes.slice(1).map((scene) => (
+        {scenes.map((scene) => (
             <li>
               <a href={`#netz-${scene.id}`} data-goto>{scene.short[language]}</a>
             </li>
@@ -190,21 +189,12 @@ const roads = [
       {scenes.map((scene, index) => (
           <div class="say" data-say>
             <p class="eyebrow">{scene.eyebrow[language]}</p>
-            {index === 0 ? (
-              <h2 id="web-heading">{scene.heading[language]}</h2>
-            ) : (
-              <h3>{scene.heading[language]}</h3>
-            )}
+            <h3>{scene.heading[language]}</h3>
             <p class="text">
               {rich(scene.text[language]).map((part, partIndex) =>
                 partIndex % 2 ? <strong>{part}</strong> : part,
               )}
             </p>
-            {index === scenes.length - 1 && (
-              <a class="next button primary" href="#weiter">
-                {en ? "What you can do" : "Was du tun kannst"}
-              </a>
-            )}
           </div>
         ))}
     </div>
@@ -237,7 +227,8 @@ const roads = [
                 data-edge
                 data-from={edge.from}
                 data-to={edge.to}
-                data-scene={edge.scene}
+                data-scene={nodes.find((node) => node.id === edge.to)?.scene}
+                data-order={nodes.find((node) => node.id === edge.to)?.order ?? 0}
                 data-maybe={nodes.find((node) => node.id === edge.to)?.maybe
                   ? ""
                   : undefined}
@@ -297,60 +288,77 @@ const roads = [
                 class="node"
                 data-node={node.id}
                 data-scene={node.scene}
+                data-order={node.order ?? 0}
                 data-people={node.leak ? (leakFor(node.leak).people ?? 0) : 0}
                 data-maybe={node.maybe ? "" : undefined}
                 transform={`translate(${at(node.id)[0]} ${at(node.id)[1]})`}
               >
                 <g class="body">
-                  <circle class="breach" r="38" />
-                  <circle class="disc" r="31" />
-                  <g class="icon" transform="scale(1.15)">
-                    {node.id === "you" && (
-                      <path d="M0-11a5 5 0 1 1 0 10a5 5 0 1 1 0-10M-10 12c0-7 4.5-10 10-10s10 3 10 10" />
-                    )}
-                    {node.id === "provider" && (
-                      <>
-                        <circle r="10.5" />
-                        <path d="M-3-6v12M1-8v2M1 6v2M-5-5h6.5a2.6 2.6 0 0 1 0 5.2H-5M-5 0.2h7.2a2.9 2.9 0 0 1 0 5.8H-5" />
-                      </>
-                    )}
-                    {node.id === "vendor" && (
-                      <>
-                        <circle r="4" />
-                        <path d="M0-11v4M0 7v4M-11 0h4M7 0h4M-7.8-7.8l2.8 2.8M5 5l2.8 2.8M7.8-7.8L5-5M-5 5l-2.8 2.8" />
-                      </>
-                    )}
-                    {node.id === "shop" && (
-                      <path d="M-10-5L0-10l10 5v11L0 11l-10-5zM-10-5L0 0l10-5M0 0v11" />
-                    )}
-                    {node.id === "taxApp" && (
-                      <>
-                        <rect x="-7" y="-11" width="14" height="22" rx="2.5" />
-                        <path d="M-3.5 5l2.5-4 2.5 2 2.5-5" />
-                      </>
-                    )}
-                    {(node.id === "taxOffice" || node.id === "foreign") && (
-                      <path d="M-11-3L0-10l11 7zM-8-1v9M-3-1v9M3-1v9M8-1v9M-11 10h22" />
-                    )}
-                    {node.id === "accounts" && (
-                      <path d="M-9-7a9 3.2 0 1 0 18 0a9 3.2 0 1 0-18 0M-9-7v14a9 3.2 0 0 0 18 0v-14M-9 0a9 3.2 0 0 0 18 0" />
-                    )}
-                    {node.id === "residents" && (
-                      <path d="M-11 0L0-9l11 9M-7.5-3v13h15v-13M-2 10v-6h4v6" />
-                    )}
-                    {node.id === "crooks" && (
-                      <>
-                        <circle r="9" />
-                        <circle r="3" />
-                        <path d="M0-14v6M0 8v6M-14 0h6M8 0h6" />
-                      </>
-                    )}
-                  </g>
-                  <text class="name" y="56">{node.name[language]}</text>
-                  <text class="name brief" y="56">
+                  <circle class="breach" r="48" />
+                  {art[node.id] ? (
+                    <>
+                      <circle class="plate" r="44" />
+                      <image
+                        class="art"
+                        href={art[node.id]}
+                        x="-52"
+                        y="-56"
+                        width="104"
+                        height="104"
+                      />
+                    </>
+                  ) : (
+                    <>
+                    <circle class="disc" r="31" />
+                    <g class="icon" transform="scale(1.15)">
+                      {node.id === "you" && (
+                        <path d="M0-11a5 5 0 1 1 0 10a5 5 0 1 1 0-10M-10 12c0-7 4.5-10 10-10s10 3 10 10" />
+                      )}
+                      {node.id === "provider" && (
+                        <>
+                          <circle r="10.5" />
+                          <path d="M-3-6v12M1-8v2M1 6v2M-5-5h6.5a2.6 2.6 0 0 1 0 5.2H-5M-5 0.2h7.2a2.9 2.9 0 0 1 0 5.8H-5" />
+                        </>
+                      )}
+                      {node.id === "vendor" && (
+                        <>
+                          <circle r="4" />
+                          <path d="M0-11v4M0 7v4M-11 0h4M7 0h4M-7.8-7.8l2.8 2.8M5 5l2.8 2.8M7.8-7.8L5-5M-5 5l-2.8 2.8" />
+                        </>
+                      )}
+                      {node.id === "shop" && (
+                        <path d="M-10-5L0-10l10 5v11L0 11l-10-5zM-10-5L0 0l10-5M0 0v11" />
+                      )}
+                      {node.id === "taxApp" && (
+                        <>
+                          <rect x="-7" y="-11" width="14" height="22" rx="2.5" />
+                          <path d="M-3.5 5l2.5-4 2.5 2 2.5-5" />
+                        </>
+                      )}
+                      {(node.id === "taxOffice" || node.id === "foreign") && (
+                        <path d="M-11-3L0-10l11 7zM-8-1v9M-3-1v9M3-1v9M8-1v9M-11 10h22" />
+                      )}
+                      {node.id === "accounts" && (
+                        <path d="M-9-7a9 3.2 0 1 0 18 0a9 3.2 0 1 0-18 0M-9-7v14a9 3.2 0 0 0 18 0v-14M-9 0a9 3.2 0 0 0 18 0" />
+                      )}
+                      {node.id === "residents" && (
+                        <path d="M-11 0L0-9l11 9M-7.5-3v13h15v-13M-2 10v-6h4v6" />
+                      )}
+                      {node.id === "crooks" && (
+                        <>
+                          <circle r="9" />
+                          <circle r="3" />
+                          <path d="M0-14v6M0 8v6M-14 0h6M8 0h6" />
+                        </>
+                      )}
+                    </g>
+                    </>
+                  )}
+                  <text class="name" y="66">{node.name[language]}</text>
+                  <text class="name brief" y="66">
                     {(node.brief ?? node.name)[language]}
                   </text>
-                  <text class="holds" y="74">
+                  <text class="holds" y="83">
                     {node.holds[language].map((line, index) => (
                       <tspan x="0" dy={index === 0 ? 0 : 15}>{line}</tspan>
                     ))}
@@ -358,8 +366,8 @@ const roads = [
                 </g>
                 {node.leak && (
                   <g class="tag">
-                    <text class="tag-case" y="-60">{caseName(node.leak)}</text>
-                    <text class="tag-what" y="-44">{node.tag?.[language]}</text>
+                    <text class="tag-case" y="-70">{caseName(node.leak)}</text>
+                    <text class="tag-what" y="-55">{node.tag?.[language]}</text>
                   </g>
                 )}
               </g>
@@ -394,26 +402,30 @@ const roads = [
       </div>
 
       <div class="map">
-        <svg viewBox="0 0 420 320" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="web-pin" x1="0.2" y1="0" x2="0.8" y2="1">
-              <stop offset="0" stop-color="#e3000f" />
-              <stop offset="1" stop-color="#be000c" />
-            </linearGradient>
-          </defs>
-          <g class="streets">
-            {streets.map((d) => <path d={d} pathLength="1" />)}
-          </g>
-          <g class="roads">
-            {roads.map((d) => <path d={d} pathLength="1" />)}
-          </g>
-          <g class="pin" transform="translate(210 160)">
-            <circle class="pulse" r="10" />
-            <circle class="pulse late" r="10" />
-            <path d="M0 0c-9-11-14-17-14-24a14 14 0 1 1 28 0c0 7-5 13-14 24z" />
-            <circle cy="-24" r="5" />
-          </g>
-        </svg>
+        {doorstep ? (
+          <img class="doorstep" src={doorstep} alt="" />
+        ) : (
+          <svg viewBox="0 0 420 320" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="web-pin" x1="0.2" y1="0" x2="0.8" y2="1">
+                <stop offset="0" stop-color="#e3000f" />
+                <stop offset="1" stop-color="#be000c" />
+              </linearGradient>
+            </defs>
+            <g class="streets">
+              {streets.map((d) => <path d={d} pathLength="1" />)}
+            </g>
+            <g class="roads">
+              {roads.map((d) => <path d={d} pathLength="1" />)}
+            </g>
+            <g class="pin" transform="translate(210 160)">
+              <circle class="pulse" r="10" />
+              <circle class="pulse late" r="10" />
+              <path d="M0 0c-9-11-14-17-14-24a14 14 0 1 1 28 0c0 7-5 13-14 24z" />
+              <circle cy="-24" r="5" />
+            </g>
+          </svg>
+        )}
         <div class="address">
           <b>Musterstraße 7</b>
           <span>{en ? "1010 Vienna" : "1010 Wien"}</span>
@@ -446,7 +458,7 @@ const roads = [
       </div>
     </dl>
   </div>
-</section>
+</div>
 
 <style>
   /* Das Datennetz als Scroll-Geschichte in der Formensprache der Seite:
@@ -604,7 +616,7 @@ const roads = [
   .say h3 {
     max-inline-size: 20ch;
     color: var(--foreground);
-    font-size: clamp(1.5rem, 1.1rem + 1.8vw, 2.25rem);
+    font-size: clamp(1.3rem, 1rem + 1.8vw, 2.25rem);
     font-weight: 600;
     line-height: 1.08;
     letter-spacing: -0.025em;
@@ -614,7 +626,7 @@ const roads = [
   .say .text {
     max-inline-size: 46ch;
     color: var(--ink-2);
-    font-size: var(--step-0);
+    font-size: 0.9375rem;
     line-height: 1.45;
     text-wrap: pretty;
   }
@@ -703,6 +715,28 @@ const roads = [
   .node .body {
     opacity: calc(var(--show) * var(--fade));
     scale: calc(0.7 + var(--show) * 0.3);
+  }
+
+  /* Gerenderte Stationen aus artwork-lab/network, im Stil der übrigen
+     Illustrationen. */
+  .art {
+    filter: drop-shadow(0 6px 8px var(--material-shade));
+  }
+
+  /* Eine Scheibe in der Farbe der Fläche hält die Linien vom Bild fern. */
+  .plate {
+    fill: var(--panel);
+  }
+
+  .doorstep {
+    align-self: center;
+    justify-self: center;
+    inline-size: min(100%, 52rem);
+    block-size: auto;
+    max-block-size: 100%;
+    object-fit: contain;
+    opacity: var(--pin);
+    translate: 0 calc((1 - var(--draw)) * 1.5rem);
   }
 
   /* Stationen als Token: Graphitkern, schmale Titankante. */
@@ -1029,7 +1063,7 @@ const roads = [
 
   .address {
     position: absolute;
-    inset-block-start: 57%;
+    inset-block-end: var(--space-s);
     inset-inline-start: 50%;
     display: grid;
     justify-items: center;
@@ -1090,14 +1124,14 @@ const roads = [
   .counters dt {
     order: 2;
     color: var(--muted-foreground);
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     line-height: 1.25;
   }
 
   .counters dd {
     margin: 0;
     color: var(--foreground);
-    font-size: clamp(1.35rem, 1rem + 1.4vw, 2.25rem);
+    font-size: clamp(1.2rem, 0.9rem + 1.4vw, 2.25rem);
     font-weight: 600;
     line-height: 1;
     letter-spacing: -0.02em;
@@ -1238,13 +1272,21 @@ const roads = [
       Shape,
       [number, number, number][]
     >
-    const leakScene = 5
-    const matchScene = 6
-    const riskScene = 7
-    const endScene = 8
+    const stateScene = 1
+    const leakScene = 2
+    const matchScene = 3
+    const riskScene = 4
+    // There is no scene after the risk; the last picture stays.
+    const endScene = 99
     // The places with a case, in the order they light up.
     const leaking = nodeEls.filter((node) => node.querySelector(".tag"))
 
+    // When a place, or the line to it, appears: in its scene, one after
+    // another.
+    const appear = (element: Element) => {
+      const data = (element as HTMLElement).dataset
+      return Number(data.scene) + 0.05 + Number(data.order ?? 0) * 0.1
+    }
     const clamp = (value: number) => Math.min(1, Math.max(0, value))
     const ramp = (value: number, from: number, to: number) =>
       clamp((value - from) / (to - from))
@@ -1268,8 +1310,16 @@ const roads = [
     // Places the nodes and draws the lines for the screen's shape.
     const arrange = () => {
       const box = view.getBoundingClientRect()
-      const ratio = box.width / Math.max(1, box.height)
-      const next = ratio >= 1.6 ? "wide" : ratio >= 0.95 ? "mid" : "tall"
+      // The layout that shows the whole network largest in the space it
+      // gets.
+      const scale = (name: Shape) => {
+        const [, , width] = cameras[name][2]
+        const height = (width * sizes[name][1]) / sizes[name][0]
+        return Math.min(box.width / width, box.height / height)
+      }
+      const next = (Object.keys(sizes) as Shape[]).reduce((best, name) =>
+        scale(name) > scale(best) ? name : best,
+      )
       if (arranged && next === shape) return
       arranged = true
       shape = next
@@ -1358,13 +1408,7 @@ const roads = [
         const shown =
           id === "you"
             ? 1
-            : snap(
-                ramp(
-                  p,
-                  Number(node.dataset.scene) - 0.05,
-                  Number(node.dataset.scene) + 0.3,
-                ),
-              )
+            : snap(ramp(p, appear(node) - 0.12, appear(node) + 0.06))
         const order = leaking.indexOf(node)
         const leak =
           order < 0
@@ -1372,8 +1416,8 @@ const roads = [
             : snap(
                 ramp(
                   p,
-                  leakScene + 0.1 + order * 0.07,
-                  leakScene + 0.17 + order * 0.07,
+                  leakScene + 0.05 + order * 0.06,
+                  leakScene + 0.11 + order * 0.06,
                 ),
               )
         set(node, "--show", shown)
@@ -1390,13 +1434,7 @@ const roads = [
         )
         const draw = toCrooks
           ? Number.parseFloat(node?.style.getPropertyValue("--leak") ?? "0")
-          : snap(
-              ramp(
-                p,
-                Number(edge.dataset.scene) + 0.05,
-                Number(edge.dataset.scene) + 0.4,
-              ),
-            )
+          : snap(ramp(p, appear(edge) - 0.1, appear(edge) + 0.12))
         set(edge, "--draw", draw)
         set(edge, "--fade", toCrooks ? 1 : 1 - away * 0.85)
       }
@@ -1470,23 +1508,25 @@ const roads = [
 
       // The counters: places with his data, the reports by year, and the
       // people in the cases lit so far.
-      const filedReports = Math.round(ramp(p, 3.1, 3.85) * 10)
+      const filedReports = Math.round(
+        ramp(p, stateScene + 0.1, stateScene + 0.8) * 10,
+      )
       write(value(places), String(count))
       write(value(reports), String(filedReports))
       write(year, String(2026 + Math.max(1, filedReports)))
       write(value(people), format.format(Math.min(total, lost)))
-      set(places, "--on", snap(ramp(p, 0.9, 1.1)))
-      set(reports, "--on", snap(ramp(p, 2.95, 3.1)))
+      set(places, "--on", snap(ramp(p, -0.1, 0.05)))
+      set(reports, "--on", snap(ramp(p, stateScene - 0.1, stateScene + 0.05)))
       set(people, "--on", snap(ramp(p, leakScene + 0.05, leakScene + 0.15)))
 
       // The timeline marks the scene and keeps it in view in the pill.
       if (scene !== current) {
         current = scene
         links.forEach((link, index) => {
-          if (index === scene - 1) link.setAttribute("aria-current", "step")
+          if (index === scene) link.setAttribute("aria-current", "step")
           else link.removeAttribute("aria-current")
         })
-        const link = links[scene - 1]
+        const link = links[scene]
         if (link)
           railList.scrollTo({
             left:

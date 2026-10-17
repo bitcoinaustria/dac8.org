@@ -2,7 +2,6 @@
 import CheckIcon from "@/assets/icons/check.svg"
 import ShareIcon from "@/assets/icons/share.svg"
 import DacFile from "@/components/DacFile.astro"
-import DataWeb from "@/components/DataWeb.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
 import { donateFor, languageFor, pathFor } from "@/lib/i18n"
@@ -27,8 +26,6 @@ const en = language === "en"
     </header>
 
     <DacFile language={language} />
-
-    <DataWeb language={language} />
 
     <section id="weiter" class="next" aria-labelledby="next-heading">
       <h2 id="next-heading">
