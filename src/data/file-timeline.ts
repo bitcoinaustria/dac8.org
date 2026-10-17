@@ -81,10 +81,14 @@ export const rows: Row[] = [
 export interface Breach {
   // The case in src/data/leaks.ts, which carries name, year and sources.
   leak: string
-  // Where the data came from and how many people it held, for the head of
-  // the record.
+  // Where the data came from, for the head of the record, and what the
+  // people in it were, for the counter. The count comes from leaks.ts.
   where: Text
-  size: Text
+  unit: Text
+  // The source names a lower bound.
+  atLeast?: boolean
+  // Other lines of the copied data, masked, which scroll past before Max's.
+  others: string[]
   // Max's line in the record, field by field, as it might look in the
   // copied data. Pieces the file already holds are matched, not added.
   fields: { piece: Piece; raw: Text }[]
@@ -95,7 +99,16 @@ export const breaches: Breach[] = [
   {
     leak: "gis",
     where: { de: "Testserver", en: "Test server" },
-    size: { de: "≥ 5 Mio. Menschen", en: "≥ 5m people" },
+    unit: { de: "Menschen", en: "people" },
+    atLeast: true,
+    others: [
+      "H••••;J••••••;1958-••-••;••••GASSE ••;1100;WIEN",
+      "K•••••;M•••;1991-••-••;••••STRASSE •;8010;GRAZ",
+      "P••••••;A••••;1973-••-••;••••WEG ••;4020;LINZ",
+      "W•••;S••••••;1986-••-••;••••PLATZ •;5020;SALZBURG",
+      "B•••••;T•••;1965-••-••;••••GASSE •;6020;INNSBRUCK",
+      "G•••••;L••••;1999-••-••;••••ZEILE ••;1210;WIEN",
+    ],
     fields: [
       { piece: "name", raw: same("MUSTERMANN;MAX") },
       { piece: "birth", raw: same("1980-01-01") },
@@ -109,7 +122,15 @@ export const breaches: Breach[] = [
   {
     leak: "ledger",
     where: { de: "Shop-Bestellungen", en: "Shop orders" },
-    size: { de: "272.000 Käufer", en: "272,000 buyers" },
+    unit: { de: "Käufer", en: "buyers" },
+    others: [
+      "M•••• K••••, ••••weg 3, Graz, +43664·····12, order #·····",
+      "J•••• S••••••, ••••str. 18, München, +49151·····40, order #·····",
+      "A•••• P•••, ••••gasse 2, Linz, +43676·····85, order #·····",
+      "T•••• B•••••, ••••platz 9, Wien, +43699·····03, order #·····",
+      "L•••• H•••, ••••allee 5, Berlin, +49170·····66, order #·····",
+      "S•••• W•••••, ••••ring 11, Salzburg, +43664·····29, order #·····",
+    ],
     fields: [
       { piece: "name", raw: same("Max Mustermann") },
       { piece: "home", raw: same("Musterstrasse 7, Wien") },
@@ -124,7 +145,15 @@ export const breaches: Breach[] = [
   {
     leak: "coinbase",
     where: { de: "Support-Zugang", en: "Support access" },
-    size: { de: "69.461 Kunden", en: "69,461 customers" },
+    unit: { de: "Kunden", en: "customers" },
+    others: [
+      "S•••• P•••, +49 151 ··· ·· 31, s••••@•••.de, id_front.jpg, balance · 37 tx",
+      "D•••• R••••, +43 664 ··· ·· 58, d••••@•••.at, passport.jpg, balance · 112 tx",
+      "E•••• N•••••, +41 79 ··· ·· 20, e••••@•••.ch, id_front.jpg, balance · 9 tx",
+      "F•••• M••••, +49 160 ··· ·· 77, f••••@•••.com, id_front.jpg, balance · 341 tx",
+      "C•••• L•••, +43 676 ··· ·· 14, c••••@•••.at, passport.jpg, balance · 56 tx",
+      "R•••• K•••••, +49 176 ··· ·· 92, r••••@•••.de, id_front.jpg, balance · 23 tx",
+    ],
     fields: [
       { piece: "name", raw: same("Max Mustermann") },
       { piece: "phone", raw: same("+43 660 ··· ·· 07") },
@@ -156,9 +185,20 @@ export const match = {
   short: { de: "Abgleich", en: "Match" },
   heading: { de: "Drei Lecks, ein Profil.", en: "Three leaks, one profile." },
   text: {
-    de: "Listen über Name, Anschrift oder Handynummer zusammenzuführen, erledigt gewöhnliche Software in Minuten, mit KI geht es noch leichter. Aus Millionen Menschen bleiben die übrig, die Bitcoin haben, mit Wohnadresse und Kontostand. Bitcoin ist wie Bargeld ein Inhaberwert, deshalb ziehen solche Listen Kriminelle an.",
-    en: "Joining lists on name, home address or mobile number takes ordinary software minutes, and AI makes it easier still. Out of millions of people, those who hold bitcoin remain, with home address and balance. Like cash, bitcoin is a bearer asset, which is why such lists draw criminals.",
+    de: "Listen über Name, Anschrift oder Handynummer zusammenzuführen, erledigt gewöhnliche Software in Minuten, einer KI genügt dafür ein Satz. Aus Millionen Menschen bleibt übrig, wer Bitcoin hat, mit Wohnadresse und Kontostand. Bitcoin ist wie Bargeld ein Inhaberwert, deshalb ziehen solche Listen Kriminelle an.",
+    en: "Ordinary software joins lists on name, home address or mobile number in minutes, and an AI needs a single sentence. Out of millions of people, those who hold bitcoin remain, with home address and balance. Like cash, bitcoin is a bearer asset, which is why such lists draw criminals.",
   },
+  // The sentence typed into the search on the stage, and what it finds.
+  prompt: { de: "Suchauftrag an eine KI", en: "Prompt to an AI" },
+  query: {
+    de: "Gleiche die drei Listen ab und zeig mir, wer Bitcoin hat, mit Wohnadresse und Kontostand.",
+    en: "Match the three lists and show me who holds bitcoin, with home address and balance.",
+  },
+  result: {
+    de: "1 Treffer · Max Mustermann · 1010 Wien · Hardware-Wallet · Kontostand",
+    en: "1 match · Max Mustermann · 1010 Vienna · hardware wallet · balance",
+  },
+  found: { de: "in allen drei Listen", en: "in all three lists" },
 }
 
 export const reports = {
@@ -189,6 +229,11 @@ export const reports = {
       "no wallet addresses",
     ],
   },
+  // Where the reports are kept.
+  places: {
+    provider: { de: "beim Anbieter", en: "with the provider" },
+    authority: { de: "beim Finanzamt", en: "with the tax authority" },
+  },
 }
 
 export const end = {
@@ -200,8 +245,12 @@ export const end = {
     en: "Ten reports, in two places.",
   },
   text: {
-    de: "Ab jetzt liegen über Max immer zehn Jahresmeldungen beim Anbieter und beim Finanzamt. Auch Steuerbehörden verlieren Daten: In Bulgarien gelangten 2019 Steuerdaten von mehr als sechs Millionen Menschen ins Netz. Je weniger über dich gesammelt wird, desto weniger kann verloren gehen.",
-    en: "From now on, ten annual reports on Max always sit with the provider and the tax authority. Tax authorities lose data too: in Bulgaria in 2019, tax data on more than six million people ended up online. The less is collected about you, the less can be lost.",
+    de: "Ab jetzt liegen über Max immer zehn Jahresmeldungen beim Anbieter und beim Finanzamt. Auch Steuerbehörden verlieren Daten: In Bulgarien gelangten 2019 Steuerdaten von mehr als sechs Millionen Menschen ins Netz.",
+    en: "From now on, ten annual reports on Max always sit with the provider and the tax authority. Tax authorities lose data too: in Bulgaria in 2019, tax data on more than six million people ended up online.",
+  },
+  closing: {
+    de: "Je weniger über dich gesammelt wird, desto weniger kann verloren gehen.",
+    en: "The less is collected about you, the less can be lost.",
   },
 }
 

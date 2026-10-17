@@ -11,11 +11,14 @@ import {
 import { leaks } from "@/data/leaks"
 import { type Language, pathFor } from "@/lib/i18n"
 
-// "How scattered leaks become a file", told as a scroll story: the cards
-// scroll past a pinned stage, and the scroll position drives the stage. The
-// cards are the readable version, so the stage stays hidden from screen
-// readers. The page renders the stage in its final state; the script below
-// rewinds it and plays it along with the scroll.
+// "How scattered leaks become a file", told as a full-screen scroll film.
+// The cards scroll past a pinned stage and the scroll position drives it:
+// a crowd of dots at true scale, one per thousand people in a leak, the
+// copied data scrolling past until Max's line, the file it lands in, a
+// search that picks him out, and the reports DAC8 then files every year.
+// The cards are the readable version, so the stage stays hidden from
+// screen readers. The page renders the stage in its final state; the
+// script below rewinds it and plays it along with the scroll.
 interface Props {
   language: Language
 }
@@ -54,6 +57,9 @@ const cases = breaches.map((breach, index) => {
     index,
     leak,
     fields,
+    // The lines that scroll past before Max's, and a few after it.
+    before: [...breach.others, ...breach.others].slice(0, 8),
+    after: breach.others.slice(0, 2),
     added: fields.filter((field) => !field.matched).map((field) => field.piece),
     matched: fields
       .filter((field) => field.matched)
@@ -67,6 +73,7 @@ const origin = new Map<Piece, number>(
 )
 const tag = (index: number) =>
   `${cases[index].leak.name[language]} ’${String(cases[index].leak.year).slice(2)}`
+const people = en ? "people" : "Menschen"
 
 const ending = leakFor(end.leak)
 const today = en ? "Today" : "Heute"
@@ -75,7 +82,7 @@ const sheets = Array.from(
   (_, index) => reports.first + index,
 )
 const last = reports.first + reports.count
-// A slightly different tilt for every report on the pile.
+// A slightly different tilt for every report on a pile.
 const tilt = [-2.2, 1.4, -0.6, 2, -1.6, 0.8, -2.6, 1.8, -1, 0.4]
 
 // The scenes after the intro, for the timeline and its anchors.
@@ -102,12 +109,19 @@ const source = en ? "Source" : "Quelle"
   aria-labelledby="journey-heading"
   data-journey
   data-first={reports.first}
+  data-locale={en ? "en" : "de-DE"}
+  data-report-label={en
+    ? `Annual report {n} of ${reports.count}`
+    : `Jahresmeldung {n} von ${reports.count}`}
+  data-end-people={ending.people}
+  data-end-label={`${people} · ${ending.kind[language]} ${ending.name[language]} ${ending.year}`}
 >
   <div class="steps">
-    <div class="step" id="akte-start" data-step data-year="" style="--len: 100">
+    <div class="step" id="akte-start" data-step data-year="" style="--len: 160">
       <div class="card intro" tabindex="-1">
         <h2 id="journey-heading">{intro.heading[language]}</h2>
         <p>{intro.text[language]}</p>
+        <span class="cue" aria-hidden="true"></span>
       </div>
     </div>
 
@@ -117,7 +131,7 @@ const source = en ? "Source" : "Quelle"
           id={`akte-${item.leak.id}`}
           data-step
           data-year={item.leak.year}
-          style="--len: 150"
+          style="--len: 170"
         >
           <div class="card" tabindex="-1">
             <p class="kicker">
@@ -149,7 +163,7 @@ const source = en ? "Source" : "Quelle"
       id="akte-abgleich"
       data-step
       data-year={today}
-      style="--len: 130"
+      style="--len: 200"
     >
       <div class="card" tabindex="-1">
         <p class="kicker"><span>{today}</span> {match.short[language]}</p>
@@ -158,7 +172,7 @@ const source = en ? "Source" : "Quelle"
       </div>
     </div>
 
-    <div class="step" id="akte-dac8" data-step style="--len: 170">
+    <div class="step" id="akte-dac8" data-step style="--len: 190">
       <div class="card" tabindex="-1">
         <p class="kicker">
           <span>{reports.first + 1}</span>
@@ -169,11 +183,12 @@ const source = en ? "Source" : "Quelle"
       </div>
     </div>
 
-    <div class="step" id="akte-ende" data-step style="--len: 120">
+    <div class="step" id="akte-ende" data-step style="--len: 230">
       <div class="card" tabindex="-1">
         <p class="kicker"><span>{last}</span> {end.short[language]}</p>
         <h3>{end.heading[language]}</h3>
         <p>{end.text[language]}</p>
+        <p class="closing">{end.closing[language]}</p>
         <p class="source">{source}: {ending.sources[0].label[language]}</p>
         <a class="more" href={pathFor("leaks", language)}
           >{en ? "More cases with sources" : "Mehr Fälle mit Quellen"}</a
@@ -185,39 +200,83 @@ const source = en ? "Source" : "Quelle"
   <div class="pin">
     <canvas class="crowd" aria-hidden="true"></canvas>
     <div class="frame">
-      <p class="year" aria-hidden="true" data-year-label>{last}</p>
+      <nav
+        class="rail"
+        aria-label={en ? "Timeline" : "Zeitleiste"}
+        style={`--ticks: ${scenes.length}`}
+      >
+        <ol>
+          {scenes.map((scene) => (
+              <li>
+                <a href={`#akte-${scene.id}`} data-goto>
+                  <span class="tick-year">{scene.year}</span>
+                  <span class="tick-name">{scene.name}</span>
+                </a>
+              </li>
+            ))}
+        </ol>
+      </nav>
+
+      <p class="count" aria-hidden="true" data-count-box>
+        <b data-count></b>
+        <span class="count-label" data-count-label></span>
+        <span class="scale">
+          {en ? "1 dot = 1,000 people" : "1 Punkt = 1.000 Menschen"}
+        </span>
+      </p>
 
       <div class="desk" aria-hidden="true">
         <div class="records">
           {cases.map((item) => (
-              <div class="record" data-record>
+              <div
+                class="record"
+                data-record
+                data-people={item.leak.people ?? 0}
+                data-prefix={item.atLeast ? "≥ " : ""}
+                data-label={`${item.unit[language]} · ${item.leak.name[language]} ${item.leak.year}`}
+              >
                 <p class="record-head">
-                  <b>{item.leak.name[language]}</b>
+                  <b>
+                    {item.leak.name[language]} {item.leak.year}
+                  </b>
                   <span>{item.where[language]}</span>
-                  <span>{item.size[language]}</span>
                 </p>
-                <span class="noise" style="--w: 86%" />
-                <p class="line">
-                  {item.fields.map((field) => (
-                    <span
-                      class="chip"
-                      data-piece={field.piece}
-                      data-matched={field.matched ? "" : undefined}
-                    >
-                      {field.raw[language]}
-                    </span>
-                  ))}
-                </p>
-                <span class="noise" style="--w: 71%" />
-                <span class="noise" style="--w: 79%" />
+                <div class="feed">
+                  <div class="reel">
+                    {item.before.map((line) => (
+                      <p class="other">{line}</p>
+                    ))}
+                    <p class="line" data-max>
+                      {item.fields.map((field) => (
+                        <span
+                          class="chip"
+                          data-piece={field.piece}
+                          data-matched={field.matched ? "" : undefined}
+                        >
+                          {field.raw[language]}
+                        </span>
+                      ))}
+                    </p>
+                    {item.after.map((line) => (
+                      <p class="other">{line}</p>
+                    ))}
+                  </div>
+                </div>
               </div>
             ))}
-          <p class="pile-count">
-            <b data-reports>{reports.count}</b>
-            {en
-                ? `of ${reports.count} annual reports, with the provider and the tax authority`
-                : `von ${reports.count} Jahresmeldungen, beim Anbieter und beim Finanzamt`}
-          </p>
+
+          <div class="query" data-query data-label={match.found[language]}>
+            <p class="query-head">
+              <span class="spark">✦</span>
+              {match.prompt[language]}
+            </p>
+            <p class="query-text">
+              <span data-typed data-text={match.query[language]}
+                >{match.query[language]}</span
+              ><i class="caret"></i>
+            </p>
+            <p class="query-result">{match.result[language]}</p>
+          </div>
         </div>
 
         <div class="file-wrap">
@@ -269,72 +328,62 @@ const source = en ? "Source" : "Quelle"
                   : ` von ${rows.length} Angaben in fremden Händen`}
             </p>
           </article>
+        </div>
 
-          <div class="pile">
-            {sheets.map((year, index) => (
-                <div
-                  class="sheet"
-                  style={`--i: ${index}; --r: ${tilt[index % tilt.length]}deg`}
-                >
-                  <p class="sheet-head">
-                    <b>{en ? `DAC8 report ${year}` : `DAC8-Meldung ${year}`}</b>
-                    <span>{en ? "to the tax authority" : "ans Finanzamt"}</span>
-                  </p>
-                  <ul>
-                    {reports.sheet[language].map((line) => (
-                      <li>{line}</li>
-                    ))}
-                  </ul>
+        <div class="stacks">
+          {(["provider", "authority"] as const).map((place) => (
+              <div class="stack" data-stack={place}>
+                <div class="pile">
+                  {sheets.map((year, index) => (
+                    <div
+                      class="sheet"
+                      style={`--i: ${index}; --r: ${tilt[index % tilt.length]}deg`}
+                    >
+                      <p class="sheet-head">
+                        <b>DAC8 · {year}</b>
+                      </p>
+                      <ul>
+                        {reports.sheet[language].map((line) => (
+                          <li>{line}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
                 </div>
-              ))}
-          </div>
+                <p class="stack-label">
+                  <b data-filed>{reports.count}</b>
+                  {reports.places[place][language]}
+                </p>
+              </div>
+            ))}
         </div>
       </div>
-
-      <nav
-        class="rail"
-        aria-label={en ? "Timeline" : "Zeitleiste"}
-        style={`--ticks: ${scenes.length}`}
-      >
-        <ol>
-          {scenes.map((scene) => (
-              <li>
-                <a href={`#akte-${scene.id}`} data-goto>
-                  <span class="tick-year">{scene.year}</span>
-                  <span class="tick-name">{scene.name}</span>
-                </a>
-              </li>
-            ))}
-        </ol>
-      </nav>
     </div>
   </div>
 </section>
 
 <style>
-  /* Die Akte als Scroll-Geschichte: Ein dunkler Raum bleibt stehen, die
-     Karten mit dem Text ziehen darüber. Hinten eine Menge aus Punkten, die
-     Menschen in den Datenbeständen; davor der Datensatz aus dem jeweiligen
-     Leck und die Akte, in die seine neuen Angaben fliegen. Was die Akte schon
-     kennt, wird nur abgeglichen. Danach legt DAC8 jedes Jahr eine Meldung
-     obenauf. Das Skript setzt die Variablen pro Bild; ohne Skript steht der
-     Endstand da. */
+  /* Die Akte als Film im Vollbild: Eine dunkle Bühne bleibt stehen, die
+     Karten mit dem Text ziehen darüber. Hinten die Menge, ein Punkt je
+     tausend Menschen in einem Leck; davor die kopierten Daten, die bis zur
+     Zeile von Max durchlaufen, und die Akte, in die seine neuen Angaben
+     fliegen. Dann sucht eine KI ihn heraus, und DAC8 legt jedes Jahr eine
+     Meldung auf zwei Stapel. Das Skript setzt die Variablen pro Bild; ohne
+     Skript steht der Endstand da. */
   .journey {
-    --stage: #060709;
+    --stage: #050608;
     --hi: #ff3b45;
     --text: #f3f2ee;
     --text-2: rgb(243 242 238 / 0.74);
-    --text-3: rgb(243 242 238 / 0.52);
-    --glass: rgb(16 17 20 / 0.76);
+    --text-3: rgb(243 242 238 / 0.5);
+    --glass: rgb(14 15 18 / 0.74);
     --edge: rgb(255 255 255 / 0.1);
     --paper-ink: #1d1d1b;
     --paper-ink-3: #736f66;
     --paper-red: #c9000d;
     --mono:
       ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
-    --pin-top: var(--header-height);
-    --pin-height: calc(100svh - var(--pin-top));
-    --ring: var(--hi);
+    --desk: 1;
     display: grid;
     color-scheme: dark;
     color: var(--text);
@@ -347,13 +396,14 @@ const source = en ? "Source" : "Quelle"
 
   /* ---------- Bühne ---------------------------------------------------- */
 
-  /* Die Fläche reicht per border-image bis an den Rand, ohne die Seite
-     breiter zu machen. */
+  /* Die Bühne füllt den ganzen Bildschirm; die Kopfleiste weicht, solange
+     sie steht. Die Fläche reicht per border-image bis an den Rand, ohne die
+     Seite breiter zu machen. */
   .pin {
     position: sticky;
-    inset-block-start: var(--pin-top);
+    inset-block-start: 0;
     align-self: start;
-    block-size: var(--pin-height);
+    block-size: 100svh;
     overflow-y: clip;
     border-image: linear-gradient(var(--stage) 0 0) fill 0 / / 0 100vw;
   }
@@ -364,41 +414,83 @@ const source = en ? "Source" : "Quelle"
     inset-inline-start: calc(var(--grid-gutter) * -1);
     inline-size: calc(100% + var(--grid-gutter) * 2);
     block-size: 100%;
-    mask-image: radial-gradient(
-      ellipse 80% 90% at 60% 50%,
-      #000 50%,
-      transparent 100%
-    );
   }
 
   .frame {
     position: relative;
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
-    gap: var(--space-xs);
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: var(--space-2xs);
     block-size: 100%;
-    padding-block: var(--space-xs);
+    padding-block: var(--space-2xs) var(--space-xs);
   }
 
-  .year {
-    display: none;
+  /* ---------- Zähler ---------------------------------------------------- */
+
+  .count {
+    --on: 1;
+    --scale: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.6rem;
+    min-block-size: 1.9rem;
+    margin: 0;
+    opacity: var(--on);
+    font-variant-numeric: tabular-nums;
   }
 
+  .count b {
+    background: linear-gradient(180deg, #fff 40%, rgb(255 255 255 / 0.45));
+    background-clip: text;
+    color: transparent;
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+  }
+
+  .count-label {
+    color: var(--text-2);
+    font-size: 0.75rem;
+  }
+
+  .scale {
+    color: var(--text-3);
+    font-size: 0.6875rem;
+    opacity: var(--scale);
+  }
+
+  /* ---------- Tisch ----------------------------------------------------- */
+
+  /* Der Tisch kippt beim Einstieg aus der Tiefe nach vorn. */
   .desk {
+    position: relative;
     display: grid;
+    align-self: start;
     align-content: start;
     gap: var(--space-xs);
     inline-size: min(100%, 34rem);
     margin-inline: auto;
+    opacity: var(--desk);
+    transform: perspective(1400px) rotateX(calc((1 - var(--desk)) * 28deg))
+      translateY(calc((1 - var(--desk)) * 12svh));
+    transform-origin: 50% 100%;
   }
 
-  /* Die Datensätze liegen übereinander in einer Zelle über der Akte; die
-     Flugbahn der Angaben misst das Skript. */
+  .journey[data-measuring] .desk,
+  .journey[data-measuring] .record {
+    transform: none;
+    translate: none;
+  }
+
+  /* Datensätze und Suche liegen übereinander in einer Zelle über der
+     Akte; die Flugbahn der Angaben misst das Skript. */
   .records {
     position: relative;
     z-index: 2;
     display: grid;
-    min-block-size: 5rem;
   }
 
   .records > * {
@@ -407,24 +499,30 @@ const source = en ? "Source" : "Quelle"
 
   .record {
     --show: 0;
+    --scan: 1;
+    --speed: 0;
+    --found: 0;
     --hit: 0;
     --fly: 0;
     --land: 0;
     display: grid;
     align-content: start;
-    gap: 0.3rem;
-    padding: 0.55rem 0.7rem;
+    gap: 0.4rem;
+    padding: 0.5rem 0.7rem 0.55rem;
     border: 1px solid var(--edge);
     border-radius: var(--radius-lg);
-    background: rgb(12 13 16 / 0.88);
+    background: rgb(10 11 14 / 0.9);
+    box-shadow: 0 24px 60px -24px rgb(0 0 0 / 0.9);
     font-family: var(--mono);
-    font-size: 0.6875rem;
+    font-size: 0.625rem;
     line-height: 1.4;
     opacity: var(--show);
+    translate: 0 calc((1 - var(--show)) * 0.75rem);
     visibility: hidden;
   }
 
-  [data-ready] .record {
+  [data-ready] .record,
+  [data-ready] .query {
     visibility: visible;
   }
 
@@ -442,27 +540,39 @@ const source = en ? "Source" : "Quelle"
     font-weight: 600;
   }
 
-  .noise {
-    display: block;
-    inline-size: var(--w);
-    block-size: 0.4rem;
-    border-radius: 2px;
-    background: repeating-linear-gradient(
-      90deg,
-      rgb(255 255 255 / 0.13) 0 2.6rem,
-      transparent 2.6rem 3rem
-    );
+  /* Das Fenster zeigt drei, vier Zeilen. Es schneidet nicht ab, damit die
+     Angaben hinausfliegen können; was außerhalb liegt, blendet das Skript
+     aus. */
+  .feed {
+    block-size: 4.6rem;
   }
 
-  /* Auf dem Telefon reicht eine Zeile Rauschen unter Max. */
-  .noise:last-child {
-    display: none;
+  .reel {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
+    translate: 0 calc(var(--scan) * var(--reel, 0px));
+    filter: blur(calc(var(--speed) * 1.6px));
   }
 
+  .other {
+    overflow: hidden;
+    padding-inline: 0.3rem;
+    color: var(--text-3);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /* Die Zeile von Max: Der Suchlauf hält auf ihr an und rahmt sie. */
   .line {
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem 0.4rem;
+    padding: 0.15rem 0.3rem;
+    border-radius: var(--radius-sm);
+    background: rgb(255 59 69 / calc(var(--found) * 0.1));
+    box-shadow: inset 0 0 0 1px rgb(255 59 69 / calc(var(--found) * 0.7));
     color: var(--text);
   }
 
@@ -475,12 +585,14 @@ const source = en ? "Source" : "Quelle"
 
   /* Neue Angaben fliegen in ihre Zeile und glühen dabei auf. */
   .chip:not([data-matched]) {
+    position: relative;
+    z-index: 1;
     background: color-mix(
       in oklab,
       rgb(255 255 255 / 0.08),
       var(--hi) calc(var(--fly) * 100%)
     );
-    box-shadow: 0 0 calc(var(--fly) * 1.2rem) rgb(255 59 69 / 0.6);
+    box-shadow: 0 0 calc(var(--fly) * 1.4rem) rgb(255 59 69 / 0.7);
     opacity: calc(1 - var(--land));
     translate: calc(var(--dx, 0px) * var(--fly))
       calc(var(--dy, 0px) * var(--fly));
@@ -492,23 +604,80 @@ const source = en ? "Source" : "Quelle"
     background: rgb(255 59 69 / calc(var(--hit) * 0.25));
   }
 
-  .pile-count {
-    --pile: 0;
-    align-self: center;
-    max-inline-size: 32ch;
-    color: var(--text-2);
-    font-size: 0.8125rem;
-    line-height: 1.35;
-    opacity: var(--pile);
+  /* ---------- Suche ----------------------------------------------------- */
+
+  .query {
+    --q: 1;
+    --res: 1;
+    display: grid;
+    align-content: start;
+    gap: 0.45rem;
+    padding: 0.65rem 0.85rem 0.7rem;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    border-radius: var(--radius-xl);
+    background: linear-gradient(rgb(30 31 36 / 0.94), rgb(14 15 18 / 0.94));
+    box-shadow:
+      0 0 0 1px rgb(255 59 69 / calc(var(--res) * 0.55)),
+      0 0 70px -12px rgb(255 59 69 / calc(var(--res) * 0.45)),
+      0 24px 60px -24px rgb(0 0 0 / 0.9);
+    opacity: var(--q);
+    translate: 0 calc((1 - var(--q)) * 1rem);
+    scale: calc(0.96 + var(--q) * 0.04);
+    visibility: hidden;
   }
 
-  .pile-count b {
-    display: block;
+  .query-head {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-3);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .spark {
+    color: var(--hi);
+    font-size: 0.75rem;
+  }
+
+  .query-text {
+    min-block-size: 2.7em;
     color: var(--text);
-    font-size: 2.25rem;
-    font-weight: 300;
-    line-height: 1;
-    letter-spacing: -0.03em;
+    font-size: 0.875rem;
+    line-height: 1.35;
+    text-wrap: pretty;
+  }
+
+  .caret {
+    display: inline-block;
+    inline-size: 2px;
+    block-size: 1.05em;
+    margin-inline-start: 2px;
+    background: var(--hi);
+    vertical-align: -0.15em;
+    animation: blink 1.1s steps(1) infinite;
+  }
+
+  .query[data-typing] .caret {
+    animation: none;
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .query-result {
+    padding-block-start: 0.4rem;
+    border-block-start: 1px solid var(--edge);
+    color: var(--hi);
+    font-family: var(--mono);
+    font-size: 0.625rem;
+    line-height: 1.4;
+    opacity: var(--res);
   }
 
   /* ---------- Akte ------------------------------------------------------ */
@@ -517,26 +686,36 @@ const source = en ? "Source" : "Quelle"
     position: relative;
   }
 
-  /* Papier bleibt in beiden Farbmodi hell. */
+  /* Papier bleibt in beiden Farbmodi hell. Beim Abgleich hebt es sich
+     rot glühend ab, unter den Stapeln tritt es zurück. */
   .file {
     --blur: 0;
     --dim: 0;
+    --lift: 0;
     --stamp: 1;
     position: relative;
     display: grid;
     gap: 0.45rem;
-    padding: 0.7rem 0.8rem 0.6rem;
+    padding: 0.65rem 0.8rem 0.55rem;
     border-radius: var(--radius-md);
     background:
       linear-gradient(rgb(255 255 255 / 0.5), transparent 30%), #f2efe7;
     color: var(--paper-ink);
     box-shadow:
       0 1px 0 rgb(255 255 255 / 0.6) inset,
+      0 0 0 calc(var(--lift) * 2px) rgb(255 59 69 / 0.85),
+      0 0 calc(var(--lift) * 80px) rgb(255 59 69 / 0.4),
       0 30px 60px -20px rgb(0 0 0 / 0.8),
       0 0 0 1px rgb(0 0 0 / 0.4);
     overflow: clip;
     color-scheme: light;
-    opacity: calc(1 - var(--dim) * 0.5);
+    opacity: calc(1 - var(--dim) * 0.6);
+    filter: blur(calc(var(--dim) * 1.5px));
+    scale: calc(1 + var(--lift) * 0.025 - var(--dim) * 0.05);
+  }
+
+  .journey[data-measuring] .file {
+    scale: none;
   }
 
   .file-head {
@@ -579,7 +758,7 @@ const source = en ? "Source" : "Quelle"
     grid-template-columns: 5.5rem minmax(0, 1fr);
     align-items: baseline;
     gap: 0.5rem;
-    padding: 0.1rem 0.3rem;
+    padding: 0.08rem 0.3rem;
     border-block-end: 1px solid rgb(0 0 0 / 0.08);
     border-radius: var(--radius-xs);
     background: rgb(201 0 13 / calc(var(--hit) * 0.12));
@@ -660,15 +839,17 @@ const source = en ? "Source" : "Quelle"
     opacity: calc(var(--fill) * (1 - var(--hit)));
   }
 
+  /* Der Stempel sitzt unten neben der Fußzeile, auf breiteren Schirmen
+     unter dem Bild; so verdeckt er keinen Wert. */
   .stamp {
     position: absolute;
-    inset-block-end: 1.6rem;
-    inset-inline-end: 0.9rem;
+    inset-block-end: 0.3rem;
+    inset-inline-end: 0.7rem;
     padding: 0.1rem 0.45rem;
     border: 3px solid var(--paper-red);
     border-radius: var(--radius-sm);
     color: var(--paper-red);
-    font-size: 0.9375rem;
+    font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -688,55 +869,73 @@ const source = en ? "Source" : "Quelle"
     color: var(--paper-ink);
   }
 
-  /* Die Jahresmeldungen kommen von unten und landen versetzt auf der Akte. */
-  .pile {
+  /* ---------- Zwei Stapel ----------------------------------------------- */
+
+  /* Jedes Jahr fällt eine Meldung auf den Stapel des Anbieters, und eine
+     Kopie wandert hinüber zum Finanzamt. Die Stapel stehen mitten über
+     dem ganzen Tisch. */
+  .stacks {
+    --stacks: 1;
     position: absolute;
     inset: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: var(--space-s);
+    padding-inline: var(--space-2xs);
+    opacity: var(--stacks);
     pointer-events: none;
+  }
+
+  .stack {
+    --alarm: 0;
+    display: grid;
+    justify-items: center;
+    gap: 0.6rem;
+  }
+
+  .pile {
+    display: grid;
+    inline-size: min(100%, 15rem);
+    filter: drop-shadow(
+      0 0 calc(var(--alarm) * 22px) rgb(255 59 69 / calc(var(--alarm) * 0.9))
+    );
   }
 
   .sheet {
     --in: 1;
-    position: absolute;
-    inset-block-start: 16%;
-    inset-inline: 7%;
+    grid-area: 1 / 1;
     display: grid;
-    gap: 0.45rem;
-    padding: 0.7rem 0.85rem;
+    gap: 0.3rem;
+    padding: 0.5rem 0.6rem;
     border-radius: var(--radius-sm);
     background: #fbfaf6;
     color: var(--paper-ink);
     box-shadow:
-      0 18px 40px -16px rgb(0 0 0 / 0.7),
+      0 14px 30px -14px rgb(0 0 0 / 0.8),
       0 0 0 1px rgb(0 0 0 / 0.25);
-    font-size: 0.75rem;
-    line-height: 1.4;
+    font-size: 0.5625rem;
+    line-height: 1.35;
     opacity: min(1, calc(var(--in) * 3));
-    translate: calc(var(--i) * 0.3rem)
-      calc((1 - var(--in)) * 80svh + var(--i) * -0.25rem);
+    translate: calc(var(--i) * 0.15rem)
+      calc(var(--i) * -0.3rem + (1 - var(--in)) * -60svh);
     rotate: calc(var(--r) * var(--in));
   }
 
+  [data-stack="authority"] .sheet {
+    translate: calc(var(--i) * 0.15rem + (1 - var(--in)) * var(--back, 0px))
+      calc(var(--i) * -0.3rem);
+  }
+
   .sheet-head {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 0 0.75rem;
-    padding-block-end: 0.35rem;
+    padding-block-end: 0.25rem;
     border-block-end: 1px solid rgb(0 0 0 / 0.15);
-  }
-
-  .sheet-head b {
     font-weight: 650;
-  }
-
-  .sheet-head span {
-    color: var(--paper-ink-3);
   }
 
   .sheet ul {
     display: grid;
-    gap: 0.15rem;
+    gap: 0.1rem;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -747,12 +946,30 @@ const source = en ? "Source" : "Quelle"
     font-weight: 600;
   }
 
+  .stack-label {
+    color: var(--text-2);
+    font-size: 0.75rem;
+    text-align: center;
+  }
+
+  .stack-label b {
+    display: block;
+    color: color-mix(
+      in oklab,
+      var(--text),
+      var(--hi) calc(var(--alarm) * 100%)
+    );
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
   /* ---------- Zeitleiste ------------------------------------------------ */
 
   /* Jede Marke ist ein Link zu ihrem Abschnitt; ziehen muss man nichts. */
   .rail {
     --rail: 1;
-    grid-row: 1;
     user-select: none;
     -webkit-user-select: none;
   }
@@ -840,8 +1057,8 @@ const source = en ? "Source" : "Quelle"
   /* ---------- Karten ---------------------------------------------------- */
 
   /* Die Karten liegen über der Bühne, lassen aber Klicks auf die Zeitleiste
-     durch. Auf dem Telefon bleiben sie unten stehen, solange ihr Abschnitt
-     läuft. */
+     durch, und blenden sich beim Kommen und Gehen ein und aus. Auf dem
+     Telefon bleiben sie unten stehen, solange ihr Abschnitt läuft. */
   .steps {
     position: relative;
     z-index: 1;
@@ -871,16 +1088,12 @@ const source = en ? "Source" : "Quelle"
     backdrop-filter: blur(18px) saturate(1.3);
     font-size: 0.875rem;
     line-height: 1.45;
+    opacity: var(--o, 1);
     pointer-events: auto;
   }
 
   .card:focus {
     outline: none;
-  }
-
-  .card h2 {
-    color: var(--text);
-    font-size: clamp(1.6rem, 1.2rem + 2vw, 2.75rem);
   }
 
   .card h3 {
@@ -896,11 +1109,6 @@ const source = en ? "Source" : "Quelle"
     text-wrap: pretty;
   }
 
-  .card.intro p {
-    color: var(--text);
-    font-size: var(--step-1);
-  }
-
   .card .kicker {
     display: flex;
     gap: 0.5rem;
@@ -913,6 +1121,54 @@ const source = en ? "Source" : "Quelle"
 
   .kicker span {
     color: var(--text);
+  }
+
+  /* Der Einstieg: groß, mittig, ohne Glas, über der noch dunklen Menge. */
+  .card.intro {
+    justify-items: center;
+    gap: var(--space-s);
+    max-inline-size: 48rem;
+    margin: 24svh auto 0;
+    padding-inline: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    text-align: center;
+  }
+
+  .card.intro h2 {
+    background: linear-gradient(180deg, #fff 35%, rgb(255 255 255 / 0.55));
+    background-clip: text;
+    color: transparent;
+    font-size: clamp(2.1rem, 1.3rem + 4.2vw, 4.75rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .card.intro p {
+    max-inline-size: 36ch;
+    color: var(--text-2);
+    font-size: var(--step-1);
+  }
+
+  /* Ein Pfeil, der zum Scrollen einlädt. */
+  .cue {
+    inline-size: 1.4rem;
+    block-size: 2.2rem;
+    border: 2px solid rgb(255 255 255 / 0.35);
+    border-radius: 1rem;
+    background:
+      radial-gradient(circle, var(--hi) 0 2.5px, transparent 3px) 50% 0.4rem /
+      100% 0.8rem no-repeat;
+    animation: cue 1.8s ease-in-out infinite;
+  }
+
+  @keyframes cue {
+    50% {
+      background-position-y: 1.1rem;
+    }
   }
 
   .delta {
@@ -942,6 +1198,14 @@ const source = en ? "Source" : "Quelle"
     font-weight: 550;
   }
 
+  .card .closing {
+    color: var(--text);
+    font-size: var(--step-1);
+    font-weight: 600;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
   .card .source {
     color: var(--text-3);
     font-size: 0.75rem;
@@ -955,10 +1219,36 @@ const source = en ? "Source" : "Quelle"
     text-underline-offset: 0.2em;
   }
 
-  /* Solange die Geschichte den Bildschirm füllt, weicht die mobile Leiste
-     mit Spenden und Teilen. */
+  /* Solange die Geschichte den Bildschirm füllt, weichen die Kopfleiste
+     und die mobile Leiste mit Spenden und Teilen; wer mit der Tastatur in
+     die Kopfleiste springt, holt sie zurück. */
+  :global(.site-header) {
+    transition: translate 0.35s ease;
+  }
+
+  :global(html[data-immersive]:not([data-menu-open]) .site-header) {
+    translate: 0 -100%;
+  }
+
+  :global(
+    html[data-immersive]:not([data-menu-open]) .site-header:focus-within
+  ) {
+    translate: none;
+  }
+
   :global(html[data-immersive] [data-action-bar]) {
     translate: 0 110%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.site-header) {
+      transition: none;
+    }
+
+    .caret,
+    .cue {
+      animation: none;
+    }
   }
 
   /* ---------- Breitere Bildschirme ------------------------------------- */
@@ -986,45 +1276,74 @@ const source = en ? "Source" : "Quelle"
     }
   }
 
-  /* Text links, Bühne rechts, die Jahreszahl groß über der Karte. */
+  /* Text links unter dem großen Zähler, der Tisch rechts. */
   @container campaign (width >= 56rem) {
     .frame {
       grid-template-columns: minmax(19rem, 0.8fr) minmax(0, 1.2fr);
-      grid-template-rows: minmax(0, 1fr) auto;
+      grid-template-rows: auto minmax(0, 1fr);
       gap: var(--space-s) var(--space-xl);
-      padding-block: var(--space-m);
+      padding-block: var(--space-s) var(--space-m);
     }
 
-    .year {
-      display: block;
-      grid-area: 1 / 1;
-      align-self: start;
-      background: linear-gradient(180deg, #fff, rgb(255 255 255 / 0.2));
-      background-clip: text;
-      color: transparent;
-      font-size: clamp(3.5rem, 2rem + 4.5vw, 6.5rem);
+    .rail {
+      grid-column: 1 / -1;
+    }
+
+    .rail a {
+      font-size: 0.75rem;
+    }
+
+    .count {
+      display: grid;
+      align-content: start;
+      gap: 0.35rem;
+      padding-block-start: 3svh;
+    }
+
+    .count b {
+      font-size: clamp(3rem, 1.25rem + 3.6vw, 5.5rem);
       font-weight: 250;
-      line-height: 1;
-      letter-spacing: -0.04em;
+      line-height: 0.95;
+      letter-spacing: -0.045em;
+    }
+
+    .count-label {
+      font-size: var(--step-0);
+    }
+
+    .scale {
+      font-size: 0.8125rem;
     }
 
     .desk {
-      grid-area: 1 / 2;
       align-self: center;
       gap: var(--space-m);
       inline-size: min(100%, 36rem);
-    }
-
-    .records {
-      min-block-size: 6.75rem;
     }
 
     .record {
       font-size: 0.75rem;
     }
 
-    .noise:last-child {
-      display: block;
+    .feed {
+      block-size: 5.6rem;
+    }
+
+    .query {
+      gap: 0.6rem;
+      padding: 0.9rem 1.1rem 1rem;
+    }
+
+    .query-head {
+      font-size: 0.6875rem;
+    }
+
+    .query-text {
+      font-size: 1.125rem;
+    }
+
+    .query-result {
+      font-size: 0.75rem;
     }
 
     .file {
@@ -1043,7 +1362,7 @@ const source = en ? "Source" : "Quelle"
 
     .row {
       grid-template-columns: 8rem minmax(0, 1fr);
-      padding-block: 0.3rem;
+      padding-block: 0.28rem;
       font-size: 0.875rem;
     }
 
@@ -1053,21 +1372,23 @@ const source = en ? "Source" : "Quelle"
     }
 
     .stamp {
-      inset-block-end: 2.2rem;
+      inset-block-end: 2.6rem;
+      inset-inline: 0.6rem auto;
       font-size: 1.125rem;
     }
 
     .sheet {
-      padding: 1rem 1.25rem;
+      gap: 0.4rem;
+      padding: 0.75rem 0.9rem;
+      font-size: 0.75rem;
+    }
+
+    .stack-label {
       font-size: 0.875rem;
     }
 
-    .rail {
-      grid-area: 2 / 2;
-    }
-
-    .rail a {
-      font-size: 0.75rem;
+    .stack-label b {
+      font-size: 2.25rem;
     }
 
     .step {
@@ -1077,18 +1398,22 @@ const source = en ? "Source" : "Quelle"
       column-gap: var(--space-xl);
     }
 
+    .step:first-child {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
     .step:last-child {
       padding-block-end: var(--space-xl);
     }
 
     .card {
-      inset-block: calc(var(--pin-top) + 24svh) auto;
+      inset-block: 31svh auto;
       padding: var(--space-m);
       font-size: var(--step-0);
     }
 
     .card.intro {
-      inset-block-start: calc(var(--pin-top) + 20svh);
+      inset-block-start: 26svh;
       margin-block-start: 20svh;
     }
 
@@ -1099,6 +1424,10 @@ const source = en ? "Source" : "Quelle"
     .delta {
       font-size: 0.875rem;
     }
+
+    .card .closing {
+      font-size: var(--step-2);
+    }
   }
 </style>
 
@@ -1106,60 +1435,93 @@ const source = en ? "Source" : "Quelle"
   // Turns the scroll position into one progress value p: 0 is the intro,
   // then one unit per card, each with its fraction. Every frame derives the
   // whole stage from p, so scrolling back rewinds it. With reduced motion,
-  // nothing flies or zooms and every change snaps.
+  // nothing flies, scans or zooms and every change snaps.
   const root = document.querySelector<HTMLElement>("[data-journey]")
   if (root) start(root)
 
   interface Dot {
     x: number
     y: number
-    distance: number
-    // 0: in no list, 1: in the first, 2: also the second, 3: also the
-    // third, 4: Max.
-    depth: number
+    // One bit per list the person is in: the leaks in order, then the
+    // tax authority's leak at the end.
+    lists: number
+    // When the dot lights up within its wave, from 0 to 1.
+    delay: number
+    pop: number
+    far: number
+  }
+
+  interface Feed {
+    height: number
+    end: number
+    rows: { element: HTMLElement; middle: number }[]
   }
 
   function start(root: HTMLElement) {
     const motion = matchMedia("(prefers-reduced-motion: reduce)")
-    const steps = [...root.querySelectorAll<HTMLElement>("[data-step]")]
-    const pin = root.querySelector<HTMLElement>(".pin")
+    const all = (selector: string) => [
+      ...root.querySelectorAll<HTMLElement>(selector),
+    ]
+    const one = (selector: string) => root.querySelector<HTMLElement>(selector)
+    const steps = all("[data-step]")
+    const cards = all(".card")
+    const records = all("[data-record]")
+    const rows = all(".row")
+    const providerSheets = all('[data-stack="provider"] .sheet')
+    const authoritySheets = all('[data-stack="authority"] .sheet')
+    const filedLabels = all("[data-filed]")
+    const yearLabels = all("[data-year-label]")
+    const links = [...root.querySelectorAll<HTMLAnchorElement>("[data-goto]")]
+    const pin = one(".pin")
+    const frame = one(".frame")
+    const desk = one(".desk")
+    const recordBox = one(".records")
     const canvas = root.querySelector<HTMLCanvasElement>(".crowd")
     const context = canvas?.getContext("2d")
-    const recordBox = root.querySelector<HTMLElement>(".records")
-    const frame = root.querySelector<HTMLElement>(".frame")
-    const desk = root.querySelector<HTMLElement>(".desk")
-    const cards = [...root.querySelectorAll<HTMLElement>(".card")]
-    const file = root.querySelector<HTMLElement>(".file")
-    const records = [...root.querySelectorAll<HTMLElement>("[data-record]")]
-    const rows = [...root.querySelectorAll<HTMLElement>(".row")]
-    const sheets = [...root.querySelectorAll<HTMLElement>(".sheet")]
-    const yearLabels = [
-      ...root.querySelectorAll<HTMLElement>("[data-year-label]"),
-    ]
-    const known = root.querySelector<HTMLElement>("[data-known]")
-    const filedCount = root.querySelector<HTMLElement>("[data-reports]")
-    const pileCount = root.querySelector<HTMLElement>(".pile-count")
-    const rail = root.querySelector<HTMLElement>(".rail")
-    const links = [...root.querySelectorAll<HTMLAnchorElement>("[data-goto]")]
+    const file = one(".file")
+    const query = one("[data-query]")
+    const typed = one("[data-typed]")
+    const countBox = one("[data-count-box]")
+    const count = one("[data-count]")
+    const countLabel = one("[data-count-label]")
+    const stacks = one(".stacks")
+    const provider = one('[data-stack="provider"]')
+    const authority = one('[data-stack="authority"]')
+    const known = one("[data-known]")
+    const rail = one(".rail")
     if (
       !pin ||
+      !frame ||
+      !desk ||
+      !recordBox ||
       !canvas ||
       !context ||
-      !recordBox ||
       !file ||
+      !query ||
+      !typed ||
+      !countBox ||
+      !count ||
+      !countLabel ||
+      !stacks ||
+      !provider ||
+      !authority ||
       !known ||
-      !filedCount ||
-      !pileCount ||
       !rail
     )
       return
 
     const matchScene = records.length + 1
     const reportScene = records.length + 2
+    const endScene = records.length + 3
     const firstReport = Number(root.dataset.first)
+    const format = new Intl.NumberFormat(root.dataset.locale)
+    const people = records.map((record) => Number(record.dataset.people))
+    const endPeople = Number(root.dataset.endPeople)
+    const endBit = 1 << records.length
+    const text = typed.dataset.text ?? ""
     // Where a click on the timeline lands within each scene: the record
     // already in the file, the match stamped, a few reports filed, the end.
-    const landing = [...records.map(() => 0.8), 0.55, 0.45, 0.9]
+    const landing = [...records.map(() => 0.8), 0.72, 0.55, 0.6]
 
     // The records that only match a piece, so its row lights up meanwhile.
     const matches = new Map<string, number[]>()
@@ -1177,23 +1539,35 @@ const source = en ? "Source" : "Quelle"
       clamp((value - from) / (to - from))
     const ease = (value: number) =>
       value < 0.5 ? 4 * value ** 3 : 1 - (-2 * value + 2) ** 3 / 2
+    const out = (value: number) => 1 - (1 - value) ** 3
     const snap = (value: number) =>
       motion.matches ? (value >= 0.5 ? 1 : 0) : value
-    // A record's own clock: in, matched pieces lit, new pieces flying,
-    // landed, out.
-    const phases = (t: number) => ({
-      show: snap(ramp(t, 0, 0.14) * (1 - ramp(t, 0.86, 1))),
-      hit: snap(ramp(t, 0.12, 0.28) * (1 - ramp(t, 0.6, 0.74))),
-      fly: motion.matches ? 0 : ease(ramp(t, 0.3, 0.66)),
-      land: snap(ramp(t, 0.62, 0.72)),
-    })
+    // A record's own clock: in, the people counted, the copy scanned down
+    // to Max's line, matched pieces lit, new pieces flying, landed, out.
+    const phases = (t: number) => {
+      const scan = ramp(t, 0.06, 0.34)
+      return {
+        show: snap(ramp(t, 0, 0.08) * (1 - ramp(t, 0.88, 1))),
+        roll: motion.matches ? 1 : out(ramp(t, 0.02, 0.4)),
+        scan: motion.matches ? 1 : out(scan),
+        speed: motion.matches || scan >= 1 ? 0 : (1 - scan) ** 2,
+        found: snap(ramp(t, 0.3, 0.36)),
+        ping: ramp(t, 0.32, 0.52),
+        hit: snap(ramp(t, 0.36, 0.44) * (1 - ramp(t, 0.66, 0.76))),
+        fly: motion.matches ? 0 : ease(ramp(t, 0.44, 0.7)),
+        land: snap(ramp(t, 0.66, 0.74)),
+      }
+    }
 
     let tops: number[] = []
     let heights: number[] = []
+    let feeds: Feed[] = []
     let dots: Dot[] = []
-    let center = { x: 0, y: 0 }
-    let reach = 1
-    let pinTop = 0
+    let max = { x: 0, y: 0 }
+    let anchor = { x: 0, y: 0 }
+    // On phones the crowd keeps clear of the timeline and the counter, and
+    // stays dimmer behind the closely set text.
+    let clear = 0
     // How far below the top of the window the scenes are read: the middle
     // on wide screens, the top of the text window on phones.
     let reading = 0
@@ -1207,37 +1581,60 @@ const source = en ? "Source" : "Quelle"
       const value = Math.sin(seed * 127.1 + 311.7) * 43758.5453
       return value - Math.floor(value)
     }
+    const set = (element: HTMLElement, name: string, value: number) =>
+      element.style.setProperty(name, String(value))
+    const write = (element: HTMLElement, value: string) => {
+      if (element.textContent !== value) element.textContent = value
+    }
 
-    function measure() {
+    // Measures everything in the final pose: desk upright, each copy
+    // scanned to Max's line, nothing in flight.
+    const measure = () => {
+      root.toggleAttribute("data-measuring", true)
       const scroll = window.scrollY
       tops = steps.map((step) => step.getBoundingClientRect().top + scroll)
       heights = steps.map((step) => step.offsetHeight)
-      if (pin) pinTop = Number.parseFloat(getComputedStyle(pin).top) || 0
+      wide = getComputedStyle(frame).gridTemplateColumns.split(" ").length > 1
 
       // On phones the cards stop just below the file, or higher where a
-      // card would not fit on the screen.
-      wide = frame
-        ? getComputedStyle(frame).gridTemplateColumns.split(" ").length > 1
-        : true
-      const below =
-        (desk?.getBoundingClientRect().bottom ?? 0) -
-        (pin?.getBoundingClientRect().top ?? 0) +
-        pinTop +
-        8
+      // card would not fit on the screen; the intro stands higher up.
+      const pinBox = pin.getBoundingClientRect()
+      const below = desk.getBoundingClientRect().bottom - pinBox.top + 8
       reading = wide ? window.innerHeight * 0.5 : below
-      for (const card of cards) {
+      cards.forEach((card, index) => {
         card.style.removeProperty("--cut")
         if (wide) card.style.removeProperty("--top")
         else
           card.style.setProperty(
             "--top",
-            `${Math.min(below, window.innerHeight - card.offsetHeight - 8)}px`,
+            `${index === 0 ? window.innerHeight * 0.28 : Math.min(below, window.innerHeight - card.offsetHeight - 8)}px`,
           )
-      }
+      })
 
-      // Where the new pieces of each record fly to.
-      for (const record of records) {
-        record.style.setProperty("--fly", "0")
+      // Each copy scrolls until Max's line stands in the middle of its
+      // window; then the new pieces fly from there into the file.
+      feeds = records.map((record) => {
+        const feed = record.querySelector<HTMLElement>(".feed")
+        const reel = record.querySelector<HTMLElement>(".reel")
+        const line = record.querySelector<HTMLElement>("[data-max]")
+        if (!feed || !reel || !line) return { height: 0, end: 0, rows: [] }
+        const height = feed.clientHeight
+        const end = -(line.offsetTop + line.offsetHeight / 2 - height / 2)
+        reel.style.setProperty("--reel", `${end}px`)
+        set(record, "--scan", 1)
+        set(record, "--fly", 0)
+        return {
+          height,
+          end,
+          rows: [...reel.children].map((element) => ({
+            element: element as HTMLElement,
+            middle:
+              (element as HTMLElement).offsetTop +
+              (element as HTMLElement).offsetHeight / 2,
+          })),
+        }
+      })
+      for (const record of records)
         for (const chip of record.querySelectorAll<HTMLElement>(
           ".chip:not([data-matched])",
         )) {
@@ -1252,44 +1649,96 @@ const source = en ? "Source" : "Quelle"
             `${target.top + target.height / 2 - (from.top + from.height / 2)}px`,
           )
         }
-      }
 
-      // The crowd fills the canvas; Max stands where the records appear.
-      if (!canvas || !recordBox) return
+      // The copies for the tax authority start on the provider's pile.
+      const providerPile = provider.querySelector(".pile")
+      const authorityPile = authority.querySelector(".pile")
+      if (providerPile && authorityPile)
+        authority.style.setProperty(
+          "--back",
+          `${providerPile.getBoundingClientRect().left - authorityPile.getBoundingClientRect().left}px`,
+        )
+
+      // The crowd: about six thousand places on the canvas. Each leak takes
+      // as many as it held people, one per thousand, at random; Max stands
+      // beside the copy on wide screens and at the end of the counter on
+      // phones, and is the only one in all three leaks.
       const box = canvas.getBoundingClientRect()
+      const fileBox = file.getBoundingClientRect()
       const spot = recordBox.getBoundingClientRect()
+      const counter = countBox.getBoundingClientRect()
+      const stack = authority.getBoundingClientRect()
       ratio = Math.min(2, window.devicePixelRatio || 1)
       canvas.width = Math.round(box.width * ratio)
       canvas.height = Math.round(box.height * ratio)
-      center = {
-        x: spot.left + spot.width / 2 - box.left,
-        y: spot.top + spot.height / 2 - box.top,
+      max = wide
+        ? {
+            x: spot.left - box.left - 26,
+            y: spot.top + spot.height / 2 - box.top,
+          }
+        : {
+            x: box.width - 22,
+            y: counter.top + counter.height / 2 - box.top,
+          }
+      anchor = wide
+        ? { x: fileBox.left - box.left, y: fileBox.top - box.top + 22 }
+        : { x: fileBox.right - box.left - 18, y: fileBox.top - box.top }
+      clear = wide ? 0 : counter.bottom - box.top + 4
+      const source = {
+        x: stack.left + stack.width / 2 - box.left,
+        y: stack.top + stack.height / 2 - box.top,
       }
-      const gap = box.width < 640 ? 11 : 13
+
+      const places = Math.max(endPeople, ...people) / 1000
+      const gap = Math.sqrt((box.width * box.height) / places)
       let seed = 1
-      let nearest: Dot | undefined
       dots = []
       for (let y = gap / 2; y < box.height; y += gap)
         for (let x = gap / 2; x < box.width; x += gap) {
           seed += 1
-          const dot: Dot = {
-            x: x + (noise(seed) - 0.5) * gap * 0.7,
-            y: y + (noise(seed + 0.5) - 0.5) * gap * 0.7,
-            distance: 0,
-            depth: 0,
-          }
-          if (noise(seed + 0.25) < 0.72) dot.depth = 1
-          if (dot.depth && noise(seed + 0.75) < 0.05) dot.depth = 2
-          if (dot.depth === 2 && noise(seed + 0.125) < 0.25) dot.depth = 3
-          dot.distance = Math.hypot(dot.x - center.x, dot.y - center.y)
-          if (!nearest || dot.distance < nearest.distance) nearest = dot
-          dots.push(dot)
+          dots.push({
+            x: x + (noise(seed) - 0.5) * gap * 0.8,
+            y: y + (noise(seed + 0.5) - 0.5) * gap * 0.8,
+            lists: endBit,
+            delay: 0,
+            pop: noise(seed + 0.375),
+            far: 0,
+          })
         }
-      if (nearest) nearest.depth = 4
-      reach = dots.reduce((most, dot) => Math.max(most, dot.distance), 1)
+      let nearest = dots[0]
+      dots.forEach((dot, index) => {
+        people.forEach((size, list) => {
+          if (
+            noise(index * 7.3 + list * 1.9 + 0.11) <
+            size / 1000 / dots.length
+          )
+            dot.lists |= 1 << list
+        })
+        const distance = Math.hypot(dot.x - max.x, dot.y - max.y)
+        if (distance < Math.hypot(nearest.x - max.x, nearest.y - max.y))
+          nearest = dot
+      })
+      const every = (1 << records.length) - 1
+      for (const dot of dots)
+        if ((dot.lists & every) === every)
+          dot.lists &= ~(1 << (records.length - 1))
+      nearest.lists = every | endBit
+      const reach = Math.max(
+        ...dots.map((dot) => Math.hypot(dot.x - max.x, dot.y - max.y)),
+      )
+      const reachEnd = Math.max(
+        ...dots.map((dot) => Math.hypot(dot.x - source.x, dot.y - source.y)),
+      )
+      for (const dot of dots) {
+        dot.delay = Math.hypot(dot.x - max.x, dot.y - max.y) / reach
+        dot.far = Math.hypot(dot.x - source.x, dot.y - source.y) / reachEnd
+      }
+      dots = dots.filter((dot) => dot !== nearest)
+
+      root.toggleAttribute("data-measuring", false)
     }
 
-    function progress() {
+    const progress = () => {
       const line = window.scrollY + reading
       let value = 0
       steps.forEach((_, index) => {
@@ -1299,21 +1748,34 @@ const source = en ? "Source" : "Quelle"
       return value
     }
 
-    // The crowd: everyone dim, then the first list lights up in a wave
-    // from Max, and each further list leaves fewer people lit, until only
-    // Max remains and the view closes in on him.
-    function draw(p: number) {
-      if (!context || !canvas) return
+    // The crowd: a faint hint in the intro, then each leak lights its
+    // people, the first in a wave from Max, the others here and there.
+    // Who is in two lists turns red. The search clears everyone but Max
+    // and the view closes in on him. With the reports the crowd dims; at
+    // the end the tax authority's leak lights up from its pile.
+    const draw = (p: number) => {
       const width = canvas.width / ratio
       const height = canvas.height / ratio
-      const wave = snap(ramp(p, 1, 1.7))
-      const second = snap(ramp(p, 2.1, 2.6))
-      const third = snap(ramp(p, 3.1, 3.6))
-      const alone = snap(ramp(p, matchScene, matchScene + 0.45))
-      // With the reports, the crowd dims and Max leaves the picture.
-      const away = snap(ramp(p, reportScene - 0.1, reportScene + 0.4))
-      const fade = 1 - away * 0.85
-      const zoom = motion.matches ? 1 : 1 + ease(alone) * 0.9
+      const scene = Math.floor(p)
+      const active = scene >= 1 && scene <= records.length ? scene - 1 : -1
+      const lit = records.map((_, index) =>
+        motion.matches
+          ? Number(p >= index + 1.2)
+          : ramp(p, index + 1.02, index + 1.42),
+      )
+      const hint = ramp(p, 0, 0.6)
+      const single = snap(ramp(p, matchScene + 0.2, matchScene + 0.36))
+      const only = snap(ramp(p, matchScene + 0.36, matchScene + 0.52))
+      const zoom = motion.matches
+        ? 1
+        : 1 + ease(ramp(p, matchScene + 0.42, matchScene + 0.8)) * 1.3
+      const ring =
+        snap(ramp(p, matchScene + 0.5, matchScene + 0.62)) *
+        (1 - snap(ramp(p, reportScene - 0.1, reportScene + 0.15)))
+      const away = snap(ramp(p, reportScene - 0.05, reportScene + 0.3))
+      const flood = motion.matches
+        ? Number(p >= endScene + 0.4)
+        : ramp(p, endScene + 0.24, endScene + 0.58)
 
       context.setTransform(ratio, 0, 0, ratio, 0, 0)
       context.clearRect(0, 0, width, height)
@@ -1322,24 +1784,45 @@ const source = en ? "Source" : "Quelle"
         0,
         0,
         ratio * zoom,
-        ratio * center.x * (1 - zoom),
-        ratio * center.y * (1 - zoom),
+        ratio * max.x * (1 - zoom),
+        ratio * max.y * (1 - zoom),
       )
 
       // Bucket the dots by colour and brightness, so the canvas changes
       // its fill only a few dozen times per frame.
       const buckets = new Map<number, Dot[]>()
       for (const dot of dots) {
-        if (dot.depth === 4) continue
-        const lit =
-          dot.depth > 0 ? clamp((wave * reach * 1.15 - dot.distance) / 80) : 0
-        let alpha = 0.13 + lit * 0.4
-        if (dot.depth < 2) alpha *= 1 - second * 0.75
-        if (dot.depth === 2) alpha *= 1 - third * 0.7
-        if (dot.depth === 3) alpha += third * 0.3
-        alpha *= (1 - alone * 0.92) * fade
-        const red = dot.depth >= 2 && second > 0.5 ? 100 : 0
-        const key = red + Math.round(alpha * 20)
+        let lists = 0
+        let fresh = 0
+        lit.forEach((value, index) => {
+          if (!(dot.lists & (1 << index))) return
+          const delay = index === 0 ? dot.delay : dot.pop
+          const shown = clamp((value * 1.3 - delay) * 6)
+          if (shown <= 0) return
+          lists += 1
+          if (index === active) fresh = shown
+        })
+        let alpha = 0.06 * hint
+        let red = false
+        if (lists > 0) {
+          alpha = active >= 0 ? (fresh > 0 ? 0.25 + fresh * 0.6 : 0.16) : 0.34
+          if (lists > 1) {
+            red = true
+            alpha = Math.max(alpha, 0.75)
+          }
+        }
+        alpha *= lists > 1 ? 1 - only * 0.88 : 1 - single * 0.85
+        alpha *= 1 - away * 0.9
+        if (flood > 0 && dot.lists & endBit) {
+          const wave = clamp((flood * 1.3 - dot.far) * 6) * 0.45
+          if (wave > alpha) {
+            alpha = wave
+            red = false
+          }
+        }
+        if (!wide) alpha *= 0.7 * clamp((dot.y - clear) / 24)
+        const key = (red ? 100 : 0) + Math.round(alpha * 20)
+        if (key % 100 === 0) continue
         const bucket = buckets.get(key)
         if (bucket) bucket.push(dot)
         else buckets.set(key, [dot])
@@ -1347,47 +1830,70 @@ const source = en ? "Source" : "Quelle"
       for (const [key, bucket] of buckets) {
         const red = key >= 100
         const alpha = (key % 100) / 20
-        if (alpha === 0) continue
         context.fillStyle = red
           ? `rgb(255 59 69 / ${alpha})`
           : `rgb(255 244 230 / ${alpha})`
-        const size = red ? 2.4 : 1.8
+        const size = red ? 2.4 : alpha > 0.5 ? 2.2 : 1.7
         for (const dot of bucket)
           context.fillRect(dot.x - size / 2, dot.y - size / 2, size, size)
       }
 
-      // Max: lit with the first list, red once he is on the second,
-      // ringed and named at the match.
-      context.fillStyle =
-        second > 0.5
-          ? `rgb(255 59 69 / ${1 - away})`
-          : `rgb(255 244 230 / ${wave > 0 ? 0.6 : 0.2})`
+      // Max: lit with the first leak, red once he is in two, and pinged
+      // each time a copy is scanned down to his line.
+      const shown = 1 - away
+      const red = lit[1] > 0.3
+      context.fillStyle = red
+        ? `rgb(255 59 69 / ${shown})`
+        : `rgb(255 244 230 / ${lit[0] > 0 ? 0.95 * shown : 0.08 * hint})`
       context.beginPath()
       context.arc(
-        center.x,
-        center.y,
-        (1.4 + second * 1.2 + alone * 1.4) / Math.sqrt(zoom),
+        max.x,
+        max.y,
+        (1.6 + (red ? 1 : 0) + ring * 1.4) / Math.sqrt(zoom),
         0,
         Math.PI * 2,
       )
       context.fill()
-      if (alone > 0) {
-        const strength = alone * (1 - away)
-        context.strokeStyle = `rgb(255 59 69 / ${strength * 0.8})`
-        context.lineWidth = 1.5 / zoom
+      if (active >= 0 && !motion.matches) {
+        const ping = phases(clamp(p - active - 1)).ping
+        if (ping > 0 && ping < 1) {
+          context.strokeStyle = `rgb(255 59 69 / ${(1 - ping) * 0.9})`
+          context.lineWidth = 1.5
+          context.beginPath()
+          context.arc(max.x, max.y, 4 + ping * 34, 0, Math.PI * 2)
+          context.stroke()
+        }
+      }
+
+      // Found: a ring, his name, and a line to the file.
+      context.setTransform(ratio, 0, 0, ratio, 0, 0)
+      if (ring > 0) {
+        context.strokeStyle = `rgb(255 59 69 / ${ring * 0.9})`
+        context.lineWidth = 1.5
         context.beginPath()
-        context.arc(
-          center.x,
-          center.y,
-          (12 + (1 - alone) * 40) / zoom,
-          0,
-          Math.PI * 2,
-        )
+        context.arc(max.x, max.y, 12 + (1 - ring) * 40, 0, Math.PI * 2)
         context.stroke()
-        context.fillStyle = `rgb(243 242 238 / ${strength})`
-        context.font = `600 ${13 / zoom}px "IBM Plex Sans", sans-serif`
-        context.textAlign = "center"
-        context.fillText("Max", center.x, center.y - 22 / zoom)
+        context.setLineDash([3, 4])
+        context.strokeStyle = `rgb(255 59 69 / ${ring * 0.55})`
+        context.beginPath()
+        const angle = Math.atan2(anchor.y - max.y, anchor.x - max.x)
+        context.moveTo(
+          max.x + Math.cos(angle) * 14,
+          max.y + Math.sin(angle) * 14,
+        )
+        context.lineTo(anchor.x, anchor.y)
+        context.stroke()
+        context.setLineDash([])
+        context.fillStyle = `rgb(243 242 238 / ${ring})`
+        context.font = `600 13px "IBM Plex Sans", sans-serif`
+        // Above the ring on wide screens, to its left on phones, where the
+        // timeline sits above.
+        context.textAlign = wide ? "center" : "right"
+        context.fillText(
+          "Max",
+          wide ? max.x : max.x - 18,
+          wide ? max.y - 20 : max.y + 4,
+        )
       }
     }
 
@@ -1395,16 +1901,49 @@ const source = en ? "Source" : "Quelle"
       queued = false
       const p = progress()
       const at = (scene: number) => clamp(p - scene)
+      const scene = Math.min(Math.floor(p), steps.length - 1)
 
+      // The cards fade in as they arrive and out as they leave.
+      cards.forEach((card, index) => {
+        const t = p - index
+        const into = index === 0 ? 1 : ramp(t, -0.2, 0.04)
+        // The intro gives way to the desk; the end stays.
+        const leave =
+          index === 0
+            ? ramp(t, 0.5, 0.7)
+            : index === cards.length - 1
+              ? 0
+              : ramp(t, 0.9, 1)
+        set(card, "--o", motion.matches ? 1 : into * (1 - leave))
+      })
+      root.style.setProperty(
+        "--desk",
+        String(motion.matches ? Number(p >= 0.6) : ease(ramp(p, 0.55, 1))),
+      )
+
+      // Each copy: shown, scanned down to Max's line, its rows fading at
+      // the edges of the window, its new pieces flying into the file.
       records.forEach((record, index) => {
         const phase = phases(at(index + 1))
-        record.style.setProperty("--show", String(phase.show))
-        record.style.setProperty("--hit", String(phase.hit))
-        record.style.setProperty("--fly", String(phase.fly))
-        record.style.setProperty("--land", String(phase.land))
+        set(record, "--show", phase.show)
+        set(record, "--scan", phase.scan)
+        set(record, "--speed", phase.speed)
+        set(record, "--found", phase.found)
+        set(record, "--hit", phase.hit)
+        set(record, "--fly", phase.fly)
+        set(record, "--land", phase.land)
+        const feed = feeds[index]
+        if (!feed || phase.show === 0) return
+        const shift = phase.scan * feed.end
+        for (const row of feed.rows) {
+          const distance = Math.abs(row.middle + shift - feed.height / 2)
+          row.element.style.opacity = String(
+            clamp(1.3 - distance / (feed.height * 0.5)),
+          )
+        }
       })
 
-      let count = 0
+      let filled = 0
       let identified = false
       for (const row of rows) {
         const fill = phases(at(Number(row.dataset.from) + 1)).land
@@ -1414,60 +1953,113 @@ const source = en ? "Source" : "Quelle"
             (index) => phases(at(index + 1)).hit,
           ),
         )
-        row.style.setProperty("--fill", String(fill))
-        row.style.setProperty("--hit", String(hit))
+        set(row, "--fill", fill)
+        set(row, "--hit", hit)
         if (fill < 0.5) continue
-        count += 1
+        filled += 1
         if (row.dataset.piece === "document") identified = true
       }
-      known.textContent = String(count)
+      write(known, String(filled))
 
       // The portrait sharpens with every piece and is clear once an ID
       // image is out.
-      file.style.setProperty(
-        "--blur",
-        String(identified ? 0 : Math.max(2, 12 - count * 1.6)),
+      set(file, "--blur", identified ? 0 : Math.max(2, 12 - filled * 1.6))
+      const search = at(matchScene)
+      set(file, "--stamp", snap(ramp(search, 0.58, 0.72)))
+      set(
+        file,
+        "--lift",
+        snap(ramp(search, 0.5, 0.64)) *
+          (1 - snap(ramp(p, reportScene - 0.1, reportScene + 0.15))),
       )
-      file.style.setProperty(
-        "--stamp",
-        String(snap(ramp(at(matchScene), 0.15, 0.4))),
-      )
-      file.style.setProperty(
-        "--dim",
-        String(snap(ramp(p, reportScene, reportScene + 0.3))),
-      )
+      set(file, "--dim", snap(ramp(p, reportScene, reportScene + 0.25)))
 
-      // One report a year over the last two scenes.
+      // The search: typed along with the scroll, then its one match.
+      set(
+        query,
+        "--q",
+        snap(
+          ramp(search, 0, 0.07) *
+            (1 - ramp(p, reportScene - 0.1, reportScene + 0.02)),
+        ),
+      )
+      const typing = motion.matches ? 1 : ramp(search, 0.06, 0.34)
+      write(typed, text.slice(0, Math.round(text.length * typing)))
+      query.toggleAttribute("data-typing", typing > 0 && typing < 1)
+      set(query, "--res", snap(ramp(search, 0.48, 0.58)))
+
+      // One report a year over the last two scenes: first on the
+      // provider's pile, then a copy over to the tax authority.
+      set(
+        stacks,
+        "--stacks",
+        snap(ramp(p, reportScene - 0.02, reportScene + 0.12)),
+      )
       const stack =
-        ramp(p, reportScene + 0.08, reportScene + 1.35) * sheets.length
+        ramp(p, reportScene + 0.12, endScene + 0.2) * providerSheets.length
       let filed = 0
-      sheets.forEach((sheet, index) => {
+      let sent = 0
+      providerSheets.forEach((sheet, index) => {
         const into = motion.matches
           ? Number(stack >= index + 1)
-          : clamp(stack - index)
-        sheet.style.setProperty("--in", String(into))
+          : clamp((stack - index) * 2)
+        set(sheet, "--in", into)
         if (into >= 0.5) filed += 1
       })
-      filedCount.textContent = String(filed)
-      pileCount.style.setProperty(
-        "--pile",
-        String(snap(ramp(p, reportScene, reportScene + 0.15))),
-      )
+      authoritySheets.forEach((sheet, index) => {
+        const into = motion.matches
+          ? Number(stack >= index + 1)
+          : clamp((stack - index) * 2 - 1)
+        set(sheet, "--in", into)
+        if (into >= 0.5) sent += 1
+      })
+      write(filedLabels[0], String(filed))
+      write(filedLabels[1], String(sent))
+      set(authority, "--alarm", snap(ramp(p, endScene + 0.24, endScene + 0.4)))
 
-      // The year, big beside the card and small on the file.
-      const scene = Math.min(Math.floor(p), steps.length - 1)
+      // The counter: the people in each leak, the search narrowing them
+      // down to one, the report years, and the tax authority's leak.
+      let value = ""
+      let caption = ""
+      let scale = 0
+      let found = 1
+      if (p >= endScene + 0.24) {
+        const flood = motion.matches
+          ? 1
+          : out(ramp(p, endScene + 0.24, endScene + 0.58))
+        value = `> ${format.format(Math.round(endPeople * flood))}`
+        caption = root.dataset.endLabel ?? ""
+        scale = 1
+      } else if (p >= reportScene) {
+        const year = Math.max(1, filed)
+        value = String(firstReport + year)
+        caption = (root.dataset.reportLabel ?? "").replace("{n}", String(year))
+      } else if (p >= matchScene) {
+        // No made-up numbers on the way: the count shows once the search
+        // has found its one match.
+        value = "1"
+        caption = query.dataset.label ?? ""
+        found = snap(ramp(search, 0.48, 0.58))
+      } else if (p >= 1) {
+        const record = records[scene - 1]
+        value = `${record.dataset.prefix ?? ""}${format.format(Math.round(people[scene - 1] * phases(at(scene)).roll))}`
+        caption = record.dataset.label ?? ""
+        scale = 1
+      }
+      write(count, value)
+      write(countLabel, caption)
+      set(countBox, "--on", snap(ramp(p, 0.92, 1.04)) * found)
+      set(countBox, "--scale", scale)
+
+      // The year on the file.
       const year =
         p >= reportScene
           ? String(firstReport + Math.max(1, filed))
           : (steps[scene].dataset.year ?? "")
-      for (const label of yearLabels)
-        if (label.textContent !== year) label.textContent = year
+      for (const label of yearLabels) write(label, year)
 
       // The timeline: a line up to the current scene, and its mark.
-      rail.style.setProperty(
-        "--rail",
-        String(clamp((p - 1.5) / (links.length - 1))),
-      )
+      set(rail, "--rail", clamp((p - 1.5) / (links.length - 1)))
       links.forEach((link, index) => {
         link.toggleAttribute("data-passed", scene - 1 > index)
         if (scene - 1 === index) link.setAttribute("aria-current", "step")
@@ -1484,19 +2076,19 @@ const source = en ? "Source" : "Quelle"
       const box = root.getBoundingClientRect()
       document.documentElement.toggleAttribute(
         "data-immersive",
-        box.top <= pinTop + 1 && box.bottom >= window.innerHeight,
+        box.top <= 1 && box.bottom >= window.innerHeight,
       )
 
       draw(p)
     }
 
-    function queue() {
+    const queue = () => {
       if (queued || !visible) return
       queued = true
       requestAnimationFrame(render)
     }
 
-    function refresh() {
+    const refresh = () => {
       measure()
       render()
     }
@@ -1523,6 +2115,7 @@ const source = en ? "Source" : "Quelle"
     }).observe(root)
     // The page above can grow, for example when the file is answered.
     new ResizeObserver(refresh).observe(document.body)
+    window.addEventListener("resize", refresh)
     window.addEventListener("scroll", queue, { passive: true })
     motion.addEventListener("change", render)
     document.fonts.ready.then(refresh)
