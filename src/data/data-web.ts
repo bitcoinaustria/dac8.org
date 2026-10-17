@@ -219,6 +219,19 @@ export const scenes: Scene[] = [
       en: "Bitcoin works like cash. According to the Gendarmerie, offenders pick their victims from leaked data. **In the first half of 2026 alone, France counted 77 kidnappings, unlawful detentions and extortions** around crypto-assets.",
     },
   },
+  {
+    id: "drinnen",
+    short: { de: "Drinnen", en: "Inside" },
+    eyebrow: { de: "06 Hinter der Tür", en: "06 Behind the door" },
+    heading: {
+      de: "Wer die Liste hat, weiß, was drinnen liegt.",
+      en: "Whoever has the list knows what is inside.",
+    },
+    text: {
+      de: "Hardware-Wallet, Kontostand, Wohnadresse: Zusammen sagen sie Tätern, wo sich ein Einbruch lohnt. **Darum sollte niemand wissen, wer wie viel Bitcoin hat.**",
+      en: "Hardware wallet, balance, home address: together they tell offenders where a break-in pays. **That is why nobody should know who holds how much bitcoin.**",
+    },
+  },
 ]
 
 // The file the matching produces: Max's details and the leak each came
@@ -263,12 +276,12 @@ export const profile: { label: Text; value: Text; from: string }[] = [
 export const search = {
   label: { de: "Suchauftrag an eine KI", en: "Prompt to an AI" },
   query: {
-    de: "Gleiche die Listen ab und zeig mir, wer Bitcoin hat, mit Wohnadresse und Kontostand.",
-    en: "Match the lists and show me who holds bitcoin, with home address and balance.",
+    de: "Gleiche die Listen ab und sortiere alle in Wien, die Bitcoin haben, nach Bestand.",
+    en: "Match the lists and rank everyone in Vienna who holds bitcoin by holdings.",
   },
   result: {
-    de: "1 Treffer · Max Mustermann · 1010 Wien",
-    en: "1 match · Max Mustermann · 1010 Vienna",
+    de: "Zielliste Wien · 07 · Max Mustermann",
+    en: "Target list Vienna · 07 · Max Mustermann",
   },
 }
 

@@ -8,6 +8,8 @@ import {
   scenes,
   search,
 } from "@/data/data-web"
+import { Picture } from "astro:assets"
+import { artwork, imageFor } from "@/data/artwork"
 import { leaks } from "@/data/leaks"
 import type { Language } from "@/lib/i18n"
 
@@ -36,9 +38,13 @@ const render = (name: string) =>
 const art: Partial<Record<Place, string>> = Object.fromEntries(
   nodes.map((node) => [node.id, render(node.id.toLowerCase())]),
 )
-const board = render("file-board")
 const doorstep = render("doorstep")
 const doorstepOpen = render("doorstep-open")
+const inside = render("inside") ?? doorstepOpen
+// The file the matching produces is the target list from the site's
+// illustrations, with Max at number 07.
+const target = artwork.rankedPortrait
+const targetImage = imageFor(target, language)
 const en = language === "en"
 
 const leakFor = (id: string) => {
@@ -102,6 +108,7 @@ const cameras = {
     [590, 300, 1240],
     [760, 330, 960],
     [760, 330, 960],
+    [760, 330, 960],
   ],
   mid: [
     [250, 350, 640],
@@ -109,11 +116,13 @@ const cameras = {
     [460, 350, 1000],
     [600, 420, 820],
     [600, 420, 820],
+    [600, 420, 820],
   ],
   tall: [
     [200, 170, 400],
     [200, 360, 420],
     [200, 420, 420],
+    [200, 600, 420],
     [200, 600, 420],
     [200, 600, 420],
   ],
@@ -133,27 +142,6 @@ const curve = (from: Place, to: Place, bend = 0.12) => {
 const leaked = nodes.filter((node) => node.leak)
 // The red plate behind a case name, sized to its capitals.
 const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
-
-// A city block for the last scene: a slightly turned grid of streets with
-// a few through roads, the same on every visit.
-const noise = (seed: number) => {
-  const value = Math.sin(seed * 127.1 + 311.7) * 43758.5453
-  return value - Math.floor(value)
-}
-const streets = [
-  ...Array.from({ length: 9 }, (_, index) => {
-    const x = 20 + index * 46 + (noise(index) - 0.5) * 14
-    return `M${x} -10 L${x + 30} 330`
-  }),
-  ...Array.from({ length: 7 }, (_, index) => {
-    const y = 18 + index * 46 + (noise(index + 20) - 0.5) * 14
-    return `M-10 ${y} L430 ${y - 24}`
-  }),
-]
-const roads = [
-  "M-10 250 C 120 200, 260 180, 430 60",
-  "M60 -10 C 120 120, 200 220, 260 330",
-]
 ---
 
 <div
@@ -169,7 +157,7 @@ const roads = [
         <div
           class="spacer"
           id={`netz-${scene.id}`}
-          style={`--len: ${[100, 110, 120, 110, 110][index] ?? 110}`}
+          style={`--len: ${[100, 110, 120, 110, 110, 110][index] ?? 110}`}
         >
         </div>
       ))}
@@ -408,24 +396,15 @@ const roads = [
         </g>
       </svg>
 
-      <article class="file" aria-hidden="true">
-        <img class="board" src={board} alt="">
-        <div class="file-head">
-          <p>{en ? "Linked profile" : "Verknüpftes Profil"}</p>
-          <b>Max Mustermann</b>
-          <span>{profile[1].value[language]}</span>
-        </div>
-        <span class="file-plate">{en ? "Match" : "Treffer"}</span>
-        <dl class="file-rows">
-          {profile.slice(2).map((row, index) => (
-              <div class="row" style={`--r: ${index}`}>
-                <dt>{row.label[language]}</dt>
-                <dd>{row.value[language]}</dd>
-                <span class="from">{caseName(row.from)}</span>
-              </div>
-            ))}
-        </dl>
-      </article>
+      <figure class="file">
+        <Picture
+          src={targetImage}
+          alt={target[language].alt}
+          widths={[420, 640, 900]}
+          sizes="(min-width: 64rem) 30rem, 80vw"
+          formats={["avif", "webp"]}
+        />
+      </figure>
 
       <div class="prompt" aria-hidden="true">
         <p class="prompt-head"><span>✦</span> {search.label[language]}</p>
@@ -437,42 +416,13 @@ const roads = [
         <p class="prompt-result">{search.result[language]}</p>
       </div>
 
-      <div class="map">
-        {doorstep ? (
-          <div class="house">
-            <img class="doorstep" src={doorstep} alt="" />
-            {doorstepOpen && (
-              <img class="doorstep inside" src={doorstepOpen} alt="" />
-            )}
-          </div>
-        ) : (
-          <svg viewBox="0 0 420 320" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              <linearGradient id="web-pin" x1="0.2" y1="0" x2="0.8" y2="1">
-                <stop offset="0" stop-color="#e3000f" />
-                <stop offset="1" stop-color="#be000c" />
-              </linearGradient>
-            </defs>
-            <g class="streets">
-              {streets.map((d) => <path d={d} pathLength="1" />)}
-            </g>
-            <g class="roads">
-              {roads.map((d) => <path d={d} pathLength="1" />)}
-            </g>
-            <g class="pin" transform="translate(210 160)">
-              <circle class="pulse" r="10" />
-              <circle class="pulse late" r="10" />
-              <path d="M0 0c-9-11-14-17-14-24a14 14 0 1 1 28 0c0 7-5 13-14 24z" />
-              <circle cy="-24" r="5" />
-            </g>
-          </svg>
-        )}
-        {doorstepOpen && (
-          <button class="peek" type="button" aria-pressed="false" data-peek>
-            {en ? "Look inside" : "Ins Haus schauen"}
-          </button>
-        )}
-        <div class="address" aria-hidden="true">
+      <div class="map" aria-hidden="true">
+        <div class="house">
+          <img class="street" src={doorstep} alt="">
+          <img class="street open" src={doorstepOpen} alt="">
+        </div>
+        <img class="inside" src={inside} alt="">
+        <div class="address">
           <b>Musterstraße 7</b>
           <span>{en ? "1010 Vienna" : "1010 Wien"}</span>
           <span class="chips">
@@ -782,28 +732,31 @@ const roads = [
     filter: drop-shadow(0 6px 8px var(--material-shade));
   }
 
-  /* Das Haus am Ende: Wer darauf zeigt oder den Knopf drückt, sieht
-     hinein, auf Schreibtisch, Hardware-Wallet und Tresor. */
+  /* Das Haus am Ende, in drei Schritten beim Scrollen: die Häuserzeile
+     mit der Nadel, dann Max' Haus aufgeschnitten, dann ganz nah hinein,
+     auf Tresor und Hardware-Wallet. */
+  .map {
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  }
+
+  .house,
+  .inside {
+    grid-area: 1 / 1;
+  }
+
   .house {
     display: grid;
     align-self: center;
     justify-self: center;
     inline-size: min(100%, 52rem);
     min-block-size: 0;
-    opacity: var(--pin);
+    opacity: calc(var(--pin) * (1 - var(--inside, 0)));
     translate: 0 calc((1 - var(--draw)) * 1.5rem);
+    scale: calc(1 + var(--inside, 0) * 0.9);
     transform-origin: 46% 36%;
-    transition: scale 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
-    cursor: zoom-in;
   }
 
-  /* Offen fährt die Ansicht an das Haus heran, damit man das Innere sieht. */
-  .map[data-open] .house {
-    scale: 2;
-    cursor: zoom-out;
-  }
-
-  .doorstep {
+  .street {
     grid-area: 1 / 1;
     inline-size: 100%;
     block-size: 100%;
@@ -811,49 +764,23 @@ const roads = [
     object-fit: contain;
   }
 
+  .street.open {
+    opacity: var(--cut, 0);
+  }
+
   .inside {
-    opacity: 0;
-    transition: opacity 0.5s ease;
+    align-self: center;
+    justify-self: center;
+    inline-size: min(100%, 56rem);
+    block-size: 100%;
+    min-block-size: 0;
+    object-fit: contain;
+    opacity: var(--inside, 0);
+    scale: calc(0.85 + var(--inside, 0) * 0.15);
   }
 
-  .map[data-open] .inside {
-    opacity: 1;
-  }
-
-  @media (hover: hover) {
-    .house:hover .inside {
-      opacity: 1;
-    }
-  }
-
-  .peek {
-    position: absolute;
-    inset-block-start: var(--space-s);
-    inset-inline-start: 50%;
-    padding: 0.4rem 0.9rem;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: var(--paper);
-    color: var(--foreground);
-    font: inherit;
-    font-size: var(--step--1);
-    font-weight: 560;
-    opacity: var(--pin);
-    translate: -50% 0;
-    cursor: pointer;
-  }
-
-  .address {
-    transition: opacity 0.4s;
-  }
-
-  .map[data-open] .address {
-    opacity: 0;
-  }
-
-  .peek[aria-pressed="true"] {
-    border-color: var(--signal);
-    color: var(--signal);
+  .map .address {
+    opacity: calc(var(--pin) * (1 - var(--cut, 0)));
   }
 
   /* Weitere Stellen, die auch Daten halten, stehen klein und blass im
@@ -1012,123 +939,27 @@ const roads = [
 
   /* ---------- Akte, Suche, Karte ---------------------------------------- */
 
-  /* Die Akte als gerenderte Tafel wie das verknüpfte Profil der
-     Illustrationen (artwork-lab/network). Kopf, Schild und Zeilen liegen
-     genau auf den freien Flächen der Tafel; die Maße stammen aus
-     artwork-lab/network/file-board.json, umgerechnet auf 900 × 1100. */
+  /* Die Akte: die Zielliste aus den Illustrationen, mit Max auf Platz 07. */
   .file {
     --file: 1;
-    position: relative;
+    display: grid;
     align-self: center;
     justify-self: center;
-    block-size: min(90%, 40rem);
-    aspect-ratio: 900 / 1100;
-    container-type: inline-size;
-    color: #1d1d1b;
-    filter: drop-shadow(0 18px 24px var(--material-shade));
+    block-size: min(88%, 36rem);
+    min-block-size: 0;
+    margin: 0;
     opacity: var(--file);
-    translate: 0 calc((1 - var(--file)) * 1rem - var(--q-up, 0) * 14%);
-    scale: calc(0.94 + var(--file) * 0.06 - var(--q-up, 0) * 0.14);
+    translate: 0 calc((1 - var(--file)) * 1rem - var(--q-up, 0) * 10%);
+    scale: calc(0.94 + var(--file) * 0.06 - var(--q-up, 0) * 0.1);
   }
 
-  .board {
-    position: absolute;
-    inset: 0;
-    inline-size: 100%;
+  .file :global(picture),
+  .file :global(img) {
+    display: block;
+    inline-size: auto;
     block-size: 100%;
-  }
-
-  .file-head {
-    position: absolute;
-    inset-block-start: 12.1%;
-    inset-inline-start: 37.4%;
-    inline-size: 41.7%;
-    block-size: 23%;
-    display: grid;
-    align-content: center;
-    gap: 1.2cqi;
-  }
-
-  .file-head p {
-    color: #6b6f73;
-    font-size: 3cqi;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .file-head b {
-    font-size: 6.4cqi;
-    font-weight: 600;
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-  }
-
-  .file-head span {
-    font-size: 3.6cqi;
-    line-height: 1.25;
-  }
-
-  .file-plate {
-    position: absolute;
-    inset-block-start: 7.3%;
-    inset-inline-start: 80.7%;
-    inline-size: 16.9%;
-    block-size: 9.3%;
-    display: grid;
-    place-items: center;
-    color: #fff;
-    font-size: 2.9cqi;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .file-rows {
-    position: absolute;
-    inset-block-start: 43.9%;
-    inset-inline-start: 10.3%;
-    inline-size: 70.6%;
-    block-size: 43.5%;
-    display: grid;
-    align-content: space-evenly;
-    margin: 0;
-  }
-
-  .row {
-    --in: 1;
-    display: grid;
-    grid-template-columns: 30% minmax(0, 1fr);
-    grid-template-rows: auto auto;
-    column-gap: 2cqi;
-    padding-block: 1.2cqi;
-    border-block-end: 1px solid rgb(0 0 0 / 0.1);
-    opacity: var(--in);
-    translate: calc((1 - var(--in)) * 1rem) 0;
-  }
-
-  .row dt {
-    grid-row: 1 / 3;
-    align-self: center;
-    color: #6b6f73;
-    font-size: 3cqi;
-  }
-
-  .row dd {
-    overflow: hidden;
-    margin: 0;
-    font-size: 3.9cqi;
-    font-weight: 560;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .from {
-    color: #c9000d;
-    font-size: 2.7cqi;
-    font-weight: 650;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    max-inline-size: 100%;
+    object-fit: contain;
   }
 
   .prompt {
@@ -1212,67 +1043,6 @@ const roads = [
     block-size: 100%;
   }
 
-  .streets path,
-  .roads path {
-    fill: none;
-    stroke-dasharray: 1;
-    stroke-dashoffset: calc(1 - var(--draw));
-  }
-
-  .streets path {
-    stroke: var(--groove);
-    stroke-width: 1.5;
-  }
-
-  .roads path {
-    stroke: var(--groove);
-    stroke-width: 5;
-  }
-
-  .pin {
-    opacity: min(1, calc(var(--pin) * 3));
-  }
-
-  .pin > path,
-  .pin > circle:not(.pulse) {
-    translate: 0 calc((1 - var(--pin)) * -30px);
-  }
-
-  .pin > path {
-    fill: url(#web-pin);
-    stroke: light-dark(#b6000c, #fa5963);
-    stroke-width: 1;
-  }
-
-  .pin > circle:not(.pulse) {
-    fill: #fff;
-  }
-
-  .pulse {
-    fill: none;
-    stroke: var(--signal);
-    stroke-width: 1.5;
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: ripple 2.4s ease-out infinite;
-  }
-
-  .pulse.late {
-    animation-delay: -1.2s;
-  }
-
-  @keyframes ripple {
-    from {
-      opacity: 0.8;
-      scale: 0.6;
-    }
-
-    to {
-      opacity: 0;
-      scale: 3;
-    }
-  }
-
   .address {
     position: absolute;
     inset-block-end: var(--space-s);
@@ -1331,7 +1101,6 @@ const roads = [
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .pulse,
     .ripple,
     .caret {
       animation: none;
@@ -1424,7 +1193,6 @@ const roads = [
     const nodeEls = all("[data-node]")
     const edgeEls = [...root.querySelectorAll<SVGGElement>("[data-edge]")]
     const packets = all("[data-packet]")
-    const rows = all(".row")
     const links = [...root.querySelectorAll<HTMLAnchorElement>("[data-goto]")]
     const net = root.querySelector<SVGSVGElement>("[data-net]")
     const view = one(".view")
@@ -1449,6 +1217,7 @@ const roads = [
     const leakScene = 2
     const matchScene = 3
     const riskScene = 4
+    const insideScene = 5
     // There is no scene after the risk; the last picture stays.
     const endScene = 99
     // The places with a case, in the order they light up.
@@ -1640,8 +1409,8 @@ const roads = [
         packet.style.opacity = String(draw >= 1 ? fade : 0)
       }
 
-      // The matching: the file assembles from the leaks, then the search
-      // types itself and finds Max.
+      // The matching: the target list comes up, then the search types
+      // itself and puts Max on it.
       set(
         net,
         "--net",
@@ -1653,19 +1422,6 @@ const roads = [
         snap(ramp(p, matchScene + 0.06, matchScene + 0.2)) *
         (1 - snap(ramp(p, riskScene - 0.1, riskScene + 0.02)))
       set(file, "--file", filed)
-      rows.forEach((row, index) =>
-        set(
-          row,
-          "--in",
-          snap(
-            ramp(
-              p,
-              matchScene + 0.12 + index * 0.04,
-              matchScene + 0.18 + index * 0.04,
-            ),
-          ),
-        ),
-      )
       const asking = snap(ramp(p, matchScene + 0.4, matchScene + 0.46))
       set(
         prompt,
@@ -1680,8 +1436,8 @@ const roads = [
       prompt.toggleAttribute("data-typing", typing > 0 && typing < 1)
       set(prompt, "--res", snap(ramp(p, matchScene + 0.76, matchScene + 0.82)))
 
-      // The risk: a city block, the streets drawing in, the pin dropping
-      // onto the home address.
+      // The risk: the street with the pin at his door, then his house cut
+      // open, then, one scene on, close up on what is inside.
       set(
         map,
         "--map",
@@ -1694,9 +1450,14 @@ const roads = [
         motion.matches ? 1 : out(ramp(p, riskScene, riskScene + 0.35)),
       )
       set(map, "--pin", snap(out(ramp(p, riskScene + 0.3, riskScene + 0.45))))
-      // The house only takes clicks while it is on screen.
-      const shown = ramp(p, riskScene - 0.04, riskScene + 0.1) >= 0.5
-      if (map.inert === shown) map.inert = !shown
+      set(map, "--cut", snap(ramp(p, riskScene + 0.6, riskScene + 0.8)))
+      set(
+        map,
+        "--inside",
+        motion.matches
+          ? Number(p >= insideScene)
+          : ease(ramp(p, insideScene - 0.05, insideScene + 0.3)),
+      )
 
       // The timeline marks the scene and keeps it in view in the pill.
       if (scene !== current) {
@@ -1720,16 +1481,6 @@ const roads = [
         box.top <= window.innerHeight * 0.2 && box.bottom >= window.innerHeight,
       )
     }
-
-    // Looking inside the house: a press keeps it open, another closes it.
-    const peek = map.querySelector<HTMLButtonElement>("[data-peek]")
-    peek?.addEventListener("click", () => {
-      const open = !map.hasAttribute("data-open")
-      map.toggleAttribute("data-open", open)
-      peek.setAttribute("aria-pressed", String(open))
-    })
-    // On touch screens a tap on the house does the same.
-    map.querySelector(".house")?.addEventListener("click", () => peek?.click())
 
     const queue = () => {
       if (queued || !visible) return
