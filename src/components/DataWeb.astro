@@ -17,7 +17,9 @@ import { type Language, pathFor } from "@/lib/i18n"
 // place a labelled grey card that stays there; the exchange sends the tax
 // office a report a year; each kind of place has lost such data in a real
 // case, and a leak copies its card as a red card to fraudsters and
-// extortionists; the copies become a target list, and the story ends in
+// extortionists, where it fills in a line of a file on Max; the camera
+// closes in on the file, the file becomes a target list, and the story
+// ends in
 // his bedroom, where his savings lie under the mattress. Grey means "kept
 // there", red means "copied", and every card moves once, with the scroll.
 // The scene texts are the readable version and sit on the stage as its
@@ -93,34 +95,36 @@ const layout: Record<
     provider: [200, 250],
     shop: [330, 250],
     taxOffice: [90, 500],
-    crooks: [270, 690],
+    crooks: [250, 650],
   },
 }
 // What the camera must show in each scene: centre, width and height. The
 // script widens the shorter side to the screen's proportions. It goes
 // close to the exchange and the tax office for the reports, and steps
-// back for the leaks.
+// back for the leaks. Once the last copy has arrived, it closes in on
+// Max's file at the offenders, readable on any screen, and stays there
+// until the target list takes over.
 const cameras = {
   wide: [
     [320, 330, 1160, 580],
     [630, 300, 760, 380],
     [600, 350, 1280, 640],
-    [600, 350, 1280, 640],
-    [600, 350, 1280, 640],
+    [1030, 470, 380, 330],
+    [1030, 470, 380, 330],
   ],
   mid: [
     [250, 370, 800, 620],
     [515, 330, 600, 470],
     [450, 380, 920, 716],
-    [450, 380, 920, 716],
-    [450, 380, 920, 716],
+    [790, 560, 380, 330],
+    [790, 560, 380, 330],
   ],
   tall: [
     [200, 180, 400, 380],
     [180, 410, 350, 440],
     [200, 445, 410, 900],
-    [200, 445, 410, 900],
-    [200, 445, 410, 900],
+    [250, 740, 260, 310],
+    [250, 740, 260, 310],
   ],
 }
 const at = (id: Place) => layout.wide[id]
@@ -145,6 +149,14 @@ const tally = (count: number) =>
 // A first width for a card from its label; the script measures the text.
 const cardWidth = (label: string) => Math.round(label.length * 7.2 + 26)
 const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
+// Max's file at the offenders: his photo and name on top, one line per
+// further leak below. It hangs under the offenders' name.
+const file = {
+  width: 236,
+  height: 150,
+  left: -104,
+  line: (index: number) => (index === 0 ? 36 : 58 + index * 26),
+}
 ---
 
 <div
@@ -159,7 +171,7 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         <div
           class="spacer"
           id={`netz-${scene.id}`}
-          style={`--len: ${[90, 110, 120, 100, 110][index] ?? 110}`}
+          style={`--len: ${[90, 110, 140, 100, 110][index] ?? 110}`}
         >
         </div>
       ))}
@@ -359,12 +371,45 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
               </g>
             )
           })}
-          <text
-            class="copies-count"
-            data-copies-count
-            data-one={caseLabels.copies[language].one}
-            data-many={caseLabels.copies[language].many}
-          ></text>
+          <g class="dossier" data-dossier>
+            <rect
+              class="dossier-bg"
+              x={-file.width / 2}
+              y="0"
+              width={file.width}
+              height={file.height}
+              rx="10"
+            />
+            {leaked.map((node, index) => {
+              const line = node.copied
+              if (!line) return null
+              const y = file.line(index)
+              return index === 0 ? (
+                <g class="fill head" data-fill={node.id} data-y={y}>
+                  <rect class="flash" x={-file.width / 2 + 4} y={y - 30} width={file.width - 8} height="60" rx="7" />
+                  <circle class="blank" cx={file.left + 22} cy={y} r="22" />
+                  <rect class="blank" x={file.left + 54} y={y - 15} width="110" height="13" rx="4" />
+                  <rect class="blank" x={file.left + 54} y={y + 6} width="70" height="9" rx="3" />
+                  <g class="known">
+                    <clipPath id="dossier-photo">
+                      <circle cx={file.left + 22} cy={y} r="22" />
+                    </clipPath>
+                    <circle class="photo-bg" cx={file.left + 22} cy={y} r="22" />
+                    <image href={art.you} x={file.left - 12} y={y - 30} width="68" height="68" clip-path="url(#dossier-photo)" />
+                    <text class="value" x={file.left + 54} y={y - 2}>{line.value[language]}</text>
+                    <text class="label" x={file.left + 54} y={y + 15}>{line.label[language]}</text>
+                  </g>
+                </g>
+              ) : (
+                <g class="fill" data-fill={node.id} data-y={y}>
+                  <rect class="flash" x={-file.width / 2 + 4} y={y - 12} width={file.width - 8} height="24" rx="6" />
+                  <text class="label" x={file.left} y={y + 4.5}>{line.label[language]}</text>
+                  <rect class="blank" x={-file.left - 64} y={y - 5} width="64" height="10" rx="3" />
+                  <text class="value known" x={-file.left} y={y + 5}>{line.value[language]}</text>
+                </g>
+              )
+            })}
+          </g>
           {leaked.map((node) => (
               <g class="case" data-case-pill={node.id} data-case={node.leak}>
                 <rect class="case-bg" x={-cardWidth(caseName(node.leak ?? "")) / 2 - 10} y="-13" width={cardWidth(caseName(node.leak ?? "")) + 20} height="26" rx="13" />
@@ -827,7 +872,8 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
 
   /* Karten: grau, was bei einer Stelle liegt; rot, was ein Datenleck
      kopiert hat. Jede bewegt sich einmal, mit dem Scrollen. */
-  .card {
+  .card,
+  .dossier {
     opacity: 0;
     pointer-events: none;
   }
@@ -851,8 +897,8 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
   }
 
   /* Hochformat, also am Handy: Die Fälle öffnen die Knöpfe im Untertitel,
-     die Kopien fliegen ohne Etikett und stapeln sich bei den Tätern unter
-     einer Zahl, und die Reihe der Meldungen weicht den Datenlecks. */
+     die Kopien fliegen ohne Etikett, und die Reihe der Meldungen weicht den
+     Datenlecks. */
   .net[data-shape="tall"] .case {
     display: none;
   }
@@ -869,16 +915,69 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     opacity: 0;
   }
 
-  .copies-count {
+  /* Die Akte über Max bei den Tätern: Jede Kopie füllt eine Zeile, aus
+     einem grauen Platzhalter wird ein roter Wert, kurz hinterlegt. */
+  .dossier-bg {
+    fill: light-dark(#ffffff, #e9ebed);
+    stroke: var(--signal);
+    stroke-width: 1.5;
+    filter: drop-shadow(0 3px 6px var(--material-shade));
+  }
+
+  .fill {
+    --known: 1;
+  }
+
+  .fill .blank {
+    fill: light-dark(#e3e6e9, #c9ced3);
+    opacity: calc(1 - var(--known));
+  }
+
+  .fill .known {
+    opacity: var(--known);
+  }
+
+  .fill .flash {
     fill: var(--signal);
-    font-size: 15px;
-    font-weight: 700;
-    text-anchor: middle;
     opacity: 0;
-    paint-order: stroke;
-    stroke: var(--panel);
-    stroke-width: 5px;
-    stroke-linejoin: round;
+  }
+
+  .fill[data-known] .flash {
+    animation: flash 0.9s ease-out;
+  }
+
+  @keyframes flash {
+    from {
+      opacity: 0.22;
+    }
+  }
+
+  .fill .label {
+    fill: #5d656d;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .fill .value {
+    fill: var(--signal);
+    font-size: 14px;
+    font-weight: 700;
+    text-anchor: end;
+  }
+
+  .fill.head .value {
+    fill: #1f2124;
+    font-size: 16px;
+    text-anchor: start;
+  }
+
+  .fill.head .label {
+    fill: var(--signal);
+    font-weight: 600;
+  }
+
+  .photo-bg {
+    fill: light-dark(#eef0f2, #d9dde1);
   }
 
   /* Hochformat: drei Stellen nebeneinander, die Karten werden schmaler. */
@@ -1082,7 +1181,8 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ripple {
+    .ripple,
+    .fill[data-known] .flash {
       animation: none;
     }
   }
@@ -1183,8 +1283,10 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     const reportEls = all("[data-report]")
     const tallyEl = one("[data-tally]")
     const reportCard = one("[data-report-card]")
-    const countEl = one("[data-copies-count]")
-    let counted = -1
+    const dossier = one("[data-dossier]")
+    const fills = all("[data-fill]")
+    // Where Max's file hangs, below the offenders' name.
+    const fileBelow = 80
     let filled = -1
     let sentYear = -1
 
@@ -1348,15 +1450,26 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         say.toggleAttribute("data-fading", shown > 0 && shown <= 0.5)
       })
 
-      // The camera moves to the scene's view in the first part of it.
+      // The camera moves to the scene's view in the first part of it. At
+      // the end of the leaks it closes in on Max's file, where the next
+      // scene's view begins.
       const keys = cameras[shape]
       const from = keys[Math.max(0, scene - 1)]
       const to = keys[scene]
       const move =
-        motion.matches || scene === 0 ? 1 : ease(ramp(local, 0, 0.45))
-      const [cx, cy, needW, needH] = from.map(
-        (value, index) => value + (to[index] - value) * move,
-      )
+        motion.matches || scene === 0 || scene === matchScene
+          ? 1
+          : ease(ramp(local, 0, 0.45))
+      const close =
+        scene === leakScene
+          ? motion.matches
+            ? snap(ramp(local, 0.8, 0.92))
+            : ease(ramp(local, 0.8, 0.92))
+          : 0
+      const [cx, cy, needW, needH] = from.map((value, index) => {
+        const here = value + (to[index] - value) * move
+        return here + (keys[matchScene][index] - here) * close
+      })
       // Widen the shorter side to the screen's proportions.
       const drawn = net.getBoundingClientRect()
       const aspect = drawn.width / drawn.height || 2
@@ -1449,9 +1562,12 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         )
       }
 
-      // A leak copies the place's card: a red copy leaves the grey one
-      // and travels to the offenders, where the copies line up.
-      let arrived = 0
+      // A leak copies the place's card: a red copy leaves the grey one,
+      // travels to the offenders and fills in its line of Max's file. The
+      // empty file appears with the first leak.
+      const filePoint = below("crooks", fileBelow)
+      if (dossier)
+        place(dossier, filePoint, snap(ramp(p, leakAt(0), leakAt(0) + 0.06)))
       for (const copy of all("[data-copy]")) {
         const id = copy.dataset.copy ?? ""
         const order = leaking.findIndex((node) => node.dataset.node === id)
@@ -1459,31 +1575,20 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         const t = motion.matches
           ? snap(ramp(p, start, start + 0.14))
           : ease(ramp(p, start, start + 0.14))
-        // What the offenders now hold: one copy below the other, or on
-        // phones a pile.
-        const stack =
-          shape === "tall"
-            ? (below("crooks", 92 + order * 6).map(
-                (value, axis) => value + (axis === 0 ? order * 5 - 8 : 0),
-              ) as Point)
-            : below("crooks", 94 + order * 30)
-        if (t >= 1) arrived += 1
+        const line = fills.find((fill) => fill.dataset.fill === id)
+        const known = snap(ramp(p, start + 0.13, start + 0.16))
+        if (line) {
+          set(line, "--known", known)
+          line.toggleAttribute("data-known", known >= 0.5)
+        }
+        const into: Point = [
+          filePoint[0],
+          filePoint[1] + Number(line?.dataset.y ?? 0),
+        ]
         place(
           copy,
-          travel(below(id, cardBelow), stack, t, 70),
-          t > 0 ? 1 - away : 0,
-        )
-      }
-      if (countEl) {
-        const { one: single, many } = countEl.dataset
-        if (arrived !== counted) {
-          counted = arrived
-          countEl.textContent = `${arrived} ${arrived === 1 ? single : many}`
-        }
-        place(
-          countEl,
-          below("crooks", 148),
-          shape === "tall" && arrived > 0 ? 1 - away : 0,
+          travel(below(id, cardBelow), into, t, 70),
+          t > 0 ? 1 - known : 0,
         )
       }
       // On phones the pile of reports gives way once the leaks begin.
@@ -1520,7 +1625,7 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
       // The list: the network gives way to the target list, and the
       // list to his bedroom.
       const listed =
-        snap(ramp(p, matchScene + 0.06, matchScene + 0.2)) *
+        snap(ramp(p, matchScene + 0.12, matchScene + 0.26)) *
         (1 - snap(ramp(p, riskScene - 0.1, riskScene + 0.02)))
       const bedroom =
         snap(ramp(p, riskScene - 0.08, riskScene + 0.05)) *
