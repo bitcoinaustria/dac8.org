@@ -209,20 +209,8 @@ export const scenes: Scene[] = [
       en: "Your profile. Your home address. A target.",
     },
     text: {
-      de: "Bitcoin funktioniert wie Bargeld. Laut Gendarmerie wählen Täter ihre Opfer anhand geleakter Daten aus. **Allein im ersten Halbjahr 2026 zählte Frankreich 77 Entführungen, Freiheitsberaubungen und Erpressungen** rund um Kryptowerte.",
-      en: "Bitcoin works like cash. According to the Gendarmerie, offenders pick their victims from leaked data. **In the first half of 2026 alone, France counted 77 kidnappings, unlawful detentions and extortions** around crypto-assets.",
-    },
-  },
-  {
-    id: "drinnen",
-    short: { de: "Gläsern", en: "See-through" },
-    heading: {
-      de: "Deine Daten machen dein Zuhause gläsern.",
-      en: "Your data makes your home see-through.",
-    },
-    text: {
-      de: "Wer die Listen zusammenführt, sieht durch Max' Wände: wer hier wohnt, dass ein Hardware-Wallet geliefert wurde und wie viel auf seinem Konto liegt. **Darum sollte niemand wissen, wer wie viel Bitcoin hat.**",
-      en: "Whoever joins the lists can see through Max's walls: who lives here, that a hardware wallet was delivered and how much is in his account. **That is why nobody should know who holds how much bitcoin.**",
+      de: "Bitcoin funktioniert wie Bargeld. Laut Gendarmerie wählen Täter ihre Opfer anhand geleakter Daten aus; allein im ersten Halbjahr 2026 zählte Frankreich 77 Entführungen, Freiheitsberaubungen und Erpressungen rund um Kryptowerte. **Darum sollte niemand wissen, wer wie viel Bitcoin hat.**",
+      en: "Bitcoin works like cash. According to the Gendarmerie, offenders pick their victims from leaked data; in the first half of 2026 alone, France counted 77 kidnappings, unlawful detentions and extortions around crypto-assets. **That is why nobody should know who holds how much bitcoin.**",
     },
   },
 ]
@@ -262,32 +250,6 @@ export const profile: { label: Text; value: Text; from: string }[] = [
     label: { de: "Kontostand", en: "Balance" },
     value: { de: "mit allen Transaktionen", en: "with all transactions" },
     from: "coinbase",
-  },
-]
-
-// What the joined lists reveal inside Max's house, pinned to the thing
-// each one gives away, with the place it came from. The anchors are
-// named in src/assets/network/home.json.
-export const exposed: { anchor: string; label: Text; from: Place }[] = [
-  {
-    anchor: "pin",
-    label: { de: "Wohnadresse", en: "Home address" },
-    from: "residents",
-  },
-  {
-    anchor: "parcel",
-    label: { de: "Hardware-Wallet geliefert", en: "Hardware wallet delivered" },
-    from: "shop",
-  },
-  {
-    anchor: "max",
-    label: { de: "Ausweis", en: "ID document" },
-    from: "provider",
-  },
-  {
-    anchor: "laptop",
-    label: { de: "Kontostand", en: "Balance" },
-    from: "provider",
   },
 ]
 
