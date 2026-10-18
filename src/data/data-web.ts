@@ -1,16 +1,22 @@
 import type { Language } from "@/lib/i18n"
 
 // "What happens to your data", told as one thread in five short steps: an
-// invented customer, Max, buys bitcoin at an exchange; the exchange keeps
-// his records and reports him to the tax office every year; both kinds of
-// place have lost such data in real cases; a leak becomes a target list;
-// the list leads to his front door. The cases and their sources live in
+// invented customer, Max, leaves his data with an exchange, a tax tool and
+// a hardware wallet shop; the exchange reports him to the tax office every
+// year; every one of these kinds of place has lost such data in real
+// cases; the leaks become a target list; the list leads to his front door. The cases and their sources live in
 // src/data/leaks.ts; the legal facts follow the dossier (§ 21 FM-GwG,
 // § 18 and § 20 Krypto-MPfG, Directive (EU) 2024/1640).
 
 type Text = Record<Language, string>
 
-export type Place = "you" | "provider" | "taxOffice" | "crooks"
+export type Place =
+  | "you"
+  | "provider"
+  | "taxTool"
+  | "shop"
+  | "taxOffice"
+  | "crooks"
 
 export interface Node {
   id: Place
@@ -32,6 +38,20 @@ export const nodes: Node[] = [
     leak: "coinbase",
   },
   {
+    id: "taxTool",
+    name: { de: "Steuertool", en: "Tax tool" },
+    scene: 0,
+    order: 2,
+    leak: "waltio",
+  },
+  {
+    id: "shop",
+    name: { de: "Wallet-Shop", en: "Wallet shop" },
+    scene: 0,
+    order: 3,
+    leak: "ledger",
+  },
+  {
     id: "taxOffice",
     name: { de: "Finanzamt", en: "Tax office" },
     scene: 1,
@@ -47,6 +67,8 @@ export const nodes: Node[] = [
 // Who passes data to whom. The report line carries a packet a year.
 export const edges: { from: Place; to: Place }[] = [
   { from: "you", to: "provider" },
+  { from: "you", to: "taxTool" },
+  { from: "you", to: "shop" },
   { from: "provider", to: "taxOffice" },
 ]
 
@@ -63,14 +85,14 @@ export interface Scene {
 export const scenes: Scene[] = [
   {
     id: "konto",
-    short: { de: "Börse", en: "Exchange" },
+    short: { de: "Deine Daten", en: "Your data" },
     heading: {
-      de: "Deine Börse kennt dich.",
-      en: "Your exchange knows you.",
+      de: "Deine Daten liegen an vielen Stellen.",
+      en: "Your data sits in many places.",
     },
     text: {
-      de: "Ausweis, Wohnadresse, jede Transaktion. Gespeichert bis zehn Jahre nach Kontoende.",
-      en: "ID, home address, every transaction. Kept until ten years after you leave.",
+      de: "Die Börse kennt Ausweis und jede Transaktion, das Steuertool deine Bestände, der Wallet-Shop deine Wohnadresse.",
+      en: "The exchange knows your ID and every transaction, the tax tool your holdings, the wallet shop your home address.",
     },
   },
   {
@@ -93,16 +115,16 @@ export const scenes: Scene[] = [
       en: "Stored. Hacked. Sold.",
     },
     text: {
-      de: "Börsen und Finanzverwaltungen haben solche Daten schon verloren.",
-      en: "Exchanges and tax administrations have lost such data before.",
+      de: "Börsen, Steuertools, Wallet-Shops und Finanzverwaltungen haben solche Daten schon verloren.",
+      en: "Exchanges, tax tools, wallet shops and tax administrations have lost such data before.",
     },
   },
   {
     id: "liste",
     short: { de: "Zielliste", en: "Target list" },
     heading: {
-      de: "Aus dem Leck wird eine Zielliste.",
-      en: "The leak becomes a target list.",
+      de: "Aus den Lecks wird eine Zielliste.",
+      en: "The leaks become a target list.",
     },
     text: {
       de: "Sortiert nach Bestand, mit Wohnadresse.",

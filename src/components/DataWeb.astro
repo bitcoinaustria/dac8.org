@@ -58,46 +58,52 @@ const layout: Record<
   Record<Place, [number, number]>
 > = {
   wide: {
-    you: [200, 300],
-    provider: [540, 300],
-    taxOffice: [900, 170],
-    crooks: [900, 450],
+    you: [140, 300],
+    taxTool: [330, 100],
+    provider: [470, 300],
+    shop: [330, 500],
+    taxOffice: [790, 160],
+    crooks: [1030, 420],
   },
   mid: {
-    you: [140, 350],
-    provider: [430, 350],
-    taxOffice: [730, 200],
-    crooks: [730, 520],
+    you: [90, 350],
+    taxTool: [250, 130],
+    provider: [380, 350],
+    shop: [250, 570],
+    taxOffice: [650, 180],
+    crooks: [790, 500],
   },
   tall: {
-    you: [200, 90],
-    provider: [200, 320],
-    taxOffice: [300, 540],
-    crooks: [120, 720],
+    you: [200, 60],
+    taxTool: [70, 250],
+    provider: [200, 250],
+    shop: [330, 250],
+    taxOffice: [90, 480],
+    crooks: [250, 720],
   },
 }
 // Where the camera looks in each scene: centre and width.
 const cameras = {
   wide: [
-    [370, 320, 720],
-    [560, 290, 1000],
-    [560, 320, 1040],
-    [560, 320, 1040],
-    [560, 320, 1040],
+    [330, 300, 1100],
+    [480, 300, 1150],
+    [585, 300, 1200],
+    [585, 300, 1200],
+    [585, 300, 1200],
   ],
   mid: [
-    [285, 370, 620],
-    [440, 340, 860],
-    [440, 380, 880],
-    [440, 380, 880],
-    [440, 380, 880],
+    [250, 355, 780],
+    [400, 355, 860],
+    [450, 370, 920],
+    [450, 370, 920],
+    [450, 370, 920],
   ],
   tall: [
-    [200, 220, 400],
-    [200, 330, 420],
-    [200, 420, 440],
-    [200, 420, 440],
-    [200, 420, 440],
+    [200, 200, 400],
+    [200, 320, 400],
+    [200, 410, 420],
+    [200, 410, 420],
+    [200, 410, 420],
   ],
 }
 const at = (id: Place) => layout.wide[id]
@@ -854,7 +860,15 @@ const leaked = nodes.filter((node) => node.leak)
       }
       // The lines to the offenders bow away from the report line.
       const crookBend = (from: string) =>
-        shape === "tall" ? -0.2 : from === "provider" ? 0.1 : -0.45
+        shape === "tall"
+          ? from === "taxTool"
+            ? -0.12
+            : 0.06
+          : from === "taxOffice"
+            ? -0.3
+            : from === "taxTool"
+              ? -0.08
+              : 0.06
       const bend = (from: string, to: string, amount: number) => {
         const [x1, y1] = [at[from][0], at[from][1] + ground]
         const [x2, y2] = [at[to][0], at[to][1] + ground]
@@ -941,8 +955,8 @@ const leaked = nodes.filter((node) => node.leak)
             ? 1
             : snap(ramp(p, appear(node) - 0.12, appear(node) + 0.06))
         const order = leaking.indexOf(node)
-        // The exchange leaks first, the tax office after it.
-        const start = order === 0 ? 0.05 : 0.35
+        // The exchange leaks first, the others one after another.
+        const start = order === 0 ? 0.05 : 0.25 + order * 0.12
         const leak =
           order < 0
             ? 0
