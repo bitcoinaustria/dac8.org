@@ -147,7 +147,6 @@ export interface Scene {
   id: string
   // The scene's name on the timeline.
   short: Text
-  eyebrow: Text
   heading: Text
   // One key phrase may be marked with **…**; the page sets it in bold.
   text: Text
@@ -157,7 +156,6 @@ export const scenes: Scene[] = [
   {
     id: "konto",
     short: { de: "Konto", en: "Account" },
-    eyebrow: { de: "01 Dein Anbieter", en: "01 Your provider" },
     heading: {
       de: "Dein Konto wird zur Akte.",
       en: "Your account becomes a file.",
@@ -170,7 +168,6 @@ export const scenes: Scene[] = [
   {
     id: "staat",
     short: { de: "Jedes Jahr", en: "Every year" },
-    eyebrow: { de: "02 DAC8", en: "02 DAC8" },
     heading: {
       de: "Jedes Jahr mehr über dich.",
       en: "More about you. Every year.",
@@ -183,7 +180,6 @@ export const scenes: Scene[] = [
   {
     id: "lecks",
     short: { de: "Lecks", en: "Leaks" },
-    eyebrow: { de: "03 Datenlecks", en: "03 Data leaks" },
     heading: {
       de: "Gespeichert. Gehackt. Verkauft.",
       en: "Stored. Hacked. Sold.",
@@ -196,7 +192,6 @@ export const scenes: Scene[] = [
   {
     id: "abgleich",
     short: { de: "Abgleich", en: "Matching" },
-    eyebrow: { de: "04 Abgleich", en: "04 Matching" },
     heading: {
       de: "Getrennt verrät jede Liste wenig. Zusammen eine Akte.",
       en: "Apart, each list says little. Together, a file.",
@@ -209,7 +204,6 @@ export const scenes: Scene[] = [
   {
     id: "risiko",
     short: { de: "Haustür", en: "Front door" },
-    eyebrow: { de: "05 Das Risiko", en: "05 The risk" },
     heading: {
       de: "Dein Profil. Deine Wohnadresse. Ein Angriffsziel.",
       en: "Your profile. Your home address. A target.",
@@ -222,7 +216,6 @@ export const scenes: Scene[] = [
   {
     id: "drinnen",
     short: { de: "Gläsern", en: "See-through" },
-    eyebrow: { de: "06 Keine Privatsphäre", en: "06 No privacy" },
     heading: {
       de: "Deine Daten machen dein Zuhause gläsern.",
       en: "Your data makes your home see-through.",
