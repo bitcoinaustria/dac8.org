@@ -40,9 +40,10 @@ const render = (name: string) =>
 const art: Partial<Record<Place, string>> = Object.fromEntries(
   nodes.map((node) => [node.id, render(node.id.toLowerCase())]),
 )
-// Max hides his savings under the mattress, the pin above his bed: the
-// site's cash analogy for self-custody, from artwork-lab's
-// knowledge/build_dac8_mattress.py.
+// Max hides cash and bitcoin under his mattress while the offenders from
+// the network wait outside with the wrench and the list, and the pin hangs
+// above the room: the site's cash analogy for self-custody, from
+// artwork-lab's knowledge/build_dac8_mattress.py.
 const home = render("mattress")
 // The file the matching produces is the target list from the site's
 // illustrations, with Max at number 07.
@@ -926,8 +927,9 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     object-fit: contain;
   }
 
-  /* Das Ende: Max schiebt sein Erspartes unter die Matratze, und die
-     Nadel steht über seinem Bett. */
+  /* Das Ende: Max schiebt Bargeld und Bitcoin unter die Matratze, draußen
+     warten die Täter mit dem Schraubenschlüssel, die Nadel steht über
+     dem Zimmer. */
   .map {
     --map: 1;
     --draw: 1;
