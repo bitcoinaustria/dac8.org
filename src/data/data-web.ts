@@ -25,6 +25,9 @@ export interface Node {
   // The scene in which the place appears, and its turn within it.
   scene: number
   order?: number
+  // What the place keeps about Max. It arrives as a grey card and stays;
+  // a leak copies it as a red card.
+  holds?: Text
   // A real case at a place of this kind, from src/data/leaks.ts.
   leak?: string
 }
@@ -36,6 +39,7 @@ export const nodes: Node[] = [
     name: { de: "Börse", en: "Exchange" },
     scene: 0,
     order: 1,
+    holds: { de: "Ausweis · Transaktionen", en: "ID · transactions" },
     leak: "coinbase",
   },
   {
@@ -43,6 +47,7 @@ export const nodes: Node[] = [
     name: { de: "Steuertool", en: "Tax tool" },
     scene: 0,
     order: 2,
+    holds: { de: "Bestände", en: "Holdings" },
     leak: "waltio",
   },
   {
@@ -50,12 +55,14 @@ export const nodes: Node[] = [
     name: { de: "Wallet-Shop", en: "Wallet shop" },
     scene: 0,
     order: 3,
+    holds: { de: "Wohnadresse", en: "Home address" },
     leak: "ledger",
   },
   {
     id: "taxOffice",
     name: { de: "Finanzamt", en: "Tax office" },
     scene: 1,
+    holds: { de: "Jahresmeldungen", en: "Annual reports" },
     leak: "france",
   },
   {
@@ -116,8 +123,8 @@ export const scenes: Scene[] = [
       en: "Stored. Hacked. Sold.",
     },
     text: {
-      de: "Börsen, Steuertools, Wallet-Shops und Finanzverwaltungen haben solche Daten schon verloren.",
-      en: "Exchanges, tax tools, wallet shops and tax administrations have lost such data before.",
+      de: "Börsen, Steuertools, Wallet-Shops und Finanzverwaltungen haben solche Daten schon verloren. **Ein Datenleck nimmt nichts weg, es kopiert.**",
+      en: "Exchanges, tax tools, wallet shops and tax administrations have lost such data before. **A data leak takes nothing away; it copies.**",
     },
   },
   {
@@ -157,6 +164,19 @@ export const reports = {
     de: { one: "Jahresmeldung", many: "Jahresmeldungen" },
     en: { one: "annual report", many: "annual reports" },
   },
+  // The card that travels to the tax office, with the year after it.
+  card: { de: "Meldung", en: "Report" },
+}
+
+// Labels around the cases: the cases in the leak scene open a card with
+// what happened, and the card links to the case on the leak page.
+export const caseLabels = {
+  open: { de: "Was ist passiert?", en: "What happened?" },
+  more: {
+    de: "Alle Datenlecks mit Quellen",
+    en: "All data leaks with sources",
+  },
+  close: { de: "Schließen", en: "Close" },
 }
 
 // A short note under the network.

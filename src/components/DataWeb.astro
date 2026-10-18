@@ -1,5 +1,6 @@
 ---
 import {
+  caseLabels,
   edges,
   nodes,
   type Place,
@@ -9,25 +10,27 @@ import {
 } from "@/data/data-web"
 import { Picture } from "astro:assets"
 import { artwork, imageFor } from "@/data/artwork"
-import { leaks } from "@/data/leaks"
-import type { Language } from "@/lib/i18n"
+import { fields, leaks } from "@/data/leaks"
+import { type Language, pathFor } from "@/lib/i18n"
 
-// "Where your data goes", as a full-screen scroll film: a network that
-// grows from Max to every place that keeps a copy of his data, lights up
-// each place with a real leak at a place of its kind, sends the copies to
-// fraudsters and extortionists, joins them into a file and ends in his
-// bedroom, where he hides his savings under the mattress. The scene texts are the readable version; the network, the
-// file and the map stay hidden from screen readers. The script sets the
-// node positions for wide and tall screens and plays everything along
-// with the scroll.
+// "Where your data goes", as a full-screen scroll film. Max hands each
+// place a labelled grey card that stays there; the exchange sends the tax
+// office a report a year; each kind of place has lost such data in a real
+// case, and a leak copies its card as a red card to fraudsters and
+// extortionists; the copies become a target list, and the story ends in
+// his bedroom, where his savings lie under the mattress. Grey means "kept
+// there", red means "copied", and every card moves once, with the scroll.
+// The scene texts are the readable version and sit on the stage as its
+// subtitle; the network, the list and the bedroom stay hidden from screen
+// readers. The red case labels, and the buttons under the leak scene's
+// text, open a card with what happened and a link to the leak page.
 interface Props {
   language: Language
 }
 
 const { language } = Astro.props
 
-// Rendered pictures of the places, from artwork-lab/network; where one is
-// missing, the place shows as a plain token with an icon.
+// Rendered pictures of the places, from artwork-lab/network.
 const renders = import.meta.glob<{ default: { src: string } }>(
   "../assets/network/*.webp",
   { eager: true },
@@ -56,6 +59,8 @@ const caseName = (id: string) => {
   const leak = leakFor(id)
   return [leak.name[language], leak.year].filter(Boolean).join(" ")
 }
+const fieldLabel = (id: string) =>
+  fields.find((field) => field.id === id)?.label[language] ?? id
 // Plain text with one **key phrase**: odd parts are set in bold.
 const rich = (text: string) => text.split(/\*\*(.+?)\*\*/)
 
@@ -72,7 +77,7 @@ const layout: Record<
     provider: [470, 300],
     shop: [330, 500],
     taxOffice: [790, 160],
-    crooks: [1030, 420],
+    crooks: [1030, 380],
   },
   mid: {
     you: [90, 350],
@@ -80,44 +85,46 @@ const layout: Record<
     provider: [380, 350],
     shop: [250, 570],
     taxOffice: [650, 180],
-    crooks: [790, 500],
+    crooks: [790, 470],
   },
   tall: {
     you: [200, 60],
     taxTool: [70, 250],
     provider: [200, 250],
     shop: [330, 250],
-    taxOffice: [90, 480],
-    crooks: [250, 720],
+    taxOffice: [90, 500],
+    crooks: [270, 690],
   },
 }
-// Where the camera looks in each scene: centre and width.
+// What the camera must show in each scene: centre, width and height. The
+// script widens the shorter side to the screen's proportions. It goes
+// close to the exchange and the tax office for the reports, and steps
+// back for the leaks.
 const cameras = {
   wide: [
-    [330, 300, 1100],
-    [480, 300, 1150],
-    [585, 300, 1200],
-    [585, 300, 1200],
-    [585, 300, 1200],
+    [320, 330, 1160, 580],
+    [630, 300, 760, 380],
+    [600, 350, 1280, 640],
+    [600, 350, 1280, 640],
+    [600, 350, 1280, 640],
   ],
   mid: [
-    [250, 355, 780],
-    [400, 355, 860],
-    [450, 370, 920],
-    [450, 370, 920],
-    [450, 370, 920],
+    [250, 370, 800, 620],
+    [515, 330, 600, 470],
+    [450, 380, 920, 716],
+    [450, 380, 920, 716],
+    [450, 380, 920, 716],
   ],
   tall: [
-    [200, 200, 400],
-    [200, 320, 400],
-    [200, 410, 420],
-    [200, 410, 420],
-    [200, 410, 420],
+    [200, 180, 400, 380],
+    [180, 410, 350, 440],
+    [200, 445, 410, 900],
+    [200, 445, 410, 900],
+    [200, 445, 410, 900],
   ],
 }
 const at = (id: Place) => layout.wide[id]
-// A gentle curve from one place to another.
-// The lines run on the ground, from plinth to plinth.
+// The lines run on the ground, from plinth to plinth, in a gentle curve.
 const ground = 36
 const curve = (from: Place, to: Place, bend = 0.12) => {
   const [x1, y1] = [at(from)[0], at(from)[1] + ground]
@@ -127,6 +134,7 @@ const curve = (from: Place, to: Place, bend = 0.12) => {
   return `M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}`
 }
 
+const holding = nodes.filter((node) => node.holds)
 const leaked = nodes.filter((node) => node.leak)
 // The tally under the exchange; without the script it shows the full
 // pile.
@@ -134,12 +142,14 @@ const tally = (count: number) =>
   `${reports.first + count - 1}: ${count} ${
     count === 1 ? reports.label[language].one : reports.label[language].many
   }`
+// A first width for a card from its label; the script measures the text.
+const cardWidth = (label: string) => Math.round(label.length * 7.2 + 26)
+const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
 ---
 
 <div
   class="web"
   data-web
-  data-locale={en ? "en" : "de-DE"}
   data-ground={ground}
   data-layout={JSON.stringify(layout)}
   data-cameras={JSON.stringify(cameras)}
@@ -149,7 +159,7 @@ const tally = (count: number) =>
         <div
           class="spacer"
           id={`netz-${scene.id}`}
-          style={`--len: ${[90, 100, 110, 100, 110][index] ?? 110}`}
+          style={`--len: ${[90, 110, 120, 100, 110][index] ?? 110}`}
         >
         </div>
       ))}
@@ -166,20 +176,38 @@ const tally = (count: number) =>
       </ol>
     </nav>
 
-    <div class="says">
-      {scenes.map((scene) => (
-          <div class="say" data-say>
-            <h3>{scene.heading[language]}</h3>
-            <p class="text">
-              {rich(scene.text[language]).map((part, partIndex) =>
-                partIndex % 2 ? <strong>{part}</strong> : part,
-              )}
-            </p>
-          </div>
-        ))}
-    </div>
-
     <div class="view">
+      <div class="says">
+        {scenes.map((scene, index) => (
+            <div class="say" data-say>
+              <h3>{scene.heading[language]}</h3>
+              <p class="text">
+                {rich(scene.text[language]).map((part, partIndex) =>
+                  partIndex % 2 ? <strong>{part}</strong> : part,
+                )}
+              </p>
+              {index === leakScene && (
+                <ul
+                  class="say-cases"
+                  aria-label={caseLabels.open[language]}
+                >
+                  {leaked.map((node) => (
+                    <li>
+                      <button
+                        type="button"
+                        data-case-open={node.leak}
+                        aria-haspopup="dialog"
+                      >
+                        {caseName(node.leak ?? "")}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+      </div>
+
       <svg
         aria-hidden="true"
         class="net"
@@ -188,17 +216,9 @@ const tally = (count: number) =>
         data-net
       >
         <defs>
-          <linearGradient id="web-graphite" x1="0.2" y1="0" x2="0.8" y2="1">
-            <stop offset="0" stop-color="#4b5056" />
-            <stop offset="1" stop-color="#25282d" />
-          </linearGradient>
           <linearGradient id="web-plinth" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stop-color="#fdfdfd" />
             <stop offset="1" stop-color="#d9dde1" />
-          </linearGradient>
-          <linearGradient id="web-signal" x1="0.2" y1="0" x2="0.8" y2="1">
-            <stop offset="0" stop-color="#e3000f" />
-            <stop offset="1" stop-color="#be000c" />
           </linearGradient>
         </defs>
 
@@ -216,12 +236,7 @@ const tally = (count: number) =>
                 data-order={target?.order ?? 0}
               >
                 <path class="bed" d={d} pathLength="1" />
-                <path
-                  class="core"
-                  id={`edge-${edge.from}-${edge.to}`}
-                  d={d}
-                  pathLength="1"
-                />
+                <path class="core" d={d} pathLength="1" />
               </g>
             )
           })}
@@ -235,50 +250,10 @@ const tally = (count: number) =>
                 data-to="crooks"
               >
                 <path class="bed" d={d} pathLength="1" />
-                <path
-                  class="core"
-                  id={`edge-${node.id}-crooks`}
-                  d={d}
-                  pathLength="1"
-                />
+                <path class="core" d={d} pathLength="1" />
               </g>
             )
           })}
-        </g>
-
-        <g class="packets">
-          {edges.map((edge) =>
-              [0, 1].map((packet) => (
-                <g class="packet" data-packet={`${edge.from}-${edge.to}`}>
-                  <rect class="card" x="-7" y="-4.5" width="14" height="9" rx="1.5" />
-                  <rect class="stripe" x="-7" y="-4.5" width="3.5" height="9" rx="1" />
-                  <animateMotion
-                    dur={edge.to === "taxOffice" ? "1.8s" : "3s"}
-                    begin={`${-packet * 1.5}s`}
-                    repeatCount="indefinite"
-                    rotate="auto"
-                  >
-                    <mpath href={`#edge-${edge.from}-${edge.to}`} />
-                  </animateMotion>
-                </g>
-              )),
-            )}
-          {leaked.map((node, index) =>
-              [0, 1].map((packet) => (
-                <g class="packet red" data-packet={`${node.id}-crooks`}>
-                  <rect class="card" x="-7" y="-4.5" width="14" height="9" rx="1.5" />
-                  <rect class="stripe" x="-7" y="-4.5" width="3.5" height="9" rx="1" />
-                  <animateMotion
-                    dur="2.4s"
-                    begin={`${-((index % 3) * 0.5 + packet * 1.2)}s`}
-                    repeatCount="indefinite"
-                    rotate="auto"
-                  >
-                    <mpath href={`#edge-${node.id}-crooks`} />
-                  </animateMotion>
-                </g>
-              )),
-            )}
         </g>
 
         <g class="nodes">
@@ -303,9 +278,6 @@ const tally = (count: number) =>
                     height="104"
                   />
                   <text class="name" y="66">{node.name[language]}</text>
-                  {node.leak && (
-                    <text class="case" y="84">{caseName(node.leak)}</text>
-                  )}
                   {node.id === "provider" && (
                     <g
                       class="reports"
@@ -319,15 +291,73 @@ const tally = (count: number) =>
                           class="report"
                           data-report
                           data-filled
-                          transform={`translate(${(year - (reports.kept - 1) / 2) * 15} 110)`}
+                          transform={`translate(${(year - (reports.kept - 1) / 2) * 15} 124)`}
                         >
-                          <rect class="card" x="-6" y="-8.5" width="12" height="17" rx="1.6" />
+                          <rect class="sheet" x="-6" y="-8.5" width="12" height="17" rx="1.6" />
                           <rect class="stripe" x="-6" y="-8.5" width="12" height="4.5" rx="1.2" />
                         </g>
                       ))}
-                      <text class="tally" y="140" data-tally>{tally(reports.kept)}</text>
+                      <text class="tally" y="154" data-tally>{tally(reports.kept)}</text>
                     </g>
                   )}
+                </g>
+              </g>
+            ))}
+        </g>
+
+        <g class="cards">
+          {holding.map((node) => {
+            const label = node.holds?.[language] ?? ""
+            return (
+              <g class="card" data-card={node.id}>
+                <rect class="card-bg" x={-cardWidth(label) / 2} y="-12" width={cardWidth(label)} height="24" rx="6" />
+                <rect class="card-stripe" x={-cardWidth(label) / 2} y="-12" width="5" height="24" rx="2" />
+                <text class="card-text" x="2.5" y="4.5">{label}</text>
+              </g>
+            )
+          })}
+          <g
+            class="card moving"
+            data-report-card
+            data-label={reports.card[language]}
+          >
+            <rect
+              class="card-bg"
+              x="-48"
+              y="-12"
+              width="96"
+              height="24"
+              rx="6"
+            />
+            <rect
+              class="card-stripe"
+              x="-48"
+              y="-12"
+              width="5"
+              height="24"
+              rx="2"
+            />
+            <text class="card-text" x="2.5" y="4.5">
+              {`${reports.card[language]} ${reports.first}`}
+            </text>
+          </g>
+          {leaked.map((node) => {
+            const label = node.holds?.[language] ?? ""
+            return (
+              <g class="card copy" data-copy={node.id}>
+                <rect class="card-bg" x={-cardWidth(label) / 2} y="-12" width={cardWidth(label)} height="24" rx="6" />
+                <rect class="card-stripe" x={-cardWidth(label) / 2} y="-12" width="5" height="24" rx="2" />
+                <text class="card-text" x="2.5" y="4.5">{label}</text>
+              </g>
+            )
+          })}
+          {leaked.map((node) => (
+              <g class="case" data-case-pill={node.id} data-case={node.leak}>
+                <rect class="case-bg" x={-cardWidth(caseName(node.leak ?? "")) / 2 - 10} y="-13" width={cardWidth(caseName(node.leak ?? "")) + 20} height="26" rx="13" />
+                <text class="case-text" x="-7" y="4.5">{caseName(node.leak ?? "")}</text>
+                <g class="case-more" transform={`translate(${cardWidth(caseName(node.leak ?? "")) / 2 - 2} 0)`}>
+                  <circle r="7.5" />
+                  <text y="3.6">i</text>
                 </g>
               </g>
             ))}
@@ -351,22 +381,57 @@ const tally = (count: number) =>
 
     <p class="note">{note[language]}</p>
   </div>
+
+  <div
+    class="case-card"
+    popover="auto"
+    role="dialog"
+    aria-labelledby="case-card-heading"
+    data-case-card
+  >
+    {leaked.map((node) => {
+      const leak = leakFor(node.leak ?? "")
+      return (
+        <article data-case-body={leak.id} hidden>
+          <p class="dateline">
+            {[leak.name[language], leak.kind[language], leak.year]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+          <h4 id={`case-card-${leak.id}`}>{leak.headline[language]}</h4>
+          {leak.lost.length > 0 && (
+            <ul class="case-tags" aria-label={en ? "Data lost" : "Verlorene Daten"}>
+              {leak.lost.map((field) => <li>{fieldLabel(field)}</li>)}
+            </ul>
+          )}
+          <p>{leak.text[language]}</p>
+          <a class="text-link" href={`${pathFor("leaks", language)}#fall-${leak.id}`}
+            >{caseLabels.more[language]}</a
+          >
+        </article>
+      )
+    })}
+    <button
+      class="case-close"
+      type="button"
+      aria-label={caseLabels.close[language]}
+      data-case-close
+    >
+      ×
+    </button>
+  </div>
 </div>
 
 <style>
   /* Das Datennetz als Scroll-Geschichte in der Formensprache der Seite:
-     helle Fläche, Stationen als Graphit-Token mit Titankante wie im
-     Datenweg des Dossiers, Linien als schmale Nut. Rot heißt wie überall
-     „hier stehst du“ (Max) oder markiert ein Leck. Die Kopfleiste bleibt
-     stehen; oben links der Satz der Szene, rechts das Netz, unten drei
-     Zahlen. Das Skript setzt die Variablen; ohne Skript stehen die Texte
-     untereinander und das Netz im Endstand. */
+     helle Fläche, gerenderte Stationen auf Sockeln, Linien als schmale Nut.
+     Graue Karten liegen bei einer Stelle, rote sind Kopien aus einem
+     Datenleck; rot heißt sonst wie überall „hier stehst du“ (Max). Der Satz
+     der Szene steht als Untertitel oben auf der Bühne. Das Skript setzt die
+     Variablen; ohne Skript stehen die Texte untereinander und das Netz im
+     Endstand. */
   .web {
-    --groove: light-dark(#c6cbcf, #454b51);
-    --groove-light: light-dark(#ffffff, #ffffff08);
     --signal: var(--accent);
-    --mono:
-      ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
   }
@@ -388,7 +453,7 @@ const tally = (count: number) =>
     align-self: start;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr) auto;
     gap: var(--space-xs);
     block-size: calc(100svh - var(--header-height));
     padding-block: var(--space-xs) var(--space-s);
@@ -405,7 +470,6 @@ const tally = (count: number) =>
   }
 
   .web:not([data-ready]) .says {
-    display: grid;
     gap: var(--space-xl);
   }
 
@@ -461,10 +525,13 @@ const tally = (count: number) =>
     box-shadow: inset 0 -2px var(--signal);
   }
 
-  /* ---------- Sätze ----------------------------------------------------- */
+  /* ---------- Untertitel ------------------------------------------------ */
 
+  /* Der Satz der Szene steht oben auf der Bühne, über dem Netz, und gleitet
+     beim Wechsel kurz nach oben. */
   .says {
     display: grid;
+    padding: var(--space-s) var(--space-m) 0;
   }
 
   .say {
@@ -472,7 +539,7 @@ const tally = (count: number) =>
     grid-area: 1 / 1;
     display: grid;
     align-content: start;
-    gap: var(--space-2xs);
+    gap: var(--space-3xs);
     opacity: var(--o);
     translate: 0 calc((1 - var(--o)) * 0.75rem);
   }
@@ -485,19 +552,18 @@ const tally = (count: number) =>
     visibility: visible;
   }
 
-  .say h2,
   .say h3 {
-    max-inline-size: 20ch;
+    max-inline-size: 30ch;
     color: var(--foreground);
-    font-size: clamp(1.3rem, 1rem + 1.8vw, 2.25rem);
+    font-size: clamp(1.2rem, 1rem + 1.1vw, 1.75rem);
     font-weight: 600;
-    line-height: 1.08;
-    letter-spacing: -0.025em;
+    line-height: 1.1;
+    letter-spacing: -0.022em;
     text-wrap: balance;
   }
 
   .say .text {
-    max-inline-size: 46ch;
+    max-inline-size: 60ch;
     color: var(--ink-2);
     font-size: 0.9375rem;
     line-height: 1.45;
@@ -509,27 +575,67 @@ const tally = (count: number) =>
     font-weight: 560;
   }
 
-  .next {
-    justify-self: start;
-    margin-block-start: var(--space-2xs);
+  /* Die Fälle der Leck-Szene als Knöpfe: wer nicht zeigt oder tippt,
+     erreicht die Karten über die Tastatur. */
+  .say-cases {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+    margin: var(--space-3xs) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .say-cases button {
+    padding: 0.2em 0.75em;
+    border: 1px solid color-mix(in oklab, var(--signal) 45%, transparent);
+    border-radius: var(--radius-full);
+    color: var(--signal);
+    background: var(--background);
+    font: inherit;
+    font-size: var(--step--1);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .say-cases button:hover,
+  .say-cases button[aria-expanded="true"] {
+    border-color: var(--signal);
+    color: #fff;
+    background: var(--signal);
   }
 
   /* ---------- Netz ------------------------------------------------------ */
 
-  /* Das Netz liegt auf einer hellen Fläche wie die anderen Bänder. */
+  /* Die Bühne ist eine helle Fläche: oben der Untertitel, darunter das
+     Netz, die Zielliste oder das Schlafzimmer. */
   .view {
     position: relative;
     display: grid;
-    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    grid-template: auto minmax(0, 1fr) / minmax(0, 1fr);
     min-block-size: 0;
     border-radius: var(--radius-xl);
     background: var(--panel);
     overflow: hidden;
   }
 
-  .view > * {
+  .view > .says {
     grid-area: 1 / 1;
+    z-index: 1;
+  }
+
+  .view > .net,
+  .view > .file,
+  .view > .map {
+    grid-area: 2 / 1;
     min-block-size: 0;
+  }
+
+  /* Zielliste und Schlafzimmer liegen über dem Netz; den Zeiger nehmen nur
+     die Fälle im Netz an. */
+  .view > .file,
+  .view > .map {
+    pointer-events: none;
   }
 
   .net {
@@ -541,10 +647,10 @@ const tally = (count: number) =>
 
   /* Die Verbindungen laufen am Boden von Sockel zu Sockel: ein breites
      helles Bett mit einer schmalen dunklen Nut darin, die sich beim
-     Auftauchen zeichnet. */
+     Auftauchen zeichnet. Die Linien zu den Tätern sind rot. */
   .link {
     --draw: 1;
-    opacity: var(--fade, 1);
+    opacity: calc(var(--fade, 1) * clamp(0, var(--draw) * 40, 1));
   }
 
   .bed,
@@ -573,27 +679,6 @@ const tally = (count: number) =>
     stroke: var(--signal);
   }
 
-  /* Was über die Verbindungen wandert: kleine Datenkarten wie die
-     Karteikarten der Illustrationen, rot markiert auf dem Weg zu den
-     Tätern. */
-  .packet {
-    opacity: 0;
-  }
-
-  .card {
-    fill: light-dark(#ffffff, #e9ebed);
-    stroke: light-dark(#8f979e, #8f979e);
-    stroke-width: 0.8;
-  }
-
-  .stripe {
-    fill: #3a3f45;
-  }
-
-  .packet.red .stripe {
-    fill: var(--signal);
-  }
-
   .node {
     --show: 1;
     --leak: 0;
@@ -603,9 +688,6 @@ const tally = (count: number) =>
   .node .body {
     transform-box: fill-box;
     transform-origin: center;
-  }
-
-  .node .body {
     opacity: calc(var(--show) * var(--fade));
     scale: calc(0.7 + var(--show) * 0.3);
   }
@@ -616,25 +698,8 @@ const tally = (count: number) =>
     filter: drop-shadow(0 6px 8px var(--material-shade));
   }
 
-  /* Das Ende: Max schiebt sein Erspartes unter die Matratze, und die
-     Nadel steht über seinem Bett. */
-  .map {
-    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
-  }
-
-  .home {
-    grid-area: 1 / 1;
-    place-self: center;
-    inline-size: min(100%, 52rem);
-    block-size: 100%;
-    min-block-size: 0;
-    object-fit: contain;
-    opacity: var(--pin);
-    translate: 0 calc((1 - var(--draw)) * 1.5rem);
-  }
-
-  /* Jede Station steht auf einem flachen Sockel. Ein Leck legt einen roten
-     Ring um den Sockel, der einmal ausschwingt. */
+  /* Jede Station steht auf einem flachen Sockel. Ein Datenleck legt einen
+     roten Ring um den Sockel, der einmal ausschwingt. */
   .plinth {
     fill: url(#web-plinth);
     stroke: light-dark(#c6cbcf, #454b51);
@@ -675,8 +740,10 @@ const tally = (count: number) =>
     }
   }
 
-  .name,
-  .case {
+  .name {
+    fill: var(--foreground);
+    font-size: 16px;
+    font-weight: 600;
     text-anchor: middle;
     paint-order: stroke;
     stroke: var(--panel);
@@ -684,33 +751,17 @@ const tally = (count: number) =>
     stroke-linejoin: round;
   }
 
-  .name {
-    fill: var(--foreground);
-    font-size: 16px;
-    font-weight: 600;
-  }
-
-  /* Ein Leck nennt den echten Fall darunter, rot. */
-  .case {
-    fill: var(--signal);
-    font-size: 13px;
-    font-weight: 600;
-    opacity: calc(var(--leak) * var(--fade));
-  }
-
   .net[data-shape="tall"] .name {
     font-size: 14px;
   }
 
   /* Die Jahresmeldungen unter der Börse: zehn Plätze, jedes Jahr wird
-     einer zur Karte. Die Zählung weicht, sobald das Leck den Fall nennt. */
+     einer zur Karte. Die Zählung weicht, sobald der Fall erscheint. */
   .reports {
     --reports: 1;
     opacity: var(--reports);
   }
 
-  /* Hochformat: Die Linie zum Finanzamt läuft links nach unten, die
-     Reihe rückt nach rechts aus dem Weg. */
   .net[data-shape="tall"] .reports {
     translate: 46px 0;
   }
@@ -722,6 +773,16 @@ const tally = (count: number) =>
 
   .report[data-filled] {
     opacity: 1;
+  }
+
+  .sheet {
+    fill: light-dark(#ffffff, #e9ebed);
+    stroke: #8f979e;
+    stroke-width: 0.8;
+  }
+
+  .stripe {
+    fill: #3a3f45;
   }
 
   .tally {
@@ -737,7 +798,110 @@ const tally = (count: number) =>
     opacity: calc(1 - var(--leak));
   }
 
-  /* ---------- Zielliste und Straße ------------------------------------- */
+  /* Karten: grau, was bei einer Stelle liegt; rot, was ein Datenleck
+     kopiert hat. Jede bewegt sich einmal, mit dem Scrollen. */
+  .card {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .card-bg {
+    fill: light-dark(#ffffff, #e9ebed);
+    stroke: #8f979e;
+    stroke-width: 1;
+    filter: drop-shadow(0 2px 3px var(--material-shade));
+  }
+
+  .card-stripe {
+    fill: #3a3f45;
+  }
+
+  .card-text {
+    fill: #1f2124;
+    font-size: 13px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+
+  /* Hochformat: drei Stellen nebeneinander, die Karten werden schmaler. */
+  .net[data-shape="tall"] :is(.card-text, .case-text) {
+    font-size: 11px;
+  }
+
+  .card.copy .card-bg {
+    stroke: var(--signal);
+    stroke-width: 1.5;
+  }
+
+  .card.copy .card-stripe {
+    fill: var(--signal);
+  }
+
+  .card.copy .card-text {
+    fill: var(--signal);
+  }
+
+  /* Der Fall unter einer Stelle: eine rote Marke, die eine Karte mit dem
+     Hergang öffnet. */
+  .case {
+    --on: 0;
+    opacity: var(--on);
+    pointer-events: none;
+    cursor: pointer;
+  }
+
+  .case[data-on] {
+    pointer-events: auto;
+  }
+
+  .case-bg {
+    fill: light-dark(#ffffff, #2b1416);
+    stroke: var(--signal);
+    stroke-width: 1.5;
+    transition: fill 140ms ease;
+  }
+
+  .case-text {
+    fill: var(--signal);
+    font-size: 13px;
+    font-weight: 700;
+    text-anchor: middle;
+    transition: fill 140ms ease;
+  }
+
+  .case-more circle {
+    fill: var(--signal);
+  }
+
+  .case-more text {
+    fill: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    font-style: italic;
+    text-anchor: middle;
+  }
+
+  .case:hover .case-bg,
+  .case[data-open] .case-bg {
+    fill: var(--signal);
+  }
+
+  .case:hover .case-text,
+  .case[data-open] .case-text {
+    fill: #fff;
+  }
+
+  .case:hover .case-more circle,
+  .case[data-open] .case-more circle {
+    fill: #fff;
+  }
+
+  .case:hover .case-more text,
+  .case[data-open] .case-more text {
+    fill: var(--signal);
+  }
+
+  /* ---------- Zielliste und Schlafzimmer ------------------------------- */
 
   /* Die Akte: die Zielliste aus den Illustrationen, mit Max auf Platz 07. */
   .file {
@@ -745,8 +909,7 @@ const tally = (count: number) =>
     display: grid;
     align-self: center;
     justify-self: center;
-    block-size: min(88%, 36rem);
-    min-block-size: 0;
+    block-size: min(92%, 34rem);
     margin: 0;
     opacity: var(--file);
     transform-origin: 50% 0;
@@ -763,14 +926,88 @@ const tally = (count: number) =>
     object-fit: contain;
   }
 
-  /* Max' Schlafzimmer mit dem Ersparten unter der Matratze. */
+  /* Das Ende: Max schiebt sein Erspartes unter die Matratze, und die
+     Nadel steht über seinem Bett. */
   .map {
     --map: 1;
     --draw: 1;
     --pin: 1;
     position: relative;
     display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     opacity: var(--map);
+  }
+
+  .home {
+    grid-area: 1 / 1;
+    place-self: center;
+    inline-size: min(100%, 52rem);
+    block-size: 100%;
+    min-block-size: 0;
+    object-fit: contain;
+    opacity: var(--pin);
+    translate: 0 calc((1 - var(--draw)) * 1.5rem);
+  }
+
+  /* ---------- Karte zum Fall ------------------------------------------- */
+
+  /* Neben der Marke, nicht über der ganzen Seite: wer mit der Maus darüber
+     fährt, liest kurz nach und scrollt weiter. */
+  .case-card {
+    position: fixed;
+    inset: auto;
+    inline-size: min(24rem, calc(100vw - 1.5rem));
+    max-block-size: min(70svh, 32rem);
+    margin: 0;
+    padding: var(--space-s) var(--space-m) var(--space-m);
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    color: var(--foreground);
+    background: var(--background);
+    box-shadow: 0 12px 32px #0000002e;
+  }
+
+  .case-card .dateline {
+    margin: 0 2rem var(--space-3xs) 0;
+    color: var(--ink-3);
+    font-size: var(--step--1);
+  }
+
+  .case-card h4 {
+    font-size: var(--step-1);
+    font-weight: 600;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .case-card article > p:not(.dateline) {
+    color: var(--ink-2);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .case-card .text-link {
+    margin-block-start: var(--space-s);
+  }
+
+  .case-close {
+    position: absolute;
+    inset: var(--space-2xs) var(--space-2xs) auto auto;
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    border: 0;
+    border-radius: var(--radius-full);
+    color: var(--muted-foreground);
+    background: transparent;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .case-close:hover {
+    color: var(--foreground);
+    background: var(--panel);
   }
 
   /* ---------- Notiz --------------------------------------------------- */
@@ -790,43 +1027,22 @@ const tally = (count: number) =>
     .ripple {
       animation: none;
     }
-
-    .packet {
-      display: none;
-    }
   }
 
   /* ---------- Breitere Bildschirme ------------------------------------- */
 
-  /* Der Satz links, das Netz rechts über die ganze Höhe. */
   @container campaign (width >= 56rem) {
     .stage {
-      grid-template-columns: minmax(18rem, 0.7fr) minmax(0, 1.3fr);
-      grid-template-rows: auto minmax(0, 1fr) auto;
-      gap: var(--space-s) var(--space-l);
+      gap: var(--space-s);
       padding-block: var(--space-s) var(--space-m);
     }
 
-    .rail {
-      grid-column: 1 / -1;
-    }
-
-    .note {
-      grid-column: 2;
-    }
-
     .says {
-      align-self: center;
-      padding-block-end: 6svh;
-    }
-
-    .say h2,
-    .say h3 {
-      font-size: clamp(1.75rem, 0.9rem + 1.9vw, 2.75rem);
+      padding: var(--space-m) var(--space-l) 0;
     }
 
     .say .text {
-      font-size: var(--step-1);
+      font-size: var(--step-0);
     }
   }
 </style>
@@ -837,13 +1053,10 @@ const tally = (count: number) =>
   // derives the whole stage from p, so scrolling back rewinds it. With
   // reduced motion, nothing travels or zooms and every change snaps.
   type Shape = "wide" | "mid" | "tall"
-  type Layout = Record<string, [number, number]>
-  // The size of each layout's drawing, as in the markup.
-  const sizes: Record<Shape, [number, number]> = {
-    wide: [1200, 600],
-    mid: [900, 700],
-    tall: [400, 840],
-  }
+  type Point = [number, number]
+  type Layout = Record<string, Point>
+  type Camera = [number, number, number, number]
+  const shapes: Shape[] = ["wide", "mid", "tall"]
 
   const root = document.querySelector<HTMLElement>("[data-web]")
   if (root) start(root)
@@ -858,7 +1071,6 @@ const tally = (count: number) =>
     const says = all("[data-say]")
     const nodeEls = all("[data-node]")
     const edgeEls = [...root.querySelectorAll<SVGGElement>("[data-edge]")]
-    const packets = all("[data-packet]")
     const links = [...root.querySelectorAll<HTMLAnchorElement>("[data-goto]")]
     const net = root.querySelector<SVGSVGElement>("[data-net]")
     const view = one(".view")
@@ -873,23 +1085,29 @@ const tally = (count: number) =>
     >
     const cameras = JSON.parse(root.dataset.cameras ?? "{}") as Record<
       Shape,
-      [number, number, number][]
+      Camera[]
     >
     const ground = Number(root.dataset.ground)
+    const reportScene = 1
     const leakScene = 2
     const matchScene = 3
     const riskScene = 4
     // There is no scene after the risk; the last picture stays.
     const endScene = 99
+    // Where a place's card and case lie, below its name. The exchange
+    // keeps its pile of reports between the two.
+    const cardBelow = 92
+    const caseBelow = (id: string) => (id === "provider" ? 156 : 122)
     // The places with a case, in the order they light up.
-    const leaking = nodeEls.filter((node) => node.querySelector(".case"))
-    // The pile of annual reports at the exchange, filled during the tax
-    // office scene.
+    const leaking = nodeEls.filter((node) =>
+      root.querySelector(`[data-case-pill="${node.dataset.node}"]`),
+    )
     const pile = one("[data-reports]")
     const reportEls = all("[data-report]")
     const tallyEl = one("[data-tally]")
-    const reportScene = 1
+    const reportCard = one("[data-report-card]")
     let filled = -1
+    let sentYear = -1
 
     // When a place, or the line to it, appears: in its scene, one after
     // another.
@@ -897,6 +1115,10 @@ const tally = (count: number) =>
       const data = (element as HTMLElement).dataset
       return Number(data.scene) + 0.05 + Number(data.order ?? 0) * 0.1
     }
+    // When a place's case lights up: the exchange first, the others one
+    // after another.
+    const leakAt = (order: number) =>
+      leakScene + (order === 0 ? 0.08 : 0.22 + order * 0.13)
     const clamp = (value: number) => Math.min(1, Math.max(0, value))
     const ramp = (value: number, from: number, to: number) =>
       clamp((value - from) / (to - from))
@@ -907,8 +1129,18 @@ const tally = (count: number) =>
       motion.matches ? (value >= 0.5 ? 1 : 0) : value
     const set = (element: Element, name: string, value: number) =>
       (element as HTMLElement).style.setProperty(name, String(value))
+    // A card's way from one point to another, in a low arc.
+    const travel = (from: Point, to: Point, t: number, lift = 60): Point => [
+      from[0] + (to[0] - from[0]) * t,
+      from[1] + (to[1] - from[1]) * t - Math.sin(Math.PI * t) * lift,
+    ]
+    const place = (element: Element, [x, y]: Point, opacity: number) => {
+      element.setAttribute("transform", `translate(${x} ${y})`)
+      ;(element as SVGElement).style.opacity = String(opacity)
+    }
 
     let shape: Shape = "wide"
+    let at: Layout = layouts.wide
     let arranged = false
     let queued = false
     let visible = false
@@ -916,24 +1148,48 @@ const tally = (count: number) =>
     let shownP = -1
     let last = 0
 
+    // Cards and case labels fit their text, in whatever font the page got.
+    const fit = () => {
+      for (const group of root.querySelectorAll<SVGGElement>(".card, .case")) {
+        const text = group.querySelector<SVGTextElement>(
+          ".card-text, .case-text",
+        )
+        if (!text) continue
+        const width = text.getComputedTextLength()
+        const isCase = group.classList.contains("case")
+        const total = width + (isCase ? 44 : 28)
+        const bg = group.querySelector(".card-bg, .case-bg")
+        bg?.setAttribute("x", String(-total / 2))
+        bg?.setAttribute("width", String(total))
+        group
+          .querySelector(".card-stripe")
+          ?.setAttribute("x", String(-total / 2))
+        if (isCase) {
+          text.setAttribute("x", String(-9))
+          group
+            .querySelector(".case-more")
+            ?.setAttribute("transform", `translate(${total / 2 - 15} 0)`)
+        }
+      }
+    }
+
     // Places the nodes and draws the lines for the screen's shape.
     const arrange = () => {
-      const box = view.getBoundingClientRect()
+      const box = net.getBoundingClientRect()
       // The layout that shows the whole network largest in the space it
       // gets.
       const scale = (name: Shape) => {
-        const [, , width] = cameras[name][2]
-        const height = (width * sizes[name][1]) / sizes[name][0]
+        const [, , width, height] = cameras[name][2]
         return Math.min(box.width / width, box.height / height)
       }
-      const next = (Object.keys(sizes) as Shape[]).reduce((best, name) =>
+      const next = shapes.reduce((best, name) =>
         scale(name) > scale(best) ? name : best,
       )
       if (arranged && next === shape) return
       arranged = true
       shape = next
       net.dataset.shape = shape
-      const at = layouts[shape]
+      at = layouts[shape]
       for (const node of nodeEls) {
         const [x, y] = at[node.dataset.node ?? ""] ?? [0, 0]
         node.setAttribute("transform", `translate(${x} ${y})`)
@@ -963,6 +1219,7 @@ const tally = (count: number) =>
         for (const path of edge.querySelectorAll("path"))
           path.setAttribute("d", d)
       }
+      fit()
     }
 
     const progress = () => {
@@ -973,6 +1230,11 @@ const tally = (count: number) =>
         if (box.top <= line) p = index + clamp((line - box.top) / box.height)
       })
       return p
+    }
+
+    const below = (id: string, dy: number): Point => {
+      const [x, y] = at[id] ?? [0, 0]
+      return [x, y + dy]
     }
 
     const render = (now = performance.now()) => {
@@ -1008,50 +1270,76 @@ const tally = (count: number) =>
 
       // The camera moves to the scene's view in the first part of it.
       const keys = cameras[shape]
-      const [width, height] = sizes[shape]
       const from = keys[Math.max(0, scene - 1)]
       const to = keys[scene]
       const move =
         motion.matches || scene === 0 ? 1 : ease(ramp(local, 0, 0.45))
-      const cx = from[0] + (to[0] - from[0]) * move
-      const cy = from[1] + (to[1] - from[1]) * move
-      const w = from[2] + (to[2] - from[2]) * move
-      const h = (w * height) / width
+      const [cx, cy, needW, needH] = from.map(
+        (value, index) => value + (to[index] - value) * move,
+      )
+      // Widen the shorter side to the screen's proportions.
+      const drawn = net.getBoundingClientRect()
+      const aspect = drawn.width / drawn.height || 2
+      const w = Math.max(needW, needH * aspect)
+      const h = w / aspect
       net.setAttribute("viewBox", `${cx - w / 2} ${cy - h / 2} ${w} ${h}`)
       // Drawing units per screen pixel, so lines keep their width.
-      const drawn = net.getBoundingClientRect()
-      set(net, "--unit", Math.max(w / drawn.width, h / drawn.height) || 1)
+      set(net, "--unit", w / drawn.width || 1)
 
-      // Places appear in their scene; each with a case lights up red in
-      // turn once the leaks begin. For the list and the risk, all but the
-      // offenders step back.
+      // For the reports, all but the exchange and the tax office step
+      // back; for the list and the risk, all but the offenders.
+      const focus =
+        snap(ramp(p, reportScene, reportScene + 0.15)) *
+        (1 - snap(ramp(p, leakScene - 0.1, leakScene + 0.05)))
       const away =
         snap(ramp(p, matchScene - 0.08, matchScene + 0.15)) *
         (1 - snap(ramp(p, endScene - 0.1, endScene + 0.1)))
+      const fades = new Map<string, number>()
       for (const node of nodeEls) {
-        const id = node.dataset.node
+        const id = node.dataset.node ?? ""
         const shown =
           id === "you"
             ? 1
             : snap(ramp(p, appear(node) - 0.12, appear(node) + 0.06))
         const order = leaking.indexOf(node)
-        // The exchange leaks first, the others one after another.
-        const start = order === 0 ? 0.05 : 0.25 + order * 0.12
         const leak =
-          order < 0
-            ? 0
-            : snap(ramp(p, leakScene + start, leakScene + start + 0.08))
+          order < 0 ? 0 : snap(ramp(p, leakAt(order), leakAt(order) + 0.06))
+        const aside = id === "provider" || id === "taxOffice" ? 0 : focus
+        const fade = id === "crooks" ? 1 : (1 - away * 0.9) * (1 - aside * 0.7)
+        fades.set(id, fade)
         set(node, "--show", shown)
         set(node, "--leak", leak)
         node.toggleAttribute("data-leaked", leak >= 0.5)
-        set(node, "--fade", id === "crooks" ? 1 : 1 - away * 0.9)
+        set(node, "--fade", fade)
       }
 
-      // One report a year, from the first to the tenth, while the line to
-      // the tax office carries them.
-      const count = Math.ceil(
-        ramp(p, reportScene + 0.15, reportScene + 0.85) * reportEls.length,
-      )
+      // Each place gets its card once: it travels from Max and stays
+      // below the place's name. The tax office's arrives with the first
+      // report.
+      for (const card of all("[data-card]")) {
+        const id = card.dataset.card ?? ""
+        const node = nodeEls.find((candidate) => candidate.dataset.node === id)
+        if (!node) continue
+        const start =
+          id === "taxOffice" ? reportScene + 0.15 : appear(node) + 0.02
+        const t = motion.matches
+          ? snap(ramp(p, start, start + 0.2))
+          : ease(ramp(p, start, start + 0.2))
+        const origin =
+          id === "taxOffice" ? below("provider", 0) : below("you", 0)
+        place(
+          card,
+          travel(origin, below(id, cardBelow), t),
+          t > 0 ? (fades.get(id) ?? 1) : 0,
+        )
+      }
+
+      // One report a year, from the first to the tenth: a card with the
+      // year travels from the exchange to the tax office, and the pile at
+      // the exchange grows.
+      const years =
+        ramp(p, reportScene + 0.15, reportScene + 0.85) * reportEls.length
+      const count = Math.ceil(years)
       if (pile && count !== filled) {
         filled = count
         set(pile, "--reports", count > 0 ? 1 : 0)
@@ -1065,6 +1353,51 @@ const tally = (count: number) =>
           }`
         }
       }
+      if (reportCard && pile) {
+        const sending = years > 0 && years < reportEls.length && !motion.matches
+        const year = Number(pile.dataset.first) + Math.floor(years)
+        if (year !== sentYear) {
+          sentYear = year
+          const text = reportCard.querySelector("text")
+          if (text) text.textContent = `${reportCard.dataset.label} ${year}`
+        }
+        const t = ease(years - Math.floor(years))
+        place(
+          reportCard,
+          travel(below("provider", 10), below("taxOffice", 10), t, 40),
+          sending ? Math.min(1, Math.sin(Math.PI * t) * 3) : 0,
+        )
+      }
+
+      // A leak copies the place's card: a red copy leaves the grey one
+      // and travels to the offenders, where the copies line up.
+      for (const copy of all("[data-copy]")) {
+        const id = copy.dataset.copy ?? ""
+        const order = leaking.findIndex((node) => node.dataset.node === id)
+        const start = leakAt(order) + 0.04
+        const t = motion.matches
+          ? snap(ramp(p, start, start + 0.14))
+          : ease(ramp(p, start, start + 0.14))
+        // What the offenders now hold, one copy below the other.
+        const stack = below("crooks", 94 + order * 30)
+        place(
+          copy,
+          travel(below(id, cardBelow), stack, t, 70),
+          t > 0 ? 1 - away : 0,
+        )
+      }
+
+      // The case below each place, once its leak is shown.
+      for (const pill of all("[data-case-pill]")) {
+        const id = pill.dataset.casePill ?? ""
+        const node = nodeEls.find((candidate) => candidate.dataset.node === id)
+        const leak = Number.parseFloat(
+          node?.style.getPropertyValue("--leak") ?? "0",
+        )
+        const on = leak * (1 - away)
+        place(pill, below(id, caseBelow(id)), on)
+        pill.toggleAttribute("data-on", on > 0.5)
+      }
 
       for (const edge of edgeEls) {
         const toCrooks = edge.dataset.to === "crooks"
@@ -1074,20 +1407,12 @@ const tally = (count: number) =>
         const draw = toCrooks
           ? Number.parseFloat(node?.style.getPropertyValue("--leak") ?? "0")
           : snap(ramp(p, appear(edge) - 0.1, appear(edge) + 0.12))
+        const ends = [edge.dataset.from ?? "", edge.dataset.to ?? ""]
+        const fade = toCrooks
+          ? 1 - away
+          : Math.min(...ends.map((id) => fades.get(id) ?? 1))
         set(edge, "--draw", draw)
-        set(edge, "--fade", toCrooks ? 1 : 1 - away * 0.85)
-      }
-      for (const packet of packets) {
-        const edge = root.querySelector(
-          `#edge-${packet.dataset.packet}`,
-        )?.parentElement
-        const draw = edge
-          ? Number.parseFloat(edge.style.getPropertyValue("--draw"))
-          : 0
-        const fade = edge
-          ? Number.parseFloat(edge.style.getPropertyValue("--fade"))
-          : 1
-        packet.style.opacity = String(draw >= 1 ? fade : 0)
+        set(edge, "--fade", fade)
       }
 
       // The list: the network gives way to the target list, and the
@@ -1118,6 +1443,7 @@ const tally = (count: number) =>
       // The timeline marks the scene and keeps it in view in the pill.
       if (scene !== current) {
         current = scene
+        if (scene !== leakScene) closeCase()
         links.forEach((link, index) => {
           if (index === scene) link.setAttribute("aria-current", "step")
           else link.removeAttribute("aria-current")
@@ -1130,12 +1456,109 @@ const tally = (count: number) =>
             behavior: motion.matches ? "auto" : "smooth",
           })
       }
+      if (anchor) placeCard()
 
       const box = root.getBoundingClientRect()
       document.documentElement.toggleAttribute(
         "data-immersive",
         box.top <= window.innerHeight * 0.2 && box.bottom >= window.innerHeight,
       )
+    }
+
+    // ---------- The card with a case ------------------------------------
+    // Pointing at a case opens its card next to it; leaving it closes the
+    // card again unless the pointer moved onto it. A tap or click keeps it
+    // open until Escape, a tap elsewhere or the close button.
+    const card = root.querySelector<HTMLElement>("[data-case-card]")
+    const bodies = card
+      ? [...card.querySelectorAll<HTMLElement>("[data-case-body]")]
+      : []
+    let anchor: Element | null = null
+    let pinned = false
+    let closing = 0
+
+    const placeCard = () => {
+      if (!card || !anchor) return
+      const box = anchor.getBoundingClientRect()
+      const own = card.getBoundingClientRect()
+      const gap = 10
+      const left = Math.min(
+        Math.max(box.left + box.width / 2 - own.width / 2, 12),
+        window.innerWidth - own.width - 12,
+      )
+      const room = window.innerHeight - box.bottom
+      const top =
+        room > own.height + gap + 12
+          ? box.bottom + gap
+          : box.top - own.height - gap
+      card.style.left = `${Math.round(left)}px`
+      card.style.top = `${Math.round(Math.max(12, top))}px`
+    }
+
+    const markOpen = (id: string | null) => {
+      for (const pill of all("[data-case-pill]"))
+        pill.toggleAttribute("data-open", pill.dataset.case === id)
+      for (const button of all("[data-case-open]"))
+        button.setAttribute(
+          "aria-expanded",
+          String(button.dataset.caseOpen === id),
+        )
+    }
+
+    const openCase = (id: string, from: Element, keep: boolean) => {
+      if (!card) return
+      window.clearTimeout(closing)
+      for (const body of bodies) body.hidden = body.dataset.caseBody !== id
+      card.setAttribute("aria-labelledby", `case-card-${id}`)
+      anchor = from
+      pinned = keep || pinned
+      if (!card.matches(":popover-open")) card.showPopover()
+      markOpen(id)
+      placeCard()
+    }
+
+    function closeCase() {
+      window.clearTimeout(closing)
+      if (card?.matches(":popover-open")) card.hidePopover()
+    }
+
+    const closeSoon = () => {
+      if (pinned) return
+      window.clearTimeout(closing)
+      closing = window.setTimeout(closeCase, 220)
+    }
+
+    card?.addEventListener("toggle", (event) => {
+      if ((event as ToggleEvent).newState === "closed") {
+        anchor = null
+        pinned = false
+        markOpen(null)
+      }
+    })
+    card?.addEventListener("pointerenter", () => window.clearTimeout(closing))
+    card?.addEventListener("pointerleave", closeSoon)
+    card
+      ?.querySelector("[data-case-close]")
+      ?.addEventListener("click", closeCase)
+
+    const hovering = (event: PointerEvent) => event.pointerType === "mouse"
+    for (const trigger of [
+      ...all("[data-case-pill]"),
+      ...all("[data-case-open]"),
+    ]) {
+      const id = trigger.dataset.case ?? trigger.dataset.caseOpen ?? ""
+      trigger.addEventListener("pointerenter", (event) => {
+        if (hovering(event)) openCase(id, trigger, false)
+      })
+      trigger.addEventListener("pointerleave", (event) => {
+        if (hovering(event)) closeSoon()
+      })
+      trigger.addEventListener("click", (event) => {
+        event.stopPropagation()
+        const open = card?.matches(":popover-open") && anchor === trigger
+        if (open && pinned) closeCase()
+        else openCase(id, trigger, true)
+      })
     }
 
     const queue = () => {
@@ -1146,7 +1569,10 @@ const tally = (count: number) =>
 
     new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting
-      if (!visible) document.documentElement.removeAttribute("data-immersive")
+      if (!visible) {
+        document.documentElement.removeAttribute("data-immersive")
+        closeCase()
+      }
       queue()
     }).observe(root)
     window.addEventListener("scroll", queue, { passive: true })
@@ -1155,6 +1581,10 @@ const tally = (count: number) =>
       queue()
     })
     motion.addEventListener("change", () => render())
+    document.fonts?.ready.then(() => {
+      fit()
+      queue()
+    })
 
     root.toggleAttribute("data-ready", true)
     render()
