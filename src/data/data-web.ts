@@ -177,6 +177,12 @@ export const caseLabels = {
     en: "All data leaks with sources",
   },
   close: { de: "Schließen", en: "Close" },
+  // On phones the copies pile up at the offenders without labels, with
+  // one count below.
+  copies: {
+    de: { one: "Kopie", many: "Kopien" },
+    en: { one: "copy", many: "copies" },
+  },
 }
 
 // A short note under the network.
