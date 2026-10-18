@@ -3,10 +3,10 @@ import ArgumentPoints from "@/components/ArgumentPoints.astro"
 import Artwork from "@/components/Artwork.astro"
 import CampaignPartners from "@/components/CampaignPartners.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
+import DataWeb from "@/components/DataWeb.astro"
 import LeakHeadlines from "@/components/LeakHeadlines.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
-import Tale from "@/components/Tale.astro"
 import Layout from "@/layouts/Layout.astro"
 import { homeObjections, points } from "@/data/arguments"
 import { campaignStatus } from "@/data/campaign"
@@ -59,36 +59,7 @@ const objections = homeObjections.map((id) => points.en[id])
     </section>
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">What happens to your data</h2>
-      <Tale
-        language="en"
-        steps={[
-          {
-            art: "accountToRecord",
-            title: "Your account becomes a file.",
-            text: "Your provider records your ID, your transactions and details of your wallet addresses under anti-money-laundering rules. For DAC8 it adds your tax identification number, tax residence and annual totals, for every customer and without suspicion.",
-          },
-          {
-            art: "yearsOnFile",
-            title: "More about you. Every year.",
-            text: "Under anti-money-laundering rules, your provider currently keeps these records for up to ten years after the customer relationship ends. It deletes each annual DAC8 report only ten years after the reporting year.",
-          },
-          {
-            art: "dataHack",
-            title: "Stored. Hacked. Sold.",
-            text: "The more data sits in one place, and the longer, the more a break-in pays. Exchanges, identity verification services and tax administrations have already lost such data.",
-          },
-          {
-            art: "rankedPortrait",
-            title: "The more you move, the higher you rank.",
-            text: "In Austria, fraudsters phish for crypto holders with fake tax-office messages. A breach at a provider would hand them the list ready-made, sorted by volume.",
-          },
-          {
-            art: "targetAtHome",
-            title: "Your profile. Your home address. A target.",
-            text: "Bitcoin works like cash: whoever holds the keys can move it. That is why a leak linking names, home addresses and presumed holdings is so dangerous. In the first half of 2026, the French interior ministry counted 77 kidnappings, unlawful detentions and extortion cases involving crypto-assets.",
-          },
-        ]}
-      />
+      <DataWeb language="en" />
       <a class="text-link" href="/en/your-file/">What DAC8 reports about you</a>
     </section>
 

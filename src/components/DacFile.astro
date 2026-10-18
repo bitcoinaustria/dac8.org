@@ -12,7 +12,8 @@ interface Props {
 // (#gemeldet, FAQ) and of AffectedCheck.astro in everyday words, so change
 // them together. Two rules from the campaign lawyer's notes still hold: the
 // report never says which wallet is yours, and what goes to the tax office
-// stays apart from what the provider keeps. CSS :has() shows the answer to
+// stays apart from what the provider keeps. The data-risk line under "No"
+// follows the Ledger case in src/data/leaks.ts. CSS :has() shows the answer to
 // the chosen option, so the page needs no script.
 const { language } = Astro.props
 const en = language === "en"
@@ -40,6 +41,7 @@ const options = en
         text: [
           "That holds as long as you never buy, sell or hold crypto through an exchange, broker or app.",
           "If you have done so since 2020, that provider still holds your ID, your wallet addresses and your transactions, currently until ten years after you leave.",
+          "Data risks remain even without a provider: if you order a hardware wallet online, a small device for keeping your bitcoin yourself, the shop gets your name and delivery address. In 2020 the home addresses of 272,000 buyers ended up online this way. The less is collected about you, the less can be lost.",
         ],
       },
       {
@@ -70,6 +72,7 @@ const options = en
         text: [
           "Das gilt, solange du nie über eine Börse, einen Broker oder eine App Krypto kaufst, verkaufst oder verwahrst.",
           "Hast du das seit 2020 getan, hat dieser Anbieter deinen Ausweis, deine Wallet-Adressen und deine Transaktionen noch, derzeit bis zehn Jahre nach deiner Kündigung.",
+          "Datenrisiken gibt es auch ohne Anbieter: Bestellst du eine Hardware-Wallet online, also ein kleines Gerät, auf dem du deine Bitcoin selbst verwahrst, bekommt der Shop deinen Namen und deine Lieferanschrift. 2020 gelangten so die Anschriften von 272.000 Käufern ins Netz. Je weniger über dich gesammelt wird, desto weniger kann verloren gehen.",
         ],
       },
       {

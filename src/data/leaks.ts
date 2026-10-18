@@ -729,6 +729,39 @@ export const leaks: Leak[] = [
     ],
   },
   {
+    id: "gis",
+    name: same("GIS"),
+    year: 2020,
+    holders: ["authority", "vendor"],
+    kind: {
+      de: "Rundfunkgebühr, mit Meldedaten",
+      en: "Broadcasting fee, with registration data",
+    },
+    lost: ["identity"],
+    headline: {
+      de: "Meldedaten von Millionen Menschen in Österreich, über einen Testserver.",
+      en: "Registration data on millions in Austria, through a test server.",
+    },
+    text: {
+      de: "Die GIS hob die Rundfunkgebühr ein und bekam dafür Meldedaten aus den Melderegistern. Für einen Test gab sie mindestens fünf Millionen echte Datensätze an einen IT-Dienstleister, der sie auf einen ungesicherten Server lud. Im Mai 2020 kopierte ein Hacker Namen, Anschriften und Geburtsdaten, danach wurden sie im Netz zum Kauf angeboten. Verdeckte Ermittler kauften den Datenbestand noch im selben Monat. Ein Verdächtiger wurde in den Niederlanden gefasst, das Strafverfahren ging dorthin.",
+      en: "GIS collected Austria’s broadcasting fee and received registration data from the population registers to do so. For a test, it handed at least five million real records to an IT contractor, who loaded them onto an unsecured server. In May 2020 a hacker copied names, postal addresses and dates of birth, which were then offered for sale online. Undercover investigators bought the data the same month. A suspect was arrested in the Netherlands, and the prosecution was handed over there.",
+    },
+    people: 5000000,
+    sources: [
+      {
+        label: {
+          de: "Bundesverwaltungsgericht",
+          en: "Federal Administrative Court",
+        },
+        href: "https://www.ris.bka.gv.at/Dokumente/Bvwg/BVWGT_20240705_W292_2284228_1_00/BVWGT_20240705_W292_2284228_1_00.pdf",
+      },
+      {
+        label: same("ORF"),
+        href: "https://orf.at/stories/3303531/",
+      },
+    ],
+  },
+  {
     id: "xplain",
     name: same("Xplain"),
     year: 2023,

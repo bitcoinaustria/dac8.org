@@ -3,10 +3,10 @@ import ArgumentPoints from "@/components/ArgumentPoints.astro"
 import Artwork from "@/components/Artwork.astro"
 import CampaignPartners from "@/components/CampaignPartners.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
+import DataWeb from "@/components/DataWeb.astro"
 import LeakHeadlines from "@/components/LeakHeadlines.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
-import Tale from "@/components/Tale.astro"
 import Layout from "@/layouts/Layout.astro"
 import { homeObjections, points } from "@/data/arguments"
 import { campaignStatus } from "@/data/campaign"
@@ -60,36 +60,7 @@ const objections = homeObjections.map((id) => points.de[id])
 
     <section id="problem" aria-labelledby="problem-heading">
       <h2 id="problem-heading">Was mit deinen Daten passiert</h2>
-      <Tale
-        language="de"
-        steps={[
-          {
-            art: "accountToRecord",
-            title: "Dein Konto wird zur Akte.",
-            text: "Ausweis, Transaktionen und Angaben zu deinen Wallet-Adressen hält dein Anbieter nach den Geldwäschevorschriften fest. Für DAC8 kommen Steuernummer, Steuerwohnsitz und deine Jahreswerte dazu, bei allen Kunden und ohne Verdacht.",
-          },
-          {
-            art: "yearsOnFile",
-            title: "Jedes Jahr mehr über dich.",
-            text: "Nach den Geldwäschevorschriften bewahrt dein Anbieter diese Unterlagen derzeit bis zehn Jahre nach Ende der Kundenbeziehung auf. Jede Jahresmeldung für DAC8 löscht er erst zehn Jahre nach dem Meldejahr.",
-          },
-          {
-            art: "dataHack",
-            title: "Gespeichert. Gehackt. Verkauft.",
-            text: "Je mehr an einer Stelle liegt und je länger, desto lohnender der Einbruch. Börsen, Identifizierungsdienste und Finanzverwaltungen haben solche Daten schon verloren.",
-          },
-          {
-            art: "rankedPortrait",
-            title: "Wer viel bewegt, steht oben auf der Liste.",
-            text: "Betrüger fischen in Österreich mit gefälschten FinanzOnline-Nachrichten nach Krypto-Besitzern. Ein Leck beim Anbieter würde ihnen die Liste fertig liefern, sortiert nach Volumen.",
-          },
-          {
-            art: "targetAtHome",
-            title: "Dein Profil. Deine Wohnadresse. Ein Angriffsziel.",
-            text: "Bitcoin funktioniert wie Bargeld: Wer die Schlüssel hat, kann ihn übertragen. Darum ist ein Leck gefährlich, wenn es Namen, Wohnadressen und mutmaßliche Bestände verbindet. In Frankreich zählte das Innenministerium 77 Entführungen, Freiheitsberaubungen und Erpressungen rund um Kryptowerte im ersten Halbjahr 2026.",
-          },
-        ]}
-      />
+      <DataWeb language="de" />
       <a class="text-link" href="/deine-akte/">Was DAC8 über dich meldet</a>
     </section>
 
