@@ -1,6 +1,7 @@
 ---
 import {
   edges,
+  exposed,
   nodes,
   type Place,
   note,
@@ -12,6 +13,7 @@ import { Picture } from "astro:assets"
 import { artwork, imageFor } from "@/data/artwork"
 import { leaks } from "@/data/leaks"
 import type { Language } from "@/lib/i18n"
+import homeAnchors from "../assets/network/home.json"
 
 // "Where your data goes", as a full-screen scroll film: a network that
 // grows from Max to every place that keeps a copy of his data, lights up
@@ -38,9 +40,24 @@ const render = (name: string) =>
 const art: Partial<Record<Place, string>> = Object.fromEntries(
   nodes.map((node) => [node.id, render(node.id.toLowerCase())]),
 )
+// The street with the pin, and Max' house up close, closed and as glass.
+// home.json holds where the close-up sits in the street picture and where
+// the things inside are, as shares of the picture.
 const doorstep = render("doorstep")
-const doorstepOpen = render("doorstep-open")
-const inside = render("inside") ?? doorstepOpen
+const home = render("home")
+const homeGlass = render("home-open")
+const zoom = homeAnchors.street
+const anchor = (name: string) => {
+  const point = homeAnchors[name as keyof typeof homeAnchors]
+  if (!point || !("x" in point) || "width" in point)
+    throw new Error(`Unknown anchor: ${name}`)
+  return point
+}
+const placeName = (id: Place) => {
+  const node = nodes.find((candidate) => candidate.id === id)
+  if (!node) throw new Error(`Unknown place: ${id}`)
+  return node.name[language]
+}
 // The file the matching produces is the target list from the site's
 // illustrations, with Max at number 07.
 const target = artwork.rankedPortrait
@@ -157,7 +174,7 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
         <div
           class="spacer"
           id={`netz-${scene.id}`}
-          style={`--len: ${[100, 110, 120, 110, 110, 110][index] ?? 110}`}
+          style={`--len: ${[100, 110, 120, 110, 110, 170][index] ?? 110}`}
         >
         </div>
       ))}
@@ -417,11 +434,29 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
       </div>
 
       <div class="map" aria-hidden="true">
-        <div class="house">
+        <div
+          class="home"
+          style={`--zx: ${zoom.x}; --zy: ${zoom.y}; --zw: ${zoom.width}`}
+        >
           <img class="street" src={doorstep} alt="">
-          <img class="street open" src={doorstepOpen} alt="">
+          <img class="closed" src={home} alt="">
+          <img class="glass" src={homeGlass} alt="">
+          <i class="scan"></i>
+          {exposed.map((item, index) => {
+            const point = anchor(item.anchor)
+            return (
+              <span
+                class="seen"
+                data-seen
+                data-side={point.x < 0.5 ? "start" : "end"}
+                style={`--x: ${point.x}; --y: ${point.y}; --i: ${index}`}
+              >
+                <b>{item.label[language]}</b>
+                <small>{placeName(item.from)}</small>
+              </span>
+            )
+          })}
         </div>
-        <img class="inside" src={inside} alt="">
         <div class="address">
           <b>Musterstraße 7</b>
           <span>{en ? "1010 Vienna" : "1010 Wien"}</span>
@@ -732,55 +767,169 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     filter: drop-shadow(0 6px 8px var(--material-shade));
   }
 
-  /* Das Haus am Ende, in drei Schritten beim Scrollen: die Häuserzeile
-     mit der Nadel, dann Max' Haus aufgeschnitten, dann ganz nah hinein,
-     auf Tresor und Hardware-Wallet. */
+  /* Das Haus am Ende: die Häuserzeile mit der Nadel, dann fährt die
+     Kamera an Max' Haus heran, ein Scan macht die Fassade zu Glas, und an
+     den Dingen drinnen steht, welche Liste sie verraten hat. Die
+     Nahaufnahme ist ein Ausschnitt des Straßenbilds; --zx, --zy und --zw
+     sagen, welcher. */
   .map {
+    container-type: size;
     grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   }
 
-  .house,
-  .inside {
+  .home {
+    /* Die Nahaufnahme, so groß sie in die Fläche passt, und die Straße
+       vor dem Heranfahren. */
+    --b: min(100cqw, 100cqh * 11 / 12);
+    --w0: min(100cqw, 100cqh * 1.6, 52rem);
+    --w: calc(var(--w0) + (var(--b) / var(--zw) - var(--w0)) * var(--zoom));
+    position: relative;
     grid-area: 1 / 1;
+    place-self: center;
+    inline-size: var(--b);
+    aspect-ratio: 11 / 12;
   }
 
-  .house {
-    display: grid;
-    align-self: center;
-    justify-self: center;
-    inline-size: min(100%, 52rem);
-    min-block-size: 0;
-    opacity: calc(var(--pin) * (1 - var(--inside, 0)));
-    translate: 0 calc((1 - var(--draw)) * 1.5rem);
-    scale: calc(1 + var(--inside, 0) * 0.9);
-    transform-origin: 46% 36%;
-  }
-
-  .street {
-    grid-area: 1 / 1;
+  .home > img {
+    position: absolute;
+    inset: 0;
     inline-size: 100%;
     block-size: 100%;
-    min-block-size: 0;
-    object-fit: contain;
   }
 
-  .street.open {
-    opacity: var(--cut, 0);
+  .home > .street {
+    inset-inline-start: calc(
+      (var(--b) - var(--w0)) /
+      2 *
+      (1 - var(--zoom)) -
+      var(--zx) *
+      var(--w) *
+      var(--zoom)
+    );
+    inset-block-start: calc(
+      (var(--b) * 12 / 11 - var(--w0) * 0.625) /
+      2 *
+      (1 - var(--zoom)) -
+      var(--zy) *
+      var(--w) *
+      0.625 *
+      var(--zoom)
+    );
+    inline-size: var(--w);
+    block-size: auto;
+    max-inline-size: none;
+    opacity: calc(var(--pin) * (1 - var(--home, 0)));
+    translate: 0 calc((1 - var(--draw)) * 1.5rem);
   }
 
-  .inside {
-    align-self: center;
-    justify-self: center;
-    inline-size: min(100%, 56rem);
-    block-size: 100%;
-    min-block-size: 0;
-    object-fit: contain;
-    opacity: var(--inside, 0);
-    scale: calc(0.85 + var(--inside, 0) * 0.15);
+  .closed {
+    opacity: var(--home, 0);
+  }
+
+  /* Die gläserne Front liegt über dem geschlossenen Haus und wird von oben
+     nach unten freigelegt. */
+  .glass {
+    opacity: var(--home, 0);
+    clip-path: inset(0 0 calc((1 - var(--scan, 0)) * 100%) 0);
+  }
+
+  .scan {
+    position: absolute;
+    inset-inline: 15%;
+    inset-block-start: calc(var(--scan, 0) * 100%);
+    block-size: 2px;
+    border-radius: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--signal) 20% 80%,
+      transparent
+    );
+    box-shadow: 0 0 12px 2px color-mix(in srgb, var(--signal) 45%, transparent);
+    opacity: calc(var(--home, 0) * var(--scanning, 0));
+  }
+
+  /* Was die Listen verraten: ein Punkt am Ding, daneben ein Schild mit
+     der Stelle, von der das Wissen stammt. */
+  .seen {
+    --seen: 0;
+    position: absolute;
+    inset-inline-start: calc(var(--x) * 100%);
+    inset-block-start: calc(var(--y) * 100%);
+    opacity: var(--seen);
+  }
+
+  .seen::before {
+    content: "";
+    position: absolute;
+    inline-size: 0.6rem;
+    block-size: 0.6rem;
+    border-radius: 50%;
+    background: var(--signal);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--signal) 25%, transparent);
+    translate: -50% -50%;
+    scale: calc(0.4 + var(--seen) * 0.6);
+  }
+
+  /* Schmal genug, dass die Schilder auch am Handy im Bild bleiben. */
+  .seen b,
+  .seen small {
+    display: block;
+    max-inline-size: 6.75rem;
+  }
+
+  .seen {
+    display: grid;
+    padding: 0.3rem 0.55rem;
+    border-radius: var(--radius-md);
+    background: var(--paper);
+    box-shadow:
+      0 0 0 1px var(--signal),
+      0 10px 24px -14px var(--material-shade);
+    translate: calc(-100% - 0.9rem) -50%;
+    line-height: 1.2;
+  }
+
+  .seen[data-side="end"] {
+    translate: 0.9rem -50%;
+  }
+
+  .seen::before {
+    inset-inline-start: calc(100% + 0.9rem);
+    inset-block-start: 50%;
+  }
+
+  .seen[data-side="end"]::before {
+    inset-inline-start: -0.9rem;
+  }
+
+  .seen::after {
+    content: "";
+    position: absolute;
+    inset-inline-start: 100%;
+    inset-block-start: 50%;
+    inline-size: 0.9rem;
+    block-size: 1px;
+    background: var(--signal);
+  }
+
+  .seen[data-side="end"]::after {
+    inset-inline-start: -0.9rem;
+  }
+
+  .seen b {
+    color: var(--signal);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .seen small {
+    color: var(--muted-foreground);
+    font-size: 0.6875rem;
   }
 
   .map .address {
-    opacity: calc(var(--pin) * (1 - var(--cut, 0)));
+    opacity: calc(var(--pin) * (1 - var(--zoom, 0)));
   }
 
   /* Weitere Stellen, die auch Daten halten, stehen klein und blass im
@@ -1034,6 +1183,7 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     --map: 1;
     --draw: 1;
     --pin: 1;
+    --zoom: 0;
     position: relative;
     display: grid;
     opacity: var(--map);
@@ -1105,11 +1255,6 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     .ripple,
     .caret {
       animation: none;
-    }
-
-    .house,
-    .inside {
-      transition: none;
     }
 
     .packet {
@@ -1199,6 +1344,7 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     const prompt = one(".prompt")
     const typed = one("[data-typed]")
     const map = one(".map")
+    const seen = all("[data-seen]")
     const railList = one(".rail ol")
     if (!net || !view || !file || !prompt || !typed || !map || !railList) return
 
@@ -1435,8 +1581,9 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
       prompt.toggleAttribute("data-typing", typing > 0 && typing < 1)
       set(prompt, "--res", snap(ramp(p, matchScene + 0.76, matchScene + 0.82)))
 
-      // The risk: the street with the pin at his door, then his house cut
-      // open, then, one scene on, close up on what is inside.
+      // The risk: the street with the pin at his door. One scene on, the
+      // camera moves up to his house, a scan turns its front to glass, and
+      // labels show what each list gave away.
       set(
         map,
         "--map",
@@ -1449,14 +1596,23 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
         motion.matches ? 1 : out(ramp(p, riskScene, riskScene + 0.35)),
       )
       set(map, "--pin", snap(out(ramp(p, riskScene + 0.3, riskScene + 0.45))))
-      set(map, "--cut", snap(ramp(p, riskScene + 0.6, riskScene + 0.8)))
       set(
         map,
-        "--inside",
+        "--zoom",
         motion.matches
           ? Number(p >= insideScene)
-          : ease(ramp(p, insideScene - 0.05, insideScene + 0.3)),
+          : ease(ramp(p, insideScene - 0.02, insideScene + 0.18)),
       )
+      set(map, "--home", snap(ramp(p, insideScene + 0.14, insideScene + 0.2)))
+      const scan = motion.matches
+        ? Number(p >= insideScene)
+        : ramp(p, insideScene + 0.22, insideScene + 0.36)
+      set(map, "--scan", scan)
+      set(map, "--scanning", Number(scan > 0 && scan < 1))
+      seen.forEach((label, index) => {
+        const from = insideScene + 0.38 + index * 0.05
+        set(label, "--seen", snap(out(ramp(p, from, from + 0.06))))
+      })
 
       // The timeline marks the scene and keeps it in view in the pill.
       if (scene !== current) {

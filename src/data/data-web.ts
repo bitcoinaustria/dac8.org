@@ -221,15 +221,15 @@ export const scenes: Scene[] = [
   },
   {
     id: "drinnen",
-    short: { de: "Drinnen", en: "Inside" },
-    eyebrow: { de: "06 Hinter der Tür", en: "06 Behind the door" },
+    short: { de: "Gläsern", en: "See-through" },
+    eyebrow: { de: "06 Keine Privatsphäre", en: "06 No privacy" },
     heading: {
-      de: "Wer die Liste hat, weiß, was drinnen liegt.",
-      en: "Whoever has the list knows what is inside.",
+      de: "Deine Daten machen dein Zuhause gläsern.",
+      en: "Your data makes your home see-through.",
     },
     text: {
-      de: "Hardware-Wallet, Kontostand, Wohnadresse: Zusammen sagen sie Tätern, wo sich ein Einbruch lohnt. **Darum sollte niemand wissen, wer wie viel Bitcoin hat.**",
-      en: "Hardware wallet, balance, home address: together they tell offenders where a break-in pays. **That is why nobody should know who holds how much bitcoin.**",
+      de: "Wer die Listen zusammenführt, sieht durch Max' Wände: wer hier wohnt, dass ein Hardware-Wallet geliefert wurde und wie viel auf seinem Konto liegt. **Darum sollte niemand wissen, wer wie viel Bitcoin hat.**",
+      en: "Whoever joins the lists can see through Max's walls: who lives here, that a hardware wallet was delivered and how much is in his account. **That is why nobody should know who holds how much bitcoin.**",
     },
   },
 ]
@@ -269,6 +269,32 @@ export const profile: { label: Text; value: Text; from: string }[] = [
     label: { de: "Kontostand", en: "Balance" },
     value: { de: "mit allen Transaktionen", en: "with all transactions" },
     from: "coinbase",
+  },
+]
+
+// What the joined lists reveal inside Max's house, pinned to the thing
+// each one gives away, with the place it came from. The anchors are
+// named in src/assets/network/home.json.
+export const exposed: { anchor: string; label: Text; from: Place }[] = [
+  {
+    anchor: "pin",
+    label: { de: "Wohnadresse", en: "Home address" },
+    from: "residents",
+  },
+  {
+    anchor: "parcel",
+    label: { de: "Hardware-Wallet geliefert", en: "Hardware wallet delivered" },
+    from: "shop",
+  },
+  {
+    anchor: "max",
+    label: { de: "Ausweis", en: "ID document" },
+    from: "provider",
+  },
+  {
+    anchor: "laptop",
+    label: { de: "Kontostand", en: "Balance" },
+    from: "provider",
   },
 ]
 
