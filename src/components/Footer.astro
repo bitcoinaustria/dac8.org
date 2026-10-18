@@ -1,7 +1,9 @@
 ---
 import BitcoinAustriaLogo from "@/assets/bitcoin-austria-horizontal.svg"
 import CheckIcon from "@/assets/icons/check.svg"
+import ExternalIcon from "@/assets/icons/external.svg"
 import ShareIcon from "@/assets/icons/share.svg"
+import { btcpay } from "@/data/donation"
 import {
   campaign,
   donateFor,
@@ -82,8 +84,12 @@ const sections = [
         {en ? "Bitcoin Austria is preparing a complaint. Your donation pays for the proceedings." : "Bitcoin Austria bereitet eine Beschwerde vor. Mit deiner Spende bezahlen wir das Verfahren."}
       </p>
       <div class="sign-off-actions">
-        <a class="button primary" href={donateFor(language)}
-          >{en ? "Support the case" : "Prozess unterstützen"}</a
+        <a class="button primary" href={btcpay} target="_blank" rel="noopener"
+          >{en ? "Donate bitcoin" : "Mit Bitcoin spenden"}
+          <ExternalIcon class="external-icon" /></a
+        >
+        <a class="button" href={`${pathFor("participate", language)}#euro`}
+          >{en ? "Bank transfer" : "Per Überweisung"}</a
         >
         <button class="button" type="button" data-share>
           <ShareIcon class="share-icon" /><CheckIcon class="share-done" />
@@ -216,10 +222,18 @@ const sections = [
     }
   }
 
+  /* Beide Spendenwege direkt: Bitcoin öffnet die Zahlungsseite, die
+     Überweisung springt zu den Kontodaten. */
   .sign-off-actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-xs);
+  }
+
+  .sign-off .external-icon {
+    inline-size: 1em;
+    block-size: 1em;
+    flex-shrink: 0;
   }
 
   /* Breit: die Aussage links, rechts auf ihrer Grundlinie der Satz und die
