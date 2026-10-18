@@ -8,8 +8,8 @@ import type { Language } from "@/lib/i18n"
 // "Where your data goes", as a full-screen scroll film: a network that
 // grows from Max to every place that keeps a copy of his data, lights up
 // each place with a real leak at a place of its kind, sends the copies to
-// fraudsters and extortionists, joins them into a file and ends at his
-// front door. The scene texts are the readable version; the network, the
+// fraudsters and extortionists, joins them into a file and ends in his
+// bedroom, where he hides his savings under the mattress. The scene texts are the readable version; the network, the
 // file and the map stay hidden from screen readers. The script sets the
 // node positions for wide and tall screens and plays everything along
 // with the scroll.
@@ -30,8 +30,10 @@ const render = (name: string) =>
 const art: Partial<Record<Place, string>> = Object.fromEntries(
   nodes.map((node) => [node.id, render(node.id.toLowerCase())]),
 )
-// The street with the pin at Max' door.
-const doorstep = render("doorstep")
+// Max hides his savings under the mattress, the pin above his bed: the
+// site's cash analogy for self-custody, from artwork-lab's
+// knowledge/build_dac8_mattress.py.
+const home = render("mattress")
 // The file the matching produces is the target list from the site's
 // illustrations, with Max at number 07.
 const target = artwork.rankedPortrait
@@ -308,7 +310,7 @@ const leaked = nodes.filter((node) => node.leak)
       </figure>
 
       <div class="map" aria-hidden="true">
-        <img class="street" src={doorstep} alt="">
+        <img class="home" src={home} alt="">
       </div>
     </div>
 
@@ -579,12 +581,13 @@ const leaked = nodes.filter((node) => node.leak)
     filter: drop-shadow(0 6px 8px var(--material-shade));
   }
 
-  /* Das Ende: die Häuserzeile, und die Nadel fällt vor Max' Tür. */
+  /* Das Ende: Max schiebt sein Erspartes unter die Matratze, und die
+     Nadel steht über seinem Bett. */
   .map {
     grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   }
 
-  .street {
+  .home {
     grid-area: 1 / 1;
     place-self: center;
     inline-size: min(100%, 52rem);
@@ -690,7 +693,7 @@ const leaked = nodes.filter((node) => node.leak)
     object-fit: contain;
   }
 
-  /* Die Straße mit Max' Haus; die Nadel fällt vor seine Tür. */
+  /* Max' Schlafzimmer mit dem Ersparten unter der Matratze. */
   .map {
     --map: 1;
     --draw: 1;
@@ -992,17 +995,17 @@ const leaked = nodes.filter((node) => node.leak)
       }
 
       // The list: the network gives way to the target list, and the
-      // list to the street.
+      // list to his bedroom.
       const listed =
         snap(ramp(p, matchScene + 0.06, matchScene + 0.2)) *
         (1 - snap(ramp(p, riskScene - 0.1, riskScene + 0.02)))
-      const street =
+      const bedroom =
         snap(ramp(p, riskScene - 0.08, riskScene + 0.05)) *
         (1 - snap(ramp(p, endScene - 0.1, endScene + 0.1)))
       set(file, "--file", listed)
-      set(net, "--net", 1 - Math.max(listed, street))
+      set(net, "--net", 1 - Math.max(listed, bedroom))
 
-      // The risk: the street draws in and the pin drops at his door.
+      // The risk: the bedroom fades in, with the pin above the bed.
       set(
         map,
         "--map",

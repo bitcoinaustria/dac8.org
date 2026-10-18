@@ -4,8 +4,9 @@ import type { Language } from "@/lib/i18n"
 // invented customer, Max, leaves his data with an exchange, a tax tool and
 // a hardware wallet shop; the exchange reports him to the tax office every
 // year; every one of these kinds of place has lost such data in real
-// cases; the leaks become a target list; the list leads to his front door. The cases and their sources live in
-// src/data/leaks.ts; the legal facts follow the dossier (§ 21 FM-GwG,
+// cases; the leaks become a target list; the list leads to his bedroom,
+// where his savings lie under the mattress. The cases and their sources
+// live in src/data/leaks.ts; the legal facts follow the dossier (§ 21 FM-GwG,
 // § 18 and § 20 Krypto-MPfG, Directive (EU) 2024/1640).
 
 type Text = Record<Language, string>
@@ -133,14 +134,14 @@ export const scenes: Scene[] = [
   },
   {
     id: "risiko",
-    short: { de: "Haustür", en: "Front door" },
+    short: { de: "Zuhause", en: "At home" },
     heading: {
       de: "Dein Profil. Deine Wohnadresse. Ein Angriffsziel.",
       en: "Your profile. Your home address. A target.",
     },
     text: {
-      de: "Bitcoin ist wie Bargeld. **Darum sollte niemand wissen, wer wie viel davon hat.**",
-      en: "Bitcoin is like cash. **That is why nobody should know who holds how much.**",
+      de: "Bitcoin in der eigenen Wallet ist wie Erspartes unter der Matratze. **Darum sollte niemand wissen, wer wie viel davon hat.**",
+      en: "Bitcoin in your own wallet is like savings under the mattress. **That is why nobody should know who holds how much.**",
     },
   },
 ]
