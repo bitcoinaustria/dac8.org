@@ -104,8 +104,8 @@ export const scenes: Scene[] = [
       en: "From 2027, it reports you every year.",
     },
     text: {
-      de: "Ans Finanzamt, ohne Wallet-Adressen. Jede Meldung bleibt zehn Jahre bei der Börse.",
-      en: "To the tax office, without wallet addresses. Each report stays with the exchange for ten years.",
+      de: "Ans Finanzamt, ohne Wallet-Adressen. **Jede Meldung bleibt zehn Jahre bei der Börse.**",
+      en: "To the tax office, without wallet addresses. **Each report stays with the exchange for ten years.**",
     },
   },
   {
@@ -145,6 +145,19 @@ export const scenes: Scene[] = [
     },
   },
 ]
+
+// The reports pile up at the exchange: one card a year while the tax
+// office scene plays. The first report goes out in 2027 (for 2026), and
+// each is kept ten years after its reporting year (§ 20 Abs. 4
+// Krypto-MPfG), so a customer who stays has ten on file from 2036 on.
+export const reports = {
+  first: 2027,
+  kept: 10,
+  label: {
+    de: { one: "Jahresmeldung", many: "Jahresmeldungen" },
+    en: { one: "annual report", many: "annual reports" },
+  },
+}
 
 // A short note under the network.
 export const note = {

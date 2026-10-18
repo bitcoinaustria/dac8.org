@@ -1,5 +1,12 @@
 ---
-import { edges, nodes, type Place, note, scenes } from "@/data/data-web"
+import {
+  edges,
+  nodes,
+  type Place,
+  note,
+  reports,
+  scenes,
+} from "@/data/data-web"
 import { Picture } from "astro:assets"
 import { artwork, imageFor } from "@/data/artwork"
 import { leaks } from "@/data/leaks"
@@ -121,6 +128,12 @@ const curve = (from: Place, to: Place, bend = 0.12) => {
 }
 
 const leaked = nodes.filter((node) => node.leak)
+// The tally under the exchange; without the script it shows the full
+// pile.
+const tally = (count: number) =>
+  `${reports.first + count - 1}: ${count} ${
+    count === 1 ? reports.label[language].one : reports.label[language].many
+  }`
 ---
 
 <div
@@ -292,6 +305,28 @@ const leaked = nodes.filter((node) => node.leak)
                   <text class="name" y="66">{node.name[language]}</text>
                   {node.leak && (
                     <text class="case" y="84">{caseName(node.leak)}</text>
+                  )}
+                  {node.id === "provider" && (
+                    <g
+                      class="reports"
+                      data-reports
+                      data-first={reports.first}
+                      data-one={reports.label[language].one}
+                      data-many={reports.label[language].many}
+                    >
+                      {Array.from({ length: reports.kept }, (_, year) => (
+                        <g
+                          class="report"
+                          data-report
+                          data-filled
+                          transform={`translate(${(year - (reports.kept - 1) / 2) * 15} 110)`}
+                        >
+                          <rect class="card" x="-6" y="-8.5" width="12" height="17" rx="1.6" />
+                          <rect class="stripe" x="-6" y="-8.5" width="12" height="4.5" rx="1.2" />
+                        </g>
+                      ))}
+                      <text class="tally" y="140" data-tally>{tally(reports.kept)}</text>
+                    </g>
                   )}
                 </g>
               </g>
@@ -667,6 +702,41 @@ const leaked = nodes.filter((node) => node.leak)
     font-size: 14px;
   }
 
+  /* Die Jahresmeldungen unter der Börse: zehn Plätze, jedes Jahr wird
+     einer zur Karte. Die Zählung weicht, sobald das Leck den Fall nennt. */
+  .reports {
+    --reports: 1;
+    opacity: var(--reports);
+  }
+
+  /* Hochformat: Die Linie zum Finanzamt läuft links nach unten, die
+     Reihe rückt nach rechts aus dem Weg. */
+  .net[data-shape="tall"] .reports {
+    translate: 46px 0;
+  }
+
+  .report {
+    opacity: 0.22;
+    transition: opacity 160ms ease;
+  }
+
+  .report[data-filled] {
+    opacity: 1;
+  }
+
+  .tally {
+    fill: var(--foreground);
+    font-size: 15px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-anchor: middle;
+    paint-order: stroke;
+    stroke: var(--panel);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+    opacity: calc(1 - var(--leak));
+  }
+
   /* ---------- Zielliste und Straße ------------------------------------- */
 
   /* Die Akte: die Zielliste aus den Illustrationen, mit Max auf Platz 07. */
@@ -813,6 +883,13 @@ const leaked = nodes.filter((node) => node.leak)
     const endScene = 99
     // The places with a case, in the order they light up.
     const leaking = nodeEls.filter((node) => node.querySelector(".case"))
+    // The pile of annual reports at the exchange, filled during the tax
+    // office scene.
+    const pile = one("[data-reports]")
+    const reportEls = all("[data-report]")
+    const tallyEl = one("[data-tally]")
+    const reportScene = 1
+    let filled = -1
 
     // When a place, or the line to it, appears: in its scene, one after
     // another.
@@ -968,6 +1045,25 @@ const leaked = nodes.filter((node) => node.leak)
         set(node, "--leak", leak)
         node.toggleAttribute("data-leaked", leak >= 0.5)
         set(node, "--fade", id === "crooks" ? 1 : 1 - away * 0.9)
+      }
+
+      // One report a year, from the first to the tenth, while the line to
+      // the tax office carries them.
+      const count = Math.ceil(
+        ramp(p, reportScene + 0.15, reportScene + 0.85) * reportEls.length,
+      )
+      if (pile && count !== filled) {
+        filled = count
+        set(pile, "--reports", count > 0 ? 1 : 0)
+        reportEls.forEach((report, index) =>
+          report.toggleAttribute("data-filled", index < count),
+        )
+        if (tallyEl && count > 0) {
+          const { first, one: single, many } = pile.dataset
+          tallyEl.textContent = `${Number(first) + count - 1}: ${count} ${
+            count === 1 ? single : many
+          }`
+        }
       }
 
       for (const edge of edgeEls) {
