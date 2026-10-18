@@ -37,12 +37,14 @@ export const shareScenes: {
   {
     // Numbered after the first eight so existing share URLs stay the same.
     id: "scene-09-profile",
+    // The German square still says "Leck", baked in by the artwork lab;
+    // change this title to "Datenleck" when the lab re-exports it.
     title: {
       de: "Jedes Leck macht dein Profil genauer.",
       en: "Every leak sharpens your profile.",
     },
     text: {
-      de: "Gesicht aus dem Netz, Wallet aus einem Leck, Bestände vom Steuerdienst. Zusammen: wer du bist, wo du wohnst, was du vermutlich hast.",
+      de: "Gesicht aus dem Netz, Wallet aus einem Datenleck, Bestände vom Steuerdienst. Zusammen: wer du bist, wo du wohnst, was du vermutlich hast.",
       en: "Your face from the web, your wallet from a leak, your holdings from a tax service. Together: who you are, where you live, what you probably own.",
     },
   },

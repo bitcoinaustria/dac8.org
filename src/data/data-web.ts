@@ -117,7 +117,7 @@ export const scenes: Scene[] = [
   },
   {
     id: "lecks",
-    short: { de: "Lecks", en: "Leaks" },
+    short: { de: "Datenlecks", en: "Leaks" },
     heading: {
       de: "Gespeichert. Gehackt. Verkauft.",
       en: "Stored. Hacked. Sold.",
@@ -131,7 +131,7 @@ export const scenes: Scene[] = [
     id: "liste",
     short: { de: "Zielliste", en: "Target list" },
     heading: {
-      de: "Aus den Lecks wird eine Zielliste.",
+      de: "Aus den Datenlecks wird eine Zielliste.",
       en: "The leaks become a target list.",
     },
     text: {

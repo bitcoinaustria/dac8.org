@@ -80,7 +80,7 @@ export const points: Record<Language, Record<PointId, Point>> = {
     },
     honeypot: {
       title: "Der Anbieter wird zum Honeypot.",
-      text: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist ein Angriff. Beim Anbieter liegen Ausweis, Wallet-Adressen und Transaktionen, mit DAC8 auch Steuernummer und Jahreswerte. Ein Leck verbindet deinen Namen mit deinen Wallet-Adressen. Wer diese Zuordnung einmal hat, behält sie und kann damit weitere Zahlungen verfolgen.",
+      text: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist ein Angriff. Beim Anbieter liegen Ausweis, Wallet-Adressen und Transaktionen, mit DAC8 auch Steuernummer und Jahreswerte. Ein Datenleck verbindet deinen Namen mit deinen Wallet-Adressen. Wer diese Zuordnung einmal hat, behält sie und kann damit weitere Zahlungen verfolgen.",
     },
     sortable: {
       title: "Sortierbar nach Vermögen.",
@@ -196,7 +196,7 @@ export const demands: Record<Language, Demand[]> = {
     },
     {
       title: "Übertragungen auf die eigene Wallet nicht melden.",
-      text: "Sie lösen für sich genommen keine Steuer aus. Sie trotzdem zu melden ist, als würde die Bank dem Finanzamt sagen, wie viel Bargeld jemand nach Hause getragen hat. Nach einem Leck steht dann auf einer Liste, wer vermutlich wie viel Bitcoin daheim hat.",
+      text: "Sie lösen für sich genommen keine Steuer aus. Sie trotzdem zu melden ist, als würde die Bank dem Finanzamt sagen, wie viel Bargeld jemand nach Hause getragen hat. Nach einem Datenleck steht dann auf einer Liste, wer vermutlich wie viel Bitcoin daheim hat.",
     },
     {
       title: "Daten nicht länger als nötig speichern.",
