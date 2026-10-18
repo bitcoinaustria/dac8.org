@@ -2,8 +2,6 @@
 import BitcoinAustriaLogo from "@/assets/bitcoin-austria-horizontal.svg"
 import CheckIcon from "@/assets/icons/check.svg"
 import ShareIcon from "@/assets/icons/share.svg"
-import { campaignStatus } from "@/data/campaign"
-
 import {
   campaign,
   donateFor,
@@ -75,32 +73,25 @@ const sections = [
 
 <footer>
   <div class="sign-off" data-share-scope>
-    <div class="sign-off-text">
-      <a class="sign-off-status" href={pathFor("proceedings", language)}>
-        <span class="status-dot" aria-hidden="true"></span>
-        {en ? "Austria" : "Österreich"}
-        · {campaignStatus[language].label}
-      </a>
-      <p class="sign-off-title">
-        {en ? "Financial privacy is a fundamental right." : "Finanzielle Privatsphäre ist ein Grundrecht."}
-        <span>{en ? "Let’s defend it." : "Verteidigen wir sie."}</span>
+    <p class="sign-off-title">
+      {en ? "Financial privacy is a fundamental right." : "Finanzielle Privatsphäre ist ein Grundrecht."}
+      <span>{en ? "Let’s defend it." : "Verteidigen wir sie."}</span>
+    </p>
+    <div class="sign-off-body">
+      <p>
+        {en ? "Bitcoin Austria is preparing a complaint. Your donation pays for the proceedings." : "Bitcoin Austria bereitet eine Beschwerde vor. Mit deiner Spende bezahlen wir das Verfahren."}
       </p>
+      <div class="sign-off-actions">
+        <a class="button primary" href={donateFor(language)}
+          >{en ? "Support the case" : "Prozess unterstützen"}</a
+        >
+        <button class="button" type="button" data-share>
+          <ShareIcon class="share-icon" /><CheckIcon class="share-done" />
+          {en ? "Share" : "Teilen"}
+        </button>
+      </div>
+      <p class="share-status" data-share-status aria-live="polite"></p>
     </div>
-    <div class="sign-off-actions">
-      <a class="button primary" href={donateFor(language)}
-        >{en ? "Support the case" : "Prozess unterstützen"}</a
-      >
-      <button
-        class="button share-button"
-        type="button"
-        data-share
-        aria-label={en ? "Share this page" : "Diese Seite teilen"}
-        title={en ? "Share" : "Teilen"}
-      >
-        <ShareIcon class="share-icon" /><CheckIcon class="share-done" />
-      </button>
-    </div>
-    <p class="share-status" data-share-status aria-live="polite"></p>
   </div>
 
   <div class="footer-main">
@@ -177,9 +168,9 @@ const sections = [
 </footer>
 
 <style>
-  /* Der Footer ist der Schluss der Seite: der Stand des Verfahrens, ein
-     Satz, Spenden und Teilen auf einer dunklen Fläche in beiden Modi.
-     Darunter die kompakte Linkliste. */
+  /* Der Footer ist der Schluss der Seite: ein Satz, wofür die Spende
+     gebraucht wird, Spenden und Teilen auf einer ruhigen Fläche wie die
+     Bänder der Seiten. Darunter die kompakte Linkliste. */
   footer {
     max-inline-size: var(--page-max);
     margin-inline: auto;
@@ -187,38 +178,21 @@ const sections = [
   }
 
   .sign-off {
-    /* Lokale Farben, damit Buttons und Links der Fläche folgen. */
-    --ink: #f4f5f6;
-    --background: #16181a;
-    --accent: #ff5a62;
-    position: relative;
     display: grid;
-    gap: var(--space-l);
-    padding: var(--space-l) var(--space-m-l);
-    overflow: hidden;
-    border: 1px solid #ffffff14;
+    gap: var(--space-m-l);
+    padding: var(--space-l-xl) var(--space-m-l);
     border-radius: var(--radius-xl);
-    color: var(--ink);
-    /* Ein rotes Glimmen in der Ecke der Handlungen, sonst eine ruhige
-       Fläche. */
-    background:
-      radial-gradient(60% 140% at 100% 100%, #e3000f2e, transparent 70%),
-      light-dark(#16181a, #1c1f22);
-  }
-
-  .sign-off-text {
-    display: grid;
-    gap: var(--space-s);
+    background: light-dark(#f3f3f2, #1c1c1c);
   }
 
   .sign-off-title {
-    max-inline-size: 26ch;
+    max-inline-size: 18ch;
     margin: 0;
-    font-size: clamp(1.5rem, 1.15rem + 1.3vw, 2.125rem);
+    font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.625rem);
     font-weight: 600;
     font-stretch: 94%;
-    line-height: 1.12;
-    letter-spacing: -0.022em;
+    line-height: 1.04;
+    letter-spacing: -0.026em;
     text-wrap: balance;
 
     span {
@@ -227,74 +201,45 @@ const sections = [
     }
   }
 
+  .sign-off-body {
+    display: grid;
+    gap: var(--space-m);
+    justify-items: start;
+
+    p {
+      max-inline-size: 40ch;
+      margin: 0;
+      color: var(--muted-foreground);
+      font-size: var(--step-1);
+      line-height: 1.45;
+      text-wrap: pretty;
+    }
+  }
+
   .sign-off-actions {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     gap: var(--space-xs);
   }
 
-  /* Teilen ist ein quadratischer Knopf in der Höhe der anderen beiden. */
-  .sign-off .share-button {
-    inline-size: 2.875rem;
-    padding: 0;
-
-    :global(svg) {
-      inline-size: 1.15em;
-      block-size: 1.15em;
-    }
-  }
-
-  /* Breit: Satz links, Handlungen rechts auf seiner Mitte. */
+  /* Breit: die Aussage links, rechts auf ihrer Grundlinie der Satz und die
+     beiden Knöpfe. */
   @media (width >= 64rem) {
     .sign-off {
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      align-items: end;
       column-gap: var(--space-2xl);
-      padding: var(--space-l-xl) var(--space-l);
-    }
-
-    .sign-off .share-status {
-      grid-column: 2;
-      justify-self: end;
+      padding: var(--space-xl) var(--space-l-xl);
     }
   }
 
   .sign-off .share-status {
-    margin: 0;
-    margin-block-start: calc(var(--space-s) - var(--space-l));
     color: var(--accent);
     font-size: var(--step--1);
   }
 
   .sign-off .share-status:empty {
     display: none;
-  }
-
-  .sign-off-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
-    inline-size: fit-content;
-    color: #b9bdc1;
-    font-size: var(--step--1);
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-decoration: none;
-    text-transform: uppercase;
-
-    &:hover {
-      color: var(--ink);
-    }
-  }
-
-  .status-dot {
-    inline-size: 0.625rem;
-    block-size: 0.625rem;
-    border: 1px solid #fa5963;
-    border-radius: var(--radius-full);
-    background: linear-gradient(155deg, #e3000f, #be000c);
-    box-shadow: inset 0 1px 0 #ffffff30;
   }
 
   .footer-main {
