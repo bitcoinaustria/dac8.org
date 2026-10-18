@@ -17,7 +17,6 @@ export const routes = {
   history: { de: "/geschichte/", en: "/en/history/" },
   proceedings: { de: "/verfahren/", en: "/en/proceedings/" },
   participate: { de: "/mitmachen/", en: "/en/get-involved/" },
-  file: { de: "/deine-akte/", en: "/en/your-file/" },
   legal: { de: "/impressum/", en: "/en/legal/" },
   privacy: { de: "/datenschutz/", en: "/en/privacy/" },
 } as const
@@ -44,10 +43,6 @@ export const feedFor = (language: Language) =>
 // visible action.
 export const navigationFor = (language: Language) => [
   { href: pathFor("dossier", language), label: "Dossier" },
-  {
-    href: pathFor("file", language),
-    label: language === "en" ? "Your file" : "Deine Akte",
-  },
   {
     href: pathFor("arguments", language),
     label: language === "en" ? "Arguments" : "Argumente",

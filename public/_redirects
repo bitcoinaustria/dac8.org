@@ -10,3 +10,10 @@
 /auskunft/                   /mitmachen/                      301
 /en/access-request           /en/get-involved/                301
 /en/access-request/          /en/get-involved/                301
+
+# „Deine Akte“ gibt es seit Oktober 2026 nicht mehr; was gemeldet wird, steht
+# im Dossier, die Geschichte dazu auf der Startseite.
+/deine-akte                  /dossier/#gemeldet               301
+/deine-akte/                 /dossier/#gemeldet               301
+/en/your-file                /en/dossier/#gemeldet            301
+/en/your-file/               /en/dossier/#gemeldet            301

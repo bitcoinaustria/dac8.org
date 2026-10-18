@@ -59,7 +59,7 @@ browser can share files, sharing as icon buttons.
 
 ## Site structure
 
-Seven pages in the navigation per language, plus the history page, with URLs
+Six pages in the navigation per language, plus the history page, with URLs
 that follow the navigation labels:
 
 | Page | German | English |
@@ -67,7 +67,6 @@ that follow the navigation labels:
 | Start: the case told as a story in scenes | `/` | `/en/` |
 | Dossier: the complete reference, FAQ and sources | `/dossier/` | `/en/dossier/` |
 | Argumente: our position by topic, with answers to objections and our demands | `/argumente/` | `/en/arguments/` |
-| Deine Akte: one question and a plain answer on what a provider reports and keeps about the reader | `/deine-akte/` | `/en/your-file/` |
 | Angriffe: archive of known physical attacks, map and list | `/angriffe/` | `/en/attacks/` |
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
@@ -172,12 +171,10 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   (`src/components/LetterGenerator.astro`, texts in `src/data/letter.ts`). It
   runs entirely in the browser; its demands come from `src/data/arguments.ts`, the
   same list the arguments page shows under "Was wir fordern".
-- The DAC8 file (`src/components/pages/FilePage.astro`) runs entirely in the
-  browser, like the letter. It restates the dossier's reporting and retention
-  facts in everyday words; change them together. It asks one question and
-  shows the matching answer with CSS `:has()`, without a script. A mock
-  report, key figures and questions on residence, years and activities were
-  removed in October 2026 because readers found them too hard to follow.
+- There is no separate "Deine Akte" page. It was removed in October 2026
+  once the home page told what happens to the data; what gets reported is in
+  the dossier (`#gemeldet`, with the affected check). `/deine-akte/` and
+  `/en/your-file/` redirect there.
 - There is no GDPR access-request tool. It was removed in October 2026: it
   did little for the campaign and put a heavy load on the providers who
   received it. `/auskunft/` and `/en/access-request/` redirect to the
