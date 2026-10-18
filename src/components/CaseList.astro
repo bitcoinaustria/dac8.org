@@ -6,6 +6,8 @@ import type { Language } from "@/lib/i18n"
 // sentence. Titles written as "Ledger 2020: headline." are split into both.
 // Tags name what was lost; data attributes let the leak page filter.
 export interface Case {
+  // An anchor, so other pages can link to the case.
+  id?: string
   dateline?: string
   title: string
   text: string
@@ -44,7 +46,7 @@ const split = (title: string) => {
       Object.entries(item.data ?? {}).map(([key, value]) => [`data-${key}`, value]),
     )
     return (
-      <li {...data}>
+      <li id={item.id} {...data}>
         {dateline && <p class="dateline">{dateline}</p>}
         <strong>{headline}</strong>
         {item.tags && item.tags.length > 0 && (

@@ -27,6 +27,8 @@ const labelFor = (id: string) =>
   fields.find((field) => field.id === id)?.label[language] ?? id
 const items = newestLeaksFirst.map((leak) => ({
   ...asCase(leak, language),
+  // The data story on the home page links its cases here.
+  id: `fall-${leak.id}`,
   dateline: [leak.name[language], leak.kind[language], leak.year]
     .filter(Boolean)
     .join(" · "),
@@ -283,6 +285,26 @@ const strings = en
 
   .leaks .cases {
     margin-block-start: var(--space-l);
+  }
+
+  /* A case opened from the home page's data story lands below the bars
+     and is marked for a moment. */
+  .leaks .cases > :global(li) {
+    scroll-margin-block-start: calc(var(--header-height) + var(--space-m));
+  }
+
+  .leaks .cases > :global(li:target) {
+    animation: case-target 2.4s ease-out 1;
+  }
+
+  @keyframes case-target {
+    from {
+      box-shadow: -0.75rem 0 0 -0.5rem var(--accent);
+    }
+
+    to {
+      box-shadow: -0.75rem 0 0 -0.5rem transparent;
+    }
   }
 
   .leaks .text-link {
