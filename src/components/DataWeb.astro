@@ -1,13 +1,5 @@
 ---
-import {
-  edges,
-  nodes,
-  type Place,
-  note,
-  profile,
-  scenes,
-  search,
-} from "@/data/data-web"
+import { edges, nodes, type Place, note, scenes } from "@/data/data-web"
 import { Picture } from "astro:assets"
 import { artwork, imageFor } from "@/data/artwork"
 import { leaks } from "@/data/leaks"
@@ -66,64 +58,46 @@ const layout: Record<
   Record<Place, [number, number]>
 > = {
   wide: {
-    you: [110, 300],
-    residents: [270, 90],
-    shop: [270, 510],
-    provider: [450, 300],
-    accounts: [590, 70],
-    vendor: [100, 80],
-    taxOffice: [780, 180],
-    foreign: [1020, 110],
-    crooks: [1060, 440],
+    you: [200, 300],
+    provider: [540, 300],
+    taxOffice: [900, 170],
+    crooks: [900, 450],
   },
   mid: {
-    you: [90, 350],
-    residents: [230, 120],
-    shop: [230, 590],
-    provider: [390, 350],
-    accounts: [480, 80],
-    vendor: [80, 110],
-    taxOffice: [650, 200],
-    foreign: [830, 100],
-    crooks: [800, 520],
+    you: [140, 350],
+    provider: [430, 350],
+    taxOffice: [730, 200],
+    crooks: [730, 520],
   },
   tall: {
-    you: [200, 50],
-    residents: [75, 255],
-    provider: [200, 275],
-    shop: [325, 255],
-    vendor: [70, 460],
-    taxOffice: [200, 480],
-    accounts: [330, 460],
-    foreign: [330, 625],
-    crooks: [200, 760],
+    you: [200, 90],
+    provider: [200, 320],
+    taxOffice: [300, 540],
+    crooks: [120, 720],
   },
 }
 // Where the camera looks in each scene: centre and width.
 const cameras = {
   wide: [
-    [290, 300, 760],
-    [560, 300, 1180],
-    [590, 300, 1240],
-    [760, 330, 960],
-    [760, 330, 960],
-    [760, 330, 960],
+    [370, 320, 720],
+    [560, 290, 1000],
+    [560, 320, 1040],
+    [560, 320, 1040],
+    [560, 320, 1040],
   ],
   mid: [
-    [250, 350, 640],
-    [460, 350, 980],
-    [460, 350, 1000],
-    [600, 420, 820],
-    [600, 420, 820],
-    [600, 420, 820],
+    [285, 370, 620],
+    [440, 340, 860],
+    [440, 380, 880],
+    [440, 380, 880],
+    [440, 380, 880],
   ],
   tall: [
-    [200, 170, 400],
-    [200, 360, 420],
-    [200, 420, 420],
-    [200, 600, 420],
-    [200, 600, 420],
-    [200, 600, 420],
+    [200, 220, 400],
+    [200, 330, 420],
+    [200, 420, 440],
+    [200, 420, 440],
+    [200, 420, 440],
   ],
 }
 const at = (id: Place) => layout.wide[id]
@@ -139,8 +113,6 @@ const curve = (from: Place, to: Place, bend = 0.12) => {
 }
 
 const leaked = nodes.filter((node) => node.leak)
-// The red plate behind a case name, sized to its capitals.
-const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
 ---
 
 <div
@@ -174,7 +146,7 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     </nav>
 
     <div class="says">
-      {scenes.map((scene, index) => (
+      {scenes.map((scene) => (
           <div class="say" data-say>
             <h3>{scene.heading[language]}</h3>
             <p class="text">
@@ -221,8 +193,6 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
                 data-to={edge.to}
                 data-scene={target?.scene}
                 data-order={target?.order ?? 0}
-                data-maybe={target?.maybe ? "" : undefined}
-                data-context={target?.context ? "" : undefined}
               >
                 <path class="bed" d={d} pathLength="1" />
                 <path
@@ -256,12 +226,7 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
         </g>
 
         <g class="packets">
-          {edges
-              .filter(
-                (edge) =>
-                  !nodes.find((node) => node.id === edge.to)?.context,
-              )
-              .map((edge) =>
+          {edges.map((edge) =>
               [0, 1].map((packet) => (
                 <g class="packet" data-packet={`${edge.from}-${edge.to}`}>
                   <rect class="card" x="-7" y="-4.5" width="14" height="9" rx="1.5" />
@@ -302,93 +267,25 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
                 data-node={node.id}
                 data-scene={node.scene}
                 data-order={node.order ?? 0}
-                data-people={node.leak ? (leakFor(node.leak).people ?? 0) : 0}
-                data-maybe={node.maybe ? "" : undefined}
-                data-context={node.context ? "" : undefined}
                 transform={`translate(${at(node.id)[0]} ${at(node.id)[1]})`}
               >
                 <g class="body">
                   <ellipse class="plinth" cy={ground} rx="48" ry="14" />
                   <ellipse class="breach" cy={ground} rx="52" ry="16" />
                   <ellipse class="ripple" cy={ground} rx="52" ry="16" />
-                  {art[node.id] ? (
-                    <>
-                      <image
-                        class="art"
-                        href={art[node.id]}
-                        x="-52"
-                        y="-56"
-                        width="104"
-                        height="104"
-                      />
-                    </>
-                  ) : (
-                    <>
-                    <circle class="disc" r="31" />
-                    <g class="icon" transform="scale(1.15)">
-                      {node.id === "you" && (
-                        <path d="M0-11a5 5 0 1 1 0 10a5 5 0 1 1 0-10M-10 12c0-7 4.5-10 10-10s10 3 10 10" />
-                      )}
-                      {node.id === "provider" && (
-                        <>
-                          <circle r="10.5" />
-                          <path d="M-3-6v12M1-8v2M1 6v2M-5-5h6.5a2.6 2.6 0 0 1 0 5.2H-5M-5 0.2h7.2a2.9 2.9 0 0 1 0 5.8H-5" />
-                        </>
-                      )}
-                      {node.id === "vendor" && (
-                        <>
-                          <circle r="4" />
-                          <path d="M0-11v4M0 7v4M-11 0h4M7 0h4M-7.8-7.8l2.8 2.8M5 5l2.8 2.8M7.8-7.8L5-5M-5 5l-2.8 2.8" />
-                        </>
-                      )}
-                      {node.id === "shop" && (
-                        <path d="M-10-5L0-10l10 5v11L0 11l-10-5zM-10-5L0 0l10-5M0 0v11" />
-                      )}
-                      {(node.id === "taxOffice" || node.id === "foreign") && (
-                        <path d="M-11-3L0-10l11 7zM-8-1v9M-3-1v9M3-1v9M8-1v9M-11 10h22" />
-                      )}
-                      {node.id === "accounts" && (
-                        <path d="M-9-7a9 3.2 0 1 0 18 0a9 3.2 0 1 0-18 0M-9-7v14a9 3.2 0 0 0 18 0v-14M-9 0a9 3.2 0 0 0 18 0" />
-                      )}
-                      {node.id === "residents" && (
-                        <path d="M-11 0L0-9l11 9M-7.5-3v13h15v-13M-2 10v-6h4v6" />
-                      )}
-                      {node.id === "crooks" && (
-                        <>
-                          <circle r="9" />
-                          <circle r="3" />
-                          <path d="M0-14v6M0 8v6M-14 0h6M8 0h6" />
-                        </>
-                      )}
-                    </g>
-                    </>
-                  )}
+                  <image
+                    class="art"
+                    href={art[node.id]}
+                    x="-52"
+                    y="-56"
+                    width="104"
+                    height="104"
+                  />
                   <text class="name" y="66">{node.name[language]}</text>
-                  <text class="name brief" y="66">
-                    {(node.brief ?? node.name)[language]}
-                  </text>
-                  <text class="holds" y="83">
-                    {(node.holds?.[language] ?? []).map((line, index) => (
-                      <tspan x="0" dy={index === 0 ? 0 : 15}>{line}</tspan>
-                    ))}
-                  </text>
+                  {node.leak && (
+                    <text class="case" y="84">{caseName(node.leak)}</text>
+                  )}
                 </g>
-                {node.leak && (
-                  <g class="tag">
-                    <rect
-                      class="tag-plate"
-                      x={-plateWidth(caseName(node.leak)) / 2}
-                      y="-94"
-                      width={plateWidth(caseName(node.leak))}
-                      height="20"
-                      rx="3"
-                    />
-                    <text class="tag-case" y="-80">
-                      {caseName(node.leak).toUpperCase()}
-                    </text>
-                    <text class="tag-what" y="-60">{node.tag?.[language]}</text>
-                  </g>
-                )}
               </g>
             ))}
         </g>
@@ -404,22 +301,8 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
         />
       </figure>
 
-      <div class="prompt" aria-hidden="true">
-        <p class="prompt-head"><span>✦</span> {search.label[language]}</p>
-        <p class="prompt-text">
-          <span data-typed data-text={search.query[language]}
-            >{search.query[language]}</span
-          ><i class="caret"></i>
-        </p>
-        <p class="prompt-result">{search.result[language]}</p>
-      </div>
-
       <div class="map" aria-hidden="true">
         <img class="street" src={doorstep} alt="">
-        <div class="address">
-          <b>Musterstraße 7</b>
-          <span>{en ? "1010 Vienna" : "1010 Wien"}</span>
-        </div>
       </div>
     </div>
 
@@ -639,16 +522,6 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     stroke-width: calc(var(--unit, 1) * 1.6);
   }
 
-  .link[data-maybe] .core {
-    stroke-dasharray: 0.02 0.016;
-    stroke-dashoffset: 0;
-    opacity: var(--draw);
-  }
-
-  .link[data-maybe] .bed {
-    opacity: calc(var(--draw) * 0.6);
-  }
-
   .link.leak .bed {
     stroke: light-dark(#f8e1e2, #4a161a);
   }
@@ -684,8 +557,7 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     --fade: 1;
   }
 
-  .node .body,
-  .node .tag {
+  .node .body {
     transform-box: fill-box;
     transform-origin: center;
   }
@@ -715,52 +587,6 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     object-fit: contain;
     opacity: var(--pin);
     translate: 0 calc((1 - var(--draw)) * 1.5rem);
-  }
-
-  /* Weitere Stellen, die auch Daten halten, stehen klein und blass im
-     Hintergrund und tragen keinen Fall. */
-  .node[data-context] .body {
-    opacity: calc(var(--show) * var(--fade) * 0.5);
-    scale: calc((0.7 + var(--show) * 0.3) * 0.72);
-  }
-
-  .link[data-context] {
-    opacity: calc(var(--fade, 1) * 0.5);
-  }
-
-  /* Stationen als Token: Graphitkern, schmale Titankante. */
-  .disc {
-    fill: url(#web-graphite);
-    stroke: light-dark(#a4abb1, #596168);
-    stroke-width: 1.5;
-  }
-
-  .icon {
-    fill: none;
-    stroke: #f7f8f9;
-    stroke-width: 1.6;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  /* Max ist der rote Punkt: hier stehst du. */
-  .node[data-node="you"] .disc {
-    fill: url(#web-signal);
-    stroke: light-dark(#b6000c, #fa5963);
-  }
-
-  .node[data-node="crooks"] .disc {
-    fill: #1a1c1f;
-    stroke: var(--signal);
-    stroke-width: 2;
-  }
-
-  .node[data-node="crooks"] .icon {
-    stroke: var(--signal);
-  }
-
-  .node[data-maybe] .disc {
-    stroke-dasharray: 4 3;
   }
 
   /* Jede Station steht auf einem flachen Sockel. Ein Leck legt einen roten
@@ -806,8 +632,7 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
   }
 
   .name,
-  .holds,
-  .tag text {
+  .case {
     text-anchor: middle;
     paint-order: stroke;
     stroke: var(--panel);
@@ -821,60 +646,19 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     font-weight: 600;
   }
 
-  /* Was eine Stelle speichert, steht nur in der Szene, in der sie
-     dazukommt; danach bleibt das Netz ruhig. */
-  .holds {
-    fill: var(--muted-foreground);
-    font-size: 12.5px;
-    opacity: var(--holds, 1);
+  /* Ein Leck nennt den echten Fall darunter, rot. */
+  .case {
+    fill: var(--signal);
+    font-size: 13px;
+    font-weight: 600;
+    opacity: calc(var(--leak) * var(--fade));
   }
 
-  .brief,
-  .net[data-shape="tall"] .name:not(.brief),
-  .net[data-shape="tall"] .holds {
-    display: none;
-  }
-
-  .net[data-shape="tall"] .brief {
-    display: inline;
+  .net[data-shape="tall"] .name {
     font-size: 14px;
   }
 
-  .tag {
-    opacity: calc(var(--leak) * var(--fade));
-    translate: 0 calc((1 - var(--leak)) * 6px);
-  }
-
-  /* Das Etikett wie das rote Schild „Datenleck“ der Illustrationen. */
-  .tag-plate {
-    fill: url(#web-signal);
-    stroke: light-dark(#b6000c, #fa5963);
-    stroke-width: 1;
-  }
-
-  .tag .tag-case {
-    fill: #fff;
-    font-size: 11.5px;
-    font-weight: 650;
-    letter-spacing: 0.06em;
-    paint-order: normal;
-    stroke: none;
-  }
-
-  .tag-what {
-    fill: var(--foreground);
-    font-size: 12.5px;
-  }
-
-  .net[data-shape="tall"] .tag-case {
-    font-size: 11px;
-  }
-
-  .net[data-shape="tall"] .tag-what {
-    font-size: 11px;
-  }
-
-  /* ---------- Akte, Suche, Karte ---------------------------------------- */
+  /* ---------- Zielliste und Straße ------------------------------------- */
 
   /* Die Akte: die Zielliste aus den Illustrationen, mit Max auf Platz 07. */
   .file {
@@ -888,7 +672,7 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     opacity: var(--file);
     transform-origin: 50% 0;
     translate: 0 calc((1 - var(--file)) * 1rem);
-    scale: calc(0.94 + var(--file) * 0.06 - var(--q-up, 0) * 0.36);
+    scale: calc(0.94 + var(--file) * 0.06);
   }
 
   .file :global(picture),
@@ -900,73 +684,7 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     object-fit: contain;
   }
 
-  .prompt {
-    --q: 1;
-    --res: 1;
-    align-self: end;
-    justify-self: center;
-    display: grid;
-    gap: 0.4rem;
-    inline-size: min(calc(100% - 2rem), 30rem);
-    margin-block-end: var(--space-s);
-    padding: var(--space-xs) var(--space-s);
-    border-radius: var(--radius-lg);
-    background: var(--paper);
-    box-shadow:
-      0 0 0 1px var(--line),
-      0 12px 32px -18px var(--material-shade);
-    opacity: var(--q);
-    translate: 0 calc((1 - var(--q)) * 0.75rem);
-  }
-
-  .prompt-head {
-    color: var(--muted-foreground);
-    font-size: 0.75rem;
-  }
-
-  .prompt-head span {
-    color: var(--signal);
-  }
-
-  .prompt-text {
-    min-block-size: 2.7em;
-    color: var(--foreground);
-    font-size: var(--step-0);
-    line-height: 1.35;
-  }
-
-  .caret {
-    display: inline-block;
-    inline-size: 2px;
-    block-size: 1.05em;
-    margin-inline-start: 2px;
-    background: var(--signal);
-    vertical-align: -0.15em;
-    animation: blink 1.1s steps(1) infinite;
-  }
-
-  .prompt[data-typing] .caret {
-    animation: none;
-  }
-
-  @keyframes blink {
-    50% {
-      opacity: 0;
-    }
-  }
-
-  .prompt-result {
-    padding-block-start: 0.4rem;
-    border-block-start: 1px solid var(--line);
-    color: var(--signal);
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    font-weight: 600;
-    opacity: var(--res);
-  }
-
-  /* Die Karte: Straßen als Nut, die sich zeichnen, dann fällt der rote
-     Punkt auf die Wohnadresse. */
+  /* Die Straße mit Max' Haus; die Nadel fällt vor seine Tür. */
   .map {
     --map: 1;
     --draw: 1;
@@ -974,39 +692,6 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     position: relative;
     display: grid;
     opacity: var(--map);
-  }
-
-  .map svg {
-    inline-size: 100%;
-    block-size: 100%;
-  }
-
-  .address {
-    position: absolute;
-    inset-block-end: var(--space-s);
-    inset-inline-start: 50%;
-    display: grid;
-    justify-items: center;
-    gap: 0.1rem;
-    padding: var(--space-xs) var(--space-s);
-    border-radius: var(--radius-lg);
-    background: var(--paper);
-    box-shadow:
-      0 0 0 1px var(--line),
-      0 12px 32px -18px var(--material-shade);
-    translate: -50% 0;
-    opacity: var(--pin);
-    text-align: center;
-  }
-
-  .address b {
-    font-size: var(--step-0);
-    font-weight: 600;
-  }
-
-  .address span {
-    color: var(--muted-foreground);
-    font-size: 0.8125rem;
   }
 
   /* ---------- Notiz --------------------------------------------------- */
@@ -1023,8 +708,7 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ripple,
-    .caret {
+    .ripple {
       animation: none;
     }
 
@@ -1065,18 +749,6 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     .say .text {
       font-size: var(--step-1);
     }
-
-    /* Breit rückt die Zielliste nach oben, sobald der Suchauftrag kommt,
-       damit er darunter Platz hat und nichts verdeckt. */
-    .file {
-      transform-origin: 50% 0;
-      translate: 0 calc((1 - var(--file)) * 1rem);
-      scale: calc(0.94 + var(--file) * 0.06 - var(--q-up, 0) * 0.2);
-    }
-
-    .prompt {
-      inline-size: min(92%, 36rem);
-    }
   }
 </style>
 
@@ -1112,13 +784,10 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     const net = root.querySelector<SVGSVGElement>("[data-net]")
     const view = one(".view")
     const file = one(".file")
-    const prompt = one(".prompt")
-    const typed = one("[data-typed]")
     const map = one(".map")
     const railList = one(".rail ol")
-    if (!net || !view || !file || !prompt || !typed || !map || !railList) return
+    if (!net || !view || !file || !map || !railList) return
 
-    const text = typed.dataset.text ?? ""
     const layouts = JSON.parse(root.dataset.layout ?? "{}") as Record<
       Shape,
       Layout
@@ -1134,7 +803,7 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
     // There is no scene after the risk; the last picture stays.
     const endScene = 99
     // The places with a case, in the order they light up.
-    const leaking = nodeEls.filter((node) => node.querySelector(".tag"))
+    const leaking = nodeEls.filter((node) => node.querySelector(".case"))
 
     // When a place, or the line to it, appears: in its scene, one after
     // another.
@@ -1152,9 +821,6 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
       motion.matches ? (value >= 0.5 ? 1 : 0) : value
     const set = (element: Element, name: string, value: number) =>
       (element as HTMLElement).style.setProperty(name, String(value))
-    const write = (element: HTMLElement | null, value: string) => {
-      if (element && element.textContent !== value) element.textContent = value
-    }
 
     let shape: Shape = "wide"
     let arranged = false
@@ -1186,20 +852,9 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
         const [x, y] = at[node.dataset.node ?? ""] ?? [0, 0]
         node.setAttribute("transform", `translate(${x} ${y})`)
       }
-      // The lines to the offenders curve round the places in between:
-      // the register's line passes above the provider, the shop's below.
+      // The lines to the offenders bow away from the report line.
       const crookBend = (from: string) =>
-        shape === "tall"
-          ? from === "residents"
-            ? 0.3
-            : from === "shop"
-              ? -0.3
-              : -0.16
-          : from === "residents"
-            ? -0.22
-            : from === "shop"
-              ? 0.12
-              : 0.06
+        shape === "tall" ? -0.2 : from === "provider" ? 0.1 : -0.45
       const bend = (from: string, to: string, amount: number) => {
         const [x1, y1] = [at[from][0], at[from][1] + ground]
         const [x2, y2] = [at[to][0], at[to][1] + ground]
@@ -1274,9 +929,8 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
       set(net, "--unit", Math.max(w / drawn.width, h / drawn.height) || 1)
 
       // Places appear in their scene; each with a case lights up red in
-      // turn once the leaks begin. In the matching and the risk, all but
-      // the offenders step back.
-      const recede = snap(ramp(p, leakScene - 0.1, leakScene + 0.05)) * 0.6
+      // turn once the leaks begin. For the list and the risk, all but the
+      // offenders step back.
       const away =
         snap(ramp(p, matchScene - 0.08, matchScene + 0.15)) *
         (1 - snap(ramp(p, endScene - 0.1, endScene + 0.1)))
@@ -1287,24 +941,16 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
             ? 1
             : snap(ramp(p, appear(node) - 0.12, appear(node) + 0.06))
         const order = leaking.indexOf(node)
-        // The provider leaks first, the shop and the register after it.
-        const start = order === 0 ? 0.05 : 0.3 + order * 0.12
+        // The exchange leaks first, the tax office after it.
+        const start = order === 0 ? 0.05 : 0.35
         const leak =
           order < 0
             ? 0
             : snap(ramp(p, leakScene + start, leakScene + start + 0.08))
-        const own = Number(node.dataset.scene)
         set(node, "--show", shown)
-        set(node, "--holds", snap(1 - ramp(p, own + 0.9, own + 1.02)))
         set(node, "--leak", leak)
         node.toggleAttribute("data-leaked", leak >= 0.5)
-        // The further places step back once the leaks begin.
-        const behind = node.hasAttribute("data-context") ? recede : 0
-        set(
-          node,
-          "--fade",
-          id === "crooks" ? 1 : (1 - away * 0.9) * (1 - behind),
-        )
+        set(node, "--fade", id === "crooks" ? 1 : 1 - away * 0.9)
       }
 
       for (const edge of edgeEls) {
@@ -1316,14 +962,7 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
           ? Number.parseFloat(node?.style.getPropertyValue("--leak") ?? "0")
           : snap(ramp(p, appear(edge) - 0.1, appear(edge) + 0.12))
         set(edge, "--draw", draw)
-        set(
-          edge,
-          "--fade",
-          toCrooks
-            ? 1
-            : (1 - away * 0.85) *
-                (1 - (edge.hasAttribute("data-context") ? recede : 0)),
-        )
+        set(edge, "--fade", toCrooks ? 1 : 1 - away * 0.85)
       }
       for (const packet of packets) {
         const edge = root.querySelector(
@@ -1338,32 +977,16 @@ const plateWidth = (text: string) => Math.round(text.length * 7.6 + 18)
         packet.style.opacity = String(draw >= 1 ? fade : 0)
       }
 
-      // The matching: the target list comes up, then the search types
-      // itself and puts Max on it.
-      set(
-        net,
-        "--net",
-        1 -
-          snap(ramp(p, riskScene - 0.08, riskScene + 0.05)) *
-            (1 - snap(ramp(p, endScene - 0.1, endScene + 0.1))),
-      )
-      const filed =
+      // The list: the network gives way to the target list, and the
+      // list to the street.
+      const listed =
         snap(ramp(p, matchScene + 0.06, matchScene + 0.2)) *
         (1 - snap(ramp(p, riskScene - 0.1, riskScene + 0.02)))
-      set(file, "--file", filed)
-      const asking = snap(ramp(p, matchScene + 0.4, matchScene + 0.46))
-      set(
-        prompt,
-        "--q",
-        asking * (1 - snap(ramp(p, riskScene - 0.1, riskScene + 0.02))),
-      )
-      set(file, "--q-up", asking)
-      const typing = motion.matches
-        ? 1
-        : ramp(p, matchScene + 0.44, matchScene + 0.74)
-      write(typed, text.slice(0, Math.round(text.length * typing)))
-      prompt.toggleAttribute("data-typing", typing > 0 && typing < 1)
-      set(prompt, "--res", snap(ramp(p, matchScene + 0.76, matchScene + 0.82)))
+      const street =
+        snap(ramp(p, riskScene - 0.08, riskScene + 0.05)) *
+        (1 - snap(ramp(p, endScene - 0.1, endScene + 0.1)))
+      set(file, "--file", listed)
+      set(net, "--net", 1 - Math.max(listed, street))
 
       // The risk: the street draws in and the pin drops at his door.
       set(
