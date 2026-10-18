@@ -24,7 +24,6 @@ const artwork: Partial<Record<Page, Record<Language, string>>> = {
     de: "finance-the-case.webp",
     en: "finance-the-case-en.webp",
   },
-  file: { de: "years-on-file.webp", en: "years-on-file-en.webp" },
 }
 
 export const getStaticPaths: GetStaticPaths = () =>
