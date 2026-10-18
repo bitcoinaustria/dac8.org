@@ -8,7 +8,7 @@ import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
 import { campaignStatus } from "@/data/campaign"
-import { asCase, featuredLeaks, leaks as allLeaks } from "@/data/leaks"
+import { asCase, featuredLeaks } from "@/data/leaks"
 import { sourceGroups } from "@/data/sources"
 
 const researchDate = "30. September 2026"
@@ -313,9 +313,7 @@ const faqs = [
         Gefahren. Sie belegen nicht, dass DAC8 sie verursacht hat.
       </p>
       <CaseList items={leaks} language="de" />
-      <a class="text-link" href="/datenlecks/"
-        >Alle {allLeaks.length} belegten Datenlecks</a
-      >
+      <a class="text-link" href="/datenlecks/">Alle Fälle mit Quellen</a>
     </section>
 
     <section id="angriffe" aria-labelledby="angriffe-heading">

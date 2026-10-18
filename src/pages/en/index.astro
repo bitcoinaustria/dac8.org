@@ -10,7 +10,7 @@ import Tale from "@/components/Tale.astro"
 import Layout from "@/layouts/Layout.astro"
 import { homeObjections, points } from "@/data/arguments"
 import { campaignStatus } from "@/data/campaign"
-import { leaks } from "@/data/leaks"
+import { peopleAffected, roundPeople } from "@/data/leaks"
 
 const objections = homeObjections.map((id) => points.en[id])
 ---
@@ -129,13 +129,13 @@ const objections = homeObjections.map((id) => points.en[id])
     <section id="faelle" aria-labelledby="faelle-heading">
       <h2 id="faelle-heading">This has already happened</h2>
       <p class="section-intro">
-        Exchanges, tax tools and authorities have already lost such data. These
-        cases show concrete dangers. They do not show that DAC8 caused them.
+        Exchanges, tax tools and authorities have already lost such data, on
+        about {roundPeople(peopleAffected, "en")} people across the documented
+        cases. These cases show concrete dangers. They do not show that DAC8
+        caused them.
       </p>
       <LeakHeadlines language="en" />
-      <a class="text-link" href="/en/data-leaks/"
-        >All {leaks.length} data leaks with sources</a
-      >
+      <a class="text-link" href="/en/data-leaks/">All cases with sources</a>
     </section>
 
     <section id="einwaende" class="band" aria-labelledby="einwaende-heading">
