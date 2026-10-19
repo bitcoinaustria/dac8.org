@@ -1,19 +1,19 @@
 ---
 import type { Point } from "@/data/arguments"
 
-// One list of argument points, each with its legal source when it has one. The arguments page shows them as facts, the home page as
-// objections under the guiding statement. A title in quotation marks is an
-// objection we answer and is set lighter than our own claims.
+// Objections and our answers: the arguments page shows four, the home page
+// two. A title in quotation marks is an objection we answer and is set
+// lighter than our own claims.
 interface Props {
   points: Point[]
-  variant?: "facts" | "objections"
+  variant?: "objections"
 }
 
-const { points, variant = "facts" } = Astro.props
+const { points } = Astro.props
 const isObjection = (title: string) => /^[„“"]/.test(title)
 ---
 
-<ul class:list={variant === "facts" ? ["facts", "concerns"] : ["objections"]}>
+<ul class="objections">
   {points.map((point) => (
     <li class:list={{ objection: isObjection(point.title) }}>
       <strong>{point.title}</strong>

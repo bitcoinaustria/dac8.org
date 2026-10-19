@@ -1,207 +1,493 @@
 ---
 import ArgumentPoints from "@/components/ArgumentPoints.astro"
-import Artwork from "@/components/Artwork.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
-import { demands, points, topics, type PointId } from "@/data/arguments"
-import { donateFor, languageFor, pathFor } from "@/lib/i18n"
+import { demands, objections, reasons } from "@/data/arguments"
+import { languageFor, pathFor } from "@/lib/i18n"
 
-// Our position by topic. The dossier states what the law requires; this page
-// says what we object to and what we demand, and links to the facts.
+// Why we oppose DAC8, in three groups: seven reasons, four objections, five
+// demands. Each reason shows a headline and one sentence; the evidence opens
+// on demand. The heading of the current group sticks under the site header
+// instead of a chapter bar. The dossier holds the facts, the attack map and
+// the leak list the proof; this page links to the map once, from the reason
+// it supports, and to the letter once, from the demands.
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
-const dossier = pathFor("dossier", language)
-const listFor = (ids: readonly PointId[]) =>
-  ids.map((id) => points[language][id])
-const sections = {
-  verdacht: listFor(topics.verdacht),
-  speicherdauer: listFor(topics.speicherdauer),
-  sicherheit: listFor(topics.sicherheit),
-  ausbau: listFor(topics.ausbau),
-}
+const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
 ---
 
-<Layout
-  sections={[
-    { id: "verdacht", label: en ? "No suspicion" : "Ohne Verdacht" },
-    { id: "speicherdauer", label: en ? "Retention" : "Speicherdauer" },
-    { id: "sicherheit", label: en ? "Security" : "Sicherheit" },
-    { id: "ausbau", label: en ? "Expansion" : "Ausbau" },
-    { id: "forderungen", label: en ? "Demands" : "Forderungen" },
-  ]}
->
+<Layout>
   <MetaPage slot="head" />
 
   <article class="campaign arguments">
     <header class="hero">
       <div class="hero-text">
         <h1>
-          {en ? "What we oppose in DAC8." : "Was wir an DAC8 ablehnen."}
+          {en ? "Seven reasons against DAC8." : "Sieben Gründe gegen DAC8."}
           <span>{en ? "And what we demand." : "Und was wir fordern."}</span>
         </h1>
         <p class="lead">
-          {en ? "Here is why we oppose collecting data on every crypto customer without suspicion, and which limits we demand. What the law requires in detail, and which data leaks have already happened, is set out in the " : "Hier steht, warum wir die Erfassung aller Krypto-Kunden ohne Verdacht ablehnen und welche Grenzen wir fordern. Was das Gesetz genau verlangt und welche Datenlecks es schon gab, steht im "}<a
-            href={dossier}
-            >{en ? "dossier" : "Dossier"}</a
-          >.
+          {en
+            ? "DAC8 opens a file on every crypto customer, without suspicion and for ten years. Such files get stolen, and they show criminals where there is something to take. At our initiative, a complaint has been filed with the Data Protection Authority."
+            : "DAC8 legt über jeden Krypto-Kunden eine Akte an, ohne Verdacht und für zehn Jahre. Solche Akten werden gestohlen und zeigen Kriminellen, bei wem etwas zu holen ist. Auf unsere Initiative ist eine Beschwerde bei der Datenschutzbehörde eingebracht."}
         </p>
         <nav
           class="hero-actions"
           aria-label={en ? "Get started" : "Direkteinstieg"}
         >
           <a class="button primary" href="#forderungen"
-            >{en ? "Our demands" : "Was wir fordern"}</a
-          >
-          <a class="button" href={dossier}
-            >{en ? "What DAC8 requires" : "Was DAC8 verlangt"}</a
+            >{en ? "What we demand" : "Was wir fordern"}</a
           >
         </nav>
       </div>
-      <Artwork
-        id="withoutSuspicion"
-        language={language}
-        size="hero"
-        priority
-        caption={false}
-      />
+      <nav
+        class="reason-index"
+        aria-label={en ? "The seven reasons" : "Die sieben Gründe"}
+      >
+        <ol>
+          {list.map((reason, index) => (
+            <li>
+              <a href={`#${reason.id}`}>
+                <span class="numeral" aria-hidden="true">{index + 1}</span>
+                {reason.short}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
     </header>
 
-    <section id="verdacht" aria-labelledby="verdacht-heading">
-      <h2 id="verdacht-heading" class="statement">
-        {en ? "Privacy needs no justification." : "Privatsphäre braucht keine Rechtfertigung."}
-        <span
-          >{en ? "State interference does." : "Staatliche Eingriffe schon."}</span
-        >
+    <section id="gruende" aria-labelledby="gruende-heading">
+      <h2 id="gruende-heading" class="group-head">
+        {en ? "Seven reasons" : "Sieben Gründe"}
       </h2>
-      <p class="section-intro">
-        {en ? "Privacy does not mean that nobody knows anything. Your bank knows your balance, your doctor your diagnosis. Privacy means that rules decide who else learns it, for what, and for how long." : "Privatsphäre heißt nicht, dass niemand etwas weiß. Deine Bank kennt deinen Kontostand, deine Ärztin deine Diagnose. Privatsphäre heißt, dass Regeln festlegen, wer sonst davon erfährt, wofür und wie lange."}
-      </p>
-      <ArgumentPoints points={sections.verdacht} />
+      <ol class="reasons">
+        {list.map((reason, index) => (
+          <li id={reason.id}>
+            <details>
+              <summary>
+                <span class="numeral" aria-hidden="true">{index + 1}</span>
+                <h3 id={reason.alias}>{reason.title}</h3>
+                <span class="reason-text">{reason.text}</span>
+                <span class="toggle" aria-hidden="true"></span>
+              </summary>
+              <div class="proof" id={reason.proofId}>
+                {reason.proof.map((paragraph) => <p>{paragraph}</p>)}
+                {reason.sources.length > 0 && (
+                  <p class="proof-sources">
+                    {en ? "Sources: " : "Quellen: "}
+                    {reason.sources.map((source, position) => (
+                      <>
+                        {position > 0 && " · "}
+                        <a href={source.href}>{source.label}</a>
+                      </>
+                    ))}
+                  </p>
+                )}
+              </div>
+            </details>
+            {reason.attacks && (
+              <a class="text-link" href={pathFor("attacks", language)}
+                >{en ? "Documented attacks on the map" : "Dokumentierte Angriffe auf der Karte"}</a
+              >
+            )}
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section id="einwaende" aria-labelledby="einwaende-heading">
+      <h2 id="einwaende-heading" class="group-head">
+        {en ? "Four objections" : "Vier Einwände"}
+      </h2>
+      <ArgumentPoints points={objections[language]} variant="objections" />
     </section>
 
     <section
-      id="speicherdauer"
+      id="forderungen"
       class="band"
-      aria-labelledby="speicherdauer-heading"
+      aria-labelledby="forderungen-heading"
     >
-      <h2 id="speicherdauer-heading">
-        {en ? "Data is kept for years, and more is added every year" : "Gespeichert wird lange, und jedes Jahr kommt mehr dazu"}
-      </h2>
-      <ArgumentPoints points={sections.speicherdauer} />
-    </section>
-
-    <section id="sicherheit" aria-labelledby="sicherheit-heading">
-      <h2 id="sicherheit-heading">
-        {en ? "Every data store is a target" : "Jeder Datenbestand ist ein Angriffsziel"}
+      <h2 id="forderungen-heading" class="group-head">
+        {en ? "Five demands" : "Fünf Forderungen"}
       </h2>
       <p class="section-intro">
-        {en ? "The danger is not the single report. It is the store that grows over the years without any suspicion, and everything that can be linked to it." : "Die Gefahr ist nicht die einzelne Meldung. Es ist der Bestand, der über Jahre wächst, ohne dass je ein Verdacht bestand, und alles, was sich damit verknüpfen lässt."}
+        {en
+          ? "The state must justify why it intrudes on your private life, and choose milder means where they suffice: targeted investigations based on specific suspicion instead of stockpiling data on everyone."
+          : "Der Staat muss begründen, warum er in dein Privatleben eingreift, und mildere Mittel wählen, wo sie genügen: gezielte Ermittlungen bei konkretem Verdacht statt Daten über alle auf Vorrat."}
       </p>
-      <ArgumentPoints points={sections.sicherheit} />
-      <ul class="facts concerns">
-        <li id="verknuepfung">
-          <strong
-            >{en ? "When datasets come together" : "Wenn Datensätze zusammenkommen"}</strong
-          >
-          <p>
-            {en ? "Each source shows only part of the picture. A public profile shows a face and family, a provider breach the wallet address, a hacked tax service the holdings. The annual totals show how much someone moves. Put together, they form a profile with a face, a home address and presumed wealth, and every further leak makes it more precise. A single breach can already hold several of these pieces: at Fractal ID, ID documents, home addresses and wallet addresses sat in one dataset." : "Jede Quelle zeigt nur einen Ausschnitt. Ein öffentliches Profil zeigt Gesicht und Familie, ein Datenleck beim Anbieter die Wallet-Adresse, ein gehackter Steuerdienst die Bestände. Die Jahreswerte zeigen, wie viel jemand bewegt. Zusammengeführt ergibt das ein Profil mit Gesicht, Wohnadresse und mutmaßlichem Vermögen, und jedes weitere Datenleck macht es genauer. Schon ein einzelnes Datenleck kann mehrere dieser Teile enthalten: Bei Fractal ID lagen Ausweis, Wohnadresse und Wallet-Adresse in einem Datensatz."}
-          </p>
-        </li>
-        <li id="zahlungsprofile">
-          <strong
-            >{en ? "When payments reveal everyday life" : "Wenn Zahlungen deinen Alltag offenlegen"}</strong
-          >
-          <p>
-            {en ? "Paying with bitcoin leaves traces of your everyday life, because on-chain transactions remain public. Once your wallet address is tied to your name, information about the recipients lets your purchases, donations and recurring payments " : "Zahlst du mit Bitcoin, hinterlässt du Spuren deines Alltags, denn On-Chain-Transaktionen bleiben öffentlich. Ist deine Wallet-Adresse einmal deinem Namen zugeordnet, lassen Einkäufe, Spenden und regelmäßige Zahlungen mit Informationen über die Empfänger "}<a
-              href="https://petsymposium.org/popets/2018/popets-2018-0038.php"
-              >{en ? "reveal habits and relationships" : "Rückschlüsse auf Gewohnheiten und Beziehungen"}</a
-            >{en ? "." : " zu."}
-          </p>
-        </li>
-      </ul>
-    </section>
-
-    <section id="ausbau" class="band" aria-labelledby="ausbau-heading">
-      <h2 id="ausbau-heading">
-        {en ? "DAC8 is one building block of financial surveillance" : "DAC8 ist ein Baustein finanzieller Überwachung"}
-      </h2>
-      <div class="columns">
-        <p class="section-intro">
-          {en ? "Step by step, the EU and Austria are building an infrastructure that collects financial data without suspicion, stores it for years and links it ever more closely." : "Schritt für Schritt bauen die EU und Österreich eine Infrastruktur, die Finanzdaten ohne Verdacht erfasst, lange speichert und immer enger verknüpft."}
-        </p>
-        <p class="prose">
-          {en ? "Wallet addresses, individual transactions and activity before 2026 currently appear in no DAC8 report, and the proposal to recast the directive does not provide for that either. Providers hold them all the same, next to the data prepared for DAC8: anti-money-laundering rules have required it since 2020. Lawmakers can expand existing infrastructure. That is why we want to limit it now. The " : "Wallet-Adressen, einzelne Transaktionen und Vorgänge vor 2026 stehen derzeit in keiner DAC8-Meldung, und auch der Vorschlag zur Neufassung der Richtlinie sieht das nicht vor. Beim Anbieter liegen sie trotzdem, neben den Daten für DAC8: Seit 2020 verlangen das die Geldwäschevorschriften. Eine bestehende Infrastruktur kann der Gesetzgeber erweitern. Wir wollen ihr deshalb jetzt Grenzen setzen. Welche Stufen schon beschlossen sind und was die Neufassung ändern würde, zeigt die "}<a
-            href={`${pathFor("history", language)}#ausblick`}
-            >{en ? "history of the DAC" : "Geschichte der DAC"}</a
-          >{en ? " shows which steps have been adopted and what the recast would change." : "."}
-        </p>
-      </div>
-      <ol
-        class="flow"
-        aria-label={en ? "The building blocks" : "Die Bausteine"}
-      >
-        <li>
-          <strong
-            >{en ? "When you open an account" : "Bei der Kontoeröffnung"}</strong
-          >
-          <span
-            >{en ? "the provider identifies you with your ID, as anti-money-laundering rules require." : "identifiziert dich der Anbieter nach den Geldwäschevorschriften mit Ausweis."}</span
-          >
-        </li>
-        <li>
-          <strong
-            >{en ? "With every transfer" : "Bei jeder Übertragung"}</strong
-          >
-          <span
-            >{en ? "it records the sender and recipient under the EU transfer of funds regulation, including when you transfer to your own wallet." : "erfasst er nach der EU-Geldtransferverordnung Absender und Empfänger, auch wenn du auf deine eigene Wallet überträgst."}</span
-          >
-        </li>
-        <li>
-          <strong
-            >{en ? "Every year" : "Jedes Jahr"}
-            <span class="tag">DAC8</span></strong
-          >
-          <span
-            >{en ? "it prepares the tax identification numbers and annual totals of all customers for the DAC8 report." : "bereitet er Steuernummer und Jahreswerte aller Kunden für die DAC8-Meldung auf."}</span
-          >
-        </li>
-        <li>
-          <strong>{en ? "By 2029" : "Bis 2029"}</strong>
-          <span
-            >{en ? "account registries will be connected across the EU and will then also cover crypto-asset accounts." : "werden die Kontenregister EU-weit vernetzt. Sie erfassen dann auch Krypto-Konten."}</span
-          >
-        </li>
-      </ol>
-      <ArgumentPoints points={sections.ausbau} />
-    </section>
-
-    <section id="forderungen" aria-labelledby="forderungen-heading">
-      <h2 id="forderungen-heading">
-        {en ? "Our demands" : "Was wir fordern"}
-      </h2>
-      <p class="section-intro">
-        {en ? "The state must justify why an intrusion into your private life is necessary. Invoking money laundering or tax evasion does not replace that justification. We call for targeted investigations based on specific suspicion and effective protection for uninvolved people." : "Der Staat muss begründen, warum ein Eingriff in dein Privatleben notwendig ist. Der Verweis auf Geldwäsche oder Steuerhinterziehung ersetzt diese Begründung nicht. Wir fordern gezielte Ermittlungen bei konkretem Verdacht und wirksamen Schutz für Unbeteiligte."}
-      </p>
-      <ul class="checklist">
+      <ol class="demands">
         {demands[language].map((demand) => (
           <li>
-            <strong>{demand.title}</strong>
-            {demand.text}
+            <h3>{demand.title}</h3>
+            <p>{demand.text}</p>
           </li>
         ))}
-      </ul>
-      <div class="precedent">
-        <p class="precedent-year" aria-hidden="true">2014</p>
-        <p class="prose">
-          <strong
-            >{en ? "A surveillance law has fallen before." : "Schon einmal fiel ein Überwachungsgesetz."}</strong
-          >
-          {en ? "The challenge to data retention organised by AKVorrat, now epicenter.works, reached the Court of Justice through Austria’s Constitutional Court. In 2014, both the EU directive and Austrian rules fell." : "Die von AKVorrat, heute epicenter.works, organisierte Beschwerde gegen die Vorratsdatenspeicherung führte über den Verfassungsgerichtshof zum Europäischen Gerichtshof. 2014 hob der EuGH die EU-Richtlinie auf, der VfGH die österreichischen Regeln."}
-        </p>
-      </div>
-      <a class="text-link" href={donateFor(language)}
-        >{en ? "Help fund the case" : "Den Prozess mittragen"}</a
+      </ol>
+      <a
+        class="text-link"
+        href={`${pathFor("participate", language)}#abgeordnete`}
+        >{en ? "Write to your MPs" : "Brief an Abgeordnete schreiben"}</a
       >
     </section>
   </article>
 </Layout>
+
+<script>
+  // Links to a reason, or to an anchor inside its evidence, open the
+  // evidence: press links such as #zielliste and the anchors of the page
+  // before October 2026 (#verknuepfung, #zahlungsprofile) land on what they
+  // promise.
+  const openTarget = () => {
+    const id = decodeURIComponent(location.hash.slice(1))
+    const target = id ? document.getElementById(id) : null
+    const details =
+      target?.closest("details") ?? target?.querySelector("details")
+    if (!target || !details || details.open) return
+    details.open = true
+    target.scrollIntoView({ block: "start" })
+  }
+  addEventListener("hashchange", openTarget)
+  openTarget()
+</script>
+
+<style>
+  .arguments {
+    --num: 3rem;
+    /* Höhe der mitlaufenden Gruppenüberschrift, damit Sprungziele unter
+       ihr statt hinter ihr landen. */
+    --group-head-height: calc(var(--type-h2) * 1.1 + 2 * var(--space-xs) + 1px);
+  }
+
+  /* Ziffern in gefrästem Metall, wie das Jahr des Präzedenzfalls: Sie
+     ordnen, die Schlagzeile daneben bleibt der stärkste Text. */
+  .numeral {
+    inline-size: fit-content;
+    background: linear-gradient(
+      170deg,
+      light-dark(#8e969d, #e3e6e8),
+      light-dark(#3c4248, #7d858c)
+    );
+    background-clip: text;
+    color: transparent;
+    font-weight: var(--weight-heading);
+    font-stretch: 94%;
+    line-height: 1;
+    letter-spacing: -0.045em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Hero: Schlagzeile links, die sieben Gründe rechts -------- */
+
+  .reason-index ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .reason-index li + li {
+    border-block-start: 1px solid var(--line);
+  }
+
+  .reason-index a {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    align-items: baseline;
+    padding-block: var(--space-2xs);
+    color: var(--ink);
+    font-size: var(--type-body);
+    font-weight: var(--weight-strong);
+    line-height: 1.35;
+    text-decoration: none;
+  }
+
+  .reason-index a:hover {
+    color: var(--accent);
+  }
+
+  .reason-index .numeral {
+    font-size: var(--type-lead);
+  }
+
+  /* Schmal folgen die Gründe direkt unter dem Vorspann; die Übersicht
+     wiederholte sie nur. */
+  @container campaign (width < 56rem) {
+    .reason-index {
+      display: none;
+    }
+  }
+
+  @container campaign (width >= 56rem) {
+    .arguments .hero {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    }
+  }
+
+  /* ---------- Mitlaufende Gruppenüberschrift ---------------------------- */
+
+  /* Die Überschrift der Gruppe, in der man gerade liest, bleibt unter der
+     Kopfleiste stehen und ersetzt die Kapitelleiste. Ihre Fläche reicht wie
+     die Bänder bis an den Rand. */
+  .arguments .group-head {
+    position: sticky;
+    z-index: 2;
+    inset-block-start: calc(var(--header-height) + 1px);
+    max-inline-size: none;
+    padding-block: var(--space-xs);
+    background:
+      linear-gradient(var(--line) 0 0) bottom / 100% 1px no-repeat,
+      var(--band-fill, var(--background));
+    box-shadow: 0 0 0 100vmax var(--band-fill, var(--background));
+    clip-path: inset(0 -100vmax);
+  }
+
+  /* ---------- Gründe: Schlagzeile und ein Satz, Belege aufklappbar ------- */
+
+  /* Schmal steht die Ziffer über der Schlagzeile, damit Schlagzeile und
+     Satz die ganze Breite haben. */
+  .reasons {
+    --cols: minmax(0, 1fr) 2.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .reasons > li {
+    display: grid;
+    grid-template-columns: var(--cols);
+    column-gap: var(--space-s);
+    border-block-end: 1px solid var(--line);
+    scroll-margin-block-start: var(--group-head-height);
+  }
+
+  .reasons details {
+    grid-column: 1 / -1;
+  }
+
+  .reasons summary {
+    display: grid;
+    grid-template-columns: var(--cols);
+    grid-template-areas:
+      "num toggle"
+      "title title"
+      "text text";
+    gap: var(--space-2xs) var(--space-s);
+    padding-block: var(--space-m);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .reasons summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .reasons summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-md);
+  }
+
+  .reasons summary .numeral {
+    grid-area: num;
+    align-self: center;
+    font-size: var(--type-h2);
+  }
+
+  .reasons h3 {
+    grid-area: title;
+    scroll-margin-block-start: calc(var(--group-head-height) + var(--space-m));
+  }
+
+  .reason-text {
+    grid-area: text;
+    max-inline-size: var(--measure-lead);
+    color: var(--ink-2);
+    font-size: var(--type-lead);
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  /* Ein runder Knopf mit Winkel, der beim Öffnen kippt. */
+  .toggle {
+    grid-area: toggle;
+    display: grid;
+    place-items: center;
+    justify-self: end;
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-full);
+    color: var(--ink-3);
+    transition:
+      color 0.15s ease,
+      background-color 0.15s ease;
+  }
+
+  .toggle::before {
+    content: "";
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-inline-end: 1.5px solid currentColor;
+    border-block-end: 1.5px solid currentColor;
+    translate: 0 -0.12rem;
+    rotate: 45deg;
+    transition:
+      rotate 0.15s ease,
+      translate 0.15s ease;
+  }
+
+  details[open] > summary .toggle::before {
+    translate: 0 0.12rem;
+    rotate: -135deg;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toggle,
+    .toggle::before {
+      transition: none;
+    }
+  }
+
+  summary:hover .toggle,
+  details[open] > summary .toggle {
+    color: var(--ink);
+    background: var(--panel);
+  }
+
+  .proof {
+    display: grid;
+    grid-template-columns: var(--cols);
+    column-gap: var(--space-s);
+    row-gap: var(--space-xs);
+    padding-block-end: var(--space-m);
+    scroll-margin-block-start: var(--group-head-height);
+  }
+
+  .proof > p {
+    grid-column: 1 / -1;
+    max-inline-size: var(--measure-text);
+    color: var(--ink-2);
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
+  .proof > .proof-sources {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    line-height: 1.5;
+  }
+
+  .proof-sources a {
+    color: inherit;
+  }
+
+  .reasons > li > .text-link {
+    grid-column: 1 / -1;
+    margin-block: calc(-1 * var(--space-xs)) var(--space-m);
+  }
+
+  /* Breit stehen Schlagzeile und Satz nebeneinander: Wer nur die linke
+     Spalte liest, hat die sieben Gründe. Die Belege öffnen unter dem Satz. */
+  @container campaign (width >= 52rem) {
+    .reasons {
+      --cols: var(--num) minmax(0, 5fr) minmax(0, 6fr) 2.5rem;
+    }
+
+    .arguments .reasons > li,
+    .arguments .proof,
+    .reasons summary {
+      column-gap: var(--space-l);
+    }
+
+    .reasons summary {
+      grid-template-areas: "num title text toggle";
+    }
+
+    .reasons summary .numeral {
+      align-self: start;
+      margin-block-start: -0.06em;
+    }
+
+    .proof > p,
+    .reasons > li > .text-link {
+      grid-column: 3;
+    }
+  }
+
+  /* ---------- Einwände -------------------------------------------------- */
+
+  #einwaende :global(.objections) {
+    margin-block-start: var(--space-l);
+  }
+
+  /* ---------- Forderungen ----------------------------------------------- */
+
+  /* Nummern als Token wie die Stationen des Rechtswegs, damit sie sich von
+     den Ziffern der Gründe abheben. */
+  .demands {
+    display: grid;
+    margin-block-start: var(--space-l);
+    padding: 0;
+    list-style: none;
+    counter-reset: demand;
+  }
+
+  .demands li {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: var(--space-2xs) var(--space-s);
+    padding-block: var(--space-m);
+    border-block-start: 1px solid var(--line);
+    counter-increment: demand;
+  }
+
+  .demands li::before {
+    content: counter(demand);
+    grid-row: 1 / span 2;
+    display: grid;
+    place-items: center;
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    border: 1px solid var(--material-edge);
+    border-radius: var(--radius-full);
+    color: #f7f8f9;
+    background: linear-gradient(155deg, #4b5056, #25282d);
+    box-shadow:
+      inset 0 1px 0 #ffffff38,
+      inset 0 -1px 0 #00000035,
+      0 1px 2px var(--material-shade);
+    font-size: var(--type-meta);
+    font-weight: var(--weight-heading);
+    line-height: 1;
+  }
+
+  .demands h3 {
+    grid-column: 2;
+  }
+
+  .demands p {
+    grid-column: 2;
+    max-inline-size: var(--measure-text);
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  @container campaign (width >= 52rem) {
+    /* Dieselben Spalten wie die Gründe, damit Titel und Text an denselben
+       Kanten stehen. */
+    .demands li {
+      grid-template-columns: var(--num) minmax(0, 5fr) minmax(0, 6fr) 2.5rem;
+      column-gap: var(--space-l);
+      align-items: start;
+    }
+
+    .demands li::before {
+      grid-row: 1;
+    }
+
+    .demands p {
+      grid-column: 3;
+      grid-row: 1;
+    }
+  }
+</style>

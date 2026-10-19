@@ -2,7 +2,7 @@ import { letterDemands } from "@/data/arguments"
 import type { Language } from "@/lib/i18n"
 
 // Letter to members of the Austrian National Council. The demands come from
-// the arguments page ("Was wir fordern", src/data/arguments.ts). The
+// the arguments page ("Fünf Forderungen", src/data/arguments.ts). The
 // letter is drafted in the browser and sent by the reader; nothing is
 // transmitted to dac8.org.
 

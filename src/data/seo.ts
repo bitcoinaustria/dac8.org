@@ -38,16 +38,16 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
   },
   arguments: {
     de: {
-      title: "Argumente gegen DAC8: was wir ablehnen und fordern",
+      title: "Sieben Gründe gegen DAC8 und was wir fordern",
       description:
-        "Warum wir die anlasslose Erfassung aller Krypto-Kunden ablehnen: Sicherheit, Speicherdauer und Zweckausweitung, Antworten auf häufige Einwände und unsere Forderungen.",
-      imageLines: ["Was wir ablehnen.", "Und was wir fordern."],
+        "Warum wir die anlasslose Erfassung aller Krypto-Kunden ablehnen: sieben Gründe vom Bargeld bis zur Zielliste, Antworten auf Einwände und fünf Forderungen.",
+      imageLines: ["Sieben Gründe", "gegen DAC8."],
     },
     en: {
-      title: "Arguments against DAC8: what we oppose and demand",
+      title: "Seven reasons against DAC8, and what we demand",
       description:
-        "Why we oppose collecting data on every crypto customer without suspicion: security, retention and expanding purposes, answers to common objections and our demands.",
-      imageLines: ["What we oppose.", "What we demand."],
+        "Why we oppose collecting data on every crypto customer without suspicion: seven reasons from cash to target lists, answers to objections and five demands.",
+      imageLines: ["Seven reasons", "against DAC8."],
     },
   },
   history: {
