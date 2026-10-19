@@ -21,7 +21,9 @@ import { languageFor, pathFor } from "@/lib/i18n"
 // matter for DAC8: the data sits at the provider and, as reports, with the
 // tax authority. Without JavaScript the full list shows and the filters stay
 // hidden. The caveat that the cases do not show DAC8 caused them is said
-// once, in the hero.
+// once, in the hero. One paragraph above the list says that leaks reach
+// past the provider; its examples are cases in the list, which carry the
+// sources.
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
 
@@ -130,6 +132,11 @@ const strings = en
       <h2 id="faelle-heading">
         {en ? "All data leaks, newest first" : "Alle Datenlecks, die neuesten zuerst"}
       </h2>
+      <p class="section-intro">
+        {en
+            ? "A data leak does not stop at the provider: support, shipping and newsletter services hold customer data too, and Trezor’s shipping provider even held orders it had confirmed in writing as deleted. Once stolen, such data can be copied and used again for fraud, such as a fake security alert in Trezor’s name sent to around 347,000 recipients."
+            : "Ein Datenleck endet nicht beim Anbieter: Auch Support-, Versand- und Newsletter-Dienste halten Kundendaten, der Versanddienstleister von Trezor sogar Bestellungen, die er schriftlich als gelöscht bestätigt hatte. Einmal gestohlen, lassen sich solche Daten kopieren und erneut für Betrug nutzen, etwa für eine gefälschte Sicherheitswarnung im Namen von Trezor an rund 347.000 Empfänger."}
+      </p>
 
       <div
         class="leak-filters"

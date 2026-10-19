@@ -69,8 +69,8 @@ export const leaks: Leak[] = [
       en: "The home addresses of 272,000 wallet buyers.",
     },
     text: {
-      de: "Aus dem Onlineshop des Hardware-Wallet-Herstellers gelangten Namen, Anschriften und Telefonnummern ins Netz. Es folgten Phishing-Mails, SMS und Briefe an die Wohnadresse, die nach der Wiederherstellungsphrase fragten. In einer Umfrage der Universität Innsbruck berichteten 93 von 104 Betroffenen von Betrugsversuchen, 33 von Erpressungsdrohungen.",
-      en: "Names, postal addresses and phone numbers leaked from the hardware wallet maker’s online shop. Phishing emails, text messages and letters to home addresses followed, asking for the recovery phrase. In a University of Innsbruck survey, 93 of 104 affected customers reported scam attempts and 33 reported extortion threats.",
+      de: "Aus dem Onlineshop des Hardware-Wallet-Herstellers gelangten Namen, Anschriften und Telefonnummern ins Netz. Es folgten Phishing-Mails und SMS, die nach der Wiederherstellungsphrase fragten. In einer Umfrage der Universität Innsbruck berichteten 93 von 104 Betroffenen von Betrugsversuchen, 33 von Erpressungsdrohungen.",
+      en: "Names, postal addresses and phone numbers leaked from the hardware wallet maker’s online shop. Phishing emails and text messages followed, asking for the recovery phrase. In a University of Innsbruck survey, 93 of 104 affected customers reported scam attempts and 33 reported extortion threats.",
     },
     people: 272000,
     sources: [
@@ -832,6 +832,32 @@ export const leaks: Leak[] = [
       {
         label: same("Cointelegraph"),
         href: "https://cointelegraph.com/news/brevo-login-flaw-trezor-bitbox-cointracking-phishing",
+      },
+    ],
+  },
+  {
+    id: "shipmonk",
+    name: same("ShipMonk"),
+    year: 2026,
+    holders: ["vendor", "provider"],
+    kind: {
+      de: "Versanddienstleister von Trezor",
+      en: "Trezor’s shipping provider",
+    },
+    lost: ["identity"],
+    headline: {
+      de: "Bestellungen, die längst gelöscht sein sollten.",
+      en: "Orders that should have been deleted long ago.",
+    },
+    text: {
+      de: "Unbefugte gelangten beim Versanddienstleister des Wallet-Herstellers Trezor an Namen, E-Mail-Adressen, Telefonnummern und Lieferanschriften von Kunden. Darunter waren Bestellungen aus 2019 bis 2021, obwohl ShipMonk Trezor mehrfach schriftlich bestätigt hatte, sie gelöscht zu haben. Betroffen sind laut Trezor 80.689 Kunden.",
+      en: "Unauthorised parties got hold of customers’ names, email addresses, phone numbers and shipping addresses at the wallet maker Trezor’s shipping provider. Among them were orders from 2019 to 2021, although ShipMonk had repeatedly confirmed to Trezor in writing that it had deleted them. According to Trezor, 80,689 customers are affected.",
+    },
+    people: 80689,
+    sources: [
+      {
+        label: same("Trezor"),
+        href: "https://trezor.io/blog/news/recent-customer-data-exposed-in-shipping-provider-incident",
       },
     ],
   },
