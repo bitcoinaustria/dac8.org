@@ -1,0 +1,261 @@
+---
+import { feature, mesh } from "topojson-client"
+import type { GeometryCollection, Topology } from "topojson-specification"
+import countries from "world-atlas/countries-50m.json"
+import { attacks, formatDate, latestDate, latestYear } from "@/lib/attacks"
+import type { Language } from "@/lib/i18n"
+
+// A still of the attack map's Europe view for the home page: land and
+// borders from Natural Earth, one dot per known attack from Jameson Lopp's
+// list, red for the last two years as on the map itself. Everything is
+// drawn at build time, so the page loads no map library and no tiles. The
+// interactive map at /angriffe/ is the place to explore; this only shows
+// how close and how recent the cases are.
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+const en = language === "en"
+
+// The map's Europe view, in Web Mercator like the map itself.
+const bounds = { west: -11, east: 32, south: 35, north: 62 }
+const width = 600
+const radians = (degrees: number) => (degrees * Math.PI) / 180
+const mercator = (latitude: number) =>
+  Math.log(Math.tan(Math.PI / 4 + radians(latitude) / 2))
+const scale = width / radians(bounds.east - bounds.west)
+const height = Math.round(
+  scale * (mercator(bounds.north) - mercator(bounds.south)),
+)
+type Point = [number, number]
+const project = ([longitude, latitude]: number[]): Point => [
+  scale * radians(longitude - bounds.west),
+  scale *
+    (mercator(bounds.north) - mercator(Math.max(-80, Math.min(80, latitude)))),
+]
+
+// Shapes are cut to the frame plus a margin, so the page carries only what
+// is visible, and rounded to whole units with short steps dropped: at this
+// size a unit is about a pixel.
+const margin = 6
+const frame = {
+  left: -margin,
+  top: -margin,
+  right: width + margin,
+  bottom: height + margin,
+}
+const inside = ([x, y]: Point) =>
+  x >= frame.left && x <= frame.right && y >= frame.top && y <= frame.bottom
+const clip = (ring: Point[]) => {
+  const sides: [(point: Point) => boolean, (a: Point, b: Point) => Point][] = [
+    [
+      ([x]) => x >= frame.left,
+      (a, b) => [
+        frame.left,
+        a[1] + ((frame.left - a[0]) / (b[0] - a[0])) * (b[1] - a[1]),
+      ],
+    ],
+    [
+      ([x]) => x <= frame.right,
+      (a, b) => [
+        frame.right,
+        a[1] + ((frame.right - a[0]) / (b[0] - a[0])) * (b[1] - a[1]),
+      ],
+    ],
+    [
+      ([, y]) => y >= frame.top,
+      (a, b) => [
+        a[0] + ((frame.top - a[1]) / (b[1] - a[1])) * (b[0] - a[0]),
+        frame.top,
+      ],
+    ],
+    [
+      ([, y]) => y <= frame.bottom,
+      (a, b) => [
+        a[0] + ((frame.bottom - a[1]) / (b[1] - a[1])) * (b[0] - a[0]),
+        frame.bottom,
+      ],
+    ],
+  ]
+  let points = ring
+  for (const [keep, cut] of sides) {
+    const input = points
+    points = []
+    input.forEach((current, index) => {
+      const previous = input.at(index - 1) ?? current
+      if (keep(current)) {
+        if (!keep(previous)) points.push(cut(previous, current))
+        points.push(current)
+      } else if (keep(previous)) points.push(cut(previous, current))
+    })
+    if (points.length === 0) break
+  }
+  return points
+}
+const step = 1.5
+const path = (points: Point[], closed: boolean) => {
+  let d = ""
+  let last: Point | undefined
+  for (const point of points) {
+    const rounded: Point = [Math.round(point[0]), Math.round(point[1])]
+    if (last && Math.hypot(rounded[0] - last[0], rounded[1] - last[1]) < step)
+      continue
+    d += last
+      ? `l${rounded[0] - last[0]} ${rounded[1] - last[1]}`
+      : `M${rounded[0]} ${rounded[1]}`
+    last = rounded
+  }
+  return closed && d.includes("l") ? `${d}z` : closed ? "" : d
+}
+
+const topology = countries as unknown as Topology
+const shapes = topology.objects.countries as GeometryCollection
+const land = feature(topology, topology.objects.land) as unknown as {
+  features?: GeoJSON.Feature[]
+  geometry?: GeoJSON.Geometry
+}
+const landGeometries = (land.features ?? []).map((item) => item.geometry)
+if (land.geometry) landGeometries.push(land.geometry)
+const landPath = landGeometries
+  .flatMap((geometry) =>
+    geometry.type === "Polygon"
+      ? [geometry.coordinates]
+      : geometry.type === "MultiPolygon"
+        ? geometry.coordinates
+        : [],
+  )
+  .flat()
+  .map((ring) => path(clip(ring.map(project)), true))
+  .join("")
+const borderPath = mesh(topology, shapes, (a, b) => a !== b)
+  .coordinates.map((line) => line.map(project))
+  .filter((line) => line.some(inside))
+  .map((line) => path(line, false))
+  .join("")
+
+// Older cases first, so the recent red dots lie on top.
+const recentFrom = latestYear - 1
+const firstYear = Math.min(...attacks.map((attack) => attack.year))
+const dots = attacks
+  .filter(
+    (attack) =>
+      attack.lat !== null &&
+      attack.lng !== null &&
+      attack.lng >= bounds.west &&
+      attack.lng <= bounds.east &&
+      attack.lat >= bounds.south &&
+      attack.lat <= bounds.north,
+  )
+  .map((attack) => {
+    const [x, y] = project([attack.lng ?? 0, attack.lat ?? 0])
+    return {
+      x: Math.round(x * 2) / 2,
+      y: Math.round(y * 2) / 2,
+      recent: attack.year >= recentFrom,
+    }
+  })
+  .sort((a, b) => Number(a.recent) - Number(b.recent))
+const recentCount = dots.filter((dot) => dot.recent).length
+const asOf = latestDate ? formatDate(latestDate, language) : String(latestYear)
+const label = en
+  ? `Map of Europe with ${dots.length} known attacks on crypto holders since ${firstYear}, ${recentCount} of them in ${recentFrom} and ${latestYear}.`
+  : `Karte Europas mit ${dots.length} bekannten Angriffen auf Krypto-Besitzer seit ${firstYear}, davon ${recentCount} in den Jahren ${recentFrom} und ${latestYear}.`
+---
+
+<figure class="attack-preview">
+  <svg
+    viewBox={`0 0 ${width} ${height}`}
+    role="img"
+    aria-label={label}
+    preserveAspectRatio="xMidYMid slice"
+  >
+    <path class="land" d={landPath} />
+    <path class="borders" d={borderPath} />
+    <g class="dots">
+      {dots.map((dot) => (
+          <circle
+            class:list={{ recent: dot.recent }}
+            cx={dot.x}
+            cy={dot.y}
+            r="5"
+          />
+        ))}
+    </g>
+  </svg>
+  <figcaption>
+    <span class="key recent">{`${recentFrom}–${latestYear}`}</span>
+    <span class="key">{`${firstYear}–${recentFrom - 1}`}</span>
+    <span class="credit"
+      >{en ? `As of ${asOf} · Data: Jameson Lopp · Map: Natural Earth` : `Stand ${asOf} · Daten: Jameson Lopp · Karte: Natural Earth`}</span
+    >
+  </figcaption>
+</figure>
+
+<style>
+  /* Wie die Karte unter /angriffe/: graues Land, helle Grenzen, ein Punkt
+     je Fall, rot die letzten zwei Jahre. Eine ruhige Fläche, kein Rahmen. */
+  .attack-preview {
+    display: grid;
+    gap: var(--space-xs);
+    margin: 0;
+  }
+
+  svg {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-xl);
+    background: var(--panel);
+  }
+
+  .land {
+    fill: var(--gray-5);
+  }
+
+  .borders {
+    fill: none;
+    stroke: var(--gray-1);
+    stroke-width: 1;
+    stroke-linejoin: round;
+  }
+
+  circle {
+    fill: var(--gray-9);
+    stroke: var(--gray-1);
+    stroke-width: 1.5;
+  }
+
+  circle.recent {
+    fill: var(--primary);
+  }
+
+  figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3xs) var(--space-s);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    line-height: 1.4;
+  }
+
+  .key::before {
+    content: "";
+    display: inline-block;
+    inline-size: 0.625rem;
+    block-size: 0.625rem;
+    margin-inline-end: 0.4em;
+    border-radius: var(--radius-full);
+    background: var(--gray-9);
+  }
+
+  .key.recent::before {
+    background: var(--primary);
+  }
+
+  .credit {
+    margin-inline-start: auto;
+  }
+</style>
