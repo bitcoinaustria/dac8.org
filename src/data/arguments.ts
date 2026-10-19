@@ -62,6 +62,27 @@ const gendarmerie =
 const accountLookups = "https://dserver.bundestag.de/btd/20/108/2010841.pdf"
 const transferRegulation = "https://eur-lex.europa.eu/eli/reg/2023/1113/oj"
 const accountRegistries = "https://eur-lex.europa.eu/eli/dir/2024/1640/oj"
+// Section 5.1: donations, union fees and medical bills as payments that
+// reveal sensitive data. It concerns detailed payment data, which the
+// provider holds and the annual report does not carry.
+const paymentGuidelines =
+  "https://www.edpb.europa.eu/sites/default/files/files/file1/edpb_guidelines_202006_psd2_afterpublicconsultation_en.pdf"
+const financialAbuse =
+  "https://www.fca.org.uk/news/blogs/hidden-cost-domestic-financial-abuse-working-together-improve-outcomes"
+// Record linkage: false links between people who share identifiers, and an
+// audit of England's hospital linkage that found false and missed matches.
+const linkageGuidance =
+  "https://www.gov.uk/government/publications/joined-up-data-in-government-the-future-of-data-linking-methods/quality-assessment-in-data-linkage"
+const linkageAudit = "https://pmc.ncbi.nlm.nih.gov/articles/PMC4550723/"
+// A randomised study measured comfort and choices right after reading about
+// surveillance, not lasting silence; keep the claim that narrow.
+const chillingStudy = "https://academic.oup.com/joc/article/76/4/277/8667253"
+const membershipCase =
+  "https://tile.loc.gov/storage-services/service/ll/usrep/usrep357/usrep357449/usrep357449.pdf"
+// Church Committee, Book II, summary of findings (PDF page 22): IRS files
+// and political tax investigations, tax data passed to FBI and CIA.
+const taxMisuse =
+  "https://donohueintellaw.ll.georgetown.edu/sites/default/files/assets/94755_II.pdf#page=22"
 
 export const reasons: Reason[] = [
   {
@@ -123,10 +144,13 @@ export const reasons: Reason[] = [
       proof: [
         "Wer diese Zuordnung einmal hat, behält sie: Aus pseudonymen Daten wird ein persönliches Finanzprofil. Ein einzelnes Datenleck kann schon beides enthalten. Beim Identifizierungsdienst Fractal ID lagen Ausweis, Wohnadresse und Wallet-Adresse in einem Datensatz.",
         "Ist eine Wallet-Adresse einmal einem Namen zugeordnet, lassen ihre Zahlungen mit Angaben über die Empfänger Rückschlüsse auf Einkäufe, Spenden und Beziehungen zu.",
+        "Ein Profil ist kein Beweis, denn auch die Zuordnung kann falsch sein. Teilen zwei Menschen Merkmale wie den Namen, verknüpft ein Abgleich womöglich ihre Daten, als gehörten sie einer Person, heißt es in einer Methodenanleitung der britischen Regierung. In einer Prüfung englischer Krankenhausdaten hielt ein landesweit genutztes Verfahren verschiedene Patienten für dieselbe Person und trennte die Daten anderer, die zusammengehörten. Wer nach einem solchen Profil beurteilt wird, muss Fehler finden und berichtigen können.",
       ],
       sources: [
         { href: fractal, label: "Fractal ID" },
         { href: paymentStudy, label: "Goldfeder et al. 2018" },
+        { href: linkageGuidance, label: "Doidge et al. 2021" },
+        { href: linkageAudit, label: "Hagger-Johnson et al. 2015" },
       ],
     },
     en: {
@@ -136,10 +160,13 @@ export const reasons: Reason[] = [
       proof: [
         "Whoever has that link keeps it: pseudonymous data becomes a personal financial profile. A single breach can already hold both. At the identity verification service Fractal ID, ID documents, home addresses and wallet addresses sat in one record.",
         "Once a wallet address is tied to a name, its payments, together with information about the recipients, reveal purchases, donations and relationships.",
+        "A profile is not proof, because the link itself can be wrong. When two people share identifiers such as a name, matching can join their records as if they belonged to one person, a UK government methods guide warns. In a check of English hospital data, a method used nationwide took different patients for the same person and split the records of others that belonged together. Anyone judged by such a profile must be able to find and correct errors.",
       ],
       sources: [
         { href: fractal, label: "Fractal ID" },
         { href: paymentStudy, label: "Goldfeder et al. 2018" },
+        { href: linkageGuidance, label: "Doidge et al. 2021" },
+        { href: linkageAudit, label: "Hagger-Johnson et al. 2015" },
       ],
     },
   },
@@ -213,25 +240,33 @@ export const reasons: Reason[] = [
       short: "Privatsphäre betrifft alle",
       title:
         "Niemand muss reich sein, um finanzielle Privatsphäre zu brauchen.",
-      text: "Beim Anbieter liegen auch einzelne Transaktionen. Aus ihnen lässt sich ablesen, wem du spendest, wo du Mitglied bist und wen du unterstützt.",
+      text: "Beim Anbieter liegen auch einzelne Transaktionen. Aus ihnen lässt sich ablesen, wem du spendest, wo du Mitglied bist und welche Hilfe du suchst.",
       proof: [
         "Bei jeder Übertragung erfasst der Anbieter nach der EU-Geldtransferverordnung Absender und Empfänger. Die Geldwäschevorschriften verlangen, diese Aufzeichnungen bei allen Kunden aufzubewahren, ohne Verdacht und derzeit bis zehn Jahre nach Ende der Kundenbeziehung.",
+        "Die europäischen Datenschutzbehörden warnen, dass schon einzelne Zahlungen viel verraten: Spenden etwa politische oder religiöse Überzeugungen, Mitgliedsbeiträge die Gewerkschaft, Arztrechnungen die Gesundheit. In der Jahresmeldung stehen davon nur Jahressummen, beim Anbieter liegt jede einzelne Zahlung.",
+        "Hilfe braucht Vertraulichkeit. Wer mit einem Partner lebt, der das Geld kontrolliert, braucht einen sicheren Weg, Hilfe zu suchen und über eigenes Geld zu verfügen. Die britische Finanzaufsicht beschreibt, wie Banken Betroffenen dafür geschützte Anlaufstellen und kleine Notgelder für die Flucht anbieten.",
       ],
       sources: [
         { href: transferRegulation, label: "Verordnung (EU) 2023/1113" },
         { href: amlRetention, label: "§ 21 FM-GwG" },
+        { href: paymentGuidelines, label: "EDSA-Leitlinien 06/2020" },
+        { href: financialAbuse, label: "FCA 2024" },
       ],
     },
     en: {
       short: "Privacy concerns everyone",
       title: "Nobody has to be rich to need financial privacy.",
-      text: "The provider also holds individual transactions. They show whom you donate to, where you are a member and whom you support.",
+      text: "The provider also holds individual transactions. They show whom you donate to, where you are a member and what help you seek.",
       proof: [
         "With every transfer, the provider records the sender and recipient under the EU transfer of funds regulation. Anti-money-laundering rules require it to keep these records for every customer, without suspicion, currently for up to ten years after the relationship ends.",
+        "Europe’s data protection authorities warn that even single payments reveal a lot: donations can show political or religious beliefs, membership fees a trade union, medical bills someone’s health. Of these, the annual report carries only yearly totals; the provider holds every single payment.",
+        "Getting help requires confidentiality. Someone living with a partner who controls the money needs a safe way to seek help and to use their own money. The UK’s financial regulator describes banks offering those affected safe spaces to ask for help and small emergency funds to leave.",
       ],
       sources: [
         { href: transferRegulation, label: "Regulation (EU) 2023/1113" },
         { href: amlRetention, label: "Section 21 FM-GwG" },
+        { href: paymentGuidelines, label: "EDPB Guidelines 06/2020" },
+        { href: financialAbuse, label: "FCA 2024" },
       ],
     },
   },
@@ -242,27 +277,37 @@ export const reasons: Reason[] = [
     de: {
       short: "Finanzielle Überwachung braucht Grenzen",
       title: "Was gesammelt ist, wird für mehr genutzt.",
-      text: "Laut Richtlinie dürfen die Daten auch für Zoll, gegen Geldwäsche und für EU-Sanktionen verwendet werden. Wir lassen prüfen, ob mildere Mittel genügen, und wollen finanzielle Überwachung begrenzen, bevor sie weiter wächst.",
+      text: "Laut Richtlinie dürfen die Daten auch für Zoll, gegen Geldwäsche und für EU-Sanktionen verwendet werden. Wir sind überzeugt, dass mildere Mittel genügen, und wollen finanzielle Überwachung begrenzen, bevor sie weiter wächst.",
       proof: [
         "Wie so etwas wächst, zeigt Deutschland: Seit 2005 dürfen Finanzämter und Sozialbehörden abfragen, wer welche Konten hat. 2013 kamen Gerichtsvollzieher dazu, 2023 fragten sie 844.427 Mal ab.",
         "DAC8 ist ein Baustein unter mehreren: Den Ausweis prüft der Anbieter schon bei der Kontoeröffnung, Absender und Empfänger erfasst er bei jeder Übertragung. Bis 2029 werden die Kontenregister EU-weit vernetzt; sie erfassen dann auch Krypto-Konten.",
+        "Gute Absichten ersetzen keine Grenzen, denn wer heute über die Daten bestimmt, ist morgen vielleicht nicht mehr zuständig. Ein Untersuchungsausschuss des US-Senats stellte 1976 fest, dass die Steuerbehörde IRS Akten über mehr als 11.000 Personen und Gruppen angelegt, Steuerprüfungen nach politischen statt steuerlichen Kriterien begonnen und Steuerdaten ohne ausreichende Schutzvorkehrungen an FBI und CIA weitergegeben hatte.",
+        "Überwachung wirkt auch ohne Datenleck. In einem Experiment mit 827 Internetnutzern aus der Deutschschweiz suchten Teilnehmer, die gerade einen Artikel über Datenüberwachung gelesen hatten, seltener nach heiklen Themen und beantworteten persönliche Fragen seltener. Dass die erzwungene Offenlegung von Mitgliederlisten Menschen davon abhalten kann, eine Vereinigung zu unterstützen, erkannte der US Supreme Court schon 1958 an.",
       ],
       sources: [
         { href: accountLookups, label: "BT-Drucksache 20/10841" },
         { href: accountRegistries, label: "Richtlinie (EU) 2024/1640" },
+        { href: taxMisuse, label: "US-Senat 1976" },
+        { href: chillingStudy, label: "Festic et al. 2026" },
+        { href: membershipCase, label: "NAACP v. Alabama 1958" },
       ],
     },
     en: {
       short: "Financial surveillance needs limits",
       title: "What is collected gets used for more.",
-      text: "Under the directive, the data may also be used for customs, against money laundering and for EU sanctions. We are seeking a review of whether milder means would do, and we want to limit financial surveillance before it grows further.",
+      text: "Under the directive, the data may also be used for customs, against money laundering and for EU sanctions. We are convinced that milder means would do, and we want to limit financial surveillance before it grows further.",
       proof: [
         "Germany shows how such uses grow: since 2005, tax offices and social benefit agencies may look up who holds which bank accounts. Bailiffs were added in 2013, and in 2023 they ran 844,427 lookups.",
         "DAC8 is one building block among several: the provider checks your ID when you open the account and records the sender and recipient of every transfer. By 2029, account registries will be connected across the EU and will then also cover crypto-asset accounts.",
+        "Good intentions are no substitute for limits, because whoever controls the data today may not be in charge tomorrow. In 1976, a US Senate investigating committee found that the tax authority, the IRS, had opened files on more than 11,000 individuals and groups, started tax investigations on political rather than tax criteria, and passed tax information to the FBI and CIA without adequate safeguards.",
+        "Surveillance has an effect even without a data leak. In an experiment with 827 internet users from German-speaking Switzerland, participants who had just read an article about data surveillance searched less often for sensitive topics and answered personal questions less often. As early as 1958, the US Supreme Court recognised that forcing an association to hand over its membership list can keep people from supporting it.",
       ],
       sources: [
         { href: accountLookups, label: "Bundestag paper 20/10841" },
         { href: accountRegistries, label: "Directive (EU) 2024/1640" },
+        { href: taxMisuse, label: "US Senate 1976" },
+        { href: chillingStudy, label: "Festic et al. 2026" },
+        { href: membershipCase, label: "NAACP v. Alabama 1958" },
       ],
     },
   },
