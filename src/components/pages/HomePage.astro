@@ -33,6 +33,7 @@ const euBefore = countIn(latestYear - 1, euCountries)
 const reasons = [
   {
     icon: "key",
+    anchor: "selbstverwahrung",
     title: en ? "We defend self-custody." : "Wir verteidigen Selbstverwahrung.",
     text: en
       ? "Holding bitcoin with your own keys is as legitimate as cash at home."
@@ -40,6 +41,7 @@ const reasons = [
   },
   {
     icon: "link",
+    anchor: "pseudonym",
     title: en
       ? "Pseudonymous is not anonymous."
       : "Pseudonym ist nicht anonym.",
@@ -49,6 +51,7 @@ const reasons = [
   },
   {
     icon: "people",
+    anchor: "alle",
     title: en ? "Privacy concerns everyone." : "Privatsphäre betrifft alle.",
     text: en
       ? "Even small payments show whom you donate to and whom you support."
@@ -56,6 +59,7 @@ const reasons = [
   },
   {
     icon: "eye",
+    anchor: "zweck",
     title: en ? "Surveillance needs limits." : "Überwachung braucht Grenzen.",
     text: en
       ? "Under the directive, the data may also be used for customs, against money laundering and for sanctions."
@@ -143,52 +147,56 @@ const actions = [
       <div class="proof-map">
         <AttackMapPreview language={language} />
       </div>
-      <a class="text-link" href={pathFor("attacks", language)}
-        >{en ? "Open the map" : "Zur Karte"}</a
-      >
     </section>
 
-    <section id="gruende" class="band" aria-labelledby="gruende-heading">
+    <section id="gruende" aria-labelledby="gruende-heading">
       <h2 id="gruende-heading">
         {en ? "This is about more than tax." : "Es geht um mehr als Steuern."}
       </h2>
       <ul class="reasons">
         {reasons.map((reason) => (
           <li>
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-              focusable="false"
+            <a
+              class="reason"
+              href={`${pathFor("arguments", language)}#${reason.anchor}`}
             >
-              {reason.icon === "key" && (
-                <>
-                  <circle cx="7.5" cy="16.5" r="3.5" />
-                  <path d="m10 14 9.5-9.5M16.5 7.5 19 10M14 10l1.5 1.5" />
-                </>
-              )}
-              {reason.icon === "link" && (
-                <path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1" />
-              )}
-              {reason.icon === "people" && (
-                <>
-                  <circle cx="9" cy="8.5" r="3.5" />
-                  <path d="M3 20a6 6 0 0 1 12 0M15.5 5a3.5 3.5 0 0 1 0 7M21 20a6 6 0 0 0-3.5-5.5" />
-                </>
-              )}
-              {reason.icon === "eye" && (
-                <>
-                  <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
-                  <circle cx="12" cy="12" r="3" />
-                </>
-              )}
-            </svg>
-            <h3>{reason.title}</h3>
-            <p>{reason.text}</p>
+              <span class="reason-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  {reason.icon === "key" && (
+                    <>
+                      <circle cx="7.5" cy="16.5" r="3.5" />
+                      <path d="m10 14 9.5-9.5M16.5 7.5 19 10M14 10l1.5 1.5" />
+                    </>
+                  )}
+                  {reason.icon === "link" && (
+                    <path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1" />
+                  )}
+                  {reason.icon === "people" && (
+                    <>
+                      <circle cx="9" cy="8.5" r="3.5" />
+                      <path d="M3 20a6 6 0 0 1 12 0M15.5 5a3.5 3.5 0 0 1 0 7M21 20a6 6 0 0 0-3.5-5.5" />
+                    </>
+                  )}
+                  {reason.icon === "eye" && (
+                    <>
+                      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </>
+                  )}
+                </svg>
+              </span>
+              <h3>{reason.title}</h3>
+              <p>{reason.text}</p>
+            </a>
           </li>
         ))}
       </ul>
@@ -197,17 +205,40 @@ const actions = [
       >
     </section>
 
-    <section id="beschwerde" aria-labelledby="beschwerde-heading">
-      <h2 id="beschwerde-heading">
-        {en ? "The complaint is with the Data Protection Authority." : "Die Beschwerde liegt bei der Datenschutzbehörde."}
-      </h2>
-      <p class="section-intro">
-        {en ? "Lawyer Dr Oliver Völkel, LL.M. (CERHA HEMPEL) filed it as a customer of a provider, at the initiative of Bitcoin Austria, the nonprofit Bitcoin association founded in Vienna in 2011. We believe that collecting data on every customer without suspicion violates fundamental rights, and we want that settled, all the way to the Court of Justice of the European Union." : "Rechtsanwalt Dr. Oliver Völkel, LL.M. (CERHA HEMPEL) hat sie als Kunde eines Anbieters eingebracht, auf Initiative von Bitcoin Austria, dem gemeinnützigen Wiener Bitcoin-Verein, gegründet 2011. Wir halten die Erfassung aller Kunden ohne Verdacht für grundrechtswidrig und wollen das bis vor den Europäischen Gerichtshof klären lassen."}
-      </p>
-      <LegalRoute language={language} />
-      <a class="text-link" href={pathFor("proceedings", language)}
-        >{en ? "Where the case stands" : "Stand des Verfahrens"}</a
+    <section
+      id="beschwerde"
+      class="band complaint"
+      aria-labelledby="beschwerde-heading"
+    >
+      <div class="complaint-text">
+        <h2 id="beschwerde-heading">
+          {en ? "The complaint is with the Data Protection Authority." : "Die Beschwerde liegt bei der Datenschutzbehörde."}
+        </h2>
+        <p class="section-intro">
+          {en ? "We believe that collecting data on every customer without suspicion violates fundamental rights. Our aim is to have that settled, all the way to the Court of Justice of the European Union." : "Wir halten die Erfassung aller Kunden ohne Verdacht für grundrechtswidrig. Unser Ziel ist eine Klärung bis vor den Europäischen Gerichtshof."}
+        </p>
+        <a class="text-link" href={pathFor("proceedings", language)}
+          >{en ? "Where the case stands" : "Stand des Verfahrens"}</a
+        >
+      </div>
+      <dl
+        class="glance complaint-facts"
+        aria-label={en ? "The complaint" : "Die Beschwerde"}
       >
+        <dt>{en ? "Filed" : "Eingebracht"}</dt>
+        <dd>{en ? "October 2026" : "im Oktober 2026"}</dd>
+        <dt>{en ? "By" : "Von"}</dt>
+        <dd>
+          {en ? "Dr Oliver Völkel, LL.M., attorney at CERHA HEMPEL, as a customer of a provider" : "Rechtsanwalt Dr. Oliver Völkel, LL.M. (CERHA HEMPEL), als Kunde eines Anbieters"}
+        </dd>
+        <dt>Initiative</dt>
+        <dd>
+          {en ? "Bitcoin Austria, nonprofit association from Vienna, founded 2011" : "Bitcoin Austria, gemeinnütziger Verein aus Wien, gegründet 2011"}
+        </dd>
+      </dl>
+      <div class="complaint-route">
+        <LegalRoute language={language} />
+      </div>
     </section>
 
     <section
@@ -251,7 +282,7 @@ const actions = [
   }
 
   /* Beleg: Aussage und Zahlen links, die Karte als einziges Bild rechts.
-     Schmal folgt die Karte dem Vorspann, der Link steht am Schluss. */
+     Die Karte selbst führt zur Karte. Schmal folgt sie dem Vorspann. */
   .proof-map {
     margin-block-start: var(--space-l);
   }
@@ -260,7 +291,7 @@ const actions = [
     .proof {
       display: grid;
       grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-      grid-template-rows: 1fr auto auto auto 1fr;
+      grid-template-rows: 1fr auto auto 1fr;
       column-gap: var(--space-2xl);
     }
 
@@ -272,21 +303,17 @@ const actions = [
       grid-area: 3 / 1;
     }
 
-    .proof > .text-link {
-      grid-area: 4 / 1;
-    }
-
     .proof-map {
-      grid-area: 1 / 2 / 6 / 3;
+      grid-area: 1 / 2 / 5 / 3;
       margin-block-start: 0;
     }
   }
 
-  /* Vier Gründe zum Überfliegen: Zeichen, Titel, ein Satz. Schmal steht
-     das Zeichen links neben Titel und Satz, breit darüber. */
+  /* Vier Gründe als Karten, zwei mal zwei: Zeichen, Titel, ein Satz. Jede
+     Karte führt zu ihrem Grund auf /argumente/. */
   .reasons {
     display: grid;
-    gap: var(--space-l) var(--space-xl);
+    gap: var(--space-s);
     margin-block-start: var(--space-l);
     padding: 0;
     list-style: none;
@@ -294,57 +321,148 @@ const actions = [
 
   .reasons li {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-content: start;
-    gap: var(--space-3xs) var(--space-s);
   }
 
-  .reasons svg {
+  .reason {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-content: start;
+    gap: var(--space-2xs) var(--space-m);
+    padding: var(--space-m-l);
+    padding-inline-end: calc(var(--space-m-l) + 1.5rem);
+    border-radius: var(--radius-xl);
+    color: inherit;
+    background: var(--panel);
+    text-decoration: none;
+    transition: background-color 160ms ease;
+  }
+
+  .reason:hover {
+    color: inherit;
+    background: var(--panel-strong);
+  }
+
+  .reason:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+  }
+
+  /* Der Pfeil zeigt, dass die Karte weiterführt. */
+  .reason::after {
+    content: "→";
+    position: absolute;
+    inset-block-start: var(--space-m-l);
+    inset-inline-end: var(--space-m-l);
+    color: var(--accent);
+    font-weight: var(--weight-strong);
+    transition: translate 160ms ease;
+  }
+
+  .reason:hover::after {
+    translate: 0.2em 0;
+  }
+
+  .reason-icon {
     grid-row: span 2;
-    inline-size: 3rem;
-    block-size: 3rem;
-    padding: 0.7rem;
+    display: grid;
+    place-items: center;
+    inline-size: 4rem;
+    block-size: 4rem;
     border-radius: var(--radius-lg);
     color: var(--ink);
     background: var(--paper);
   }
 
-  .reasons h3 {
-    align-self: center;
-    font-size: var(--type-lead);
-    line-height: 1.3;
-    letter-spacing: -0.012em;
+  .reason-icon svg {
+    inline-size: 2rem;
+    block-size: 2rem;
   }
 
-  .reasons p {
-    max-inline-size: 40ch;
+  .reason h3 {
+    align-self: end;
+    max-inline-size: none;
+  }
+
+  .reason p {
+    max-inline-size: 46ch;
     color: var(--ink-2);
     text-wrap: pretty;
   }
 
-  @container campaign (width >= 40rem) {
+  @container campaign (width >= 48rem) {
     .reasons {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  @container campaign (width >= 64rem) {
-    .reasons {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    .reasons li {
+  @container campaign (width < 30rem) {
+    .reason {
       grid-template-columns: minmax(0, 1fr);
-      gap: var(--space-xs);
     }
 
-    .reasons svg {
+    .reason-icon {
       grid-row: auto;
+      inline-size: 3.25rem;
+      block-size: 3.25rem;
       margin-block-end: var(--space-3xs);
     }
 
-    .reasons h3 {
-      align-self: start;
+    .reason-icon svg {
+      inline-size: 1.625rem;
+      block-size: 1.625rem;
+    }
+  }
+
+  /* Die Beschwerde: links Aussage und Ziel, rechts die Eckdaten auf einer
+     Karte wie im Hero von /verfahren/, darunter über die ganze Breite der
+     Rechtsweg. */
+  .complaint {
+    display: grid;
+    align-items: center;
+    gap: var(--space-xl) var(--space-2xl);
+  }
+
+  .complaint .text-link {
+    margin-block-start: var(--space-m);
+  }
+
+  .complaint-facts.glance {
+    inline-size: auto;
+    margin: 0;
+    padding: var(--space-m-l);
+    border-radius: var(--radius-xl);
+    background: var(--panel);
+  }
+
+  .complaint-facts dd:last-child {
+    margin-block-end: 0;
+  }
+
+  @media (width >= 36rem) {
+    .complaint-facts.glance {
+      gap: var(--space-s) var(--space-l);
+    }
+  }
+
+  .complaint-route :global(.route) {
+    margin-block-start: 0;
+  }
+
+  @container campaign (width >= 52rem) {
+    .complaint {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    }
+
+    .complaint-route {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reason,
+    .reason::after {
+      transition: none;
     }
   }
 </style>
