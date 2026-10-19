@@ -69,8 +69,8 @@ export const leaks: Leak[] = [
       en: "The home addresses of 272,000 wallet buyers.",
     },
     text: {
-      de: "Aus dem Onlineshop des Hardware-Wallet-Herstellers gelangten Namen, Anschriften und Telefonnummern ins Netz. Es folgten Phishing-Mails, SMS und Briefe an die Wohnadresse, die nach der Wiederherstellungsphrase fragten. In einer Umfrage der Universität Innsbruck berichteten 93 von 104 Betroffenen von Betrugsversuchen, 33 von Erpressungsdrohungen.",
-      en: "Names, postal addresses and phone numbers leaked from the hardware wallet maker’s online shop. Phishing emails, text messages and letters to home addresses followed, asking for the recovery phrase. In a University of Innsbruck survey, 93 of 104 affected customers reported scam attempts and 33 reported extortion threats.",
+      de: "Aus dem Onlineshop des Hardware-Wallet-Herstellers gelangten Namen, Anschriften und Telefonnummern ins Netz. Es folgten Phishing-Mails und SMS, die nach der Wiederherstellungsphrase fragten. In einer Umfrage der Universität Innsbruck berichteten 93 von 104 Betroffenen von Betrugsversuchen, 33 von Erpressungsdrohungen.",
+      en: "Names, postal addresses and phone numbers leaked from the hardware wallet maker’s online shop. Phishing emails and text messages followed, asking for the recovery phrase. In a University of Innsbruck survey, 93 of 104 affected customers reported scam attempts and 33 reported extortion threats.",
     },
     people: 272000,
     sources: [
