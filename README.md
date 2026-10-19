@@ -65,7 +65,7 @@ that follow the navigation labels:
 | Page | German | English |
 | --- | --- | --- |
 | Start: the case told as a story in scenes | `/` | `/en/` |
-| Dossier: the complete reference, FAQ and sources | `/dossier/` | `/en/dossier/` |
+| Dossier: the checkable reference: what is reported, what the provider keeps and for how long, FAQ, terms and sources | `/dossier/` | `/en/dossier/` |
 | Argumente: our position by topic, with answers to objections and our demands | `/argumente/` | `/en/arguments/` |
 | Angriffe: archive of known physical attacks, map and list | `/angriffe/` | `/en/attacks/` |
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
@@ -83,10 +83,12 @@ then the three ways to help (donate, ask your provider, write to MPs),
 documented leaks as a table of which kinds of data each exposed
 (`src/components/LeakMatrix.astro`), the guiding statement with two objections
 (the rest are on the arguments page, `src/data/arguments.ts`), what we do with
-the legal route, and who we are. The full case list with sources is in the dossier (`#faelle`). A case
-belongs there only if lost or misused data made the harm possible, and it needs
-a public source. The dossier's "Am I affected?" check
-(`src/components/AffectedCheck.astro`) restates the FAQ. The footer closes
+the legal route, and who we are. The full case list with sources is on the
+leak page (`/datenlecks/`, `/en/data-leaks/`, data in `src/data/leaks.ts`),
+after the cases in which such data led criminals to someone's door
+(`#angriffe`). A case belongs there only if lost or misused data made the harm
+possible, and it needs a public source. The "Am I affected?" check
+(`src/components/AffectedCheck.astro`) restates the dossier's FAQ. The footer closes
 every page with the status, the campaign statement and three equal actions on
 a dark band. Share buttons confirm a copied link on the button itself.
 
@@ -103,7 +105,7 @@ map holds the world, Europe and Austria views, a two-handle year range over a
 histogram of the cases in view, and the legend; zoom sits in the map's
 bottom-right corner. The list shows the cases in view, newest first; pointing
 at a case rings its place on the map. Without JavaScript the page shows the
-full list. The dossier's `#angriffe`
+full list. The leak page's `#angriffe`
 block (`src/components/AttackSummary.astro`) gives the key figures and links
 to the archive.
 
@@ -173,7 +175,7 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   same list the arguments page shows under "Was wir fordern".
 - There is no separate "Deine Akte" page. It was removed in October 2026
   once the home page told what happens to the data; what gets reported is in
-  the dossier (`#gemeldet`, with the affected check). `/deine-akte/` and
+  the dossier (`#gemeldet`). `/deine-akte/` and
   `/en/your-file/` redirect there.
 - There is no GDPR access-request tool. It was removed in October 2026: it
   did little for the campaign and put a heavy load on the providers who
