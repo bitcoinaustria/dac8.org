@@ -207,7 +207,7 @@ export const history: Entry[] = [
         when: "15. Februar 2011, automatischer Austausch ab 2015",
         title: "DAC1: Die Grundrichtlinie",
         text: "Neu ist der verpflichtende automatische Austausch: Was die Behörden über Gehälter, Aufsichtsratsvergütungen, Lebensversicherungen, Pensionen und Immobilien schon wissen, geht jedes Jahr an den Wohnsitzstaat.",
-        more: "Die Richtlinie 2011/16/EU ersetzt die Regeln von 1977 und ist bis heute der Rahmen, den alle weiteren Stufen ändern.",
+        more: "Die Richtlinie 2011/16/EU ersetzt die Regeln von 1977 und ist bis heute der Rahmen, den alle späteren Regeln ändern.",
         reporters: "Behörden, aus eigenen Daten",
         austria: "EU-Amtshilfegesetz, in Kraft seit 1. Jänner 2013",
       },
@@ -215,7 +215,7 @@ export const history: Entry[] = [
         when: "15 February 2011, automatic exchange from 2015",
         title: "DAC1: the framework directive",
         text: "What is new is mandatory automatic exchange: what authorities already know about salaries, director’s fees, life insurance, pensions and immovable property goes to the country of residence every year.",
-        more: "Directive 2011/16/EU replaces the 1977 rules and remains the framework that every later step amends.",
+        more: "Directive 2011/16/EU replaces the 1977 rules and remains the framework that every later rule amends.",
         reporters: "Authorities, from their own data",
         austria: "EU-Amtshilfegesetz, in force since 1 January 2013",
       },
@@ -572,7 +572,7 @@ export const history: Entry[] = [
       de: {
         when: "Vorgeschlagen am 24. Juni 2026",
         title: "Die Neufassung, oft „DAC10“ genannt",
-        text: "Die Kommission will alle Stufen in einer neuen Richtlinie zusammenführen und vereinfachen.",
+        text: "Die Kommission will alle bisherigen Änderungen in einer neuen Richtlinie zusammenführen und vereinfachen.",
         more: "Zur Vereinfachung sollen bei Steuergestaltungen 90 statt 30 Tage gelten, Plattform-Schwellen sich ändern und ein EU-Werkzeug Steuernummern prüfen. Zugleich sollen Steuerbehörden Zugang zu Geldwäsche-Registern, auch für Immobilien, und zu Pensionsregistern bekommen. Die Kryptofelder bleiben inhaltlich gleich. Der Datenschutzbeauftragte der EU hat im August 2026 engere Grenzen für diese Zugriffe und die Speicherdauer empfohlen.",
         reporters: "Noch kein Recht",
         austria:
@@ -581,7 +581,7 @@ export const history: Entry[] = [
       en: {
         when: "Proposed on 24 June 2026",
         title: "The recast, often called “DAC10”",
-        text: "The Commission wants to merge all steps into one new directive and simplify them.",
+        text: "The Commission wants to merge all amendments so far into one new directive and simplify them.",
         more: "To simplify, it proposes 90 instead of 30 days for tax arrangements, changed platform thresholds and an EU tool to verify tax numbers. At the same time, tax authorities would gain access to anti-money laundering registers, including for real estate, and to pension registers. The crypto fields stay the same in substance. In August 2026, the European Data Protection Supervisor recommended tighter limits on this access and on retention.",
         reporters: "Not yet law",
         austria:
@@ -610,7 +610,8 @@ export const history: Entry[] = [
 // open inside the row they led to.
 export type StackRow = {
   id: string
-  step: string | Record<Language, string>
+  // The legal act's short name, shown quietly after what it reports.
+  step?: string | Record<Language, string>
   from: number
   // Last year of application, for repealed steps.
   until?: number
@@ -638,13 +639,9 @@ export const historyStack: {
     rows: [
       {
         id: "zinsrichtlinie",
-        step: { de: "Zinsen", en: "Interest" },
         from: 2005,
         until: 2015,
-        what: {
-          de: "Zinsrichtlinie",
-          en: "Savings Directive",
-        },
+        what: { de: "Zinsen", en: "Interest" },
         plain: { de: "Zinsen aus dem Ausland", en: "Interest from abroad" },
       },
       {
@@ -803,20 +800,20 @@ export const historyCommon: {
 } = {
   translations: {
     de: {
-      label: "Für alle Stufen",
+      label: "Für alle Regeln",
       summary:
         "Seit DAC8 dürfen alle diese Daten auch gegen Geldwäsche und Terrorismusfinanzierung verwendet werden.",
       text: [
-        "Jede Stufe ändert dieselbe Richtlinie von 2011. Übermittlungswege, Amtsgeheimnis und die Regeln, wofür die Daten verwendet werden dürfen, gelten für alle Kategorien gemeinsam.",
+        "Bis auf die Zinsrichtlinie stehen alle diese Regeln in derselben Richtlinie von 2011 oder ändern sie. Übermittlungswege, Amtsgeheimnis und die Regeln, wofür die Daten verwendet werden dürfen, gelten für alle Kategorien gemeinsam.",
         "Ursprünglich durften ausgetauschte Informationen für Steuern, deren Beitreibung, Sozialversicherungsbeiträge und Steuerstrafverfahren verwendet werden; für alles andere brauchte es die Zustimmung des Herkunftsstaats. DAC8 hat die Bekämpfung von Geldwäsche und Terrorismusfinanzierung hinzugefügt, und für EU-Sanktionsrechtsakte nach Art. 215 AEUV braucht es keine Zustimmung des Herkunftsstaats mehr. Zweckbindung, Geheimhaltung und Datenschutz gelten weiter. Das betrifft alle DAC-Daten, auch Konto-, Lohn-, Pensions- und Plattformdaten.",
       ],
     },
     en: {
-      label: "For every step",
+      label: "For every rule",
       summary:
         "Since DAC8, all of this data may also be used to fight money laundering and terrorist financing.",
       text: [
-        "Every step amends the same 2011 directive. The exchange channels, official secrecy and the rules on what the data may be used for apply to all categories alike.",
+        "Except for the Savings Directive, all of these rules are in the same 2011 directive or amend it. The exchange channels, official secrecy and the rules on what the data may be used for apply to all categories alike.",
         "Originally, exchanged information could be used for taxes, tax recovery, social security contributions and tax penalty proceedings; any other use needed the sending country’s consent. DAC8 added the fight against money laundering and terrorist financing, and for the purposes of EU sanctions acts under Article 215 TFEU, the sending country’s consent is no longer required. Purpose limits, official secrecy and data protection still apply. This covers all DAC data, including bank-account, salary, pension and platform data.",
       ],
     },

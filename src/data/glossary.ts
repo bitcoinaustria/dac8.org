@@ -40,7 +40,7 @@ export const glossary: Record<Language, Term[]> = {
     },
     {
       term: "DAC8",
-      text: "Die achte Stufe der EU-Richtlinie über die Zusammenarbeit der Steuerbehörden (2011/16/EU). Sie weitet den automatischen Austausch von Steuerdaten auf Kryptowerte aus.",
+      text: "Eine 2023 beschlossene Änderung der EU-Richtlinie über die Zusammenarbeit der Steuerbehörden (2011/16/EU). Sie weitet den automatischen Austausch von Steuerdaten auf Kryptowerte aus.",
     },
     {
       term: "Krypto-MPfG",
@@ -90,7 +90,7 @@ export const glossary: Record<Language, Term[]> = {
     },
     {
       term: "DAC8",
-      text: "The eighth stage of the EU directive on administrative cooperation in taxation (2011/16/EU). It extends the automatic exchange of tax data to crypto-assets.",
+      text: "A 2023 amendment to the EU directive on administrative cooperation in taxation (2011/16/EU). It extends the automatic exchange of tax data to crypto-assets.",
     },
     {
       term: "Krypto-MPfG",

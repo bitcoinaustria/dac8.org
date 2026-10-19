@@ -56,22 +56,22 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
   },
   history: {
     de: {
-      title: "Von der Amtshilfe zu DAC8: Jede Stufe sammelt mehr Daten",
+      title: "Von der Amtshilfe zu DAC8: Jede neue Regel bringt mehr Daten",
       description:
         "Von der Amtshilfe 1977 bis zu jährlichen Meldungen von Banken, Plattformen und Krypto-Anbietern: DAC1 bis DAC9 und die vorgeschlagene Neufassung, mit Primärquellen.",
       imageLines: [
-        "Jede Stufe sammelt",
-        "mehr Daten.",
+        "Jede neue Regel",
+        "bringt mehr Daten.",
         "Bis jemand Grenzen setzt.",
       ],
     },
     en: {
-      title: "From mutual assistance to DAC8: every step collects more data",
+      title: "From mutual assistance to DAC8: each new rule adds more data",
       description:
         "From mutual assistance in 1977 to annual reports by banks, platforms and crypto-asset providers: DAC1 to DAC9 and the proposed recast, with primary sources.",
       imageLines: [
-        "Every step collects",
-        "more data.",
+        "Each new rule",
+        "adds more data.",
         "Until someone sets limits.",
       ],
     },

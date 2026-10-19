@@ -87,7 +87,7 @@ const groups = shown.map((group) => ({
       kind,
       era: eraOf.get(row.id),
       context,
-      step: typeof row.step === "string" ? row.step : row.step[language],
+      step: typeof row.step === "object" ? row.step[language] : row.step,
       what: row.what[language],
       plain: (row.plain ?? row.what)[language],
       span,
@@ -133,14 +133,13 @@ const [first, ...rest] = milestones
 const middle = rest.slice(0, -1)
 const last = rest.at(-1) ?? first
 const one = (count: number) => count === 1
-const noun = (count: number) =>
-  en ? (one(count) ? "step" : "steps") : one(count) ? "Stufe" : "Stufen"
+const noun = en ? "of these rules" : "dieser Regeln"
 const were = (count: number) => (one(count) ? "war es" : "waren es")
 type Part = string | { strong: string }
 const sentence: Part[] = en
   ? [
       {
-        strong: `${say(first.count).replace(/^./, (c) => c.toUpperCase())} ${noun(first.count)}`,
+        strong: `${say(first.count).replace(/^./, (c) => c.toUpperCase())} ${noun}`,
       },
       ` applied in ${first.year}`,
       ...middle.flatMap((m) => [
@@ -154,7 +153,7 @@ const sentence: Part[] = en
     ]
   : [
       `${first.year} ${one(first.count) ? "galt" : "galten"} `,
-      { strong: `${say(first.count)} ${noun(first.count)}` },
+      { strong: `${say(first.count)} ${noun}` },
       ...middle.flatMap((m) => [
         `, ${m.year} ${were(m.count)} `,
         { strong: say(m.count) },
@@ -185,8 +184,8 @@ let index = 0
       <p class="figure-line" set:html={counter} />
       <p class="stack-note">
         {en
-          ? "One row per step, from the year it applies. Open a row for details and sources."
-          : "Eine Zeile je Stufe, ab dem Jahr, in dem sie angewendet wird. Jede Zeile öffnet Einzelheiten und Quellen."}
+          ? "One row per rule, from the year it applies. Open a row for details and sources."
+          : "Eine Zeile je Regel, ab dem Jahr, in dem sie angewendet wird. Jede Zeile öffnet Einzelheiten und Quellen."}
       </p>
       <ul class="stack-legend" aria-hidden="true">
         <li class="past">{en ? "In force" : "In Kraft"}</li>
@@ -207,13 +206,10 @@ let index = 0
         {group.rows.map((row) => {
           const line = (
             <span class="stack-line">
-              <strong>{row.step}</strong>
-              <span class="stack-what"
-                >{row.what}<span
-                  class={compact && row.kind === "proposed" ? "stack-span" : "visually-hidden"}
-                  >, {row.span}</span
-                ></span
+              <strong
+                >{row.what}<span class="visually-hidden">, {row.span}</span></strong
               >
+              {row.step && <span class="stack-code">{row.step}</span>}
               <span class="stack-track" aria-hidden="true">
                 <span class="stack-bar">
                   <span class="stack-year">{row.from}</span>
@@ -292,7 +288,7 @@ let index = 0
   {!compact && (
     <div class="stack-sum" aria-hidden="true">
       <span class="stack-sum-label">
-        {en ? "Steps in force" : "Stufen in Kraft"}
+        {en ? "Rules in force" : "Regeln in Kraft"}
       </span>
       <span class="stack-track">
         {columns.map((column) => (
@@ -373,8 +369,8 @@ let index = 0
 
 <style>
   .stack {
-    /* Aufklapper, Kennung, Bezeichnung, Spur. */
-    --stack-cols: 1.75rem 4.25rem minmax(0, 14rem) minmax(0, 1fr);
+    /* Aufklapper, Bezeichnung, Kürzel, Spur. */
+    --stack-cols: 1.75rem minmax(0, 14rem) 4.25rem minmax(0, 1fr);
     --bar: light-dark(#3b4147, #a7afb6);
     --today-line: color-mix(in oklab, var(--foreground) 50%, transparent);
     --row: 2rem;
@@ -572,15 +568,18 @@ let index = 0
 
   .stack-line > strong {
     grid-column: 2;
+    padding-inline-end: var(--space-s);
     color: var(--ink);
     font-weight: var(--weight-heading);
-    white-space: nowrap;
+    text-wrap: pretty;
   }
 
-  .stack-what {
+  /* Was gemeldet wird, steht vorn. Das Kürzel des Rechtsakts folgt nur als
+     leiser Verweis: DAC1 bis DAC9 kennt kaum jemand. */
+  .stack-code {
     grid-column: 3;
-    padding-inline-end: var(--space-s);
-    text-wrap: pretty;
+    color: var(--ink-3);
+    white-space: nowrap;
   }
 
   .stack-track {
@@ -632,7 +631,7 @@ let index = 0
     color: var(--ink-3);
   }
 
-  .repealed :is(.stack-line > strong, .stack-what) {
+  .repealed .stack-line > strong {
     color: var(--ink-3);
   }
 
@@ -649,11 +648,6 @@ let index = 0
   .current .stack-line > strong,
   .current .stack-year {
     color: var(--accent);
-  }
-
-  .current .stack-what {
-    color: var(--ink);
-    font-weight: var(--weight-heading);
   }
 
   .current .stack-bar {
@@ -704,8 +698,8 @@ let index = 0
     background: var(--panel);
   }
 
-  summary:hover .stack-what {
-    color: var(--ink);
+  summary:hover .stack-code {
+    color: var(--ink-2);
   }
 
   .current summary:hover .stack-line {
@@ -825,7 +819,7 @@ let index = 0
 
   /* ---------- Summe ----------------------------------------------------- */
 
-  /* Unter den Zeilen ihre Summe: eine Säule je Jahr, ein Stein je Stufe in
+  /* Unter den Zeilen ihre Summe: eine Säule je Jahr, ein Stein je Regel in
      Kraft. Die Zahl steht nur dort, wo sich etwas ändert. */
   .stack-sum {
     display: grid;
@@ -873,7 +867,7 @@ let index = 0
     font-weight: var(--weight-heading);
   }
 
-  /* ---------- Für alle Stufen und Stand -------------------------------- */
+  /* ---------- Für alle Regeln und Stand -------------------------------- */
 
   .stack-common {
     margin-block-start: var(--space-m);
@@ -897,6 +891,7 @@ let index = 0
   .stack-common .stack-what {
     grid-column: 4;
     color: var(--ink-2);
+    text-wrap: pretty;
   }
 
   .stack-research {
@@ -973,7 +968,7 @@ let index = 0
   /* Beschriftung über der Spur, die Spur über die volle Breite. */
   @container campaign (width < 46rem) {
     .stack {
-      --stack-cols: 1.5rem 4.25rem minmax(0, 1fr);
+      --stack-cols: 1.5rem minmax(0, 1fr) 4.25rem;
     }
 
     .stack.compact {
