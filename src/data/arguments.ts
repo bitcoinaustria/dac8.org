@@ -311,39 +311,6 @@ export const objections: Record<Language, Point[]> = {
   ],
 }
 
-// The home page still shows two objections from before the October 2026
-// rebuild: the cash comparison and the reply on what the provider holds
-// besides the report. Drop these once the new home page no longer uses them.
-export type PointId = "nothingToHide" | "justTaxData"
-
-export const homeObjections = [
-  "nothingToHide",
-  "justTaxData",
-] as const satisfies readonly PointId[]
-
-export const points: Record<Language, Record<PointId, Point>> = {
-  de: {
-    nothingToHide: {
-      title: "„Ich habe nichts zu verbergen.“",
-      text: "Bitcoin in der eigenen Wallet ist wie Bargeld daheim. Stell dir vor, deine Bank würde dem Finanzamt jedes Jahr melden, wie viel Bargeld du abgehoben hast, ab dem ersten Euro und ohne Verdacht. Bei Bitcoin verlangt DAC8 das: Überträgst du von einer Börse auf die eigene Wallet, steht die Jahressumme in der Regel in der Meldung. Gelangt so eine Meldung in falsche Hände, zeigt sie, wer vermutlich Erspartes selbst verwahrt.",
-    },
-    justTaxData: {
-      title: "„Das sind doch nur Steuerdaten.“",
-      text: "Gemeldet werden Identität und Jahreswerte. Beim Anbieter liegen aber auch Ausweis, Wallet-Adressen und einzelne Transaktionen. Die Geldwäschevorschriften verlangen, sie bei allen Kunden aufzubewahren, ohne Verdacht und derzeit bis zehn Jahre nach Ende der Kundenbeziehung. Für DAC8 kommen Steuernummer und Steuerwohnsitz dazu, im selben Kundenkonto.",
-    },
-  },
-  en: {
-    nothingToHide: {
-      title: "“I have nothing to hide.”",
-      text: "Bitcoin in your own wallet is like cash at home. Imagine your bank telling the tax authority every year how much cash you withdrew, from the first euro and without suspicion. For bitcoin, DAC8 requires just that: if you move coins from an exchange to your own wallet, the annual total usually appears in the report. In the wrong hands, such a report shows who probably keeps savings in self-custody.",
-    },
-    justTaxData: {
-      title: "“It’s just tax data.”",
-      text: "The report contains identity and annual totals. But the provider also holds your ID, wallet addresses and individual transactions. Anti-money-laundering rules require it to keep them for every customer, without suspicion, currently for up to ten years after the relationship ends. For DAC8, your tax identification number and tax residence are added to the same customer account.",
-    },
-  },
-}
-
 // The page shows title and text; the letter uses `letter` where the page
 // wording addresses the reader or leans on the page around it, and title and
 // text joined otherwise.

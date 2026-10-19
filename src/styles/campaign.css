@@ -103,8 +103,7 @@
 /* Titel einzelner Einträge in Listen und Karten: so groß wie der Vorspann,
    aber fett und dunkel. Wer nur sie liest, hat den Abschnitt. */
 .campaign .objections > li > strong,
-.campaign .peak-actions > li > h3,
-.campaign .timeline > li > strong {
+.campaign .peak-actions > li > h3 {
   font-size: var(--type-lead);
   font-weight: var(--weight-heading);
   line-height: 1.3;
@@ -556,13 +555,6 @@
   font-size: var(--step--1);
 }
 
-/* Belegte Fälle: jeder beginnt mit einer Datumszeile (wer, wann), darunter
-   die Schlagzeile. Die Liste lässt sich so allein über die Datumszeilen und
-   die fetten Titel überfliegen. */
-.campaign .facts.cases {
-  row-gap: var(--space-xl);
-}
-
 /* Was verloren ging, als kleine Marken unter dem Titel. */
 .campaign .case-tags {
   display: flex;
@@ -587,67 +579,6 @@
   }
 }
 
-/* Wer und wann über einem Fall: grau in normaler Schreibweise, damit die
-   Zeile beim Überfliegen hilft, ohne mit dem Titel zu konkurrieren. */
-.campaign .cases .dateline {
-  margin-block-end: var(--space-3xs);
-  color: var(--ink-3);
-  font-size: var(--step--1);
-}
-
-/* Die Kritikpunkte sind die dichteste Textstrecke. Breit stehen sie als
-   Zeilen zwischen Haarlinien: links die Aussage mit ihrem Beleg, rechts die
-   Begründung. Wer nur die linke Spalte liest, hat das Argument. Einwände in
-   Anführungszeichen stehen leichter gesetzt als unsere eigenen Aussagen;
-   die Anführungszeichen sagen schon, dass hier jemand anderes spricht. */
-.campaign .facts.concerns {
-  row-gap: clamp(2rem, 3vw, 3rem);
-}
-
-.campaign .concerns .objection > strong {
-  font-weight: var(--weight-text);
-}
-
-@container campaign (width >= 52rem) {
-  .campaign .facts.concerns {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 0;
-  }
-
-  .campaign .facts.concerns > li {
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    grid-template-rows: auto 1fr;
-    column-gap: var(--space-2xl);
-    max-inline-size: none;
-    padding-block: var(--space-l);
-    border-block-start: 1px solid var(--line);
-  }
-
-  .campaign .facts.concerns > li:last-child {
-    border-block-end: 1px solid var(--line);
-  }
-
-  .campaign .concerns > li > strong {
-    grid-area: 1 / 1;
-    margin-block-end: 0;
-    line-height: 1.25;
-    text-wrap: balance;
-  }
-
-  .campaign .concerns > li > p {
-    grid-column: 2;
-    grid-row: 1 / -1;
-    max-inline-size: var(--measure-text);
-  }
-
-  .campaign .concerns > li > small {
-    grid-area: 2 / 1;
-    align-self: start;
-    margin-block-start: var(--space-xs);
-  }
-}
-
 /* Status-Marke vor einem Fakt: „gilt heute“, „Vorschlag“, „bräuchte ein
    Gesetz“. Eine Aussage über den Stand, keine Kategorie-Etikette. */
 .campaign .tag {
@@ -664,75 +595,6 @@
 .campaign .tag.live {
   background: var(--primary);
   color: var(--primary-foreground);
-}
-
-/* Forderungen: Haken als kleine Token wie die Stationen, ab mittlerer
-   Breite zweispaltig. */
-.campaign .checklist {
-  display: grid;
-  gap: var(--space-m) var(--space-xl);
-  margin-block-start: var(--space-xl);
-  padding: 0;
-  list-style: none;
-}
-
-.campaign .checklist li {
-  position: relative;
-  max-inline-size: var(--measure-text);
-  padding-inline-start: 2.25rem;
-  color: var(--ink-2);
-  text-wrap: pretty;
-}
-
-.campaign .checklist li::before {
-  content: "✓" / "";
-  position: absolute;
-  inset-block-start: 0.1em;
-  inset-inline-start: 0;
-  display: grid;
-  place-items: center;
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
-  border: 1px solid var(--material-edge);
-  border-radius: var(--radius-full);
-  color: #f7f8f9;
-  background: linear-gradient(155deg, #4b5056, #25282d);
-  box-shadow:
-    inset 0 1px 0 #ffffff38,
-    0 1px 2px var(--material-shade);
-  font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 1;
-}
-
-@container campaign (width >= 46rem) {
-  .campaign .checklist {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.campaign .checklist strong {
-  color: var(--ink);
-  font-weight: 560;
-}
-
-/* Zwei Textspalten: links die Einordnung, rechts die Einzelheiten. Für
-   kurze Abschnitte ohne Bild, damit sie nicht links an der Kante hängen. */
-.campaign .columns {
-  display: grid;
-  align-items: start;
-  gap: var(--space-m) var(--space-2xl);
-  margin-block-start: var(--space-m);
-}
-
-.campaign .columns > * {
-  margin-block-start: 0;
-}
-
-@container campaign (width >= 52rem) {
-  .campaign .columns {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 /* ---------- Stationen: Datenweg, Rechtsweg ---------------------------- */
@@ -1564,29 +1426,6 @@
   content: " ↗";
 }
 
-/* Breit: das Motiv links, die Bildunterschrift wie ein Museumsschild rechts
-   unten daneben. */
-.campaign .artwork-wide {
-  --art-height: 26rem;
-}
-
-/* Das Musterblatt der Meldung braucht Größe, damit Felder lesbar bleiben. */
-.campaign .artwork-wide:has(.artwork-zoom-link) {
-  --art-height: 34rem;
-}
-
-@container campaign (width >= 52rem) {
-  .campaign .artwork-wide {
-    grid-template-columns: minmax(0, 1fr) 15rem;
-    align-items: end;
-    gap: var(--space-l);
-  }
-
-  .campaign .artwork-wide figcaption {
-    inline-size: auto;
-  }
-}
-
 /* Text und Illustration nebeneinander, sobald die Spalte breit genug ist.
    Darunter folgt das Bild dem Text. */
 .campaign .art-split {
@@ -1618,34 +1457,16 @@
   margin-block-start: var(--space-xs);
 }
 
-.campaign .art-split .artwork-side {
-  --art-height: 19rem;
-}
-
 @container campaign (width >= 52rem) {
   .campaign .art-split {
     grid-template-columns: minmax(0, 1fr) minmax(17rem, 23rem);
   }
 
-  /* Gleich breit für Profile mit lesbaren Beschriftungen. */
-  .campaign .art-split.even {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  
 
-  /* Motiv links, Text rechts: bricht die Folge gleich gebauter Blöcke. */
-  .campaign .art-split.reverse > .artwork {
-    grid-row: 1;
-    grid-column: 1;
-  }
+  
 
-  .campaign .art-split.even .artwork-side {
-    --art-height: 22rem;
-  }
-
-  /* Aufeinanderfolgende Bildblöcke brauchen mehr Luft als Text zu Text. */
-  .campaign :is(.artwork-wide, .art-split.even) + .art-split.even {
-    margin-block-start: var(--space-2xl);
-  }
+  
 }
 
 /* Dossier: „Bin ich betroffen?“ steht rechts neben der Schlagzeile. */
@@ -1674,26 +1495,6 @@
     max-inline-size: none;
     margin-block-start: 0;
   }
-}
-
-/* ---------- Startseite: dichter erzählt ------------------------------- */
-
-/* Der Satz mit den Kennzahlen gehört zum Hero und steht deshalb dicht
-   darunter, ohne eigene Fläche. */
-.campaign.landing > .hero + .figures {
-  margin-block-start: calc(var(--space-l) - var(--band-gap));
-}
-
-/* Mehrere Textlinks am Ende eines Bands stehen in einer Zeile. */
-.campaign .link-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--space-l);
-  margin-block-start: var(--space-l);
-}
-
-.campaign .link-row .text-link {
-  margin-block-start: 0;
 }
 
 /* ---------- Mitmachen am Höhepunkt ------------------------------------ */
@@ -1751,13 +1552,7 @@
   }
 }
 
-/* ---------- Leitsatz und Einwände -------------------------------------- */
-
-/* Der Leitsatz steht über Einwänden und Argumenten: kurze Antworten, jede
-   mit einem Beleg zum Weiterlesen. */
-.campaign .statement {
-  max-inline-size: 22ch;
-}
+/* ---------- Einwände ---------------------------------------------------- */
 
 .campaign .objections {
   display: grid;
@@ -1828,25 +1623,6 @@
 @container campaign (width >= 40rem) {
   .campaign .precedent {
     grid-template-columns: auto minmax(0, 1fr);
-  }
-}
-
-/* ---------- Wer dahintersteht ------------------------------------------ */
-
-.campaign .about {
-  display: grid;
-  align-items: start;
-  gap: var(--space-l) var(--space-2xl);
-  margin-block-start: var(--space-m);
-}
-
-.campaign .about > div > :first-child {
-  margin-block-start: 0;
-}
-
-@container campaign (width >= 52rem) {
-  .campaign .about {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   }
 }
 
@@ -2141,72 +1917,3 @@ html:has(.lightbox[open]) {
   }
 }
 
-/* ---------- Zeitleiste ------------------------------------------------- */
-
-.campaign .timeline {
-  display: grid;
-  gap: var(--space-m);
-  margin-block-start: var(--space-m);
-  padding: 0;
-  list-style: none;
-}
-
-.campaign .timeline li {
-  position: relative;
-  display: grid;
-  align-content: start;
-  gap: var(--space-3xs);
-  padding-inline-start: 1.75rem;
-}
-
-.campaign .timeline li::before {
-  content: "";
-  position: absolute;
-  inset-block-start: 0.45em;
-  inset-inline-start: 0;
-  inline-size: 0.875rem;
-  block-size: 0.875rem;
-  border: 1px solid var(--material-edge);
-  border-radius: var(--radius-full);
-  background: linear-gradient(155deg, #4b5056, #25282d);
-  box-shadow: inset 0 1px 0 #ffffff38;
-}
-
-.campaign .timeline li:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  inset-block: calc(0.45em + 0.875rem) calc(-1 * var(--space-m));
-  inset-inline-start: calc(0.4375rem - 1px);
-  border-inline-start: 2px solid light-dark(#c6cbcf, #454b51);
-}
-
-.campaign .timeline strong {
-  line-height: 1.2;
-}
-
-.campaign .timeline span {
-  color: var(--ink-2);
-  text-wrap: pretty;
-}
-
-@container campaign (width >= 40rem) {
-  .campaign .timeline {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .campaign .timeline li {
-    padding-block-start: 1.5rem;
-    padding-inline-start: 0;
-  }
-
-  .campaign .timeline li::before {
-    inset-block-start: 0;
-  }
-
-  .campaign .timeline li:not(:last-child)::after {
-    inset-block: calc(0.4375rem - 1px) auto;
-    inset-inline: 1.375rem calc(-1 * var(--space-m) + 0.5rem);
-    border-inline-start: 0;
-    border-block-start: 2px solid light-dark(#c6cbcf, #454b51);
-  }
-}

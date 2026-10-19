@@ -2,8 +2,8 @@ import type { Language } from "@/lib/i18n"
 
 // Documented cases in which companies, authorities or their service
 // providers lost data on people, or let it be misused. This is the only
-// copy: the leak page lists every case, the home page the few in homeLeaks
-// and the dossier only their sum. Add new cases here, in both languages and
+// copy: the leak page lists every case, the home page and the dossier only
+// their sum. Add new cases here, in both languages and
 // with at least one primary source (the body's own notice, a court ruling,
 // a prosecutor, regulator or parliamentary record). Press may only add to
 // it. Say "accused" or "suspected" until a court has ruled.
@@ -27,14 +27,11 @@ export interface Leak {
   lost: Field[]
   headline: Record<Language, string>
   text: Record<Language, string>
-  // One short line on what followed; needed for the cases on the home page.
-  then?: Record<Language, string>
   // How many people a source names as affected, at the lower figure it
   // gives. Left out where the sources only count accounts, email addresses,
   // files or queries, or give no number at all; never guess.
   people?: number
   sources: { label: Record<Language, string>; href: string }[]
-  featured?: boolean
 }
 
 const same = (label: string) => ({ de: label, en: label })
@@ -75,10 +72,6 @@ export const leaks: Leak[] = [
       de: "Aus dem Onlineshop des Hardware-Wallet-Herstellers gelangten Namen, Anschriften und Telefonnummern ins Netz. Es folgten Phishing-Mails, SMS und Briefe an die Wohnadresse, die nach der Wiederherstellungsphrase fragten. In einer Umfrage der Universität Innsbruck berichteten 93 von 104 Betroffenen von Betrugsversuchen, 33 von Erpressungsdrohungen.",
       en: "Names, postal addresses and phone numbers leaked from the hardware wallet maker’s online shop. Phishing emails, text messages and letters to home addresses followed, asking for the recovery phrase. In a University of Innsbruck survey, 93 of 104 affected customers reported scam attempts and 33 reported extortion threats.",
     },
-    then: {
-      de: "Danach Erpressungsdrohungen und Briefe an die Wohnadresse",
-      en: "Then extortion threats and letters to home addresses",
-    },
     people: 272000,
     sources: [
       {
@@ -90,7 +83,6 @@ export const leaks: Leak[] = [
         href: "https://www.usenix.org/system/files/usenixsecurity23-abramova.pdf",
       },
     ],
-    featured: true,
   },
   {
     id: "kroll",
@@ -106,10 +98,6 @@ export const leaks: Leak[] = [
     text: {
       de: "Über die gekaperte Handynummer eines Mitarbeiters griffen Angreifer beim Insolvenzdienstleister der FTX-Pleite auf Namen, Anschriften und Guthaben von Gläubigern dreier Krypto-Firmen zu. Kroll warnte vor Betrügern, die dazu auffordern, eine Wallet zu verbinden oder die Wiederherstellungsphrase einzugeben.",
       en: "Through an employee’s hijacked phone number, attackers at the FTX bankruptcy’s claims agent accessed the names, postal addresses and balances of creditors of three crypto companies. Kroll warned of fraudsters asking people to connect a wallet or enter their recovery phrase.",
-    },
-    then: {
-      de: "Danach warnte Kroll vor Betrügern",
-      en: "Kroll then warned of fraudsters",
     },
     sources: [
       {
@@ -133,10 +121,6 @@ export const leaks: Leak[] = [
       de: "Mit dem wiederverwendeten Passwort eines Administrators holte ein Angreifer beim Berliner Identifizierungsdienst die Daten von rund 6.300 Nutzern: Namen, Ausweisbilder, Wohnadressen und Wallet-Adressen. Danach verlangten die Angreifer Lösegeld.",
       en: "Using an administrator’s reused password, an attacker took the data of around 6,300 users from the Berlin identity verification service: names, ID images, home addresses and wallet addresses. The attackers then demanded a ransom.",
     },
-    then: {
-      de: "Danach verlangten die Angreifer Lösegeld",
-      en: "Then the attackers demanded a ransom",
-    },
     people: 6300,
     sources: [
       {
@@ -144,7 +128,6 @@ export const leaks: Leak[] = [
         href: "http://web.archive.org/web/20240726003733/https://web.fractal.id/fractal-id-data-breach-post-mortem/",
       },
     ],
-    featured: true,
   },
   {
     id: "coinbase",
@@ -161,10 +144,6 @@ export const leaks: Leak[] = [
       de: "Bestochene Support-Mitarbeiter kopierten Kundendaten bis hin zu Ausweisbildern und Kontoständen. Betrüger gaben sich danach als Coinbase aus und brachten Kunden dazu, ihnen Geld zu überweisen. Coinbase schätzt die Kosten samt Entschädigungen auf 180 bis 400 Millionen Dollar. Auch in Österreich nahm danach das Phishing in Coinbases Namen zu.",
       en: "Bribed support staff copied customer data, down to ID images and balances. Fraudsters then posed as Coinbase and persuaded customers to send them money. Coinbase estimates the costs, including reimbursements, at 180 to 400 million dollars. Phishing in Coinbase’s name then also rose in Austria.",
     },
-    then: {
-      de: "Betrüger nutzten die Daten, Kosten bis zu 400 Mio. $",
-      en: "Fraudsters used the data, costs of up to $400m",
-    },
     people: 69461,
     sources: [
       {
@@ -176,7 +155,6 @@ export const leaks: Leak[] = [
         href: "https://www.watchlist-internet.at/news/datenleck-bei-coinbase-phishing",
       },
     ],
-    featured: true,
   },
   {
     id: "waltio",
@@ -193,10 +171,6 @@ export const leaks: Leak[] = [
       de: "Beim französischen Krypto-Steuerdienst gelangten E-Mail-Adressen, Gewinne und Verluste sowie Jahresendbestände der Kunden in fremde Hände. Laut Gendarmerie nutzen Täter die Daten, um Opfer für Gewalttaten auszuwählen, und irren sich dabei teils über deren tatsächliche Bestände.",
       en: "At the French crypto tax service, customers’ email addresses, gains and losses and year-end balances fell into the wrong hands. According to the Gendarmerie, criminals use the data to select victims of violent crime, sometimes misjudging what they actually hold.",
     },
-    then: {
-      de: "Laut Gendarmerie wählen Täter damit Opfer für Gewalttaten aus",
-      en: "According to the Gendarmerie, criminals use it to pick victims",
-    },
     sources: [
       {
         label: same("Waltio"),
@@ -207,7 +181,6 @@ export const leaks: Leak[] = [
         href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2",
       },
     ],
-    featured: true,
   },
   {
     id: "france",
@@ -224,10 +197,6 @@ export const leaks: Leak[] = [
       de: "Mit gestohlenen Zugangsdaten von Beamten zogen Angreifer im Februar 1,2 Millionen Datensätze aus dem nationalen Kontenregister, mit IBAN, Namen und Anschrift. Im Sommer folgten Daten zu Einkommen, Anschrift und Grundbesitz von 678.000 Menschen und Unternehmen aus dem Steuersystem.",
       en: "Using officials’ stolen credentials, attackers extracted 1.2 million records from the national bank-account register in February, with IBAN, name and postal address. In the summer, data on income, postal address and property on 678,000 individuals and businesses followed from the tax system.",
     },
-    then: {
-      de: "Zwei Einbrüche, ins Kontenregister und ins Steuersystem",
-      en: "Two breaches, of the bank-account register and the tax system",
-    },
     sources: [
       {
         label: { de: "Kontenregister", en: "account register" },
@@ -238,7 +207,6 @@ export const leaks: Leak[] = [
         href: "https://presse.economie.gouv.fr/acces-illegitime-au-systeme-dinformation-de-la-direction-generale-des-finances-publiques/",
       },
     ],
-    featured: true,
   },
   {
     id: "netherlands",
@@ -254,10 +222,6 @@ export const leaks: Leak[] = [
     text: {
       de: "Eine Gerichtsmitarbeiterin verkaufte vertrauliche Daten aus dem Justizsystem und erpresste mit solchen Daten selbst einen Mann, unter Drohungen gegen seine Familie. Er zahlte mehr als 92.000 Euro. Sie bekam vier Jahre Haft.",
       en: "A court employee sold confidential data from the justice system and used such data herself to extort a man, threatening his family. He paid more than 92,000 euros. She was sentenced to four years in prison.",
-    },
-    then: {
-      de: "Erpressung mit Drohungen gegen die Familie",
-      en: "Extortion with threats against the family",
     },
     sources: [
       {
@@ -280,10 +244,6 @@ export const leaks: Leak[] = [
       de: "Ein Finanzbeamter griff sechs Jahre lang ohne dienstlichen Grund mehrere tausend Mal auf Steuerdaten zu, darunter von mehr als 1.000 Menschen aus seinem Heimatort. 2024 registrierte das Bundesamt zur Korruptionsbekämpfung im öffentlichen Dienst 116 neue Fälle unbefugter Datenabfragen und -weitergaben.",
       en: "For six years, a tax official accessed tax records several thousand times without any official reason, including those of more than 1,000 people from his home town. In 2024, Austria’s anti-corruption office registered 116 new cases of unauthorised data queries and disclosures in the public sector.",
     },
-    then: {
-      de: "Tausende Abfragen ohne dienstlichen Grund",
-      en: "Thousands of queries without any official reason",
-    },
     people: 1000,
     sources: [
       {
@@ -301,7 +261,6 @@ export const leaks: Leak[] = [
         href: "https://www.bak.gv.at/Downloads/files/Jahresberichte/BAK_Jahresbericht_2024_bf_20250422.pdf",
       },
     ],
-    featured: true,
   },
   {
     id: "bulgaria",
@@ -317,10 +276,6 @@ export const leaks: Leak[] = [
     text: {
       de: "Angreifer drangen in die Systeme der bulgarischen Steuerbehörde ein, danach standen Steuer- und Sozialversicherungsdaten von mehr als sechs Millionen Menschen im Netz. Darunter waren Kontodaten, die Bulgarien im automatischen Informationsaustausch von anderen Staaten erhalten hatte, auch über Konten in der Schweiz und in Deutschland. Der Austausch mit Bulgarien wurde ausgesetzt. Über denselben Austausch gehen künftig die DAC8-Meldungen zu Kryptowerten.",
       en: "Attackers broke into the Bulgarian tax authority’s systems, and tax and social security data on more than six million people then appeared online. It included account data that Bulgaria had received from other states through the automatic exchange of information, including on accounts in Switzerland and Germany. Exchanges with Bulgaria were suspended. DAC8 reports on crypto-assets will travel through the same exchange.",
-    },
-    then: {
-      de: "Über denselben Austausch gehen künftig die DAC8-Meldungen",
-      en: "DAC8 reports will travel through the same exchange",
     },
     people: 6000000,
     sources: [
@@ -344,7 +299,6 @@ export const leaks: Leak[] = [
         href: "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:62021CJ0340",
       },
     ],
-    featured: true,
   },
   {
     id: "usa-irs-contractor",
@@ -1110,15 +1064,6 @@ export const leaks: Leak[] = [
     ],
   },
 ]
-
-export const featuredLeaks = leaks.filter((leak) => leak.featured)
-
-// The home page shows four headlines: a tax tool, an exchange, a wallet
-// shop and a tax authority, so readers see that every kind of holder has
-// lost such data. Newest first.
-export const homeLeaks = ["waltio", "coinbase", "ledger", "bulgaria"]
-  .map((id) => leaks.find((leak) => leak.id === id))
-  .filter((leak): leak is Leak => Boolean(leak?.then))
 
 // People affected across all cases, as the sources count them. One person
 // can be in several cases, so this is a sum of cases, not of people.
