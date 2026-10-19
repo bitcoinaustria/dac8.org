@@ -237,25 +237,36 @@ const lawyerProfile = en
       <div class="press-contact">
         <h2 id="presse-heading">{en ? "For the media" : "Für Medien"}</h2>
         <p class="section-intro">
-          {en ? "Available for questions and interviews:" : "Für Rückfragen und Interviews stehen bereit:"}
+          {en ? "The association and the attorney are available for questions and interviews." : "Für Rückfragen und Interviews stehen der Verein und der Anwalt zur Verfügung."}
         </p>
         <ul class="contacts">
           <li>
-            <strong>Tobias Girstmair</strong>
-            {en ? "Secretary General, Bitcoin Austria" : "Generalsekretär, Bitcoin Austria"}
+            <p class="contact-role">
+              {en ? "Campaign and case" : "Kampagne und Verfahren"}
+            </p>
+            <strong>Bitcoin Austria</strong>
+            <p>
+              {en ? "The non-profit association behind dac8.org." : "Der gemeinnützige Verein hinter dac8.org."}
+            </p>
+            <a
+              class="button"
+              href={en ? "mailto:kontakt@dac8.org?subject=Press%20enquiry%20DAC8" : "mailto:kontakt@dac8.org?subject=Presseanfrage%20DAC8"}
+              >kontakt@dac8.org</a
+            >
           </li>
           <li>
-            <strong
-              ><a href={lawyerProfile}>Dr. Oliver Völkel, LL.M.</a></strong
+            <p class="contact-role">
+              {en ? "Legal questions" : "Rechtliche Fragen"}
+            </p>
+            <strong>Dr. Oliver Völkel, LL.M.</strong>
+            <p>
+              {en ? "Attorney and partner at CERHA HEMPEL in Vienna. He filed the complaint." : "Rechtsanwalt und Partner bei CERHA HEMPEL in Wien. Er hat die Beschwerde eingebracht."}
+            </p>
+            <a class="text-link" href={lawyerProfile}
+              >{en ? "Profile at CERHA HEMPEL" : "Profil bei CERHA HEMPEL"}</a
             >
-            {en ? "Attorney and partner, CERHA HEMPEL, Vienna. Filed the complaint." : "Rechtsanwalt und Partner, CERHA HEMPEL, Wien. Hat die Beschwerde eingebracht."}
           </li>
         </ul>
-        <a
-          class="button"
-          href={en ? "mailto:kontakt@dac8.org?subject=Press%20enquiry%20DAC8" : "mailto:kontakt@dac8.org?subject=Presseanfrage%20DAC8"}
-          >kontakt@dac8.org</a
-        >
       </div>
       <div class="faq-list">
         <details name="press-faq">
@@ -366,27 +377,42 @@ const lawyerProfile = en
     margin-block-start: 0;
   }
 
+  /* Zwei Ansprechpartner als Karten: wofür, wer, wie erreichbar. */
   .contacts {
     display: grid;
-    gap: var(--space-s);
-    margin-block-start: var(--space-m);
+    gap: var(--space-xs);
+    margin-block-start: var(--space-l);
     padding: 0;
     list-style: none;
-    color: var(--ink-2);
+  }
+
+  .contacts li {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-3xs);
+    padding: var(--space-m);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+
+  .contact-role {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
   }
 
   .contacts strong {
-    display: block;
-    color: var(--ink);
-    font-weight: var(--weight-strong);
+    font-size: var(--type-lead);
+    font-weight: var(--weight-heading);
+    line-height: 1.3;
+    letter-spacing: -0.012em;
   }
 
-  .contacts a {
-    color: inherit;
+  .contacts p:not(.contact-role) {
+    color: var(--ink-2);
   }
 
-  .press-contact .button {
-    margin-block-start: var(--space-l);
+  .contacts :is(.button, .text-link) {
+    margin-block-start: var(--space-s);
   }
 
   @container campaign (width >= 60rem) {
