@@ -3,6 +3,7 @@ import AffectedCheck from "@/components/AffectedCheck.astro"
 import AttackMapPreview from "@/components/AttackMapPreview.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
 import DataWeb from "@/components/DataWeb.astro"
+import HistoryStack from "@/components/HistoryStack.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
@@ -10,12 +11,13 @@ import { peopleAffected, roundPeople } from "@/data/leaks"
 import { countIn, euCountries, latestYear } from "@/lib/attacks"
 import { donateFor, languageFor, pathFor, shareKitFor } from "@/lib/i18n"
 
-// The home page tells one story in six bands: the claim and "Am I
+// The home page tells one story in seven bands: the claim and "Am I
 // affected?" on the first screen, the data story, the proof that such data
-// gets lost and that holders get attacked, four of our reasons, who
-// filed the complaint, and one ask. Every fact appears here once and in full
-// on its own page: the dossier (what is reported), /angriffe/ and
-// /datenlecks/ (cases), /argumente/ (reasons), /verfahren/ (the case).
+// gets lost and that holders get attacked, three of our reasons, how each
+// step of EU tax reporting has added more, who filed the complaint, and one
+// ask. Every fact appears here once and in full on its own page: the dossier
+// (what is reported), /angriffe/ and /datenlecks/ (cases), /argumente/
+// (reasons), /geschichte/ (the steps), /verfahren/ (the case).
 // The German headline keeps "Krypto-Kunden" on one line: a word joiner
 // (U+2060) after the hyphen stops the break that balancing would pick.
 const language = languageFor(Astro.url.pathname)
@@ -26,10 +28,11 @@ const people = roundPeople(peopleAffected, language)
 const euNow = countIn(latestYear, euCountries)
 const euBefore = countIn(latestYear - 1, euCountries)
 
-// Four of the reasons on /argumente/, the ones the story above does
+// Three of the reasons on /argumente/, the ones the story around them does
 // not already tell: the cash comparison opens the page, the growing file
 // and the target list are the data story, presumed wealth is the proof
-// band. Icons follow src/assets/icons: 24 px grid, 1.7 stroke, round ends.
+// band, and the band after the reasons shows how surveillance grows. Icons
+// follow src/assets/icons: 24 px grid, 1.7 stroke, round ends.
 const reasons = [
   {
     icon: "key",
@@ -56,16 +59,6 @@ const reasons = [
     text: en
       ? "Even small payments show whom you donate to and whom you support."
       : "Auch kleine Zahlungen zeigen, wem du spendest und wen du unterstützt.",
-  },
-  {
-    icon: "eye",
-    // The one card that leads to the history page: the chart there shows
-    // the growth this card names.
-    href: pathFor("history", language),
-    title: en ? "Surveillance needs limits." : "Überwachung braucht Grenzen.",
-    text: en
-      ? "Since 1977, one step after another: bank accounts, platforms, now crypto. More steps are already proposed."
-      : "Seit 1977 kam Stufe um Stufe dazu: Bankkonten, Plattformen, jetzt Krypto. Weitere sind schon vorgeschlagen.",
   },
 ]
 
@@ -160,7 +153,7 @@ const actions = [
           <li>
             <a
               class="reason"
-              href={reason.href ?? `${pathFor("arguments", language)}#${reason.anchor}`}
+              href={`${pathFor("arguments", language)}#${reason.anchor}`}
             >
               <span class="reason-icon">
                 <svg
@@ -188,12 +181,6 @@ const actions = [
                       <path d="M3 20a6 6 0 0 1 12 0M15.5 5a3.5 3.5 0 0 1 0 7M21 20a6 6 0 0 0-3.5-5.5" />
                     </>
                   )}
-                  {reason.icon === "eye" && (
-                    <>
-                      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
-                      <circle cx="12" cy="12" r="3" />
-                    </>
-                  )}
                 </svg>
               </span>
               <h3>{reason.title}</h3>
@@ -204,6 +191,16 @@ const actions = [
       </ul>
       <a class="text-link" href={pathFor("arguments", language)}
         >{en ? "All our reasons" : "Alle Gründe"}</a
+      >
+    </section>
+
+    <section id="stufen" aria-labelledby="stufen-heading">
+      <h2 id="stufen-heading">
+        {en ? "With every step, the tax office learns more." : "Mit jeder Stufe erfährt das Finanzamt mehr."}
+      </h2>
+      <HistoryStack language={language} compact />
+      <a class="text-link" href={pathFor("history", language)}
+        >{en ? "Every step since 1977" : "Alle Stufen seit 1977"}</a
       >
     </section>
 
@@ -311,7 +308,8 @@ const actions = [
     }
   }
 
-  /* Vier Gründe als Karten, zwei mal zwei: Zeichen, Titel, ein Satz. Jede
+  /* Drei Gründe als Karten: Zeichen, Titel, ein Satz. Breit stehen sie in
+     einer Reihe, das Zeichen über dem Titel; schmal untereinander. Jede
      Karte führt zu ihrem Grund auf /argumente/. */
   .reasons {
     display: grid;
@@ -392,9 +390,23 @@ const actions = [
     text-wrap: pretty;
   }
 
-  @container campaign (width >= 48rem) {
+  @container campaign (width >= 56rem) {
     .reasons {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .reason {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-2xs);
+    }
+
+    .reason-icon {
+      grid-row: auto;
+      margin-block-end: var(--space-xs);
+    }
+
+    .reason h3 {
+      align-self: start;
     }
   }
 
