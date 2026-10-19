@@ -18,6 +18,24 @@
   --prose-marker:     color-mix(in oklab, var(--foreground) 30%, transparent);
 
   --measure: 40rem;
+
+  /* Rollen statt Größen. Jede Seite kommt mit diesen sechs aus, und jede
+     Stufe ist sichtbar kleiner als die darüber: Schlagzeile (eine pro
+     Seite), Bandüberschrift, Abschnitt oder Karte, Vorspann und
+     Eintragstitel, Fließtext, Hinweis. Wichtigkeit innerhalb einer Stufe
+     zeigt das Gewicht, nie eine Zwischengröße. Grau gibt es nur in der
+     Hinweisgröße. */
+  --type-display: clamp(2rem, 1.45rem + 2.25vw, 3rem);
+  --type-h2: clamp(1.625rem, 1.25rem + 1.5vw, 2.25rem);
+  --type-h3: var(--step-2);
+  --type-lead: var(--step-1);
+  --type-body: var(--step-0);
+  --type-meta: var(--step--1);
+
+  /* Drei Gewichte: Text, Hervorhebung und Aktion, Überschrift. */
+  --weight-text: 400;
+  --weight-strong: 560;
+  --weight-heading: 600;
 }
 
 body {

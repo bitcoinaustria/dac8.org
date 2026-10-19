@@ -615,8 +615,8 @@ const file = {
   .say h3 {
     max-inline-size: 30ch;
     color: var(--foreground);
-    font-size: clamp(1.2rem, 1rem + 1.1vw, 1.75rem);
-    font-weight: 600;
+    font-size: var(--type-h3);
+    font-weight: var(--weight-heading);
     line-height: 1.1;
     letter-spacing: -0.022em;
     text-wrap: balance;
@@ -625,7 +625,7 @@ const file = {
   .say .text {
     max-inline-size: 60ch;
     color: var(--ink-2);
-    font-size: 0.9375rem;
+    font-size: var(--type-body);
     line-height: 1.45;
     text-wrap: pretty;
   }

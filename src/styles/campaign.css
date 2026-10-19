@@ -26,7 +26,7 @@
   --measure-text: 66ch;
   /* Luft zwischen den Bändern einer Seite. Innerhalb eines Bands stehen
      Blöcke mit --space-xl Abstand, Überschrift und Text mit --space-m. */
-  --band-gap: clamp(4.5rem, 2.75rem + 5vw, 8rem);
+  --band-gap: clamp(4rem, 2.5rem + 4vw, 6.5rem);
   container: campaign / inline-size;
   display: grid;
   gap: var(--band-gap);
@@ -64,52 +64,51 @@
 
 .campaign h1,
 .campaign h2 {
-  font-weight: 600;
+  font-weight: var(--weight-heading);
   font-stretch: 94%;
   text-wrap: balance;
 }
 
 .campaign h1 {
   max-inline-size: 24ch;
-  font-size: clamp(2rem, 1.45rem + 2.4vw, 3.25rem);
-  line-height: 1.02;
+  font-size: var(--type-display);
+  line-height: 1.04;
   letter-spacing: -0.028em;
 }
 
-/* Der rote Teil einer H1 steht auf eigener Zeile. */
-.campaign h1 span {
+/* Der rote Teil einer Schlagzeile oder Bandüberschrift steht auf eigener
+   Zeile. Eine rote Zeile pro Überschrift, mehr Rot gibt es nur an
+   Aktionen. */
+.campaign :is(h1, h2) > span {
   display: block;
   color: var(--accent);
 }
 
 .campaign h2 {
   max-inline-size: 26ch;
-  font-size: clamp(1.625rem, 1.25rem + 1.5vw, 2.25rem);
+  font-size: var(--type-h2);
   line-height: 1.1;
   letter-spacing: -0.022em;
 }
 
 .campaign h3 {
-  font-size: var(--step-1);
-  font-weight: 560;
-  line-height: 1.3;
-  letter-spacing: -0.012em;
+  max-inline-size: 30ch;
+  font-size: var(--type-h3);
+  font-weight: var(--weight-heading);
+  line-height: 1.2;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
 }
 
-/* Drei Stufen unter der H1: Band (H2), Abschnitt im Band (diese H3) und
-   Karte oder Fakt (fette Zeile in Fließtextnähe). Die Abschnittsüberschrift
-   liegt deutlich zwischen beiden, damit Gruppen über ihren Einträgen stehen
-   statt neben ihnen. */
-.campaign > section > h3,
-.campaign > section > .art-split > div > h3,
-.campaign .attacks > h3 {
-  max-inline-size: 30ch;
-  font-size: clamp(1.375rem, 1.15rem + 0.75vw, 1.75rem);
-  font-weight: 600;
-  font-stretch: 94%;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
+/* Titel einzelner Einträge in Listen und Karten: so groß wie der Vorspann,
+   aber fett und dunkel. Wer nur sie liest, hat den Abschnitt. */
+.campaign .objections > li > strong,
+.campaign .peak-actions > li > h3,
+.campaign .timeline > li > strong {
+  font-size: var(--type-lead);
+  font-weight: var(--weight-heading);
+  line-height: 1.3;
+  letter-spacing: -0.012em;
 }
 
 .campaign > section > h3 {
@@ -122,29 +121,19 @@
 }
 
 .campaign h4 {
-  font-size: var(--step-0);
-  font-weight: 560;
+  font-size: var(--type-body);
+  font-weight: var(--weight-heading);
   line-height: 1.35;
 }
 
-.campaign .lead {
-  max-inline-size: 52ch;
-  margin-block-start: var(--space-m);
-  color: var(--ink-2);
-  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
-  line-height: 1.5;
-  text-wrap: pretty;
-}
-
-/* Einleitung eines Bands: so groß wie der Vorspann im Hero und damit eine
-   Spur kleiner als die fetten Titel der Karten, damit sie nicht mit ihnen
-   um den Blick konkurriert. */
-.campaign .section-intro {
+/* Vorspann: ein bis zwei Sätze direkt unter Schlagzeile oder
+   Bandüberschrift, dicht an ihr, damit er zu ihr gehört. Pro Band einer. */
+.campaign :is(.lead, .section-intro) {
   max-inline-size: var(--measure-lead);
-  margin-block-start: var(--space-m);
+  margin-block-start: var(--space-s);
   color: var(--ink-2);
-  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
-  line-height: 1.5;
+  font-size: var(--type-lead);
+  line-height: 1.45;
   text-wrap: pretty;
 }
 
@@ -155,7 +144,7 @@
 .campaign .lead strong,
 .campaign .section-intro strong {
   color: var(--ink);
-  font-weight: 560;
+  font-weight: var(--weight-strong);
 }
 
 .campaign .prose {
@@ -220,12 +209,6 @@
   .campaign .hero > .artwork {
     --art-height: 26rem;
   }
-
-  /* Die Schlagzeile neben dem Bild ist eine Stufe kleiner, damit sie in
-     drei bis vier Zeilen bleibt. */
-  .campaign .hero:has(> .artwork) h1 {
-    font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
-  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -283,8 +266,8 @@
   display: inline-block;
   margin-block-end: var(--space-m);
   color: var(--ink-3);
-  font-size: var(--step--1);
-  font-weight: 500;
+  font-size: var(--type-meta);
+  font-weight: var(--weight-strong);
   letter-spacing: 0.08em;
   text-decoration: none;
   text-transform: uppercase;
@@ -318,18 +301,16 @@
    Werte dunkel und rot unterlegt. So liest man eine Aussage, kein
    Dashboard. */
 .campaign .figure-line {
-  max-inline-size: 40ch;
-  color: var(--ink-3);
-  font-size: clamp(1.375rem, 1.1rem + 1.2vw, 1.875rem);
-  font-weight: 450;
-  line-height: 1.3;
-  letter-spacing: -0.018em;
+  max-inline-size: var(--measure-lead);
+  color: var(--ink-2);
+  font-size: var(--type-lead);
+  line-height: 1.45;
   text-wrap: pretty;
 }
 
 .campaign .figure-line strong {
   color: var(--ink);
-  font-weight: 620;
+  font-weight: var(--weight-heading);
   background: linear-gradient(
       color-mix(in oklab, var(--primary) 18%, transparent) 0 0
     )
@@ -354,6 +335,7 @@
 
 .campaign .glance dt {
   color: var(--ink-3);
+  font-size: var(--type-meta);
 }
 
 .campaign .glance dd {
@@ -553,8 +535,8 @@
 .campaign .facts h3 {
   display: block;
   margin-block-end: var(--space-2xs);
-  font-size: var(--step-1);
-  font-weight: 600;
+  font-size: var(--type-lead);
+  font-weight: var(--weight-heading);
   line-height: 1.3;
   letter-spacing: -0.012em;
 }
@@ -623,7 +605,7 @@
 }
 
 .campaign .concerns .objection > strong {
-  font-weight: 450;
+  font-weight: var(--weight-text);
 }
 
 @container campaign (width >= 52rem) {
@@ -649,7 +631,6 @@
   .campaign .concerns > li > strong {
     grid-area: 1 / 1;
     margin-block-end: 0;
-    font-size: clamp(1.1875rem, 1.05rem + 0.5vw, 1.375rem);
     line-height: 1.25;
     text-wrap: balance;
   }
@@ -943,9 +924,6 @@
 
 .campaign .compare h3 {
   margin-block-end: var(--space-2xs);
-  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
-  font-weight: 600;
-  letter-spacing: -0.018em;
 }
 
 .campaign .compare ul {
@@ -1013,9 +991,6 @@
 
 .campaign .cards h3 {
   margin-block-end: var(--space-xs);
-  font-size: var(--step-2);
-  font-weight: 600;
-  letter-spacing: -0.02em;
 }
 
 .campaign .cards p {
@@ -1333,17 +1308,10 @@
   margin-block-end: 1.5rem;
 }
 
-.campaign .donation-heading h3 {
-  font-size: 1.65rem;
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.2;
-}
-
 .campaign .donation-heading p {
   margin-block-start: 0.25rem;
   color: var(--ink-3);
-  font-size: 0.9375rem;
+  font-size: var(--type-meta);
   line-height: 1.4;
 }
 
@@ -1356,7 +1324,7 @@
 .campaign .payment-note {
   margin-block-start: -0.5rem;
   color: var(--ink-3);
-  font-size: 0.875rem;
+  font-size: var(--type-meta);
   line-height: 1.5;
 }
 
@@ -1383,20 +1351,20 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  font-size: 1rem;
+  font-size: var(--type-body);
 }
 
 .campaign .detail-label,
 .campaign .bank-details dt {
   color: var(--ink-3);
-  font-size: 0.8125rem;
+  font-size: var(--type-meta);
   line-height: 1.4;
 }
 
 .campaign .payment-link span {
   display: block;
   margin-block-start: 0.25rem;
-  font-weight: 500;
+  font-weight: var(--weight-strong);
 }
 
 .campaign .bank-details > div {
@@ -1415,8 +1383,8 @@
 
 .campaign .bank-details dd {
   margin-block-start: 0.25rem;
-  font-size: 1.0625rem;
-  font-weight: 550;
+  font-size: var(--type-body);
+  font-weight: var(--weight-strong);
   line-height: 1.4;
   font-variant-numeric: tabular-nums;
 }
@@ -1482,7 +1450,7 @@
   min-block-size: 1.5em;
   margin-block-start: 0.75rem;
   color: var(--ink-3);
-  font-size: 0.8125rem;
+  font-size: var(--type-meta);
 }
 
 @container campaign (min-width: 44rem) {
@@ -1710,11 +1678,6 @@
 
 /* ---------- Startseite: dichter erzählt ------------------------------- */
 
-/* Die Startseite trägt viele Bilder; engere Bänder halten sie kurz. */
-.campaign.landing {
-  --band-gap: clamp(4rem, 2.5rem + 4vw, 6.5rem);
-}
-
 /* Der Satz mit den Kennzahlen gehört zum Hero und steht deshalb dicht
    darunter, ohne eigene Fläche. */
 .campaign.landing > .hero + .figures {
@@ -1771,10 +1734,6 @@
   background: var(--paper);
 }
 
-.campaign .peak-actions h3 {
-  font-size: var(--step-1);
-}
-
 .campaign .peak-actions p {
   color: var(--ink-2);
   text-wrap: pretty;
@@ -1797,18 +1756,7 @@
 /* Der Leitsatz steht über Einwänden und Argumenten: kurze Antworten, jede
    mit einem Beleg zum Weiterlesen. */
 .campaign .statement {
-  max-inline-size: 20ch;
-  font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.625rem);
-  font-weight: 600;
-  font-stretch: 94%;
-  line-height: 1.04;
-  letter-spacing: -0.026em;
-  text-wrap: balance;
-}
-
-.campaign .statement span {
-  display: block;
-  color: var(--accent);
+  max-inline-size: 22ch;
 }
 
 .campaign .objections {
@@ -1825,17 +1773,8 @@
   gap: var(--space-xs);
 }
 
-.campaign .objections strong {
-  font-size: var(--step-1);
-  font-weight: 560;
-  line-height: 1.3;
-}
-
 .campaign .objections .objection > strong {
-  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
-  font-weight: 450;
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+  font-weight: var(--weight-text);
 }
 
 .campaign .objections p {
@@ -1878,8 +1817,8 @@
   );
   background-clip: text;
   color: transparent;
-  font-size: clamp(2.5rem, 1.9rem + 2.4vw, 3.5rem);
-  font-weight: 600;
+  font-size: var(--type-h2);
+  font-weight: var(--weight-heading);
   font-stretch: 94%;
   line-height: 0.9;
   letter-spacing: -0.045em;
@@ -2242,10 +2181,7 @@ html:has(.lightbox[open]) {
 }
 
 .campaign .timeline strong {
-  font-size: var(--step-1);
-  font-weight: 600;
   line-height: 1.2;
-  letter-spacing: -0.015em;
 }
 
 .campaign .timeline span {
