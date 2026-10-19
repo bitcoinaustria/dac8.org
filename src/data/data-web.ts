@@ -135,8 +135,8 @@ export const scenes: Scene[] = [
     id: "staat",
     short: { de: "Finanzamt", en: "Tax office" },
     heading: {
-      de: "Ab 2027 meldet sie dich jedes Jahr.",
-      en: "From 2027, it reports you every year.",
+      de: "Ab 2027 meldet dich die Börse jedes Jahr.",
+      en: "From 2027, the exchange reports you every year.",
     },
     text: {
       de: "Ans Finanzamt, ohne Wallet-Adressen. **Jede Meldung bleibt zehn Jahre bei der Börse.**",
