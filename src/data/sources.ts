@@ -1,3 +1,23 @@
+// Primary texts the dossier cites next to each fact, such as „§ 18
+// Krypto-MPfG“ beside what goes to the tax office. They are listed in the
+// bibliography below as well, so a reference never points anywhere else.
+export const law = {
+  // The whole act as promulgated; also the source for § 19 (deadline
+  // 31 July) and § 21 (passing reports on within nine months).
+  kryptoMPfG:
+    "https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_2025_I_96/BGBLA_2025_I_96.pdf",
+  section18:
+    "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=18",
+  section20:
+    "https://www.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40273819/NOR40273819.pdf",
+  fmGwG:
+    "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009769",
+  // DAC8 also added Art. 22(3) to Directive 2011/16/EU: at least five years
+  // for reports received from another member state.
+  dac8: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:32023L2226",
+  transferRegulation: "https://eur-lex.europa.eu/eli/reg/2023/1113/oj",
+} as const
+
 export const sourceGroups = [
   {
     title: "Österreichisches Gesetz",
@@ -7,18 +27,18 @@ export const sourceGroups = [
         label: "Krypto-Meldepflichtgesetz, BGBl. I Nr. 96/2025",
         labelEn:
           "Crypto-Asset Reporting Obligations Act, Federal Law Gazette I No. 96/2025",
-        href: "https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_2025_I_96/BGBLA_2025_I_96.pdf",
+        href: law.kryptoMPfG,
       },
       {
         label: "§ 18 Krypto-MPfG: welche Daten gemeldet werden",
         labelEn: "Section 18 Krypto-MPfG: reporting fields",
-        href: "https://www.ris.bka.gv.at/NormDokument.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20013064&Paragraf=18",
+        href: law.section18,
       },
       {
         label: "§ 20 Krypto-MPfG: Verarbeitung für alle Kunden, Löschung",
         labelEn:
           "Section 20 Krypto-MPfG: processing for all customers and deletion",
-        href: "https://www.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40273819/NOR40273819.pdf",
+        href: law.section20,
       },
       {
         label: "§ 39 Krypto-MPfG: Aufbewahrung der Dokumentation",
@@ -40,7 +60,7 @@ export const sourceGroups = [
           "§ 21 FM-GwG: Aufbewahrung von Identifizierungs- und Transaktionsunterlagen",
         labelEn:
           "Section 21 FM-GwG: retention of identification and transaction records",
-        href: "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009769",
+        href: law.fmGwG,
       },
     ],
   },
@@ -51,14 +71,14 @@ export const sourceGroups = [
       {
         label: "Richtlinie (EU) 2023/2226 (DAC8)",
         labelEn: "Directive (EU) 2023/2226 (DAC8)",
-        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:32023L2226",
+        href: law.dac8,
       },
       {
         label:
           "Verordnung (EU) 2023/1113: Angaben zu Absender und Empfänger bei Krypto-Übertragungen",
         labelEn:
           "Regulation (EU) 2023/1113: originator and beneficiary information for crypto-asset transfers",
-        href: "https://eur-lex.europa.eu/eli/reg/2023/1113/oj",
+        href: law.transferRegulation,
       },
       {
         label:
