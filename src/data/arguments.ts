@@ -18,7 +18,9 @@ import type { Language } from "@/lib/i18n"
 export type Source = { href: string; label: string }
 
 type ReasonText = {
-  // Short label for the overview in the hero.
+  // The reason's name: a claim a reader can repeat, close to the title of
+  // its talking point in the press briefing. It stands above the headline
+  // and, with the same number, in the overview in the hero.
   short: string
   title: string
   // One sentence, two at most: the reason in plain words.
@@ -63,10 +65,10 @@ export const reasons: Reason[] = [
     id: "bargeld",
     alias: "verdacht",
     de: {
-      short: "Wie eine Bargeld-Meldung",
+      short: "Gemeldet wird auch, was keine Steuer auslöst",
       title:
         "Stell dir vor, deine Bank meldet dem Finanzamt jedes Jahr, wie viel Bargeld du abgehoben hast.",
-      text: "Bei Bitcoin verlangt DAC8 genau das, ohne jeden Verdacht: Hebst du Bitcoin von der Börse ab, um sie selbst zu verwahren, steht die Jahressumme in der Regel in der Meldung.",
+      text: "Bei Bitcoin verlangt DAC8 genau das: Hebst du Bitcoin von der Börse ab, um sie selbst zu verwahren, steht die Jahressumme in der Regel in der Meldung, obwohl das für sich genommen keine Steuer auslöst.",
       proof: [
         "Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, bevor feststeht, wer überhaupt gemeldet wird. Damit geht Österreich über die EU-Richtlinie hinaus.",
         "Die Wallet-Adresse, gleichsam die Kontonummer deiner Wallet, steht nicht in der Meldung, nur die Summe. Gelangt so eine Meldung in falsche Hände, zeigt sie trotzdem, wer vermutlich Erspartes selbst verwahrt.",
@@ -74,10 +76,10 @@ export const reasons: Reason[] = [
       sources: [{ href: section20, label: "§ 20 Abs. 1 Krypto-MPfG" }],
     },
     en: {
-      short: "Like reporting your cash",
+      short: "Reported even when no tax is due",
       title:
         "Imagine your bank telling the tax authority every year how much cash you withdrew.",
-      text: "For bitcoin, DAC8 requires exactly that, without any suspicion: withdraw bitcoin from an exchange to keep it yourself, and the annual total usually appears in the report.",
+      text: "For bitcoin, DAC8 requires exactly that: withdraw bitcoin from an exchange to keep it yourself, and the annual total usually appears in the report, although the transfer triggers no tax by itself.",
       proof: [
         "Providers must prepare reporting data for all customers before it is clear who will be reported at all. Here Austria goes beyond the EU directive.",
         "The wallet address, in effect your wallet’s account number, is not in the report, only the total. In the wrong hands, such a report still shows who probably keeps savings in self-custody.",
@@ -88,7 +90,7 @@ export const reasons: Reason[] = [
   {
     id: "selbstverwahrung",
     de: {
-      short: "Selbstverwahrung schützen",
+      short: "Bitcoin selbst verwahren ist legitim",
       title: "Bitcoin in der eigenen Wallet ist wie Bargeld daheim.",
       text: "Diese Selbstverwahrung verteidigen wir. Gefährlich wird es wie beim Bargeld erst, wenn andere erfahren, wer vermutlich wie viel hat.",
       proof: [
@@ -98,7 +100,7 @@ export const reasons: Reason[] = [
       sources: [],
     },
     en: {
-      short: "Protect self-custody",
+      short: "Holding your own bitcoin is legitimate",
       title: "Bitcoin in your own wallet is like cash at home.",
       text: "We defend this self-custody. As with cash, the danger starts when others learn who probably holds how much.",
       proof: [
@@ -113,8 +115,8 @@ export const reasons: Reason[] = [
     proofId: "zahlungsprofile",
     de: {
       short: "Pseudonym ist nicht anonym",
-      title: "Pseudonym ist nicht anonym.",
-      text: "Auf der Blockchain stehen Zahlungen öffentlich unter Wallet-Adressen, einer Art Kontonummer, statt unter Namen. Verrät ein Datenleck, welche davon dir gehören, lassen sich dir auch ihre früheren Zahlungen und ihr Bestand zuordnen.",
+      title: "Die Blockchain zeigt Zahlungen, aber keine Namen.",
+      text: "Sie stehen öffentlich unter Wallet-Adressen, einer Art Kontonummer. Verrät ein Datenleck, welche davon dir gehören, lassen sich dir auch ihre früheren Zahlungen und ihr Bestand zuordnen.",
       proof: [
         "Wer diese Zuordnung einmal hat, behält sie: Aus pseudonymen Daten wird ein persönliches Finanzprofil. Ein einzelnes Datenleck kann schon beides enthalten. Beim Identifizierungsdienst Fractal ID lagen Ausweis, Wohnadresse und Wallet-Adresse in einem Datensatz.",
         "Ist eine Wallet-Adresse einmal einem Namen zugeordnet, lassen ihre Zahlungen mit Angaben über die Empfänger Rückschlüsse auf Einkäufe, Spenden und Beziehungen zu.",
@@ -126,8 +128,8 @@ export const reasons: Reason[] = [
     },
     en: {
       short: "Pseudonymous is not anonymous",
-      title: "Pseudonymous is not anonymous.",
-      text: "On the blockchain, payments appear publicly under wallet addresses, a kind of account number, instead of names. If a data breach reveals which ones are yours, their past payments and holdings can be traced to you as well.",
+      title: "The blockchain shows payments, but no names.",
+      text: "They appear publicly under wallet addresses, a kind of account number. If a data breach reveals which ones are yours, their past payments and holdings can be traced to you as well.",
       proof: [
         "Whoever has that link keeps it: pseudonymous data becomes a personal financial profile. A single breach can already hold both. At the identity verification service Fractal ID, ID documents, home addresses and wallet addresses sat in one record.",
         "Once a wallet address is tied to a name, its payments, together with information about the recipients, reveal purchases, donations and relationships.",
@@ -143,11 +145,11 @@ export const reasons: Reason[] = [
     alias: "speicherdauer",
     proofId: "verknuepfung",
     de: {
-      short: "Die Akte wächst jedes Jahr",
+      short: "Jede Jahresmeldung bleibt zehn Jahre",
       title: "Mit jedem Jahr wird die Akte dicker.",
-      text: "Jede Jahresmeldung bleibt zehn Jahre beim Anbieter. So wächst ein Honeypot, ein Datenbestand, der Angreifer umso mehr anzieht, je mehr darin liegt.",
+      text: "Bleibst du Kunde, liegen ab 2036 laufend zehn Jahresmeldungen beim Anbieter. So wächst ein Honeypot, ein Datenbestand, der Angreifer umso mehr anzieht, je mehr darin liegt.",
       proof: [
-        "Bleibst du Kunde, liegen ab 2036 laufend zehn Jahresmeldungen beim Anbieter. Für Meldungen über Bankkonten gelten fünf Jahre.",
+        "Der Anbieter löscht jede Jahresmeldung erst zehn Jahre nach ihrem Meldejahr. Für Meldungen über Bankkonten gelten fünf Jahre.",
         "Daneben bewahrt der Anbieter nach den Geldwäschevorschriften Ausweis, Wallet-Adressen und einzelne Transaktionen auf, derzeit bis zehn Jahre nach Ende der Kundenbeziehung. Für DAC8 kommen Steuernummer und Steuerwohnsitz dazu. Beim Finanzamt laufen die Jahresmeldungen aller Anbieter zusammen, bei denen du Kunde bist.",
         "Entscheidend ist das Gesamtbild: Meldungen über mehrere Anbieter und Jahre, das Datenleck eines Steuertools und zuordenbare Blockchain-Daten können zusammen ein weitreichendes Profil von Vermögen und Aktivität ergeben.",
       ],
@@ -157,11 +159,11 @@ export const reasons: Reason[] = [
       ],
     },
     en: {
-      short: "The file grows every year",
+      short: "Each annual report is kept ten years",
       title: "Every year, the file grows thicker.",
-      text: "Every annual report stays with the provider for ten years. That builds a honeypot, a data store that draws more attackers the more it holds.",
+      text: "If you remain a customer, from 2036 ten annual reports will always be on file. That builds a honeypot, a data store that draws more attackers the more it holds.",
       proof: [
-        "If you remain a customer, from 2036 ten annual reports will always be on file. For reports on bank accounts, the period is five years.",
+        "The provider deletes each annual report only ten years after its reporting year. For reports on bank accounts, the period is five years.",
         "Under anti-money-laundering rules, the provider also keeps your ID, wallet addresses and individual transactions, currently until ten years after the relationship ends. For DAC8, it adds your tax identification number and tax residence. At the tax authority, the annual reports from every provider you use come together.",
         "What matters is the overall picture: reports across several providers and years, a breach at a tax tool and attributable blockchain data can together add up to a far-reaching profile of wealth and activity.",
       ],
@@ -176,7 +178,7 @@ export const reasons: Reason[] = [
     alias: "sicherheit",
     attacks: true,
     de: {
-      short: "Datenlecks werden Ziellisten",
+      short: "Daten verraten, bei wem etwas zu holen ist",
       title: "Aus Datenlecks werden Ziellisten.",
       text: "Schon der Verdacht auf Krypto-Vermögen kann Überfälle und Entführungen auslösen, ob der vermutete Bestand stimmt oder nicht. Daten bei Anbietern, Dienstleistern und Behörden können Tätern dafür Ansatzpunkte liefern.",
       proof: [
@@ -189,7 +191,7 @@ export const reasons: Reason[] = [
       ],
     },
     en: {
-      short: "Breaches become target lists",
+      short: "Data shows where there is something to take",
       title: "Data breaches turn into target lists.",
       text: "Suspected crypto wealth alone can lead to robberies and kidnappings, whether the presumed holdings are real or not. Data held by providers, service providers and authorities can give offenders a starting point.",
       proof: [
@@ -205,7 +207,7 @@ export const reasons: Reason[] = [
   {
     id: "alle",
     de: {
-      short: "Es betrifft alle",
+      short: "Privatsphäre betrifft alle",
       title:
         "Niemand muss reich sein, um finanzielle Privatsphäre zu brauchen.",
       text: "Beim Anbieter liegen auch einzelne Transaktionen. Aus ihnen lässt sich ablesen, wem du spendest, wo du Mitglied bist und wen du unterstützt.",
@@ -218,7 +220,7 @@ export const reasons: Reason[] = [
       ],
     },
     en: {
-      short: "It affects everyone",
+      short: "Privacy concerns everyone",
       title: "Nobody has to be rich to need financial privacy.",
       text: "The provider also holds individual transactions. They show whom you donate to, where you are a member and whom you support.",
       proof: [
@@ -234,7 +236,7 @@ export const reasons: Reason[] = [
     id: "zweck",
     alias: "ausbau",
     de: {
-      short: "Der Zweck wächst mit",
+      short: "Finanzielle Überwachung braucht Grenzen",
       title: "Was gesammelt ist, wird für mehr genutzt.",
       text: "Laut Richtlinie dürfen die Daten auch für Zoll, gegen Geldwäsche und für EU-Sanktionen verwendet werden. Wir lassen prüfen, ob mildere Mittel genügen, und wollen finanzielle Überwachung begrenzen, bevor sie weiter wächst.",
       proof: [
@@ -247,7 +249,7 @@ export const reasons: Reason[] = [
       ],
     },
     en: {
-      short: "The purpose keeps growing",
+      short: "Financial surveillance needs limits",
       title: "What is collected gets used for more.",
       text: "Under the directive, the data may also be used for customs, against money laundering and for EU sanctions. We are seeking a review of whether milder means would do, and we want to limit financial surveillance before it grows further.",
       proof: [
