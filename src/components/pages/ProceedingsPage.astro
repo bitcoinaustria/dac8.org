@@ -26,7 +26,7 @@ const questions = en
   ? [
       {
         title: "May the state demand this?",
-        text: "Providers must collect every customer’s data for the tax office, without suspicion. Every report stays on file with them for ten years. Is that compatible with the fundamental right to data protection?",
+        text: "Providers must collect every customer’s data for the tax office, without suspicion, and keep each report for ten years. Is that compatible with the fundamental right to data protection?",
       },
       {
         title: "Does the tax office need this data?",
@@ -34,13 +34,13 @@ const questions = en
       },
       {
         title: "Could it be done with less?",
-        text: "Any interference with fundamental rights must be necessary and proportionate. We want it examined whether milder means would work with less data.",
+        text: "Any interference with fundamental rights must be necessary and proportionate. We are convinced that milder means would do, such as collecting data only on customers who are actually reported.",
       },
     ]
   : [
       {
         title: "Darf der Staat das verlangen?",
-        text: "Anbieter müssen die Daten aller Kunden für das Finanzamt erfassen, ohne Verdacht. Jede Meldung bleibt zehn Jahre bei ihnen gespeichert. Ist das mit dem Grundrecht auf Datenschutz vereinbar?",
+        text: "Anbieter müssen die Daten aller Kunden für das Finanzamt erfassen, ohne Verdacht, und jede Meldung zehn Jahre aufbewahren. Ist das mit dem Grundrecht auf Datenschutz vereinbar?",
       },
       {
         title: "Braucht das Finanzamt diese Daten?",
@@ -48,7 +48,7 @@ const questions = en
       },
       {
         title: "Ginge es mit weniger?",
-        text: "Ein Eingriff in Grundrechte muss erforderlich und verhältnismäßig sein, also nötig und angemessen. Wir lassen prüfen, ob mildere Mittel mit weniger Daten auskommen.",
+        text: "Ein Eingriff in Grundrechte muss erforderlich und verhältnismäßig sein, also nötig und angemessen. Wir sind überzeugt, dass mildere Mittel genügen, etwa nur die Kunden zu erfassen, die tatsächlich gemeldet werden.",
       },
     ]
 
@@ -134,7 +134,7 @@ const lawyerProfile = en
         {en ? "How much data may the state demand, just in case?" : "Wie viel darf der Staat vorsorglich sammeln lassen?"}
       </h2>
       <p class="section-intro">
-        {en ? "The complaint takes one concrete case: the data a provider prepares about one of its customers for DAC8. On that case, we want three questions answered." : "Die Beschwerde nimmt einen konkreten Fall: die Daten, die ein Anbieter für DAC8 über einen seiner Kunden aufbereitet. An ihm lassen wir drei Fragen klären."}
+        {en ? "The complaint starts from one concrete case: the data a provider prepares about one of its customers for DAC8. It asks three questions." : "Die Beschwerde setzt an einem konkreten Fall an: an den Daten, die ein Anbieter für DAC8 über einen seiner Kunden aufbereitet. Sie stellt drei Fragen."}
       </p>
       <ol class="facts questions">
         {questions.map((question) => (
