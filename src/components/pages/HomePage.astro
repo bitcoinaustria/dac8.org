@@ -19,7 +19,7 @@ import { languageFor, pathFor } from "@/lib/i18n"
 // here once and in full on its own page: the dossier (what is reported),
 // /angriffe/ and /datenlecks/ (cases), /argumente/ (reasons), /geschichte/
 // (the steps), /verfahren/ (the case).
-// The German headline keeps "Krypto-Kunden" on one line: a word joiner
+// The German headline keeps "Krypto-Kunde" on one line: a word joiner
 // (U+2060) after the hyphen stops the break that balancing would pick.
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
@@ -30,9 +30,9 @@ const euNow = countIn(latestYear, euCountries)
 const euBefore = countIn(latestYear - 1, euCountries)
 
 // Three of the reasons on /argumente/, the ones the story around them does
-// not already tell: the cash comparison opens the page, the growing file
-// and the target list are the data story, presumed wealth is the proof
-// band, and the band after the reasons shows how surveillance grows. Icons
+// not already tell: the growing file and the target list are the data
+// story, presumed wealth is the proof band, and the band after the reasons
+// shows how surveillance grows. The cash comparison opens /argumente/. Icons
 // follow src/assets/icons: 24 px grid, 1.7 stroke, round ends.
 const reasons = [
   {
@@ -72,11 +72,11 @@ const reasons = [
       <div class="hero-text">
         <CampaignStatus language={language} />
         <h1>
-          {en ? "DAC8 opens a file on every crypto customer." : "DAC8 legt über jeden Krypto-\u2060Kunden eine Akte an."}
+          {en ? "Every crypto customer is now reported." : "Jeder Krypto-\u2060Kunde wird jetzt gemeldet."}
           <span>{en ? "We are fighting back." : "Wir gehen dagegen vor."}</span>
         </h1>
         <p class="lead">
-          {en ? "Imagine your bank telling the tax office every year how much cash you withdrew. For bitcoin and other crypto-assets, that has been the rule since 2026, without suspicion. DAC8 is an EU directive and applies in Austria, Germany and across the EU." : "Stell dir vor, deine Bank meldet dem Finanzamt jedes Jahr, wie viel Bargeld du abgehoben hast. Bei Bitcoin und anderen Kryptowerten ist das seit 2026 Pflicht, ohne Verdacht. DAC8 ist eine EU-Richtlinie und gilt in Österreich, Deutschland und der ganzen EU."}
+          {en ? "The EU directive DAC8 requires exchanges, brokers and apps to tell the tax office every year who you are and how much you traded, without any suspicion." : "Die EU-Richtlinie DAC8 verpflichtet Börsen, Broker und Apps, dem Finanzamt jedes Jahr zu melden, wer du bist und wie viel du gehandelt hast, ganz ohne Verdacht."}
         </p>
       </div>
       <AffectedCheck language={language} />
