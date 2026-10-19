@@ -88,6 +88,9 @@ export interface Scene {
   // One line at most. One key phrase may be marked with **…**; the page
   // sets it in bold.
   text: Text
+  // A shorter text for phones, where the caption shares the screen with
+  // the network: two lines at most, in the same style as text.
+  brief?: Text
 }
 
 export const scenes: Scene[] = [
@@ -102,6 +105,10 @@ export const scenes: Scene[] = [
       de: "Die Börse kennt Ausweis und jede Transaktion, das Steuertool deine Bestände, der Wallet-Shop deine Wohnadresse.",
       en: "The exchange knows your ID and every transaction, the tax tool your holdings, the wallet shop your home address.",
     },
+    brief: {
+      de: "Börse, Steuertool, Wallet-Shop: **Jede Stelle kennt einen Teil.**",
+      en: "Exchange, tax tool, wallet shop: **each knows a part.**",
+    },
   },
   {
     id: "staat",
@@ -114,6 +121,10 @@ export const scenes: Scene[] = [
       de: "Ans Finanzamt, ohne Wallet-Adressen. **Jede Meldung bleibt zehn Jahre bei der Börse.**",
       en: "To the tax office, without wallet addresses. **Each report stays with the exchange for ten years.**",
     },
+    brief: {
+      de: "Ohne Wallet-Adressen. **Die Börse hebt jede Meldung zehn Jahre auf.**",
+      en: "Without wallet addresses. **The exchange keeps each report for ten years.**",
+    },
   },
   {
     id: "lecks",
@@ -125,6 +136,10 @@ export const scenes: Scene[] = [
     text: {
       de: "Börsen, Steuertools, Wallet-Shops und Finanzverwaltungen haben solche Daten schon verloren. **Ein Datenleck nimmt nichts weg, es kopiert.**",
       en: "Exchanges, tax tools, wallet shops and tax administrations have lost such data before. **A data leak takes nothing away; it copies.**",
+    },
+    brief: {
+      de: "**Ein Datenleck nimmt nichts weg, es kopiert.**",
+      en: "**A data leak takes nothing away; it copies.**",
     },
   },
   {
@@ -149,6 +164,10 @@ export const scenes: Scene[] = [
     text: {
       de: "Bitcoin in der eigenen Wallet ist wie Erspartes unter der Matratze. **Darum sollte niemand wissen, wer wie viel davon hat.**",
       en: "Bitcoin in your own wallet is like savings under the mattress. **That is why nobody should know who holds how much.**",
+    },
+    brief: {
+      de: "Wie Erspartes unter der Matratze: **Niemand sollte wissen, wer wie viel hat.**",
+      en: "Like savings under the mattress: **nobody should know who holds how much.**",
     },
   },
 ]
@@ -177,6 +196,12 @@ export const caseLabels = {
     en: "All data leaks with sources",
   },
   close: { de: "Schließen", en: "Close" },
+  // On phones the copies pile up at the offenders without labels, with
+  // one count below.
+  copies: {
+    de: { one: "Kopie", many: "Kopien" },
+    en: { one: "copy", many: "copies" },
+  },
 }
 
 // A short note under the network.

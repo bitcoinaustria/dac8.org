@@ -180,13 +180,20 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     <div class="view">
       <div class="says">
         {scenes.map((scene, index) => (
-            <div class="say" data-say>
+            <div class="say" data-say data-brief={scene.brief ? "" : undefined}>
               <h3>{scene.heading[language]}</h3>
-              <p class="text">
+              <p class="text full">
                 {rich(scene.text[language]).map((part, partIndex) =>
                   partIndex % 2 ? <strong>{part}</strong> : part,
                 )}
               </p>
+              {scene.brief && (
+                <p class="text brief">
+                  {rich(scene.brief[language]).map((part, partIndex) =>
+                    partIndex % 2 ? <strong>{part}</strong> : part,
+                  )}
+                </p>
+              )}
               {index === leakScene && (
                 <ul
                   class="say-cases"
@@ -199,7 +206,8 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
                         data-case-open={node.leak}
                         aria-haspopup="dialog"
                       >
-                        {caseName(node.leak ?? "")}
+                        {leakFor(node.leak ?? "").name[language]}
+                        <span class="year">{leakFor(node.leak ?? "").year}</span>
                       </button>
                     </li>
                   ))}
@@ -352,6 +360,12 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
               </g>
             )
           })}
+          <text
+            class="copies-count"
+            data-copies-count
+            data-one={caseLabels.copies[language].one}
+            data-many={caseLabels.copies[language].many}
+          ></text>
           {leaked.map((node) => (
               <g class="case" data-case-pill={node.id} data-case={node.leak}>
                 <rect class="case-bg" x={-cardWidth(caseName(node.leak ?? "")) / 2 - 10} y="-13" width={cardWidth(caseName(node.leak ?? "")) + 20} height="26" rx="13" />
@@ -532,7 +546,7 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
      beim Wechsel kurz nach oben. */
   .says {
     display: grid;
-    padding: var(--space-s) var(--space-m) 0;
+    padding: var(--space-s) var(--space-s) 0;
   }
 
   .say {
@@ -571,30 +585,43 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     text-wrap: pretty;
   }
 
+  /* Am Handy teilt sich der Untertitel den Schirm mit dem Netz: dort steht
+     die kurze Fassung, am breiten Schirm die lange. */
+  .say[data-brief] .full,
+  .say-cases .year {
+    display: none;
+  }
+
   .say strong {
     color: var(--foreground);
     font-weight: 560;
   }
 
   /* Die Fälle der Datenleck-Szene als Knöpfe: wer nicht zeigt oder tippt,
-     erreicht die Karten über die Tastatur. */
+     erreicht die Karten über die Tastatur. Am Handy bleiben sie in einer
+     Zeile, die sich zur Seite wischen lässt, wenn sie nicht ganz passt. */
   .say-cases {
     display: flex;
-    flex-wrap: wrap;
     gap: var(--space-3xs);
     margin: var(--space-3xs) 0 0;
     padding: 0;
     list-style: none;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .say-cases li {
+    flex: none;
   }
 
   .say-cases button {
-    padding: 0.2em 0.75em;
+    padding: 0.2em 0.55em;
     border: 1px solid color-mix(in oklab, var(--signal) 45%, transparent);
     border-radius: var(--radius-full);
     color: var(--signal);
     background: var(--background);
     font: inherit;
-    font-size: var(--step--1);
+    font-size: 0.8125rem;
     font-weight: 600;
     cursor: pointer;
   }
@@ -824,6 +851,37 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     text-anchor: middle;
   }
 
+  /* Hochformat, also am Handy: Die Fälle öffnen die Knöpfe im Untertitel,
+     die Kopien fliegen ohne Etikett und stapeln sich bei den Tätern unter
+     einer Zahl, und die Reihe der Meldungen weicht den Datenlecks. */
+  .net[data-shape="tall"] .case {
+    display: none;
+  }
+
+  .net[data-shape="tall"] .card.copy .card-text {
+    display: none;
+  }
+
+  .net[data-shape="tall"] .reports {
+    transition: opacity 0.3s;
+  }
+
+  .net[data-shape="tall"][data-late] .reports {
+    opacity: 0;
+  }
+
+  .copies-count {
+    fill: var(--signal);
+    font-size: 15px;
+    font-weight: 700;
+    text-anchor: middle;
+    opacity: 0;
+    paint-order: stroke;
+    stroke: var(--panel);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+  }
+
   /* Hochformat: drei Stellen nebeneinander, die Karten werden schmaler. */
   .net[data-shape="tall"] :is(.card-text, .case-text) {
     font-size: 11px;
@@ -1046,6 +1104,25 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     .say .text {
       font-size: var(--step-0);
     }
+
+    .say[data-brief] .full,
+    .say-cases .year {
+      display: revert;
+    }
+
+    .say .brief {
+      display: none;
+    }
+
+    .say-cases {
+      flex-wrap: wrap;
+      overflow: visible;
+    }
+
+    .say-cases button {
+      padding-inline: 0.75em;
+      font-size: var(--step--1);
+    }
   }
 </style>
 
@@ -1108,6 +1185,8 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     const reportEls = all("[data-report]")
     const tallyEl = one("[data-tally]")
     const reportCard = one("[data-report-card]")
+    const countEl = one("[data-copies-count]")
+    let counted = -1
     let filled = -1
     let sentYear = -1
 
@@ -1159,7 +1238,8 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         if (!text) continue
         const width = text.getComputedTextLength()
         const isCase = group.classList.contains("case")
-        const total = width + (isCase ? 44 : 28)
+        const pile = shape === "tall" && group.classList.contains("copy")
+        const total = pile ? 46 : width + (isCase ? 44 : 28)
         const bg = group.querySelector(".card-bg, .case-bg")
         bg?.setAttribute("x", String(-total / 2))
         bg?.setAttribute("width", String(total))
@@ -1373,6 +1453,7 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
 
       // A leak copies the place's card: a red copy leaves the grey one
       // and travels to the offenders, where the copies line up.
+      let arrived = 0
       for (const copy of all("[data-copy]")) {
         const id = copy.dataset.copy ?? ""
         const order = leaking.findIndex((node) => node.dataset.node === id)
@@ -1380,14 +1461,35 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         const t = motion.matches
           ? snap(ramp(p, start, start + 0.14))
           : ease(ramp(p, start, start + 0.14))
-        // What the offenders now hold, one copy below the other.
-        const stack = below("crooks", 94 + order * 30)
+        // What the offenders now hold: one copy below the other, or on
+        // phones a pile.
+        const stack =
+          shape === "tall"
+            ? (below("crooks", 92 + order * 6).map(
+                (value, axis) => value + (axis === 0 ? order * 5 - 8 : 0),
+              ) as Point)
+            : below("crooks", 94 + order * 30)
+        if (t >= 1) arrived += 1
         place(
           copy,
           travel(below(id, cardBelow), stack, t, 70),
           t > 0 ? 1 - away : 0,
         )
       }
+      if (countEl) {
+        const { one: single, many } = countEl.dataset
+        if (arrived !== counted) {
+          counted = arrived
+          countEl.textContent = `${arrived} ${arrived === 1 ? single : many}`
+        }
+        place(
+          countEl,
+          below("crooks", 148),
+          shape === "tall" && arrived > 0 ? 1 - away : 0,
+        )
+      }
+      // On phones the pile of reports gives way once the leaks begin.
+      net.toggleAttribute("data-late", p > leakScene - 0.1)
 
       // The case below each place, once its leak is shown.
       for (const pill of all("[data-case-pill]")) {
