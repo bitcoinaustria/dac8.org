@@ -52,6 +52,14 @@ const questions = en
       },
     ]
 
+// The two 2014 rulings on data retention, as listed under courts in
+// src/data/sources.ts: the CJEU judgment of 8 April and the Constitutional
+// Court's decision of 27 June.
+const retentionCjeu = en
+  ? "https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=CELEX:62012CJ0293"
+  : "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:62012CJ0293"
+const retentionVfgh =
+  "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20140627_12G00047_00/JFT_20140627_12G00047_00.pdf"
 // The Constitutional Court's April 2026 decision on the electronic
 // vaccination record: a direct application is inadmissible while the route
 // through the Data Protection Authority is open, whatever its prospects there.
@@ -151,23 +159,37 @@ const lawyerProfile = en
       >
     </section>
 
-    <section id="praezedenzfall" aria-labelledby="praezedenzfall-heading">
-      <h2 id="praezedenzfall-heading">
-        {en ? "Will it make a difference?" : "Bringt das etwas?"}
-        <span
-          >{en ? "A surveillance law has fallen before." : "Schon einmal fiel ein Überwachungsgesetz."}</span
-        >
-      </h2>
-      <p class="section-intro">
-        {en ? "Whether we win is for the courts to decide. But they have already answered once whether the state may have data on everyone stored just in case." : "Ob wir recht bekommen, entscheiden die Gerichte. Die Frage, ob der Staat Daten über alle auf Vorrat speichern lassen darf, haben sie aber schon einmal beantwortet."}
-      </p>
+    <section
+      id="praezedenzfall"
+      class="band precedent-band"
+      aria-labelledby="praezedenzfall-heading"
+    >
+      <div class="precedent-text">
+        <h2 id="praezedenzfall-heading">
+          {en ? "Will it make a difference?" : "Bringt das etwas?"}
+          <span
+            >{en ? "A surveillance law has fallen before." : "Schon einmal fiel ein Überwachungsgesetz."}</span
+          >
+        </h2>
+        <p class="section-intro">
+          {en ? "Whether we win is for the courts to decide. But they have already answered whether the state may have data on everyone stored just in case." : "Ob wir recht bekommen, entscheiden die Gerichte. Die Frage, ob der Staat Daten über alle auf Vorrat speichern lassen darf, haben sie aber bereits beantwortet."}
+        </p>
+      </div>
       <div class="precedent">
         <p class="precedent-year" aria-hidden="true">2014</p>
         <p class="prose">
           <strong
             >{en ? "Data retention." : "Die Vorratsdatenspeicherung."}</strong
           >
-          {en ? "Phone and internet providers had to store for six months who was in contact with whom and when, for all customers and without suspicion. A challenge organised by AKVorrat, now epicenter.works, took this to the Constitutional Court, which referred the questions to the Court of Justice of the EU (CJEU). In April 2014 the CJEU declared the EU directive invalid, and in June the Constitutional Court struck down the Austrian rules." : "Telefon- und Internetanbieter mussten sechs Monate lang speichern, wer wann mit wem in Verbindung war, von allen Kunden und ohne Verdacht. Ein von AKVorrat, heute epicenter.works, organisierter Antrag brachte das vor den Verfassungsgerichtshof. Der legte die Fragen dem Europäischen Gerichtshof (EuGH) vor. Im April 2014 erklärte der EuGH die EU-Richtlinie für ungültig, im Juni hob der Verfassungsgerichtshof die österreichischen Regeln auf."}
+          {en ? "Phone and internet providers had to store for six months who was in contact with whom and when, for all customers and without suspicion. A challenge organised by AKVorrat, now epicenter.works, took this to the Constitutional Court, which referred the questions to the Court of Justice of the EU (CJEU). " : "Telefon- und Internetanbieter mussten sechs Monate lang speichern, wer wann mit wem in Verbindung war, von allen Kunden und ohne Verdacht. Ein von AKVorrat, heute epicenter.works, organisierter Antrag brachte das vor den Verfassungsgerichtshof. Der legte die Fragen dem Europäischen Gerichtshof (EuGH) vor. "}<a
+            href={retentionCjeu}
+            hreflang={language}
+            >{en ? "In April 2014" : "Im April 2014"}</a
+          >{en ? " the CJEU declared the EU directive invalid, and " : " erklärte der EuGH die EU-Richtlinie für ungültig, "}<a
+            href={retentionVfgh}
+            hreflang="de"
+            >{en ? "in June" : "im Juni"}</a
+          >{en ? " the Constitutional Court struck down the Austrian rules." : " hob der Verfassungsgerichtshof die österreichischen Regeln auf."}
         </p>
       </div>
       <a class="text-link" href={donate}
@@ -175,7 +197,7 @@ const lawyerProfile = en
       >
     </section>
 
-    <section id="europa" class="band" aria-labelledby="europa-heading">
+    <section id="europa" aria-labelledby="europa-heading">
       <h2 id="europa-heading">
         {en ? "Elsewhere in Europe" : "Anderswo in Europa"}
       </h2>
@@ -207,7 +229,7 @@ const lawyerProfile = en
             {en ? "The campaign concerns everyone covered by DAC8, whatever crypto-assets they use. It starts in Austria. If you want to challenge the law in your country, get in touch." : "Die Kampagne gilt allen, die DAC8 erfasst, egal welche Kryptowerte sie nutzen. Sie beginnt in Österreich. Wer das Gesetz im eigenen Land angehen will, meldet sich bei uns."}
           </p>
           <a
-            class="button primary"
+            class="text-link"
             href={en ? "mailto:kontakt@dac8.org?subject=Working%20together%20on%20DAC8" : "mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"}
             >kontakt@dac8.org</a
           >
@@ -215,26 +237,34 @@ const lawyerProfile = en
       </div>
     </section>
 
-    <section id="neuigkeiten" aria-labelledby="neuigkeiten-heading">
-      <h2 id="neuigkeiten-heading">{en ? "Updates" : "Neuigkeiten"}</h2>
-      <p class="section-intro">
-        {en ? "We post every new step in the case here and in the RSS feed as soon as it is public." : "Jeden neuen Schritt im Verfahren melden wir hier und im RSS-Feed, sobald er öffentlich ist."}
-      </p>
-      {entries.length === 0 && <p class="empty-state">
-        <strong>{en ? "No updates published yet." : "Noch keine Meldungen veröffentlicht."}</strong>
-      </p>}
-      {entries.map(entry => <article id={entry.id} class="campaign-update">
-        <time datetime={entry.publishedAt}>{new Intl.DateTimeFormat(en ? "en-GB" : "de-AT", { dateStyle: "long", timeZone: "Europe/Vienna" }).format(new Date(entry.publishedAt))}</time>
-        <h3>{entry.translations[language].title}</h3>
-        <p class="prose">{entry.translations[language].text}</p>
-        {entry.source && <a class="text-link" href={entry.source}>{en ? "Read the document" : "Zum Dokument"}</a>}
-      </article>)}
-      <a class="text-link" href={feed}
-        >{en ? "Subscribe via RSS" : "RSS-Feed abonnieren"}</a
-      >
+    <section
+      id="neuigkeiten"
+      class="band news"
+      aria-labelledby="neuigkeiten-heading"
+    >
+      <div class="news-text">
+        <h2 id="neuigkeiten-heading">{en ? "Updates" : "Neuigkeiten"}</h2>
+        <p class="section-intro">
+          {en ? "We post every new step in the case here and in the RSS feed as soon as it is public." : "Jeden neuen Schritt im Verfahren melden wir hier und im RSS-Feed, sobald er öffentlich ist."}
+        </p>
+        <a class="text-link" href={feed}
+          >{en ? "Subscribe via RSS" : "RSS-Feed abonnieren"}</a
+        >
+      </div>
+      <div class="news-list">
+        {entries.length === 0 && <p class="empty-state">
+          <strong>{en ? "No updates published yet." : "Noch keine Meldungen veröffentlicht."}</strong>
+        </p>}
+        {entries.map(entry => <article id={entry.id} class="campaign-update">
+          <time datetime={entry.publishedAt}>{formatDate.format(new Date(entry.publishedAt))}</time>
+          <h3>{entry.translations[language].title}</h3>
+          <p class="prose">{entry.translations[language].text}</p>
+          {entry.source && <a class="text-link" href={entry.source}>{en ? "Read the document" : "Zum Dokument"}</a>}
+        </article>)}
+      </div>
     </section>
 
-    <section id="presse" class="band press" aria-labelledby="presse-heading">
+    <section id="presse" class="press" aria-labelledby="presse-heading">
       <div class="press-contact">
         <h2 id="presse-heading">{en ? "For the media" : "Für Medien"}</h2>
         <p class="section-intro">
@@ -259,7 +289,9 @@ const lawyerProfile = en
             <p class="contact-role">
               {en ? "Legal questions" : "Rechtliche Fragen"}
             </p>
-            <strong>Dr. Oliver Völkel, LL.M.</strong>
+            <strong
+              >{en ? "Dr Oliver Völkel, LL.M." : "Dr. Oliver Völkel, LL.M."}</strong
+            >
             <p>
               {en ? "Attorney and partner at CERHA HEMPEL in Vienna. He filed the complaint." : "Rechtsanwalt und Partner bei CERHA HEMPEL in Wien. Er hat die Beschwerde eingebracht."}
             </p>
@@ -303,7 +335,7 @@ const lawyerProfile = en
             {en ? "How long will the case take?" : "Wie lange dauert das Verfahren?"}
           </summary>
           <p>
-            {en ? "We do not know. The Data Protection Authority and the courts set the pace. We publish every new step on this page and in the RSS feed." : "Das wissen wir nicht. Den Zeitplan bestimmen die Datenschutzbehörde und die Gerichte. Jeden neuen Schritt veröffentlichen wir auf dieser Seite und im RSS-Feed."}
+            {en ? "We do not know. The Data Protection Authority and the courts set the pace." : "Das wissen wir nicht. Den Zeitplan bestimmen die Datenschutzbehörde und die Gerichte."}
           </p>
         </details>
         <details name="press-faq">
@@ -335,7 +367,7 @@ const lawyerProfile = en
       </div>
     </section>
 
-    <MediaCoverage language={language} />
+    <MediaCoverage language={language} band />
   </article>
 </Layout>
 
@@ -384,7 +416,36 @@ const lawyerProfile = en
     }
   }
 
-  /* Die Präzedenzfall-Aussage beginnt mit einem fetten Einstieg. */
+  /* Präzedenzfall: links Frage und Antwort der Gerichte, rechts das Jahr
+     und was damals fiel. Schmal folgt der Fall dem Vorspann, der Link
+     schließt das Band. */
+  .precedent-band {
+    display: grid;
+    grid-template-areas: "text" "case" "link";
+    gap: var(--space-xl) var(--space-2xl);
+  }
+
+  .precedent-text {
+    grid-area: text;
+  }
+
+  .precedent-band .precedent {
+    grid-area: case;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-xs);
+    margin-block-start: 0;
+  }
+
+  .precedent-band > .text-link {
+    grid-area: link;
+    margin-block-start: 0;
+  }
+
+  /* Das Jahr trägt das Band wie ein Bild: groß, in gefrästem Metall. */
+  .precedent-band .precedent-year {
+    font-size: clamp(3rem, 2rem + 4vw, 5rem);
+  }
+
   .precedent .prose strong {
     display: block;
     margin-block-end: var(--space-3xs);
@@ -393,8 +454,38 @@ const lawyerProfile = en
     line-height: 1.3;
   }
 
+  @container campaign (width >= 56rem) {
+    .precedent-band {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+      grid-template-rows: auto 1fr;
+      grid-template-areas: "text case" "link case";
+    }
+  }
+
   .cards .text-link {
     margin-block-start: var(--space-m);
+  }
+
+  /* Neuigkeiten: links was hier erscheint und wie man folgt, rechts die
+     Meldungen selbst. */
+  .news {
+    display: grid;
+    align-items: start;
+    gap: var(--space-l) var(--space-2xl);
+  }
+
+  .news-list > :first-child {
+    margin-block-start: 0;
+  }
+
+  @container campaign (width >= 56rem) {
+    .news {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+
+    .news-list {
+      padding-block-start: var(--space-2xs);
+    }
   }
 
   /* Für Medien: links die Ansprechpartner, rechts die häufigen Fragen. */
@@ -451,11 +542,6 @@ const lawyerProfile = en
     .press {
       grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     }
-  }
-
-  h2 + .campaign-update,
-  .section-intro + .campaign-update {
-    margin-block-start: var(--space-l);
   }
 
   .campaign-update + .campaign-update {
