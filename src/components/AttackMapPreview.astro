@@ -6,8 +6,10 @@ import { attacks } from "@/lib/attacks"
 import { type Language, pathFor } from "@/lib/i18n"
 
 // A still of the attack map's Europe view for the home page: land and
-// borders from Natural Earth, one dot per known attack from Jameson Lopp's
-// list, all alike: the year filter lives on the map itself. Everything is
+// borders from Natural Earth, the known attacks from Jameson Lopp's list
+// grouped into hotspots like on the map itself: nearby cases merge into
+// one numbered circle that grows with the count. All alike in colour; the
+// year filter lives on the map. Everything is
 // drawn at build time, so the page loads no map library and no tiles. The
 // interactive map at /angriffe/ is the place to explore; this only shows
 // how close the cases are, and the whole picture links there. Below it
@@ -136,7 +138,7 @@ const borderPath = mesh(topology, shapes, (a, b) => a !== b)
   .join("")
 
 const firstYear = Math.min(...attacks.map((attack) => attack.year))
-const dots = attacks
+const points = attacks
   .filter(
     (attack) =>
       attack.lat !== null &&
@@ -148,14 +150,59 @@ const dots = attacks
   )
   .map((attack) => {
     const [x, y] = project([attack.lng ?? 0, attack.lat ?? 0])
+    return { x, y, count: 1 }
+  })
+
+// Hotspots: merge the two closest groups while their circles would touch
+// or they sit closer than `reach`, weighting the centre by count. A single
+// case stays a small dot; a group's circle grows with the logarithm of its
+// count, as on the map at /angriffe/.
+const reach = 30
+const radius = (count: number) => (count === 1 ? 5 : 11 + Math.log2(count) * 4)
+const groups = points.map((point) => ({ ...point }))
+for (;;) {
+  let best: [number, number, number] | undefined
+  for (let i = 0; i < groups.length; i++) {
+    for (let j = i + 1; j < groups.length; j++) {
+      const a = groups[i]
+      const b = groups[j]
+      const distance = Math.hypot(a.x - b.x, a.y - b.y)
+      const limit = Math.max(reach, radius(a.count) + radius(b.count) + 4)
+      if (distance < limit && (!best || distance - limit < best[2])) {
+        best = [i, j, distance - limit]
+      }
+    }
+  }
+  if (!best) break
+  const [i, j] = best
+  const a = groups[i]
+  const b = groups[j]
+  const count = a.count + b.count
+  groups[i] = {
+    x: (a.x * a.count + b.x * b.count) / count,
+    y: (a.y * a.count + b.y * b.count) / count,
+    count,
+  }
+  groups.splice(j, 1)
+}
+// Circles near the frame move inwards so their halo and number stay whole.
+const keepInside = (value: number, r: number, size: number) =>
+  Math.min(Math.max(value, r + 6), size - r - 6)
+const hotspots = groups
+  .map((group) => {
+    const r = Math.round(radius(group.count) * 2) / 2
     return {
-      x: Math.round(x * 2) / 2,
-      y: Math.round(y * 2) / 2,
+      x: Math.round(keepInside(group.x, r, width) * 2) / 2,
+      y: Math.round(keepInside(group.y, r, height) * 2) / 2,
+      count: group.count,
+      r,
     }
   })
+  // Small ones first, so the biggest hotspots lie on top.
+  .sort((a, b) => a.count - b.count)
 const label = en
-  ? `Open the map: ${dots.length} known attacks on crypto holders in Europe since ${firstYear}.`
-  : `Zur Karte: ${dots.length} bekannte Angriffe auf Krypto-Besitzer in Europa seit ${firstYear}.`
+  ? `Open the map: ${points.length} known attacks on crypto holders in Europe since ${firstYear}.`
+  : `Zur Karte: ${points.length} bekannte Angriffe auf Krypto-Besitzer in Europa seit ${firstYear}.`
 ---
 
 <figure class="attack-preview">
@@ -169,13 +216,17 @@ const label = en
       <path class="land" d={landPath} />
       <path class="borders" d={borderPath} />
       <g class="dots">
-        {dots.map((dot) => (
-            <circle
-              cx={dot.x}
-              cy={dot.y}
-              r="5"
-            />
-          ))}
+        {hotspots.map((spot) =>
+          spot.count === 1 ? (
+            <circle class="dot" cx={spot.x} cy={spot.y} r={spot.r} />
+          ) : (
+            <g class="hotspot">
+              <circle class="halo" cx={spot.x} cy={spot.y} r={spot.r + 5} />
+              <circle cx={spot.x} cy={spot.y} r={spot.r} />
+              <text x={spot.x} y={spot.y}>{spot.count}</text>
+            </g>
+          ),
+        )}
       </g>
     </svg>
   </a>
@@ -187,9 +238,8 @@ const label = en
 </figure>
 
 <style>
-  /* Wie die Karte unter /angriffe/: graues Land, helle Grenzen, ein Punkt
-     je Fall, rot die letzten zwei Jahre. Das ganze Bild führt zur Karte;
-     rechts unten steht es dabei, damit man es auch ohne Zeiger sieht. */
+  /* Wie die Karte unter /angriffe/: graues Land, helle Grenzen, rote
+     Brennpunkte mit der Zahl der Fälle. Das ganze Bild führt zur Karte. */
   .attack-preview {
     display: grid;
     gap: var(--space-xs);
@@ -235,8 +285,24 @@ const label = en
 
   circle {
     fill: var(--primary);
+  }
+
+  .dot {
     stroke: var(--gray-1);
     stroke-width: 1.5;
+  }
+
+  .halo {
+    fill: color-mix(in oklab, var(--primary) 28%, transparent);
+  }
+
+  text {
+    fill: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-anchor: middle;
+    dominant-baseline: central;
   }
 
   figcaption {
