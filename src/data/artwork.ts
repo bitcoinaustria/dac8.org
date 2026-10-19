@@ -124,12 +124,12 @@ export const artwork = {
     de: {
       alt: "Illustration: Eine Lupe über einer Kartei mit der Aufschrift Datensammlung voller Personenkarten. Davor eine Beschwerde von Max Mustermann gegen die anlasslose Erfassung der Jahreswerte.",
       caption:
-        "Unsere geplante Beschwerde setzt an der Verarbeitung bei einem Anbieter an. Sie soll klären, ob die gesetzlichen Vorgaben mit den Grundrechten vereinbar sind.",
+        "Unsere Beschwerde setzt an der Verarbeitung bei einem Anbieter an. Sie soll klären, ob die gesetzlichen Vorgaben mit den Grundrechten vereinbar sind.",
     },
     en: {
       alt: "Illustration: a magnifying glass over a card index labelled data collection, full of personal record cards. In front, a complaint by Max Mustermann against the blanket collection of annual totals.",
       caption:
-        "Our planned complaint starts from one provider’s processing of a customer’s data. It asks whether the legal requirements are compatible with fundamental rights.",
+        "Our complaint starts from one provider’s processing of a customer’s data. It asks whether the legal requirements are compatible with fundamental rights.",
     },
   },
   financeTheCase: {

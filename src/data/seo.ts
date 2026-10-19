@@ -12,13 +12,13 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "Gegen DAC8. Für finanzielle Privatsphäre",
       description:
-        "DAC8 erfasst die Finanzdaten aller Krypto-Kunden, Jahr für Jahr und ohne Verdacht. Bitcoin Austria bereitet ein Verfahren gegen diese finanzielle Massenüberwachung vor.",
+        "DAC8 erfasst die Finanzdaten aller Krypto-Kunden, Jahr für Jahr und ohne Verdacht. Bitcoin Austria geht rechtlich gegen diese finanzielle Massenüberwachung vor.",
       imageLines: ["DAC8 erfasst jeden", "Krypto-Kunden.", "Wir wehren uns."],
     },
     en: {
       title: "Against DAC8. For financial privacy",
       description:
-        "DAC8 records the financial data of every crypto customer, every year and without suspicion. Bitcoin Austria is preparing a legal challenge to this mass surveillance.",
+        "DAC8 records the financial data of every crypto customer, every year and without suspicion. Bitcoin Austria is challenging this mass surveillance in the courts.",
       imageLines: ["DAC8 records every", "crypto customer.", "We fight back."],
     },
   },
@@ -110,14 +110,14 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "DAC8-Verfahren: Aktuelles und nächste Schritte",
       description:
-        "Der aktuelle Stand des von Bitcoin Austria vorbereiteten DAC8-Verfahrens in Österreich. Neuigkeiten und nächste Schritte, auch per RSS.",
-      imageLines: ["Das Verfahren", "gegen DAC8.", "In Vorbereitung."],
+        "Der aktuelle Stand des DAC8-Verfahrens von Bitcoin Austria in Österreich. Neuigkeiten und nächste Schritte, auch per RSS.",
+      imageLines: ["Unsere Beschwerde", "gegen DAC8", "ist eingebracht."],
     },
     en: {
       title: "DAC8 legal challenge: updates and next steps",
       description:
         "Follow Bitcoin Austria’s legal challenge to DAC8 in Austria: the current status, campaign updates and next steps. Also available via RSS.",
-      imageLines: ["The case", "against DAC8.", "In preparation."],
+      imageLines: ["Our complaint", "against DAC8", "has been filed."],
     },
   },
   legal: {
