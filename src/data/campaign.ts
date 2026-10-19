@@ -26,7 +26,7 @@ export const legalRoute = {
       title: "Anbieter",
       text: "ein Kunde beanstandet, wie sein Anbieter Daten für DAC8 verarbeitet",
       detail:
-        "Ein Kunde beanstandet, wie sein Anbieter seine Daten für DAC8 verarbeitet, und bringt im Oktober 2026 Beschwerde ein.",
+        "Ein Kunde beanstandet, wie sein Anbieter seine Daten für DAC8 verarbeitet. In der Sache geht es um das Gesetz, das den Anbieter dazu verpflichtet.",
     },
     {
       title: "Datenschutzbehörde",
@@ -52,7 +52,7 @@ export const legalRoute = {
       title: "Provider",
       text: "a customer objects to how their provider processes data for DAC8",
       detail:
-        "A customer objects to how their provider processes their data for DAC8 and files a complaint in October 2026.",
+        "A customer objects to how their provider processes their data for DAC8. In substance, it is about the law that requires the provider to do so.",
     },
     {
       title: "Data Protection Authority",

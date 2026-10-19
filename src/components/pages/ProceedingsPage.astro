@@ -7,21 +7,26 @@ import MetaPage from "@/components/MetaPage.astro"
 import { publishedUpdates } from "@/data/updates"
 import { donateFor, feedFor, languageFor, pathFor } from "@/lib/i18n"
 
-// What we do: the complaint, the route it can take, why it can work, and
-// what journalists need. Every procedural statement here must match the
-// actual status; the courts, not the campaign, decide on referrals and
-// timing.
+// What we do: the conviction and one way to help first, then where the case
+// stands, the questions it asks, why it can work, and what journalists need.
+// Every procedural statement here must match the actual status; the courts,
+// not the campaign, decide on referrals and timing.
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
 const entries = publishedUpdates()
+const latest = entries[0]
 const donate = donateFor(language)
 const feed = feedFor(language)
+const formatDate = new Intl.DateTimeFormat(en ? "en-GB" : "de-AT", {
+  dateStyle: "long",
+  timeZone: "Europe/Vienna",
+})
 
 const questions = en
   ? [
       {
         title: "May the state demand this?",
-        text: "Providers must collect every customer’s data for the tax office, without suspicion. Every report stays on file with them for ten years. Is that compatible with the fundamental right to data protection?",
+        text: "Providers must collect every customer’s data for the tax office, without suspicion, and keep each report for ten years. Is that compatible with the fundamental right to data protection?",
       },
       {
         title: "Does the tax office need this data?",
@@ -29,13 +34,13 @@ const questions = en
       },
       {
         title: "Could it be done with less?",
-        text: "Any interference with fundamental rights must be necessary and proportionate. We want it examined whether milder means would work with less data.",
+        text: "Any interference with fundamental rights must be necessary and proportionate. We are convinced that milder means would do, such as collecting data only on customers who are actually reported.",
       },
     ]
   : [
       {
         title: "Darf der Staat das verlangen?",
-        text: "Anbieter müssen die Daten aller Kunden für das Finanzamt erfassen, ohne Verdacht. Jede Meldung bleibt zehn Jahre bei ihnen gespeichert. Ist das mit dem Grundrecht auf Datenschutz vereinbar?",
+        text: "Anbieter müssen die Daten aller Kunden für das Finanzamt erfassen, ohne Verdacht, und jede Meldung zehn Jahre aufbewahren. Ist das mit dem Grundrecht auf Datenschutz vereinbar?",
       },
       {
         title: "Braucht das Finanzamt diese Daten?",
@@ -43,10 +48,18 @@ const questions = en
       },
       {
         title: "Ginge es mit weniger?",
-        text: "Ein Eingriff in Grundrechte muss erforderlich und verhältnismäßig sein, also nötig und angemessen. Wir lassen prüfen, ob mildere Mittel mit weniger Daten auskommen.",
+        text: "Ein Eingriff in Grundrechte muss erforderlich und verhältnismäßig sein, also nötig und angemessen. Wir sind überzeugt, dass mildere Mittel genügen, etwa nur die Kunden zu erfassen, die tatsächlich gemeldet werden.",
       },
     ]
 
+// The two 2014 rulings on data retention, as listed under courts in
+// src/data/sources.ts: the CJEU judgment of 8 April and the Constitutional
+// Court's decision of 27 June.
+const retentionCjeu = en
+  ? "https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=CELEX:62012CJ0293"
+  : "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:62012CJ0293"
+const retentionVfgh =
+  "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20140627_12G00047_00/JFT_20140627_12G00047_00.pdf"
 // The Constitutional Court's April 2026 decision on the electronic
 // vaccination record: a direct application is inadmissible while the route
 // through the Data Protection Authority is open, whatever its prospects there.
@@ -59,8 +72,8 @@ const lawyerProfile = en
 
 <Layout
   sections={[
+    { id: "rechtsweg", label: en ? "Status" : "Stand" },
     { id: "beschwerde", label: en ? "Complaint" : "Beschwerde" },
-    { id: "rechtsweg", label: en ? "Legal route" : "Rechtsweg" },
     { id: "praezedenzfall", label: en ? "Precedent" : "Präzedenzfall" },
     { id: "europa", label: en ? "Europe" : "Europa" },
     { id: "neuigkeiten", label: en ? "Updates" : "Neuigkeiten" },
@@ -78,36 +91,13 @@ const lawyerProfile = en
           >
         </h1>
         <p class="lead">
-          {en ? "We are convinced that collecting data on every customer without suspicion violates the fundamental right to data protection. The route starts at the Data Protection Authority and can lead to the Court of Justice of the European Union." : "Wir sind überzeugt, dass die Erfassung aller Kunden ohne Verdacht gegen das Grundrecht auf Datenschutz verstößt. Der Weg beginnt bei der Datenschutzbehörde und kann bis zum Europäischen Gerichtshof führen."}
+          {en ? "We are convinced that collecting data on every crypto customer without suspicion violates the fundamental right to data protection." : "Wir sind überzeugt, dass die Erfassung aller Krypto-Kunden ohne Verdacht gegen das Grundrecht auf Datenschutz verstößt."}
         </p>
-        <nav
-          class="hero-actions"
-          aria-label={en ? "Support and follow the case" : "Verfahren unterstützen und verfolgen"}
-        >
+        <div class="hero-actions">
           <a class="button primary" href={donate}
             >{en ? "Support the case" : "Verfahren unterstützen"}</a
           >
-          <a class="button" href={feed}
-            >{en ? "Updates via RSS" : "Neuigkeiten per RSS"}</a
-          >
-        </nav>
-        <dl
-          class="glance"
-          aria-label={en ? "The complaint at a glance" : "Die Beschwerde auf einen Blick"}
-        >
-          <dt>{en ? "Filed" : "Eingebracht"}</dt>
-          <dd>
-            {en ? "in October 2026 with the Austrian Data Protection Authority" : "im Oktober 2026 bei der österreichischen Datenschutzbehörde"}
-          </dd>
-          <dt>{en ? "By" : "Von"}</dt>
-          <dd>
-            {en ? "Dr. Oliver Völkel, LL.M., attorney in Vienna, as a customer of a crypto provider" : "Dr. Oliver Völkel, LL.M., Rechtsanwalt in Wien, als Kunde eines Krypto-Anbieters"}
-          </dd>
-          <dt>{en ? "Initiated by" : "Initiative"}</dt>
-          <dd>
-            {en ? "Bitcoin Austria, the non-profit bitcoin association from Vienna" : "Bitcoin Austria, gemeinnütziger Bitcoin-Verein aus Wien"}
-          </dd>
-        </dl>
+        </div>
       </div>
       <Artwork
         id="collectionReview"
@@ -118,12 +108,41 @@ const lawyerProfile = en
       />
     </header>
 
+    <section
+      id="rechtsweg"
+      class="band case-status"
+      aria-labelledby="rechtsweg-heading"
+    >
+      <div class="case-status-text">
+        <h2 id="rechtsweg-heading">
+          {en ? "Where the case stands" : "Wo das Verfahren steht"}
+        </h2>
+        <p class="section-intro">
+          {en ? "At Bitcoin Austria’s initiative, attorney Dr Oliver Völkel (CERHA HEMPEL) filed a complaint with the Austrian Data Protection Authority in October 2026, as a customer of a crypto provider." : "Auf Initiative von Bitcoin Austria hat Rechtsanwalt Dr. Oliver Völkel (CERHA HEMPEL) im Oktober 2026 als Kunde eines Krypto-Anbieters Beschwerde bei der österreichischen Datenschutzbehörde eingebracht."}
+        </p>
+      </div>
+      <LegalRoute language={language} detailed />
+      {latest && (
+        <p class="case-status-latest">
+          <span>
+            {en ? "Latest, " : "Zuletzt, "}
+            <time datetime={latest.publishedAt}
+              >{formatDate.format(new Date(latest.publishedAt))}</time
+            >
+          </span>
+          <a class="text-link" href={`#${latest.id}`}
+            >{latest.translations[language].title}</a
+          >
+        </p>
+      )}
+    </section>
+
     <section id="beschwerde" aria-labelledby="beschwerde-heading">
       <h2 id="beschwerde-heading">
         {en ? "How much data may the state demand, just in case?" : "Wie viel darf der Staat vorsorglich sammeln lassen?"}
       </h2>
       <p class="section-intro">
-        {en ? "The complaint takes one concrete case: the data a provider prepares about one of its customers for DAC8. On that case, we want three questions answered." : "Die Beschwerde nimmt einen konkreten Fall: die Daten, die ein Anbieter für DAC8 über einen seiner Kunden aufbereitet. An ihm lassen wir drei Fragen klären."}
+        {en ? "The complaint starts from one concrete case: the data a provider prepares about one of its customers for DAC8. It asks three questions." : "Die Beschwerde setzt an einem konkreten Fall an: an den Daten, die ein Anbieter für DAC8 über einen seiner Kunden aufbereitet. Sie stellt drei Fragen."}
       </p>
       <ol class="facts questions">
         {questions.map((question) => (
@@ -140,33 +159,37 @@ const lawyerProfile = en
       >
     </section>
 
-    <section id="rechtsweg" class="band" aria-labelledby="rechtsweg-heading">
-      <h2 id="rechtsweg-heading">
-        {en ? "What happens next" : "Wie es weitergeht"}
-      </h2>
-      <p class="section-intro">
-        {en ? "In Austria only the Constitutional Court can strike down a law, and only the Court of Justice of the EU can declare an EU directive invalid. That is why the route is long." : "Ein Gesetz aufheben kann in Österreich nur der Verfassungsgerichtshof, eine EU-Richtlinie für ungültig erklären nur der Europäische Gerichtshof. Deshalb ist der Weg so lang."}
-      </p>
-      <LegalRoute language={language} detailed />
-    </section>
-
-    <section id="praezedenzfall" aria-labelledby="praezedenzfall-heading">
-      <h2 id="praezedenzfall-heading">
-        {en ? "Will it make a difference?" : "Bringt das etwas?"}
-        <span
-          >{en ? "A surveillance law has fallen before." : "Schon einmal fiel ein Überwachungsgesetz."}</span
-        >
-      </h2>
-      <p class="section-intro">
-        {en ? "Whether we win is for the courts to decide. But they have already answered once whether the state may have data on everyone stored just in case." : "Ob wir recht bekommen, entscheiden die Gerichte. Die Frage, ob der Staat Daten über alle auf Vorrat speichern lassen darf, haben sie aber schon einmal beantwortet."}
-      </p>
+    <section
+      id="praezedenzfall"
+      class="band precedent-band"
+      aria-labelledby="praezedenzfall-heading"
+    >
+      <div class="precedent-text">
+        <h2 id="praezedenzfall-heading">
+          {en ? "Will it make a difference?" : "Bringt das etwas?"}
+          <span
+            >{en ? "A surveillance law has fallen before." : "Schon einmal fiel ein Überwachungsgesetz."}</span
+          >
+        </h2>
+        <p class="section-intro">
+          {en ? "Whether we win is for the courts to decide. But they have already answered whether the state may have data on everyone stored just in case." : "Ob wir recht bekommen, entscheiden die Gerichte. Die Frage, ob der Staat Daten über alle auf Vorrat speichern lassen darf, haben sie aber bereits beantwortet."}
+        </p>
+      </div>
       <div class="precedent">
         <p class="precedent-year" aria-hidden="true">2014</p>
         <p class="prose">
           <strong
             >{en ? "Data retention." : "Die Vorratsdatenspeicherung."}</strong
           >
-          {en ? "Phone and internet providers had to store for six months who was in contact with whom and when, for all customers and without suspicion. A challenge organised by AKVorrat, now epicenter.works, took this to the Constitutional Court, which referred the questions to the Court of Justice of the EU (CJEU). In April 2014 the CJEU declared the EU directive invalid, and in June the Constitutional Court struck down the Austrian rules." : "Telefon- und Internetanbieter mussten sechs Monate lang speichern, wer wann mit wem in Verbindung war, von allen Kunden und ohne Verdacht. Ein von AKVorrat, heute epicenter.works, organisierter Antrag brachte das vor den Verfassungsgerichtshof. Der legte die Fragen dem Europäischen Gerichtshof (EuGH) vor. Im April 2014 erklärte der EuGH die EU-Richtlinie für ungültig, im Juni hob der Verfassungsgerichtshof die österreichischen Regeln auf."}
+          {en ? "Phone and internet providers had to store for six months who was in contact with whom and when, for all customers and without suspicion. A challenge organised by AKVorrat, now epicenter.works, took this to the Constitutional Court, which referred the questions to the Court of Justice of the EU (CJEU). " : "Telefon- und Internetanbieter mussten sechs Monate lang speichern, wer wann mit wem in Verbindung war, von allen Kunden und ohne Verdacht. Ein von AKVorrat, heute epicenter.works, organisierter Antrag brachte das vor den Verfassungsgerichtshof. Der legte die Fragen dem Europäischen Gerichtshof (EuGH) vor. "}<a
+            href={retentionCjeu}
+            hreflang={language}
+            >{en ? "In April 2014" : "Im April 2014"}</a
+          >{en ? " the CJEU declared the EU directive invalid, and " : " erklärte der EuGH die EU-Richtlinie für ungültig, "}<a
+            href={retentionVfgh}
+            hreflang="de"
+            >{en ? "in June" : "im Juni"}</a
+          >{en ? " the Constitutional Court struck down the Austrian rules." : " hob der Verfassungsgerichtshof die österreichischen Regeln auf."}
         </p>
       </div>
       <a class="text-link" href={donate}
@@ -174,7 +197,7 @@ const lawyerProfile = en
       >
     </section>
 
-    <section id="europa" class="band" aria-labelledby="europa-heading">
+    <section id="europa" aria-labelledby="europa-heading">
       <h2 id="europa-heading">
         {en ? "Elsewhere in Europe" : "Anderswo in Europa"}
       </h2>
@@ -206,7 +229,7 @@ const lawyerProfile = en
             {en ? "The campaign concerns everyone covered by DAC8, whatever crypto-assets they use. It starts in Austria. If you want to challenge the law in your country, get in touch." : "Die Kampagne gilt allen, die DAC8 erfasst, egal welche Kryptowerte sie nutzen. Sie beginnt in Österreich. Wer das Gesetz im eigenen Land angehen will, meldet sich bei uns."}
           </p>
           <a
-            class="button primary"
+            class="text-link"
             href={en ? "mailto:kontakt@dac8.org?subject=Working%20together%20on%20DAC8" : "mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"}
             >kontakt@dac8.org</a
           >
@@ -214,26 +237,34 @@ const lawyerProfile = en
       </div>
     </section>
 
-    <section id="neuigkeiten" aria-labelledby="neuigkeiten-heading">
-      <h2 id="neuigkeiten-heading">{en ? "Updates" : "Neuigkeiten"}</h2>
-      <p class="section-intro">
-        {en ? "We post every new step in the case here and in the RSS feed as soon as it is public." : "Jeden neuen Schritt im Verfahren melden wir hier und im RSS-Feed, sobald er öffentlich ist."}
-      </p>
-      {entries.length === 0 && <p class="empty-state">
-        <strong>{en ? "No updates published yet." : "Noch keine Meldungen veröffentlicht."}</strong>
-      </p>}
-      {entries.map(entry => <article id={entry.id} class="campaign-update">
-        <time datetime={entry.publishedAt}>{new Intl.DateTimeFormat(en ? "en-GB" : "de-AT", { dateStyle: "long", timeZone: "Europe/Vienna" }).format(new Date(entry.publishedAt))}</time>
-        <h3>{entry.translations[language].title}</h3>
-        <p class="prose">{entry.translations[language].text}</p>
-        {entry.source && <a class="text-link" href={entry.source}>{en ? "Read the document" : "Zum Dokument"}</a>}
-      </article>)}
-      <a class="text-link" href={feed}
-        >{en ? "Subscribe via RSS" : "RSS-Feed abonnieren"}</a
-      >
+    <section
+      id="neuigkeiten"
+      class="band news"
+      aria-labelledby="neuigkeiten-heading"
+    >
+      <div class="news-text">
+        <h2 id="neuigkeiten-heading">{en ? "Updates" : "Neuigkeiten"}</h2>
+        <p class="section-intro">
+          {en ? "We post every new step in the case here and in the RSS feed as soon as it is public." : "Jeden neuen Schritt im Verfahren melden wir hier und im RSS-Feed, sobald er öffentlich ist."}
+        </p>
+        <a class="text-link" href={feed}
+          >{en ? "Subscribe via RSS" : "RSS-Feed abonnieren"}</a
+        >
+      </div>
+      <div class="news-list">
+        {entries.length === 0 && <p class="empty-state">
+          <strong>{en ? "No updates published yet." : "Noch keine Meldungen veröffentlicht."}</strong>
+        </p>}
+        {entries.map(entry => <article id={entry.id} class="campaign-update">
+          <time datetime={entry.publishedAt}>{formatDate.format(new Date(entry.publishedAt))}</time>
+          <h3>{entry.translations[language].title}</h3>
+          <p class="prose">{entry.translations[language].text}</p>
+          {entry.source && <a class="text-link" href={entry.source}>{en ? "Read the document" : "Zum Dokument"}</a>}
+        </article>)}
+      </div>
     </section>
 
-    <section id="presse" class="band press" aria-labelledby="presse-heading">
+    <section id="presse" class="press" aria-labelledby="presse-heading">
       <div class="press-contact">
         <h2 id="presse-heading">{en ? "For the media" : "Für Medien"}</h2>
         <p class="section-intro">
@@ -258,7 +289,9 @@ const lawyerProfile = en
             <p class="contact-role">
               {en ? "Legal questions" : "Rechtliche Fragen"}
             </p>
-            <strong>Dr. Oliver Völkel, LL.M.</strong>
+            <strong
+              >{en ? "Dr Oliver Völkel, LL.M." : "Dr. Oliver Völkel, LL.M."}</strong
+            >
             <p>
               {en ? "Attorney and partner at CERHA HEMPEL in Vienna. He filed the complaint." : "Rechtsanwalt und Partner bei CERHA HEMPEL in Wien. Er hat die Beschwerde eingebracht."}
             </p>
@@ -302,7 +335,7 @@ const lawyerProfile = en
             {en ? "How long will the case take?" : "Wie lange dauert das Verfahren?"}
           </summary>
           <p>
-            {en ? "We do not know. The Data Protection Authority and the courts set the pace. We publish every new step on this page and in the RSS feed." : "Das wissen wir nicht. Den Zeitplan bestimmen die Datenschutzbehörde und die Gerichte. Jeden neuen Schritt veröffentlichen wir auf dieser Seite und im RSS-Feed."}
+            {en ? "We do not know. The Data Protection Authority and the courts set the pace." : "Das wissen wir nicht. Den Zeitplan bestimmen die Datenschutzbehörde und die Gerichte."}
           </p>
         </details>
         <details name="press-faq">
@@ -334,11 +367,42 @@ const lawyerProfile = en
       </div>
     </section>
 
-    <MediaCoverage language={language} />
+    <MediaCoverage language={language} band />
   </article>
 </Layout>
 
 <style>
+  /* Stand: wer die Beschwerde eingebracht hat, in einem Satz, darunter der
+     Rechtsweg als einziges Bild des Bands. */
+  :global(.campaign) > section.case-status {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .case-status-text {
+    max-inline-size: 48rem;
+  }
+
+  .case-status :global(.route) {
+    margin-block-start: 0;
+    padding-block-start: var(--space-s);
+  }
+
+  /* Die jüngste Meldung als leise Zeile unter dem Weg. */
+  .case-status-latest {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2xs) var(--space-s);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  .case-status-latest .text-link {
+    margin-block-start: 0;
+    font-size: var(--type-body);
+  }
+
   /* Drei Prüffragen nebeneinander, jede unter einer Haarlinie. Wer nur die
      fetten Fragen liest, weiß, worum es geht. */
   .questions > li {
@@ -352,7 +416,36 @@ const lawyerProfile = en
     }
   }
 
-  /* Die Präzedenzfall-Aussage beginnt mit einem fetten Einstieg. */
+  /* Präzedenzfall: links Frage und Antwort der Gerichte, rechts das Jahr
+     und was damals fiel. Schmal folgt der Fall dem Vorspann, der Link
+     schließt das Band. */
+  .precedent-band {
+    display: grid;
+    grid-template-areas: "text" "case" "link";
+    gap: var(--space-xl) var(--space-2xl);
+  }
+
+  .precedent-text {
+    grid-area: text;
+  }
+
+  .precedent-band .precedent {
+    grid-area: case;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-xs);
+    margin-block-start: 0;
+  }
+
+  .precedent-band > .text-link {
+    grid-area: link;
+    margin-block-start: 0;
+  }
+
+  /* Das Jahr trägt das Band wie ein Bild: groß, in gefrästem Metall. */
+  .precedent-band .precedent-year {
+    font-size: clamp(3rem, 2rem + 4vw, 5rem);
+  }
+
   .precedent .prose strong {
     display: block;
     margin-block-end: var(--space-3xs);
@@ -361,8 +454,38 @@ const lawyerProfile = en
     line-height: 1.3;
   }
 
+  @container campaign (width >= 56rem) {
+    .precedent-band {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+      grid-template-rows: auto 1fr;
+      grid-template-areas: "text case" "link case";
+    }
+  }
+
   .cards .text-link {
     margin-block-start: var(--space-m);
+  }
+
+  /* Neuigkeiten: links was hier erscheint und wie man folgt, rechts die
+     Meldungen selbst. */
+  .news {
+    display: grid;
+    align-items: start;
+    gap: var(--space-l) var(--space-2xl);
+  }
+
+  .news-list > :first-child {
+    margin-block-start: 0;
+  }
+
+  @container campaign (width >= 56rem) {
+    .news {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+
+    .news-list {
+      padding-block-start: var(--space-2xs);
+    }
   }
 
   /* Für Medien: links die Ansprechpartner, rechts die häufigen Fragen. */
@@ -421,11 +544,6 @@ const lawyerProfile = en
     }
   }
 
-  h2 + .campaign-update,
-  .section-intro + .campaign-update {
-    margin-block-start: var(--space-l);
-  }
-
   .campaign-update + .campaign-update {
     margin-block-start: var(--space-l);
     padding-block-start: var(--space-m);
@@ -437,5 +555,10 @@ const lawyerProfile = en
     margin-block-end: var(--space-xs);
     color: var(--ink-3);
     font-size: var(--type-meta);
+  }
+
+  .case-status-latest time {
+    display: inline;
+    margin: 0;
   }
 </style>
