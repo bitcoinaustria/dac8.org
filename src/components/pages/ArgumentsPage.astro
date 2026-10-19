@@ -67,6 +67,7 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
             <details>
               <summary>
                 <span class="numeral" aria-hidden="true">{index + 1}</span>
+                <span class="eyebrow">{reason.short}</span>
                 <h3 id={reason.alias}>{reason.title}</h3>
                 <span class="reason-text">{reason.text}</span>
                 <span class="toggle" aria-hidden="true"></span>
@@ -243,10 +244,12 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
 
   /* ---------- Gründe: Schlagzeile und ein Satz, Belege aufklappbar ------- */
 
-  /* Schmal steht die Ziffer über der Schlagzeile, damit Schlagzeile und
-     Satz die ganze Breite haben. */
+  /* Jeder Grund trägt seinen Namen als Zeile über der Schlagzeile, wortgleich
+     mit der Übersicht im Hero. Schmal stehen Ziffer und Name in einer Zeile
+     über der Schlagzeile, damit Schlagzeile und Satz die ganze Breite
+     haben. */
   .reasons {
-    --cols: minmax(0, 1fr) 2.25rem;
+    --cols: auto minmax(0, 1fr) 2.25rem;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -268,9 +271,9 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
     display: grid;
     grid-template-columns: var(--cols);
     grid-template-areas:
-      "num toggle"
-      "title title"
-      "text text";
+      "num eyebrow toggle"
+      "title title title"
+      "text text text";
     gap: var(--space-2xs) var(--space-s);
     padding-block: var(--space-m);
     cursor: pointer;
@@ -291,6 +294,15 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
     grid-area: num;
     align-self: center;
     font-size: var(--type-h2);
+  }
+
+  .eyebrow {
+    grid-area: eyebrow;
+    align-self: center;
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+    font-weight: var(--weight-strong);
+    line-height: 1.35;
   }
 
   .reasons h3 {
@@ -400,7 +412,14 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
     }
 
     .reasons summary {
-      grid-template-areas: "num title text toggle";
+      grid-template-areas:
+        "num eyebrow . ."
+        "num title text toggle";
+      grid-template-rows: auto 1fr;
+    }
+
+    .eyebrow {
+      align-self: end;
     }
 
     .reasons summary .numeral {
