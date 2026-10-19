@@ -598,15 +598,20 @@
 
 /* ---------- Stationen: Datenweg, Rechtsweg ---------------------------- */
 
+/* Stationen als Punkte an einer Linie, ohne Nummern: Die Reihenfolge zeigt
+   die Linie. Schmal läuft der Weg senkrecht, ab mittlerer Breite von links
+   nach rechts mit dem Titel unter dem Punkt. */
 .campaign .flow {
-  --dot: 2rem;
+  --dot: 0.875rem;
+  --line: 2px;
+  --walked: light-dark(#3a3f45, #a3aab0);
+  --open: var(--ink-3);
   display: grid;
   gap: var(--space-m);
   max-inline-size: var(--measure-text);
   margin-block-start: var(--space-xl);
   padding: 0;
   list-style: none;
-  counter-reset: station;
 }
 
 .campaign .flow li {
@@ -614,58 +619,32 @@
   display: grid;
   grid-template-columns: var(--dot) minmax(0, 1fr);
   gap: var(--space-3xs) var(--space-s);
-  counter-increment: station;
   line-height: 1.4;
 }
 
-/* Stationen als kleine Token wie die Knöpfe der Renderings: Graphitkern,
-   schmale Titankante, eine obere Lichtkante. Statisch, ohne Glanz oder
-   Bewegung, weil sie nicht klickbar sind. */
+/* Der Punkt sitzt auf der Höhe der ersten Titelzeile. */
 .campaign .flow li::before {
-  content: counter(station);
+  content: "";
   z-index: 1;
-  display: inline-grid;
-  place-items: center;
+  align-self: start;
+  box-sizing: border-box;
   inline-size: var(--dot);
   block-size: var(--dot);
-  border: 1px solid var(--material-edge);
+  margin-block-start: calc(0.7em - var(--dot) / 2);
   border-radius: var(--radius-full);
-  color: #f7f8f9;
-  background: linear-gradient(155deg, #4b5056, #25282d);
-  box-shadow:
-    inset 0 1px 0 #ffffff38,
-    inset 0 -1px 0 #00000035,
-    0 1px 2px var(--material-shade);
-  font-size: 0.875rem;
-  font-weight: 600;
-  line-height: 1;
+  background: var(--walked);
 }
 
-/* Rot heißt auf Stationen immer „hier stehen wir“: nur die aktuelle Station
-   des Rechtswegs. Andere Hervorhebungen tragen eine Marke wie „DAC8“. */
-.campaign .route li.current::before {
-  border-color: light-dark(#b6000c, #fa5963);
-  color: #ffffff;
-  background: linear-gradient(155deg, #e3000f, #be000c);
-  box-shadow:
-    inset 0 1px 0 #ffffff30,
-    inset 0 -1px 0 #71000860,
-    0 1px 2px var(--material-shade);
-}
-
-/* Die Linie läuft von Station zu Station durch, als schmale Nut. */
 .campaign .flow li:not(:last-child)::after {
   content: "";
   position: absolute;
-  inset-block-start: var(--dot);
-  inset-block-end: calc(-1 * var(--space-m));
-  inset-inline-start: calc(var(--dot) / 2 - 1px);
-  border-inline-start: 2px solid light-dark(#c6cbcf, #454b51);
-  box-shadow: 1px 0 0 light-dark(#ffffff, #ffffff08);
+  inset-block-start: calc(0.7em + var(--dot) / 2 + 4px);
+  inset-block-end: calc(4px + var(--dot) / 2 - 0.7em - var(--space-m));
+  inset-inline-start: calc(var(--dot) / 2 - var(--line) / 2);
+  border-inline-start: var(--line) solid var(--walked);
 }
 
 .campaign .flow strong {
-  align-self: center;
   font-weight: 560;
   overflow-wrap: normal;
   hyphens: auto;
@@ -677,34 +656,36 @@
   text-wrap: pretty;
 }
 
-/* Rechtsweg mit Stand: erledigt, jetzt, noch offen. Offene Stationen sind
-   Glas statt Graphit. Die letzte Station ist gestrichelt angebunden, weil
-   über Vorlagen die Gerichte entscheiden. */
+/* Rechtsweg mit Stand: Gegangen ist graphit, die aktuelle Station rot. Rot
+   heißt auf Stationen immer „hier stehen wir“. Offene Stationen sind leere
+   Ringe am gestrichelten Weg. */
+.campaign .route li.current::before {
+  background: var(--primary);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 25%, transparent);
+}
+
 .campaign .route li.next::before {
-  color: light-dark(#202428, #eef0f2);
-  background: linear-gradient(
-    155deg,
-    light-dark(#ffffff, #292d31),
-    light-dark(#e8ecee, #181b1e)
-  );
-  box-shadow:
-    inset 0 1px 0 var(--material-shine),
-    inset 0 0 0 2px light-dark(#ffffff80, #ffffff06);
+  border: var(--line) solid var(--open);
+  background: transparent;
+}
+
+.campaign .route li:is(.current, .next):not(:last-child)::after {
+  border-inline-start-style: dashed;
+  border-color: var(--open);
+}
+
+.campaign .route li.current > strong {
+  color: var(--accent);
+  font-weight: var(--weight-heading);
 }
 
 .campaign .route li.next > strong {
   color: var(--ink-2);
 }
 
-.campaign .route li:has(+ [data-possible])::after {
-  border-inline-start-style: dashed;
-  box-shadow: none;
-}
-
-/* „Jetzt“ bleibt lesbar, ohne mit dem roten Token zu konkurrieren. */
 .campaign .route .tag.live {
-  color: var(--ink);
-  background: var(--panel-strong);
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .campaign .flow .tag {
@@ -717,8 +698,6 @@
   margin-block-start: var(--space-xl);
 }
 
-/* Ab mittlerer Breite laufen Datenweg und Rechtsweg von links nach rechts:
-   Token auf einer Schiene, darunter Titel und Erklärung. */
 @container campaign (width >= 46rem) {
   .campaign .flow {
     grid-auto-columns: minmax(0, 1fr);
@@ -733,26 +712,28 @@
     gap: var(--space-xs);
   }
 
+  .campaign .flow li::before {
+    margin-block-start: 0;
+  }
+
   .campaign .flow li > :is(strong, span) {
     grid-column: 1;
   }
 
   .campaign .flow li > strong {
-    align-self: start;
     margin-block-start: var(--space-2xs);
   }
 
   .campaign .flow li:not(:last-child)::after {
-    inset-block: calc(var(--dot) / 2 - 1px) auto;
-    inset-inline: calc(var(--dot) + var(--space-2xs))
-      calc(-1 * var(--space-m) + var(--space-2xs));
+    inset-block: calc(var(--dot) / 2 - var(--line) / 2) auto;
+    inset-inline: calc(var(--dot) + 6px) calc(6px - var(--space-m));
     border-inline-start: 0;
-    border-block-start: 2px solid light-dark(#c6cbcf, #454b51);
-    box-shadow: 0 1px 0 light-dark(#ffffff, #ffffff08);
+    border-block-start: var(--line) solid var(--walked);
   }
 
-  .campaign .route li:has(+ [data-possible])::after {
+  .campaign .route li:is(.current, .next):not(:last-child)::after {
     border-block-start-style: dashed;
+    border-color: var(--open);
   }
 }
 

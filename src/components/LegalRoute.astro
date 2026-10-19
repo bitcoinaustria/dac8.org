@@ -6,9 +6,12 @@ interface Props {
   language: Language
   // The proceedings page also says at each station what we expect there.
   detailed?: boolean
+  // The home page shows only the stations, and a note under the last one.
+  compact?: boolean
+  goalNote?: string
 }
 
-const { language, detailed = false } = Astro.props
+const { language, detailed = false, compact = false, goalNote } = Astro.props
 const en = language === "en"
 const stations = legalRoute[language]
 const stateOf = (index: number) =>
@@ -35,7 +38,6 @@ const timing = (index: number) =>
       <li
         class={stateOf(index)}
         style={timing(index)}
-        data-possible={index === stations.length - 1 ? "" : undefined}
         aria-current={index === currentStage ? "step" : undefined}
       >
         <strong>
@@ -44,41 +46,45 @@ const timing = (index: number) =>
             <span class="tag live">{en ? "Now" : "Jetzt"}</span>
           )}
         </strong>
-        <span>{detailed ? station.detail : station.text}</span>
+        {!compact && <span>{detailed ? station.detail : station.text}</span>}
+        {goalNote && index === stations.length - 1 && (
+          <span class="route-note">{goalNote}</span>
+        )}
       </li>
     ))}
 </ol>
 
 <style>
-  /* Der Rechtsweg als Zeitleiste. Der gegangene Weg ist eine Graphitlinie in
-     der Nut, der offene bleibt leere Nut. Ohne Scroll-Animation oder bei
-     reduzierter Bewegung steht der Stand fertig gezeichnet da. */
+  /* Der Rechtsweg mit Stand (Punkte und Linien: campaign.css, .flow). Der
+     gegangene Weg zeichnet sich beim Scrollen als Graphitlinie über eine
+     helle Spur. Ohne Scroll-Animation oder bei reduzierter Bewegung steht
+     der Stand fertig gezeichnet da. */
   :global(.campaign) .route {
     --groove: light-dark(#c6cbcf, #454b51);
-    --walked: light-dark(#3a3f45, #a3aab0);
     --glass: light-dark(#f1f3f4, #23272b);
     view-timeline: --legal-route block;
   }
 
   :global(.campaign) .route li.done:not(:last-child)::after {
-    inline-size: 2px;
+    inline-size: var(--line);
     border: 0;
     background:
       linear-gradient(var(--walked), var(--walked)) 0 0 / 100% 100% no-repeat,
       var(--groove);
   }
 
-  /* Über die Vorlage an den EuGH entscheiden die Gerichte: Die letzte
-     Station ist nur gestrichelt umrissen. */
-  :global(.campaign) .route li[data-possible]::before {
-    border-style: dashed;
-    border-color: var(--ink-3);
+  /* Unter dem Ziel eine leise Notiz, etwa was dort schon einmal fiel. */
+  :global(.campaign) .route .route-note {
+    max-inline-size: 26ch;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    line-height: 1.4;
   }
 
   @container campaign (width >= 46rem) {
     :global(.campaign) .route li.done:not(:last-child)::after {
       inline-size: auto;
-      block-size: 2px;
+      block-size: var(--line);
     }
   }
 
@@ -137,18 +143,11 @@ const timing = (index: number) =>
     }
   }
 
-  /* Eine Station leuchtet von der Mitte her auf: Ein innerer Schatten in
-     Glasfarbe deckt das Token zuerst ganz ab und zieht sich an den Rand
-     zurück. */
+  /* Ein erreichter Punkt füllt sich von außen nach innen: Ein innerer
+     Schatten in Glasfarbe deckt ihn zuerst ab und zieht sich zurück. */
   @keyframes legal-route-reach {
     from {
-      border-color: var(--material-edge);
-      color: light-dark(#202428, #eef0f2);
-      box-shadow:
-        inset 0 1px 0 #ffffff38,
-        inset 0 -1px 0 #00000035,
-        0 1px 2px var(--material-shade),
-        inset 0 0 0 calc(var(--dot) / 2) var(--glass);
+      box-shadow: inset 0 0 0 calc(var(--dot) / 2) var(--glass);
     }
   }
 

@@ -4,9 +4,9 @@ import AttackMapPreview from "@/components/AttackMapPreview.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
 import DataWeb from "@/components/DataWeb.astro"
 import HistoryStack from "@/components/HistoryStack.astro"
+import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
-import { currentStage, legalRoute } from "@/data/campaign"
 import { peopleAffected, roundPeople } from "@/data/leaks"
 import { countIn, euCountries, latestYear } from "@/lib/attacks"
 import { languageFor, pathFor } from "@/lib/i18n"
@@ -196,27 +196,11 @@ const reasons = [
           {en ? "In October 2026, attorney Dr Oliver Völkel (CERHA HEMPEL) filed a complaint as a customer of a provider. We are convinced that collecting data on every customer without suspicion violates fundamental rights." : "Rechtsanwalt Dr. Oliver Völkel (CERHA HEMPEL) hat im Oktober 2026 als Kunde eines Anbieters Beschwerde eingebracht. Wir sind überzeugt, dass die Erfassung aller Kunden ohne Verdacht gegen Grundrechte verstößt."}
         </p>
       </div>
-      <ol class="path" aria-label={en ? "The legal route" : "Der Rechtsweg"}>
-        {legalRoute[language].map((station, index, stations) => (
-          <li
-            class:list={[
-              index < currentStage ? "done" : index === currentStage ? "current" : "next",
-              { goal: index === stations.length - 1 },
-            ]}
-            aria-current={index === currentStage ? "step" : undefined}
-          >
-            <strong>{station.title}</strong>
-            {index === currentStage && (
-              <span class="now">{en ? "Now" : "Jetzt"}</span>
-            )}
-            {index === stations.length - 1 && (
-              <span class="note">
-                {en ? "This is where data retention fell in 2014." : "Hier fiel 2014 die Vorratsdatenspeicherung."}
-              </span>
-            )}
-          </li>
-        ))}
-      </ol>
+      <LegalRoute
+        language={language}
+        compact
+        goalNote={en ? "This is where data retention fell in 2014." : "Hier fiel 2014 die Vorratsdatenspeicherung."}
+      />
       <p class="complaint-foot">
         <span>
           {en ? "An initiative by Bitcoin Austria, a nonprofit association from Vienna" : "Eine Initiative von Bitcoin Austria, gemeinnütziger Verein aus Wien"}
@@ -394,7 +378,8 @@ const reasons = [
   /* Die Beschwerde ist die Wende der Seite: nach dem Problem, was wir
      dagegen tun. Sie schließt die Seite ab und bekommt mehr Luft als die
      anderen Bänder: die Absicht, wer eingebracht hat, der Rechtsweg als
-     einziges Bild und eine leise Zeile mit dem Weg zum Stand. */
+     einziges Bild (LegalRoute, kompakt) und eine leise Zeile mit dem Weg
+     zum Stand. */
   :global(.campaign) > section.complaint {
     display: grid;
     gap: var(--space-xl);
@@ -405,108 +390,9 @@ const reasons = [
     max-inline-size: 48rem;
   }
 
-  /* Der Rechtsweg: gegangen graphit, die aktuelle Station rot, offene
-     Stationen leere Ringe am gestrichelten Weg. Unter dem Ziel steht, was
-     dort schon einmal gefallen ist; belegt auf /verfahren/. Schmal läuft er
-     senkrecht, breit über die ganze Zeile. */
-  .path {
-    --dot: 0.875rem;
-    --line: 2px;
-    --walked: light-dark(#3a3f45, #a3aab0);
-    --open: var(--ink-3);
-    display: grid;
-    gap: var(--space-m);
-    margin: 0;
-    padding: var(--space-s) 0 0;
-    list-style: none;
-  }
-
-  .path li {
-    position: relative;
-    display: grid;
-    justify-items: start;
-    align-content: start;
-    gap: var(--space-3xs);
-    padding-inline-start: calc(var(--dot) + var(--space-s));
-  }
-
-  .path li::before {
-    content: "";
-    position: absolute;
-    inset-block-start: 0.3em;
-    inset-inline-start: 0;
-    box-sizing: border-box;
-    inline-size: var(--dot);
-    block-size: var(--dot);
-    border: var(--line) solid var(--open);
-    border-radius: 50%;
-  }
-
-  .path li:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    inset-block: calc(0.3em + var(--dot) + 4px)
-      calc(4px - var(--space-m) - 0.3em);
-    inset-inline-start: calc(var(--dot) / 2 - var(--line) / 2);
-    border-inline-start: var(--line) dashed var(--open);
-  }
-
-  .path strong {
-    color: var(--ink-3);
-    font-weight: 560;
-    line-height: 1.3;
-    hyphens: auto;
-    overflow-wrap: break-word;
-  }
-
-  .path .done::before {
-    border: 0;
-    background: var(--walked);
-  }
-
-  .path li.done:not(:last-child)::after {
-    border-color: var(--walked);
-    border-style: solid;
-  }
-
-  .path .done strong {
-    color: var(--ink-2);
-  }
-
-  .path .current::before {
-    border: 0;
-    background: var(--primary);
-    box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 25%, transparent);
-  }
-
-  .path .current strong {
-    color: var(--accent);
-    font-weight: var(--weight-heading);
-  }
-
-  .path .goal::before {
-    border-color: var(--ink-2);
-  }
-
-  .path .goal strong {
-    color: var(--ink);
-  }
-
-  .now {
-    padding: 0.05em 0.6em;
-    border-radius: var(--radius-full);
-    background: var(--primary);
-    color: var(--primary-foreground);
-    font-size: var(--step--1);
-    font-weight: 560;
-  }
-
-  .note {
-    max-inline-size: 24ch;
-    color: var(--ink-3);
-    font-size: var(--type-meta);
-    line-height: 1.4;
-    text-wrap: pretty;
+  .complaint :global(.route) {
+    margin-block-start: 0;
+    padding-block-start: var(--space-s);
   }
 
   .complaint-foot {
@@ -522,35 +408,6 @@ const reasons = [
   .complaint-foot .text-link {
     margin-block-start: 0;
     font-size: var(--type-body);
-  }
-
-  @container campaign (width >= 52rem) {
-    .path {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 0 var(--space-s);
-    }
-
-    .path li {
-      padding-block-start: calc(var(--dot) + var(--space-s));
-      padding-inline-start: 0;
-    }
-
-    .path li::before {
-      inset-block-start: 0;
-    }
-
-    /* Breit füllt die Linie den Weg bis zum nächsten Punkt. */
-    .path li:not(:last-child)::after {
-      inset-block: calc(var(--dot) / 2 - var(--line) / 2) auto;
-      inset-inline: calc(var(--dot) + 6px) calc(6px - var(--space-s));
-      border-inline-start: 0;
-      border-block-start: var(--line) dashed var(--open);
-    }
-
-    .path li.done:not(:last-child)::after {
-      border-color: var(--walked);
-      border-block-start-style: solid;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
