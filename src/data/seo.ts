@@ -122,13 +122,13 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "DAC8-Verfahren: Beschwerde, Rechtsweg und Presse",
       description:
-        "Bitcoin Austria lässt DAC8 prüfen: die Beschwerde bei der Datenschutzbehörde, der mögliche Weg bis zum EuGH, Pressekontakte und Neuigkeiten per RSS.",
+        "Bitcoin Austria bringt DAC8 vor Gericht: die Beschwerde bei der Datenschutzbehörde, der mögliche Weg bis zum EuGH, Pressekontakte und Neuigkeiten per RSS.",
       imageLines: ["Unsere Beschwerde", "gegen DAC8", "ist eingebracht."],
     },
     en: {
       title: "DAC8 legal challenge: complaint, route and press",
       description:
-        "Bitcoin Austria is challenging DAC8: the complaint to Austria’s Data Protection Authority, the possible route to the CJEU, press contacts and updates via RSS.",
+        "Bitcoin Austria is taking DAC8 to court: the complaint to Austria’s Data Protection Authority, the possible route to the CJEU, press contacts and updates via RSS.",
       imageLines: ["Our complaint", "against DAC8", "has been filed."],
     },
   },
