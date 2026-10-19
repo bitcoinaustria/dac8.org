@@ -10,13 +10,16 @@ import layout from "@/data/target-plate.json"
 // The target list at the end of the data story's leak scene, rendered by
 // artwork-lab's knowledge/build_dac8_target_plate.py: a plate with the
 // ranks 06 to 08 and Max at 07, with his photo, home address and annual
-// reports. The empty plate shows Max's parts as grey bars; each leak reveals
-// its parts of the filled plate. The wrench is a layer of its own, rendered
-// to the left of the plate. All
-// layers share one frame, so they stack exactly; target-plate.json is the
-// lab's regions.json: the frame's size in pixels and where each part sits,
-// as shares of the frame (left, top, width, height). Re-export the images
-// and the JSON together.
+// reports. The photo is the portrait from the linked profile in
+// src/assets/artwork/target-at-home.webp, the one Max of every picture: the
+// network's avatar (you.webp) and the bedroom (mattress.webp) show the same
+// man in the round. The empty plate shows Max's parts as grey bars and his
+// outline where the photo goes; each leak reveals its parts of the filled
+// plate. The wrench is a layer of its own, rendered to the left of the
+// plate. All layers share one frame, so they stack exactly;
+// target-plate.json is the lab's regions.json: the frame's size in pixels
+// and where each part sits, as shares of the frame (left, top, width,
+// height). Re-export the images and the JSON together.
 export type PlatePart = "rank" | "photo" | "name" | "address" | "reports"
 
 type Box = [number, number, number, number]
