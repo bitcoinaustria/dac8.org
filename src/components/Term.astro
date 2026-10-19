@@ -82,7 +82,12 @@ if (!entry) throw new Error(`Unknown glossary term: ${id}`)
     const own = tip.getBoundingClientRect()
     const margin = 12
     const gap = 8
-    const width = document.documentElement.clientWidth
+    // The body leaves out a reserved scrollbar gutter, which the root's
+    // width includes where scrollbars overlay the page.
+    const width = Math.min(
+      document.documentElement.clientWidth,
+      document.body.clientWidth,
+    )
     const left = Math.min(
       Math.max(box.left + box.width / 2 - own.width / 2, margin),
       width - own.width - margin,
@@ -222,7 +227,7 @@ if (!entry) throw new Error(`Unknown glossary term: ${id}`)
     position: fixed;
     inset: auto;
     inline-size: max-content;
-    max-inline-size: min(21rem, calc(100vw - 1.5rem));
+    max-inline-size: min(21rem, calc(100vw - 2.5rem));
     margin: 0;
     padding: 0.75rem 0.95rem 0.85rem;
     overflow: visible;
@@ -241,6 +246,8 @@ if (!entry) throw new Error(`Unknown glossary term: ${id}`)
     letter-spacing: normal;
     text-align: start;
     text-wrap: pretty;
+    hyphens: manual;
+    overflow-wrap: break-word;
   }
 
   .term-tip-name {
