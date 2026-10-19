@@ -1,4 +1,6 @@
 ---
+import CheckIcon from "@/assets/icons/check.svg"
+import ShareIcon from "@/assets/icons/share.svg"
 import LanguageSelector from "@/components/LanguageSelector.astro"
 import ThemeToggle from "@/components/ThemeToggle.astro"
 import { SITE, type PageSection } from "@/consts"
@@ -57,7 +59,12 @@ const home = pathname === (normalizePath(pathFor("home", language)) || "/")
         </p>
       </div>
     </nav>
-    <div class="bar-actions">
+    <div class="bar-actions" data-share-scope>
+      <button class="button share-button" type="button" data-share>
+        <ShareIcon class="share-icon" /><CheckIcon class="share-done" />
+        {en ? "Share" : "Teilen"}
+      </button>
+      <span class="share-status" data-share-status aria-live="polite"></span>
       <a class="button primary donate-button" href={donateFor(language)}>
         {en ? "Donate" : "Spenden"}
       </a>
@@ -218,6 +225,7 @@ const home = pathname === (normalizePath(pathFor("home", language)) || "/")
     display: none;
   }
 
+  /* Spenden und Teilen, wie in der Aktionsleiste am Handy. */
   .bar-actions {
     display: flex;
     flex: none;
@@ -227,6 +235,21 @@ const home = pathname === (normalizePath(pathFor("home", language)) || "/")
       min-block-size: 2.5rem;
       padding-block: 0.5em;
     }
+  }
+
+  /* Die Bestätigung „Link kopiert“ steht unter dem Knopf, nicht über der
+     Seite. Die Statuszeile spricht hier nur zu Screenreadern. */
+  .share-button[data-copied]::after {
+    inset-block: calc(100% + 0.5rem) auto;
+  }
+
+  .share-status {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .menu-toggle,
@@ -434,7 +457,8 @@ const home = pathname === (normalizePath(pathFor("home", language)) || "/")
     }
   }
 
-  /* Am Handy übernimmt die Aktionsleiste am unteren Rand das Spenden. */
+  /* Am Handy übernimmt die Aktionsleiste am unteren Rand Spenden und
+     Teilen. */
   @media (width < 64rem) {
     .bar-actions {
       display: none;
