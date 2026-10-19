@@ -11,6 +11,10 @@ import "@/styles/dossier.css"
 
 // The English edition of src/pages/dossier.astro; keep both in step.
 const researchDate = "30 September 2026"
+const sourceCount = sourceGroups.reduce(
+  (n, group) => n + group.sources.length,
+  0,
+)
 const sources = sourceGroups.map((group) => ({
   title: group.titleEn,
   sources: group.sources.map((source) => ({
@@ -343,28 +347,34 @@ const faqs = [
 
       <section id="quellen" aria-labelledby="sources-heading">
         <h2 id="sources-heading">Sources</h2>
-        <div class="disclosure-list">
-          {sources.map((group) => (
-            <Disclosure name="quellen">
-              <Fragment slot="summary">
-                {group.title}{" "}
-                <span class="count">{group.sources.length}</span>
-              </Fragment>
-              <ul class="source-list">
-                {group.sources.map((source) => (
-                  <li>
-                    <a href={source.href}>{source.label}</a>
-                  </li>
-                ))}
-              </ul>
-            </Disclosure>
-          ))}
+        <div class="sources">
+          <p class="sources-intro">
+            The dossier rests on legislation, EU law, court rulings and reports.
+            Research last updated: {researchDate}. Sources on the development
+            from 1977 to the recast are in the
+            <a href="/en/history/">history of the DAC</a>.
+          </p>
+          <details class="bibliography">
+            <summary>
+              <span class="show">Show all {sourceCount} sources</span>
+              <span class="hide">Hide sources</span>
+            </summary>
+            <div class="bibliography-groups">
+              {sources.map((group) => (
+                <div>
+                  <h3>{group.title}</h3>
+                  <ul>
+                    {group.sources.map((source) => (
+                      <li>
+                        <a href={source.href}>{source.label}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </details>
         </div>
-        <p class="research-note">
-          Research last updated: {researchDate}. Sources on the development from
-          1977 to the recast are in the
-          <a href="/en/history/">history of the DAC</a>.
-        </p>
       </section>
     </div>
   </article>

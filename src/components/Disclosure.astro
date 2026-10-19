@@ -5,9 +5,10 @@ interface Props {
   name?: string
 }
 
-// One row of the dossier's reference zone: a question, a term or a group of
-// sources. All three open the same way, so readers learn the pattern once.
+// One row that opens below itself, such as a question in the dossier's FAQ.
 // The summary slot is the row's title, the default slot what opens below it.
+// Terms and sources have their own forms (Glossary.astro, the dossier's
+// source list), because readers use them differently.
 const { id, name } = Astro.props
 ---
 

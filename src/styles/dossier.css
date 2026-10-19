@@ -200,10 +200,11 @@
 
 /* ---------- Nachschlagen ----------------------------------------------- */
 
-/* Fragen, Begriffe und Quellen bilden am Ende eine ruhige Zone, alle drei
-   gleich gebaut: links die Überschrift, rechts die Einträge, die sich
-   einzeln aufklappen (Disclosure.astro). Schmal steht die Liste unter der
-   Überschrift. Keine Fläche dahinter, damit die Zone nicht an die Fläche
+/* Am Ende stehen Fragen, Begriffe und Quellen, gleich angeordnet (links die
+   Überschrift, rechts der Inhalt), aber je nach Gebrauch verschieden: Fragen
+   klappen einzeln auf (Disclosure.astro), Begriffe sind ein Register mit
+   einer Karte (Glossary.astro), Quellen ein ruhiges Verzeichnis, das sich als
+   Ganzes öffnet. Keine Fläche dahinter, damit die Zone nicht an die Fläche
    des Seitenfußes stößt. */
 .campaign.dossier > .reference {
   display: grid;
@@ -217,18 +218,10 @@
   scroll-margin-block-start: var(--space-xl);
 }
 
-.campaign.dossier :is(.disclosure-list, .terms) {
+.campaign.dossier .disclosure-list {
   display: grid;
   align-items: start;
   gap: var(--space-2xs);
-}
-
-/* Die Begriffe sind kurz und stehen breit in zwei Spalten, von A bis Z erst
-   links hinunter, dann rechts. */
-@container campaign (width >= 46rem) {
-  .campaign.dossier .terms {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @container campaign (width >= 60rem) {
@@ -241,28 +234,84 @@
   }
 }
 
-/* Die Zahl der Quellen einer Gruppe steht leise neben ihrem Titel. */
-.campaign.dossier .reference .count {
-  color: var(--ink-3);
-  font-weight: var(--weight-text);
+/* Quellen: ein Satz, worauf sich das Dossier stützt, und ein einziger
+   Textlink, der das ganze Verzeichnis in Spalten öffnet. */
+.campaign.dossier .sources-intro {
+  max-inline-size: var(--measure-text);
+  color: var(--ink-2);
+  text-wrap: pretty;
 }
 
-.campaign.dossier .source-list {
+.campaign.dossier .bibliography {
+  margin-block-start: var(--space-s);
+}
+
+.campaign.dossier .bibliography > summary {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4em;
+  color: var(--accent);
+  font-weight: var(--weight-heading);
+  list-style: none;
+  cursor: pointer;
+}
+
+.campaign.dossier .bibliography > summary::-webkit-details-marker {
+  display: none;
+}
+
+.campaign.dossier .bibliography > summary::after {
+  content: "↓";
+  transition: rotate 160ms ease;
+}
+
+.campaign.dossier .bibliography[open] > summary::after {
+  rotate: 180deg;
+}
+
+.campaign.dossier .bibliography:not([open]) .hide,
+.campaign.dossier .bibliography[open] .show {
+  display: none;
+}
+
+.campaign.dossier .bibliography-groups {
   display: grid;
-  gap: var(--space-2xs);
+  gap: var(--space-l) var(--space-xl);
+  margin-block-start: var(--space-m);
+}
+
+.campaign.dossier .bibliography-groups h3 {
+  font-size: var(--type-body);
+}
+
+.campaign.dossier .bibliography-groups ul {
+  display: grid;
+  gap: var(--space-3xs);
+  margin-block-start: var(--space-2xs);
   padding: 0;
   list-style: none;
+  font-size: var(--type-meta);
   line-height: 1.45;
 }
 
-.campaign.dossier .source-list a {
+.campaign.dossier .bibliography-groups a {
+  color: var(--ink-2);
   text-decoration: none;
 }
 
-.campaign.dossier .source-list a:hover {
+.campaign.dossier .bibliography-groups a:hover {
+  color: var(--ink);
   text-decoration: underline;
 }
 
-.campaign.dossier .reference .research-note {
-  margin-block-start: 0;
+@container campaign (width >= 46rem) {
+  .campaign.dossier .bibliography-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campaign.dossier .bibliography > summary::after {
+    transition: none;
+  }
 }

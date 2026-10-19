@@ -14,6 +14,10 @@ import "@/styles/dossier.css"
 // the leak page, the proceedings on their own page; this page links to each
 // once. The English page mirrors this one.
 const researchDate = "30. September 2026"
+const sourceCount = sourceGroups.reduce(
+  (n, group) => n + group.sources.length,
+  0,
+)
 
 // The 30-second version. Whoever reads only the bold lines has the page.
 const overview = [
@@ -336,28 +340,34 @@ const faqs = [
 
       <section id="quellen" aria-labelledby="sources-heading">
         <h2 id="sources-heading">Quellen</h2>
-        <div class="disclosure-list">
-          {sourceGroups.map((group) => (
-            <Disclosure name="quellen">
-              <Fragment slot="summary">
-                {group.title}{" "}
-                <span class="count">{group.sources.length}</span>
-              </Fragment>
-              <ul class="source-list">
-                {group.sources.map((source) => (
-                  <li>
-                    <a href={source.href}>{source.label}</a>
-                  </li>
-                ))}
-              </ul>
-            </Disclosure>
-          ))}
+        <div class="sources">
+          <p class="sources-intro">
+            Das Dossier stützt sich auf Gesetze, EU-Recht, Urteile und Berichte.
+            Stand der Recherche: {researchDate}. Quellen zur Entwicklung von
+            1977 bis zur Neufassung stehen in der
+            <a href="/geschichte/">Geschichte der DAC</a>.
+          </p>
+          <details class="bibliography">
+            <summary>
+              <span class="show">Alle {sourceCount} Quellen anzeigen</span>
+              <span class="hide">Quellen ausblenden</span>
+            </summary>
+            <div class="bibliography-groups">
+              {sourceGroups.map((group) => (
+                <div>
+                  <h3>{group.title}</h3>
+                  <ul>
+                    {group.sources.map((source) => (
+                      <li>
+                        <a href={source.href}>{source.label}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </details>
         </div>
-        <p class="research-note">
-          Stand der Recherche: {researchDate}. Quellen zur Entwicklung von 1977
-          bis zur Neufassung stehen in der
-          <a href="/geschichte/">Geschichte der DAC</a>.
-        </p>
       </section>
     </div>
   </article>
