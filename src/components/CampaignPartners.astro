@@ -8,15 +8,15 @@ const en = language === "en"
 <div class="partners">
   <section aria-labelledby="legal-representation-heading">
     <h3 id="legal-representation-heading">
-      {en ? "Legal representation" : "Rechtliche Vertretung"}
+      {en ? "Legal counsel" : "Rechtliche Begleitung"}
     </h3>
     <p class="prose">
-      {en ? "Bitcoin Austria is represented in the proceedings by " : "Die rechtliche Vertretung im Verfahren übernimmt "}
+      {en ? "The initiative is advised by " : "Rechtlich begleitet die Initiative "}
       <a
         href={en ? "https://www.cerhahempel.com/lawyers/oliver-voelkel" : "https://www.cerhahempel.com/de/juristen/oliver-voelkel"}
         >Dr. Oliver Völkel, LL.M.</a
       >,
-      {en ? "attorney at law and partner at CERHA HEMPEL in Vienna." : "Rechtsanwalt und Partner bei CERHA HEMPEL in Wien."}
+      {en ? "attorney at law and partner at CERHA HEMPEL in Vienna. He filed the complaint as a customer of a provider." : "Rechtsanwalt und Partner bei CERHA HEMPEL in Wien. Er hat die Beschwerde als Kunde eines Anbieters eingebracht."}
     </p>
   </section>
   {supporters.length > 0 && (

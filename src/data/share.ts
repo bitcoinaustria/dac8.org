@@ -68,8 +68,8 @@ export const shareScenes: {
       en: "Challenge financial mass surveillance.",
     },
     text: {
-      de: "Wir bereiten ein Verfahren gegen die anlasslose Erfassung vor. Unser Ziel: die Frage bis vor den Europäischen Gerichtshof bringen.",
-      en: "We are preparing proceedings against recording everyone without suspicion. Our aim: take the question all the way to the EU Court of Justice.",
+      de: "Unsere Beschwerde gegen die anlasslose Erfassung ist eingebracht. Unser Ziel: die Frage bis vor den Europäischen Gerichtshof bringen.",
+      en: "Our complaint against recording everyone without suspicion has been filed. Our aim: take the question all the way to the EU Court of Justice.",
     },
   },
 ]
