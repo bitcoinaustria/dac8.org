@@ -404,15 +404,15 @@ export const demands: Record<Language, Demand[]> = {
     },
     {
       title: "Kürzer speichern.",
-      text: "Für Meldungen über Bankkonten gelten fünf Jahre. Zehn Jahre muss der Staat begründen.",
+      text: "Für Meldungen über Bankkonten gelten fünf Jahre. Zehn Jahre muss der Staat begründen. Kopien, die niemand mehr braucht, müssen auch bei Dienstleistern nachweislich gelöscht werden.",
       letter:
-        "Kürzer speichern. Für Meldungen über Bankkonten gelten fünf Jahre; zehn Jahre brauchen eine nachvollziehbare Begründung.",
+        "Kürzer speichern. Für Meldungen über Bankkonten gelten fünf Jahre; zehn Jahre brauchen eine nachvollziehbare Begründung. Nicht mehr benötigte Kopien müssen auch bei Dienstleistern nachweislich gelöscht werden.",
     },
     {
       title: "Zugriff begrenzen, Rechte sichern.",
-      text: "Für jeden Zweck eine klare Grenze, Zugriffe nachvollziehbar und unabhängig kontrolliert. Du musst Auskunft erhalten, Fehler korrigieren und unrechtmäßig gespeicherte Daten bei allen Empfängern löschen lassen können. Nutzen und Risiken gehören regelmäßig und öffentlich überprüft.",
+      text: "Für jeden Zweck eine klare Grenze, Zugriffe nachvollziehbar und unabhängig kontrolliert. Du musst Auskunft erhalten, Fehler berichtigen und unrechtmäßig gespeicherte Daten löschen lassen können, bei allen Empfängern. Entscheidungen, die auf diesen Daten beruhen, müssen sich überprüfen lassen. Nutzen und Risiken gehören regelmäßig und öffentlich auf den Prüfstand.",
       letter:
-        "Zweck, Zugriff und Weitergabe eng begrenzen und unabhängig kontrollieren. Die Rechte der Betroffenen müssen praktisch funktionieren: Auskunft, Korrektur und Löschung unrechtmäßig gespeicherter Daten bei allen Empfängern. Nutzen und Risiken regelmäßig und öffentlich überprüfen, damit unnötige Eingriffe beendet werden.",
+        "Zweck, Zugriff und Weitergabe eng begrenzen und unabhängig kontrollieren. Die Rechte der Betroffenen müssen praktisch funktionieren: Auskunft, Berichtigung von Fehlern und Löschung unrechtmäßig gespeicherter Daten bei allen Empfängern sowie die Überprüfung darauf gestützter Entscheidungen. Nutzen und Risiken regelmäßig und öffentlich überprüfen, damit unnötige Eingriffe beendet werden.",
     },
   ],
   en: [
@@ -432,15 +432,15 @@ export const demands: Record<Language, Demand[]> = {
     },
     {
       title: "Keep data for less time.",
-      text: "For reports on bank accounts, the period is five years. The state must justify ten.",
+      text: "For reports on bank accounts, the period is five years. The state must justify ten. Copies nobody needs any more must be verifiably deleted, including at service providers.",
       letter:
-        "Keep data for less time. For reports on bank accounts, the period is five years; ten years needs a clear justification.",
+        "Keep data for less time. For reports on bank accounts, the period is five years; ten years needs a clear justification. Copies no longer needed must be verifiably deleted, including at service providers.",
     },
     {
       title: "Limit access, secure rights.",
-      text: "A clear limit for each purpose, with traceable access and independent oversight. You must be able to access your data, correct errors and have unlawfully stored data deleted by every recipient. Benefits and risks need regular, public review.",
+      text: "A clear limit for each purpose, with traceable access and independent oversight. You must be able to access your data, correct errors and have unlawfully stored data deleted, by every recipient. Decisions based on the data must be open to review. Benefits and risks need regular, public review.",
       letter:
-        "Strictly limit purpose, access and onward disclosure, with independent oversight. The rights of those affected must work in practice: access, correction and deletion of unlawfully stored data by every recipient. Independently review benefits and risks, regularly and publicly, so unnecessary intrusions can be ended.",
+        "Strictly limit purpose, access and onward disclosure, with independent oversight. The rights of those affected must work in practice: access, correction of errors and deletion of unlawfully stored data by every recipient, and review of decisions based on the data. Independently review benefits and risks, regularly and publicly, so unnecessary intrusions can be ended.",
     },
   ],
 }
