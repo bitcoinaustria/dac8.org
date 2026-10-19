@@ -178,6 +178,43 @@ const options: Option[] = en
   </div>
 </section>
 
+<script>
+  // Choosing the open answer again closes it. Radios cannot be unchecked
+  // natively: a pointer click on the radio that was already checked when the
+  // pointer went down clears the group, and so does Space on a checked
+  // radio, which Chromium otherwise ignores. The answer then hides through
+  // :has(). Escape closes it from anywhere in the check; arrow keys keep
+  // moving between answers as usual.
+  for (const check of document.querySelectorAll<HTMLElement>(
+    "[data-affected-check]",
+  )) {
+    let armed: HTMLInputElement | null = null
+    const radioOf = (event: Event) =>
+      event.target instanceof Element
+        ? event.target.closest("label")?.querySelector("input")
+        : null
+    check.addEventListener("pointerdown", (event) => {
+      const radio = radioOf(event)
+      armed = radio?.checked ? radio : null
+    })
+    check.addEventListener("click", (event) => {
+      if (!armed || event.target !== armed) return
+      armed.checked = false
+      armed = null
+    })
+    check.addEventListener("keydown", (event) => {
+      const radio = radioOf(event)
+      if (event.key === " " && radio?.checked) {
+        event.preventDefault()
+        radio.checked = false
+      } else if (event.key === "Escape") {
+        const open = check.querySelector<HTMLInputElement>("input:checked")
+        if (open) open.checked = false
+      }
+    })
+  }
+</script>
+
 <style>
   /* Eine Fläche neben der Schlagzeile: die Frage als Überschrift, drei
      Antworten als Schaltflächen, darunter die passende Auskunft. */
