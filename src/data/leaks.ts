@@ -836,6 +836,32 @@ export const leaks: Leak[] = [
     ],
   },
   {
+    id: "shipmonk",
+    name: same("ShipMonk"),
+    year: 2026,
+    holders: ["vendor", "provider"],
+    kind: {
+      de: "Versanddienstleister von Trezor",
+      en: "Trezor’s shipping provider",
+    },
+    lost: ["identity"],
+    headline: {
+      de: "Bestellungen, die längst gelöscht sein sollten.",
+      en: "Orders that should have been deleted long ago.",
+    },
+    text: {
+      de: "Unbefugte gelangten beim Versanddienstleister des Wallet-Herstellers Trezor an Namen, E-Mail-Adressen, Telefonnummern und Lieferanschriften von Kunden. Darunter waren Bestellungen aus 2019 bis 2021, obwohl ShipMonk Trezor mehrfach schriftlich bestätigt hatte, sie gelöscht zu haben. Betroffen sind laut Trezor 80.689 Kunden.",
+      en: "Unauthorised parties got hold of customers’ names, email addresses, phone numbers and shipping addresses at the wallet maker Trezor’s shipping provider. Among them were orders from 2019 to 2021, although ShipMonk had repeatedly confirmed to Trezor in writing that it had deleted them. According to Trezor, 80,689 customers are affected.",
+    },
+    people: 80689,
+    sources: [
+      {
+        label: same("Trezor"),
+        href: "https://trezor.io/blog/news/recent-customer-data-exposed-in-shipping-provider-incident",
+      },
+    ],
+  },
+  {
     id: "trezor-2024",
     name: same("Trezor"),
     year: 2024,
