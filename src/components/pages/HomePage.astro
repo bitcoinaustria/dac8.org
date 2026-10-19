@@ -12,7 +12,7 @@ import { donateFor, languageFor, pathFor, shareKitFor } from "@/lib/i18n"
 
 // The home page tells one story in six bands: the claim and "Am I
 // affected?" on the first screen, the data story, the proof that such data
-// gets lost and that holders get attacked, four of the seven reasons, who
+// gets lost and that holders get attacked, four of our reasons, who
 // filed the complaint, and one ask. Every fact appears here once and in full
 // on its own page: the dossier (what is reported), /angriffe/ and
 // /datenlecks/ (cases), /argumente/ (reasons), /verfahren/ (the case).
@@ -26,7 +26,7 @@ const people = roundPeople(peopleAffected, language)
 const euNow = countIn(latestYear, euCountries)
 const euBefore = countIn(latestYear - 1, euCountries)
 
-// Four of the seven reasons on /argumente/, the ones the story above does
+// Four of the reasons on /argumente/, the ones the story above does
 // not already tell: the cash comparison opens the page, the growing file
 // and the target list are the data story, presumed wealth is the proof
 // band. Icons follow src/assets/icons: 24 px grid, 1.7 stroke, round ends.
@@ -201,7 +201,7 @@ const actions = [
         ))}
       </ul>
       <a class="text-link" href={pathFor("arguments", language)}
-        >{en ? "All seven reasons" : "Alle sieben Gründe"}</a
+        >{en ? "All our reasons" : "Alle Gründe"}</a
       >
     </section>
 

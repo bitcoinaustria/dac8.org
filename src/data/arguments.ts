@@ -1,7 +1,8 @@
 import type { Language } from "@/lib/i18n"
 
 // Why we oppose DAC8, told in the order of the press briefing of October 2026:
-// seven reasons, four objections with our answers, five demands. The press
+// reasons, objections with our answers, demands. The lists will change, so
+// no page names how many there are. The press
 // and the site must say the same, so change a reason here and in the
 // briefing together. The arguments page shows each reason as a headline and
 // one sentence; the evidence sits behind a disclosure with its sources. The

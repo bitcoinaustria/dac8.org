@@ -5,8 +5,8 @@ import Layout from "@/layouts/Layout.astro"
 import { demands, objections, reasons } from "@/data/arguments"
 import { languageFor, pathFor } from "@/lib/i18n"
 
-// Why we oppose DAC8, in three groups: seven reasons, four objections, five
-// demands. Each reason shows a headline and one sentence; the evidence opens
+// Why we oppose DAC8, in three groups: reasons, objections, demands. No
+// heading counts them, because the lists will still change. Each reason shows a headline and one sentence; the evidence opens
 // on demand. The heading of the current group sticks under the site header
 // instead of a chapter bar. The dossier holds the facts, the attack map and
 // the leak list the proof; this page links to the map once, from the reason
@@ -23,7 +23,7 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
     <header class="hero">
       <div class="hero-text">
         <h1>
-          {en ? "Seven reasons against DAC8." : "Sieben Gründe gegen DAC8."}
+          {en ? "Why we oppose DAC8." : "Warum wir DAC8 ablehnen."}
           <span>{en ? "And what we demand." : "Und was wir fordern."}</span>
         </h1>
         <p class="lead">
@@ -42,7 +42,7 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
       </div>
       <nav
         class="reason-index"
-        aria-label={en ? "The seven reasons" : "Die sieben Gründe"}
+        aria-label={en ? "Our reasons" : "Unsere Gründe"}
       >
         <ol>
           {list.map((reason) => (
@@ -58,7 +58,7 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
 
     <section id="gruende" aria-labelledby="gruende-heading">
       <h2 id="gruende-heading" class="group-head">
-        {en ? "Seven reasons" : "Sieben Gründe"}
+        {en ? "Our reasons" : "Unsere Gründe"}
       </h2>
       <ol class="reasons">
         {list.map((reason) => (
@@ -97,7 +97,7 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
 
     <section id="einwaende" aria-labelledby="einwaende-heading">
       <h2 id="einwaende-heading" class="group-head">
-        {en ? "Four objections" : "Vier Einwände"}
+        {en ? "Objections" : "Einwände"}
       </h2>
       <ArgumentPoints points={objections[language]} variant="objections" />
     </section>
@@ -108,7 +108,7 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
       aria-labelledby="forderungen-heading"
     >
       <h2 id="forderungen-heading" class="group-head">
-        {en ? "Five demands" : "Fünf Forderungen"}
+        {en ? "Our demands" : "Unsere Forderungen"}
       </h2>
       <p class="section-intro">
         {en
@@ -158,7 +158,7 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
     --group-head-height: calc(var(--type-h2) * 1.1 + 2 * var(--space-xs) + 1px);
   }
 
-  /* ---------- Hero: Schlagzeile links, die sieben Gründe rechts -------- */
+  /* ---------- Hero: Schlagzeile links, die Gründe rechts --------------- */
 
   .reason-index ol {
     margin: 0;
@@ -367,7 +367,7 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
   }
 
   /* Breit stehen Schlagzeile und Satz nebeneinander: Wer nur die linke
-     Spalte liest, hat die sieben Gründe. Die Belege öffnen unter dem Satz. */
+     Spalte liest, hat alle Gründe. Die Belege öffnen unter dem Satz. */
   @container campaign (width >= 52rem) {
     .reasons {
       --cols: minmax(0, 5fr) minmax(0, 6fr) 2.5rem;
