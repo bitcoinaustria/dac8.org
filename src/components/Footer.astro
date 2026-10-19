@@ -12,9 +12,6 @@ import {
 } from "@/lib/i18n"
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
-// The home page closes with its own ask under the same headline, so the
-// footer leaves out its sign-off there instead of asking twice in a row.
-const signOff = Astro.url.pathname !== pathFor("home", language)
 const background = pathFor("dossier", language)
 // Only what the top bar does not already offer: the main pages are one click
 // away there, so the footer keeps reference pages, ways to help and ways to
@@ -75,7 +72,6 @@ const sections = [
 ---
 
 <footer>
-  {signOff && (
   <div class="sign-off" data-share-scope>
     <p class="sign-off-title">
       {en ? "Financial privacy is a fundamental right." : "Finanzielle Privatsphäre ist ein Grundrecht."}
@@ -97,7 +93,6 @@ const sections = [
       <p class="share-status" data-share-status aria-live="polite"></p>
     </div>
   </div>
-  )}
 
   <div class="footer-main">
     <div class="footer-lead">

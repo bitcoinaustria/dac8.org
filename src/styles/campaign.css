@@ -102,8 +102,7 @@
 
 /* Titel einzelner Einträge in Listen und Karten: so groß wie der Vorspann,
    aber fett und dunkel. Wer nur sie liest, hat den Abschnitt. */
-.campaign .objections > li > strong,
-.campaign .peak-actions > li > h3 {
+.campaign .objections > li > strong {
   font-size: var(--type-lead);
   font-weight: var(--weight-heading);
   line-height: 1.3;
@@ -1494,61 +1493,6 @@
   .campaign .faq .faq-list {
     max-inline-size: none;
     margin-block-start: 0;
-  }
-}
-
-/* ---------- Mitmachen am Höhepunkt ------------------------------------ */
-
-/* Direkt nach der Geschichte, wo sie am stärksten wirkt: eine Fläche mit
-   drei Wegen. Spenden trägt das Verfahren und steht deshalb vorne, die
-   anderen zwei sind gleich schwer. */
-.campaign .peak {
-  padding: var(--space-l) var(--space-m-l);
-  border-radius: var(--radius-xl);
-  background: var(--panel);
-}
-
-.campaign .peak h2 span {
-  display: block;
-  color: var(--accent);
-}
-
-.campaign .peak > .section-intro {
-  margin-block-start: var(--space-s);
-}
-
-.campaign .peak-actions {
-  display: grid;
-  gap: var(--space-m);
-  margin-block-start: var(--space-l);
-  padding: 0;
-  list-style: none;
-}
-
-.campaign .peak-actions li {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-xs);
-  padding: var(--space-m);
-  border-radius: var(--radius-lg);
-  background: var(--paper);
-}
-
-.campaign .peak-actions p {
-  color: var(--ink-2);
-  text-wrap: pretty;
-}
-
-.campaign .peak-actions .button {
-  margin-block-start: auto;
-}
-
-/* Breit stehen die drei Wege nebeneinander, gleich gebaut und ohne Bild.
-   Spenden steht vorne und trägt als einziger den roten Knopf. */
-@container campaign (width >= 52rem) {
-  .campaign .peak-actions {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

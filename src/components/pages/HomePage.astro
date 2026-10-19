@@ -9,15 +9,16 @@ import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
 import { peopleAffected, roundPeople } from "@/data/leaks"
 import { countIn, euCountries, latestYear } from "@/lib/attacks"
-import { donateFor, languageFor, pathFor, shareKitFor } from "@/lib/i18n"
+import { languageFor, pathFor } from "@/lib/i18n"
 
-// The home page tells one story in seven bands: the claim and "Am I
+// The home page tells one story in six bands: the claim and "Am I
 // affected?" on the first screen, the data story, the proof that such data
 // gets lost and that holders get attacked, three of our reasons, how each
-// step of EU tax reporting has added more, who filed the complaint, and one
-// ask. Every fact appears here once and in full on its own page: the dossier
-// (what is reported), /angriffe/ and /datenlecks/ (cases), /argumente/
-// (reasons), /geschichte/ (the steps), /verfahren/ (the case).
+// step of EU tax reporting has added more, and who filed the complaint. The
+// footer's sign-off carries the one ask, as on every page. Every fact appears
+// here once and in full on its own page: the dossier (what is reported),
+// /angriffe/ and /datenlecks/ (cases), /argumente/ (reasons), /geschichte/
+// (the steps), /verfahren/ (the case).
 // The German headline keeps "Krypto-Kunden" on one line: a word joiner
 // (U+2060) after the hyphen stops the break that balancing would pick.
 const language = languageFor(Astro.url.pathname)
@@ -59,34 +60,6 @@ const reasons = [
     text: en
       ? "Even small payments show whom you donate to and whom you support."
       : "Auch kleine Zahlungen zeigen, wem du spendest und wen du unterstützt.",
-  },
-]
-
-const actions = [
-  {
-    title: en ? "Help fund the case" : "Das Verfahren mittragen",
-    text: en
-      ? "Your donation helps pay for it."
-      : "Deine Spende hilft, es zu finanzieren.",
-    href: donateFor(language),
-    label: en ? "Donate" : "Spenden",
-    primary: true,
-  },
-  {
-    title: en ? "Write to MPs" : "Abgeordnete anschreiben",
-    text: en
-      ? "A letter to Austria’s National Council, drafted in your browser."
-      : "Ein Brief an den österreichischen Nationalrat, vorbereitet in deinem Browser.",
-    href: `${pathFor("participate", language)}#abgeordnete`,
-    label: en ? "Write a letter" : "Brief schreiben",
-  },
-  {
-    title: en ? "Share the campaign" : "Die Kampagne teilen",
-    text: en
-      ? "Graphics for posts and stories."
-      : "Grafiken für Beiträge und Stories.",
-    href: shareKitFor(language),
-    label: en ? "See the graphics" : "Grafiken ansehen",
   },
 ]
 ---
@@ -244,30 +217,6 @@ const actions = [
       <div class="complaint-route">
         <LegalRoute language={language} />
       </div>
-    </section>
-
-    <section
-      id="mitmachen"
-      class="peak"
-      aria-labelledby="mitmachen-heading"
-      data-action-end
-    >
-      <h2 id="mitmachen-heading">
-        {en ? "Financial privacy is a fundamental right." : "Finanzielle Privatsphäre ist ein Grundrecht."}
-        <span>{en ? "Bitcoin included." : "Auch bei Bitcoin."}</span>
-      </h2>
-      <ul class="peak-actions">
-        {actions.map((action) => (
-          <li>
-            <h3>{action.title}</h3>
-            <p>{action.text}</p>
-            <a
-              class:list={["button", { primary: action.primary }]}
-              href={action.href}>{action.label}</a
-            >
-          </li>
-        ))}
-      </ul>
     </section>
   </article>
 </Layout>
