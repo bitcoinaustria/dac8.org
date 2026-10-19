@@ -83,6 +83,9 @@ const membershipCase =
 // and political tax investigations, tax data passed to FBI and CIA.
 const taxMisuse =
   "https://donohueintellaw.ll.georgetown.edu/sites/default/files/assets/94755_II.pdf#page=22"
+// Bribed support staff took data from systems they were allowed to use.
+const coinbaseIncident =
+  "https://www.sec.gov/Archives/edgar/data/1679788/000167978825000094/coin-20250514.htm"
 
 export const reasons: Reason[] = [
   {
@@ -332,6 +335,15 @@ export const objections: Record<Language, Point[]> = {
       text: "Steuern zahlen soll jeder, das bestreiten wir nicht. Aber auch dafür darf der Staat nur so viele Daten verlangen und so lange speichern, wie er begründen kann.",
     },
     {
+      title: "„Brauchen wir die Daten nicht gegen Kriminalität?“",
+      text: "Ermittlungen brauchen Informationen. Daraus folgt nicht, dass jede zusätzliche Angabe, jeder weitere Zugriff und jede lange Speicherfrist nötig ist. Wer Daten über alle verlangt, muss ihren Nutzen belegen und zeigen, dass gezielte Ermittlungen bei konkretem Verdacht nicht genügen.",
+    },
+    {
+      title: "„Die Daten sind doch verschlüsselt.“",
+      text: "Verschlüsselung hilft gegen Fremde, nicht gegen jene, die die Daten ohnehin sehen dürfen. Bei Coinbase sammelten bestochene Support-Mitarbeiter Kundendaten aus internen Systemen, auf die sie Zugriff hatten, bis hin zu Ausweisbildern und Kontoständen. Darum zählt auch, wie viel gesammelt wird und wer darauf zugreifen darf.",
+      source: { href: coinbaseIncident, label: "Coinbase (Form 8-K)" },
+    },
+    {
       title: "„Ich nutze nur meine eigene Wallet.“",
       text: "Solange du nie über einen Anbieter kaufst oder verkaufst, meldet DAC8 dich nicht. Hast du dort gekauft und auf deine Wallet übertragen, steht die Jahressumme in der Regel in der Meldung, ohne Wallet-Adresse.",
     },
@@ -348,6 +360,15 @@ export const objections: Record<Language, Point[]> = {
     {
       title: "“It’s about tax fairness.”",
       text: "Everyone should pay their taxes; we do not dispute that. But even for that, the state may only demand as much data, and keep it as long, as it can justify.",
+    },
+    {
+      title: "“Don’t we need the data to fight crime?”",
+      text: "Investigations need information. That does not make every extra detail, every further access and every long retention period necessary. Whoever demands data on everyone must prove its benefit and show that targeted investigations based on specific suspicion would not do.",
+    },
+    {
+      title: "“But the data is encrypted.”",
+      text: "Encryption helps against outsiders, not against those who are allowed to see the data anyway. At Coinbase, bribed support staff collected customer data from internal systems they had access to, down to ID images and balances. That is why it also matters how much is collected and who may access it.",
+      source: { href: coinbaseIncident, label: "Coinbase (Form 8-K)" },
     },
     {
       title: "“I only use my own wallet.”",
