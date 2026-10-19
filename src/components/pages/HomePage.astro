@@ -190,51 +190,41 @@ const reasons = [
     >
       <div class="complaint-text">
         <h2 id="beschwerde-heading">
-          {en ? "The complaint is with the Data Protection Authority." : "Die Beschwerde liegt bei der Datenschutzbehörde."}
+          {en ? "We are taking DAC8 to court." : "Wir bringen DAC8 vor Gericht."}
         </h2>
         <p class="section-intro">
-          {en ? "We believe that collecting data on every customer without suspicion violates fundamental rights. Our aim is to have that settled, all the way to the Court of Justice of the European Union." : "Wir halten die Erfassung aller Kunden ohne Verdacht für grundrechtswidrig. Unser Ziel ist eine Klärung bis vor den Europäischen Gerichtshof."}
+          {en ? "In October 2026, attorney Dr Oliver Völkel (CERHA HEMPEL) filed a complaint as a customer of a provider. We are convinced that collecting data on every customer without suspicion violates fundamental rights." : "Rechtsanwalt Dr. Oliver Völkel (CERHA HEMPEL) hat im Oktober 2026 als Kunde eines Anbieters Beschwerde eingebracht. Wir sind überzeugt, dass die Erfassung aller Kunden ohne Verdacht gegen Grundrechte verstößt."}
         </p>
       </div>
-      <dl
-        class="complaint-facts"
-        aria-label={en ? "The complaint" : "Die Beschwerde"}
-      >
-        <div>
-          <dt>{en ? "Filed" : "Eingebracht"}</dt>
-          <dd>{en ? "October 2026" : "im Oktober 2026"}</dd>
-        </div>
-        <div>
-          <dt>{en ? "By" : "Von"}</dt>
-          <dd>
-            {en ? "Dr Oliver Völkel, LL.M., attorney at CERHA HEMPEL, as a customer of a provider" : "Rechtsanwalt Dr. Oliver Völkel, LL.M. (CERHA HEMPEL), als Kunde eines Anbieters"}
-          </dd>
-        </div>
-        <div>
-          <dt>Initiative</dt>
-          <dd>
-            {en ? "Bitcoin Austria, nonprofit association from Vienna, founded 2011" : "Bitcoin Austria, gemeinnütziger Verein aus Wien, gegründet 2011"}
-          </dd>
-        </div>
-      </dl>
       <ol class="path" aria-label={en ? "The legal route" : "Der Rechtsweg"}>
-        {legalRoute[language].map((station, index) => (
+        {legalRoute[language].map((station, index, stations) => (
           <li
-            class={index < currentStage ? "done" : index === currentStage ? "current" : "next"}
+            class:list={[
+              index < currentStage ? "done" : index === currentStage ? "current" : "next",
+              { goal: index === stations.length - 1 },
+            ]}
             aria-current={index === currentStage ? "step" : undefined}
           >
-            <span class="station">
-              {station.title}
-              {index === currentStage && (
-                <span class="now">{en ? "Now" : "Jetzt"}</span>
-              )}
-            </span>
+            <strong>{station.title}</strong>
+            {index === currentStage && (
+              <span class="now">{en ? "Now" : "Jetzt"}</span>
+            )}
+            {index === stations.length - 1 && (
+              <span class="note">
+                {en ? "This is where data retention fell in 2014." : "Hier fiel 2014 die Vorratsdatenspeicherung."}
+              </span>
+            )}
           </li>
         ))}
       </ol>
-      <a class="text-link" href={pathFor("proceedings", language)}
-        >{en ? "Where the case stands" : "Stand des Verfahrens"}</a
-      >
+      <p class="complaint-foot">
+        <span>
+          {en ? "An initiative by Bitcoin Austria, a nonprofit association from Vienna" : "Eine Initiative von Bitcoin Austria, gemeinnütziger Verein aus Wien"}
+        </span>
+        <a class="text-link" href={pathFor("proceedings", language)}
+          >{en ? "Where the case stands" : "Stand des Verfahrens"}</a
+        >
+      </p>
     </section>
   </article>
 </Layout>
@@ -401,10 +391,10 @@ const reasons = [
     }
   }
 
-  /* Die Beschwerde schließt die Seite ab und bekommt deshalb mehr Luft als
-     die anderen Bänder. Von oben nach unten: Aussage und Ziel, die
-     Eckdaten in einer Zeile, der Rechtsweg als Pfad und der
-     Weg zum Stand des Verfahrens. */
+  /* Die Beschwerde ist die Wende der Seite: nach dem Problem, was wir
+     dagegen tun. Sie schließt die Seite ab und bekommt mehr Luft als die
+     anderen Bänder: die Absicht, wer eingebracht hat, der Rechtsweg als
+     einziges Bild und eine leise Zeile mit dem Weg zum Stand. */
   :global(.campaign) > section.complaint {
     display: grid;
     gap: var(--space-xl);
@@ -415,36 +405,17 @@ const reasons = [
     max-inline-size: 48rem;
   }
 
-  .complaint-facts {
-    display: grid;
-    gap: var(--space-m) var(--space-xl);
-    padding: var(--space-m-l) var(--space-l);
-    border-radius: var(--radius-xl);
-    background: var(--panel);
-  }
-
-  .complaint-facts dt {
-    color: var(--ink-3);
-    font-size: var(--type-meta);
-  }
-
-  .complaint-facts dd {
-    margin-block-start: var(--space-3xs);
-    font-weight: 560;
-    line-height: 1.45;
-    text-wrap: pretty;
-  }
-
-  /* Der Rechtsweg als schlanker Pfad: nur die Stationen, ohne Nummern und
-     Beschreibungen. Gegangen ist graphit, die aktuelle Station rot, offene
-     Stationen sind leere Ringe am gestrichelten Weg. Ausführlich steht er auf /verfahren/. Schmal
-     läuft er senkrecht. */
+  /* Der Rechtsweg: gegangen graphit, die aktuelle Station rot, offene
+     Stationen leere Ringe am gestrichelten Weg. Unter dem Ziel steht, was
+     dort schon einmal gefallen ist; belegt auf /verfahren/. Schmal läuft er
+     senkrecht, breit über die ganze Zeile. */
   .path {
+    --dot: 0.875rem;
     --line: 2px;
     --walked: light-dark(#3a3f45, #a3aab0);
     --open: var(--ink-3);
     display: grid;
-    gap: var(--space-s);
+    gap: var(--space-m);
     margin: 0;
     padding: var(--space-s) 0 0;
     list-style: none;
@@ -452,47 +423,73 @@ const reasons = [
 
   .path li {
     position: relative;
-    display: flex;
-    align-items: center;
+    display: grid;
+    justify-items: start;
+    align-content: start;
+    gap: var(--space-3xs);
+    padding-inline-start: calc(var(--dot) + var(--space-s));
   }
 
-  .station {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2xs) var(--space-xs);
-    color: var(--ink-3);
-    font-weight: 560;
-    white-space: nowrap;
-  }
-
-  .station::before {
+  .path li::before {
     content: "";
-    flex: none;
-    inline-size: 0.75rem;
-    block-size: 0.75rem;
+    position: absolute;
+    inset-block-start: 0.3em;
+    inset-inline-start: 0;
+    box-sizing: border-box;
+    inline-size: var(--dot);
+    block-size: var(--dot);
     border: var(--line) solid var(--open);
     border-radius: 50%;
   }
 
-  .done .station {
-    color: var(--ink-2);
+  .path li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    inset-block: calc(0.3em + var(--dot) + 4px)
+      calc(4px - var(--space-m) - 0.3em);
+    inset-inline-start: calc(var(--dot) / 2 - var(--line) / 2);
+    border-inline-start: var(--line) dashed var(--open);
   }
 
-  .done .station::before {
+  .path strong {
+    color: var(--ink-3);
+    font-weight: 560;
+    line-height: 1.3;
+    hyphens: auto;
+    overflow-wrap: break-word;
+  }
+
+  .path .done::before {
     border: 0;
     background: var(--walked);
   }
 
-  .current .station {
+  .path li.done:not(:last-child)::after {
+    border-color: var(--walked);
+    border-style: solid;
+  }
+
+  .path .done strong {
+    color: var(--ink-2);
+  }
+
+  .path .current::before {
+    border: 0;
+    background: var(--primary);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 25%, transparent);
+  }
+
+  .path .current strong {
     color: var(--accent);
     font-weight: var(--weight-heading);
   }
 
-  .current .station::before {
-    border: 0;
-    background: var(--primary);
-    box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 25%, transparent);
+  .path .goal::before {
+    border-color: var(--ink-2);
+  }
+
+  .path .goal strong {
+    color: var(--ink);
   }
 
   .now {
@@ -504,59 +501,55 @@ const reasons = [
     font-weight: 560;
   }
 
-  /* Senkrecht: eine Linie von Punkt zu Punkt. */
-  .path li:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    inset-block: calc(50% + 0.5rem) calc(-50% - var(--space-s) + 0.5rem);
-    inset-inline-start: calc(0.375rem - var(--line) / 2);
-    border-inline-start: var(--line) dashed var(--open);
+  .note {
+    max-inline-size: 24ch;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    line-height: 1.4;
+    text-wrap: pretty;
   }
 
-  .path li.done::after {
-    border-inline-start-style: solid;
-    border-color: var(--walked);
+  .complaint-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2xs) var(--space-l);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
   }
 
-  @container campaign (width >= 56rem) {
+  .complaint-foot .text-link {
+    margin-block-start: 0;
+    font-size: var(--type-body);
+  }
+
+  @container campaign (width >= 52rem) {
     .path {
-      display: flex;
-      align-items: center;
-      gap: var(--space-s);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0 var(--space-s);
     }
 
     .path li {
-      flex: 1 1 auto;
-      gap: var(--space-s);
+      padding-block-start: calc(var(--dot) + var(--space-s));
+      padding-inline-start: 0;
     }
 
-    .path li:last-child {
-      flex: none;
+    .path li::before {
+      inset-block-start: 0;
     }
 
-    /* Waagrecht füllt die Linie den Platz bis zur nächsten Station. */
+    /* Breit füllt die Linie den Weg bis zum nächsten Punkt. */
     .path li:not(:last-child)::after {
-      position: static;
-      flex: 1;
-      min-inline-size: var(--space-l);
+      inset-block: calc(var(--dot) / 2 - var(--line) / 2) auto;
+      inset-inline: calc(var(--dot) + 6px) calc(6px - var(--space-s));
       border-inline-start: 0;
       border-block-start: var(--line) dashed var(--open);
     }
 
-    .path li.done::after {
-      border-block-start-style: solid;
+    .path li.done:not(:last-child)::after {
       border-color: var(--walked);
-    }
-  }
-
-  .complaint .text-link {
-    justify-self: start;
-    margin-block-start: calc(var(--space-m) - var(--space-xl));
-  }
-
-  @container campaign (width >= 52rem) {
-    .complaint-facts {
-      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr) minmax(0, 1.2fr);
+      border-block-start-style: solid;
     }
   }
 
