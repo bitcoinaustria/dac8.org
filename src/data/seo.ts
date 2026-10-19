@@ -24,16 +24,16 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
   },
   dossier: {
     de: {
-      title: "DAC8 erklärt: Meldepflichten, Risiken und Rechtsweg",
+      title: "DAC8 erklärt: was gemeldet wird und was beim Anbieter bleibt",
       description:
-        "Was DAC8 in Österreich verlangt, welche Krypto-Daten Jahr für Jahr gemeldet werden, was sich beim Anbieter ansammelt und was mit solchen Daten passiert ist. Mit Primärquellen.",
-      imageLines: ["Was DAC8 verlangt.", "Und was daraus wird."],
+        "Wer betroffen ist, was jedes Jahr ans Finanzamt geht, was beim Anbieter bleibt und wer die Daten wie lange speichert. Die Krypto-Meldepflicht in Österreich, mit Primärquellen.",
+      imageLines: ["Was DAC8 verlangt.", "Belegt mit Quellen."],
     },
     en: {
-      title: "DAC8 explained: reporting, risks and legal challenge",
+      title: "DAC8 explained: what is reported and what the provider keeps",
       description:
-        "What DAC8 requires in Austria, which crypto-asset data is reported every year, what builds up at your provider and what has already happened to such data. With primary sources.",
-      imageLines: ["What DAC8 requires.", "And where it leads."],
+        "Who is affected, what goes to the tax office each year, what stays with the provider and who keeps the data for how long. Crypto-asset reporting in Austria, with primary sources.",
+      imageLines: ["What DAC8 requires.", "Backed by sources."],
     },
   },
   arguments: {
@@ -96,13 +96,13 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "Datenlecks: wenn Daten über Krypto-Besitz verloren gehen",
       description:
-        "Belegte Datenlecks bei Krypto-Anbietern, Steuertools, Behörden und ihren Dienstleistern, von Ledger bis zum Kontenaustausch der Steuerbehörden. Mit Primärquellen.",
+        "Belegte Datenlecks bei Krypto-Anbietern, Steuertools, Behörden und Dienstleistern, und Fälle, in denen solche Daten Täter bis zur Wohnungstür führten. Mit Primärquellen.",
       imageLines: ["Wenn Daten über", "Vermögen verloren", "gehen."],
     },
     en: {
       title: "Data leaks: when data on crypto holdings gets lost",
       description:
-        "Documented data leaks at crypto providers, tax tools, authorities and their service providers, from Ledger to the tax authorities’ account exchange. With primary sources.",
+        "Documented data leaks at crypto providers, tax tools, authorities and service providers, and cases in which such data led criminals to the front door. With primary sources.",
       imageLines: ["When data", "on holdings", "gets lost."],
     },
   },

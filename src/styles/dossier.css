@@ -1,0 +1,257 @@
+/* Das Dossier, beide Sprachen. Ergänzt campaign.css nur für diese Seite:
+   der Überblick unter der Schlagzeile, die Rechtsgrundlagen zum Aufklappen,
+   die Tabelle der Speicherfristen, Risiko und Rechtsweg als Paar, die
+   Quellen in zugeklappten Gruppen. Alles hängt an .campaign.dossier. */
+
+.campaign.dossier .visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Auf einen Blick -------------------------------------------- */
+
+/* Fünf Zeilen zwischen Haarlinien, dicht unter der Schlagzeile. Breit
+   links die Aussage, rechts die Einzelheiten: Wer nur die linke Spalte
+   liest, hat die Seite. */
+.campaign.dossier > .hero + .overview {
+  margin-block-start: calc(var(--space-xl) - var(--band-gap));
+}
+
+.campaign.dossier .overview ol {
+  padding: 0;
+  list-style: none;
+  border-block-end: 1px solid var(--line);
+}
+
+.campaign.dossier .overview li {
+  display: grid;
+  gap: var(--space-3xs) var(--space-2xl);
+  padding-block: var(--space-s-m);
+  border-block-start: 1px solid var(--line);
+}
+
+.campaign.dossier .overview li:first-child {
+  border-block-start-color: var(--ink);
+}
+
+.campaign.dossier .overview li > strong {
+  font-size: var(--type-lead);
+  font-weight: var(--weight-heading);
+  line-height: 1.3;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+.campaign.dossier .overview li > p {
+  max-inline-size: var(--measure-text);
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+@container campaign (width >= 52rem) {
+  .campaign.dossier .overview li {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+}
+
+/* ---------- Meldung ----------------------------------------------------- */
+
+/* Das Musterblatt steht klein neben der Überschrift und öffnet sich in
+   voller Größe; die Gegenüberstellung darunter trägt das Band. */
+.campaign.dossier .report-head .artwork {
+  --art-height: 15rem;
+}
+
+.campaign.dossier .legal-detail {
+  max-inline-size: var(--measure-text);
+  margin-block-start: var(--space-l);
+}
+
+.campaign.dossier .legal-detail summary {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5em;
+  font-weight: var(--weight-heading);
+  list-style: none;
+  cursor: pointer;
+}
+
+.campaign.dossier .legal-detail summary::-webkit-details-marker {
+  display: none;
+}
+
+.campaign.dossier .legal-detail summary::after {
+  content: "+";
+  color: var(--ink-3);
+  font-size: var(--step-2);
+  font-weight: 500;
+  line-height: 1;
+  transition: rotate 160ms ease;
+}
+
+.campaign.dossier .legal-detail[open] summary::after {
+  rotate: 45deg;
+}
+
+.campaign.dossier .legal-detail > div {
+  display: grid;
+  gap: var(--space-s);
+  margin-block-start: var(--space-s);
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+/* ---------- Speicherdauer ----------------------------------------------- */
+
+.campaign.dossier .retention {
+  inline-size: 100%;
+  border-collapse: collapse;
+  line-height: 1.45;
+}
+
+.campaign.dossier .retention :is(th, td) {
+  padding: var(--space-s) var(--space-m) var(--space-s) 0;
+  text-align: start;
+  vertical-align: top;
+  border-block-end: 1px solid var(--line);
+  text-wrap: pretty;
+}
+
+.campaign.dossier .retention thead th {
+  padding-block: 0 var(--space-2xs);
+  border-block-end-color: var(--ink);
+  color: var(--ink-3);
+  font-size: var(--type-meta);
+  font-weight: var(--weight-text);
+}
+
+.campaign.dossier .retention tbody th {
+  font-weight: var(--weight-heading);
+}
+
+.campaign.dossier .retention td {
+  color: var(--ink-2);
+}
+
+.campaign.dossier .retention strong {
+  color: var(--ink);
+  font-weight: var(--weight-strong);
+}
+
+/* Schmal wird jede Zeile ein Eintrag: wer oben, darunter was und wie
+   lange mit ihren Spaltennamen. */
+@container campaign (width < 40rem) {
+  .campaign.dossier .retention thead {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .campaign.dossier .retention tr {
+    display: grid;
+    gap: var(--space-2xs);
+    padding-block: var(--space-s);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .campaign.dossier .retention tbody tr:first-child {
+    border-block-start-color: var(--ink);
+  }
+
+  .campaign.dossier .retention :is(th, td) {
+    display: block;
+    padding: 0;
+    border: 0;
+  }
+
+  .campaign.dossier .retention td::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+}
+
+/* ---------- Risiko und Rechtsweg --------------------------------------- */
+
+/* Zwei kurze Abschnitte, die je auf ihre eigene Seite weiterführen, stehen
+   breit nebeneinander. */
+.campaign.dossier > .pair {
+  display: grid;
+  gap: var(--band-gap) var(--space-2xl);
+}
+
+.campaign.dossier > .pair > section > .prose {
+  margin-block-start: var(--space-s);
+}
+
+@container campaign (width >= 52rem) {
+  .campaign.dossier > .pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Fragen und Quellen ----------------------------------------- */
+
+/* Fragen lesen sich wie Eintragstitel, nicht wie Kleingedrucktes. */
+.campaign.dossier .faq-list summary {
+  font-weight: var(--weight-heading);
+}
+
+.campaign.dossier .faq-list details p a {
+  margin-inline-start: 0.25em;
+}
+
+/* Quellen zugeklappt nach Gruppe, mit der Zahl der Einträge. */
+.campaign.dossier .sources .source-groups {
+  gap: 0 var(--space-xl);
+  border-block-end: 1px solid var(--line);
+}
+
+.campaign.dossier .sources details {
+  border-block-start: 1px solid var(--line);
+}
+
+.campaign.dossier .sources summary {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2xs);
+  padding-block: var(--space-s);
+  font-weight: var(--weight-heading);
+  list-style: none;
+  cursor: pointer;
+}
+
+.campaign.dossier .sources summary::-webkit-details-marker {
+  display: none;
+}
+
+.campaign.dossier .sources summary > span {
+  color: var(--ink-3);
+  font-size: var(--type-meta);
+  font-weight: var(--weight-text);
+}
+
+.campaign.dossier .sources summary::after {
+  content: "+";
+  margin-inline-start: auto;
+  color: var(--ink-3);
+  font-size: var(--step-2);
+  font-weight: 500;
+  line-height: 1;
+  transition: rotate 160ms ease;
+}
+
+.campaign.dossier .sources details[open] summary::after {
+  rotate: 45deg;
+}
+
+.campaign.dossier .sources details ul {
+  padding-block-end: var(--space-m);
+}

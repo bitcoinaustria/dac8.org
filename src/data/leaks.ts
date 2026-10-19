@@ -2,8 +2,8 @@ import type { Language } from "@/lib/i18n"
 
 // Documented cases in which companies, authorities or their service
 // providers lost data on people, or let it be misused. This is the only
-// copy: the leak page lists every case, the dossier shows the featured ones
-// and the home page the few in homeLeaks. Add new cases here, in both languages and
+// copy: the leak page lists every case, the home page the few in homeLeaks
+// and the dossier only their sum. Add new cases here, in both languages and
 // with at least one primary source (the body's own notice, a court ruling,
 // a prosecutor, regulator or parliamentary record). Press may only add to
 // it. Say "accused" or "suspected" until a court has ruled.
@@ -1146,9 +1146,11 @@ export const newestLeaksFirst = [...leaks].sort(
   (a, b) => (b.year ?? 0) - (a.year ?? 0),
 )
 
-// The dossier's case list reads "Ledger · 2020" above the headline.
+// A leak as the case list shows it (src/components/CaseList.astro).
 export const asCase = (leak: Leak, language: Language) => ({
-  dateline: [leak.name[language], leak.year].filter(Boolean).join(" · "),
+  year: leak.year,
+  who: leak.name[language],
+  kind: leak.kind[language],
   title: leak.headline[language],
   text: leak.text[language],
   sources: leak.sources.map((source) => ({
@@ -1156,3 +1158,95 @@ export const asCase = (leak: Leak, language: Language) => ({
     href: source.href,
   })),
 })
+
+// Cases in which leaked or betrayed data led criminals to someone's home,
+// and France's count of attacks on people believed to hold crypto. The leak
+// page shows them between its introduction and the full list. The attack
+// archive (src/data/attacks.json) keeps every known attack, whatever made the
+// victim known. Headlines name the data problem; the text says what happened.
+export interface DoorstepCase {
+  place: Record<Language, string>
+  year: number
+  headline: Record<Language, string>
+  text: Record<Language, string>
+  sources: { label: Record<Language, string>; href: string }[]
+}
+
+export const doorstepCases: DoorstepCase[] = [
+  {
+    place: same("USA"),
+    year: 2026,
+    headline: {
+      de: "Eine Bande mit eigenen Hackern für Datenbanken.",
+      en: "A gang with its own database hackers.",
+    },
+    text: {
+      de: "Von Ende 2023 bis Anfang 2025 erbeutete eine kriminelle Vereinigung mehr als 250 Millionen Dollar in Kryptowerten. Ihre Mitglieder hatten feste Rollen: Datenbanken hacken, Ziele auswählen, Betrugsanrufe, Geldwäsche und Einbruch. Im Visier standen Menschen, die viel Krypto besitzen sollten. Ihr Einbrecher wurde 2026 zu 78 Monaten Haft verurteilt.",
+      en: "Between late 2023 and early 2025, a criminal enterprise stole more than 250 million dollars in crypto-assets. Its members had set roles: database hacking, target identification, fraudulent calls, money laundering and burglary. It went after people believed to hold large amounts of crypto. Its burglar was sentenced to 78 months in prison in 2026.",
+    },
+    sources: [
+      {
+        label: { de: "US-Justizministerium", en: "US Department of Justice" },
+        href: "https://www.justice.gov/usao-dc/pr/gothferrari-sentenced-78-months-prison-role-massive-cryptocurrency-heist",
+      },
+    ],
+  },
+  {
+    place: { de: "Frankreich", en: "France" },
+    year: 2026,
+    headline: {
+      de: "Ausgewählt über offenbar gehackte Daten.",
+      en: "Picked out through apparently hacked data.",
+    },
+    text: {
+      de: "Bewaffnete Täter halten einen Mann in seinem Haus fest und zwingen ihn, Kryptowerte im Wert von rund 68.000 Euro zu überweisen. Die Gendarmerie ordnet den Fall einer Serie zu, in der Täter Wallet-Besitzer ins Visier nehmen, deren persönliche Daten offenbar gehackt wurden.",
+      en: "Armed attackers hold a man in his home and force him to transfer crypto-assets worth around 68,000 euros. The Gendarmerie places the case in a series in which criminals target wallet holders whose personal data had apparently been hacked.",
+    },
+    sources: [
+      {
+        label: same("Gendarmerie"),
+        href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/criminalite-organisee-et-enquetes/2026/crypto-rapt-en-haute-garonne-trois-nouvelles-interpellations-par-les-enqueteurs-de-la-section-de-recherches-de-toulouse",
+      },
+    ],
+  },
+  {
+    place: { de: "Frankreich", en: "France" },
+    year: 2026,
+    headline: {
+      de: "Im Visier auch, wer Krypto nur besitzen soll.",
+      en: "Targeted even when merely believed to hold crypto.",
+    },
+    text: {
+      de: "Inzwischen geraten auch Privatleute ins Visier, die Kryptowerte besitzen oder nur besitzen sollen. Im ersten Halbjahr 2026 zählte der Innenminister 77 Entführungen, Freiheitsberaubungen und Erpressungen oder Versuche, nach 45 im ganzen Jahr 2025.",
+      en: "Private individuals who hold crypto-assets, or are believed to, are now also being targeted. In the first half of 2026, the Interior Minister counted 77 abductions, sequestrations and extortions or attempts, against 45 in all of 2025.",
+    },
+    sources: [
+      {
+        label: { de: "Innenministerium", en: "Interior Ministry" },
+        href: "https://www.interieur.gouv.fr/actualites/actualites-du-ministere/crypto-actifs-proteger-particuliers",
+      },
+      {
+        label: same("Journal du Coin"),
+        href: "https://journalducoin.com/actualites/crypto-rapt-france-plan-action-laurent-nunez",
+      },
+    ],
+  },
+  {
+    place: same("USA"),
+    year: 2022,
+    headline: {
+      de: "Ein Polizist liefert die Wohnadresse.",
+      en: "A police officer supplies the home address.",
+    },
+    text: {
+      de: "Ein Detective erschleicht sich einen Ortungsbeschluss und verschafft einem Auftraggeber die Wohnadresse eines Mannes, der viel Krypto besitzen soll. Wenig später versuchen drei Bewaffnete, in dessen Haus einzudringen, und fliehen erst, als das Opfer schießt.",
+      en: "A detective obtains a location warrant under false pretences and gives a client the home address of a man believed to hold a lot of crypto. Soon after, three armed men try to force their way into his home and only flee when the victim fires a shot.",
+    },
+    sources: [
+      {
+        label: { de: "US-Justizministerium", en: "US Department of Justice" },
+        href: "https://www.justice.gov/usao-cdca/pr/crypto-godfather-and-lasd-detective-agree-plead-guilty-violating-civil-rights-business",
+      },
+    ],
+  },
+]
