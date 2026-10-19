@@ -85,6 +85,8 @@ const en = language === "en"
   // Ohne JavaScript bleibt die Leiste immer sichtbar.
   const bar = document.querySelector<HTMLElement>("[data-action-bar]")
   const start = document.querySelector("main .hero, main h1")
+  // It hides again where the page offers the same actions: the footer's
+  // sign-off.
   const end = document.querySelector("footer:has(.sign-off)")
   if (bar && "IntersectionObserver" in window) {
     const visible = new Map<Element, boolean>()

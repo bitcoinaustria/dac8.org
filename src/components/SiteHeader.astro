@@ -1,4 +1,6 @@
 ---
+import CheckIcon from "@/assets/icons/check.svg"
+import ShareIcon from "@/assets/icons/share.svg"
 import LanguageSelector from "@/components/LanguageSelector.astro"
 import ThemeToggle from "@/components/ThemeToggle.astro"
 import { SITE, type PageSection } from "@/consts"
@@ -53,13 +55,24 @@ const home = pathname === (normalizePath(pathFor("home", language)) || "/")
         </div>
         <p class="nav-foot">
           {en ? "An initiative by" : "Eine Initiative von"}
-          <a href="https://bitcoin-austria.at">Bitcoin Austria</a>
+          <a href="https://bitcoin-austria.at">Bitcoin Austria</a>,
+          {en ? "supported by" : "unterstützt von"}
+          <a href={en ? "https://coinfinity.co/en" : "https://coinfinity.co/"}
+            >Coinfinity</a
+          >
         </p>
       </div>
     </nav>
-    <a class="button primary donate-button" href={donateFor(language)}>
-      {en ? "Donate" : "Spenden"}
-    </a>
+    <div class="bar-actions" data-share-scope>
+      <button class="button share-button" type="button" data-share>
+        <ShareIcon class="share-icon" /><CheckIcon class="share-done" />
+        {en ? "Share" : "Teilen"}
+      </button>
+      <span class="share-status" data-share-status aria-live="polite"></span>
+      <a class="button primary donate-button" href={donateFor(language)}>
+        {en ? "Donate" : "Spenden"}
+      </a>
+    </div>
     <button
       class="menu-toggle"
       type="button"
@@ -216,10 +229,31 @@ const home = pathname === (normalizePath(pathFor("home", language)) || "/")
     display: none;
   }
 
-  .donate-button {
+  /* Spenden und Teilen, wie in der Aktionsleiste am Handy. */
+  .bar-actions {
+    display: flex;
     flex: none;
-    min-block-size: 2.5rem;
-    padding-block: 0.5em;
+    gap: var(--space-2xs);
+
+    .button {
+      min-block-size: 2.5rem;
+      padding-block: 0.5em;
+    }
+  }
+
+  /* Die Bestätigung „Link kopiert“ steht unter dem Knopf, nicht über der
+     Seite. Die Statuszeile spricht hier nur zu Screenreadern. */
+  .share-button[data-copied]::after {
+    inset-block: calc(100% + 0.5rem) auto;
+  }
+
+  .share-status {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .menu-toggle,
@@ -323,26 +357,27 @@ const home = pathname === (normalizePath(pathFor("home", language)) || "/")
     }
   }
 
+  /* Mit JavaScript (gesetzt im Kopf, vor dem ersten Zeichnen) öffnet ein
+     Menüknopf die Seiten; ohne bricht die Leiste einfach um. */
   @media (width < 80rem) {
-    .site-header[data-menu-ready] .site-bar > nav#site-navigation {
+    :global(html[data-js]) .site-bar > nav#site-navigation {
       display: none;
     }
 
-    .site-header[data-menu-ready] .menu-toggle,
+    :global(html[data-js]) .menu-toggle,
     .menu-close {
       display: inline-flex;
     }
 
-    .site-header[data-menu-ready] .site-bar {
+    :global(html[data-js]) .site-bar {
       justify-content: space-between;
     }
 
-    /* Mobil übernimmt die Aktionsleiste am unteren Rand das Spenden. */
-    .site-header[data-menu-ready] .donate-button {
-      display: none;
+    .bar-actions {
+      margin-inline-start: auto;
     }
 
-    .site-header:not([data-menu-ready]) .site-bar {
+    :global(html:not([data-js])) .site-bar {
       flex-wrap: wrap;
       padding-block: var(--space-2xs);
     }
@@ -412,8 +447,6 @@ const home = pathname === (normalizePath(pathFor("home", language)) || "/")
 
     dialog .controls {
       justify-content: space-between;
-      padding-block-start: var(--space-xs);
-      border-block-start: 1px solid var(--border);
     }
 
     dialog .nav-foot {
@@ -425,6 +458,14 @@ const home = pathname === (normalizePath(pathFor("home", language)) || "/")
       a {
         color: inherit;
       }
+    }
+  }
+
+  /* Am Handy übernimmt die Aktionsleiste am unteren Rand Spenden und
+     Teilen. */
+  @media (width < 64rem) {
+    .bar-actions {
+      display: none;
     }
   }
 
@@ -485,7 +526,6 @@ const home = pathname === (normalizePath(pathFor("home", language)) || "/")
     if ((event.target as Element).closest("a") && menu?.open) closeMenu()
   })
   mobile.addEventListener("change", closeMenu)
-  header?.setAttribute("data-menu-ready", "")
 
   // Kapitelanzeige: aktuell ist das letzte Kapitel, dessen Oberkante die
   // Lesezone (oberes Drittel) erreicht hat. Am Seitenende zählt das letzte,

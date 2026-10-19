@@ -49,6 +49,9 @@ import { SITE } from "@/consts"
   >
 
   <script is:inline>
+    // Before the first paint: with JavaScript the header shows its menu
+    // button below 80rem right away instead of the wrapped desktop links.
+    document.documentElement.dataset.js = ""
     const theme = localStorage.theme
     if (theme === "light" || theme === "dark")
       document.documentElement.dataset.theme = theme

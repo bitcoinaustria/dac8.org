@@ -4,8 +4,10 @@ import type { Language } from "@/lib/i18n"
 
 interface Props {
   language: Language
+  // Lay the section on a full-width surface, so the page keeps alternating.
+  band?: boolean
 }
-const { language } = Astro.props
+const { language, band = false } = Astro.props
 const en = language === "en"
 const items = publishedMedia()
 // Beyond this many, older pieces wait behind a toggle so the page stays short.
@@ -38,7 +40,7 @@ const formatDate = new Intl.DateTimeFormat(en ? "en-GB" : "de-AT", {
 const languageNames = new Intl.DisplayNames([language], { type: "language" })
 ---
 
-<section class="media" aria-labelledby="media-heading">
+<section class:list={["media", { band }]} aria-labelledby="media-heading">
   <h2 id="media-heading">{en ? "In the media" : "In den Medien"}</h2>
   {items.length === 0 ? (
     <p class="empty-state">
@@ -100,7 +102,7 @@ const languageNames = new Intl.DisplayNames([language], { type: "language" })
     </label>
   )}
   <p class="media-contact">
-    {en ? "Press enquiries or a piece we are missing: " : "Presseanfragen oder ein Beitrag, der hier fehlt: "}
+    {en ? "A piece we are missing: " : "Ein Beitrag, der hier fehlt: "}
     <a href="mailto:kontakt@dac8.org">kontakt@dac8.org</a>
   </p>
 </section>

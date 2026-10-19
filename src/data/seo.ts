@@ -12,56 +12,68 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "Gegen DAC8. Für finanzielle Privatsphäre",
       description:
-        "DAC8 erfasst die Finanzdaten aller Krypto-Kunden, Jahr für Jahr und ohne Verdacht. Bitcoin Austria geht rechtlich gegen diese finanzielle Massenüberwachung vor.",
-      imageLines: ["DAC8 erfasst jeden", "Krypto-Kunden.", "Wir wehren uns."],
+        "DAC8 legt über jeden Krypto-Kunden eine Akte an, ohne Verdacht und in der ganzen EU. Prüf, ob du betroffen bist, und sieh, wie Bitcoin Austria dagegen vorgeht.",
+      imageLines: ["Eine Akte über jeden", "Krypto-Kunden.", "Wir wehren uns."],
     },
     en: {
       title: "Against DAC8. For financial privacy",
       description:
-        "DAC8 records the financial data of every crypto customer, every year and without suspicion. Bitcoin Austria is challenging this mass surveillance in the courts.",
-      imageLines: ["DAC8 records every", "crypto customer.", "We fight back."],
+        "DAC8 opens a file on every crypto customer, without suspicion and across the EU. Check whether you are affected and see how Bitcoin Austria is challenging it.",
+      imageLines: [
+        "A file on every",
+        "crypto customer.",
+        "We are fighting back.",
+      ],
     },
   },
   dossier: {
     de: {
-      title: "DAC8 erklärt: Meldepflichten, Risiken und Rechtsweg",
+      title: "DAC8 erklärt: was gemeldet wird und was beim Anbieter bleibt",
       description:
-        "Was DAC8 in Österreich verlangt, welche Krypto-Daten Jahr für Jahr gemeldet werden, was sich beim Anbieter ansammelt und was mit solchen Daten passiert ist. Mit Primärquellen.",
-      imageLines: ["Was DAC8 verlangt.", "Und was daraus wird."],
+        "Wer betroffen ist, was jedes Jahr ans Finanzamt geht, was beim Anbieter bleibt und wer die Daten wie lange speichert. Die Krypto-Meldepflicht in Österreich, mit Primärquellen.",
+      imageLines: ["Was DAC8 verlangt.", "Und was das heißt."],
     },
     en: {
-      title: "DAC8 explained: reporting, risks and legal challenge",
+      title: "DAC8 explained: what is reported and what the provider keeps",
       description:
-        "What DAC8 requires in Austria, which crypto-asset data is reported every year, what builds up at your provider and what has already happened to such data. With primary sources.",
-      imageLines: ["What DAC8 requires.", "And where it leads."],
+        "Who is affected, what goes to the tax office each year, what stays with the provider and who keeps the data for how long. Crypto-asset reporting in Austria, with primary sources.",
+      imageLines: ["What DAC8 requires.", "And what it means."],
     },
   },
   arguments: {
     de: {
-      title: "Argumente gegen DAC8: was wir ablehnen und fordern",
+      title: "Warum wir DAC8 ablehnen und was wir fordern",
       description:
-        "Warum wir die anlasslose Erfassung aller Krypto-Kunden ablehnen: Sicherheit, Speicherdauer und Zweckausweitung, Antworten auf häufige Einwände und unsere Forderungen.",
-      imageLines: ["Was wir ablehnen.", "Und was wir fordern."],
+        "Warum wir die anlasslose Erfassung aller Krypto-Kunden ablehnen: unsere Gründe vom Bargeld bis zur Zielliste, Antworten auf Einwände und unsere Forderungen.",
+      imageLines: ["Warum wir", "DAC8 ablehnen."],
     },
     en: {
-      title: "Arguments against DAC8: what we oppose and demand",
+      title: "Why we oppose DAC8, and what we demand",
       description:
-        "Why we oppose collecting data on every crypto customer without suspicion: security, retention and expanding purposes, answers to common objections and our demands.",
-      imageLines: ["What we oppose.", "What we demand."],
+        "Why we oppose collecting data on every crypto customer without suspicion: our reasons from cash to target lists, answers to objections and our demands.",
+      imageLines: ["Why we", "oppose DAC8."],
     },
   },
   history: {
     de: {
-      title: "Wie es zu DAC8 kam: die EU-Steueramtshilfe seit 1977",
+      title: "Von der Amtshilfe zu DAC8: Jede neue Regel bringt mehr Daten",
       description:
-        "Von der Amtshilfe 1977 bis zu jährlichen Meldepflichten für Banken, Plattformen und Krypto-Anbieter: DAC1 bis DAC9, die Neufassung und Österreich. Mit Primärquellen.",
-      imageLines: ["Wie es zu DAC8 kam.", "Und was noch kommt."],
+        "Von der Amtshilfe 1977 bis zu jährlichen Meldungen von Banken, Plattformen und Krypto-Anbietern: DAC1 bis DAC9 und die vorgeschlagene Neufassung, mit Primärquellen.",
+      imageLines: [
+        "Jede neue Regel",
+        "bringt mehr Daten.",
+        "Bis jemand Grenzen setzt.",
+      ],
     },
     en: {
-      title: "How we got to DAC8: EU tax cooperation since 1977",
+      title: "From mutual assistance to DAC8: each new rule adds more data",
       description:
-        "From exchange on request in 1977 to annual reporting duties for banks, platforms and crypto-asset providers: DAC1 to DAC9, the recast and Austria. With primary sources.",
-      imageLines: ["How we got to DAC8.", "And what comes next."],
+        "From mutual assistance in 1977 to annual reports by banks, platforms and crypto-asset providers: DAC1 to DAC9 and the proposed recast, with primary sources.",
+      imageLines: [
+        "Each new rule",
+        "adds more data.",
+        "Until someone sets limits.",
+      ],
     },
   },
   participate: {
@@ -96,27 +108,27 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "Datenlecks: wenn Daten über Krypto-Besitz verloren gehen",
       description:
-        "Belegte Datenlecks bei Krypto-Anbietern, Steuertools, Behörden und ihren Dienstleistern, von Ledger bis zum Kontenaustausch der Steuerbehörden. Mit Primärquellen.",
+        "Belegte Datenlecks bei Krypto-Anbietern, Steuertools, Behörden und Dienstleistern, und Fälle, in denen solche Daten Täter bis zur Wohnungstür führten. Mit Primärquellen.",
       imageLines: ["Wenn Daten über", "Vermögen verloren", "gehen."],
     },
     en: {
       title: "Data leaks: when data on crypto holdings gets lost",
       description:
-        "Documented data leaks at crypto providers, tax tools, authorities and their service providers, from Ledger to the tax authorities’ account exchange. With primary sources.",
+        "Documented data leaks at crypto providers, tax tools, authorities and service providers, and cases in which such data led criminals to the front door. With primary sources.",
       imageLines: ["When data", "on holdings", "gets lost."],
     },
   },
   proceedings: {
     de: {
-      title: "DAC8-Verfahren: Aktuelles und nächste Schritte",
+      title: "DAC8-Verfahren: Beschwerde, Rechtsweg und Presse",
       description:
-        "Der aktuelle Stand des DAC8-Verfahrens von Bitcoin Austria in Österreich. Neuigkeiten und nächste Schritte, auch per RSS.",
+        "Bitcoin Austria bringt DAC8 vor Gericht: die Beschwerde bei der Datenschutzbehörde, der mögliche Weg bis zum EuGH, Pressekontakte und Neuigkeiten per RSS.",
       imageLines: ["Unsere Beschwerde", "gegen DAC8", "ist eingebracht."],
     },
     en: {
-      title: "DAC8 legal challenge: updates and next steps",
+      title: "DAC8 legal challenge: complaint, route and press",
       description:
-        "Follow Bitcoin Austria’s legal challenge to DAC8 in Austria: the current status, campaign updates and next steps. Also available via RSS.",
+        "Bitcoin Austria is taking DAC8 to court: the complaint to Austria’s Data Protection Authority, the possible route to the CJEU, press contacts and updates via RSS.",
       imageLines: ["Our complaint", "against DAC8", "has been filed."],
     },
   },

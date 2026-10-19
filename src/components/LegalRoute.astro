@@ -4,20 +4,40 @@ import type { Language } from "@/lib/i18n"
 
 interface Props {
   language: Language
+  // The proceedings page also says at each station what we expect there.
+  detailed?: boolean
+  // The home page shows only the stations, and a note under the last one.
+  compact?: boolean
+  goalNote?: string
 }
 
-const { language } = Astro.props
+const { language, detailed = false, compact = false, goalNote } = Astro.props
 const en = language === "en"
 const stations = legalRoute[language]
 const stateOf = (index: number) =>
   index < currentStage ? "done" : index === currentStage ? "current" : "next"
+
+// Scrolling the route into view retraces the path walked so far: a reached
+// station lights up, the line runs on to the next one, and so on until the
+// current station turns red. Where the route lies on one line, each of these
+// steps gets an equal share of the first 45 % of the route's "contain" range,
+// so the walk is complete by the time it sits in the upper half of the
+// screen. Stacked on phones, every station keeps its own pace instead.
+const steps = currentStage * 2 + 1
+const share = 45 / steps
+const range = (step: number) =>
+  `contain ${(step * share).toFixed(1)}% contain ${((step + 1) * share).toFixed(1)}%`
+const timing = (index: number) =>
+  index <= currentStage
+    ? `--station-range: ${range(index * 2)}; --line-range: ${range(index * 2 + 1)}`
+    : undefined
 ---
 
 <ol class="flow route" aria-label={en ? "The legal route" : "Der Rechtsweg"}>
   {stations.map((station, index) => (
       <li
         class={stateOf(index)}
-        data-possible={index === stations.length - 1 ? "" : undefined}
+        style={timing(index)}
         aria-current={index === currentStage ? "step" : undefined}
       >
         <strong>
@@ -26,7 +46,137 @@ const stateOf = (index: number) =>
             <span class="tag live">{en ? "Now" : "Jetzt"}</span>
           )}
         </strong>
-        <span>{station.text}</span>
+        {!compact && <span>{detailed ? station.detail : station.text}</span>}
+        {goalNote && index === stations.length - 1 && (
+          <span class="route-note">{goalNote}</span>
+        )}
       </li>
     ))}
 </ol>
+
+<style>
+  /* Der Rechtsweg mit Stand (Punkte und Linien: campaign.css, .flow). Der
+     gegangene Weg zeichnet sich beim Scrollen als Graphitlinie über eine
+     helle Spur. Ohne Scroll-Animation oder bei reduzierter Bewegung steht
+     der Stand fertig gezeichnet da. */
+  :global(.campaign) .route {
+    --groove: light-dark(#c6cbcf, #454b51);
+    --glass: light-dark(#f1f3f4, #23272b);
+    view-timeline: --legal-route block;
+  }
+
+  :global(.campaign) .route li.done:not(:last-child)::after {
+    inline-size: var(--line);
+    border: 0;
+    background:
+      linear-gradient(var(--walked), var(--walked)) 0 0 / 100% 100% no-repeat,
+      var(--groove);
+  }
+
+  /* Unter dem Ziel eine leise Notiz, etwa was dort schon einmal fiel. */
+  :global(.campaign) .route .route-note {
+    max-inline-size: 26ch;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    line-height: 1.4;
+  }
+
+  @container campaign (width >= 46rem) {
+    :global(.campaign) .route li.done:not(:last-child)::after {
+      inline-size: auto;
+      block-size: var(--line);
+    }
+  }
+
+  /* Schmal läuft der Weg senkrecht: Jede erreichte Station leuchtet auf,
+     sobald sie das untere Drittel des Bildschirms erreicht, und die Linie
+     folgt dem Scrollen bis zur nächsten. Breit liegt der Weg auf einer
+     Zeile; dann gibt die Reihenfolge den Takt vor (siehe --station-range). */
+  :global(.campaign) .route > li {
+    view-timeline: --legal-station block;
+  }
+
+  /* Nur Einzelangaben statt der Kurzform animation: Der Minifier zieht
+     animation-timeline sonst in die Kurzform, und dort verwerfen Browser die
+     ganze Angabe. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      :global(.campaign) .route li:is(.done, .current)::before,
+      :global(.campaign) .route li:is(.done, .current) > strong,
+      :global(.campaign) .route .tag.live,
+      :global(.campaign) .route li.done:not(:last-child)::after {
+        animation-name: legal-route-reach;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: --legal-station;
+        animation-range: entry 30vh entry calc(30vh + var(--dot));
+      }
+
+      :global(.campaign) .route li:is(.done, .current) > strong {
+        animation-name: legal-route-title;
+      }
+
+      :global(.campaign) .route .tag.live {
+        animation-name: legal-route-now;
+      }
+
+      :global(.campaign) .route li.done:not(:last-child)::after {
+        animation-name: legal-route-down;
+        animation-range: entry calc(30vh + var(--dot)) entry
+          calc(100% + 30vh + var(--space-m));
+      }
+
+      @container campaign (width >= 46rem) {
+        :global(.campaign) .route li:is(.done, .current)::before,
+        :global(.campaign) .route li:is(.done, .current) > strong,
+        :global(.campaign) .route .tag.live {
+          animation-timeline: --legal-route;
+          animation-range: var(--station-range);
+        }
+
+        :global(.campaign) .route li.done:not(:last-child)::after {
+          animation-name: legal-route-across;
+          animation-timeline: --legal-route;
+          animation-range: var(--line-range);
+        }
+      }
+    }
+  }
+
+  /* Ein erreichter Punkt füllt sich von außen nach innen: Ein innerer
+     Schatten in Glasfarbe deckt ihn zuerst ab und zieht sich zurück. */
+  @keyframes legal-route-reach {
+    from {
+      box-shadow: inset 0 0 0 calc(var(--dot) / 2) var(--glass);
+    }
+  }
+
+  @keyframes legal-route-title {
+    from {
+      color: var(--ink-3);
+    }
+  }
+
+  @keyframes legal-route-now {
+    from {
+      opacity: 0;
+      translate: -0.25rem 0;
+    }
+  }
+
+  @keyframes legal-route-down {
+    from {
+      background-size:
+        100% 0%,
+        auto;
+    }
+  }
+
+  @keyframes legal-route-across {
+    from {
+      background-size:
+        0% 100%,
+        auto;
+    }
+  }
+</style>

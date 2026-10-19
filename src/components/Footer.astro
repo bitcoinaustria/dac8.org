@@ -188,10 +188,10 @@ const sections = [
   .sign-off-title {
     max-inline-size: 18ch;
     margin: 0;
-    font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.625rem);
-    font-weight: 600;
+    font-size: var(--type-h2);
+    font-weight: var(--weight-heading);
     font-stretch: 94%;
-    line-height: 1.04;
+    line-height: 1.1;
     letter-spacing: -0.026em;
     text-wrap: balance;
 
@@ -209,8 +209,8 @@ const sections = [
     p {
       max-inline-size: 40ch;
       margin: 0;
-      color: var(--muted-foreground);
-      font-size: var(--step-1);
+      color: color-mix(in oklab, var(--foreground) 86%, transparent);
+      font-size: var(--type-lead);
       line-height: 1.45;
       text-wrap: pretty;
     }
@@ -246,6 +246,11 @@ const sections = [
 
   .footer-main {
     padding-block-start: var(--space-2xl);
+  }
+
+  /* Ohne Abschluss (Startseite) schließt die Linkliste direkt an. */
+  .footer-main:first-child {
+    padding-block-start: 0;
   }
 
   .footer-main {

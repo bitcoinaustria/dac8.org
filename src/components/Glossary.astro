@@ -1,67 +1,95 @@
 ---
-import { glossary } from "@/data/glossary"
+import Term from "@/components/Term.astro"
+import { glossary, termAnchor } from "@/data/glossary"
 import type { Language } from "@/lib/i18n"
 
 interface Props {
   language: Language
 }
 
-// The dossier's glossary: heading on the left, terms in two columns on the
-// right, like the questions above it.
+// The dossier's register of terms: the names A to Z in a few short columns,
+// like the index of a book. The explanations open where a term is used in
+// the text (Term.astro) and here on a tap. Pages link to one term with
+// #begriff-<id> (see src/data/glossary.ts), which scrolls to it and opens its
+// explanation; #begriffe is the whole section. Without the popover the
+// explanations stand under each name.
 const { language } = Astro.props
 const en = language === "en"
+const collator = new Intl.Collator(language)
+const terms = glossary[language].toSorted((a, b) =>
+  collator.compare(a.term, b.term),
+)
 ---
 
-<section id="begriffe" class="glossary band" aria-labelledby="glossary-heading">
+<section id="begriffe" aria-labelledby="glossary-heading">
   <h2 id="glossary-heading">{en ? "Terms" : "Begriffe"}</h2>
-  <dl>
-    {glossary[language].map((entry) => (
-      <div>
-        <dt>{entry.term}</dt>
-        <dd>{entry.text}</dd>
-      </div>
-    ))}
-  </dl>
+  <div class="register">
+    <p class="register-intro">
+      {en
+          ? "Words with a dotted underline explain themselves when you tap them. Here are all of them, A\u00a0to\u00a0Z."
+          : "Gepunktet unterstrichene Wörter erklären sich beim Antippen. Hier stehen alle von A\u00a0bis\u00a0Z."}
+    </p>
+    <ul aria-label={en ? "Terms A to Z" : "Begriffe von A bis Z"}>
+      {terms.map((entry) => (
+          <li id={termAnchor(entry.id)}>
+            <Term id={entry.id} />
+            <span class="register-text">{entry.text}</span>
+          </li>
+        ))}
+    </ul>
+  </div>
 </section>
 
 <style>
-  .glossary dl {
-    display: grid;
-    gap: var(--space-m) var(--space-xl);
-    margin-block-start: var(--space-l);
-  }
-
-  .glossary dl > div {
-    padding-block-start: var(--space-xs);
-    border-block-start: 1px solid var(--line);
-  }
-
-  .glossary dt {
-    font-weight: 600;
-  }
-
-  .glossary dd {
-    margin-block-start: var(--space-3xs);
+  .register-intro {
+    max-inline-size: var(--measure-text);
     color: var(--ink-2);
     text-wrap: pretty;
   }
 
-  @container campaign (width >= 46rem) {
-    .glossary dl {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+  /* Names only, in short columns that fill top to bottom: three on wide
+     screens, two on a phone, where long names break with a hyphen. */
+  ul {
+    columns: 3 9rem;
+    column-gap: var(--space-m);
+    margin-block-start: var(--space-s);
+    padding: 0;
+    list-style: none;
   }
 
-  @container campaign (width >= 60rem) {
-    .glossary {
-      display: grid;
-      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-      align-items: start;
-      column-gap: var(--space-2xl);
-    }
+  li {
+    padding-block: var(--space-3xs);
+    font-weight: 560;
+    overflow-wrap: normal;
+    hyphens: auto;
+    break-inside: avoid;
+    scroll-margin-block: var(--space-2xl);
+  }
 
-    .glossary dl {
-      margin-block-start: 0;
-    }
+  /* Without the popover each explanation stands under its name, and the
+     register becomes a plain list. */
+  .register-text {
+    display: block;
+    max-inline-size: var(--measure-text);
+    color: var(--ink-2);
+    font-weight: var(--weight-text);
+    text-wrap: pretty;
+  }
+
+  :global(html:not([data-terms])) .register-intro {
+    display: none;
+  }
+
+  :global(html:not([data-terms])) ul {
+    columns: auto;
+    margin-block-start: 0;
+  }
+
+  :global(html:not([data-terms])) li {
+    padding-block: var(--space-2xs);
+  }
+
+  :global(html[data-terms]) .register-text {
+    display: none;
   }
 </style>

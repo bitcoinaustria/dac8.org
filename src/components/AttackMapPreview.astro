@@ -1,0 +1,327 @@
+---
+import { feature, mesh } from "topojson-client"
+import type { GeometryCollection, Topology } from "topojson-specification"
+import countries from "world-atlas/countries-50m.json"
+import { attacks } from "@/lib/attacks"
+import { type Language, pathFor } from "@/lib/i18n"
+
+// A still of the attack map's Europe view for the home page: land and
+// borders from Natural Earth, the known attacks from Jameson Lopp's list
+// grouped into hotspots like on the map itself: nearby cases merge into
+// one numbered circle that grows with the count. All alike in colour; the
+// year filter lives on the map. Everything is
+// drawn at build time, so the page loads no map library and no tiles. The
+// interactive map at /angriffe/ is the place to explore; this only shows
+// how close the cases are, and the whole picture links there. Below it
+// one quiet line with the data credit.
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+const en = language === "en"
+
+// The map's Europe view, in Web Mercator like the map itself.
+const bounds = { west: -11, east: 32, south: 35, north: 62 }
+const width = 600
+const radians = (degrees: number) => (degrees * Math.PI) / 180
+const mercator = (latitude: number) =>
+  Math.log(Math.tan(Math.PI / 4 + radians(latitude) / 2))
+const scale = width / radians(bounds.east - bounds.west)
+const height = Math.round(
+  scale * (mercator(bounds.north) - mercator(bounds.south)),
+)
+type Point = [number, number]
+const project = ([longitude, latitude]: number[]): Point => [
+  scale * radians(longitude - bounds.west),
+  scale *
+    (mercator(bounds.north) - mercator(Math.max(-80, Math.min(80, latitude)))),
+]
+
+// Shapes are cut to the frame plus a margin, so the page carries only what
+// is visible, and rounded to whole units with short steps dropped: at this
+// size a unit is about a pixel.
+const margin = 6
+const frame = {
+  left: -margin,
+  top: -margin,
+  right: width + margin,
+  bottom: height + margin,
+}
+const inside = ([x, y]: Point) =>
+  x >= frame.left && x <= frame.right && y >= frame.top && y <= frame.bottom
+const clip = (ring: Point[]) => {
+  const sides: [(point: Point) => boolean, (a: Point, b: Point) => Point][] = [
+    [
+      ([x]) => x >= frame.left,
+      (a, b) => [
+        frame.left,
+        a[1] + ((frame.left - a[0]) / (b[0] - a[0])) * (b[1] - a[1]),
+      ],
+    ],
+    [
+      ([x]) => x <= frame.right,
+      (a, b) => [
+        frame.right,
+        a[1] + ((frame.right - a[0]) / (b[0] - a[0])) * (b[1] - a[1]),
+      ],
+    ],
+    [
+      ([, y]) => y >= frame.top,
+      (a, b) => [
+        a[0] + ((frame.top - a[1]) / (b[1] - a[1])) * (b[0] - a[0]),
+        frame.top,
+      ],
+    ],
+    [
+      ([, y]) => y <= frame.bottom,
+      (a, b) => [
+        a[0] + ((frame.bottom - a[1]) / (b[1] - a[1])) * (b[0] - a[0]),
+        frame.bottom,
+      ],
+    ],
+  ]
+  let points = ring
+  for (const [keep, cut] of sides) {
+    const input = points
+    points = []
+    input.forEach((current, index) => {
+      const previous = input.at(index - 1) ?? current
+      if (keep(current)) {
+        if (!keep(previous)) points.push(cut(previous, current))
+        points.push(current)
+      } else if (keep(previous)) points.push(cut(previous, current))
+    })
+    if (points.length === 0) break
+  }
+  return points
+}
+const step = 1.5
+const path = (points: Point[], closed: boolean) => {
+  let d = ""
+  let last: Point | undefined
+  for (const point of points) {
+    const rounded: Point = [Math.round(point[0]), Math.round(point[1])]
+    if (last && Math.hypot(rounded[0] - last[0], rounded[1] - last[1]) < step)
+      continue
+    d += last
+      ? `l${rounded[0] - last[0]} ${rounded[1] - last[1]}`
+      : `M${rounded[0]} ${rounded[1]}`
+    last = rounded
+  }
+  return closed && d.includes("l") ? `${d}z` : closed ? "" : d
+}
+
+const topology = countries as unknown as Topology
+const shapes = topology.objects.countries as GeometryCollection
+const land = feature(topology, topology.objects.land) as unknown as {
+  features?: GeoJSON.Feature[]
+  geometry?: GeoJSON.Geometry
+}
+const landGeometries = (land.features ?? []).map((item) => item.geometry)
+if (land.geometry) landGeometries.push(land.geometry)
+const landPath = landGeometries
+  .flatMap((geometry) =>
+    geometry.type === "Polygon"
+      ? [geometry.coordinates]
+      : geometry.type === "MultiPolygon"
+        ? geometry.coordinates
+        : [],
+  )
+  .flat()
+  .map((ring) => path(clip(ring.map(project)), true))
+  .join("")
+const borderPath = mesh(topology, shapes, (a, b) => a !== b)
+  .coordinates.map((line) => line.map(project))
+  .filter((line) => line.some(inside))
+  .map((line) => path(line, false))
+  .join("")
+
+const firstYear = Math.min(...attacks.map((attack) => attack.year))
+const points = attacks
+  .filter(
+    (attack) =>
+      attack.lat !== null &&
+      attack.lng !== null &&
+      attack.lng >= bounds.west &&
+      attack.lng <= bounds.east &&
+      attack.lat >= bounds.south &&
+      attack.lat <= bounds.north,
+  )
+  .map((attack) => {
+    const [x, y] = project([attack.lng ?? 0, attack.lat ?? 0])
+    return { x, y, count: 1 }
+  })
+
+// Hotspots: merge the two closest groups while their circles would touch
+// or they sit closer than `reach`, weighting the centre by count. A single
+// case stays a small dot; a group's circle grows with the logarithm of its
+// count, as on the map at /angriffe/.
+const reach = 30
+const radius = (count: number) => (count === 1 ? 5 : 11 + Math.log2(count) * 4)
+const groups = points.map((point) => ({ ...point }))
+for (;;) {
+  let best: [number, number, number] | undefined
+  for (let i = 0; i < groups.length; i++) {
+    for (let j = i + 1; j < groups.length; j++) {
+      const a = groups[i]
+      const b = groups[j]
+      const distance = Math.hypot(a.x - b.x, a.y - b.y)
+      const limit = Math.max(reach, radius(a.count) + radius(b.count) + 4)
+      if (distance < limit && (!best || distance - limit < best[2])) {
+        best = [i, j, distance - limit]
+      }
+    }
+  }
+  if (!best) break
+  const [i, j] = best
+  const a = groups[i]
+  const b = groups[j]
+  const count = a.count + b.count
+  groups[i] = {
+    x: (a.x * a.count + b.x * b.count) / count,
+    y: (a.y * a.count + b.y * b.count) / count,
+    count,
+  }
+  groups.splice(j, 1)
+}
+// Circles near the frame move inwards so their halo and number stay whole.
+const keepInside = (value: number, r: number, size: number) =>
+  Math.min(Math.max(value, r + 6), size - r - 6)
+const hotspots = groups
+  .map((group) => {
+    const r = Math.round(radius(group.count) * 2) / 2
+    return {
+      x: Math.round(keepInside(group.x, r, width) * 2) / 2,
+      y: Math.round(keepInside(group.y, r, height) * 2) / 2,
+      count: group.count,
+      r,
+    }
+  })
+  // Small ones first, so the biggest hotspots lie on top.
+  .sort((a, b) => a.count - b.count)
+const label = en
+  ? `Open the map: ${points.length} known attacks on crypto holders in Europe since ${firstYear}.`
+  : `Zur Karte: ${points.length} bekannte Angriffe auf Krypto-Besitzer in Europa seit ${firstYear}.`
+---
+
+<figure class="attack-preview">
+  <a class="map-link" href={pathFor("attacks", language)} aria-label={label}>
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      aria-hidden="true"
+      focusable="false"
+      preserveAspectRatio="xMidYMid slice"
+    >
+      <path class="land" d={landPath} />
+      <path class="borders" d={borderPath} />
+      <g class="dots">
+        {hotspots.map((spot) =>
+          spot.count === 1 ? (
+            <circle class="dot" cx={spot.x} cy={spot.y} r={spot.r} />
+          ) : (
+            <g class="hotspot">
+              <circle class="halo" cx={spot.x} cy={spot.y} r={spot.r + 5} />
+              <circle cx={spot.x} cy={spot.y} r={spot.r} />
+              <text x={spot.x} y={spot.y}>{spot.count}</text>
+            </g>
+          ),
+        )}
+      </g>
+    </svg>
+  </a>
+  <figcaption>
+    <span class="credit"
+      >{en ? "Data: Jameson Lopp" : "Daten: Jameson Lopp"}</span
+    >
+  </figcaption>
+</figure>
+
+<style>
+  /* Wie die Karte unter /angriffe/: graues Land, helle Grenzen, rote
+     Brennpunkte mit der Zahl der Fälle. Das ganze Bild führt zur Karte. */
+  .attack-preview {
+    display: grid;
+    gap: var(--space-xs);
+    margin: 0;
+  }
+
+  .map-link {
+    position: relative;
+    display: block;
+    border-radius: var(--radius-xl);
+    background: var(--panel);
+    overflow: hidden;
+    text-decoration: none;
+    transition: background-color 160ms ease;
+  }
+
+  .map-link:hover {
+    background: var(--panel-strong);
+  }
+
+  .map-link:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+  }
+
+  svg {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .land {
+    fill: var(--gray-5);
+  }
+
+  .borders {
+    fill: none;
+    stroke: var(--gray-1);
+    stroke-width: 1;
+    stroke-linejoin: round;
+  }
+
+  circle {
+    fill: var(--primary);
+  }
+
+  .dot {
+    stroke: var(--gray-1);
+    stroke-width: 1.5;
+  }
+
+  .halo {
+    fill: color-mix(in oklab, var(--primary) 28%, transparent);
+  }
+
+  text {
+    fill: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3xs) var(--space-s);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    line-height: 1.4;
+  }
+
+  .credit {
+    margin-inline-start: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .map-link {
+      transition: none;
+    }
+  }
+</style>

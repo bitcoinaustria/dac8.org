@@ -21,6 +21,8 @@ export const historyResearchDate: Record<Language, string> = {
   en: longDate("en-GB"),
 }
 
+// Chapters of the former timeline. Links to them still land on the first
+// chart row of each era.
 type Era = "anfaenge" | "automatik" | "konzerne" | "neue-bereiche" | "ausblick"
 // context: outside the directive, e.g. OECD standards. proposed: not law.
 type Status = "context" | "repealed" | "past" | "current" | "proposed"
@@ -28,9 +30,9 @@ type Status = "context" | "repealed" | "past" | "current" | "proposed"
 type Text = {
   when: string
   title: string
-  // Shown on the timeline: one or two sentences.
+  // The first sentences when a row of the history chart opens.
   text: string
-  // The rest of the explanation, behind the entry's disclosure.
+  // The rest of the explanation, below the text.
   more?: string
   reporters?: string
   austria?: string
@@ -205,7 +207,7 @@ export const history: Entry[] = [
         when: "15. Februar 2011, automatischer Austausch ab 2015",
         title: "DAC1: Die Grundrichtlinie",
         text: "Neu ist der verpflichtende automatische Austausch: Was die Behörden über Gehälter, Aufsichtsratsvergütungen, Lebensversicherungen, Pensionen und Immobilien schon wissen, geht jedes Jahr an den Wohnsitzstaat.",
-        more: "Die Richtlinie 2011/16/EU ersetzt die Regeln von 1977 und ist bis heute der Rahmen, den alle weiteren Stufen ändern.",
+        more: "Die Richtlinie 2011/16/EU ersetzt die Regeln von 1977 und ist bis heute der Rahmen, den alle späteren Regeln ändern.",
         reporters: "Behörden, aus eigenen Daten",
         austria: "EU-Amtshilfegesetz, in Kraft seit 1. Jänner 2013",
       },
@@ -213,7 +215,7 @@ export const history: Entry[] = [
         when: "15 February 2011, automatic exchange from 2015",
         title: "DAC1: the framework directive",
         text: "What is new is mandatory automatic exchange: what authorities already know about salaries, director’s fees, life insurance, pensions and immovable property goes to the country of residence every year.",
-        more: "Directive 2011/16/EU replaces the 1977 rules and remains the framework that every later step amends.",
+        more: "Directive 2011/16/EU replaces the 1977 rules and remains the framework that every later rule amends.",
         reporters: "Authorities, from their own data",
         austria: "EU-Amtshilfegesetz, in force since 1 January 2013",
       },
@@ -570,7 +572,7 @@ export const history: Entry[] = [
       de: {
         when: "Vorgeschlagen am 24. Juni 2026",
         title: "Die Neufassung, oft „DAC10“ genannt",
-        text: "Die Kommission will alle Stufen in einer neuen Richtlinie zusammenführen und vereinfachen.",
+        text: "Die Kommission will alle bisherigen Änderungen in einer neuen Richtlinie zusammenführen und vereinfachen.",
         more: "Zur Vereinfachung sollen bei Steuergestaltungen 90 statt 30 Tage gelten, Plattform-Schwellen sich ändern und ein EU-Werkzeug Steuernummern prüfen. Zugleich sollen Steuerbehörden Zugang zu Geldwäsche-Registern, auch für Immobilien, und zu Pensionsregistern bekommen. Die Kryptofelder bleiben inhaltlich gleich. Der Datenschutzbeauftragte der EU hat im August 2026 engere Grenzen für diese Zugriffe und die Speicherdauer empfohlen.",
         reporters: "Noch kein Recht",
         austria:
@@ -579,7 +581,7 @@ export const history: Entry[] = [
       en: {
         when: "Proposed on 24 June 2026",
         title: "The recast, often called “DAC10”",
-        text: "The Commission wants to merge all steps into one new directive and simplify them.",
+        text: "The Commission wants to merge all amendments so far into one new directive and simplify them.",
         more: "To simplify, it proposes 90 instead of 30 days for tax arrangements, changed platform thresholds and an EU tool to verify tax numbers. At the same time, tax authorities would gain access to anti-money laundering registers, including for real estate, and to pension registers. The crypto fields stay the same in substance. In August 2026, the European Data Protection Supervisor recommended tighter limits on this access and on retention.",
         reporters: "Not yet law",
         austria:
@@ -602,50 +604,72 @@ export const history: Entry[] = [
 
 // What tax authorities receive, by the step that introduced it; the history
 // page draws one bar per row from the year it applies. Years are EU
-// application dates, as in the entries. Each row links to its entry, whose
-// status (repealed, proposed) decides how the bar is drawn.
-type StackRow = {
+// application dates, as in the entries. Each row opens its entry, whose
+// status (repealed, proposed) decides how the bar is drawn. Entries without
+// a row of their own, the 1977 directive and the international standards,
+// open inside the row they led to.
+export type StackRow = {
   id: string
-  step: string | Record<Language, string>
+  // The legal act's short name, shown quietly after what it reports.
+  step?: string | Record<Language, string>
   from: number
   // Last year of application, for repealed steps.
   until?: number
   what: Record<Language, string>
+  // What the tax office learns, in everyday words, for the short chart on
+  // the home page, where step names like "DAC2" say nothing. Falls back to
+  // `what`.
+  plain?: Record<Language, string>
+  // Entries that open inside this row: its predecessor or the standard it
+  // followed.
+  context?: string[]
 }
 
+// "compact" groups also appear in the short chart on the home page: the
+// steps about individuals and the proposal, which would add registers about
+// them.
 export const historyStack: {
   label: Record<Language, string>
+  compact?: boolean
   rows: StackRow[]
 }[] = [
   {
     label: { de: "Über Privatpersonen", en: "About individuals" },
+    compact: true,
     rows: [
       {
         id: "zinsrichtlinie",
-        step: { de: "Zinsen", en: "Interest" },
         from: 2005,
         until: 2015,
-        what: {
-          de: "Zinsrichtlinie",
-          en: "Savings Directive",
-        },
+        what: { de: "Zinsen", en: "Interest" },
+        plain: { de: "Zinsen aus dem Ausland", en: "Interest from abroad" },
       },
       {
         id: "dac1",
         step: "DAC1",
         from: 2015,
+        context: ["amtshilfe-1977"],
         what: {
           de: "Löhne, Pensionen, Immobilien",
           en: "Salaries, pensions, property",
+        },
+        plain: {
+          de: "Löhne, Pensionen, Immobilien im Ausland",
+          en: "Pay, pensions, property abroad",
         },
       },
       {
         id: "dac2",
         step: "DAC2",
         from: 2016,
+        context: ["fatca", "crs"],
         what: {
           de: "Bankkonten",
           en: "Bank accounts",
+        },
+        plain: {
+          de: "Konten im Ausland samt Kontostand",
+          en: "Accounts abroad, with balances",
         },
       },
       {
@@ -656,6 +680,10 @@ export const historyStack: {
           de: "Zugriff auf Geldwäschedaten",
           en: "Anti-money laundering data",
         },
+        plain: {
+          de: "Ausweis- und Kundendaten der Banken",
+          en: "Banks’ ID and customer records",
+        },
       },
       {
         id: "dac7",
@@ -665,14 +693,23 @@ export const historyStack: {
           de: "Plattform-Einnahmen",
           en: "Platform income",
         },
+        plain: {
+          de: "Einnahmen über Online-Plattformen",
+          en: "Income through online platforms",
+        },
       },
       {
         id: "dac8",
         step: "DAC8",
         from: 2026,
+        context: ["carf"],
         what: {
           de: "Kryptowerte",
           en: "Crypto-assets",
+        },
+        plain: {
+          de: "Deine Kryptowerte, auch im Inland",
+          en: "Your crypto-assets, at home too",
         },
       },
     ],
@@ -720,6 +757,7 @@ export const historyStack: {
   },
   {
     label: { de: "Vorgeschlagen", en: "Proposed" },
+    compact: true,
     rows: [
       {
         id: "neufassung",
@@ -729,128 +767,103 @@ export const historyStack: {
           de: "Neufassung, Registerzugang",
           en: "Recast, register access",
         },
+        plain: {
+          de: "Zugriff auf Register, auch für Immobilien und Pensionen",
+          en: "Access to registers, incl. property and pensions",
+        },
       },
     ],
   },
 ]
 
-export const historyEras: Record<
-  Language,
-  { id: Era; label: string; title: string; intro: string }[]
-> = {
-  de: [
-    {
-      id: "anfaenge",
-      label: "1977–2010",
-      title: "Amtshilfe im Einzelfall",
-      intro:
-        "Drei Jahrzehnte lang fragen Steuerbehörden einander zu bestimmten Fällen.",
+const statusOf = new Map(history.map((entry) => [entry.id, entry.status]))
+export const isProposed = (row: StackRow) => statusOf.get(row.id) === "proposed"
+
+// How many of the given rows apply in a year: proposals do not count, and a
+// step applies from its first year until it is repealed.
+export const stepsInForce = (rows: StackRow[], year: number) =>
+  rows.filter(
+    (row) =>
+      !isProposed(row) &&
+      row.from <= year &&
+      year <= (row.until ?? Number.POSITIVE_INFINITY),
+  ).length
+
+// What every step shares: each amends Directive 2011/16/EU, whose Article 16
+// says what exchanged data may be used for. The history chart closes with it.
+export const historyCommon: {
+  translations: Record<
+    Language,
+    { label: string; summary: string; text: string[] }
+  >
+  sources: Source[]
+} = {
+  translations: {
+    de: {
+      label: "Für alle Regeln",
+      summary:
+        "Seit DAC8 dürfen alle diese Daten auch gegen Geldwäsche und Terrorismusfinanzierung verwendet werden.",
+      text: [
+        "Bis auf die Zinsrichtlinie stehen alle diese Regeln in derselben Richtlinie von 2011 oder ändern sie. Übermittlungswege, Amtsgeheimnis und die Regeln, wofür die Daten verwendet werden dürfen, gelten für alle Kategorien gemeinsam.",
+        "Ursprünglich durften ausgetauschte Informationen für Steuern, deren Beitreibung, Sozialversicherungsbeiträge und Steuerstrafverfahren verwendet werden; für alles andere brauchte es die Zustimmung des Herkunftsstaats. DAC8 hat die Bekämpfung von Geldwäsche und Terrorismusfinanzierung hinzugefügt, und für EU-Sanktionsrechtsakte nach Art. 215 AEUV braucht es keine Zustimmung des Herkunftsstaats mehr. Zweckbindung, Geheimhaltung und Datenschutz gelten weiter. Das betrifft alle DAC-Daten, auch Konto-, Lohn-, Pensions- und Plattformdaten.",
+      ],
     },
-    {
-      id: "automatik",
-      label: "2011–2014",
-      title: "Der automatische Austausch",
-      intro: "Ab 2011 wird der automatische Austausch zur Regel.",
+    en: {
+      label: "For every rule",
+      summary:
+        "Since DAC8, all of this data may also be used to fight money laundering and terrorist financing.",
+      text: [
+        "Except for the Savings Directive, all of these rules are in the same 2011 directive or amend it. The exchange channels, official secrecy and the rules on what the data may be used for apply to all categories alike.",
+        "Originally, exchanged information could be used for taxes, tax recovery, social security contributions and tax penalty proceedings; any other use needed the sending country’s consent. DAC8 added the fight against money laundering and terrorist financing, and for the purposes of EU sanctions acts under Article 215 TFEU, the sending country’s consent is no longer required. Purpose limits, official secrecy and data protection still apply. This covers all DAC data, including bank-account, salary, pension and platform data.",
+      ],
     },
-    {
-      id: "konzerne",
-      label: "2015–2018",
-      title: "Konzerne und Berater",
-      intro:
-        "Nach Enthüllungen über Steuerabsprachen und Briefkastenfirmen richten sich neue Stufen an Konzerne und Berater.",
-    },
-    {
-      id: "neue-bereiche",
-      label: "2021–2025",
-      title: "Plattformen, Krypto, Mindeststeuer",
-      intro:
-        "Die Meldepflichten folgen der Wirtschaft in neue Bereiche, jeweils kurz nach einem Standard der OECD.",
-    },
-    {
-      id: "ausblick",
-      label: "Ab 2026",
-      title: "Was noch kommt",
-      intro:
-        "Der Vorschlag ist noch kein Recht und kann sich in den Verhandlungen ändern.",
-    },
-  ],
-  en: [
-    {
-      id: "anfaenge",
-      label: "1977–2010",
-      title: "Assistance in individual cases",
-      intro:
-        "For three decades, tax authorities ask each other about specific cases.",
-    },
-    {
-      id: "automatik",
-      label: "2011–2014",
-      title: "Automatic exchange",
-      intro: "From 2011, automatic exchange becomes the rule.",
-    },
-    {
-      id: "konzerne",
-      label: "2015–2018",
-      title: "Multinationals and advisers",
-      intro:
-        "After revelations about tax deals and shell companies, new steps target multinationals and advisers.",
-    },
-    {
-      id: "neue-bereiche",
-      label: "2021–2025",
-      title: "Platforms, crypto, minimum tax",
-      intro:
-        "Reporting follows the economy into new areas, each time shortly after an OECD standard.",
-    },
-    {
-      id: "ausblick",
-      label: "From 2026",
-      title: "What comes next",
-      intro: "The proposal is not yet law and may change in negotiations.",
-    },
+  },
+  sources: [
+    eli("dir/2011/16", {
+      de: "Art. 16 der Richtlinie 2011/16/EU",
+      en: "Article 16 of Directive 2011/16/EU",
+    }),
+    eli("dir/2023/2226", {
+      de: "Geändert durch Art. 1 Nr. 7 der Richtlinie (EU) 2023/2226",
+      en: "Amended by Article 1(7) of Directive (EU) 2023/2226",
+    }),
   ],
 }
 
-// "DAC3: Steuervorbescheide" becomes code "DAC3" and name
-// "Steuervorbescheide", so the timeline can set the codes as a column.
-const splitTitle = (title: string, short: string) => {
-  if (!title.startsWith(`${short}: `)) return { code: undefined, name: title }
-  const name = title.slice(short.length + 2)
-  return { code: short, name: name.charAt(0).toUpperCase() + name.slice(1) }
-}
-
-export const historyFor = (language: Language) =>
-  history.map((entry) => {
+export const historyFor = (language: Language) => {
+  const en = language === "en"
+  return history.map((entry) => {
     const { translations, short, sources, ...rest } = entry
     const text = translations[language]
-    const en = language === "en"
+    const facts = [
+      { label: en ? "Date" : "Datum", text: text.when },
+      text.reporters && {
+        label: en ? "Who reports" : "Wer meldet",
+        text: text.reporters,
+      },
+      text.austria && {
+        label:
+          entry.status === "proposed"
+            ? en
+              ? "Procedure"
+              : "Verfahren"
+            : en
+              ? "In Austria"
+              : "In Österreich",
+        text: text.austria,
+      },
+    ].filter((fact): fact is { label: string; text: string } => Boolean(fact))
     return {
       ...rest,
       short: short[language],
-      when: text.when,
       title: text.title,
-      ...splitTitle(text.title, short[language]),
       text: text.text,
       more: text.more,
-      reporters: text.reporters,
-      details: [
-        text.austria && {
-          label:
-            entry.status === "proposed"
-              ? en
-                ? "Procedure"
-                : "Verfahren"
-              : en
-                ? "In Austria"
-                : "In Österreich",
-          text: text.austria,
-        },
-      ].filter((detail): detail is { label: string; text: string } =>
-        Boolean(detail),
-      ),
+      facts,
       sources: sources.map((source) => ({
         label: source.label[language],
         href: source.href[language],
       })),
     }
   })
+}

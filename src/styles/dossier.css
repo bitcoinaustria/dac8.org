@@ -1,0 +1,258 @@
+/* Das Dossier, beide Sprachen. Ergänzt campaign.css nur für diese Seite:
+   die Rechtsgrundlage neben jeder Aussage, die Tabelle der Speicherfristen,
+   am Ende Fragen, Begriffe und Quellen zum Nachschlagen. Alles hängt an
+   .campaign.dossier. */
+
+/* ---------- Rechtsgrundlagen ------------------------------------------ */
+
+/* Neben jeder Aussage steht leise ihre Rechtsgrundlage, verlinkt auf den
+   Primärtext aus src/data/sources.ts: klein, grau, mit Paragrafenzeichen.
+   Wer nur liest, überliest sie; wer prüft, findet sie dort, wo die Aussage
+   steht. */
+.campaign.dossier .basis {
+  color: var(--ink-3);
+  font-size: var(--type-meta);
+  font-weight: var(--weight-text);
+  line-height: 1.45;
+}
+
+.campaign.dossier .basis a,
+.campaign.dossier a.basis {
+  color: var(--ink-3);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+  text-underline-offset: 0.18em;
+  white-space: nowrap;
+}
+
+.campaign.dossier .basis a:hover,
+.campaign.dossier a.basis:hover {
+  color: var(--accent);
+  text-decoration-color: currentColor;
+}
+
+/* Hinter einem Satz steht die Grundlage auf eigener Zeile darunter. */
+.campaign.dossier :is(p, span, td) > a.basis {
+  display: table;
+  margin-block-start: var(--space-3xs);
+}
+
+.campaign.dossier .section-intro + .basis {
+  margin-block-start: var(--space-xs);
+}
+
+/* ---------- Meldung ----------------------------------------------------- */
+
+/* Das Musterblatt steht klein neben der Überschrift und öffnet sich in
+   voller Größe; die Gegenüberstellung darunter trägt das Band. Unter jedem
+   Kartentitel die Grundlage, unter der Liste ein Satz, der sie ergänzt. */
+.campaign.dossier .report-head .artwork {
+  --art-height: 15rem;
+}
+
+.campaign.dossier .compare h3 {
+  margin-block-end: 0;
+}
+
+.campaign.dossier .compare h3 + .basis {
+  margin-block-end: var(--space-2xs);
+}
+
+.campaign.dossier .compare .note {
+  margin-block-start: var(--space-xs);
+  padding-block: var(--space-s) var(--space-2xs);
+  border-block-start: 1px solid var(--line);
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+/* ---------- Speicherdauer ----------------------------------------------- */
+
+.campaign.dossier .retention {
+  inline-size: 100%;
+  border-collapse: collapse;
+  line-height: 1.45;
+}
+
+.campaign.dossier .retention :is(th, td) {
+  padding: var(--space-s) var(--space-m) var(--space-s) 0;
+  text-align: start;
+  vertical-align: top;
+  border-block-end: 1px solid var(--line);
+  text-wrap: pretty;
+}
+
+.campaign.dossier .retention thead th {
+  padding-block: 0 var(--space-2xs);
+  border-block-end-color: var(--ink);
+  color: var(--ink-3);
+  font-size: var(--type-meta);
+  font-weight: var(--weight-text);
+}
+
+.campaign.dossier .retention tbody th {
+  font-weight: var(--weight-heading);
+}
+
+.campaign.dossier .retention td {
+  color: var(--ink-2);
+}
+
+.campaign.dossier .retention strong {
+  color: var(--ink);
+  font-weight: var(--weight-strong);
+}
+
+/* Schmal wird jede Zeile ein Eintrag: wer oben, darunter was und wie
+   lange mit ihren Spaltennamen. */
+@container campaign (width < 40rem) {
+  .campaign.dossier .retention thead {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .campaign.dossier .retention tr {
+    display: grid;
+    gap: var(--space-2xs);
+    padding-block: var(--space-s);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .campaign.dossier .retention tbody tr:first-child {
+    border-block-start-color: var(--ink);
+  }
+
+  .campaign.dossier .retention :is(th, td) {
+    display: block;
+    padding: 0;
+    border: 0;
+  }
+
+  .campaign.dossier .retention td::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+}
+
+/* ---------- Nachschlagen ----------------------------------------------- */
+
+/* Am Ende stehen Fragen, Begriffe und Quellen, gleich angeordnet (links die
+   Überschrift, rechts der Inhalt), aber je nach Gebrauch verschieden: Fragen
+   klappen einzeln auf (Disclosure.astro), Begriffe sind ein Register in
+   kurzen Spalten (Glossary.astro), Quellen ein ruhiges Verzeichnis, das sich
+   als Ganzes öffnet. Keine Fläche dahinter, damit die Zone nicht an die Fläche
+   des Seitenfußes stößt. */
+.campaign.dossier > .reference {
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+.campaign.dossier > .reference > section {
+  display: grid;
+  align-items: start;
+  gap: var(--space-l) var(--space-2xl);
+  scroll-margin-block-start: var(--space-xl);
+}
+
+.campaign.dossier .disclosure-list {
+  display: grid;
+  align-items: start;
+  gap: var(--space-2xs);
+}
+
+@container campaign (width >= 60rem) {
+  .campaign.dossier > .reference > section {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  }
+
+  .campaign.dossier > .reference > section > :not(h2) {
+    grid-column: 2;
+  }
+}
+
+/* Quellen: ein Satz, worauf sich das Dossier stützt, und ein einziger
+   Textlink, der das ganze Verzeichnis in Spalten öffnet. */
+.campaign.dossier .sources-intro {
+  max-inline-size: var(--measure-text);
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.campaign.dossier .bibliography {
+  margin-block-start: var(--space-s);
+}
+
+.campaign.dossier .bibliography > summary {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4em;
+  color: var(--accent);
+  font-weight: var(--weight-heading);
+  list-style: none;
+  cursor: pointer;
+}
+
+.campaign.dossier .bibliography > summary::-webkit-details-marker {
+  display: none;
+}
+
+.campaign.dossier .bibliography > summary::after {
+  content: "↓";
+  transition: rotate 160ms ease;
+}
+
+.campaign.dossier .bibliography[open] > summary::after {
+  rotate: 180deg;
+}
+
+.campaign.dossier .bibliography:not([open]) .hide,
+.campaign.dossier .bibliography[open] .show {
+  display: none;
+}
+
+.campaign.dossier .bibliography-groups {
+  display: grid;
+  gap: var(--space-l) var(--space-xl);
+  margin-block-start: var(--space-m);
+}
+
+.campaign.dossier .bibliography-groups h3 {
+  font-size: var(--type-body);
+}
+
+.campaign.dossier .bibliography-groups ul {
+  display: grid;
+  gap: var(--space-3xs);
+  margin-block-start: var(--space-2xs);
+  padding: 0;
+  list-style: none;
+  font-size: var(--type-meta);
+  line-height: 1.45;
+}
+
+.campaign.dossier .bibliography-groups a {
+  color: var(--ink-2);
+  text-decoration: none;
+}
+
+.campaign.dossier .bibliography-groups a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+@container campaign (width >= 46rem) {
+  .campaign.dossier .bibliography-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campaign.dossier .bibliography > summary::after {
+    transition: none;
+  }
+}

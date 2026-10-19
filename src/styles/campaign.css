@@ -26,7 +26,7 @@
   --measure-text: 66ch;
   /* Luft zwischen den Bändern einer Seite. Innerhalb eines Bands stehen
      Blöcke mit --space-xl Abstand, Überschrift und Text mit --space-m. */
-  --band-gap: clamp(4.5rem, 2.75rem + 5vw, 8rem);
+  --band-gap: clamp(4rem, 2.5rem + 4vw, 6.5rem);
   container: campaign / inline-size;
   display: grid;
   gap: var(--band-gap);
@@ -64,52 +64,49 @@
 
 .campaign h1,
 .campaign h2 {
-  font-weight: 600;
+  font-weight: var(--weight-heading);
   font-stretch: 94%;
   text-wrap: balance;
 }
 
 .campaign h1 {
   max-inline-size: 24ch;
-  font-size: clamp(2rem, 1.45rem + 2.4vw, 3.25rem);
-  line-height: 1.02;
+  font-size: var(--type-display);
+  line-height: 1.04;
   letter-spacing: -0.028em;
 }
 
-/* Der rote Teil einer H1 steht auf eigener Zeile. */
-.campaign h1 span {
+/* Der rote Teil einer Schlagzeile oder Bandüberschrift steht auf eigener
+   Zeile. Eine rote Zeile pro Überschrift, mehr Rot gibt es nur an
+   Aktionen. */
+.campaign :is(h1, h2) > span {
   display: block;
   color: var(--accent);
 }
 
 .campaign h2 {
   max-inline-size: 26ch;
-  font-size: clamp(1.625rem, 1.25rem + 1.5vw, 2.25rem);
+  font-size: var(--type-h2);
   line-height: 1.1;
   letter-spacing: -0.022em;
 }
 
 .campaign h3 {
-  font-size: var(--step-1);
-  font-weight: 560;
-  line-height: 1.3;
-  letter-spacing: -0.012em;
+  max-inline-size: 30ch;
+  font-size: var(--type-h3);
+  font-weight: var(--weight-heading);
+  line-height: 1.2;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
 }
 
-/* Drei Stufen unter der H1: Band (H2), Abschnitt im Band (diese H3) und
-   Karte oder Fakt (fette Zeile in Fließtextnähe). Die Abschnittsüberschrift
-   liegt deutlich zwischen beiden, damit Gruppen über ihren Einträgen stehen
-   statt neben ihnen. */
-.campaign > section > h3,
-.campaign > section > .art-split > div > h3,
-.campaign .attacks > h3 {
-  max-inline-size: 30ch;
-  font-size: clamp(1.375rem, 1.15rem + 0.75vw, 1.75rem);
-  font-weight: 600;
-  font-stretch: 94%;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
+/* Titel einzelner Einträge in Listen und Karten: so groß wie der Vorspann,
+   aber fett und dunkel. Wer nur sie liest, hat den Abschnitt. */
+.campaign .objections > li > strong {
+  font-size: var(--type-lead);
+  font-weight: var(--weight-heading);
+  line-height: 1.3;
+  letter-spacing: -0.012em;
 }
 
 .campaign > section > h3 {
@@ -122,29 +119,19 @@
 }
 
 .campaign h4 {
-  font-size: var(--step-0);
-  font-weight: 560;
+  font-size: var(--type-body);
+  font-weight: var(--weight-heading);
   line-height: 1.35;
 }
 
-.campaign .lead {
-  max-inline-size: 52ch;
-  margin-block-start: var(--space-m);
-  color: var(--ink-2);
-  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
-  line-height: 1.5;
-  text-wrap: pretty;
-}
-
-/* Einleitung eines Bands: so groß wie der Vorspann im Hero und damit eine
-   Spur kleiner als die fetten Titel der Karten, damit sie nicht mit ihnen
-   um den Blick konkurriert. */
-.campaign .section-intro {
+/* Vorspann: ein bis zwei Sätze direkt unter Schlagzeile oder
+   Bandüberschrift, dicht an ihr, damit er zu ihr gehört. Pro Band einer. */
+.campaign :is(.lead, .section-intro) {
   max-inline-size: var(--measure-lead);
-  margin-block-start: var(--space-m);
+  margin-block-start: var(--space-s);
   color: var(--ink-2);
-  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
-  line-height: 1.5;
+  font-size: var(--type-lead);
+  line-height: 1.45;
   text-wrap: pretty;
 }
 
@@ -155,7 +142,7 @@
 .campaign .lead strong,
 .campaign .section-intro strong {
   color: var(--ink);
-  font-weight: 560;
+  font-weight: var(--weight-strong);
 }
 
 .campaign .prose {
@@ -220,12 +207,6 @@
   .campaign .hero > .artwork {
     --art-height: 26rem;
   }
-
-  /* Die Schlagzeile neben dem Bild ist eine Stufe kleiner, damit sie in
-     drei bis vier Zeilen bleibt. */
-  .campaign .hero:has(> .artwork) h1 {
-    font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
-  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -283,8 +264,8 @@
   display: inline-block;
   margin-block-end: var(--space-m);
   color: var(--ink-3);
-  font-size: var(--step--1);
-  font-weight: 500;
+  font-size: var(--type-meta);
+  font-weight: var(--weight-strong);
   letter-spacing: 0.08em;
   text-decoration: none;
   text-transform: uppercase;
@@ -318,18 +299,16 @@
    Werte dunkel und rot unterlegt. So liest man eine Aussage, kein
    Dashboard. */
 .campaign .figure-line {
-  max-inline-size: 40ch;
-  color: var(--ink-3);
-  font-size: clamp(1.375rem, 1.1rem + 1.2vw, 1.875rem);
-  font-weight: 450;
-  line-height: 1.3;
-  letter-spacing: -0.018em;
+  max-inline-size: var(--measure-lead);
+  color: var(--ink-2);
+  font-size: var(--type-lead);
+  line-height: 1.45;
   text-wrap: pretty;
 }
 
 .campaign .figure-line strong {
   color: var(--ink);
-  font-weight: 620;
+  font-weight: var(--weight-heading);
   background: linear-gradient(
       color-mix(in oklab, var(--primary) 18%, transparent) 0 0
     )
@@ -354,6 +333,7 @@
 
 .campaign .glance dt {
   color: var(--ink-3);
+  font-size: var(--type-meta);
 }
 
 .campaign .glance dd {
@@ -553,8 +533,8 @@
 .campaign .facts h3 {
   display: block;
   margin-block-end: var(--space-2xs);
-  font-size: var(--step-1);
-  font-weight: 600;
+  font-size: var(--type-lead);
+  font-weight: var(--weight-heading);
   line-height: 1.3;
   letter-spacing: -0.012em;
 }
@@ -572,13 +552,6 @@
   margin-block-start: var(--space-2xs);
   color: var(--ink-3);
   font-size: var(--step--1);
-}
-
-/* Belegte Fälle: jeder beginnt mit einer Datumszeile (wer, wann), darunter
-   die Schlagzeile. Die Liste lässt sich so allein über die Datumszeilen und
-   die fetten Titel überfliegen. */
-.campaign .facts.cases {
-  row-gap: var(--space-xl);
 }
 
 /* Was verloren ging, als kleine Marken unter dem Titel. */
@@ -605,68 +578,6 @@
   }
 }
 
-/* Wer und wann über einem Fall: grau in normaler Schreibweise, damit die
-   Zeile beim Überfliegen hilft, ohne mit dem Titel zu konkurrieren. */
-.campaign .cases .dateline {
-  margin-block-end: var(--space-3xs);
-  color: var(--ink-3);
-  font-size: var(--step--1);
-}
-
-/* Die Kritikpunkte sind die dichteste Textstrecke. Breit stehen sie als
-   Zeilen zwischen Haarlinien: links die Aussage mit ihrem Beleg, rechts die
-   Begründung. Wer nur die linke Spalte liest, hat das Argument. Einwände in
-   Anführungszeichen stehen leichter gesetzt als unsere eigenen Aussagen;
-   die Anführungszeichen sagen schon, dass hier jemand anderes spricht. */
-.campaign .facts.concerns {
-  row-gap: clamp(2rem, 3vw, 3rem);
-}
-
-.campaign .concerns .objection > strong {
-  font-weight: 450;
-}
-
-@container campaign (width >= 52rem) {
-  .campaign .facts.concerns {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 0;
-  }
-
-  .campaign .facts.concerns > li {
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    grid-template-rows: auto 1fr;
-    column-gap: var(--space-2xl);
-    max-inline-size: none;
-    padding-block: var(--space-l);
-    border-block-start: 1px solid var(--line);
-  }
-
-  .campaign .facts.concerns > li:last-child {
-    border-block-end: 1px solid var(--line);
-  }
-
-  .campaign .concerns > li > strong {
-    grid-area: 1 / 1;
-    margin-block-end: 0;
-    font-size: clamp(1.1875rem, 1.05rem + 0.5vw, 1.375rem);
-    line-height: 1.25;
-    text-wrap: balance;
-  }
-
-  .campaign .concerns > li > p {
-    grid-column: 2;
-    grid-row: 1 / -1;
-    max-inline-size: var(--measure-text);
-  }
-
-  .campaign .concerns > li > small {
-    grid-area: 2 / 1;
-    align-self: start;
-    margin-block-start: var(--space-xs);
-  }
-}
-
 /* Status-Marke vor einem Fakt: „gilt heute“, „Vorschlag“, „bräuchte ein
    Gesetz“. Eine Aussage über den Stand, keine Kategorie-Etikette. */
 .campaign .tag {
@@ -685,86 +596,22 @@
   color: var(--primary-foreground);
 }
 
-/* Forderungen: Haken als kleine Token wie die Stationen, ab mittlerer
-   Breite zweispaltig. */
-.campaign .checklist {
-  display: grid;
-  gap: var(--space-m) var(--space-xl);
-  margin-block-start: var(--space-xl);
-  padding: 0;
-  list-style: none;
-}
-
-.campaign .checklist li {
-  position: relative;
-  max-inline-size: var(--measure-text);
-  padding-inline-start: 2.25rem;
-  color: var(--ink-2);
-  text-wrap: pretty;
-}
-
-.campaign .checklist li::before {
-  content: "✓" / "";
-  position: absolute;
-  inset-block-start: 0.1em;
-  inset-inline-start: 0;
-  display: grid;
-  place-items: center;
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
-  border: 1px solid var(--material-edge);
-  border-radius: var(--radius-full);
-  color: #f7f8f9;
-  background: linear-gradient(155deg, #4b5056, #25282d);
-  box-shadow:
-    inset 0 1px 0 #ffffff38,
-    0 1px 2px var(--material-shade);
-  font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 1;
-}
-
-@container campaign (width >= 46rem) {
-  .campaign .checklist {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.campaign .checklist strong {
-  color: var(--ink);
-  font-weight: 560;
-}
-
-/* Zwei Textspalten: links die Einordnung, rechts die Einzelheiten. Für
-   kurze Abschnitte ohne Bild, damit sie nicht links an der Kante hängen. */
-.campaign .columns {
-  display: grid;
-  align-items: start;
-  gap: var(--space-m) var(--space-2xl);
-  margin-block-start: var(--space-m);
-}
-
-.campaign .columns > * {
-  margin-block-start: 0;
-}
-
-@container campaign (width >= 52rem) {
-  .campaign .columns {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 /* ---------- Stationen: Datenweg, Rechtsweg ---------------------------- */
 
+/* Stationen als Punkte an einer Linie, ohne Nummern: Die Reihenfolge zeigt
+   die Linie. Schmal läuft der Weg senkrecht, ab mittlerer Breite von links
+   nach rechts mit dem Titel unter dem Punkt. */
 .campaign .flow {
-  --dot: 2rem;
+  --dot: 0.875rem;
+  --line: 2px;
+  --walked: light-dark(#3a3f45, #a3aab0);
+  --open: var(--ink-3);
   display: grid;
   gap: var(--space-m);
   max-inline-size: var(--measure-text);
   margin-block-start: var(--space-xl);
   padding: 0;
   list-style: none;
-  counter-reset: station;
 }
 
 .campaign .flow li {
@@ -772,58 +619,32 @@
   display: grid;
   grid-template-columns: var(--dot) minmax(0, 1fr);
   gap: var(--space-3xs) var(--space-s);
-  counter-increment: station;
   line-height: 1.4;
 }
 
-/* Stationen als kleine Token wie die Knöpfe der Renderings: Graphitkern,
-   schmale Titankante, eine obere Lichtkante. Statisch, ohne Glanz oder
-   Bewegung, weil sie nicht klickbar sind. */
+/* Der Punkt sitzt auf der Höhe der ersten Titelzeile. */
 .campaign .flow li::before {
-  content: counter(station);
+  content: "";
   z-index: 1;
-  display: inline-grid;
-  place-items: center;
+  align-self: start;
+  box-sizing: border-box;
   inline-size: var(--dot);
   block-size: var(--dot);
-  border: 1px solid var(--material-edge);
+  margin-block-start: calc(0.7em - var(--dot) / 2);
   border-radius: var(--radius-full);
-  color: #f7f8f9;
-  background: linear-gradient(155deg, #4b5056, #25282d);
-  box-shadow:
-    inset 0 1px 0 #ffffff38,
-    inset 0 -1px 0 #00000035,
-    0 1px 2px var(--material-shade);
-  font-size: 0.875rem;
-  font-weight: 600;
-  line-height: 1;
+  background: var(--walked);
 }
 
-/* Rot heißt auf Stationen immer „hier stehen wir“: nur die aktuelle Station
-   des Rechtswegs. Andere Hervorhebungen tragen eine Marke wie „DAC8“. */
-.campaign .route li.current::before {
-  border-color: light-dark(#b6000c, #fa5963);
-  color: #ffffff;
-  background: linear-gradient(155deg, #e3000f, #be000c);
-  box-shadow:
-    inset 0 1px 0 #ffffff30,
-    inset 0 -1px 0 #71000860,
-    0 1px 2px var(--material-shade);
-}
-
-/* Die Linie läuft von Station zu Station durch, als schmale Nut. */
 .campaign .flow li:not(:last-child)::after {
   content: "";
   position: absolute;
-  inset-block-start: var(--dot);
-  inset-block-end: calc(-1 * var(--space-m));
-  inset-inline-start: calc(var(--dot) / 2 - 1px);
-  border-inline-start: 2px solid light-dark(#c6cbcf, #454b51);
-  box-shadow: 1px 0 0 light-dark(#ffffff, #ffffff08);
+  inset-block-start: calc(0.7em + var(--dot) / 2 + 4px);
+  inset-block-end: calc(4px + var(--dot) / 2 - 0.7em - var(--space-m));
+  inset-inline-start: calc(var(--dot) / 2 - var(--line) / 2);
+  border-inline-start: var(--line) solid var(--walked);
 }
 
 .campaign .flow strong {
-  align-self: center;
   font-weight: 560;
   overflow-wrap: normal;
   hyphens: auto;
@@ -835,34 +656,36 @@
   text-wrap: pretty;
 }
 
-/* Rechtsweg mit Stand: erledigt, jetzt, noch offen. Offene Stationen sind
-   Glas statt Graphit. Die letzte Station ist gestrichelt angebunden, weil
-   über Vorlagen die Gerichte entscheiden. */
+/* Rechtsweg mit Stand: Gegangen ist graphit, die aktuelle Station rot. Rot
+   heißt auf Stationen immer „hier stehen wir“. Offene Stationen sind leere
+   Ringe am gestrichelten Weg. */
+.campaign .route li.current::before {
+  background: var(--primary);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 25%, transparent);
+}
+
 .campaign .route li.next::before {
-  color: light-dark(#202428, #eef0f2);
-  background: linear-gradient(
-    155deg,
-    light-dark(#ffffff, #292d31),
-    light-dark(#e8ecee, #181b1e)
-  );
-  box-shadow:
-    inset 0 1px 0 var(--material-shine),
-    inset 0 0 0 2px light-dark(#ffffff80, #ffffff06);
+  border: var(--line) solid var(--open);
+  background: transparent;
+}
+
+.campaign .route li:is(.current, .next):not(:last-child)::after {
+  border-inline-start-style: dashed;
+  border-color: var(--open);
+}
+
+.campaign .route li.current > strong {
+  color: var(--accent);
+  font-weight: var(--weight-heading);
 }
 
 .campaign .route li.next > strong {
   color: var(--ink-2);
 }
 
-.campaign .route li:has(+ [data-possible])::after {
-  border-inline-start-style: dashed;
-  box-shadow: none;
-}
-
-/* „Jetzt“ bleibt lesbar, ohne mit dem roten Token zu konkurrieren. */
 .campaign .route .tag.live {
-  color: var(--ink);
-  background: var(--panel-strong);
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .campaign .flow .tag {
@@ -875,8 +698,6 @@
   margin-block-start: var(--space-xl);
 }
 
-/* Ab mittlerer Breite laufen Datenweg und Rechtsweg von links nach rechts:
-   Token auf einer Schiene, darunter Titel und Erklärung. */
 @container campaign (width >= 46rem) {
   .campaign .flow {
     grid-auto-columns: minmax(0, 1fr);
@@ -891,26 +712,28 @@
     gap: var(--space-xs);
   }
 
+  .campaign .flow li::before {
+    margin-block-start: 0;
+  }
+
   .campaign .flow li > :is(strong, span) {
     grid-column: 1;
   }
 
   .campaign .flow li > strong {
-    align-self: start;
     margin-block-start: var(--space-2xs);
   }
 
   .campaign .flow li:not(:last-child)::after {
-    inset-block: calc(var(--dot) / 2 - 1px) auto;
-    inset-inline: calc(var(--dot) + var(--space-2xs))
-      calc(-1 * var(--space-m) + var(--space-2xs));
+    inset-block: calc(var(--dot) / 2 - var(--line) / 2) auto;
+    inset-inline: calc(var(--dot) + 6px) calc(6px - var(--space-m));
     border-inline-start: 0;
-    border-block-start: 2px solid light-dark(#c6cbcf, #454b51);
-    box-shadow: 0 1px 0 light-dark(#ffffff, #ffffff08);
+    border-block-start: var(--line) solid var(--walked);
   }
 
-  .campaign .route li:has(+ [data-possible])::after {
+  .campaign .route li:is(.current, .next):not(:last-child)::after {
     border-block-start-style: dashed;
+    border-color: var(--open);
   }
 }
 
@@ -943,9 +766,6 @@
 
 .campaign .compare h3 {
   margin-block-end: var(--space-2xs);
-  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
-  font-weight: 600;
-  letter-spacing: -0.018em;
 }
 
 .campaign .compare ul {
@@ -1013,9 +833,6 @@
 
 .campaign .cards h3 {
   margin-block-end: var(--space-xs);
-  font-size: var(--step-2);
-  font-weight: 600;
-  letter-spacing: -0.02em;
 }
 
 .campaign .cards p {
@@ -1045,7 +862,7 @@
   }
 }
 
-/* ---------- FAQ und Quellen ------------------------------------------- */
+/* ---------- Häufige Fragen ------------------------------------------- */
 
 .campaign .faq-list {
   display: grid;
@@ -1093,42 +910,6 @@
   padding: 0 var(--space-m) var(--space-m);
   color: var(--ink-2);
   text-wrap: pretty;
-}
-
-.campaign .sources .source-groups {
-  display: grid;
-  gap: var(--space-l) var(--space-xl);
-  margin-block-start: var(--space-l);
-}
-
-.campaign .sources h3 {
-  margin-block-end: var(--space-xs);
-  font-size: var(--step-0);
-}
-
-.campaign .sources ul {
-  display: grid;
-  gap: var(--space-2xs);
-  padding: 0;
-  list-style: none;
-  font-size: var(--step--1);
-  line-height: 1.45;
-}
-
-.campaign .sources li a {
-  color: var(--ink-2);
-  text-decoration: none;
-}
-
-.campaign .sources li a:hover {
-  color: var(--accent);
-  text-decoration: underline;
-}
-
-@media (width >= 48rem) {
-  .campaign .sources .source-groups {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 .campaign :is(.research-note, .aside-note) {
@@ -1333,17 +1114,10 @@
   margin-block-end: 1.5rem;
 }
 
-.campaign .donation-heading h3 {
-  font-size: 1.65rem;
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.2;
-}
-
 .campaign .donation-heading p {
   margin-block-start: 0.25rem;
   color: var(--ink-3);
-  font-size: 0.9375rem;
+  font-size: var(--type-meta);
   line-height: 1.4;
 }
 
@@ -1356,7 +1130,7 @@
 .campaign .payment-note {
   margin-block-start: -0.5rem;
   color: var(--ink-3);
-  font-size: 0.875rem;
+  font-size: var(--type-meta);
   line-height: 1.5;
 }
 
@@ -1383,20 +1157,20 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  font-size: 1rem;
+  font-size: var(--type-body);
 }
 
 .campaign .detail-label,
 .campaign .bank-details dt {
   color: var(--ink-3);
-  font-size: 0.8125rem;
+  font-size: var(--type-meta);
   line-height: 1.4;
 }
 
 .campaign .payment-link span {
   display: block;
   margin-block-start: 0.25rem;
-  font-weight: 500;
+  font-weight: var(--weight-strong);
 }
 
 .campaign .bank-details > div {
@@ -1415,8 +1189,8 @@
 
 .campaign .bank-details dd {
   margin-block-start: 0.25rem;
-  font-size: 1.0625rem;
-  font-weight: 550;
+  font-size: var(--type-body);
+  font-weight: var(--weight-strong);
   line-height: 1.4;
   font-variant-numeric: tabular-nums;
 }
@@ -1482,7 +1256,7 @@
   min-block-size: 1.5em;
   margin-block-start: 0.75rem;
   color: var(--ink-3);
-  font-size: 0.8125rem;
+  font-size: var(--type-meta);
 }
 
 @container campaign (min-width: 44rem) {
@@ -1596,29 +1370,6 @@
   content: " ↗";
 }
 
-/* Breit: das Motiv links, die Bildunterschrift wie ein Museumsschild rechts
-   unten daneben. */
-.campaign .artwork-wide {
-  --art-height: 26rem;
-}
-
-/* Das Musterblatt der Meldung braucht Größe, damit Felder lesbar bleiben. */
-.campaign .artwork-wide:has(.artwork-zoom-link) {
-  --art-height: 34rem;
-}
-
-@container campaign (width >= 52rem) {
-  .campaign .artwork-wide {
-    grid-template-columns: minmax(0, 1fr) 15rem;
-    align-items: end;
-    gap: var(--space-l);
-  }
-
-  .campaign .artwork-wide figcaption {
-    inline-size: auto;
-  }
-}
-
 /* Text und Illustration nebeneinander, sobald die Spalte breit genug ist.
    Darunter folgt das Bild dem Text. */
 .campaign .art-split {
@@ -1650,34 +1401,16 @@
   margin-block-start: var(--space-xs);
 }
 
-.campaign .art-split .artwork-side {
-  --art-height: 19rem;
-}
-
 @container campaign (width >= 52rem) {
   .campaign .art-split {
     grid-template-columns: minmax(0, 1fr) minmax(17rem, 23rem);
   }
 
-  /* Gleich breit für Profile mit lesbaren Beschriftungen. */
-  .campaign .art-split.even {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  
 
-  /* Motiv links, Text rechts: bricht die Folge gleich gebauter Blöcke. */
-  .campaign .art-split.reverse > .artwork {
-    grid-row: 1;
-    grid-column: 1;
-  }
+  
 
-  .campaign .art-split.even .artwork-side {
-    --art-height: 22rem;
-  }
-
-  /* Aufeinanderfolgende Bildblöcke brauchen mehr Luft als Text zu Text. */
-  .campaign :is(.artwork-wide, .art-split.even) + .art-split.even {
-    margin-block-start: var(--space-2xl);
-  }
+  
 }
 
 /* Dossier: „Bin ich betroffen?“ steht rechts neben der Schlagzeile. */
@@ -1692,124 +1425,7 @@
   }
 }
 
-/* Häufige Fragen: Überschrift links, Antworten rechts, damit die Liste
-   nicht an der linken Kante hängt. */
-@container campaign (width >= 60rem) {
-  .campaign .faq {
-    display: grid;
-    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-    align-items: start;
-    column-gap: var(--space-2xl);
-  }
-
-  .campaign .faq .faq-list {
-    max-inline-size: none;
-    margin-block-start: 0;
-  }
-}
-
-/* ---------- Startseite: dichter erzählt ------------------------------- */
-
-/* Die Startseite trägt viele Bilder; engere Bänder halten sie kurz. */
-.campaign.landing {
-  --band-gap: clamp(4rem, 2.5rem + 4vw, 6.5rem);
-}
-
-/* Der Satz mit den Kennzahlen gehört zum Hero und steht deshalb dicht
-   darunter, ohne eigene Fläche. */
-.campaign.landing > .hero + .figures {
-  margin-block-start: calc(var(--space-l) - var(--band-gap));
-}
-
-/* Mehrere Textlinks am Ende eines Bands stehen in einer Zeile. */
-.campaign .link-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--space-l);
-  margin-block-start: var(--space-l);
-}
-
-.campaign .link-row .text-link {
-  margin-block-start: 0;
-}
-
-/* ---------- Mitmachen am Höhepunkt ------------------------------------ */
-
-/* Direkt nach der Geschichte, wo sie am stärksten wirkt: eine Fläche mit
-   drei Wegen. Spenden trägt das Verfahren und steht deshalb vorne, die
-   anderen zwei sind gleich schwer. */
-.campaign .peak {
-  padding: var(--space-l) var(--space-m-l);
-  border-radius: var(--radius-xl);
-  background: var(--panel);
-}
-
-.campaign .peak h2 span {
-  display: block;
-  color: var(--accent);
-}
-
-.campaign .peak > .section-intro {
-  margin-block-start: var(--space-s);
-}
-
-.campaign .peak-actions {
-  display: grid;
-  gap: var(--space-m);
-  margin-block-start: var(--space-l);
-  padding: 0;
-  list-style: none;
-}
-
-.campaign .peak-actions li {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-xs);
-  padding: var(--space-m);
-  border-radius: var(--radius-lg);
-  background: var(--paper);
-}
-
-.campaign .peak-actions h3 {
-  font-size: var(--step-1);
-}
-
-.campaign .peak-actions p {
-  color: var(--ink-2);
-  text-wrap: pretty;
-}
-
-.campaign .peak-actions .button {
-  margin-block-start: auto;
-}
-
-/* Breit stehen die drei Wege nebeneinander, gleich gebaut und ohne Bild.
-   Spenden steht vorne und trägt als einziger den roten Knopf. */
-@container campaign (width >= 52rem) {
-  .campaign .peak-actions {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* ---------- Leitsatz und Einwände -------------------------------------- */
-
-/* Der Leitsatz steht über Einwänden und Argumenten: kurze Antworten, jede
-   mit einem Beleg zum Weiterlesen. */
-.campaign .statement {
-  max-inline-size: 20ch;
-  font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.625rem);
-  font-weight: 600;
-  font-stretch: 94%;
-  line-height: 1.04;
-  letter-spacing: -0.026em;
-  text-wrap: balance;
-}
-
-.campaign .statement span {
-  display: block;
-  color: var(--accent);
-}
+/* ---------- Einwände ---------------------------------------------------- */
 
 .campaign .objections {
   display: grid;
@@ -1825,17 +1441,8 @@
   gap: var(--space-xs);
 }
 
-.campaign .objections strong {
-  font-size: var(--step-1);
-  font-weight: 560;
-  line-height: 1.3;
-}
-
 .campaign .objections .objection > strong {
-  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
-  font-weight: 450;
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+  font-weight: var(--weight-text);
 }
 
 .campaign .objections p {
@@ -1878,8 +1485,8 @@
   );
   background-clip: text;
   color: transparent;
-  font-size: clamp(2.5rem, 1.9rem + 2.4vw, 3.5rem);
-  font-weight: 600;
+  font-size: var(--type-h2);
+  font-weight: var(--weight-heading);
   font-stretch: 94%;
   line-height: 0.9;
   letter-spacing: -0.045em;
@@ -1889,25 +1496,6 @@
 @container campaign (width >= 40rem) {
   .campaign .precedent {
     grid-template-columns: auto minmax(0, 1fr);
-  }
-}
-
-/* ---------- Wer dahintersteht ------------------------------------------ */
-
-.campaign .about {
-  display: grid;
-  align-items: start;
-  gap: var(--space-l) var(--space-2xl);
-  margin-block-start: var(--space-m);
-}
-
-.campaign .about > div > :first-child {
-  margin-block-start: 0;
-}
-
-@container campaign (width >= 52rem) {
-  .campaign .about {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   }
 }
 
@@ -2202,75 +1790,3 @@ html:has(.lightbox[open]) {
   }
 }
 
-/* ---------- Zeitleiste ------------------------------------------------- */
-
-.campaign .timeline {
-  display: grid;
-  gap: var(--space-m);
-  margin-block-start: var(--space-m);
-  padding: 0;
-  list-style: none;
-}
-
-.campaign .timeline li {
-  position: relative;
-  display: grid;
-  align-content: start;
-  gap: var(--space-3xs);
-  padding-inline-start: 1.75rem;
-}
-
-.campaign .timeline li::before {
-  content: "";
-  position: absolute;
-  inset-block-start: 0.45em;
-  inset-inline-start: 0;
-  inline-size: 0.875rem;
-  block-size: 0.875rem;
-  border: 1px solid var(--material-edge);
-  border-radius: var(--radius-full);
-  background: linear-gradient(155deg, #4b5056, #25282d);
-  box-shadow: inset 0 1px 0 #ffffff38;
-}
-
-.campaign .timeline li:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  inset-block: calc(0.45em + 0.875rem) calc(-1 * var(--space-m));
-  inset-inline-start: calc(0.4375rem - 1px);
-  border-inline-start: 2px solid light-dark(#c6cbcf, #454b51);
-}
-
-.campaign .timeline strong {
-  font-size: var(--step-1);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.015em;
-}
-
-.campaign .timeline span {
-  color: var(--ink-2);
-  text-wrap: pretty;
-}
-
-@container campaign (width >= 40rem) {
-  .campaign .timeline {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .campaign .timeline li {
-    padding-block-start: 1.5rem;
-    padding-inline-start: 0;
-  }
-
-  .campaign .timeline li::before {
-    inset-block-start: 0;
-  }
-
-  .campaign .timeline li:not(:last-child)::after {
-    inset-block: calc(0.4375rem - 1px) auto;
-    inset-inline: 1.375rem calc(-1 * var(--space-m) + 0.5rem);
-    border-inline-start: 0;
-    border-block-start: 2px solid light-dark(#c6cbcf, #454b51);
-  }
-}

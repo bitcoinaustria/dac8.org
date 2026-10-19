@@ -29,7 +29,7 @@ const newestFirst = [...attacks].sort((a, b) =>
 
 // The archive follows Jameson Lopp's list as written and keeps every case,
 // whatever made the victim known; the cases where a leak made the attack
-// possible are in the dossier (#angriffe). The intro explains the risk through
+// possible are on the data-leaks page (#angriffe). The intro explains the risk through
 // bitcoin as a bearer asset and argues for keeping holdings private. It must
 // not read as a warning against owning bitcoin.
 
@@ -78,7 +78,7 @@ const strings = en
             ? " Most victims stay silent, and many cases never become public. How the attackers knew about their victims is rarely reported."
             : " Die meisten Opfer schweigen, viele Fälle werden nie öffentlich. Woher die Täter von ihren Opfern wussten, steht selten im Bericht."}
       </p>
-      <a class="atlas-why" href={`${pathFor("dossier", language)}#angriffe`}
+      <a class="atlas-why" href={`${pathFor("leaks", language)}#angriffe`}
         >{en ? "Attacks after data leaks" : "Angriffe nach Datenlecks"}</a
       >
     </header>
@@ -1135,15 +1135,28 @@ const strings = en
       0 1px 3px color-mix(in oklab, var(--foreground) 25%, transparent);
   }
 
-  .atlas .leaflet-control-attribution {
-    color: var(--ink-3);
-    background: color-mix(in oklab, var(--background) 85%, transparent);
-    font-size: 0.6875rem;
+  /* Eine Stufe genauer als Leaflets eigenes Stylesheet, das später lädt:
+     sonst bleibt es hell hinterlegt und im Dunkelmodus unlesbar. Die
+     Quellen sind Links und sehen auch so aus. */
+  .atlas .leaflet-container .leaflet-control-attribution {
+    padding: 0.15em 0.6em;
+    border-top-left-radius: var(--radius-md);
+    color: var(--ink-2);
+    background: color-mix(in oklab, var(--background) 92%, transparent);
+    font-size: 0.75rem;
   }
 
-  .atlas .leaflet-control-attribution a {
-    color: inherit;
+  .atlas .leaflet-container .leaflet-control-attribution a {
+    color: var(--foreground);
+    font-weight: 560;
     text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+    text-underline-offset: 0.15em;
+  }
+
+  .atlas .leaflet-container .leaflet-control-attribution a:hover {
+    color: var(--accent);
+    text-decoration-color: currentColor;
   }
 
   .atlas .atlas-popup .leaflet-popup-content-wrapper {
