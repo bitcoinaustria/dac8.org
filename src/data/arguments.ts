@@ -19,10 +19,13 @@ export type Point = {
 export type PointId =
   | "allCustomers"
   | "nothingToHide"
+  | "notRich"
   | "power"
   | "noExit"
   | "taxFairness"
+  | "selfCustody"
   | "honeypot"
+  | "pseudonymous"
   | "sortable"
   | "noEndDate"
   | "justTaxData"
@@ -33,9 +36,16 @@ export type PointId =
 
 // Which points each section of the arguments page shows, in order.
 export const topics = {
-  verdacht: ["allCustomers", "nothingToHide", "power", "noExit", "taxFairness"],
+  verdacht: [
+    "allCustomers",
+    "nothingToHide",
+    "notRich",
+    "power",
+    "noExit",
+    "taxFairness",
+  ],
   speicherdauer: ["justTaxData", "noEndDate", "ownWallet"],
-  sicherheit: ["honeypot", "sortable"],
+  sicherheit: ["selfCustody", "honeypot", "pseudonymous", "sortable"],
   ausbau: ["purpose", "keptAndUsed", "errors"],
 } as const satisfies Record<string, readonly PointId[]>
 
@@ -66,6 +76,10 @@ export const points: Record<Language, Record<PointId, Point>> = {
       title: "„Ich habe nichts zu verbergen.“",
       text: "Bitcoin in der eigenen Wallet ist wie Bargeld daheim. Stell dir vor, deine Bank würde dem Finanzamt jedes Jahr melden, wie viel Bargeld du abgehoben hast, ab dem ersten Euro und ohne Verdacht. Bei Bitcoin verlangt DAC8 das: Überträgst du von einer Börse auf die eigene Wallet, steht die Jahressumme in der Regel in der Meldung. Gelangt so eine Meldung in falsche Hände, zeigt sie, wer vermutlich Erspartes selbst verwahrt.",
     },
+    notRich: {
+      title: "„Ich habe doch gar kein Vermögen.“",
+      text: "Niemand muss reich sein, um finanzielle Privatsphäre zu brauchen. Beim Anbieter liegen auch einzelne Transaktionen. Aus ihnen lässt sich ablesen, wem du spendest, wo du Mitglied bist und wen du unterstützt.",
+    },
     power: {
       title: "Wer viel über dich weiß, hat Macht über dich.",
       text: "Wer weiß, was du besitzt und bewegst, kann dich erpressen, betrügen oder zu Unrecht verdächtigen. Das gilt für Kriminelle nach einem Datenleck ebenso wie für Stellen, die Daten später anders nutzen als gedacht. Darum muss jede Sammlung begründet und begrenzt sein.",
@@ -78,13 +92,21 @@ export const points: Record<Language, Record<PointId, Point>> = {
       title: "„Es geht doch um Steuergerechtigkeit.“",
       text: "Steuern zahlen soll jeder, das bestreiten wir nicht. Aber auch dafür darf der Staat nur so viele Daten verlangen und so lange speichern, wie er begründen kann.",
     },
+    selfCustody: {
+      title: "Wir verteidigen Selbstverwahrung.",
+      text: "Selbstverwahrung heißt, Bitcoin in der eigenen Wallet zu halten statt bei einer Börse. Sie ist ein Grundpfeiler von Bitcoin und so legitim wie Bargeld daheim. Wie beim Bargeld entsteht das Risiko erst, wenn andere erfahren, wer vermutlich wie viel hat. Wir kritisieren Datenbestände, die Menschen identifizieren, nicht die eigene Wallet.",
+    },
     honeypot: {
       title: "Der Anbieter wird zum Honeypot.",
-      text: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist ein Angriff. Beim Anbieter liegen Ausweis, Wallet-Adressen und Transaktionen, mit DAC8 auch Steuernummer und Jahreswerte. Ein Datenleck verbindet deinen Namen mit deinen Wallet-Adressen. Wer diese Zuordnung einmal hat, behält sie und kann damit weitere Zahlungen verfolgen.",
+      text: "Je mehr an einer Stelle liegt und je länger es dort bleibt, desto lohnender ist ein Angriff. Beim Anbieter liegen Ausweis, Wallet-Adressen und Transaktionen, mit DAC8 auch Steuernummer und Jahreswerte. Beim Finanzamt laufen die Jahresmeldungen aller Anbieter zusammen, bei denen du Kunde bist. Mit jedem Jahr wächst beides.",
+    },
+    pseudonymous: {
+      title: "Pseudonym ist nicht anonym.",
+      text: "Auf der Blockchain stehen Zahlungen unter Wallet-Adressen statt unter Namen. Ein Datenleck beim Anbieter kann deinen Namen mit deinen Wallet-Adressen verbinden. Dann lassen sich dir auch deine früheren Zahlungen und dein sichtbarer Bestand zuordnen. Wer diese Zuordnung einmal hat, behält sie: Aus pseudonymen Daten wird ein persönliches Finanzprofil.",
     },
     sortable: {
-      title: "Sortierbar nach Vermögen.",
-      text: "Aus Summe und Anzahl der Käufe lässt sich grob schätzen, wie viel Geld jemand in Krypto bewegt. Wer die Daten in die Hände bekommt, kann so Menschen herausfiltern, die vermögend wirken, auch wenn die Schätzung falsch ist.",
+      title: "Sortierbar nach vermutetem Vermögen.",
+      text: "Aus Summe und Anzahl der Käufe und Übertragungen lässt sich grob schätzen, wie viel jemand in Krypto bewegt. Die Schätzung kann weit danebenliegen: Überträgst du Bitcoin von der Börse auf deine Wallet, schickst sie zurück und überträgst sie wieder, zählt dasselbe Geld zweimal. Wer die Daten in die Hände bekommt, filtert trotzdem Menschen heraus, die vermögend wirken. Schon der Verdacht kann Kriminelle anlocken, ob der vermutete Bestand stimmt oder nicht.",
     },
     noEndDate: {
       title: "Eine Akte ohne Enddatum.",
@@ -127,6 +149,10 @@ export const points: Record<Language, Record<PointId, Point>> = {
       title: "“I have nothing to hide.”",
       text: "Bitcoin in your own wallet is like cash at home. Imagine your bank telling the tax authority every year how much cash you withdrew, from the first euro and without suspicion. For bitcoin, DAC8 requires just that: if you move coins from an exchange to your own wallet, the annual total usually appears in the report. In the wrong hands, such a report shows who probably keeps savings in self-custody.",
     },
+    notRich: {
+      title: "“I don’t even have any wealth.”",
+      text: "Nobody has to be rich to need financial privacy. The provider also holds individual transactions. They show whom you donate to, where you are a member and whom you support.",
+    },
     power: {
       title: "Whoever knows a lot about you has power over you.",
       text: "Whoever knows what you own and move can blackmail you, defraud you or wrongly suspect you. That goes for criminals after a data breach as much as for bodies that later use the data in ways no one intended. That is why every collection needs a justification and a limit.",
@@ -139,13 +165,21 @@ export const points: Record<Language, Record<PointId, Point>> = {
       title: "“It’s about tax fairness.”",
       text: "Everyone should pay their taxes; we do not dispute that. But even for that, the state may only demand as much data, and keep it as long, as it can justify.",
     },
+    selfCustody: {
+      title: "We defend self-custody.",
+      text: "Self-custody means holding bitcoin in your own wallet instead of with an exchange. It is a cornerstone of bitcoin and as legitimate as cash at home. As with cash, the risk only arises when others learn who probably holds how much. We criticise data stores that identify people, not your own wallet.",
+    },
     honeypot: {
       title: "The provider becomes a honeypot.",
-      text: "The more data sits in one place, and the longer it stays there, the more an attack pays off. The provider holds your ID, wallet addresses and transactions, and with DAC8 also your tax identification number and annual totals. A breach ties your name to your wallet addresses. Whoever has that link keeps it and can use it to trace further payments.",
+      text: "The more data sits in one place, and the longer it stays there, the more an attack pays off. The provider holds your ID, wallet addresses and transactions, and with DAC8 also your tax identification number and annual totals. At the tax authority, the annual reports from every provider you use come together. Both grow every year.",
+    },
+    pseudonymous: {
+      title: "Pseudonymous is not anonymous.",
+      text: "On the blockchain, payments appear under wallet addresses instead of names. A breach at a provider can tie your name to your wallet addresses. Then your past payments and visible holdings can be traced to you as well. Whoever has that link keeps it: pseudonymous data becomes a personal financial profile.",
     },
     sortable: {
-      title: "Sortable by wealth.",
-      text: "Total value and number of purchases give a rough estimate of how much money someone moves in crypto. Anyone who gets hold of the data can use it to single out people who appear wealthy, even when the estimate is wrong.",
+      title: "Sortable by presumed wealth.",
+      text: "Totals and counts of purchases and transfers give a rough estimate of how much someone moves in crypto. The estimate can be far off: move bitcoin from an exchange to your wallet, send it back and move it out again, and the same money counts twice. Anyone who gets hold of the data still singles out people who appear wealthy. Suspicion alone can draw criminals, whether the presumed holdings are real or not.",
     },
     noEndDate: {
       title: "A file with no end date.",
