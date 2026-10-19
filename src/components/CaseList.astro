@@ -1,17 +1,23 @@
 ---
 import type { Language } from "@/lib/i18n"
 
-// Sourced cases. Each has a dateline above the headline ("Ledger · 2020"),
-// so a reader can run down the list by who and when before reading any
-// sentence. Titles written as "Ledger 2020: headline." are split into both.
-// Tags name what was lost; data attributes let the leak page filter.
+// Sourced cases as a log, built like the list of the attack archive: when
+// and who in small type, a one-line headline, one sentence, the sources.
+// Wide, year and who stand in a margin, the year once per year, and what
+// was lost stands in a column on the right, so the list can be read down
+// either edge without reading a sentence. Narrow, what was lost comes right
+// under who lost it. Further sentences open on request; without JavaScript
+// they simply show.
 export interface Case {
   // An anchor, so other pages can link to the case.
   id?: string
-  dateline?: string
+  year?: number
+  who: string
+  kind?: string
   title: string
   text: string
   sources: { label: string; href: string }[]
+  // What was lost, as short labels.
   tags?: string[]
   data?: Record<string, string>
 }
@@ -23,39 +29,56 @@ interface Props {
 
 const { items, language } = Astro.props
 const en = language === "en"
+const tagged = items.some((item) => item.tags?.length)
 
-const split = (title: string) => {
-  const at = title.indexOf(": ")
-  if (at < 0) return { headline: title }
-  const lead = title.slice(0, at)
-  const year = lead.match(/^(.+?),?\s(\d{4})$/)
-  const rest = title.slice(at + 2)
-  return {
-    dateline: year ? `${year[1]} · ${year[2]}` : lead,
-    headline: rest.charAt(0).toUpperCase() + rest.slice(1),
-  }
+// The first sentence carries the case. A very short one takes the next
+// along, and a short remainder is not worth a button.
+const count = (text: string) => text.split(/\s+/).filter(Boolean).length
+const split = (text: string) => {
+  const sentences = text.split(/(?<=[.!?])\s+(?=[\p{Lu}\d„"])/u)
+  let lede = sentences.shift() ?? ""
+  while (sentences.length > 0 && count(lede) < 14)
+    lede += ` ${sentences.shift()}`
+  const rest = sentences.join(" ")
+  return count(rest) <= 10 ? { lede: text, rest: "" } : { lede, rest }
 }
 ---
 
-<ul class="facts cases">
-  {items.map((item) => {
-    const { dateline, headline } = item.dateline
-      ? { dateline: item.dateline, headline: item.title }
-      : split(item.title)
+<ol
+  class:list={["case-log", { tagged }]}
+  data-case-log
+  data-more={en ? "more" : "mehr"}
+  data-less={en ? "less" : "weniger"}
+>
+  {items.map((item, index) => {
+    const { lede, rest } = split(item.text)
+    const repeat = index > 0 && items[index - 1].year === item.year
     const data = Object.fromEntries(
       Object.entries(item.data ?? {}).map(([key, value]) => [`data-${key}`, value]),
     )
     return (
-      <li id={item.id} {...data}>
-        {dateline && <p class="dateline">{dateline}</p>}
-        <strong>{headline}</strong>
+      <li id={item.id} data-year={item.year ?? ""} {...data}>
+        <p class="case-meta">
+          <span class="case-when" data-repeat={repeat ? "" : undefined}>
+            {item.year ?? (en ? "Over years" : "Über Jahre")}
+          </span>
+          <strong class="case-who">{item.who}</strong>
+          {item.kind && <span class="case-kind">{item.kind}</span>}
+        </p>
         {item.tags && item.tags.length > 0 && (
-          <ul class="case-tags" aria-label={en ? "Data lost" : "Verlorene Daten"}>
-            {item.tags.map((tag) => <li>{tag}</li>)}
-          </ul>
+          <div class="case-lost">
+            <span aria-hidden="true">{en ? "Lost" : "Verloren"}</span>
+            <ul aria-label={en ? "Data lost" : "Verlorene Daten"}>
+              {item.tags.map((tag) => <li>{tag}</li>)}
+            </ul>
+          </div>
         )}
-        <p>{item.text}</p>
-        <small>
+        <h3 class="case-title">{item.title}</h3>
+        <p class="case-text">
+          {lede}
+          {rest && <span class="case-rest" data-rest>{` ${rest}`}</span>}
+        </p>
+        <p class="case-sources">
           {item.sources.length > 1
             ? en
               ? "Sources:"
@@ -67,8 +90,238 @@ const split = (title: string) => {
             index > 0 && ", ",
             <a href={source.href}>{source.label}</a>,
           ])}
-        </small>
+        </p>
       </li>
     )
   })}
-</ul>
+</ol>
+
+<script>
+  // Fold everything after the first sentence behind a small button at the
+  // end of the paragraph. A data attribute rather than `hidden` folds it, so
+  // the leak page's search can show the full text while it filters.
+  let next = 0
+  for (const log of document.querySelectorAll<HTMLElement>("[data-case-log]")) {
+    const { more = "mehr", less = "weniger" } = log.dataset
+    for (const rest of log.querySelectorAll<HTMLElement>("[data-rest]")) {
+      rest.id ||= `case-rest-${++next}`
+      rest.toggleAttribute("data-folded", true)
+      const button = document.createElement("button")
+      button.type = "button"
+      button.className = "case-more"
+      button.textContent = more
+      button.setAttribute("aria-expanded", "false")
+      button.setAttribute("aria-controls", rest.id)
+      button.addEventListener("click", () => {
+        const folded = rest.toggleAttribute("data-folded")
+        button.setAttribute("aria-expanded", String(!folded))
+        button.textContent = folded ? more : less
+      })
+      rest.after(button)
+    }
+  }
+</script>
+
+<style>
+  .case-log {
+    display: grid;
+    margin-block-start: var(--space-xl);
+    padding: 0;
+    list-style: none;
+    border-block-end: 1px solid var(--line);
+  }
+
+  /* Narrow: year, who and what kind of holder on one line, then what was
+     lost, the headline, the text and the sources. */
+  .case-log > li {
+    display: grid;
+    grid-template-areas:
+      "meta"
+      "lost"
+      "title"
+      "text"
+      "sources";
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3xs);
+    padding-block: var(--space-m);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .case-rest[data-folded] {
+    display: none;
+  }
+
+  .case-meta {
+    grid-area: meta;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    line-height: 1.4;
+  }
+
+  .case-when {
+    color: var(--ink);
+    font-weight: var(--weight-heading);
+  }
+
+  .case-meta > :not(:first-child)::before {
+    content: " · ";
+    color: var(--ink-3);
+    font-weight: var(--weight-text);
+  }
+
+  .case-who {
+    color: var(--ink);
+    font-weight: var(--weight-strong);
+  }
+
+  /* Label and pills flow as one line that wraps pill by pill. */
+  .case-lost {
+    grid-area: lost;
+    margin-block: var(--space-3xs) var(--space-2xs);
+    font-size: var(--type-meta);
+    line-height: 1.9;
+  }
+
+  .case-lost > span {
+    margin-inline-end: var(--space-2xs);
+    color: var(--ink-3);
+  }
+
+  .case-lost ul {
+    display: inline;
+    padding: 0;
+    list-style: none;
+  }
+
+  .case-lost li {
+    display: inline-block;
+    margin-inline-end: var(--space-3xs);
+    padding: 0 0.65em;
+    border-radius: var(--radius-full);
+    color: var(--ink);
+    background: color-mix(in oklab, var(--foreground) 8%, transparent);
+    font-weight: var(--weight-strong);
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+
+  .case-title {
+    grid-area: title;
+    max-inline-size: 42ch;
+    font-size: var(--type-lead);
+    font-weight: var(--weight-heading);
+    line-height: 1.3;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+  }
+
+  .case-text {
+    grid-area: text;
+    max-inline-size: var(--measure-text);
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  .case-text :global(.case-more) {
+    margin-inline-start: 0.1em;
+    padding: 0;
+    border: 0;
+    color: var(--ink);
+    background: none;
+    font: inherit;
+    font-weight: var(--weight-strong);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+    text-underline-offset: 0.18em;
+    cursor: pointer;
+  }
+
+  .case-text :global(.case-more:hover) {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+  }
+
+  .case-sources {
+    grid-area: sources;
+    margin-block-start: var(--space-3xs);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  .case-sources a {
+    color: var(--ink-2);
+  }
+
+  /* Wide: a margin with the year, shown once per year above a darker rule,
+     and who lost the data; what was lost in a column on the right. Read
+     down the edges, the list is a table; read across, a story. */
+  @container campaign (width >= 46rem) {
+    .case-log > li {
+      grid-template-areas:
+        "meta title"
+        "meta text"
+        "meta sources";
+      grid-template-columns: 10rem minmax(0, 42rem);
+      grid-template-rows: auto auto 1fr;
+      column-gap: var(--space-l);
+      padding-block: var(--space-s-m);
+    }
+
+    .case-log.tagged > li {
+      grid-template-areas:
+        "meta title lost"
+        "meta text lost"
+        "meta sources lost";
+      grid-template-columns: 10rem minmax(0, 42rem) minmax(9rem, 13rem);
+    }
+
+    .case-log > li:has(.case-when:not([data-repeat])) {
+      border-block-start-color: var(--ink);
+    }
+
+    .case-meta > * {
+      display: block;
+    }
+
+    .case-meta > :not(:first-child)::before {
+      content: none;
+    }
+
+    .case-when {
+      margin-block-end: var(--space-2xs);
+      font-size: var(--type-body);
+    }
+
+    .case-when[data-repeat] {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .case-who {
+      font-size: var(--type-body);
+    }
+
+    .case-kind {
+      hyphens: auto;
+    }
+
+    /* One pill per line, under the label. */
+    .case-lost {
+      margin-block: 0;
+    }
+
+    .case-lost > span,
+    .case-lost ul,
+    .case-lost li {
+      display: table;
+    }
+
+    .case-lost li {
+      margin-block-start: var(--space-3xs);
+    }
+  }
+</style>

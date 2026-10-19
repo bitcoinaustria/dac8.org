@@ -13,50 +13,40 @@ interface Props {
   language: Language
 }
 
+// Under the leak page's cases that reached someone's door: the archive's
+// key figures in one sentence, the caveat in one more, then the way to the
+// archive. France's own count is one of the cases above it.
 const { language } = Astro.props
 const en = language === "en"
 
-const years = [latestYear - 2, latestYear - 1, latestYear]
-const throughShort = latestDate ? formatDate(latestDate, language, false) : ""
+const through = latestDate ? formatDate(latestDate, language, false) : ""
+const now = countIn(latestYear)
+const before = countIn(latestYear - 1)
 const euNow = countIn(latestYear, euCountries)
-const euBefore = countIn(latestYear - 1, euCountries)
-const franceNow = countIn(latestYear, ["FR"])
-// France's Interior Minister counted 77 cases in the first half of 2026.
-const showFrance = latestYear === 2026 && franceNow < 77
 ---
 
-<div class="attacks">
-  <h3>{en ? "Known attacks worldwide" : "Bekannte Angriffe weltweit"}</h3>
-  <div class="columns">
-    <p class="section-intro">
-      {en
-          ? `${attacks.length} physical attacks on holders of bitcoin and other crypto-assets are publicly known, and the number keeps rising. In the EU there have already been ${euNow} this year, after ${euBefore} in all of ${latestYear - 1}.`
-          : `${attacks.length} körperliche Angriffe auf Besitzer von Bitcoin und anderen Kryptowerten sind öffentlich bekannt, und es werden laufend mehr. In der EU sind es ${latestYear} schon ${euNow}, nach ${euBefore} im ganzen Jahr ${latestYear - 1}.`}
-    </p>
-    <p class="prose">
-      {en
-          ? "The list is incomplete: most victims stay silent, and many cases never become public."
-          : "Die Liste ist unvollständig: Die meisten Opfer schweigen, und viele Fälle werden nie öffentlich."}
-      {showFrance &&
-          (en
-            ? ` France’s Interior Minister alone counted 77 abductions, sequestrations and extortions or attempts in the first half of ${latestYear}; the collection has ${franceNow} French cases for the whole year so far.`
-            : ` Allein Frankreichs Innenminister zählte im ersten Halbjahr ${latestYear} 77 Entführungen, Freiheitsberaubungen und Erpressungen oder Versuche; die Sammlung kennt für Frankreich bisher ${franceNow} im ganzen Jahr.`)}
-    </p>
-  </div>
+<div class="attack-summary">
   <p class="figure-line">
     {en ? (
       <>
-        In {years[0]}, <strong>{countIn(years[0])} attacks</strong> became
-        known, in {years[1]} <strong>{countIn(years[1])}</strong>, and in{" "}
-        {years[2]} <strong>{countIn(years[2])}</strong> up to {throughShort}.
+        Worldwide, <strong>{attacks.length} physical attacks</strong> on
+        holders of bitcoin and other crypto-assets are publicly known. There
+        were {before} in {latestYear - 1} and <strong>{now}</strong> in{" "}
+        {latestYear} up to {through}, {euNow} of them in the EU.
       </>
     ) : (
       <>
-        {years[0]} wurden <strong>{countIn(years[0])} Angriffe</strong>{" "}
-        bekannt, {years[1]} <strong>{countIn(years[1])}</strong>, {years[2]}{" "}
-        bis {throughShort} schon <strong>{countIn(years[2])}</strong>.
+        Weltweit sind <strong>{attacks.length} körperliche Angriffe</strong> auf
+        Besitzer von Bitcoin und anderen Kryptowerten öffentlich bekannt.{" "}
+        {latestYear - 1} waren es {before}, {latestYear} bis {through} schon{" "}
+        <strong>{now}</strong>, {euNow} davon in der EU.
       </>
     )}
+  </p>
+  <p class="attack-caveat">
+    {en
+        ? "Most victims stay silent, and many cases never become public."
+        : "Die meisten Opfer schweigen, viele Fälle werden nie öffentlich."}
   </p>
   <a class="button primary" href={pathFor("attacks", language)}
     >{en ? "Open the attack archive" : "Zum Angriffsarchiv"}</a
@@ -64,11 +54,17 @@ const showFrance = latestYear === 2026 && franceNow < 77
 </div>
 
 <style>
-  .attacks {
-    margin-block-start: var(--space-2xl);
+  .attack-summary {
+    margin-block-start: var(--space-xl);
   }
 
-  .figure-line {
-    margin-block: var(--space-xl);
+  .attack-caveat {
+    margin-block-start: var(--space-2xs);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  .attack-summary .button {
+    margin-block-start: var(--space-l);
   }
 </style>
