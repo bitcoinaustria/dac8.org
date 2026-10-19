@@ -56,16 +56,24 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
   },
   history: {
     de: {
-      title: "Wie es zu DAC8 kam: die EU-Steueramtshilfe seit 1977",
+      title: "Von der Amtshilfe zu DAC8: Jede Stufe sammelt mehr Daten",
       description:
-        "Von der Amtshilfe 1977 bis zu jährlichen Meldepflichten für Banken, Plattformen und Krypto-Anbieter: DAC1 bis DAC9, die Neufassung und Österreich. Mit Primärquellen.",
-      imageLines: ["Wie es zu DAC8 kam.", "Und was noch kommt."],
+        "Von der Amtshilfe 1977 bis zu jährlichen Meldungen von Banken, Plattformen und Krypto-Anbietern: DAC1 bis DAC9 und die vorgeschlagene Neufassung, mit Primärquellen.",
+      imageLines: [
+        "Jede Stufe sammelt",
+        "mehr Daten.",
+        "Bis jemand Grenzen setzt.",
+      ],
     },
     en: {
-      title: "How we got to DAC8: EU tax cooperation since 1977",
+      title: "From mutual assistance to DAC8: every step collects more data",
       description:
-        "From exchange on request in 1977 to annual reporting duties for banks, platforms and crypto-asset providers: DAC1 to DAC9, the recast and Austria. With primary sources.",
-      imageLines: ["How we got to DAC8.", "And what comes next."],
+        "From mutual assistance in 1977 to annual reports by banks, platforms and crypto-asset providers: DAC1 to DAC9 and the proposed recast, with primary sources.",
+      imageLines: [
+        "Every step collects",
+        "more data.",
+        "Until someone sets limits.",
+      ],
     },
   },
   participate: {

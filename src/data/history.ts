@@ -21,6 +21,8 @@ export const historyResearchDate: Record<Language, string> = {
   en: longDate("en-GB"),
 }
 
+// Chapters of the former timeline. Links to them still land on the first
+// chart row of each era.
 type Era = "anfaenge" | "automatik" | "konzerne" | "neue-bereiche" | "ausblick"
 // context: outside the directive, e.g. OECD standards. proposed: not law.
 type Status = "context" | "repealed" | "past" | "current" | "proposed"
@@ -28,9 +30,9 @@ type Status = "context" | "repealed" | "past" | "current" | "proposed"
 type Text = {
   when: string
   title: string
-  // Shown on the timeline: one or two sentences.
+  // The first sentences when a row of the history chart opens.
   text: string
-  // The rest of the explanation, behind the entry's disclosure.
+  // The rest of the explanation, below the text.
   more?: string
   reporters?: string
   austria?: string
@@ -602,23 +604,33 @@ export const history: Entry[] = [
 
 // What tax authorities receive, by the step that introduced it; the history
 // page draws one bar per row from the year it applies. Years are EU
-// application dates, as in the entries. Each row links to its entry, whose
-// status (repealed, proposed) decides how the bar is drawn.
-type StackRow = {
+// application dates, as in the entries. Each row opens its entry, whose
+// status (repealed, proposed) decides how the bar is drawn. Entries without
+// a row of their own, the 1977 directive and the international standards,
+// open inside the row they led to.
+export type StackRow = {
   id: string
   step: string | Record<Language, string>
   from: number
   // Last year of application, for repealed steps.
   until?: number
   what: Record<Language, string>
+  // Entries that open inside this row: its predecessor or the standard it
+  // followed.
+  context?: string[]
 }
 
+// "compact" groups also appear in the short chart on the home page: the
+// steps about individuals and the proposal, which would add registers about
+// them.
 export const historyStack: {
   label: Record<Language, string>
+  compact?: boolean
   rows: StackRow[]
 }[] = [
   {
     label: { de: "Über Privatpersonen", en: "About individuals" },
+    compact: true,
     rows: [
       {
         id: "zinsrichtlinie",
@@ -634,6 +646,7 @@ export const historyStack: {
         id: "dac1",
         step: "DAC1",
         from: 2015,
+        context: ["amtshilfe-1977"],
         what: {
           de: "Löhne, Pensionen, Immobilien",
           en: "Salaries, pensions, property",
@@ -643,6 +656,7 @@ export const historyStack: {
         id: "dac2",
         step: "DAC2",
         from: 2016,
+        context: ["fatca", "crs"],
         what: {
           de: "Bankkonten",
           en: "Bank accounts",
@@ -670,6 +684,7 @@ export const historyStack: {
         id: "dac8",
         step: "DAC8",
         from: 2026,
+        context: ["carf"],
         what: {
           de: "Kryptowerte",
           en: "Crypto-assets",
@@ -720,6 +735,7 @@ export const historyStack: {
   },
   {
     label: { de: "Vorgeschlagen", en: "Proposed" },
+    compact: true,
     rows: [
       {
         id: "neufassung",
@@ -734,123 +750,94 @@ export const historyStack: {
   },
 ]
 
-export const historyEras: Record<
-  Language,
-  { id: Era; label: string; title: string; intro: string }[]
-> = {
-  de: [
-    {
-      id: "anfaenge",
-      label: "1977–2010",
-      title: "Amtshilfe im Einzelfall",
-      intro:
-        "Drei Jahrzehnte lang fragen Steuerbehörden einander zu bestimmten Fällen.",
+const statusOf = new Map(history.map((entry) => [entry.id, entry.status]))
+export const isProposed = (row: StackRow) => statusOf.get(row.id) === "proposed"
+
+// How many of the given rows apply in a year: proposals do not count, and a
+// step applies from its first year until it is repealed.
+export const stepsInForce = (rows: StackRow[], year: number) =>
+  rows.filter(
+    (row) =>
+      !isProposed(row) &&
+      row.from <= year &&
+      year <= (row.until ?? Number.POSITIVE_INFINITY),
+  ).length
+
+// What every step shares: each amends Directive 2011/16/EU, whose Article 16
+// says what exchanged data may be used for. The history chart closes with it.
+export const historyCommon: {
+  translations: Record<
+    Language,
+    { label: string; summary: string; text: string[] }
+  >
+  sources: Source[]
+} = {
+  translations: {
+    de: {
+      label: "Für alle Stufen",
+      summary:
+        "Seit DAC8 dürfen alle diese Daten auch gegen Geldwäsche und Terrorismusfinanzierung verwendet werden.",
+      text: [
+        "Jede Stufe ändert dieselbe Richtlinie von 2011. Übermittlungswege, Amtsgeheimnis und die Regeln, wofür die Daten verwendet werden dürfen, gelten für alle Kategorien gemeinsam.",
+        "Ursprünglich durften ausgetauschte Informationen für Steuern, deren Beitreibung, Sozialversicherungsbeiträge und Steuerstrafverfahren verwendet werden; für alles andere brauchte es die Zustimmung des Herkunftsstaats. DAC8 hat die Bekämpfung von Geldwäsche und Terrorismusfinanzierung hinzugefügt, und für EU-Sanktionsrechtsakte nach Art. 215 AEUV braucht es keine Zustimmung des Herkunftsstaats mehr. Zweckbindung, Geheimhaltung und Datenschutz gelten weiter. Das betrifft alle DAC-Daten, auch Konto-, Lohn-, Pensions- und Plattformdaten.",
+      ],
     },
-    {
-      id: "automatik",
-      label: "2011–2014",
-      title: "Der automatische Austausch",
-      intro: "Ab 2011 wird der automatische Austausch zur Regel.",
+    en: {
+      label: "For every step",
+      summary:
+        "Since DAC8, all of this data may also be used to fight money laundering and terrorist financing.",
+      text: [
+        "Every step amends the same 2011 directive. The exchange channels, official secrecy and the rules on what the data may be used for apply to all categories alike.",
+        "Originally, exchanged information could be used for taxes, tax recovery, social security contributions and tax penalty proceedings; any other use needed the sending country’s consent. DAC8 added the fight against money laundering and terrorist financing, and for the purposes of EU sanctions acts under Article 215 TFEU, the sending country’s consent is no longer required. Purpose limits, official secrecy and data protection still apply. This covers all DAC data, including bank-account, salary, pension and platform data.",
+      ],
     },
-    {
-      id: "konzerne",
-      label: "2015–2018",
-      title: "Konzerne und Berater",
-      intro:
-        "Nach Enthüllungen über Steuerabsprachen und Briefkastenfirmen richten sich neue Stufen an Konzerne und Berater.",
-    },
-    {
-      id: "neue-bereiche",
-      label: "2021–2025",
-      title: "Plattformen, Krypto, Mindeststeuer",
-      intro:
-        "Die Meldepflichten folgen der Wirtschaft in neue Bereiche, jeweils kurz nach einem Standard der OECD.",
-    },
-    {
-      id: "ausblick",
-      label: "Ab 2026",
-      title: "Was noch kommt",
-      intro:
-        "Der Vorschlag ist noch kein Recht und kann sich in den Verhandlungen ändern.",
-    },
-  ],
-  en: [
-    {
-      id: "anfaenge",
-      label: "1977–2010",
-      title: "Assistance in individual cases",
-      intro:
-        "For three decades, tax authorities ask each other about specific cases.",
-    },
-    {
-      id: "automatik",
-      label: "2011–2014",
-      title: "Automatic exchange",
-      intro: "From 2011, automatic exchange becomes the rule.",
-    },
-    {
-      id: "konzerne",
-      label: "2015–2018",
-      title: "Multinationals and advisers",
-      intro:
-        "After revelations about tax deals and shell companies, new steps target multinationals and advisers.",
-    },
-    {
-      id: "neue-bereiche",
-      label: "2021–2025",
-      title: "Platforms, crypto, minimum tax",
-      intro:
-        "Reporting follows the economy into new areas, each time shortly after an OECD standard.",
-    },
-    {
-      id: "ausblick",
-      label: "From 2026",
-      title: "What comes next",
-      intro: "The proposal is not yet law and may change in negotiations.",
-    },
+  },
+  sources: [
+    eli("dir/2011/16", {
+      de: "Art. 16 der Richtlinie 2011/16/EU",
+      en: "Article 16 of Directive 2011/16/EU",
+    }),
+    eli("dir/2023/2226", {
+      de: "Geändert durch Art. 1 Nr. 7 der Richtlinie (EU) 2023/2226",
+      en: "Amended by Article 1(7) of Directive (EU) 2023/2226",
+    }),
   ],
 }
 
-// "DAC3: Steuervorbescheide" becomes code "DAC3" and name
-// "Steuervorbescheide", so the timeline can set the codes as a column.
-const splitTitle = (title: string, short: string) => {
-  if (!title.startsWith(`${short}: `)) return { code: undefined, name: title }
-  const name = title.slice(short.length + 2)
-  return { code: short, name: name.charAt(0).toUpperCase() + name.slice(1) }
-}
-
-export const historyFor = (language: Language) =>
-  history.map((entry) => {
+export const historyFor = (language: Language) => {
+  const en = language === "en"
+  return history.map((entry) => {
     const { translations, short, sources, ...rest } = entry
     const text = translations[language]
-    const en = language === "en"
+    const facts = [
+      { label: en ? "Date" : "Datum", text: text.when },
+      text.reporters && {
+        label: en ? "Who reports" : "Wer meldet",
+        text: text.reporters,
+      },
+      text.austria && {
+        label:
+          entry.status === "proposed"
+            ? en
+              ? "Procedure"
+              : "Verfahren"
+            : en
+              ? "In Austria"
+              : "In Österreich",
+        text: text.austria,
+      },
+    ].filter((fact): fact is { label: string; text: string } => Boolean(fact))
     return {
       ...rest,
       short: short[language],
-      when: text.when,
       title: text.title,
-      ...splitTitle(text.title, short[language]),
       text: text.text,
       more: text.more,
-      reporters: text.reporters,
-      details: [
-        text.austria && {
-          label:
-            entry.status === "proposed"
-              ? en
-                ? "Procedure"
-                : "Verfahren"
-              : en
-                ? "In Austria"
-                : "In Österreich",
-          text: text.austria,
-        },
-      ].filter((detail): detail is { label: string; text: string } =>
-        Boolean(detail),
-      ),
+      facts,
       sources: sources.map((source) => ({
         label: source.label[language],
         href: source.href[language],
       })),
     }
   })
+}

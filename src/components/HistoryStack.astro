@@ -1,12 +1,22 @@
 ---
-import { historyAsOf, historyFor, historyStack } from "@/data/history"
-import { type Language, pathFor } from "@/lib/i18n"
+import {
+  historyAsOf,
+  historyCommon,
+  historyFor,
+  historyResearchDate,
+  historyStack,
+  isProposed,
+  stepsInForce,
+} from "@/data/history"
+import type { Language } from "@/lib/i18n"
 
 // The reporting duties as stacked bars: one row per step, from the year it
-// applies until today. Read top to bottom, the stack grows towards DAC8.
-// Each row is a link with its years spelled out; the bars only repeat them.
-// "compact" is a teaser for other pages: only the duties about individuals,
-// no caption or legend, rows linking into the history page.
+// applies until today, proposals beyond it. Read top to bottom, the stack
+// grows towards DAC8, and the count below adds the rows up year by year.
+// Every row opens in place with its text, facts and primary sources, and
+// entries without a row of their own open inside the row they led to.
+// "compact" is the version on the home page: only the steps about
+// individuals and the proposal, plain bars without rows to open.
 interface Props {
   language: Language
   compact?: boolean
@@ -14,25 +24,39 @@ interface Props {
 
 const { language, compact = false } = Astro.props
 const en = language === "en"
-const status = Object.fromEntries(
-  historyFor(language).map((entry) => [entry.id, entry.status]),
-)
+const entries = new Map(historyFor(language).map((entry) => [entry.id, entry]))
+const entryFor = (id: string) => {
+  const entry = entries.get(id)
+  if (!entry) throw new Error(`History chart: no entry "${id}"`)
+  return entry
+}
 
-const axisStart = 2002
+const axisStart = 2000
 const axisEnd = 2031
 const asOf = new Date(historyAsOf)
-const yearStart = Date.UTC(asOf.getUTCFullYear(), 0, 1)
+const thisYear = asOf.getUTCFullYear()
 const today =
-  asOf.getUTCFullYear() + (asOf.getTime() - yearStart) / (365 * 86_400_000)
-const x = (year: number) =>
-  `${(((year - axisStart) / (axisEnd - axisStart)) * 100).toFixed(2)}%`
+  thisYear + (asOf.getTime() - Date.UTC(thisYear, 0, 1)) / (365 * 86_400_000)
+const at = (year: number) => ((year - axisStart) / (axisEnd - axisStart)) * 100
+const x = (year: number) => `${at(year).toFixed(2)}%`
 const ticks = [2005, 2010, 2015, 2020, 2030]
 
-const base = compact ? pathFor("history", language) : ""
-const groups = historyStack.slice(0, compact ? 1 : undefined).map((group) => ({
+const shown = historyStack.filter((group) => !compact || group.compact)
+const rows = shown.flatMap((group) => group.rows)
+
+// Links to the former timeline's chapters land on the first row of each.
+const eraOf = new Map<string, string>()
+for (const entry of entries.values()) {
+  const isRow = rows.some((row) => row.id === entry.id)
+  if (isRow && ![...eraOf.values()].includes(entry.era))
+    eraOf.set(entry.id, entry.era)
+}
+
+const groups = shown.map((group) => ({
   label: group.label[language],
   rows: group.rows.map((row) => {
-    const kind = status[row.id] ?? "past"
+    const entry = entryFor(row.id)
+    const kind = entry.status
     const end =
       row.until !== undefined
         ? row.until + 1
@@ -49,17 +73,102 @@ const groups = historyStack.slice(0, compact ? 1 : undefined).map((group) => ({
           : en
             ? `since ${row.from}`
             : `seit ${row.from}`
+    const context = (row.context ?? []).map((id) => {
+      const nested = entryFor(id)
+      const before = nested.status !== "context"
+      return {
+        ...nested,
+        kicker: `${before ? (en ? "Before" : "Davor") : en ? "Context" : "Umfeld"}, ${nested.year}`,
+      }
+    })
     return {
       ...row,
+      entry,
       kind,
+      era: eraOf.get(row.id),
+      context,
       step: typeof row.step === "string" ? row.step : row.step[language],
       what: row.what[language],
       span,
-      href: `${base}#${row.id}`,
       style: `--from: ${x(row.from)}; --to: ${x(end)}`,
     }
   }),
 }))
+
+// The escalation in one sentence and one row of columns, both counted from
+// the rows above: how many steps applied in each year.
+const counted = rows.filter((row) => !isProposed(row))
+const firstYear = Math.min(...counted.map((row) => row.from))
+const columns = Array.from(
+  { length: thisYear - axisStart + 1 },
+  (_, i) => axisStart + i,
+).map((year) => {
+  const count = stepsInForce(counted, year)
+  return {
+    year,
+    count,
+    changed: count > 0 && count !== stepsInForce(counted, year - 1),
+    style: `--at: ${x(year)}; --w: ${(at(Math.min(year + 1, today)) - at(year)).toFixed(2)}%; --n: ${count}; --i: ${year - axisStart}`,
+  }
+})
+const peak = Math.max(...columns.map((column) => column.count))
+
+const words = {
+  de: "keine eine zwei drei vier fünf sechs sieben acht neun zehn elf zwölf",
+  en: "no one two three four five six seven eight nine ten eleven twelve",
+}
+const say = (count: number) =>
+  words[language].split(" ")[count] ?? String(count)
+const milestones = [
+  ...Array.from(
+    { length: Math.ceil((thisYear - firstYear) / 10) },
+    (_, i) => (Math.floor(firstYear / 10) + 1 + i) * 10,
+  )
+    .filter((year) => year < thisYear)
+    .map((year) => ({ year, count: stepsInForce(counted, year) })),
+  { year: thisYear, count: stepsInForce(counted, thisYear) },
+]
+const [first, ...rest] = milestones
+const middle = rest.slice(0, -1)
+const last = rest.at(-1) ?? first
+const one = (count: number) => count === 1
+const noun = (count: number) =>
+  en ? (one(count) ? "step" : "steps") : one(count) ? "Stufe" : "Stufen"
+const were = (count: number) => (one(count) ? "war es" : "waren es")
+type Part = string | { strong: string }
+const sentence: Part[] = en
+  ? [
+      {
+        strong: `${say(first.count).replace(/^./, (c) => c.toUpperCase())} ${noun(first.count)}`,
+      },
+      `${compact ? " applied to individuals in" : " applied in"} ${first.year}`,
+      ...middle.flatMap((m) => [
+        ", ",
+        { strong: say(m.count) },
+        ` in ${m.year}`,
+      ]),
+      " and ",
+      { strong: say(last.count) },
+      " today.",
+    ]
+  : [
+      compact
+        ? `Über Privatpersonen ${one(first.count) ? "galt" : "galten"} ${first.year} `
+        : `${first.year} ${one(first.count) ? "galt" : "galten"} `,
+      { strong: `${say(first.count)} ${noun(first.count)}` },
+      ...middle.flatMap((m) => [
+        `, ${m.year} ${were(m.count)} `,
+        { strong: say(m.count) },
+      ]),
+      `, heute ${one(last.count) ? "ist es" : "sind es"} `,
+      { strong: say(last.count) },
+      ".",
+    ]
+const counter = sentence
+  .map((part) =>
+    typeof part === "string" ? part : `<strong>${part.strong}</strong>`,
+  )
+  .join("")
 
 let index = 0
 ---
@@ -67,25 +176,27 @@ let index = 0
 <figure
   class:list={["stack", { compact }]}
   aria-labelledby={compact ? undefined : "stack-title"}
-  aria-label={compact ? (en ? "Reporting duties about individuals since 2005" : "Meldepflichten über Privatpersonen seit 2005") : undefined}
-  style={`--today: ${x(today)}`}
+  style={`--today: ${x(today)}; --peak: ${peak}`}
 >
-  {!compact && (
-  <figcaption>
-    <h2 id="stack-title">
-      {en ? "What tax authorities receive today" : "Was die Steuerbehörden heute bekommen"}
-    </h2>
-    <p>
-      {en
-        ? "One row per step, from the year it applies."
-        : "Eine Zeile je Stufe, ab dem Jahr, in dem sie angewendet wird."}
-    </p>
-    <ul class="stack-legend" aria-hidden="true">
-      <li class="past">{en ? "In force" : "In Kraft"}</li>
-      <li class="repealed">{en ? "Repealed" : "Aufgehoben"}</li>
-      <li class="proposed">{en ? "Proposal" : "Vorschlag"}</li>
-    </ul>
-  </figcaption>
+  {compact ? (
+    <figcaption class="section-intro" set:html={counter} />
+  ) : (
+    <figcaption>
+      <h2 id="stack-title">
+        {en ? "What tax authorities receive today" : "Was die Steuerbehörden heute bekommen"}
+      </h2>
+      <p class="figure-line" set:html={counter} />
+      <p class="stack-note">
+        {en
+          ? "One row per step, from the year it applies. Open a row for details and sources."
+          : "Eine Zeile je Stufe, ab dem Jahr, in dem sie angewendet wird. Jede Zeile öffnet Einzelheiten und Quellen."}
+      </p>
+      <ul class="stack-legend" aria-hidden="true">
+        <li class="past">{en ? "In force" : "In Kraft"}</li>
+        <li class="repealed">{en ? "Repealed" : "Aufgehoben"}</li>
+        <li class="proposed">{en ? "Proposal" : "Vorschlag"}</li>
+      </ul>
+    </figcaption>
   )}
 
   <div class="stack-axis" aria-hidden="true">
@@ -96,46 +207,179 @@ let index = 0
     <section class="stack-group" aria-label={group.label}>
       {!compact && <h3><span>{group.label}</span></h3>}
       <ul>
-        {group.rows.map((row) => (
-          <li class={row.kind} style={`${row.style}; --i: ${index++}`}>
-            <a href={row.href}>
+        {group.rows.map((row) => {
+          const line = (
+            <span class="stack-line">
               <strong>{row.step}</strong>
-              <span class="stack-what">
-                {row.what}
-                <span class="visually-hidden">, {row.span}</span>
-              </span>
+              <span class="stack-what"
+                >{row.what}<span
+                  class={compact && row.kind === "proposed" ? "stack-span" : "visually-hidden"}
+                  >, {row.span}</span
+                ></span
+              >
               <span class="stack-track" aria-hidden="true">
                 <span class="stack-bar">
-                  <span class="stack-year">
-                    {row.from}
-                  </span>
+                  <span class="stack-year">{row.from}</span>
                 </span>
               </span>
-            </a>
-          </li>
-        ))}
+            </span>
+          )
+          return compact ? (
+            <li class:list={["stack-row", row.kind]} style={`${row.style}; --i: ${index++}`}>
+              {line}
+            </li>
+          ) : (
+            <li
+              id={row.id}
+              class:list={["stack-row", row.kind]}
+              style={`${row.style}; --i: ${index++}`}
+            >
+              {row.era && <span id={row.era} class="stack-anchor" />}
+              <details>
+                <summary>{line}</summary>
+                <div class="stack-detail">
+                  {[row.entry, ...row.context].map((entry) => {
+                    const nested = entry !== row.entry
+                    return (
+                      <div class="stack-entry" id={nested ? entry.id : undefined}>
+                        {nested && (
+                          <>
+                            <p class="stack-kicker">{"kicker" in entry && entry.kicker}</p>
+                            <h4>{entry.title}</h4>
+                          </>
+                        )}
+                        <div class="stack-text">
+                          <p>{entry.text}</p>
+                          {entry.more && <p>{entry.more}</p>}
+                        </div>
+                        <div class="stack-facts">
+                          <dl>
+                            {entry.facts.map((fact) => (
+                              <>
+                                <dt>{fact.label}</dt>
+                                <dd>{fact.text}</dd>
+                              </>
+                            ))}
+                          </dl>
+                          <ul class="stack-sources">
+                            {entry.sources.map((source) => (
+                              <li>
+                                <a href={source.href}>{source.label}</a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </details>
+            </li>
+          )
+        })}
       </ul>
     </section>
   ))}
 
+  {!compact && (
+    <div class="stack-sum" aria-hidden="true">
+      <span class="stack-sum-label">
+        {en ? "Steps in force" : "Stufen in Kraft"}
+      </span>
+      <span class="stack-track">
+        {columns.map((column) => (
+          <span
+            class:list={["stack-col", { last: column.year === thisYear }]}
+            style={column.style}
+            title={`${column.year}: ${column.count}`}
+          >
+            {(column.changed || column.year === thisYear) && (
+              <span class="stack-count">{column.count}</span>
+            )}
+          </span>
+        ))}
+      </span>
+    </div>
+  )}
+
   <div class="stack-axis bottom" aria-hidden="true">
     {ticks.map((tick) => <span style={`--at: ${x(tick)}`}>{tick}</span>)}
   </div>
+
+  {!compact && (
+    <>
+      <details id="gemeinsam" class="stack-row stack-common">
+        <summary>
+          <span class="stack-line">
+            <strong>{historyCommon.translations[language].label}</strong>
+            <span class="stack-what">
+              {historyCommon.translations[language].summary}
+            </span>
+          </span>
+        </summary>
+        <div class="stack-detail">
+          <div class="stack-entry">
+            <div class="stack-text">
+              {historyCommon.translations[language].text.map((text) => (
+                <p>{text}</p>
+              ))}
+            </div>
+            <div class="stack-facts">
+              <ul class="stack-sources">
+                {historyCommon.sources.map((source) => (
+                  <li>
+                    <a href={source.href[language]}>{source.label[language]}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </details>
+      <p class="stack-research">
+        {en
+          ? `Research by Bitcoin Austria, as of ${historyResearchDate.en}. Every row links to its primary sources.`
+          : `Recherche von Bitcoin Austria, Stand: ${historyResearchDate.de}. Jede Zeile verweist auf ihre Primärquellen.`}
+      </p>
+    </>
+  )}
 </figure>
+
+<script>
+  // Links into the page may point at an entry that now sits inside a closed
+  // row, or at a chapter of the former timeline: open the row that holds it.
+  const reveal = () => {
+    const id = decodeURIComponent(location.hash.slice(1))
+    const target = id ? document.getElementById(id) : null
+    if (!target?.closest(".stack")) return
+    const details =
+      target.closest("details") ??
+      target.closest(".stack-row")?.querySelector("details")
+    if (!details || details.open) return
+    details.open = true
+    target.scrollIntoView({ block: "start" })
+  }
+  reveal()
+  addEventListener("hashchange", reveal)
+</script>
 
 <style>
   .stack {
-    --stack-cols: 5rem minmax(0, 14rem) minmax(0, 1fr);
+    /* Aufklapper, Kennung, Bezeichnung, Spur. */
+    --stack-cols: 1.75rem 4.25rem minmax(0, 14rem) minmax(0, 1fr);
     --bar: light-dark(#3b4147, #a7afb6);
     --today-line: color-mix(in oklab, var(--foreground) 50%, transparent);
     --row: 2rem;
+    --brick: 0.4375rem;
     display: grid;
     margin: 0;
-    font-size: 0.875rem;
+    font-size: var(--type-meta);
     line-height: 1.3;
   }
 
-  figcaption {
+  /* ---------- Bildunterschrift ------------------------------------------ */
+
+  figcaption:not(.section-intro) {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
@@ -143,29 +387,35 @@ let index = 0
     margin-block-end: var(--space-m);
   }
 
-  figcaption h2 {
-    max-inline-size: none;
-    font-size: var(--step-1);
-    font-stretch: 100%;
-    font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: -0.01em;
+  figcaption :is(h2, p) {
+    grid-column: 1;
   }
 
-  figcaption p {
-    grid-column: 1;
+  figcaption h2 {
+    max-inline-size: none;
+    font-size: var(--type-h3);
+    font-stretch: 100%;
+    line-height: 1.2;
+    letter-spacing: -0.018em;
+  }
+
+  figcaption .figure-line {
+    margin-block-start: var(--space-2xs);
+  }
+
+  .stack-note {
+    margin-block-start: var(--space-2xs);
     color: var(--ink-3);
   }
 
   .stack-legend {
     grid-column: 2;
-    grid-row: 1 / 3;
+    grid-row: 1 / 4;
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2xs) var(--space-s);
     padding: 0;
     color: var(--ink-3);
-    font-size: 0.8125rem;
     list-style: none;
   }
 
@@ -209,17 +459,18 @@ let index = 0
     border: 1.5px dashed var(--ink-3);
   }
 
-  /* Achse: Jahre unten, „Heute“ oben, beide über der Spur. */
+  /* ---------- Achse ------------------------------------------------------ */
+
+  /* Jahre unten, „Heute“ oben, beide über der Spur. */
   .stack-axis {
     display: grid;
     grid-template-columns: var(--stack-cols);
     block-size: 1.5rem;
     color: var(--ink-3);
-    font-size: 0.75rem;
   }
 
   .stack-axis > * {
-    grid-column: 3;
+    grid-column: 4;
     grid-row: 1;
     align-self: end;
     justify-self: start;
@@ -230,15 +481,15 @@ let index = 0
 
   .stack-axis .stack-today {
     --at: var(--today);
-    color: var(--ink);
-    font-weight: 600;
     padding-block-end: 0.2rem;
+    color: var(--ink);
+    font-weight: var(--weight-heading);
   }
 
   /* Unten eine Grundlinie mit kurzen Strichen statt Hilfslinien. */
   .stack-axis.bottom::before {
     content: "";
-    grid-column: 3;
+    grid-column: 4;
     grid-row: 1;
     align-self: start;
     border-block-start: 1px solid var(--line);
@@ -250,33 +501,6 @@ let index = 0
     background:
       linear-gradient(var(--line), var(--line)) top center / 1px 0.3rem
       no-repeat;
-  }
-
-  .stack-group h3 {
-    display: grid;
-    grid-template-columns: var(--stack-cols);
-    color: var(--ink-3);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    line-height: var(--row);
-    text-transform: uppercase;
-  }
-
-  .stack-group h3 span {
-    grid-column: 1 / 3;
-    padding-inline-start: var(--space-2xs);
-  }
-
-  .stack-group h3::after {
-    content: "";
-    grid-column: 3;
-    background: var(--track-bg);
-  }
-
-  .stack-group ul {
-    padding: 0;
-    list-style: none;
   }
 
   /* Nur die Heute-Linie und die Zukunft rechts davon. Jede Spur trägt sie
@@ -293,30 +517,67 @@ let index = 0
       0 0 / 100% 100% no-repeat;
   }
 
-  .stack-group li a {
+  /* ---------- Gruppen und Zeilen ---------------------------------------- */
+
+  .stack-group h3 {
+    display: grid;
+    grid-template-columns: var(--stack-cols);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    font-stretch: 100%;
+    font-weight: var(--weight-heading);
+    letter-spacing: 0.06em;
+    line-height: var(--row);
+    text-transform: uppercase;
+  }
+
+  /* Die Gruppe darf in die Spur ragen; die Heute-Linie läuft darunter. */
+  .stack-group h3 span {
+    z-index: 1;
+    grid-column: 2 / -1;
+    grid-row: 1;
+    white-space: nowrap;
+  }
+
+  .stack-group h3::after {
+    content: "";
+    grid-column: 4;
+    grid-row: 1;
+    background: var(--track-bg);
+  }
+
+  .stack-group ul,
+  .stack-sources {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stack-line {
     display: grid;
     grid-template-columns: var(--stack-cols);
     align-items: center;
     min-block-size: var(--row);
     border-radius: var(--radius-sm);
     color: var(--ink-2);
-    text-decoration: none;
   }
 
-  .stack-group li a strong {
-    padding-inline-start: var(--space-2xs);
+  .stack-line > strong {
+    grid-column: 2;
     color: var(--ink);
-    font-weight: 600;
+    font-weight: var(--weight-heading);
     white-space: nowrap;
   }
 
   .stack-what {
+    grid-column: 3;
     padding-inline-end: var(--space-s);
     text-wrap: pretty;
   }
 
   .stack-track {
     position: relative;
+    grid-column: 4;
     align-self: stretch;
     background: var(--track-bg);
   }
@@ -341,57 +602,298 @@ let index = 0
     border: 1.5px dashed var(--ink-3);
   }
 
+  /* Der Vorschlag beginnt knapp nach heute: seine Jahreszahl deckt die
+     Heute-Linie ab, statt von ihr durchgestrichen zu werden. */
+  .proposed .stack-year {
+    padding-inline: 0.15rem;
+    border-radius: 2px;
+    background: var(--background);
+  }
+
   .stack-year {
     position: absolute;
     inset-inline-end: calc(100% + 0.4rem);
     inset-block-start: 50%;
     translate: 0 -50%;
     color: var(--ink-3);
-    font-size: 0.75rem;
     white-space: nowrap;
   }
 
-  .repealed :is(strong, .stack-what) {
+  /* Kompakt fehlen Gruppen und Legende: der Vorschlag nennt sein Jahr. */
+  .stack-span {
     color: var(--ink-3);
   }
 
-  .repealed .stack-what {
-    font-style: normal;
+  .repealed :is(.stack-line > strong, .stack-what) {
+    color: var(--ink-3);
   }
 
   /* DAC8: die jüngste Pflicht über Privatpersonen, in Markenrot. */
-  li.current a {
-    background: color-mix(in oklab, var(--primary) 9%, transparent);
+  .current {
+    --swatch: var(--primary);
+    --row-fill: color-mix(in oklab, var(--primary) 9%, transparent);
   }
 
-  li.current a strong,
-  li.current .stack-year {
+  .current .stack-line {
+    background: var(--row-fill);
+  }
+
+  .current .stack-line > strong,
+  .current .stack-year {
     color: var(--accent);
   }
 
-  li.current .stack-what {
+  .current .stack-what {
     color: var(--ink);
-    font-weight: 600;
+    font-weight: var(--weight-heading);
   }
 
-  li.current {
-    --swatch: var(--primary);
-  }
-
-  li.current .stack-bar {
+  .current .stack-bar {
     box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 28%, transparent);
   }
 
-  .stack-group li a:hover {
+  /* ---------- Aufklappen ------------------------------------------------ */
+
+  .stack-row {
+    --open-fill: var(--panel);
+  }
+
+  .stack-row.current {
+    --open-fill: color-mix(in oklab, var(--primary) 7%, var(--panel));
+  }
+
+  summary {
+    display: block;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Ein kleiner Winkel vor der Kennung, der beim Öffnen nach unten kippt. */
+  summary .stack-line::before {
+    content: "";
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    justify-self: center;
+    inline-size: 0.4rem;
+    block-size: 0.4rem;
+    border-inline-end: 1.5px solid var(--ink-3);
+    border-block-end: 1.5px solid var(--ink-3);
+    rotate: -45deg;
+    transition: rotate 0.15s ease;
+  }
+
+  details[open] > summary .stack-line::before {
+    rotate: 45deg;
+  }
+
+  summary:hover .stack-line {
     background: var(--panel);
   }
 
-  .stack-group li a:hover .stack-what {
+  summary:hover .stack-what {
     color: var(--ink);
   }
 
-  .stack-group li.current a:hover {
+  .current summary:hover .stack-line {
     background: color-mix(in oklab, var(--primary) 15%, transparent);
+  }
+
+  details[open] > summary .stack-line {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+    background: var(--open-fill);
+  }
+
+  .stack-row,
+  .stack-anchor {
+    scroll-margin-block-start: var(--space-s);
+  }
+
+  .stack-row:target > details > summary .stack-line {
+    box-shadow: inset 2px 0 0 var(--ink);
+  }
+
+  .stack-detail {
+    display: grid;
+    gap: var(--space-m);
+    margin-block-end: var(--space-2xs);
+    padding: var(--space-2xs) var(--space-m) var(--space-m) 1.75rem;
+    border-end-start-radius: var(--radius-sm);
+    border-end-end-radius: var(--radius-sm);
+    background: var(--open-fill);
+  }
+
+  .stack-entry {
+    display: grid;
+    align-content: start;
+    gap: var(--space-s) var(--space-xl);
+    scroll-margin-block-start: var(--space-s);
+  }
+
+  .stack-entry + .stack-entry {
+    padding-block-start: var(--space-m);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .stack-kicker {
+    color: var(--ink-3);
+  }
+
+  .stack-entry h4 {
+    margin-block-start: calc(var(--space-s) * -0.75);
+    max-inline-size: 60ch;
+    font-size: var(--type-body);
+    font-weight: var(--weight-heading);
+    line-height: 1.35;
+  }
+
+  .stack-text {
+    display: grid;
+    align-content: start;
+    gap: var(--space-xs);
+    max-inline-size: 62ch;
+    color: var(--ink-2);
+    font-size: var(--type-body);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  .stack-facts {
+    display: grid;
+    align-content: start;
+    gap: var(--space-s);
+    line-height: 1.45;
+  }
+
+  .stack-facts dl {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--space-3xs) var(--space-s);
+  }
+
+  .stack-facts dt {
+    color: var(--ink-3);
+  }
+
+  .stack-facts dd {
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  .stack-sources {
+    display: grid;
+    gap: var(--space-3xs);
+  }
+
+  .stack-sources a {
+    color: var(--ink-3);
+  }
+
+  .stack-sources a::before {
+    content: "↗ ";
+    content: "↗ " / "";
+  }
+
+  .stack-sources a:hover {
+    color: var(--ink);
+  }
+
+  @container campaign (width >= 56rem) {
+    .stack-entry {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    }
+
+    .stack-kicker,
+    .stack-entry h4 {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* ---------- Summe ----------------------------------------------------- */
+
+  /* Unter den Zeilen ihre Summe: eine Säule je Jahr, ein Stein je Stufe in
+     Kraft. Die Zahl steht nur dort, wo sich etwas ändert. */
+  .stack-sum {
+    display: grid;
+    grid-template-columns: var(--stack-cols);
+    align-items: end;
+    margin-block-start: var(--space-s);
+  }
+
+  .stack-sum-label {
+    grid-column: 2 / 4;
+    padding-block-end: 0.15rem;
+    color: var(--ink);
+    font-weight: var(--weight-heading);
+  }
+
+  .stack-sum .stack-track {
+    block-size: calc(var(--peak) * var(--brick) + 1.5rem);
+  }
+
+  .stack-col {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-start: var(--at);
+    inline-size: max(1px, min(calc(var(--w) - 2px), 1.5rem));
+    block-size: calc(var(--n) * var(--brick));
+    background: repeating-linear-gradient(
+      to top,
+      var(--bar) 0 calc(var(--brick) - 2px),
+      transparent 0 var(--brick)
+    );
+    transform-origin: bottom;
+  }
+
+  .stack-count {
+    position: absolute;
+    inset-block-end: calc(100% + 0.15rem);
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    color: var(--ink-3);
+    line-height: 1;
+  }
+
+  .stack-col.last .stack-count {
+    color: var(--ink);
+    font-weight: var(--weight-heading);
+  }
+
+  /* ---------- Für alle Stufen und Stand -------------------------------- */
+
+  .stack-common {
+    margin-block-start: var(--space-m);
+    border-block-start: 1px solid var(--line);
+    padding-block-start: var(--space-2xs);
+  }
+
+  .stack-common .stack-line {
+    align-items: baseline;
+    padding-block: 0.4rem;
+  }
+
+  .stack-common .stack-line::before {
+    align-self: center;
+  }
+
+  .stack-common .stack-line > strong {
+    grid-column: 2 / 4;
+  }
+
+  .stack-common .stack-what {
+    grid-column: 4;
+    color: var(--ink-2);
+  }
+
+  .stack-research {
+    margin-block-start: var(--space-s);
+    color: var(--ink-3);
   }
 
   .visually-hidden {
@@ -403,10 +905,23 @@ let index = 0
     white-space: nowrap;
   }
 
+  /* ---------- Bewegung --------------------------------------------------- */
+
   @media (prefers-reduced-motion: no-preference) {
     .stack-bar {
       animation: stack-grow 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
       animation-delay: calc(150ms + var(--i) * 55ms);
+    }
+
+    .stack-col {
+      animation: stack-rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      animation-delay: calc(500ms + var(--i) * 30ms);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    summary .stack-line::before {
+      transition: none;
     }
   }
 
@@ -416,26 +931,41 @@ let index = 0
     }
   }
 
-  /* Kompakt als Teaser: dieselben Zeilen, etwas mehr Luft, weil keine
-     Gruppenüberschrift sie gliedert. */
-  .stack.compact {
-    --row: 2.25rem;
-    max-inline-size: 60rem;
-  }
-
-  @container campaign (width >= 46rem) {
-    .stack.compact {
-      --stack-cols: 4.5rem minmax(0, 15rem) minmax(0, 1fr);
+  @keyframes stack-rise {
+    from {
+      scale: 1 0;
     }
   }
 
-  /* Schmal: Beschriftung über der Spur, die Spur über die volle Breite. */
+  /* ---------- Kompakt (Startseite) -------------------------------------- */
+
+  /* Dieselben Zeilen ohne Aufklapper und Gruppen, mit etwas mehr Luft. */
+  .stack.compact {
+    --stack-cols: 0 5rem minmax(0, 15rem) minmax(0, 1fr);
+    --row: 2.25rem;
+  }
+
+  .compact figcaption {
+    margin-block: var(--space-s) var(--space-l);
+  }
+
+  .compact .stack-line > strong {
+    padding-inline-start: var(--space-2xs);
+  }
+
+  /* ---------- Schmal ---------------------------------------------------- */
+
+  /* Beschriftung über der Spur, die Spur über die volle Breite. */
   @container campaign (width < 46rem) {
     .stack {
-      --stack-cols: 4.5rem minmax(0, 1fr);
+      --stack-cols: 1.5rem 4.25rem minmax(0, 1fr);
     }
 
-    figcaption {
+    .stack.compact {
+      --stack-cols: 0 4.75rem minmax(0, 1fr);
+    }
+
+    figcaption:not(.section-intro) {
       grid-template-columns: minmax(0, 1fr);
     }
 
@@ -455,18 +985,21 @@ let index = 0
     }
 
     .stack-group h3 {
-      display: block;
-      padding-inline-start: 0;
+      grid-template-columns: minmax(0, 1fr);
       margin-block-start: var(--space-xs);
-      line-height: 2;
+      line-height: 1.4;
+      padding-block: 0.3rem;
+    }
+
+    .stack-group h3 span {
+      grid-column: 1;
     }
 
     .stack-group h3::after {
       content: none;
     }
 
-    .stack-group li a {
-      grid-template-columns: var(--stack-cols);
+    .stack-line {
       align-items: start;
       padding-block: 0.35rem 0;
       row-gap: 0.2rem;
@@ -475,6 +1008,33 @@ let index = 0
     .stack-track {
       grid-column: 1 / -1;
       block-size: 1rem;
+    }
+
+    .stack-sum {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: var(--space-2xs);
+    }
+
+    .stack-sum-label,
+    .stack-sum .stack-track {
+      grid-column: 1;
+    }
+
+    .stack-common .stack-line > strong,
+    .stack-common .stack-what {
+      grid-column: 2 / -1;
+    }
+
+    .stack-detail {
+      padding-inline: var(--space-s);
+    }
+
+    .stack-facts dl {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stack-facts dd + dt {
+      margin-block-start: var(--space-2xs);
     }
   }
 </style>
