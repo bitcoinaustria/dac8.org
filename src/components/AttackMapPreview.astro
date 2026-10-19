@@ -2,15 +2,16 @@
 import { feature, mesh } from "topojson-client"
 import type { GeometryCollection, Topology } from "topojson-specification"
 import countries from "world-atlas/countries-50m.json"
-import { attacks, formatDate, latestDate, latestYear } from "@/lib/attacks"
-import type { Language } from "@/lib/i18n"
+import { attacks, latestYear } from "@/lib/attacks"
+import { type Language, pathFor } from "@/lib/i18n"
 
 // A still of the attack map's Europe view for the home page: land and
 // borders from Natural Earth, one dot per known attack from Jameson Lopp's
 // list, red for the last two years as on the map itself. Everything is
 // drawn at build time, so the page loads no map library and no tiles. The
 // interactive map at /angriffe/ is the place to explore; this only shows
-// how close and how recent the cases are.
+// how close and how recent the cases are, and the whole picture links
+// there. Below it one quiet line: the legend and the data credit.
 interface Props {
   language: Language
 }
@@ -157,48 +158,74 @@ const dots = attacks
   })
   .sort((a, b) => Number(a.recent) - Number(b.recent))
 const recentCount = dots.filter((dot) => dot.recent).length
-const asOf = latestDate ? formatDate(latestDate, language) : String(latestYear)
 const label = en
-  ? `Map of Europe with ${dots.length} known attacks on crypto holders since ${firstYear}, ${recentCount} of them in ${recentFrom} and ${latestYear}.`
-  : `Karte Europas mit ${dots.length} bekannten Angriffen auf Krypto-Besitzer seit ${firstYear}, davon ${recentCount} in den Jahren ${recentFrom} und ${latestYear}.`
+  ? `Open the map: ${dots.length} known attacks on crypto holders in Europe since ${firstYear}, ${recentCount} of them since ${recentFrom}.`
+  : `Zur Karte: ${dots.length} bekannte Angriffe auf Krypto-Besitzer in Europa seit ${firstYear}, ${recentCount} davon seit ${recentFrom}.`
 ---
 
 <figure class="attack-preview">
-  <svg
-    viewBox={`0 0 ${width} ${height}`}
-    role="img"
-    aria-label={label}
-    preserveAspectRatio="xMidYMid slice"
-  >
-    <path class="land" d={landPath} />
-    <path class="borders" d={borderPath} />
-    <g class="dots">
-      {dots.map((dot) => (
-          <circle
-            class:list={{ recent: dot.recent }}
-            cx={dot.x}
-            cy={dot.y}
-            r="5"
-          />
-        ))}
-    </g>
-  </svg>
+  <a class="map-link" href={pathFor("attacks", language)} aria-label={label}>
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      aria-hidden="true"
+      focusable="false"
+      preserveAspectRatio="xMidYMid slice"
+    >
+      <path class="land" d={landPath} />
+      <path class="borders" d={borderPath} />
+      <g class="dots">
+        {dots.map((dot) => (
+            <circle
+              class:list={{ recent: dot.recent }}
+              cx={dot.x}
+              cy={dot.y}
+              r="5"
+            />
+          ))}
+      </g>
+    </svg>
+    <span class="map-cta" aria-hidden="true"
+      >{en ? "Open the map" : "Zur Karte"}</span
+    >
+  </a>
   <figcaption>
-    <span class="key recent">{`${recentFrom}–${latestYear}`}</span>
-    <span class="key">{`${firstYear}–${recentFrom - 1}`}</span>
+    <span class="key recent"
+      >{en ? `since ${recentFrom}` : `seit ${recentFrom}`}</span
+    >
+    <span class="key">{en ? "earlier" : "früher"}</span>
     <span class="credit"
-      >{en ? `As of ${asOf} · Data: Jameson Lopp · Map: Natural Earth` : `Stand ${asOf} · Daten: Jameson Lopp · Karte: Natural Earth`}</span
+      >{en ? "Data: Jameson Lopp" : "Daten: Jameson Lopp"}</span
     >
   </figcaption>
 </figure>
 
 <style>
   /* Wie die Karte unter /angriffe/: graues Land, helle Grenzen, ein Punkt
-     je Fall, rot die letzten zwei Jahre. Eine ruhige Fläche, kein Rahmen. */
+     je Fall, rot die letzten zwei Jahre. Das ganze Bild führt zur Karte;
+     rechts unten steht es dabei, damit man es auch ohne Zeiger sieht. */
   .attack-preview {
     display: grid;
     gap: var(--space-xs);
     margin: 0;
+  }
+
+  .map-link {
+    position: relative;
+    display: block;
+    border-radius: var(--radius-xl);
+    background: var(--panel);
+    overflow: hidden;
+    text-decoration: none;
+    transition: background-color 160ms ease;
+  }
+
+  .map-link:hover {
+    background: var(--panel-strong);
+  }
+
+  .map-link:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
   }
 
   svg {
@@ -206,8 +233,6 @@ const label = en
     inline-size: 100%;
     block-size: auto;
     aspect-ratio: 1 / 1;
-    border-radius: var(--radius-xl);
-    background: var(--panel);
   }
 
   .land {
@@ -229,6 +254,33 @@ const label = en
 
   circle.recent {
     fill: var(--primary);
+  }
+
+  /* Wie ein Textlink, auf einer Fläche, damit er über dem Land lesbar
+     bleibt. */
+  .map-cta {
+    position: absolute;
+    inset-block-end: var(--space-s);
+    inset-inline-end: var(--space-s);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4em;
+    padding: 0.45em 0.9em;
+    border-radius: var(--radius-full);
+    color: var(--accent);
+    background: var(--background);
+    box-shadow: 0 1px 3px
+      color-mix(in oklab, var(--foreground) 18%, transparent);
+    font-weight: var(--weight-strong);
+  }
+
+  .map-cta::after {
+    content: "→";
+    transition: translate 160ms ease;
+  }
+
+  .map-link:hover .map-cta::after {
+    translate: 0.2em 0;
   }
 
   figcaption {
@@ -257,5 +309,12 @@ const label = en
 
   .credit {
     margin-inline-start: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .map-link,
+    .map-cta::after {
+      transition: none;
+    }
   }
 </style>
