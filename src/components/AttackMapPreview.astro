@@ -2,16 +2,16 @@
 import { feature, mesh } from "topojson-client"
 import type { GeometryCollection, Topology } from "topojson-specification"
 import countries from "world-atlas/countries-50m.json"
-import { attacks, latestYear } from "@/lib/attacks"
+import { attacks } from "@/lib/attacks"
 import { type Language, pathFor } from "@/lib/i18n"
 
 // A still of the attack map's Europe view for the home page: land and
 // borders from Natural Earth, one dot per known attack from Jameson Lopp's
-// list, red for the last two years as on the map itself. Everything is
+// list, all alike: the year filter lives on the map itself. Everything is
 // drawn at build time, so the page loads no map library and no tiles. The
 // interactive map at /angriffe/ is the place to explore; this only shows
-// how close and how recent the cases are, and the whole picture links
-// there. Below it one quiet line: the legend and the data credit.
+// how close the cases are, and the whole picture links there. Below it
+// one quiet line with the data credit.
 interface Props {
   language: Language
 }
@@ -135,8 +135,6 @@ const borderPath = mesh(topology, shapes, (a, b) => a !== b)
   .map((line) => path(line, false))
   .join("")
 
-// Older cases first, so the recent red dots lie on top.
-const recentFrom = latestYear - 1
 const firstYear = Math.min(...attacks.map((attack) => attack.year))
 const dots = attacks
   .filter(
@@ -153,14 +151,11 @@ const dots = attacks
     return {
       x: Math.round(x * 2) / 2,
       y: Math.round(y * 2) / 2,
-      recent: attack.year >= recentFrom,
     }
   })
-  .sort((a, b) => Number(a.recent) - Number(b.recent))
-const recentCount = dots.filter((dot) => dot.recent).length
 const label = en
-  ? `Open the map: ${dots.length} known attacks on crypto holders in Europe since ${firstYear}, ${recentCount} of them since ${recentFrom}.`
-  : `Zur Karte: ${dots.length} bekannte Angriffe auf Krypto-Besitzer in Europa seit ${firstYear}, ${recentCount} davon seit ${recentFrom}.`
+  ? `Open the map: ${dots.length} known attacks on crypto holders in Europe since ${firstYear}.`
+  : `Zur Karte: ${dots.length} bekannte Angriffe auf Krypto-Besitzer in Europa seit ${firstYear}.`
 ---
 
 <figure class="attack-preview">
@@ -176,7 +171,6 @@ const label = en
       <g class="dots">
         {dots.map((dot) => (
             <circle
-              class:list={{ recent: dot.recent }}
               cx={dot.x}
               cy={dot.y}
               r="5"
@@ -184,15 +178,8 @@ const label = en
           ))}
       </g>
     </svg>
-    <span class="map-cta" aria-hidden="true"
-      >{en ? "Open the map" : "Zur Karte"}</span
-    >
   </a>
   <figcaption>
-    <span class="key recent"
-      >{en ? `since ${recentFrom}` : `seit ${recentFrom}`}</span
-    >
-    <span class="key">{en ? "earlier" : "früher"}</span>
     <span class="credit"
       >{en ? "Data: Jameson Lopp" : "Daten: Jameson Lopp"}</span
     >
@@ -247,40 +234,9 @@ const label = en
   }
 
   circle {
-    fill: var(--gray-9);
+    fill: var(--primary);
     stroke: var(--gray-1);
     stroke-width: 1.5;
-  }
-
-  circle.recent {
-    fill: var(--primary);
-  }
-
-  /* Wie ein Textlink, auf einer Fläche, damit er über dem Land lesbar
-     bleibt. */
-  .map-cta {
-    position: absolute;
-    inset-block-end: var(--space-s);
-    inset-inline-end: var(--space-s);
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.4em;
-    padding: 0.45em 0.9em;
-    border-radius: var(--radius-full);
-    color: var(--accent);
-    background: var(--background);
-    box-shadow: 0 1px 3px
-      color-mix(in oklab, var(--foreground) 18%, transparent);
-    font-weight: var(--weight-strong);
-  }
-
-  .map-cta::after {
-    content: "→";
-    transition: translate 160ms ease;
-  }
-
-  .map-link:hover .map-cta::after {
-    translate: 0.2em 0;
   }
 
   figcaption {
@@ -293,27 +249,12 @@ const label = en
     line-height: 1.4;
   }
 
-  .key::before {
-    content: "";
-    display: inline-block;
-    inline-size: 0.625rem;
-    block-size: 0.625rem;
-    margin-inline-end: 0.4em;
-    border-radius: var(--radius-full);
-    background: var(--gray-9);
-  }
-
-  .key.recent::before {
-    background: var(--primary);
-  }
-
   .credit {
     margin-inline-start: auto;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .map-link,
-    .map-cta::after {
+    .map-link {
       transition: none;
     }
   }

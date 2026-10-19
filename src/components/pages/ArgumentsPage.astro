@@ -45,10 +45,9 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
         aria-label={en ? "The seven reasons" : "Die sieben Gründe"}
       >
         <ol>
-          {list.map((reason, index) => (
+          {list.map((reason) => (
             <li>
               <a href={`#${reason.id}`}>
-                <span class="numeral" aria-hidden="true">{index + 1}</span>
                 {reason.short}
               </a>
             </li>
@@ -62,11 +61,10 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
         {en ? "Seven reasons" : "Sieben Gründe"}
       </h2>
       <ol class="reasons">
-        {list.map((reason, index) => (
+        {list.map((reason) => (
           <li id={reason.id}>
             <details>
               <summary>
-                <span class="numeral" aria-hidden="true">{index + 1}</span>
                 <span class="eyebrow">{reason.short}</span>
                 <h3 id={reason.alias}>{reason.title}</h3>
                 <span class="reason-text">{reason.text}</span>
@@ -160,24 +158,6 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
     --group-head-height: calc(var(--type-h2) * 1.1 + 2 * var(--space-xs) + 1px);
   }
 
-  /* Ziffern in gefrästem Metall, wie das Jahr des Präzedenzfalls: Sie
-     ordnen, die Schlagzeile daneben bleibt der stärkste Text. */
-  .numeral {
-    inline-size: fit-content;
-    background: linear-gradient(
-      170deg,
-      light-dark(#8e969d, #e3e6e8),
-      light-dark(#3c4248, #7d858c)
-    );
-    background-clip: text;
-    color: transparent;
-    font-weight: var(--weight-heading);
-    font-stretch: 94%;
-    line-height: 1;
-    letter-spacing: -0.045em;
-    font-variant-numeric: tabular-nums;
-  }
-
   /* ---------- Hero: Schlagzeile links, die sieben Gründe rechts -------- */
 
   .reason-index ol {
@@ -192,8 +172,6 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
 
   .reason-index a {
     display: grid;
-    grid-template-columns: 2.5rem minmax(0, 1fr);
-    align-items: baseline;
     padding-block: var(--space-2xs);
     color: var(--ink);
     font-size: var(--type-body);
@@ -204,10 +182,6 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
 
   .reason-index a:hover {
     color: var(--accent);
-  }
-
-  .reason-index .numeral {
-    font-size: var(--type-lead);
   }
 
   /* Schmal folgen die Gründe direkt unter dem Vorspann; die Übersicht
@@ -249,7 +223,7 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
      über der Schlagzeile, damit Schlagzeile und Satz die ganze Breite
      haben. */
   .reasons {
-    --cols: auto minmax(0, 1fr) 2.25rem;
+    --cols: minmax(0, 1fr) 2.25rem;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -271,9 +245,9 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
     display: grid;
     grid-template-columns: var(--cols);
     grid-template-areas:
-      "num eyebrow toggle"
-      "title title title"
-      "text text text";
+      "eyebrow toggle"
+      "title title"
+      "text text";
     gap: var(--space-2xs) var(--space-s);
     padding-block: var(--space-m);
     cursor: pointer;
@@ -288,12 +262,6 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
     outline: 2px solid var(--accent);
     outline-offset: 2px;
     border-radius: var(--radius-md);
-  }
-
-  .reasons summary .numeral {
-    grid-area: num;
-    align-self: center;
-    font-size: var(--type-h2);
   }
 
   .eyebrow {
@@ -402,7 +370,7 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
      Spalte liest, hat die sieben Gründe. Die Belege öffnen unter dem Satz. */
   @container campaign (width >= 52rem) {
     .reasons {
-      --cols: var(--num) minmax(0, 5fr) minmax(0, 6fr) 2.5rem;
+      --cols: minmax(0, 5fr) minmax(0, 6fr) 2.5rem;
     }
 
     .arguments .reasons > li,
@@ -413,8 +381,8 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
 
     .reasons summary {
       grid-template-areas:
-        "num eyebrow . ."
-        "num title text toggle";
+        "eyebrow . ."
+        "title text toggle";
       grid-template-rows: auto 1fr;
     }
 
@@ -422,14 +390,9 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
       align-self: end;
     }
 
-    .reasons summary .numeral {
-      align-self: start;
-      margin-block-start: -0.06em;
-    }
-
     .proof > p,
     .reasons > li > .text-link {
-      grid-column: 3;
+      grid-column: 2;
     }
   }
 
@@ -441,8 +404,7 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
 
   /* ---------- Forderungen ----------------------------------------------- */
 
-  /* Nummern als Token wie die Stationen des Rechtswegs, damit sie sich von
-     den Ziffern der Gründe abheben. */
+  /* Nummern als Token wie die Stationen des Rechtswegs. */
   .demands {
     display: grid;
     margin-block-start: var(--space-l);
@@ -492,8 +454,7 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
   }
 
   @container campaign (width >= 52rem) {
-    /* Dieselben Spalten wie die Gründe, damit Titel und Text an denselben
-       Kanten stehen. */
+    /* Wie die Gründe: Titel links, Text rechts, davor die Nummer. */
     .demands li {
       grid-template-columns: var(--num) minmax(0, 5fr) minmax(0, 6fr) 2.5rem;
       column-gap: var(--space-l);
