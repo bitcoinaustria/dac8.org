@@ -65,9 +65,10 @@ const fieldLabel = (id: string) =>
 const rich = (text: string) => text.split(/\*\*(.+?)\*\*/)
 
 // Where each place stands, on wide screens (1200 × 600), on squarer ones
-// (900 × 700) and on tall ones (400 × 840). The script switches between
-// them.
-type Shape = "wide" | "mid" | "tall"
+// (900 × 700), on phones (400 × 840) and on desktop monitors turned
+// upright (900 × 1200), where the phone's order gets room for the full
+// labels. The script switches between them.
+type Shape = "wide" | "mid" | "tall" | "upright"
 const layout: Record<Shape, Record<Place, [number, number]>> = {
   wide: {
     you: [140, 300],
@@ -93,12 +94,25 @@ const layout: Record<Shape, Record<Place, [number, number]>> = {
     taxOffice: [90, 500],
     crooks: [250, 610],
   },
+  upright: {
+    you: [450, 70],
+    taxTool: [140, 360],
+    provider: [450, 360],
+    shop: [760, 360],
+    taxOffice: [190, 740],
+    crooks: [620, 860],
+  },
 }
 // The target list hangs below the offenders' name: the plate's width on
 // each shape, and how far its top lies below the offenders. Its frame,
 // which also holds the wrench to the left of the plate, follows from the
 // rendered layers: left, top, width and height.
-const plateWidth: Record<Shape, number> = { wide: 176, mid: 176, tall: 150 }
+const plateWidth: Record<Shape, number> = {
+  wide: 176,
+  mid: 176,
+  tall: 150,
+  upright: 176,
+}
 const plateBelow = 82
 const shapes = Object.keys(layout) as Shape[]
 const frames = Object.fromEntries(
@@ -159,7 +173,10 @@ const listView = (shape: Shape) => {
 // close to the exchange and the tax office for the reports, and steps
 // back for the leaks. Once the last copy has arrived, it closes in on the
 // target list at the offenders and stays there for the bedroom, which
-// fades in above it.
+// fades in above it. On phones the whole network would be too small to
+// read: there the leaks start on the three places at the top (the sixth
+// view) and the camera follows the copies down past the tax office to the
+// offenders and their list (the seventh); the third only picks the shape.
 const cameras = {
   wide: [
     [320, 330, 1160, 580],
@@ -181,6 +198,15 @@ const cameras = {
     [200, 445, 410, 900],
     listView("tall"),
     listView("tall"),
+    [200, 280, 410, 200],
+    [200, 718, 410, 340],
+  ],
+  upright: [
+    [450, 270, 860, 560],
+    [330, 570, 540, 560],
+    [450, 600, 900, 1200],
+    listView("upright"),
+    listView("upright"),
   ],
 }
 const at = (id: Place) => layout.wide[id]
@@ -206,6 +232,8 @@ const tally = (count: number) =>
 const cardWidth = (label: string) => Math.round(label.length * 7.2 + 26)
 const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
 ---
+
+<p class="note lead">{note[language]}</p>
 
 <div
   class="web"
@@ -538,7 +566,15 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
      der Szene steht als Untertitel oben auf der Bühne. Das Skript setzt die
      Variablen; ohne Skript stehen die Texte untereinander und das Netz im
      Endstand. */
+  /* Die Bühne füllt das Fenster, am Handy auch, wenn der Browser beim
+     Scrollen seine Leisten einklappt. Der Scrollweg je Szene wächst mit der
+     Fensterhöhe, aber nur bis zu einem 76rem hohen Fenster, etwa einem
+     hochkant gedrehten Monitor; darüber wäre jede Szene ein langer Weg.
+     Den Rest gleicht ein Vorlauf vor der ersten und ein Nachlauf nach der
+     letzten Szene aus, damit sie wie auf jedem Bildschirm beginnen und
+     enden, während die Bühne steht. */
   .web {
+    --pace: min(1svh, 0.76rem);
     --signal: var(--accent);
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -549,8 +585,19 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     grid-area: 1 / 1;
   }
 
+  .track {
+    padding-block: max(
+      0px,
+      50svh -
+      var(--header-height) /
+      2 -
+      50 *
+      var(--pace)
+    );
+  }
+
   .spacer {
-    block-size: calc(var(--len) * 1svh);
+    block-size: calc(var(--len) * var(--pace));
   }
 
   /* ---------- Bühne ----------------------------------------------------- */
@@ -563,7 +610,7 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr) auto;
     gap: var(--space-xs);
-    block-size: calc(100svh - var(--header-height));
+    block-size: calc(100dvh - var(--header-height));
     padding-block: var(--space-xs) var(--space-s);
   }
 
@@ -943,13 +990,8 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
   }
 
   /* Hochformat, also am Handy: Die Fälle öffnen die Knöpfe im Untertitel,
-     die Kopien fliegen ohne Etikett, und die Reihe der Meldungen weicht den
-     Datenlecks. */
+     und die Reihe der Meldungen weicht den Datenlecks. */
   .net[data-shape="tall"] .case {
-    display: none;
-  }
-
-  .net[data-shape="tall"] .card.copy .card-text {
     display: none;
   }
 
@@ -1112,6 +1154,12 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     translate: 0 calc((1 - var(--draw)) * 1.5rem);
   }
 
+  /* Auf einem hochkant gedrehten Monitor ist das Zimmer so breit wie die
+     Zielliste davor. */
+  .net[data-shape="upright"] ~ .map .home {
+    inline-size: 100%;
+  }
+
   /* Am Handy ist das Zimmer sonst klein: Das Bild ragt über die Ränder
      der Bodenplatte hinaus, damit Erspartes, Max und Täter lesbar bleiben. */
   @container campaign (width < 40rem) {
@@ -1190,6 +1238,70 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     font-size: var(--step--1);
   }
 
+  .lead {
+    display: none;
+  }
+
+  /* Am Handy zählt jede Zeile für das Netz: Der Hinweis steht vor der
+     Geschichte statt unter der Bühne, und die Leiste wird flacher. */
+  @container campaign (width < 40rem) {
+    .lead {
+      display: block;
+      margin-block-end: var(--space-2xs);
+    }
+
+    .stage > .note {
+      display: none;
+    }
+
+    .stage {
+      padding-block-end: var(--space-xs);
+    }
+
+    .rail a {
+      padding-block: 0.45rem 0.5rem;
+    }
+  }
+
+  /* Ein Handy quer hat kaum Höhe: Leiste, Untertitel und Hinweis stehen
+     links, das Netz bekommt rechts die ganze Höhe der Bühne. */
+  @media (orientation: landscape) and (max-height: 32rem) and (width < 64rem) {
+    .stage {
+      grid-template:
+        auto minmax(0, 1fr) auto
+        / minmax(0, 2fr) minmax(0, 3fr);
+      column-gap: var(--space-s);
+    }
+
+    .rail {
+      grid-area: 1 / 1;
+    }
+
+    .view {
+      display: contents;
+    }
+
+    .view > .says {
+      grid-area: 2 / 1;
+      align-self: start;
+      padding: var(--space-xs) 0 0;
+    }
+
+    .view > .net,
+    .view > .map {
+      grid-area: 1 / 2 / -1;
+    }
+
+    .net {
+      border-radius: var(--radius-xl);
+      background: var(--panel);
+    }
+
+    .stage > .note {
+      grid-area: 3 / 1;
+    }
+  }
+
   /* Solange die Geschichte den Bildschirm füllt, weicht die mobile Leiste
      mit Spenden und Teilen. */
   :global(html[data-immersive] [data-action-bar]) {
@@ -1238,6 +1350,26 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
       font-size: var(--step--1);
     }
   }
+
+  /* Auf hohen Bildschirmen ist über dem Bild Platz für einen größeren
+     Untertitel. */
+  @media (min-width: 64rem) and (min-height: 70rem) {
+    .says {
+      padding: var(--space-xl) var(--space-xl) 0;
+    }
+
+    .say {
+      gap: var(--space-2xs);
+    }
+
+    .say h3 {
+      font-size: var(--type-h2);
+    }
+
+    .say .text {
+      font-size: var(--step-1);
+    }
+  }
 </style>
 
 <script>
@@ -1245,11 +1377,28 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
   // the scenes passed, with the fraction of the current one; every frame
   // derives the whole stage from p, so scrolling back rewinds it. With
   // reduced motion, nothing travels or zooms and every change snaps.
-  type Shape = "wide" | "mid" | "tall"
+  type Shape = "wide" | "mid" | "tall" | "upright"
   type Point = [number, number]
   type Layout = Record<string, Point>
   type Camera = [number, number, number, number]
-  const shapes: Shape[] = ["wide", "mid", "tall"]
+  const shapes: Shape[] = ["wide", "mid", "tall", "upright"]
+  // How large each scene may get, in screen pixels per drawing unit: about
+  // what a large desktop screen shows. Bigger screens show more room
+  // around the picture instead of ever larger places and labels.
+  const largest = [1.3, 1.7, 1.1, 3.6, 3.6, 1.1, 1.1]
+  // Where a screen shows more height than a view needs, the phone's leak
+  // views keep their top edge (the places) or their bottom edge (the
+  // list) in place, so the spare room shows what comes next instead of
+  // half of Max.
+  const anchors: Partial<Record<Shape, Record<number, number>>> = {
+    tall: { 5: -1, 6: 1 },
+  }
+  const crookBends: Record<Shape, Record<string, number>> = {
+    wide: { taxOffice: -0.3, taxTool: -0.08 },
+    mid: { taxOffice: -0.3, taxTool: -0.08 },
+    tall: { taxTool: -0.12 },
+    upright: { provider: -0.22, taxOffice: 0.12 },
+  }
 
   const root = document.querySelector<HTMLElement>("[data-web]")
   if (root) start(root)
@@ -1333,9 +1482,20 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
       return Number(data.scene) + 0.05 + Number(data.order ?? 0) * 0.1
     }
     // When a place's case lights up: the exchange first, the others one
-    // after another.
+    // after another. On phones the three places at the top leak in quick
+    // succession while the camera is on them, and the tax office as the
+    // camera passes it on the way down.
     const leakAt = (order: number) =>
-      leakScene + (order === 0 ? 0.08 : 0.22 + order * 0.13)
+      shape === "tall"
+        ? leakScene + [0.1, 0.18, 0.26, 0.5][order]
+        : leakScene + (order === 0 ? 0.08 : 0.22 + order * 0.13)
+    // When a leak's copy leaves for the list, and how long it travels. On
+    // phones the copies from the top leave together and travel with the
+    // camera.
+    const copyAt = (order: number) =>
+      shape === "tall" && order < 3
+        ? { start: leakScene + 0.34 + order * 0.03, time: 0.26 }
+        : { start: leakAt(order) + 0.04, time: 0.14 }
     const clamp = (value: number) => Math.min(1, Math.max(0, value))
     const ramp = (value: number, from: number, to: number) =>
       clamp((value - from) / (to - from))
@@ -1375,8 +1535,7 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         if (!text) continue
         const width = text.getComputedTextLength()
         const isCase = group.classList.contains("case")
-        const pile = shape === "tall" && group.classList.contains("copy")
-        const total = pile ? 46 : width + (isCase ? 44 : 28)
+        const total = width + (isCase ? 44 : 28)
         const bg = group.querySelector(".card-bg, .case-bg")
         bg?.setAttribute("x", String(-total / 2))
         bg?.setAttribute("width", String(total))
@@ -1396,14 +1555,30 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     const arrange = () => {
       const box = net.getBoundingClientRect()
       // The layout that shows the whole network largest in the space it
-      // gets.
-      const scale = (name: Shape) => {
+      // gets, up to its largest size; of those that reach it, the one that
+      // fills the space best.
+      const shown = (name: Shape) => {
         const [, , width, height] = cameras[name][2]
-        return Math.min(box.width / width, box.height / height)
+        const scale = Math.min(
+          box.width / width,
+          box.height / height,
+          largest[2],
+        )
+        const filled = (width * height * scale ** 2) / (box.width * box.height)
+        return { scale, filled }
       }
-      const next = shapes.reduce((best, name) =>
-        scale(name) > scale(best) ? name : best,
-      )
+      // Narrow spaces, on phones, always get the phone layout, which
+      // follows the leaks instead of showing the whole network at once.
+      const next =
+        box.width < 560
+          ? "tall"
+          : shapes.reduce((best, name) => {
+              const a = shown(name)
+              const b = shown(best)
+              if (Math.abs(a.scale - b.scale) < 0.005)
+                return a.filled > b.filled ? name : best
+              return a.scale > b.scale ? name : best
+            })
       if (arranged && next === shape) return
       arranged = true
       shape = next
@@ -1419,17 +1594,9 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         const [x, y] = at[node.dataset.node ?? ""] ?? [0, 0]
         node.setAttribute("transform", `translate(${x} ${y})`)
       }
-      // The lines to the offenders bow away from the report line.
-      const crookBend = (from: string) =>
-        shape === "tall"
-          ? from === "taxTool"
-            ? -0.12
-            : 0.06
-          : from === "taxOffice"
-            ? -0.3
-            : from === "taxTool"
-              ? -0.08
-              : 0.06
+      // The lines to the offenders bow away from the report line, and on
+      // upright screens from the exchange's pile of reports.
+      const crookBend = (from: string) => crookBends[shape][from] ?? 0.06
       const bend = (from: string, to: string, amount: number) => {
         const [x1, y1] = [at[from][0], at[from][1] + ground]
         const [x2, y2] = [at[to][0], at[to][1] + ground]
@@ -1498,25 +1665,36 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
       const drawn = net.getBoundingClientRect()
       const aspect = drawn.width / drawn.height || 2
       const keys = cameras[shape]
-      // Widen the shorter side to the screen's proportions.
-      const widest = (key: Camera): [number, number, number] => [
-        key[0],
-        key[1],
-        Math.max(key[2], key[3] * aspect),
-      ]
-      const moves: [number, number, number, number][] = [
-        [1, 1.45, 0, 1],
-        [leakScene, leakScene + 0.45, 1, 2],
-        [matchScene - 0.17, matchScene + 0.12, 2, 3],
-        [riskScene, riskScene + 0.45, 3, 4],
-      ]
+      // Widen the shorter side to the screen's proportions, and further
+      // where the scene would grow past its largest size.
+      const widest = (index: number): [number, number, number] => {
+        const [x, y, width, height] = keys[index]
+        const w = Math.max(width, height * aspect, drawn.width / largest[index])
+        const anchor = anchors[shape]?.[index] ?? 0
+        return [x, y + (anchor * (height - w / aspect)) / 2, w]
+      }
+      const moves: [number, number, number, number][] =
+        shape === "tall"
+          ? [
+              [1, 1.45, 0, 1],
+              [leakScene, leakScene + 0.2, 1, 5],
+              [leakScene + 0.36, leakScene + 0.64, 5, 6],
+              [matchScene - 0.17, matchScene + 0.12, 6, 3],
+              [riskScene, riskScene + 0.45, 3, 4],
+            ]
+          : [
+              [1, 1.45, 0, 1],
+              [leakScene, leakScene + 0.45, 1, 2],
+              [matchScene - 0.17, matchScene + 0.12, 2, 3],
+              [riskScene, riskScene + 0.45, 3, 4],
+            ]
       const moving = moves.filter(([start]) => p >= start).pop()
-      let [cx, cy, w] = widest(keys[0])
+      let [cx, cy, w] = widest(0)
       if (moving) {
         const [start, end, a, b] = moving
         const t = snap(ease(ramp(p, start, end)))
-        const [ax, ay, aw] = widest(keys[a])
-        const [bx, by, bw] = widest(keys[b])
+        const [ax, ay, aw] = widest(a)
+        const [bx, by, bw] = widest(b)
         w = aw * (bw / aw) ** t
         const k = Math.abs(aw - bw) < 1 ? t : (aw - w) / (aw - bw)
         cx = ax + (bx - ax) * k
@@ -1535,6 +1713,10 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
       const away =
         snap(ramp(p, matchScene - 0.08, matchScene + 0.15)) *
         (1 - snap(ramp(p, endScene - 0.1, endScene + 0.1)))
+      // On phones the places step back once the camera is down at the
+      // offenders, where the tax office would stand cut off at the edge.
+      const settle =
+        shape === "tall" ? snap(ramp(p, leakScene + 0.7, leakScene + 0.78)) : 0
       const fades = new Map<string, number>()
       for (const node of nodeEls) {
         const id = node.dataset.node ?? ""
@@ -1547,7 +1729,9 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
           order < 0 ? 0 : snap(ramp(p, leakAt(order), leakAt(order) + 0.06))
         const aside = id === "provider" || id === "taxOffice" ? 0 : focus
         const fade =
-          id === "crooks" ? 1 - away : (1 - away * 0.9) * (1 - aside * 0.7)
+          id === "crooks"
+            ? 1 - away
+            : (1 - away * 0.9) * (1 - aside * 0.7) * (1 - settle * 0.75)
         fades.set(id, fade)
         set(node, "--show", shown)
         set(node, "--leak", leak)
@@ -1623,12 +1807,12 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
       for (const copy of all("[data-copy]")) {
         const id = copy.dataset.copy ?? ""
         const order = leaking.findIndex((node) => node.dataset.node === id)
-        const start = leakAt(order) + 0.04
+        const { start, time } = copyAt(order)
         const t = motion.matches
-          ? snap(ramp(p, start, start + 0.14))
-          : ease(ramp(p, start, start + 0.14))
+          ? snap(ramp(p, start, start + time))
+          : ease(ramp(p, start, start + time))
         const part = fills.find((fill) => fill.dataset.fill === id)
-        const known = snap(ramp(p, start + 0.13, start + 0.16))
+        const known = snap(ramp(p, start + time - 0.01, start + time + 0.02))
         if (part) {
           set(part, "--known", known)
           part.toggleAttribute("data-known", known >= 0.5)
