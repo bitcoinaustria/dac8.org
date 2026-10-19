@@ -735,29 +735,6 @@
   font-weight: 560;
 }
 
-/* Hervorgehobene Aussage: ein Satz, der die Seite trägt. Roter Balken als
-   Marke für „hier setzt die Kritik an“, nicht als Trennlinie. */
-.campaign .callout {
-  max-inline-size: 60ch;
-  margin-block-start: var(--space-xl);
-  padding-inline-start: var(--space-m);
-  border-inline-start: 3px solid var(--primary);
-  font-size: var(--step-1);
-  line-height: 1.45;
-  text-wrap: pretty;
-}
-
-.campaign .callout strong {
-  font-weight: 560;
-}
-
-.campaign .callout small {
-  display: block;
-  margin-block-start: var(--space-2xs);
-  color: var(--ink-3);
-  font-size: var(--step--1);
-}
-
 /* Zwei Textspalten: links die Einordnung, rechts die Einzelheiten. Für
    kurze Abschnitte ohne Bild, damit sie nicht links an der Kante hängen. */
 .campaign .columns {
