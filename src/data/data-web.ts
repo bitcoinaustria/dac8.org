@@ -4,8 +4,11 @@ import type { Language } from "@/lib/i18n"
 // invented customer, Max, leaves his data with an exchange, a tax tool and
 // a hardware wallet shop; the exchange reports him to the tax office every
 // year; every one of these kinds of place has lost such data in real
-// cases; the leaks become a target list; the list leads to his bedroom,
-// where his savings lie under the mattress. The cases and their sources
+// cases, and each leak fills in a line of a file on Max at the offenders;
+// the file becomes his row on a target list; the list leads to his
+// bedroom, where his savings lie under the mattress. The file's values
+// match the site's illustrations of Max (Vienna, 7.2 BTC). The cases and
+// their sources
 // live in src/data/leaks.ts; the legal facts follow the dossier (§ 21 FM-GwG,
 // § 18 and § 20 Krypto-MPfG, Directive (EU) 2024/1640).
 
@@ -30,6 +33,8 @@ export interface Node {
   holds?: Text
   // A real case at a place of this kind, from src/data/leaks.ts.
   leak?: string
+  // What the copy tells the offenders about Max: one line of his file.
+  copied?: { label: Text; value: Text }
 }
 
 export const nodes: Node[] = [
@@ -41,6 +46,10 @@ export const nodes: Node[] = [
     order: 1,
     holds: { de: "Ausweis · Transaktionen", en: "ID · transactions" },
     leak: "coinbase",
+    copied: {
+      label: { de: "Ausweis mit Foto", en: "ID with photo" },
+      value: { de: "Max Mustermann", en: "Max Mustermann" },
+    },
   },
   {
     id: "taxTool",
@@ -49,6 +58,10 @@ export const nodes: Node[] = [
     order: 2,
     holds: { de: "Bestände", en: "Holdings" },
     leak: "waltio",
+    copied: {
+      label: { de: "Bestand", en: "Holdings" },
+      value: { de: "7,2 BTC", en: "7.2 BTC" },
+    },
   },
   {
     id: "shop",
@@ -57,6 +70,10 @@ export const nodes: Node[] = [
     order: 3,
     holds: { de: "Wohnadresse", en: "Home address" },
     leak: "ledger",
+    copied: {
+      label: { de: "Wohnadresse", en: "Home address" },
+      value: { de: "1070 Wien", en: "1070 Vienna" },
+    },
   },
   {
     id: "taxOffice",
@@ -64,6 +81,10 @@ export const nodes: Node[] = [
     scene: 1,
     holds: { de: "Jahresmeldungen", en: "Annual reports" },
     leak: "france",
+    copied: {
+      label: { de: "Jahresmeldungen", en: "Annual reports" },
+      value: { de: "2027–2036", en: "2027–2036" },
+    },
   },
   {
     id: "crooks",
@@ -196,12 +217,6 @@ export const caseLabels = {
     en: "All data leaks with sources",
   },
   close: { de: "Schließen", en: "Close" },
-  // On phones the copies pile up at the offenders without labels, with
-  // one count below.
-  copies: {
-    de: { one: "Kopie", many: "Kopien" },
-    en: { one: "copy", many: "copies" },
-  },
 }
 
 // A short note under the network.
