@@ -1,4 +1,5 @@
 ---
+import Term from "@/components/Term.astro"
 import { glossary, termAnchor } from "@/data/glossary"
 import type { Language } from "@/lib/i18n"
 
@@ -6,11 +7,12 @@ interface Props {
   language: Language
 }
 
-// The dossier's glossary works like a dictionary, not like the questions
-// above it: all terms A to Z as a register, and one card with the chosen
-// term's explanation. Pages link to one term with #begriff-<id> (see
-// src/data/glossary.ts), which selects it; #begriffe is the whole section.
-// Without JavaScript every card stays visible as a plain list.
+// The dossier's register of terms: the names A to Z in a few short columns,
+// like the index of a book. The explanations open where a term is used in
+// the text (Term.astro) and here on a tap. Pages link to one term with
+// #begriff-<id> (see src/data/glossary.ts), which scrolls to it and opens its
+// explanation; #begriffe is the whole section. Without the popover the
+// explanations stand under each name.
 const { language } = Astro.props
 const en = language === "en"
 const collator = new Intl.Collator(language)
@@ -21,177 +23,73 @@ const terms = glossary[language].toSorted((a, b) =>
 
 <section id="begriffe" aria-labelledby="glossary-heading">
   <h2 id="glossary-heading">{en ? "Terms" : "Begriffe"}</h2>
-  <div class="glossary" data-glossary>
-    <ul
-      class="term-index"
-      role="tablist"
-      aria-label={en ? "Terms A to Z" : "Begriffe von A bis Z"}
-    >
-      {terms.map((entry, index) => (
-        <li role="presentation">
-          <a
-            role="tab"
-            href={`#${termAnchor(entry.id)}`}
-            aria-controls={termAnchor(entry.id)}
-            aria-selected={index === 0 ? "true" : "false"}
-            tabindex={index === 0 ? undefined : "-1"}
-            data-term={termAnchor(entry.id)}>{entry.term}</a
-          >
-        </li>
-      ))}
+  <div class="register">
+    <p class="register-intro">
+      {en
+          ? "Words with a dotted underline explain themselves when you tap them. Here are all of them, A\u00a0to\u00a0Z."
+          : "Gepunktet unterstrichene Wörter erklären sich beim Antippen. Hier stehen alle von A\u00a0bis\u00a0Z."}
+    </p>
+    <ul aria-label={en ? "Terms A to Z" : "Begriffe von A bis Z"}>
+      {terms.map((entry) => (
+          <li id={termAnchor(entry.id)}>
+            <Term id={entry.id} />
+            <span class="register-text">{entry.text}</span>
+          </li>
+        ))}
     </ul>
-    <div class="term-cards">
-      {terms.map((entry, index) => (
-        <article
-          class="term-card"
-          id={termAnchor(entry.id)}
-          role="tabpanel"
-          aria-label={entry.term}
-          data-current={index === 0 ? "" : undefined}
-        >
-          <h3>{entry.term}</h3>
-          <p>{entry.text}</p>
-        </article>
-      ))}
-    </div>
   </div>
 </section>
 
-<script>
-  // Choosing a term shows its card and puts it in the address, without
-  // jumping; a link to #begriff-<id> selects it and brings the glossary
-  // into view. Arrow keys move along the register.
-  const root = document.querySelector<HTMLElement>("[data-glossary]")
-  if (root) {
-    const tabs = [...root.querySelectorAll<HTMLAnchorElement>("[role=tab]")]
-    const select = (id: string) => {
-      const card = root.querySelector<HTMLElement>(`#${CSS.escape(id)}`)
-      if (!card) return false
-      for (const other of root.querySelectorAll(".term-card"))
-        other.toggleAttribute("data-current", other === card)
-      for (const tab of tabs) {
-        const current = tab.dataset.term === id
-        tab.setAttribute("aria-selected", String(current))
-        if (current) tab.removeAttribute("tabindex")
-        else tab.setAttribute("tabindex", "-1")
-      }
-      return true
-    }
-    for (const tab of tabs) {
-      tab.addEventListener("click", (event) => {
-        event.preventDefault()
-        const id = tab.dataset.term ?? ""
-        if (select(id)) history.replaceState(null, "", `#${id}`)
-      })
-      tab.addEventListener("keydown", (event) => {
-        const step =
-          event.key === "ArrowRight" || event.key === "ArrowDown"
-            ? 1
-            : event.key === "ArrowLeft" || event.key === "ArrowUp"
-              ? -1
-              : 0
-        if (!step) return
-        event.preventDefault()
-        const next =
-          tabs[(tabs.indexOf(tab) + step + tabs.length) % tabs.length]
-        next.focus()
-        next.click()
-      })
-    }
-    const fromHash = () => {
-      const id = decodeURIComponent(location.hash.slice(1))
-      if (id.startsWith("begriff-") && select(id))
-        root.scrollIntoView({ block: "start" })
-    }
-    fromHash()
-    addEventListener("hashchange", fromHash)
-  }
-</script>
-
 <style>
-  /* Unter Kopfleiste und Kapitelleiste, wenn ein Link hierher springt. */
-  .glossary {
-    scroll-margin-block-start: calc(
-      var(--bar-height) +
-      var(--chapter-height) +
-      var(--space-m)
-    );
+  .register-intro {
+    max-inline-size: var(--measure-text);
+    color: var(--ink-2);
+    text-wrap: pretty;
   }
 
-  .term-index {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs);
-    margin: 0;
+  /* Names only, in short columns that fill top to bottom: three on wide
+     screens, two on a phone, where long names break with a hyphen. */
+  ul {
+    columns: 3 9rem;
+    column-gap: var(--space-m);
+    margin-block-start: var(--space-s);
     padding: 0;
     list-style: none;
   }
 
-  /* Das Register: jeder Begriff ein Chip, der gewählte dunkel gefüllt. Rot
-     bleibt dem „Jetzt“ des Rechtswegs vorbehalten. */
-  .term-index a {
-    display: inline-flex;
-    align-items: center;
-    min-block-size: 2.5rem;
-    padding: 0 var(--space-s);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-full);
-    color: var(--ink);
+  li {
+    padding-block: var(--space-3xs);
     font-weight: 560;
-    text-decoration: none;
-    transition:
-      border-color 120ms ease,
-      background-color 120ms ease;
+    overflow-wrap: normal;
+    hyphens: auto;
+    break-inside: avoid;
+    scroll-margin-block: var(--space-2xl);
   }
 
-  .term-index a:hover {
-    border-color: var(--ink-3);
-  }
-
-  .term-index a[aria-selected="true"] {
-    border-color: var(--ink);
-    background: var(--ink);
-    color: var(--background);
-  }
-
-  .term-cards {
-    display: grid;
-    gap: var(--space-s);
-    margin-block-start: var(--space-m);
-  }
-
-  /* Die Karte des gewählten Begriffs, groß genug zum Lesen. Mit JavaScript
-     steht nur sie da; die Mindesthöhe hält das Register ruhig, wenn die
-     Erklärungen verschieden lang sind. */
-  .term-card {
-    padding: var(--space-m) var(--space-l);
-    border-radius: var(--radius-xl);
-    background: var(--panel);
-  }
-
-  :global(html[data-js]) .term-card:not([data-current]) {
-    display: none;
-  }
-
-  :global(html[data-js]) .term-card {
-    min-block-size: 10rem;
-  }
-
-  .term-card h3 {
-    font-size: var(--type-h3);
-  }
-
-  .term-card p {
+  /* Without the popover each explanation stands under its name, and the
+     register becomes a plain list. */
+  .register-text {
+    display: block;
     max-inline-size: var(--measure-text);
-    margin-block-start: var(--space-2xs);
     color: var(--ink-2);
-    font-size: var(--type-lead);
+    font-weight: var(--weight-text);
     text-wrap: pretty;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .term-index a {
-      transition: none;
-    }
+  :global(html:not([data-terms])) .register-intro {
+    display: none;
+  }
+
+  :global(html:not([data-terms])) ul {
+    columns: auto;
+    margin-block-start: 0;
+  }
+
+  :global(html:not([data-terms])) li {
+    padding-block: var(--space-2xs);
+  }
+
+  :global(html[data-terms]) .register-text {
+    display: none;
   }
 </style>

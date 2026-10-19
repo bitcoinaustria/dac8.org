@@ -3,10 +3,9 @@ import Artwork from "@/components/Artwork.astro"
 import Disclosure from "@/components/Disclosure.astro"
 import Glossary from "@/components/Glossary.astro"
 import MetaPage from "@/components/MetaPage.astro"
+import Term from "@/components/Term.astro"
 import Layout from "@/layouts/Layout.astro"
-import { campaignStatus } from "@/data/campaign"
-import { peopleAffected, roundPeople } from "@/data/leaks"
-import { sourceGroups } from "@/data/sources"
+import { law, sourceGroups } from "@/data/sources"
 import "@/styles/dossier.css"
 
 // The English edition of src/pages/dossier.astro; keep both in step.
@@ -22,29 +21,6 @@ const sources = sourceGroups.map((group) => ({
     label: source.labelEn,
   })),
 }))
-
-const overview = [
-  {
-    title: "You are affected if you use a provider.",
-    text: "Providers are the exchanges, brokers and apps where you buy, sell or keep crypto-assets. Anyone who only self-custodies, holding the keys to their bitcoin themselves, and never buys or sells through a provider is not reported.",
-  },
-  {
-    title: "The tax office receives your identity and annual totals.",
-    text: "Name, postal address, date of birth, tax residence, tax identification number and, for each crypto-asset, the totals for the year. Transfers to your own wallet usually appear as a total, without wallet addresses.",
-  },
-  {
-    title: "The details stay with the provider.",
-    text: "Anti-money-laundering rules require it to keep your ID, wallet addresses and individual transactions, currently for up to ten years after the customer relationship ends.",
-  },
-  {
-    title: "The first report is due by 31 July 2027.",
-    text: "Providers with Austrian reporting obligations then report 2026 to the tax office. If you live in Germany or another EU country, Austria passes the report on to it by 30 September 2027.",
-  },
-  {
-    title: "Our complaint has been filed.",
-    text: "It is with the Austrian Data Protection Authority. Data collection continues during the proceedings.",
-  },
-]
 
 const faqs = [
   {
@@ -91,11 +67,9 @@ const faqs = [
 
 <Layout
   sections={[
-    { id: "ueberblick", label: "Overview" },
     { id: "gemeldet", label: "The report" },
     { id: "speicherdauer", label: "Retention" },
     { id: "ablauf", label: "Timeline" },
-    { id: "risiko", label: "Risk" },
     { id: "faq", label: "Questions" },
     { id: "begriffe", label: "Terms" },
     { id: "quellen", label: "Sources" },
@@ -108,27 +82,14 @@ const faqs = [
       <div class="hero-text">
         <h1>What DAC8 requires. <span>And what it means for you.</span></h1>
         <p class="lead">
-          Crypto-asset reporting in Austria: who is affected, what is reported
-          and who keeps the data for how long.
+          You are affected if you buy, sell or keep crypto-assets through a
+          <Term id="anbieter">provider</Term>
+          such as an exchange, broker or app. Anyone who only uses
+          <Term id="selbstverwahrung">self-custody</Term>
+          and never buys or sells through a provider is not reported.
         </p>
       </div>
     </header>
-
-    <section
-      id="ueberblick"
-      class="overview"
-      aria-labelledby="ueberblick-heading"
-    >
-      <h2 id="ueberblick-heading" class="visually-hidden">At a glance</h2>
-      <ol>
-        {overview.map((point) => (
-          <li>
-            <strong>{point.title}</strong>
-            <p>{point.text}</p>
-          </li>
-        ))}
-      </ol>
-    </section>
 
     <section id="gemeldet" class="band" aria-labelledby="gemeldet-heading">
       <div class="art-split report-head">
@@ -138,8 +99,12 @@ const faqs = [
             <span>What stays with the provider.</span>
           </h2>
           <p class="section-intro">
-            The provider reports every year, starting with 2026. It keeps the
-            details, most of them already under anti-money-laundering rules.
+            Under Austria’s
+            <Term id="krypto-mpfg"
+              >Crypto-Asset Reporting Obligations Act</Term
+            >, the provider reports to the tax office every year, starting with
+            2026. It keeps the details, most of them already under
+            <Term id="fm-gwg">anti-money-laundering rules</Term>.
           </p>
         </div>
         <Artwork
@@ -152,64 +117,60 @@ const faqs = [
       <div class="compare">
         <div class="reported">
           <h3>Goes to the tax office</h3>
+          <p class="basis">
+            <a href={law.section18}>Section 18 Krypto-MPfG</a>
+          </p>
           <ul>
             <li>Name, postal address and date of birth</li>
             <li>Tax residence and tax identification number</li>
             <li>
-              Annual totals per crypto-asset for purchases, sales, exchanges and
-              transfers
+              For each crypto-asset, the annual totals for purchases, sales,
+              exchanges and transfers: euro value, units and, for most
+              categories, the number of transactions
             </li>
             <li>
-              Transfers to wallets with no known provider, usually including
-              your own:
-              <strong>as a total, without wallet addresses</strong>
+              Transfers to <Term id="wallet">wallets</Term> with no known
+              provider, usually including your own:
+              <strong
+                >as a total, without
+                <Term id="wallet-adresse">wallet addresses</Term></strong
+              >
             </li>
             <li>
               Activities that often have no tax consequences, such as
               crypto-to-crypto exchanges
             </li>
           </ul>
+          <p class="note">
+            The provider must prepare this reporting data for all customers,
+            even those who are not ultimately reported.
+            <a class="basis" href={law.section20}>Section 20(1) Krypto-MPfG</a>
+          </p>
         </div>
         <div class="absent">
           <h3>Stays with the provider</h3>
+          <p class="basis">
+            <a href={law.fmGwG}>Section 21 FM-GwG</a>,
+            <a href={law.transferRegulation}>Regulation (EU) 2023/1113</a>
+          </p>
           <ul>
-            <li>Your ID and the records of your identification</li>
+            <li>
+              Your ID and the records of your
+              <Term id="kyc">identification</Term>
+            </li>
             <li>Wallet addresses, including those of your own wallet</li>
             <li>
               Individual transactions with time and amount, and for transfers,
-              the sender and recipient
+              the <Term id="travel-rule">sender and recipient</Term>
             </li>
             <li>Your balance</li>
           </ul>
+          <p class="note">
+            For DAC8, the provider adds your tax identification number and tax
+            residence to these records.
+          </p>
         </div>
       </div>
-      <details class="legal-detail">
-        <summary>What the law requires in detail</summary>
-        <div>
-          <p>
-            Under Section 18 Krypto-MPfG, the provider reports for each
-            crypto-asset and activity category the euro value, the units and,
-            for most categories, the number of transactions, separated into
-            purchases, sales, exchanges and transfers. Transfers to wallet
-            addresses it does not know to belong to a provider or financial
-            institution appear as a total, without the wallet addresses
-            themselves.
-          </p>
-          <p>
-            Providers with Austrian reporting obligations must prepare the
-            reporting data for all customers, even those who are not ultimately
-            reported (Section 20 Krypto-MPfG).
-          </p>
-          <p>
-            Your ID, wallet addresses and transaction records must already be
-            kept under Austria’s Financial Markets Anti-Money Laundering Act
-            (Section 21 FM-GwG). The EU transfer of funds regulation requires
-            details of the sender and recipient of every crypto transfer, even
-            when you transfer to your own wallet. For DAC8, the provider adds
-            your tax identification number and tax residence to these records.
-          </p>
-        </div>
-      </details>
     </section>
 
     <section id="speicherdauer" aria-labelledby="speicherdauer-heading">
@@ -236,14 +197,20 @@ const faqs = [
               <td data-label="How long">
                 currently up to
                 <strong>ten years after the customer relationship ends</strong>
+                <a class="basis" href={law.fmGwG}>Section 21 FM-GwG</a>
               </td>
             </tr>
             <tr>
               <th scope="row">Your provider</th>
-              <td data-label="What">Each annual report</td>
+              <td data-label="What">
+                Each <Term id="jahresmeldung">annual report</Term>
+              </td>
               <td data-label="How long">
                 <strong>ten years</strong>
                 after the reporting year, then it is deleted
+                <a class="basis" href={law.section20}
+                  >Section 20(4) Krypto-MPfG</a
+                >
               </td>
             </tr>
             <tr>
@@ -256,6 +223,7 @@ const faqs = [
               <td data-label="How long">
                 <strong>at least five years</strong>; the directive sets no
                 maximum
+                <a class="basis" href={law.dac8}>Article 22(3) DAC</a>
               </td>
             </tr>
           </tbody>
@@ -276,23 +244,32 @@ const faqs = [
         through the Crypto-Asset Reporting Obligations Act (Krypto-MPfG), which
         has applied since 1 January 2026.
       </p>
+      <p class="basis">
+        <a href={law.dac8}>Directive (EU) 2023/2226</a>,
+        <a href={law.kryptoMPfG}>Federal Law Gazette I No. 96/2025</a>
+      </p>
       <ol class="flow" aria-label="How the first report travels">
         <li>
           <strong>2026</strong>
           <span>
             Your provider records the first reporting year and prepares the
             reporting data for all customers.
+            <a class="basis" href={law.section20}>Section 20(1) Krypto-MPfG</a>
           </span>
         </li>
         <li>
           <strong>By 31 July 2027</strong>
-          <span>It reports 2026 to the Austrian tax office.</span>
+          <span>
+            It reports 2026 to the Austrian tax office.
+            <a class="basis" href={law.kryptoMPfG}>Section 19(2) Krypto-MPfG</a>
+          </span>
         </li>
         <li>
           <strong>By 30 September 2027</strong>
           <span>
             If you live in Germany or another EU country, Austria passes the
             report on to it.
+            <a class="basis" href={law.kryptoMPfG}>Section 21 Krypto-MPfG</a>
           </span>
         </li>
         <li>
@@ -302,30 +279,6 @@ const faqs = [
       </ol>
       <a class="text-link" href="/en/history/">How we got to DAC8</a>
     </section>
-
-    <div class="pair">
-      <section id="risiko" aria-labelledby="risiko-heading">
-        <h2 id="risiko-heading">Why this data is a risk</h2>
-        <p class="prose">
-          Bitcoin works like cash: whoever holds the keys can move it. So nobody
-          should know who holds how much. Yet providers, tax services and
-          authorities have already lost such data, in the documented cases
-          affecting
-          <strong>about {roundPeople(peopleAffected, "en")} people</strong>
-          in total. Stolen data shows criminals where there is something to
-          take. The cases do not show that DAC8 caused them.
-        </p>
-        <a class="text-link" href="/en/data-leaks/"
-          >The documented data leaks</a
-        >
-      </section>
-
-      <section id="rechtsweg" aria-labelledby="rechtsweg-heading">
-        <h2 id="rechtsweg-heading">What we are doing about it</h2>
-        <p class="prose">{campaignStatus.en.text}</p>
-        <a class="text-link" href="/en/proceedings/">Where the case stands</a>
-      </section>
-    </div>
 
     <div class="reference">
       <section id="faq" aria-labelledby="faq-heading">
@@ -392,6 +345,9 @@ const faqs = [
       "#faelle": "/en/data-leaks/",
       "#angriffe": "/en/data-leaks/#angriffe",
       "#was-ist-dac8": "#ablauf",
+      "#ueberblick": "#top",
+      "#risiko": "/en/data-leaks/",
+      "#rechtsweg": "/en/proceedings/",
     }
     const forward = () => {
       const target = moved[location.hash]

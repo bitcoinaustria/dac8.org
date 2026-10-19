@@ -1,0 +1,280 @@
+---
+import { glossary } from "@/data/glossary"
+import { languageFor } from "@/lib/i18n"
+
+interface Props {
+  // The term's id in src/data/glossary.ts, such as "kyc".
+  id: string
+}
+
+// A word in running text that explains itself: dotted underline, and on
+// hover, focus or tap a small popover with the glossary entry. The wording
+// comes from src/data/glossary.ts only. Wrap the word as it reads in the
+// sentence, <Term id="kyc">Identifizierung</Term>; without content the
+// glossary's own term shows. Mark only the first use of a term on a page.
+//
+// Without JavaScript, or in browsers without the Popover API, the word stays
+// plain text. The script turns it into a button that controls the popover;
+// one popover is open at a time, Escape or a tap elsewhere closes it, and a
+// link to the register entry (#begriff-<id>) opens it there.
+//
+// The markup stands last in this file: anything after it would put a space
+// between the word and the punctuation that follows it.
+const { id } = Astro.props
+const entry = glossary[languageFor(Astro.url.pathname)].find(
+  (term) => term.id === id,
+)
+if (!entry) throw new Error(`Unknown glossary term: ${id}`)
+---
+
+<script>
+  type Term = { button: HTMLButtonElement; tip: HTMLElement }
+
+  const supported = Object.hasOwn(HTMLElement.prototype, "popover")
+  const terms: Term[] = []
+
+  if (supported) {
+    let count = 0
+    for (const host of document.querySelectorAll<HTMLElement>(
+      ".term[data-term-text]",
+    )) {
+      const id = `term-tip-${++count}`
+      const button = document.createElement("button")
+      button.type = "button"
+      button.className = "term-trigger"
+      button.setAttribute("aria-expanded", "false")
+      button.setAttribute("aria-controls", id)
+      button.append(...host.childNodes)
+
+      const tip = document.createElement("span")
+      tip.id = id
+      tip.className = "term-tip"
+      tip.popover = "auto"
+      const name = document.createElement("span")
+      name.className = "term-tip-name"
+      name.textContent = host.dataset.termName ?? ""
+      const text = document.createElement("span")
+      text.className = "term-tip-text"
+      text.textContent = host.dataset.termText ?? ""
+      tip.append(name, text)
+
+      // The invoker link keeps a tap on the word from counting as a tap
+      // outside; the clicks themselves are handled below.
+      button.popoverTargetElement = tip
+      host.append(button, tip)
+      terms.push({ button, tip })
+    }
+    document.documentElement.toggleAttribute("data-terms", true)
+  }
+
+  let open: Term | null = null
+  let pinned = false
+  let timer = 0
+
+  // The sticky header's lower edge: explanations stay below it.
+  const header = document.querySelector("[data-site-header]")
+  const ceiling = () => header?.getBoundingClientRect().bottom ?? 0
+
+  // Below the word, or above it when there is no room; never past the edge
+  // of the screen or under the header.
+  const place = ({ button, tip }: Term) => {
+    const box = button.getClientRects()[0] ?? button.getBoundingClientRect()
+    const own = tip.getBoundingClientRect()
+    const margin = 12
+    const gap = 8
+    // The body leaves out a reserved scrollbar gutter, which the root's
+    // width includes where scrollbars overlay the page.
+    const width = Math.min(
+      document.documentElement.clientWidth,
+      document.body.clientWidth,
+    )
+    const left = Math.min(
+      Math.max(box.left + box.width / 2 - own.width / 2, margin),
+      width - own.width - margin,
+    )
+    const below = box.bottom + gap
+    const above = box.top - gap - own.height
+    const top =
+      below + own.height <= window.innerHeight - margin ||
+      above < ceiling() + margin
+        ? below
+        : above
+    tip.style.left = `${Math.round(Math.max(left, margin))}px`
+    tip.style.top = `${Math.round(top)}px`
+  }
+
+  const show = (term: Term, pin: boolean) => {
+    window.clearTimeout(timer)
+    pinned = pin || (pinned && open === term)
+    if (!term.tip.matches(":popover-open")) term.tip.showPopover()
+    open = term
+    place(term)
+  }
+
+  const hide = (term: Term) => {
+    window.clearTimeout(timer)
+    if (term.tip.matches(":popover-open")) term.tip.hidePopover()
+  }
+
+  const hideSoon = (term: Term) => {
+    if (pinned) return
+    window.clearTimeout(timer)
+    timer = window.setTimeout(() => hide(term), 200)
+  }
+
+  const mouse = (event: PointerEvent) => event.pointerType === "mouse"
+
+  for (const term of terms) {
+    const { button, tip } = term
+    tip.addEventListener("toggle", (event) => {
+      const opened = (event as ToggleEvent).newState === "open"
+      button.setAttribute("aria-expanded", String(opened))
+      if (!opened && open === term) {
+        open = null
+        pinned = false
+      }
+    })
+    button.addEventListener("click", (event) => {
+      event.preventDefault()
+      if (open === term && pinned) hide(term)
+      else show(term, true)
+    })
+    button.addEventListener("pointerenter", (event) => {
+      if (!mouse(event) || open === term) return
+      window.clearTimeout(timer)
+      timer = window.setTimeout(() => show(term, false), 120)
+    })
+    button.addEventListener("pointerleave", (event) => {
+      if (!mouse(event)) return
+      if (open === term) hideSoon(term)
+      else window.clearTimeout(timer)
+    })
+    tip.addEventListener("pointerenter", () => window.clearTimeout(timer))
+    tip.addEventListener("pointerleave", (event) => {
+      if (mouse(event)) hideSoon(term)
+    })
+    button.addEventListener("focus", () => {
+      if (button.matches(":focus-visible") && open !== term) show(term, false)
+    })
+    button.addEventListener("blur", (event) => {
+      const next = event.relatedTarget as Node | null
+      if (next ? !tip.contains(next) : !pinned) hide(term)
+    })
+  }
+
+  // While open, the explanation moves with its word, and closes once the
+  // word has scrolled under the header or off the screen.
+  let queued = false
+  const follow = () => {
+    if (queued || !open) return
+    queued = true
+    requestAnimationFrame(() => {
+      queued = false
+      if (!open) return
+      const box = open.button.getBoundingClientRect()
+      if (box.bottom < ceiling() || box.top > window.innerHeight) hide(open)
+      else place(open)
+    })
+  }
+  addEventListener("scroll", follow, { passive: true })
+  addEventListener("resize", follow)
+
+  // A link to a register entry, such as /dossier/#begriff-kyc, brings it
+  // into view and opens its explanation.
+  const reveal = () => {
+    const id = decodeURIComponent(location.hash.slice(1))
+    if (!id.startsWith("begriff-")) return
+    const entry = document.getElementById(id)
+    const term = terms.find(({ button }) => entry?.contains(button))
+    if (!entry || !term) return
+    entry.scrollIntoView({ block: "center" })
+    show(term, true)
+  }
+  reveal()
+  addEventListener("hashchange", reveal)
+</script>
+
+<style is:global>
+  /* The word: a dotted line under it, solid while its explanation is open.
+     It keeps the size, colour and weight of the text around it. */
+  .term-trigger {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: inherit;
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 0.09em;
+    text-decoration-color: color-mix(in oklab, currentColor 55%, transparent);
+    text-underline-offset: 0.22em;
+    cursor: help;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .term-trigger:hover,
+  .term-trigger[aria-expanded="true"] {
+    text-decoration-style: solid;
+    text-decoration-color: currentColor;
+  }
+
+  /* The explanation: a small card above everything, sized for a phone. */
+  .term-tip {
+    position: fixed;
+    inset: auto;
+    inline-size: max-content;
+    max-inline-size: min(21rem, calc(100vw - 2.5rem));
+    margin: 0;
+    padding: 0.75rem 0.95rem 0.85rem;
+    overflow: visible;
+    border: 1px solid color-mix(in oklab, var(--foreground) 14%, transparent);
+    border-radius: var(--radius-lg);
+    background: light-dark(#ffffff, #1f1f1f);
+    box-shadow:
+      0 1px 2px light-dark(#15202b14, #00000060),
+      0 8px 24px light-dark(#15202b1f, #00000080);
+    color: var(--foreground);
+    font-family: inherit;
+    font-size: var(--step--1);
+    font-weight: var(--weight-text);
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+    text-align: start;
+    text-wrap: pretty;
+    hyphens: manual;
+    overflow-wrap: break-word;
+  }
+
+  .term-tip-name {
+    display: block;
+    margin-block-end: 0.2rem;
+    font-weight: var(--weight-heading);
+  }
+
+  .term-tip-text {
+    display: block;
+    color: color-mix(in oklab, var(--foreground) 86%, transparent);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .term-tip:popover-open {
+      animation: term-tip-in 120ms ease-out;
+    }
+  }
+
+  @keyframes term-tip-in {
+    from {
+      opacity: 0;
+      translate: 0 0.2rem;
+    }
+  }
+</style>
+
+<span class="term" data-term-name={entry.term} data-term-text={entry.text}
+  ><slot>{entry.term}</slot></span
+>

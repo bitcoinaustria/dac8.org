@@ -3,45 +3,22 @@ import Artwork from "@/components/Artwork.astro"
 import Disclosure from "@/components/Disclosure.astro"
 import Glossary from "@/components/Glossary.astro"
 import MetaPage from "@/components/MetaPage.astro"
+import Term from "@/components/Term.astro"
 import Layout from "@/layouts/Layout.astro"
-import { campaignStatus } from "@/data/campaign"
-import { peopleAffected, roundPeople } from "@/data/leaks"
-import { sourceGroups } from "@/data/sources"
+import { law, sourceGroups } from "@/data/sources"
 import "@/styles/dossier.css"
 
-// The checkable reference: what DAC8 requires, each fact in full once. The
-// story is on the home page, the reasons on the arguments page, the cases on
-// the leak page, the proceedings on their own page; this page links to each
-// once. The English page mirrors this one.
+// The legal reference: what DAC8 and the Austrian act require, each fact
+// once, with its legal basis beside it as a quiet link to the primary text
+// (src/data/sources.ts). No story and no campaign here: the home page tells
+// the story, and the arguments, leak, proceedings and history pages each own
+// theirs. Terms explain themselves where they first appear (Term.astro) and
+// stand A to Z in the register. The English page mirrors this one.
 const researchDate = "30. September 2026"
 const sourceCount = sourceGroups.reduce(
   (n, group) => n + group.sources.length,
   0,
 )
-
-// The 30-second version. Whoever reads only the bold lines has the page.
-const overview = [
-  {
-    title: "Betroffen bist du, wenn du einen Anbieter nutzt.",
-    text: "Anbieter sind Börsen, Broker und Apps, bei denen du Kryptowerte kaufst, verkaufst oder verwahren lässt. Wer nur selbst verwahrt, also die Schlüssel zu seinen Bitcoin selbst hält, und nie über einen Anbieter kauft oder verkauft, wird nicht gemeldet.",
-  },
-  {
-    title: "Ans Finanzamt gehen Identität und Jahressummen.",
-    text: "Name, Anschrift, Geburtsdatum, Steuerwohnsitz, Steuernummer und je Kryptowert die Summen eines Jahres. Übertragungen auf deine eigene Wallet stehen in der Regel als Summe darin, ohne Wallet-Adressen.",
-  },
-  {
-    title: "Die Einzelheiten bleiben beim Anbieter.",
-    text: "Ausweis, Wallet-Adressen und einzelne Transaktionen muss er nach den Geldwäschevorschriften aufbewahren, derzeit bis zehn Jahre nach Ende der Kundenbeziehung.",
-  },
-  {
-    title: "Die erste Meldung kommt bis 31. Juli 2027.",
-    text: "Anbieter mit Meldepflicht in Österreich melden dann das Jahr 2026 ans Finanzamt. Wohnst du in Deutschland oder einem anderen EU-Staat, gibt Österreich die Meldung bis 30. September 2027 dorthin weiter.",
-  },
-  {
-    title: "Unsere Beschwerde ist eingebracht.",
-    text: "Sie liegt bei der österreichischen Datenschutzbehörde. Die Datenerfassung läuft während des Verfahrens weiter.",
-  },
-]
 
 const faqs = [
   {
@@ -88,11 +65,9 @@ const faqs = [
 
 <Layout
   sections={[
-    { id: "ueberblick", label: "Überblick" },
     { id: "gemeldet", label: "Meldung" },
     { id: "speicherdauer", label: "Speicherdauer" },
     { id: "ablauf", label: "Ablauf" },
-    { id: "risiko", label: "Risiko" },
     { id: "faq", label: "Fragen" },
     { id: "begriffe", label: "Begriffe" },
     { id: "quellen", label: "Quellen" },
@@ -105,27 +80,15 @@ const faqs = [
       <div class="hero-text">
         <h1>Was DAC8 verlangt. <span>Und was das für dich heißt.</span></h1>
         <p class="lead">
-          Die Krypto-Meldepflicht in Österreich: wer betroffen ist, was gemeldet
-          wird und wer die Daten wie lange speichert.
+          Betroffen bist du, wenn du Kryptowerte über einen
+          <Term id="anbieter">Anbieter</Term>
+          wie eine Börse, einen Broker oder eine App kaufst, verkaufst oder
+          verwahren lässt. Wer nur
+          <Term id="selbstverwahrung">selbst verwahrt</Term>
+          und nie über einen Anbieter kauft oder verkauft, wird nicht gemeldet.
         </p>
       </div>
     </header>
-
-    <section
-      id="ueberblick"
-      class="overview"
-      aria-labelledby="ueberblick-heading"
-    >
-      <h2 id="ueberblick-heading" class="visually-hidden">Auf einen Blick</h2>
-      <ol>
-        {overview.map((point) => (
-          <li>
-            <strong>{point.title}</strong>
-            <p>{point.text}</p>
-          </li>
-        ))}
-      </ol>
-    </section>
 
     <section id="gemeldet" class="band" aria-labelledby="gemeldet-heading">
       <div class="art-split report-head">
@@ -134,8 +97,11 @@ const faqs = [
             Was ans Finanzamt geht. <span>Was beim Anbieter bleibt.</span>
           </h2>
           <p class="section-intro">
-            Der Anbieter meldet jedes Jahr, beginnend mit 2026. Die Einzelheiten
-            behält er, die meisten schon wegen der Geldwäschevorschriften.
+            Nach dem
+            <Term id="krypto-mpfg">Krypto-Meldepflichtgesetz</Term>
+            meldet der Anbieter jedes Jahr ans Finanzamt, beginnend mit 2026.
+            Die Einzelheiten behält er, die meisten schon wegen der
+            <Term id="fm-gwg">Geldwäschevorschriften</Term>.
           </p>
         </div>
         <Artwork
@@ -148,63 +114,58 @@ const faqs = [
       <div class="compare">
         <div class="reported">
           <h3>Geht ans Finanzamt</h3>
+          <p class="basis"><a href={law.section18}>§ 18 Krypto-MPfG</a></p>
           <ul>
             <li>Name, Anschrift und Geburtsdatum</li>
             <li>Steuerwohnsitz und Steuernummer</li>
             <li>
-              Jahressummen je Kryptowert für Kauf, Verkauf, Tausch und
-              Übertragung
+              je Kryptowert die Jahressummen für Kauf, Verkauf, Tausch und
+              Übertragung: Wert in Euro, Stückzahl und meist die Anzahl der
+              Vorgänge
             </li>
             <li>
-              Übertragungen auf Wallets ohne bekannten Anbieter, in der Regel
-              auch deine eigene:
-              <strong>als Summe, ohne Wallet-Adressen</strong>
+              Übertragungen auf <Term id="wallet">Wallets</Term> ohne bekannten
+              Anbieter, in der Regel auch deine eigene:
+              <strong
+                >als Summe, ohne
+                <Term id="wallet-adresse">Wallet-Adressen</Term></strong
+              >
             </li>
             <li>
               auch Vorgänge, die steuerlich meist keine Rolle spielen, etwa der
               Tausch von Krypto gegen Krypto
             </li>
           </ul>
+          <p class="note">
+            Aufbereiten muss der Anbieter diese Meldedaten für alle Kunden, auch
+            für jene, die am Ende nicht gemeldet werden.
+            <a class="basis" href={law.section20}>§ 20 Abs. 1 Krypto-MPfG</a>
+          </p>
         </div>
         <div class="absent">
           <h3>Bleibt beim Anbieter</h3>
+          <p class="basis">
+            <a href={law.fmGwG}>§ 21 FM-GwG</a>,
+            <a href={law.transferRegulation}>Verordnung (EU) 2023/1113</a>
+          </p>
           <ul>
-            <li>dein Ausweis und die Unterlagen aus der Identifizierung</li>
+            <li>
+              dein Ausweis und die Unterlagen aus der
+              <Term id="kyc">Identifizierung</Term>
+            </li>
             <li>Wallet-Adressen, auch die deiner eigenen Wallet</li>
             <li>
               einzelne Transaktionen mit Zeitpunkt und Betrag, bei Übertragungen
-              auch Absender und Empfänger
+              auch <Term id="travel-rule">Absender und Empfänger</Term>
             </li>
             <li>dein Kontostand</li>
           </ul>
+          <p class="note">
+            Für DAC8 nimmt der Anbieter Steuernummer und Steuerwohnsitz zu
+            diesen Unterlagen dazu.
+          </p>
         </div>
       </div>
-      <details class="legal-detail">
-        <summary>Was das Gesetz genau verlangt</summary>
-        <div>
-          <p>
-            Nach § 18 Krypto-MPfG meldet der Anbieter je Kryptowert und
-            Vorgangsart den Wert in Euro, die Stückzahl und meist die Anzahl der
-            Vorgänge, getrennt nach Kauf, Verkauf, Tausch und Übertragung.
-            Übertragungen an Wallet-Adressen, von denen er nicht weiß, dass sie
-            zu einem Anbieter oder Finanzinstitut gehören, stehen als Summe
-            darin, ohne die Wallet-Adressen selbst.
-          </p>
-          <p>
-            Anbieter mit Meldepflicht in Österreich müssen die Meldedaten für
-            alle Kunden aufbereiten, auch für jene, die am Ende nicht gemeldet
-            werden (§ 20 Krypto-MPfG).
-          </p>
-          <p>
-            Ausweis, Wallet-Adressen und Transaktionsunterlagen muss der
-            Anbieter schon nach dem Finanzmarkt-Geldwäschegesetz aufbewahren (§
-            21 FM-GwG). Angaben zu Absender und Empfänger jeder
-            Krypto-Übertragung verlangt die EU-Geldtransferverordnung, auch wenn
-            du auf deine eigene Wallet überträgst. Für DAC8 nimmt der Anbieter
-            Steuernummer und Steuerwohnsitz zu diesen Unterlagen dazu.
-          </p>
-        </div>
-      </details>
     </section>
 
     <section id="speicherdauer" aria-labelledby="speicherdauer-heading">
@@ -231,14 +192,20 @@ const faqs = [
               <td data-label="Wie lange">
                 derzeit bis
                 <strong>zehn Jahre nach Ende der Kundenbeziehung</strong>
+                <a class="basis" href={law.fmGwG}>§ 21 FM-GwG</a>
               </td>
             </tr>
             <tr>
               <th scope="row">Dein Anbieter</th>
-              <td data-label="Was">jede Jahresmeldung</td>
+              <td data-label="Was">
+                jede <Term id="jahresmeldung">Jahresmeldung</Term>
+              </td>
               <td data-label="Wie lange">
                 <strong>zehn Jahre</strong>
                 nach dem Meldejahr, dann wird sie gelöscht
+                <a class="basis" href={law.section20}
+                  >§ 20 Abs. 4 Krypto-MPfG</a
+                >
               </td>
             </tr>
             <tr>
@@ -251,6 +218,7 @@ const faqs = [
               <td data-label="Wie lange">
                 <strong>mindestens fünf Jahre</strong>, eine Höchstfrist nennt
                 die Richtlinie nicht
+                <a class="basis" href={law.dac8}>Art. 22 Abs. 3 DAC</a>
               </td>
             </tr>
           </tbody>
@@ -271,23 +239,32 @@ const faqs = [
         setzt sie mit dem Krypto-Meldepflichtgesetz um, das seit 1. Jänner 2026
         gilt.
       </p>
+      <p class="basis">
+        <a href={law.dac8}>Richtlinie (EU) 2023/2226</a>,
+        <a href={law.kryptoMPfG}>BGBl. I Nr. 96/2025</a>
+      </p>
       <ol class="flow" aria-label="Der Weg der ersten Meldung">
         <li>
           <strong>2026</strong>
           <span>
             Dein Anbieter zeichnet das erste Meldejahr auf und bereitet die
             Meldedaten für alle Kunden auf.
+            <a class="basis" href={law.section20}>§ 20 Abs. 1 Krypto-MPfG</a>
           </span>
         </li>
         <li>
           <strong>bis 31. Juli 2027</strong>
-          <span>Er meldet das Jahr 2026 ans Finanzamt in Österreich.</span>
+          <span>
+            Er meldet das Jahr 2026 ans Finanzamt in Österreich.
+            <a class="basis" href={law.kryptoMPfG}>§ 19 Abs. 2 Krypto-MPfG</a>
+          </span>
         </li>
         <li>
           <strong>bis 30. September 2027</strong>
           <span>
             Wohnst du in Deutschland oder einem anderen EU-Staat, gibt
             Österreich die Meldung dorthin weiter.
+            <a class="basis" href={law.kryptoMPfG}>§ 21 Krypto-MPfG</a>
           </span>
         </li>
         <li>
@@ -297,28 +274,6 @@ const faqs = [
       </ol>
       <a class="text-link" href="/geschichte/">Wie es zu DAC8 kam</a>
     </section>
-
-    <div class="pair">
-      <section id="risiko" aria-labelledby="risiko-heading">
-        <h2 id="risiko-heading">Warum diese Daten ein Risiko sind</h2>
-        <p class="prose">
-          Bitcoin funktioniert wie Bargeld: Wer die Schlüssel hat, kann ihn
-          übertragen. Darum sollte niemand wissen, wer wie viel besitzt. Doch
-          Anbieter, Steuerdienste und Behörden haben solche Daten schon
-          verloren, in den belegten Fällen zusammengezählt von
-          <strong>rund {roundPeople(peopleAffected, "de")} Menschen</strong>.
-          Gestohlene Daten zeigen Kriminellen, bei wem etwas zu holen ist. Dass
-          DAC8 diese Fälle verursacht hat, belegen sie nicht.
-        </p>
-        <a class="text-link" href="/datenlecks/">Die belegten Datenlecks</a>
-      </section>
-
-      <section id="rechtsweg" aria-labelledby="rechtsweg-heading">
-        <h2 id="rechtsweg-heading">Was wir dagegen tun</h2>
-        <p class="prose">{campaignStatus.de.text}</p>
-        <a class="text-link" href="/verfahren/">Stand des Verfahrens</a>
-      </section>
-    </div>
 
     <div class="reference">
       <section id="faq" aria-labelledby="faq-heading">
@@ -376,7 +331,9 @@ const faqs = [
 <script is:inline>
   // Forward links to sections that moved. The critique, outlook and demands
   // went to the arguments page, the cases and attacks to the leak page, both
-  // in October 2026; "Was ist DAC8" became the reporting timeline.
+  // in October 2026; "Was ist DAC8" became the reporting timeline. Later that
+  // month the overview went into the lead ("#top" is the top of the page),
+  // and risk and complaint were left to their own pages.
   ;(() => {
     const moved = {
       "#problem": "/argumente/#sicherheit",
@@ -387,6 +344,9 @@ const faqs = [
       "#faelle": "/datenlecks/",
       "#angriffe": "/datenlecks/#angriffe",
       "#was-ist-dac8": "#ablauf",
+      "#ueberblick": "#top",
+      "#risiko": "/datenlecks/",
+      "#rechtsweg": "/verfahren/",
     }
     const forward = () => {
       const target = moved[location.hash]
