@@ -65,9 +65,10 @@ const fieldLabel = (id: string) =>
 const rich = (text: string) => text.split(/\*\*(.+?)\*\*/)
 
 // Where each place stands, on wide screens (1200 × 600), on squarer ones
-// (900 × 700) and on tall ones (400 × 840). The script switches between
-// them.
-type Shape = "wide" | "mid" | "tall"
+// (900 × 700), on phones (400 × 840) and on desktop monitors turned
+// upright (900 × 1200), where the phone's order gets room for the full
+// labels. The script switches between them.
+type Shape = "wide" | "mid" | "tall" | "upright"
 const layout: Record<Shape, Record<Place, [number, number]>> = {
   wide: {
     you: [140, 300],
@@ -93,12 +94,25 @@ const layout: Record<Shape, Record<Place, [number, number]>> = {
     taxOffice: [90, 500],
     crooks: [250, 610],
   },
+  upright: {
+    you: [450, 70],
+    taxTool: [140, 360],
+    provider: [450, 360],
+    shop: [760, 360],
+    taxOffice: [190, 740],
+    crooks: [620, 860],
+  },
 }
 // The target list hangs below the offenders' name: the plate's width on
 // each shape, and how far its top lies below the offenders. Its frame,
 // which also holds the wrench to the left of the plate, follows from the
 // rendered layers: left, top, width and height.
-const plateWidth: Record<Shape, number> = { wide: 176, mid: 176, tall: 150 }
+const plateWidth: Record<Shape, number> = {
+  wide: 176,
+  mid: 176,
+  tall: 150,
+  upright: 176,
+}
 const plateBelow = 82
 const shapes = Object.keys(layout) as Shape[]
 const frames = Object.fromEntries(
@@ -181,6 +195,13 @@ const cameras = {
     [200, 445, 410, 900],
     listView("tall"),
     listView("tall"),
+  ],
+  upright: [
+    [450, 270, 860, 560],
+    [330, 570, 540, 560],
+    [450, 600, 900, 1200],
+    listView("upright"),
+    listView("upright"),
   ],
 }
 const at = (id: Place) => layout.wide[id]
@@ -538,13 +559,14 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
      der Szene steht als Untertitel oben auf der Bühne. Das Skript setzt die
      Variablen; ohne Skript stehen die Texte untereinander und das Netz im
      Endstand. */
-  /* Auf sehr hohen Fenstern, etwa einem hochkant gedrehten Monitor, wächst
-     die Bühne nicht mit: Sie wird höchstens so hoch wie ein großer
-     Laptop-Bildschirm und steht mittig im Fenster, und der Scrollweg je
-     Szene richtet sich nach dieser Höhe statt nach dem Fenster. Auf
-     üblichen Bildschirmen greift die Grenze nicht. */
+  /* Die Bühne füllt das Fenster. Der Scrollweg je Szene wächst mit der
+     Fensterhöhe, aber nur bis zu einem 76rem hohen Fenster, etwa einem
+     hochkant gedrehten Monitor; darüber wäre jede Szene ein langer Weg.
+     Den Rest gleicht ein Vorlauf vor der ersten und ein Nachlauf nach der
+     letzten Szene aus, damit sie wie auf jedem Bildschirm beginnen und
+     enden, während die Bühne steht. */
   .web {
-    --stage-max: 76rem;
+    --pace: min(1svh, 0.76rem);
     --signal: var(--accent);
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -555,24 +577,32 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     grid-area: 1 / 1;
   }
 
+  .track {
+    padding-block: max(
+      0px,
+      50svh -
+      var(--header-height) /
+      2 -
+      50 *
+      var(--pace)
+    );
+  }
+
   .spacer {
-    block-size: calc(var(--len) * min(1svh, var(--stage-max) / 100));
+    block-size: calc(var(--len) * var(--pace));
   }
 
   /* ---------- Bühne ----------------------------------------------------- */
 
   .stage {
     position: sticky;
-    inset-block-start: max(
-      var(--header-height),
-      calc((100svh + var(--header-height) - var(--stage-max)) / 2)
-    );
+    inset-block-start: var(--header-height);
     align-self: start;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr) auto;
     gap: var(--space-xs);
-    block-size: min(100svh - var(--header-height), var(--stage-max));
+    block-size: calc(100svh - var(--header-height));
     padding-block: var(--space-xs) var(--space-s);
   }
 
@@ -1121,6 +1151,12 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     translate: 0 calc((1 - var(--draw)) * 1.5rem);
   }
 
+  /* Auf einem hochkant gedrehten Monitor ist das Zimmer so breit wie die
+     Zielliste davor. */
+  .net[data-shape="upright"] ~ .map .home {
+    inline-size: 100%;
+  }
+
   /* Am Handy ist das Zimmer sonst klein: Das Bild ragt über die Ränder
      der Bodenplatte hinaus, damit Erspartes, Max und Täter lesbar bleiben. */
   @container campaign (width < 40rem) {
@@ -1247,6 +1283,26 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
       font-size: var(--step--1);
     }
   }
+
+  /* Auf hohen Bildschirmen ist über dem Bild Platz für einen größeren
+     Untertitel. */
+  @media (min-width: 64rem) and (min-height: 70rem) {
+    .says {
+      padding: var(--space-xl) var(--space-xl) 0;
+    }
+
+    .say {
+      gap: var(--space-2xs);
+    }
+
+    .say h3 {
+      font-size: var(--type-h2);
+    }
+
+    .say .text {
+      font-size: var(--step-1);
+    }
+  }
 </style>
 
 <script>
@@ -1254,11 +1310,21 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
   // the scenes passed, with the fraction of the current one; every frame
   // derives the whole stage from p, so scrolling back rewinds it. With
   // reduced motion, nothing travels or zooms and every change snaps.
-  type Shape = "wide" | "mid" | "tall"
+  type Shape = "wide" | "mid" | "tall" | "upright"
   type Point = [number, number]
   type Layout = Record<string, Point>
   type Camera = [number, number, number, number]
-  const shapes: Shape[] = ["wide", "mid", "tall"]
+  const shapes: Shape[] = ["wide", "mid", "tall", "upright"]
+  // How large each scene may get, in screen pixels per drawing unit: about
+  // what a large desktop screen shows. Bigger screens show more room
+  // around the picture instead of ever larger places and labels.
+  const largest = [1.3, 1.7, 1.1, 3.6, 3.6]
+  const crookBends: Record<Shape, Record<string, number>> = {
+    wide: { taxOffice: -0.3, taxTool: -0.08 },
+    mid: { taxOffice: -0.3, taxTool: -0.08 },
+    tall: { taxTool: -0.12 },
+    upright: { provider: -0.22, taxOffice: 0.12 },
+  }
 
   const root = document.querySelector<HTMLElement>("[data-web]")
   if (root) start(root)
@@ -1405,14 +1471,25 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     const arrange = () => {
       const box = net.getBoundingClientRect()
       // The layout that shows the whole network largest in the space it
-      // gets.
-      const scale = (name: Shape) => {
+      // gets, up to its largest size; of those that reach it, the one that
+      // fills the space best.
+      const shown = (name: Shape) => {
         const [, , width, height] = cameras[name][2]
-        return Math.min(box.width / width, box.height / height)
+        const scale = Math.min(
+          box.width / width,
+          box.height / height,
+          largest[2],
+        )
+        const filled = (width * height * scale ** 2) / (box.width * box.height)
+        return { scale, filled }
       }
-      const next = shapes.reduce((best, name) =>
-        scale(name) > scale(best) ? name : best,
-      )
+      const next = shapes.reduce((best, name) => {
+        const a = shown(name)
+        const b = shown(best)
+        if (Math.abs(a.scale - b.scale) < 0.005)
+          return a.filled > b.filled ? name : best
+        return a.scale > b.scale ? name : best
+      })
       if (arranged && next === shape) return
       arranged = true
       shape = next
@@ -1428,17 +1505,9 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         const [x, y] = at[node.dataset.node ?? ""] ?? [0, 0]
         node.setAttribute("transform", `translate(${x} ${y})`)
       }
-      // The lines to the offenders bow away from the report line.
-      const crookBend = (from: string) =>
-        shape === "tall"
-          ? from === "taxTool"
-            ? -0.12
-            : 0.06
-          : from === "taxOffice"
-            ? -0.3
-            : from === "taxTool"
-              ? -0.08
-              : 0.06
+      // The lines to the offenders bow away from the report line, and on
+      // upright screens from the exchange's pile of reports.
+      const crookBend = (from: string) => crookBends[shape][from] ?? 0.06
       const bend = (from: string, to: string, amount: number) => {
         const [x1, y1] = [at[from][0], at[from][1] + ground]
         const [x2, y2] = [at[to][0], at[to][1] + ground]
@@ -1507,11 +1576,16 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
       const drawn = net.getBoundingClientRect()
       const aspect = drawn.width / drawn.height || 2
       const keys = cameras[shape]
-      // Widen the shorter side to the screen's proportions.
-      const widest = (key: Camera): [number, number, number] => [
-        key[0],
-        key[1],
-        Math.max(key[2], key[3] * aspect),
+      // Widen the shorter side to the screen's proportions, and further
+      // where the scene would grow past its largest size.
+      const widest = (index: number): [number, number, number] => [
+        keys[index][0],
+        keys[index][1],
+        Math.max(
+          keys[index][2],
+          keys[index][3] * aspect,
+          drawn.width / largest[index],
+        ),
       ]
       const moves: [number, number, number, number][] = [
         [1, 1.45, 0, 1],
@@ -1520,12 +1594,12 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         [riskScene, riskScene + 0.45, 3, 4],
       ]
       const moving = moves.filter(([start]) => p >= start).pop()
-      let [cx, cy, w] = widest(keys[0])
+      let [cx, cy, w] = widest(0)
       if (moving) {
         const [start, end, a, b] = moving
         const t = snap(ease(ramp(p, start, end)))
-        const [ax, ay, aw] = widest(keys[a])
-        const [bx, by, bw] = widest(keys[b])
+        const [ax, ay, aw] = widest(a)
+        const [bx, by, bw] = widest(b)
         w = aw * (bw / aw) ** t
         const k = Math.abs(aw - bw) < 1 ? t : (aw - w) / (aw - bw)
         cx = ax + (bx - ax) * k
