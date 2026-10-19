@@ -55,7 +55,11 @@ const home = pathname === (normalizePath(pathFor("home", language)) || "/")
         </div>
         <p class="nav-foot">
           {en ? "An initiative by" : "Eine Initiative von"}
-          <a href="https://bitcoin-austria.at">Bitcoin Austria</a>
+          <a href="https://bitcoin-austria.at">Bitcoin Austria</a>,
+          {en ? "supported by" : "unterstützt von"}
+          <a href={en ? "https://coinfinity.co/en" : "https://coinfinity.co/"}
+            >Coinfinity</a
+          >
         </p>
       </div>
     </nav>
