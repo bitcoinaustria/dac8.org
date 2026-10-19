@@ -1,0 +1,90 @@
+---
+interface Props {
+  id?: string
+  // Entries that share a name open one at a time.
+  name?: string
+}
+
+// One row of the dossier's reference zone: a question, a term or a group of
+// sources. All three open the same way, so readers learn the pattern once.
+// The summary slot is the row's title, the default slot what opens below it.
+const { id, name } = Astro.props
+---
+
+<details class="disclosure" id={id} name={name}>
+  <summary>
+    <span><slot name="summary" /></span>
+  </summary>
+  <div class="disclosure-body"><slot /></div>
+</details>
+
+<script>
+  // A link to one entry, such as a term at #begriff-kyc, opens it, also when
+  // the reader is already on the page.
+  const reveal = () => {
+    const id = decodeURIComponent(location.hash.slice(1))
+    const target = id ? document.getElementById(id) : null
+    const details = target?.closest<HTMLDetailsElement>("details.disclosure")
+    if (!details || details.open) return
+    details.open = true
+    target?.scrollIntoView({ block: "start" })
+  }
+  reveal()
+  addEventListener("hashchange", reveal)
+</script>
+
+<style>
+  details {
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+
+  summary {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-m);
+    padding: var(--space-s) var(--space-m);
+    font-weight: var(--weight-heading);
+    line-height: 1.4;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: "+";
+    flex: none;
+    color: var(--ink-3);
+    font-size: var(--step-2);
+    font-weight: 500;
+    line-height: 1;
+    transition:
+      rotate 160ms ease,
+      color 160ms ease;
+  }
+
+  summary:hover::after {
+    color: var(--ink);
+  }
+
+  details[open] > summary::after {
+    rotate: 45deg;
+  }
+
+  .disclosure-body {
+    max-inline-size: var(--measure-text);
+    padding: 0 var(--space-m) var(--space-m);
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    summary::after {
+      transition: none;
+    }
+  }
+</style>

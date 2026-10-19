@@ -1,67 +1,39 @@
 ---
-import { glossary } from "@/data/glossary"
+import Disclosure from "@/components/Disclosure.astro"
+import { glossary, termAnchor } from "@/data/glossary"
 import type { Language } from "@/lib/i18n"
 
 interface Props {
   language: Language
 }
 
-// The dossier's glossary: heading on the left, terms in two columns on the
-// right, like the questions above it.
+// The dossier's glossary: only the terms, A to Z, each opening its
+// definition like the questions above it. Pages link to one term with
+// #begriff-<id> (see src/data/glossary.ts), to the whole list with #begriffe.
 const { language } = Astro.props
 const en = language === "en"
+const collator = new Intl.Collator(language)
+const terms = glossary[language].toSorted((a, b) =>
+  collator.compare(a.term, b.term),
+)
+// Two columns, A to Z down the first, then the second, each its own stack so
+// an open definition only pushes down the terms below it.
+const half = Math.ceil(terms.length / 2)
+const columns = [terms.slice(0, half), terms.slice(half)]
 ---
 
-<section id="begriffe" class="glossary band" aria-labelledby="glossary-heading">
+<section id="begriffe" aria-labelledby="glossary-heading">
   <h2 id="glossary-heading">{en ? "Terms" : "Begriffe"}</h2>
-  <dl>
-    {glossary[language].map((entry) => (
-      <div>
-        <dt>{entry.term}</dt>
-        <dd>{entry.text}</dd>
+  <div class="terms">
+    {columns.map((column) => (
+      <div class="disclosure-list">
+        {column.map((entry) => (
+          <Disclosure id={termAnchor(entry.id)} name="begriffe">
+            <Fragment slot="summary">{entry.term}</Fragment>
+            <p>{entry.text}</p>
+          </Disclosure>
+        ))}
       </div>
     ))}
-  </dl>
+  </div>
 </section>
-
-<style>
-  .glossary dl {
-    display: grid;
-    gap: var(--space-m) var(--space-xl);
-    margin-block-start: var(--space-l);
-  }
-
-  .glossary dl > div {
-    padding-block-start: var(--space-xs);
-    border-block-start: 1px solid var(--line);
-  }
-
-  .glossary dt {
-    font-weight: 600;
-  }
-
-  .glossary dd {
-    margin-block-start: var(--space-3xs);
-    color: var(--ink-2);
-    text-wrap: pretty;
-  }
-
-  @container campaign (width >= 46rem) {
-    .glossary dl {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @container campaign (width >= 60rem) {
-    .glossary {
-      display: grid;
-      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-      align-items: start;
-      column-gap: var(--space-2xl);
-    }
-
-    .glossary dl {
-      margin-block-start: 0;
-    }
-  }
-</style>
