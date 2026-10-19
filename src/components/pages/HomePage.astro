@@ -195,28 +195,34 @@ const reasons = [
         <p class="section-intro">
           {en ? "We believe that collecting data on every customer without suspicion violates fundamental rights. Our aim is to have that settled, all the way to the Court of Justice of the European Union." : "Wir halten die Erfassung aller Kunden ohne Verdacht für grundrechtswidrig. Unser Ziel ist eine Klärung bis vor den Europäischen Gerichtshof."}
         </p>
-        <a class="text-link" href={pathFor("proceedings", language)}
-          >{en ? "Where the case stands" : "Stand des Verfahrens"}</a
-        >
       </div>
       <dl
-        class="glance complaint-facts"
+        class="complaint-facts"
         aria-label={en ? "The complaint" : "Die Beschwerde"}
       >
-        <dt>{en ? "Filed" : "Eingebracht"}</dt>
-        <dd>{en ? "October 2026" : "im Oktober 2026"}</dd>
-        <dt>{en ? "By" : "Von"}</dt>
-        <dd>
-          {en ? "Dr Oliver Völkel, LL.M., attorney at CERHA HEMPEL, as a customer of a provider" : "Rechtsanwalt Dr. Oliver Völkel, LL.M. (CERHA HEMPEL), als Kunde eines Anbieters"}
-        </dd>
-        <dt>Initiative</dt>
-        <dd>
-          {en ? "Bitcoin Austria, nonprofit association from Vienna, founded 2011" : "Bitcoin Austria, gemeinnütziger Verein aus Wien, gegründet 2011"}
-        </dd>
+        <div>
+          <dt>{en ? "Filed" : "Eingebracht"}</dt>
+          <dd>{en ? "October 2026" : "im Oktober 2026"}</dd>
+        </div>
+        <div>
+          <dt>{en ? "By" : "Von"}</dt>
+          <dd>
+            {en ? "Dr Oliver Völkel, LL.M., attorney at CERHA HEMPEL, as a customer of a provider" : "Rechtsanwalt Dr. Oliver Völkel, LL.M. (CERHA HEMPEL), als Kunde eines Anbieters"}
+          </dd>
+        </div>
+        <div>
+          <dt>Initiative</dt>
+          <dd>
+            {en ? "Bitcoin Austria, nonprofit association from Vienna, founded 2011" : "Bitcoin Austria, gemeinnütziger Verein aus Wien, gegründet 2011"}
+          </dd>
+        </div>
       </dl>
       <div class="complaint-route">
         <LegalRoute language={language} />
       </div>
+      <a class="text-link" href={pathFor("proceedings", language)}
+        >{en ? "Where the case stands" : "Stand des Verfahrens"}</a
+      >
     </section>
   </article>
 </Layout>
@@ -383,48 +389,63 @@ const reasons = [
     }
   }
 
-  /* Die Beschwerde: links Aussage und Ziel, rechts die Eckdaten auf einer
-     Karte wie im Hero von /verfahren/, darunter über die ganze Breite der
-     Rechtsweg. */
-  .complaint {
+  /* Die Beschwerde schließt die Seite ab und bekommt deshalb mehr Luft als
+     die anderen Bänder. Von oben nach unten: Aussage und Ziel, die
+     Eckdaten in einer Zeile, der Rechtsweg über die ganze Breite und der
+     Weg zum Stand des Verfahrens. */
+  :global(.campaign) > section.complaint {
     display: grid;
-    align-items: center;
-    gap: var(--space-xl) var(--space-2xl);
+    gap: var(--space-xl);
+    padding-block: calc(var(--band-gap) * 0.95);
   }
 
-  .complaint .text-link {
-    margin-block-start: var(--space-m);
+  .complaint-text {
+    max-inline-size: 48rem;
   }
 
-  .complaint-facts.glance {
-    inline-size: auto;
-    margin: 0;
-    padding: var(--space-m-l);
+  .complaint-facts {
+    display: grid;
+    gap: var(--space-m) var(--space-xl);
+    padding: var(--space-m-l) var(--space-l);
     border-radius: var(--radius-xl);
     background: var(--panel);
   }
 
-  .complaint-facts dd:last-child {
-    margin-block-end: 0;
+  .complaint-facts dt {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
   }
 
-  @media (width >= 36rem) {
-    .complaint-facts.glance {
-      gap: var(--space-s) var(--space-l);
-    }
+  .complaint-facts dd {
+    margin-block-start: var(--space-3xs);
+    font-weight: 560;
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .complaint-route {
+    padding-block-start: var(--space-s);
   }
 
   .complaint-route :global(.route) {
     margin-block-start: 0;
   }
 
-  @container campaign (width >= 52rem) {
-    .complaint {
-      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-    }
+  .complaint .text-link {
+    justify-self: start;
+  }
 
-    .complaint-route {
-      grid-column: 1 / -1;
+  /* Waagrecht hat der Rechtsweg unten eigenen Weißraum; der Link rückt
+     näher heran. */
+  @container campaign (width >= 46rem) {
+    .complaint .text-link {
+      margin-block-start: calc(var(--space-s) - var(--space-xl));
+    }
+  }
+
+  @container campaign (width >= 52rem) {
+    .complaint-facts {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr) minmax(0, 1.2fr);
     }
   }
 
