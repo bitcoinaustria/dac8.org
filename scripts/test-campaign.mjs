@@ -115,6 +115,14 @@ assert.equal(
   "2021-03-01,2020-05-01",
 )
 
+// Pages link to single terms at #begriff-<id>, so both languages must carry
+// the same ids, each once, as ASCII slugs.
+const { glossary } = load("@/data/glossary")
+const termIds = (language) => glossary[language].map((entry) => entry.id)
+assert.deepEqual(termIds("en").sort(), termIds("de").sort())
+assert.equal(new Set(termIds("de")).size, termIds("de").length)
+for (const id of termIds("de")) assert.match(id, /^[a-z0-9]+(-[a-z0-9]+)*$/)
+
 console.log(
-  "Passed: locale routing, unknown routes, empty feeds, language-specific URLs, publication dates, ordering, stable GUIDs, XML escaping and media entry checks.",
+  "Passed: locale routing, unknown routes, empty feeds, language-specific URLs, publication dates, ordering, stable GUIDs, XML escaping, media entry and glossary anchor checks.",
 )

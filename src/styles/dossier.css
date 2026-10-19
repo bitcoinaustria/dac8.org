@@ -1,7 +1,8 @@
 /* Das Dossier, beide Sprachen. Ergänzt campaign.css nur für diese Seite:
    der Überblick unter der Schlagzeile, die Rechtsgrundlagen zum Aufklappen,
-   die Tabelle der Speicherfristen, Risiko und Rechtsweg als Paar, die
-   Quellen in zugeklappten Gruppen. Alles hängt an .campaign.dossier. */
+   die Tabelle der Speicherfristen, Risiko und Rechtsweg als Paar, am Ende
+   Fragen, Begriffe und Quellen zum Nachschlagen. Alles hängt an
+   .campaign.dossier. */
 
 .campaign.dossier .visually-hidden {
   position: absolute;
@@ -197,61 +198,71 @@
   }
 }
 
-/* ---------- Fragen und Quellen ----------------------------------------- */
+/* ---------- Nachschlagen ----------------------------------------------- */
 
-/* Fragen lesen sich wie Eintragstitel, nicht wie Kleingedrucktes. */
-.campaign.dossier .faq-list summary {
-  font-weight: var(--weight-heading);
+/* Fragen, Begriffe und Quellen bilden am Ende eine ruhige Zone, alle drei
+   gleich gebaut: links die Überschrift, rechts die Einträge, die sich
+   einzeln aufklappen (Disclosure.astro). Schmal steht die Liste unter der
+   Überschrift. Keine Fläche dahinter, damit die Zone nicht an die Fläche
+   des Seitenfußes stößt. */
+.campaign.dossier > .reference {
+  display: grid;
+  gap: var(--space-2xl);
 }
 
-.campaign.dossier .faq-list details p a {
-  margin-inline-start: 0.25em;
+.campaign.dossier > .reference > section {
+  display: grid;
+  align-items: start;
+  gap: var(--space-l) var(--space-2xl);
+  scroll-margin-block-start: var(--space-xl);
 }
 
-/* Quellen zugeklappt nach Gruppe, mit der Zahl der Einträge. */
-.campaign.dossier .sources .source-groups {
-  gap: 0 var(--space-xl);
-  border-block-end: 1px solid var(--line);
-}
-
-.campaign.dossier .sources details {
-  border-block-start: 1px solid var(--line);
-}
-
-.campaign.dossier .sources summary {
-  display: flex;
-  align-items: baseline;
+.campaign.dossier :is(.disclosure-list, .terms) {
+  display: grid;
+  align-items: start;
   gap: var(--space-2xs);
-  padding-block: var(--space-s);
-  font-weight: var(--weight-heading);
-  list-style: none;
-  cursor: pointer;
 }
 
-.campaign.dossier .sources summary::-webkit-details-marker {
-  display: none;
+/* Die Begriffe sind kurz und stehen breit in zwei Spalten, von A bis Z erst
+   links hinunter, dann rechts. */
+@container campaign (width >= 46rem) {
+  .campaign.dossier .terms {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-.campaign.dossier .sources summary > span {
+@container campaign (width >= 60rem) {
+  .campaign.dossier > .reference > section {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  }
+
+  .campaign.dossier > .reference > section > :not(h2) {
+    grid-column: 2;
+  }
+}
+
+/* Die Zahl der Quellen einer Gruppe steht leise neben ihrem Titel. */
+.campaign.dossier .reference .count {
   color: var(--ink-3);
-  font-size: var(--type-meta);
   font-weight: var(--weight-text);
 }
 
-.campaign.dossier .sources summary::after {
-  content: "+";
-  margin-inline-start: auto;
-  color: var(--ink-3);
-  font-size: var(--step-2);
-  font-weight: 500;
-  line-height: 1;
-  transition: rotate 160ms ease;
+.campaign.dossier .source-list {
+  display: grid;
+  gap: var(--space-2xs);
+  padding: 0;
+  list-style: none;
+  line-height: 1.45;
 }
 
-.campaign.dossier .sources details[open] summary::after {
-  rotate: 45deg;
+.campaign.dossier .source-list a {
+  text-decoration: none;
 }
 
-.campaign.dossier .sources details ul {
-  padding-block-end: var(--space-m);
+.campaign.dossier .source-list a:hover {
+  text-decoration: underline;
+}
+
+.campaign.dossier .reference .research-note {
+  margin-block-start: 0;
 }

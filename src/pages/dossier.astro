@@ -1,5 +1,6 @@
 ---
 import Artwork from "@/components/Artwork.astro"
+import Disclosure from "@/components/Disclosure.astro"
 import Glossary from "@/components/Glossary.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
@@ -315,47 +316,50 @@ const faqs = [
       </section>
     </div>
 
-    <section id="faq" class="faq" aria-labelledby="faq-heading">
-      <h2 id="faq-heading">Häufige Fragen</h2>
-      <div class="faq-list">
-        {faqs.map((faq) => (
-          <details name="faq">
-            <summary>{faq.question}</summary>
-            <p>
-              {faq.answer}
-              {faq.link && <a href={faq.link.href}>{faq.link.label}</a>}
-            </p>
-          </details>
-        ))}
-      </div>
-    </section>
+    <div class="reference">
+      <section id="faq" aria-labelledby="faq-heading">
+        <h2 id="faq-heading">Häufige Fragen</h2>
+        <div class="disclosure-list">
+          {faqs.map((faq) => (
+            <Disclosure name="faq">
+              <Fragment slot="summary">{faq.question}</Fragment>
+              <p>
+                {faq.answer}
+                {faq.link && <a href={faq.link.href}>{faq.link.label}</a>}
+              </p>
+            </Disclosure>
+          ))}
+        </div>
+      </section>
 
-    <Glossary language="de" />
+      <Glossary language="de" />
 
-    <section id="quellen" class="sources" aria-labelledby="sources-heading">
-      <h2 id="sources-heading">Quellen</h2>
-      <div class="source-groups">
-        {sourceGroups.map((group) => (
-          <details>
-            <summary>
-              {group.title} <span>{group.sources.length}</span>
-            </summary>
-            <ul>
-              {group.sources.map((source) => (
-                <li>
-                  <a href={source.href}>{source.label}</a>
-                </li>
-              ))}
-            </ul>
-          </details>
-        ))}
-      </div>
-      <p class="research-note">
-        Stand der Recherche: {researchDate}. Quellen zur Entwicklung von 1977
-        bis zur Neufassung stehen in der
-        <a href="/geschichte/">Geschichte der DAC</a>.
-      </p>
-    </section>
+      <section id="quellen" aria-labelledby="sources-heading">
+        <h2 id="sources-heading">Quellen</h2>
+        <div class="disclosure-list">
+          {sourceGroups.map((group) => (
+            <Disclosure name="quellen">
+              <Fragment slot="summary">
+                {group.title}{" "}
+                <span class="count">{group.sources.length}</span>
+              </Fragment>
+              <ul class="source-list">
+                {group.sources.map((source) => (
+                  <li>
+                    <a href={source.href}>{source.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </Disclosure>
+          ))}
+        </div>
+        <p class="research-note">
+          Stand der Recherche: {researchDate}. Quellen zur Entwicklung von 1977
+          bis zur Neufassung stehen in der
+          <a href="/geschichte/">Geschichte der DAC</a>.
+        </p>
+      </section>
+    </div>
   </article>
 </Layout>
 
