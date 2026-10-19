@@ -538,7 +538,13 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
      der Szene steht als Untertitel oben auf der Bühne. Das Skript setzt die
      Variablen; ohne Skript stehen die Texte untereinander und das Netz im
      Endstand. */
+  /* Auf sehr hohen Fenstern, etwa einem hochkant gedrehten Monitor, wächst
+     die Bühne nicht mit: Sie wird höchstens so hoch wie ein großer
+     Laptop-Bildschirm und steht mittig im Fenster, und der Scrollweg je
+     Szene richtet sich nach dieser Höhe statt nach dem Fenster. Auf
+     üblichen Bildschirmen greift die Grenze nicht. */
   .web {
+    --stage-max: 60rem;
     --signal: var(--accent);
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -550,20 +556,23 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
   }
 
   .spacer {
-    block-size: calc(var(--len) * 1svh);
+    block-size: calc(var(--len) * min(1svh, var(--stage-max) / 100));
   }
 
   /* ---------- Bühne ----------------------------------------------------- */
 
   .stage {
     position: sticky;
-    inset-block-start: var(--header-height);
+    inset-block-start: max(
+      var(--header-height),
+      calc((100svh + var(--header-height) - var(--stage-max)) / 2)
+    );
     align-self: start;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr) auto;
     gap: var(--space-xs);
-    block-size: calc(100svh - var(--header-height));
+    block-size: min(100svh - var(--header-height), var(--stage-max));
     padding-block: var(--space-xs) var(--space-s);
   }
 
