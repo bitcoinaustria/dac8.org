@@ -90,6 +90,11 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
                 >{en ? "Documented attacks on the map" : "Dokumentierte Angriffe auf der Karte"}</a
               >
             )}
+            {reason.history && (
+              <a class="text-link" href={pathFor("history", language)}
+                >{en ? "How the collection grew, step by step" : "Wie die Datensammlung Stufe um Stufe wuchs"}</a
+              >
+            )}
           </li>
         ))}
       </ol>

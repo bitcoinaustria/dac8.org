@@ -31,13 +31,13 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       title: "DAC8 erklärt: was gemeldet wird und was beim Anbieter bleibt",
       description:
         "Wer betroffen ist, was jedes Jahr ans Finanzamt geht, was beim Anbieter bleibt und wer die Daten wie lange speichert. Die Krypto-Meldepflicht in Österreich, mit Primärquellen.",
-      imageLines: ["Was DAC8 verlangt.", "Belegt mit Quellen."],
+      imageLines: ["Was DAC8 verlangt.", "Und was das heißt."],
     },
     en: {
       title: "DAC8 explained: what is reported and what the provider keeps",
       description:
         "Who is affected, what goes to the tax office each year, what stays with the provider and who keeps the data for how long. Crypto-asset reporting in Austria, with primary sources.",
-      imageLines: ["What DAC8 requires.", "Backed by sources."],
+      imageLines: ["What DAC8 requires.", "And what it means."],
     },
   },
   arguments: {

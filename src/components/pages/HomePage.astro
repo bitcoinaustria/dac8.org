@@ -59,11 +59,13 @@ const reasons = [
   },
   {
     icon: "eye",
-    anchor: "zweck",
+    // The one card that leads to the history page: the chart there shows
+    // the growth this card names.
+    href: pathFor("history", language),
     title: en ? "Surveillance needs limits." : "Überwachung braucht Grenzen.",
     text: en
-      ? "Under the directive, the data may also be used for customs, against money laundering and for sanctions."
-      : "Laut Richtlinie dürfen die Daten auch für Zoll, gegen Geldwäsche und für Sanktionen genutzt werden.",
+      ? "Since 1977, one step after another: bank accounts, platforms, now crypto. More steps are already proposed."
+      : "Seit 1977 kam Stufe um Stufe dazu: Bankkonten, Plattformen, jetzt Krypto. Weitere sind schon vorgeschlagen.",
   },
 ]
 
@@ -158,7 +160,7 @@ const actions = [
           <li>
             <a
               class="reason"
-              href={`${pathFor("arguments", language)}#${reason.anchor}`}
+              href={reason.href ?? `${pathFor("arguments", language)}#${reason.anchor}`}
             >
               <span class="reason-icon">
                 <svg

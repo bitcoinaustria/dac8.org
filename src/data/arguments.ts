@@ -39,8 +39,10 @@ export type Reason = {
   // evidence, which opens when the address points to it.
   alias?: string
   proofId?: string
-  // The one link of the reasons, to the map of documented attacks.
+  // Two reasons link out, each to the page that shows its proof: the map
+  // of documented attacks and the history of the directive's growth.
   attacks?: true
+  history?: true
 } & Record<Language, ReasonText>
 
 const section20 =
@@ -236,6 +238,7 @@ export const reasons: Reason[] = [
   {
     id: "zweck",
     alias: "ausbau",
+    history: true,
     de: {
       short: "Finanzielle Überwachung braucht Grenzen",
       title: "Was gesammelt ist, wird für mehr genutzt.",
