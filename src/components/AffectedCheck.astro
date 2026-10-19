@@ -8,41 +8,76 @@ interface Props {
 const { language } = Astro.props
 const en = language === "en"
 const reported = `${pathFor("dossier", language)}#gemeldet`
-
-// The answers restate the vetted FAQ entries on who is affected and on own
-// wallets. Keep them in sync with the FAQ when either changes.
 const faq = `${pathFor("dossier", language)}#faq`
-const options = en
+
+// "Am I affected?" on the home page, next to the headline: one question
+// about what people do, three answers, and for each a verdict in plain
+// sentences. The answers restate the dossier's vetted claims: what goes to
+// the tax office (identity, tax number and residence, annual totals; own
+// wallets only as a sum without addresses), what stays with the provider
+// under anti-money-laundering rules (ID, wallet addresses, single
+// transactions), and the dates of the first report and its exchange with
+// other EU states, Germany included. Keep both in sync when either changes.
+// A point may open with a short label in bold, so "to the tax office" and
+// "with the provider" stay visibly apart.
+type Point = { label?: string; text: string }
+type Option = {
+  value: string
+  label: string
+  verdict: string
+  points: Point[]
+  link: { href: string; label: string }
+}
+const options: Option[] = en
   ? [
       {
         value: "provider",
         label: "Yes",
         verdict: "Then you are affected.",
         points: [
-          "Every year, your provider prepares your identity, tax identification number and annual totals for the tax authority.",
-          "Providers with Austrian reporting obligations do this for all customers, even those who are not ultimately reported.",
-          "Anti-money-laundering rules already require them to keep your ID, wallet addresses and individual transactions, currently for up to ten years after you leave. For DAC8, your tax identification number and tax residence are added. None of these records is in the report.",
+          {
+            label: "To the tax office:",
+            text: "every year your name, home address, date of birth, tax identification number and tax residence, and per crypto-asset the yearly totals of what you bought, sold, exchanged and transferred. Transfers to your own wallet, where only you hold the keys, appear as a total, without the wallet address.",
+          },
+          {
+            label: "With the provider:",
+            text: "your ID, wallet addresses and individual transactions. Anti-money-laundering rules currently require it to keep them for up to ten years after you leave.",
+          },
+          {
+            label: "When:",
+            text: "providers in Austria send the first report by 31 July 2027. If you live in Germany or another EU state, it goes on to the tax authority there by 30 September 2027.",
+          },
         ],
         link: { href: reported, label: "What is reported" },
       },
       {
         value: "self",
-        label: "No, never through a provider",
+        label: "No, never",
         verdict: "Then DAC8 does not report you.",
         points: [
-          "This applies as long as you only self-custody and never buy or sell through a provider.",
-          "If you buy from a provider and transfer to your own wallet, the value and units of those transfers usually appear in that provider’s annual report. The wallet address is not in the report, but the provider keeps it under anti-money-laundering rules.",
-          "If you used a provider in 2020 or later, anti-money-laundering rules currently require it to keep your ID, wallet addresses and transactions for up to ten years after you left.",
+          {
+            text: "This holds as long as you never buy or sell through an exchange, broker or app.",
+          },
+          {
+            text: "If you do buy there and move the bitcoin to your own wallet, the value of those transfers usually appears in the provider’s annual report as a total, without the wallet address.",
+          },
+          {
+            text: "If you were a customer of a provider in 2020 or later, anti-money-laundering rules currently require it to keep your ID, wallet addresses and transactions for up to ten years after you left.",
+          },
         ],
         link: { href: faq, label: "Questions and answers" },
       },
       {
         value: "unsure",
         label: "Not sure",
-        verdict: "It depends on where you buy crypto-assets.",
+        verdict: "It depends on where you buy.",
         points: [
-          "Exchanges, brokers and apps that buy or hold crypto-assets for you count as providers, including banks with a crypto offer.",
-          "Your provider has to tell you before it reports for the first time. If in doubt, ask it whether it reports under DAC8.",
+          {
+            text: "Exchanges, brokers and apps where you buy crypto-assets or leave them in safekeeping count as providers, including banks that offer crypto.",
+          },
+          {
+            text: "Your provider has to tell you before it reports for the first time.",
+          },
         ],
         link: { href: reported, label: "What is reported" },
       },
@@ -53,43 +88,69 @@ const options = en
         label: "Ja",
         verdict: "Dann bist du betroffen.",
         points: [
-          "Dein Anbieter bereitet jedes Jahr deine Identität, Steuernummer und Jahreswerte für das Finanzamt auf.",
-          "Anbieter mit Meldepflicht in Österreich tun das für alle Kunden, auch für jene, die am Ende nicht gemeldet werden.",
-          "Ausweis, Wallet-Adressen und einzelne Transaktionen muss er schon nach den Geldwäschevorschriften aufbewahren, derzeit bis zehn Jahre nach Ende der Kundenbeziehung. Für DAC8 kommen Steuernummer und Steuerwohnsitz dazu. In der Meldung steht nichts davon.",
+          {
+            label: "Ans Finanzamt:",
+            text: "jedes Jahr Name, Anschrift, Geburtsdatum, Steuernummer und Steuerwohnsitz, dazu je Kryptowert die Jahressummen deiner Käufe, Verkäufe, Tauschgeschäfte und Übertragungen. Was du auf deine eigene Wallet überträgst, bei der nur du die Schlüssel hast, steht als Summe darin, ohne Wallet-Adresse.",
+          },
+          {
+            label: "Beim Anbieter:",
+            text: "Ausweis, Wallet-Adressen und einzelne Transaktionen. Die Geldwäschevorschriften verlangen, sie derzeit bis zehn Jahre nach Ende der Kundenbeziehung aufzubewahren.",
+          },
+          {
+            label: "Wann:",
+            text: "Anbieter in Österreich melden zum ersten Mal bis 31. Juli 2027. Wohnst du in Deutschland oder einem anderen EU-Staat, geht die Meldung bis 30. September 2027 an die Steuerbehörde dort.",
+          },
         ],
         link: { href: reported, label: "Was gemeldet wird" },
       },
       {
         value: "self",
-        label: "Nein, nie über einen Anbieter",
+        label: "Nein, nie",
         verdict: "Dann meldet DAC8 dich nicht.",
         points: [
-          "Das gilt, solange du ausschließlich selbst verwahrst und nie über einen Anbieter kaufst oder verkaufst.",
-          "Kaufst du bei einem Anbieter und überträgst auf deine eigene Wallet, stehen Wert und Stückzahl dieser Übertragungen in der Regel in seiner Jahresmeldung. Die Wallet-Adresse steht nicht darin, er speichert sie aber nach den Geldwäschevorschriften.",
-          "Warst du 2020 oder später Kunde bei einem Anbieter, muss er Ausweis, Wallet-Adressen und Transaktionen nach den Geldwäschevorschriften derzeit bis zehn Jahre nach Ende der Kundenbeziehung aufbewahren.",
+          {
+            text: "Das gilt, solange du nie über eine Börse, einen Broker oder eine App kaufst oder verkaufst.",
+          },
+          {
+            text: "Kaufst du doch dort und holst die Bitcoin in deine eigene Wallet, steht der Wert dieser Übertragungen in der Regel als Summe in der Jahresmeldung des Anbieters, ohne Wallet-Adresse.",
+          },
+          {
+            text: "Warst du 2020 oder später Kunde bei einem Anbieter, muss er Ausweis, Wallet-Adressen und Transaktionen nach den Geldwäschevorschriften derzeit bis zehn Jahre nach Ende der Kundenbeziehung aufbewahren.",
+          },
         ],
         link: { href: faq, label: "Häufige Fragen" },
       },
       {
         value: "unsure",
         label: "Weiß ich nicht",
-        verdict: "Das hängt davon ab, wo du Kryptowerte kaufst.",
+        verdict: "Das hängt davon ab, wo du kaufst.",
         points: [
-          "Als Anbieter gelten Börsen, Broker und Apps, bei denen du Kryptowerte kaufst oder verwahren lässt, auch Banken mit Krypto-Angebot.",
-          "Dein Anbieter muss dich informieren, bevor er erstmals meldet. Frag im Zweifel nach, ob er nach DAC8 meldet.",
+          {
+            text: "Als Anbieter gelten Börsen, Broker und Apps, bei denen du Kryptowerte kaufst oder verwahren lässt, auch Banken mit Krypto-Angebot.",
+          },
+          {
+            text: "Dein Anbieter muss dich informieren, bevor er zum ersten Mal meldet.",
+          },
         ],
         link: { href: reported, label: "Was gemeldet wird" },
       },
     ]
 ---
 
-<div class="check" data-affected-check>
+<section
+  id="betroffen"
+  class="check"
+  aria-labelledby="betroffen-heading"
+  data-affected-check
+>
   <fieldset>
     <legend>
-      <span class="check-title"
-        >{en ? "Am I affected?" : "Bin ich betroffen?"}</span
-      >
-      {en ? "Do you buy, sell or hold crypto through an exchange, broker or app?" : "Kaufst, verkaufst oder verwahrst du Krypto über eine Börse, einen Broker oder eine App?"}
+      <h2 id="betroffen-heading">
+        {en ? "Am I affected?" : "Bin ich betroffen?"}
+      </h2>
+      <span class="check-question">
+        {en ? "Do you buy or sell bitcoin or other crypto-assets through an exchange, broker or app?" : "Kaufst oder verkaufst du Bitcoin oder andere Kryptowerte über eine Börse, einen Broker oder eine App?"}
+      </span>
     </legend>
     <div class="check-options">
       {options.map((option) => (
@@ -105,25 +166,33 @@ const options = en
       <div data-answer={option.value}>
         <p class="check-verdict">{option.verdict}</p>
         <ul>
-          {option.points.map((point) => <li>{point}</li>)}
+          {option.points.map((point) => (
+            <li>
+              {point.label && <strong>{point.label}</strong>} {point.text}
+            </li>
+          ))}
         </ul>
         <a class="text-link" href={option.link.href}>{option.link.label}</a>
       </div>
     ))}
   </div>
-</div>
+</section>
 
 <style>
-  /* Keine Karte, keine Linie: eine Frage, drei Antworten als Schaltflächen,
-     darunter die passende Auskunft. */
+  /* Eine Fläche neben der Schlagzeile: die Frage als Überschrift, drei
+     Antworten als Schaltflächen, darunter die passende Auskunft. */
   .check {
     display: grid;
-    gap: var(--space-s);
-    max-inline-size: 48rem;
-    margin-block-start: var(--space-xl);
+    gap: var(--space-m);
+    align-self: start;
+    padding: var(--space-m-l);
+    border-radius: var(--radius-xl);
+    background: var(--panel);
+    scroll-margin-block-start: var(--space-xl);
   }
 
   fieldset {
+    min-inline-size: 0;
     margin: 0;
     padding: 0;
     border: 0;
@@ -131,21 +200,27 @@ const options = en
 
   legend {
     display: grid;
-    gap: var(--space-3xs);
+    gap: var(--space-2xs);
     padding: 0;
-    color: var(--ink-2);
-    font-size: var(--step-1);
-    line-height: 1.35;
-    text-wrap: balance;
   }
 
-  /* Die Frage als Überschrift, keine Etikette in Versalien. */
-  .check-title {
+  /* Spezifischer als die globalen Bandüberschriften: Die Frage steht im
+     Hero und ist deshalb eine Stufe kleiner als die Schlagzeile. */
+  .check h2 {
+    max-inline-size: none;
     color: var(--ink);
     font-size: var(--type-h3);
     font-weight: var(--weight-heading);
+    font-stretch: normal;
     line-height: 1.2;
     letter-spacing: -0.015em;
+  }
+
+  .check-question {
+    color: var(--ink-2);
+    font-size: var(--type-body);
+    line-height: 1.45;
+    text-wrap: pretty;
   }
 
   .check-options {
@@ -170,11 +245,12 @@ const options = en
   label span {
     display: inline-flex;
     align-items: center;
-    min-block-size: 2.75rem;
-    padding: 0.55em 1.1em;
+    min-block-size: 2.875rem;
+    padding: 0.55em 1.2em;
     border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
     border-radius: var(--radius-full);
-    font-weight: 560;
+    background: var(--background);
+    font-weight: var(--weight-strong);
     transition:
       background-color 140ms ease,
       color 140ms ease,
@@ -196,11 +272,10 @@ const options = en
     outline-offset: 0.2rem;
   }
 
-  /* Die Auskunft: eine fette Aussage, darunter zwei bis drei kurze Punkte
-     und ein Link zum Weiterlesen. */
+  /* Die Auskunft: eine fette Aussage, darunter kurze Punkte und ein Link. */
   .check-answers > div {
     display: grid;
-    gap: var(--space-2xs);
+    gap: var(--space-xs);
     max-inline-size: var(--measure-text);
   }
 
@@ -216,29 +291,41 @@ const options = en
     .check:has(input[value="unsure"]:checked) [data-answer="unsure"] {
       display: grid;
     }
+
+    .check:not(:has(input:checked)) .check-answers {
+      display: none;
+    }
   }
 
   .check-verdict {
-    font-size: var(--step-1);
-    font-weight: 560;
+    color: var(--ink);
+    font-size: var(--type-lead);
+    font-weight: var(--weight-heading);
     line-height: 1.3;
   }
 
   .check-answers ul {
     display: grid;
     gap: var(--space-2xs);
-    padding-inline-start: 1.2em;
+    margin: 0;
+    padding-inline-start: 1.1em;
     list-style: disc;
     color: var(--ink-2);
+    line-height: 1.5;
     text-wrap: pretty;
   }
 
+  .check-answers li strong {
+    color: var(--ink);
+    font-weight: var(--weight-strong);
+  }
+
   .check-answers ul li::marker {
-    color: var(--primary);
+    color: var(--ink-3);
   }
 
   .check-answers .text-link {
     justify-self: start;
-    margin-block-start: 0;
+    margin-block-start: var(--space-3xs);
   }
 </style>
