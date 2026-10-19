@@ -332,7 +332,7 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "„Es geht doch um Steuergerechtigkeit.“",
-      text: "Steuern zahlen soll jeder, das bestreiten wir nicht. Aber auch dafür darf der Staat nur so viele Daten verlangen und so lange speichern, wie er begründen kann.",
+      text: "Darum geht es hier nicht, hier geht es um Daten. Auch für die Steuer darf der Staat nur so viele Daten verlangen und so lange speichern, wie er begründen kann.",
     },
     {
       title: "„Brauchen wir die Daten nicht gegen Kriminalität?“",
@@ -359,7 +359,7 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "“It’s about tax fairness.”",
-      text: "Everyone should pay their taxes; we do not dispute that. But even for that, the state may only demand as much data, and keep it as long, as it can justify.",
+      text: "That is not what this is about; this is about data. Even for taxes, the state may only demand as much data, and keep it as long, as it can justify.",
     },
     {
       title: "“Don’t we need the data to fight crime?”",
