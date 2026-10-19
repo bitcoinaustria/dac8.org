@@ -333,8 +333,8 @@ const strings = en
       .setPrefix(false)
       .addAttribution(
         language === "en"
-          ? "Map: Natural Earth · Data: Jameson Lopp"
-          : "Karte: Natural Earth · Daten: Jameson Lopp",
+          ? 'Map: <a href="https://www.naturalearthdata.com/">Natural Earth</a> · Data: <a href="https://github.com/jlopp/physical-bitcoin-attacks">Jameson Lopp</a>'
+          : 'Karte: <a href="https://www.naturalearthdata.com/">Natural Earth</a> · Daten: <a href="https://github.com/jlopp/physical-bitcoin-attacks">Jameson Lopp</a>',
       )
 
     const views = {
@@ -1139,6 +1139,11 @@ const strings = en
     color: var(--ink-3);
     background: color-mix(in oklab, var(--background) 85%, transparent);
     font-size: 0.6875rem;
+  }
+
+  .atlas .leaflet-control-attribution a {
+    color: inherit;
+    text-decoration: underline;
   }
 
   .atlas .atlas-popup .leaflet-popup-content-wrapper {
