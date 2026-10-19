@@ -11,8 +11,6 @@ import financeTheCase from "@/assets/artwork/finance-the-case.webp"
 import financeTheCaseEn from "@/assets/artwork/finance-the-case-en.webp"
 import linkedIdentity from "@/assets/artwork/linked-identity.webp"
 import linkedIdentityEn from "@/assets/artwork/linked-identity-en.webp"
-import rankedPortrait from "@/assets/artwork/ranked-portrait.webp"
-import rankedPortraitEn from "@/assets/artwork/ranked-portrait-en.webp"
 import reportAssets from "@/assets/artwork/report-assets.webp"
 import reportAssetsEn from "@/assets/artwork/report-assets-en.webp"
 import targetAtHome from "@/assets/artwork/target-at-home.webp"
@@ -90,15 +88,6 @@ export const artwork = {
     },
     en: {
       alt: "Illustration: a red arrow leads from a cracked glass archive labelled personal data to a sheet marked data leak, exposed, with Max Mustermann’s name, Vienna home address, 7.2 BTC and family status.",
-    },
-  },
-  rankedPortrait: {
-    image: { de: rankedPortrait, en: rankedPortraitEn },
-    de: {
-      alt: "Illustration: Ein Schraubenschlüssel neben einer Zielliste für Wien mit verknüpften Vermögensdaten. Rot markiert ist Platz 07, Max Mustermann mit 7,2 BTC; darunter Anschrift, Familienstand und ein Porträtfoto.",
-    },
-    en: {
-      alt: "Illustration: a wrench beside a target list for Vienna with linked wealth data. Number 07, Max Mustermann with 7.2 BTC, is highlighted in red, with his home address, family status and a portrait photo below.",
     },
   },
   targetAtHome: {
