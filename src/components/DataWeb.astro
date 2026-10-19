@@ -42,9 +42,9 @@ const render = (name: string) =>
 const art: Partial<Record<Place, string>> = Object.fromEntries(
   nodes.map((node) => [node.id, render(node.id.toLowerCase())]),
 )
-// Max hides cash and bitcoin under his mattress while the offenders from
-// the network wait outside with the wrench and the list, and the pin hangs
-// above the room: the site's cash analogy for self-custody, from
+// Max stands in his underwear beside his open storage bed, his savings in
+// it, while the offenders look in with the wrench and the list, and the pin
+// hangs above the room: the site's cash analogy for self-custody, from
 // artwork-lab's knowledge/build_dac8_mattress.py.
 const home = render("mattress")
 const en = language === "en"
@@ -1088,9 +1088,9 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
 
   /* ---------- Schlafzimmer -------------------------------------------- */
 
-  /* Das Ende: Max schiebt Bargeld und Bitcoin unter die Matratze, draußen
-     warten die Täter mit dem Schraubenschlüssel, die Nadel steht über
-     dem Zimmer. */
+  /* Das Ende: Max steht in Unterwäsche neben dem offenen Bett mit seinem
+     Ersparten, draußen schauen die Täter mit Schraubenschlüssel und Liste
+     herein, die Nadel steht über dem Zimmer. */
   .map {
     --map: 1;
     --draw: 1;
@@ -1110,6 +1110,16 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     object-fit: contain;
     opacity: var(--pin);
     translate: 0 calc((1 - var(--draw)) * 1.5rem);
+  }
+
+  /* Am Handy ist das Zimmer sonst klein: Das Bild ragt über die Ränder
+     der Bodenplatte hinaus, damit Erspartes, Max und Täter lesbar bleiben. */
+  @container campaign (width < 40rem) {
+    .home {
+      inline-size: 128%;
+      max-inline-size: none;
+      margin-inline: -14%;
+    }
   }
 
   /* ---------- Karte zum Fall ------------------------------------------- */
