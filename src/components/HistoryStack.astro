@@ -89,6 +89,7 @@ const groups = shown.map((group) => ({
       context,
       step: typeof row.step === "string" ? row.step : row.step[language],
       what: row.what[language],
+      plain: (row.plain ?? row.what)[language],
       span,
       style: `--from: ${x(row.from)}; --to: ${x(end)}`,
     }
@@ -141,7 +142,7 @@ const sentence: Part[] = en
       {
         strong: `${say(first.count).replace(/^./, (c) => c.toUpperCase())} ${noun(first.count)}`,
       },
-      `${compact ? " applied to individuals in" : " applied in"} ${first.year}`,
+      ` applied in ${first.year}`,
       ...middle.flatMap((m) => [
         ", ",
         { strong: say(m.count) },
@@ -152,9 +153,7 @@ const sentence: Part[] = en
       " today.",
     ]
   : [
-      compact
-        ? `Über Privatpersonen ${one(first.count) ? "galt" : "galten"} ${first.year} `
-        : `${first.year} ${one(first.count) ? "galt" : "galten"} `,
+      `${first.year} ${one(first.count) ? "galt" : "galten"} `,
       { strong: `${say(first.count)} ${noun(first.count)}` },
       ...middle.flatMap((m) => [
         `, ${m.year} ${were(m.count)} `,
@@ -178,9 +177,7 @@ let index = 0
   aria-labelledby={compact ? undefined : "stack-title"}
   style={`--today: ${x(today)}; --peak: ${peak}`}
 >
-  {compact ? (
-    <figcaption class="section-intro" set:html={counter} />
-  ) : (
+  {!compact && (
     <figcaption>
       <h2 id="stack-title">
         {en ? "What tax authorities receive today" : "Was die Steuerbehörden heute bekommen"}
@@ -226,7 +223,18 @@ let index = 0
           )
           return compact ? (
             <li class:list={["stack-row", row.kind]} style={`${row.style}; --i: ${index++}`}>
-              {line}
+              <span class="stack-line">
+                <span class="stack-plain"
+                  >{row.plain}{row.kind === "proposed" && (
+                    <span class="stack-span">, {row.span}</span>
+                  )}</span
+                >
+                <span class="stack-track" aria-hidden="true">
+                  <span class="stack-bar">
+                    <span class="stack-year">{row.from}</span>
+                  </span>
+                </span>
+              </span>
             </li>
           ) : (
             <li
@@ -943,14 +951,21 @@ let index = 0
   .stack.compact {
     --stack-cols: 0 5rem minmax(0, 15rem) minmax(0, 1fr);
     --row: 2.25rem;
+    margin-block-start: var(--space-l);
   }
 
-  .compact figcaption {
-    margin-block: var(--space-s) var(--space-l);
-  }
-
-  .compact .stack-line > strong {
+  /* Auf der Startseite steht statt Kürzel und Fachbegriff, was das
+     Finanzamt erfährt, in Alltagsworten über zwei Spalten. */
+  .stack-plain {
+    grid-column: 2 / 4;
     padding-inline-start: var(--space-2xs);
+    color: var(--ink);
+    font-weight: var(--weight-strong);
+  }
+
+  .current .stack-plain {
+    color: var(--accent);
+    font-weight: var(--weight-heading);
   }
 
   /* ---------- Schmal ---------------------------------------------------- */

@@ -615,6 +615,10 @@ export type StackRow = {
   // Last year of application, for repealed steps.
   until?: number
   what: Record<Language, string>
+  // What the tax office learns, in everyday words, for the short chart on
+  // the home page, where step names like "DAC2" say nothing. Falls back to
+  // `what`.
+  plain?: Record<Language, string>
   // Entries that open inside this row: its predecessor or the standard it
   // followed.
   context?: string[]
@@ -641,6 +645,7 @@ export const historyStack: {
           de: "Zinsrichtlinie",
           en: "Savings Directive",
         },
+        plain: { de: "Zinsen aus dem Ausland", en: "Interest from abroad" },
       },
       {
         id: "dac1",
@@ -650,6 +655,10 @@ export const historyStack: {
         what: {
           de: "Löhne, Pensionen, Immobilien",
           en: "Salaries, pensions, property",
+        },
+        plain: {
+          de: "Löhne, Pensionen, Immobilien im Ausland",
+          en: "Pay, pensions, property abroad",
         },
       },
       {
@@ -661,6 +670,10 @@ export const historyStack: {
           de: "Bankkonten",
           en: "Bank accounts",
         },
+        plain: {
+          de: "Konten im Ausland samt Kontostand",
+          en: "Accounts abroad, with balances",
+        },
       },
       {
         id: "dac5",
@@ -669,6 +682,10 @@ export const historyStack: {
         what: {
           de: "Zugriff auf Geldwäschedaten",
           en: "Anti-money laundering data",
+        },
+        plain: {
+          de: "Ausweis- und Kundendaten der Banken",
+          en: "Banks’ ID and customer records",
         },
       },
       {
@@ -679,6 +696,10 @@ export const historyStack: {
           de: "Plattform-Einnahmen",
           en: "Platform income",
         },
+        plain: {
+          de: "Einnahmen über Online-Plattformen",
+          en: "Income through online platforms",
+        },
       },
       {
         id: "dac8",
@@ -688,6 +709,10 @@ export const historyStack: {
         what: {
           de: "Kryptowerte",
           en: "Crypto-assets",
+        },
+        plain: {
+          de: "Deine Kryptowerte, auch im Inland",
+          en: "Your crypto-assets, at home too",
         },
       },
     ],
@@ -744,6 +769,10 @@ export const historyStack: {
         what: {
           de: "Neufassung, Registerzugang",
           en: "Recast, register access",
+        },
+        plain: {
+          de: "Zugriff auf Register, auch für Immobilien und Pensionen",
+          en: "Access to registers, incl. property and pensions",
         },
       },
     ],

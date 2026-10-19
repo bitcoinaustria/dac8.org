@@ -196,11 +196,17 @@ const actions = [
 
     <section id="stufen" aria-labelledby="stufen-heading">
       <h2 id="stufen-heading">
-        {en ? "With every step, the tax office learns more." : "Mit jeder Stufe erfährt das Finanzamt mehr."}
+        {en ? "First interest, then accounts." : "Erst Zinsen, dann Konten."}
+        <span>{en ? "Now crypto." : "Jetzt Krypto."}</span>
       </h2>
+      <p class="section-intro">
+        {en
+          ? "What the tax office learns automatically about private individuals has grown since 2005. Crypto-asset providers now report their domestic customers too, and the next expansion is already proposed."
+          : "Was das Finanzamt automatisch über Privatpersonen erfährt, wird seit 2005 immer mehr. Krypto-Anbieter melden jetzt auch Kunden im Inland, und die nächste Erweiterung ist schon vorgeschlagen."}
+      </p>
       <HistoryStack language={language} compact />
       <a class="text-link" href={pathFor("history", language)}
-        >{en ? "Every step since 1977" : "Alle Stufen seit 1977"}</a
+        >{en ? "How it grew since 1977" : "Wie es seit 1977 gewachsen ist"}</a
       >
     </section>
 
