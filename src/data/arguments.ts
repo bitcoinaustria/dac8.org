@@ -118,14 +118,15 @@ const wikileaks =
   "https://www.floridalawreview.com/api/v1/articles/80812-internet-payment-blockades.pdf"
 // About 280 accounts, cards and credit lines frozen (joint committee
 // report, pp. 62-64). The courts found the information sharing breached
-// section 8 of the Charter: 2024 FC 42, affirmed by 2026 FCA 6; leave to
-// the Supreme Court was pending in October 2026.
+// section 8 of the Charter: 2024 FC 42, affirmed by 2026 FCA 6, which held
+// that freezing alone was no seizure (para. 416); leave to the Supreme
+// Court was pending in October 2026.
 const convoyReport =
   "https://www.parl.ca/Content/Committee/441/DEDC/Reports/RP13414575/dedcrp03/dedcrp03-e.pdf"
 const convoyRuling =
   "https://www.fct-cf.gc.ca/Content/assets/pdf/base/2024.01.23-306-22-T-316-22-T-347-22-T-382-22.pdf"
 const convoyAppeal =
-  "https://www.jccf.ca/wp-content/uploads/2026/01/A-73-24_20260116_R-M_E-A_O_OTT_20260116093754_CJD_LAS_MCT_2026_FCA_6.pdf"
+  "https://decisions.fca-caf.gc.ca/fca-caf/decisions/en/item/521758/index.do"
 // Austrian financial intelligence unit, report 2024, pp. 25-36: reports
 // kept without initial suspicion, and accounts opened with forged
 // Austrian passports bearing real people's data.
@@ -214,7 +215,7 @@ export const reasons: Reason[] = [
       proof: [
         "Das verlangt die EU-Geldtransferverordnung: Namen und Wallet-Adressen von Absender und Empfänger, auch wenn das Ziel deine eigene Wallet ist. Aufbewahrt wird das bei allen Kunden, ohne Verdacht und über Jahre.",
         "Die europäischen Datenschutzbehörden warnen, dass schon einzelne Zahlungen viel verraten: Spenden etwa politische oder religiöse Überzeugungen, Arztrechnungen die Gesundheit. In der Jahresmeldung stehen davon nur Jahressummen, beim Anbieter liegt jede einzelne Zahlung.",
-        "Wie schnell Zahlungswege und Finanzdaten gegen politische Anliegen gewendet werden, zeigen zwei bekannte Fälle. Im Dezember 2010 blockierten Visa, Mastercard und PayPal Spenden an WikiLeaks, ohne dazu gerichtlich verpflichtet zu sein. 2022 ließ Kanada während der Trucker-Proteste rund 280 Konten, Karten und Kreditlinien einfrieren, und Banken mussten Angaben über ihre Kunden an die Polizei weitergeben. Kanadische Gerichte urteilten 2024 und 2026, dass diese Weitergabe gegen den Schutz vor unangemessener Durchsuchung verstieß.",
+        "Wie schnell Zahlungswege und Finanzdaten gegen politische Anliegen gewendet werden, zeigen zwei bekannte Fälle. Im Dezember 2010 blockierten Visa, Mastercard und PayPal Spenden an WikiLeaks, ohne dazu gerichtlich verpflichtet zu sein. 2022 ließ Kanada während der Trucker-Proteste rund 280 Konten, Karten und Kreditlinien einfrieren, und Banken mussten Angaben über betroffene Kunden an die Polizei weitergeben. Kanadische Gerichte urteilten 2024 und 2026, noch nicht rechtskräftig, dass diese Weitergabe gegen den Schutz vor unangemessener Durchsuchung verstieß.",
         "Überwachung wirkt auch ohne Datenleck. Das Bundesverfassungsgericht schrieb 1983: „Wer unsicher ist, ob abweichende Verhaltensweisen jederzeit notiert und als Information dauerhaft gespeichert, verwendet oder weitergegeben werden, wird versuchen, nicht durch solche Verhaltensweisen aufzufallen.“",
       ],
       sources: [
@@ -235,7 +236,7 @@ export const reasons: Reason[] = [
       proof: [
         "The EU transfer of funds regulation requires it: the names and wallet addresses of sender and recipient, even when the destination is your own wallet. It is kept for every customer, without suspicion, for years.",
         "Europe’s data protection authorities warn that even single payments reveal a lot: donations can show political or religious beliefs, medical bills someone’s health. Of these, the annual report carries only yearly totals; the provider holds every single payment.",
-        "Two well-known cases show how quickly payment routes and financial data can be turned against political causes. In December 2010, Visa, Mastercard and PayPal blocked donations to WikiLeaks without any court order requiring them to. In 2022, during the trucker protests, Canada had around 280 accounts, cards and credit lines frozen, and banks had to pass information about their customers to the police. Canadian courts ruled in 2024 and 2026 that this sharing breached the protection against unreasonable search.",
+        "Two well-known cases show how quickly payment routes and financial data can be turned against political causes. In December 2010, Visa, Mastercard and PayPal blocked donations to WikiLeaks without any court order requiring them to. In 2022, during the trucker protests, Canada had around 280 accounts, cards and credit lines frozen, and banks had to pass information about the customers concerned to the police. Canadian courts ruled in 2024 and 2026, not yet finally, that this sharing breached the protection against unreasonable search.",
         "Surveillance has an effect even without a data leak. Germany’s Federal Constitutional Court wrote in 1983 that anyone unsure whether deviant behaviour is recorded at any time and permanently stored, used or passed on as information will try not to attract attention through such behaviour.",
       ],
       sources: [
@@ -477,7 +478,7 @@ export const reasons: Reason[] = [
     de: {
       short: "Finanzielle Überwachung braucht Grenzen",
       title: "Was gesammelt ist, wird für mehr genutzt.",
-      text: "Seit DAC8 dürfen alle Steuerdaten, die Staaten nach der Richtlinie austauschen, auch über Bankkonten, gegen Geldwäsche und für EU-Sanktionen genutzt werden. Wir wollen finanzielle Überwachung begrenzen, bevor sie weiter wächst.",
+      text: "Seit DAC8 erlaubt die Richtlinie, alle Steuerdaten, die Staaten nach ihr austauschen, auch über Bankkonten, gegen Geldwäsche und für EU-Sanktionen zu nutzen. Wir wollen finanzielle Überwachung begrenzen, bevor sie weiter wächst.",
       proof: [
         "Wie so etwas wächst, zeigt Österreich: Das Kontenregister entstand 2015 im selben Gesetz, das das Bankgeheimnis lockerte. Seit Juli 2026 nutzt es auch das Amt für Betrugsbekämpfung, etwa gegen Sozialbetrug und Scheinfirmen. In Deutschland fragten Gerichtsvollzieher 2013 erst 61.760 Mal ab, wer welche Konten hat, 2023 schon 844.427 Mal.",
         "DAC8 ist ein Baustein unter mehreren: Den Ausweis prüft der Anbieter schon bei der Kontoeröffnung, Absender und Empfänger erfasst er bei jeder Übertragung. Bis 2029 werden die Kontenregister EU-weit vernetzt; sie erfassen dann auch Konten bei Krypto-Anbietern, ohne Kontostände.",
@@ -493,7 +494,7 @@ export const reasons: Reason[] = [
     en: {
       short: "Financial surveillance needs limits",
       title: "What is collected gets used for more.",
-      text: "Since DAC8, all tax data that states exchange under the directive, bank-account data included, may also be used against money laundering and for EU sanctions. We want to limit financial surveillance before it grows further.",
+      text: "Since DAC8, the directive allows all tax data that states exchange under it, bank-account data included, to be used against money laundering and for EU sanctions. We want to limit financial surveillance before it grows further.",
       proof: [
         "Austria shows how such uses grow: its account register was created in 2015 by the same act that loosened banking secrecy. Since July 2026, the anti-fraud office uses it too, for example against benefit fraud and shell companies. In Germany, bailiffs looked up who holds which accounts 61,760 times in 2013 and 844,427 times in 2023.",
         "DAC8 is one building block among several: the provider checks your ID when you open the account and records the sender and recipient of every transfer. By 2029, account registries will be connected across the EU and will then also cover accounts at crypto-asset providers, without balances.",
