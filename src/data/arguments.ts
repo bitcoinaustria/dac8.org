@@ -400,9 +400,9 @@ export const demands: Record<Language, Demand[]> = {
     },
     {
       title: "Übertragungen auf die eigene Wallet nicht melden.",
-      text: "Sie lösen für sich genommen keine Steuer aus, verraten nach einem Datenleck aber, wer vermutlich Bitcoin selbst verwahrt und wie viel dorthin geflossen ist.",
+      text: "Sie lösen für sich genommen keine Steuer aus, verraten nach einem Datenleck aber, wer vermutlich wie viel Bitcoin daheim hat.",
       letter:
-        "Übertragungen auf die eigene Wallet nicht melden. Sie lösen für sich genommen keine Steuer aus. Sie trotzdem zu melden ist, als würde die Bank dem Finanzamt sagen, wie viel Bargeld jemand nach Hause getragen hat. Nach einem Datenleck steht dann auf einer Liste, wer vermutlich Bitcoin selbst verwahrt und wie viel dorthin geflossen ist.",
+        "Übertragungen auf die eigene Wallet nicht melden. Sie lösen für sich genommen keine Steuer aus. Sie trotzdem zu melden ist, als würde die Bank dem Finanzamt sagen, wie viel Bargeld jemand nach Hause getragen hat. Nach einem Datenleck steht dann auf einer Liste, wer vermutlich wie viel Bitcoin daheim hat.",
     },
     {
       title: "Nur erheben, was die Steuer braucht.",
@@ -428,9 +428,9 @@ export const demands: Record<Language, Demand[]> = {
     },
     {
       title: "Do not report transfers to your own wallet.",
-      text: "They trigger no tax by themselves, yet after a breach they reveal who probably keeps bitcoin in self-custody and how much went there.",
+      text: "They trigger no tax by themselves, yet after a breach they reveal who probably keeps how much bitcoin at home.",
       letter:
-        "Do not report transfers to your own wallet. They trigger no tax by themselves. Reporting their total is like a bank telling the tax authority how much cash someone has carried home. After a breach, it becomes a list of who probably keeps bitcoin in self-custody and how much went there.",
+        "Do not report transfers to your own wallet. They trigger no tax by themselves. Reporting their total is like a bank telling the tax authority how much cash someone has carried home. After a breach, it becomes a list of who probably keeps how much bitcoin at home.",
     },
     {
       title: "Collect only what taxation needs.",
