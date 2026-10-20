@@ -4,10 +4,10 @@ import type { Language } from "@/lib/i18n"
 // objections with our answers, demands. The reasons run from the principle
 // to the case: privacy as choosing who learns what, and what payments
 // reveal; bitcoin as cash and what DAC8 reports of it; what collected data
-// does in the wrong hands; and why such collection misses its aim and keeps
-// growing. Terms such as wallet or blockchain are explained in the visible
-// text of the first reason that uses them, since the evidence starts
-// closed. DAC8 is the newest layer of a stack
+// does in the wrong hands; and why collection without suspicion is wrong
+// and keeps growing. Terms such as wallet or blockchain are explained in
+// the visible text of the first reason that uses them, since the evidence
+// starts closed. DAC8 is the newest layer of a stack
 // that already holds the ID check, every transfer and the account
 // registers, so a reason may rest on any layer as long as it names the one
 // it means. The lists will change, so no page names how many there are.
@@ -132,9 +132,8 @@ const convoyAppeal =
 // Austrian passports bearing real people's data.
 const fiuReport =
   "https://www.bundeskriminalamt.at/308/files/409_2025_Geldwaeschebericht_2024_A4_V20251020_Web.pdf"
-// Impact assessment: no data on gains already taxed (p. 12), switching to
-// peer-to-peer possible (p. 34), estimate from bitcoin gains scaled up to
-// all crypto-assets (Annex 4, pp. 66-68).
+// Impact assessment: no data on gains already taxed (p. 12), estimate from
+// bitcoin gains scaled up to all crypto-assets (Annex 4, pp. 66-68).
 const impactAssessment =
   "https://data.consilium.europa.eu/doc/document/ST-15829-2022-ADD-2/en/pdf"
 // Federal government's answer on account lookups, with figures per authority
@@ -437,11 +436,12 @@ export const reasons: Reason[] = [
     },
   },
   {
-    id: "ehrliche",
+    id: "anlasslos",
     de: {
       short: "Erfasst werden Unverdächtige",
-      title: "Wer ehrlich kauft, landet in der Akte.",
-      text: "Gemeldet wird, wer über Börsen, Broker und Apps kauft und sich dort ausweist. Die EU-Kommission hält selbst für möglich, dass Handel auf Wege ausweicht, die DAC8 nicht erfasst.",
+      title:
+        "In die Akte kommt, wer einen Anbieter nutzt, nicht wer verdächtig ist.",
+      text: "Gemeldet wird, wer über eine Börse, einen Broker oder eine App kauft, ohne jeden Verdacht. Wer Bitcoin direkt von Mensch zu Mensch kauft oder sich Waren und Arbeit in Bitcoin bezahlen lässt, steht nicht darin, und verdächtig ist keiner von beiden.",
       proof: [
         "Der Verfassungsgerichtshof hob 2014 die Vorratsdatenspeicherung von Telefon- und Internetdaten auf. Sie erfasse „fast ausschließlich Personen, die keinerlei Anlass […] für die Datenspeicherung gegeben haben“.",
         "Auch was ins Leere läuft, bleibt gespeichert: 2024 gingen bei der österreichischen Geldwäschemeldestelle 11.111 Verdachtsmeldungen ein, 1.228 davon von Krypto-Anbietern. 8.138 führten vorerst nicht weiter, mangels Anfangsverdachts, also eines Anhaltspunkts für eine Straftat, oder weiterer Ansätze. Sie bleiben für spätere Auswertungen bis zu fünf Jahre gespeichert.",
@@ -456,8 +456,9 @@ export const reasons: Reason[] = [
     },
     en: {
       short: "It records people under no suspicion",
-      title: "Buy honestly, and you end up in the file.",
-      text: "It reports those who buy through exchanges, brokers and apps and show their ID there. The European Commission itself considers it possible that trading moves to routes DAC8 does not cover.",
+      title:
+        "The file holds whoever uses a provider, not whoever is suspected.",
+      text: "Anyone who buys through an exchange, broker or app is reported, without any suspicion. Anyone who buys bitcoin directly from another person or is paid in bitcoin for goods and work is not in it, and neither of them is suspect.",
       proof: [
         "In 2014, Austria’s Constitutional Court struck down the retention of phone and internet data. It found that the retention captured almost exclusively people who had given no cause for it.",
         "Even what leads nowhere stays on file: in 2024, Austria’s financial intelligence unit received 11,111 suspicious transaction reports, 1,228 of them from crypto-asset providers. 8,138 led nowhere for now, for lack of an initial suspicion of a crime or of further leads. They are kept for later analysis for up to five years.",
