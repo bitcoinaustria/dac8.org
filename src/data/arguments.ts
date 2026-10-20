@@ -2,9 +2,12 @@ import type { Language } from "@/lib/i18n"
 
 // Why financial privacy matters, and what we demand of DAC8: reasons,
 // objections with our answers, demands. The reasons run from the principle
-// to the case: privacy as choosing who learns what, cash and self-custody,
-// what collected data does in the wrong hands, and why such collection
-// misses its aim and keeps growing. DAC8 is the newest layer of a stack
+// to the case: privacy as choosing who learns what, and what payments
+// reveal; bitcoin as cash and what DAC8 reports of it; what collected data
+// does in the wrong hands; and why such collection misses its aim and keeps
+// growing. Terms such as wallet or blockchain are explained in the visible
+// text of the first reason that uses them, since the evidence starts
+// closed. DAC8 is the newest layer of a stack
 // that already holds the ID check, every transfer and the account
 // registers, so a reason may rest on any layer as long as it names the one
 // it means. The lists will change, so no page names how many there are.
@@ -157,6 +160,9 @@ const retentionRuling =
   "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20140627_12G00047_00/JFT_20140627_12G00047_00.pdf"
 const bulgaria =
   "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:62021CJ0340"
+// Exchanged account data (CRS/DAC) was among the leaked records.
+const bulgariaOecd =
+  "https://web.archive.org/web/20240123063026/https://www.oecd.org/tax/transparency/documents/statement-on-the-data-breach-in-the-national-revenue-agency-of-bulgaria.htm"
 const accountDataRuling =
   "https://www.ris.bka.gv.at/Dokumente/Vfgh/JFT_20230309_21E02097_00/JFT_20230309_21E02097_00.pdf"
 
@@ -195,6 +201,75 @@ export const reasons: Reason[] = [
     },
   },
   {
+    id: "alle",
+    de: {
+      short: "Privatsphäre betrifft alle",
+      title:
+        "Niemand muss reich sein, um finanzielle Privatsphäre zu brauchen.",
+      text: "Überträgst du Bitcoin über eine Börse, einen Broker oder eine App, wird dort gespeichert, wer an wen zahlt. Daraus kann hervorgehen, wem du spendest, wen du unterstützt und wo du Mitglied bist.",
+      proof: [
+        "Das verlangt die EU-Geldtransferverordnung: Namen und Wallet-Adressen von Absender und Empfänger, auch wenn das Ziel deine eigene Wallet ist. Die Geldtransferverordnung verlangt, diese Angaben ohne Verdacht fünf Jahre aufzubewahren, das österreichische Geldwäschegesetz Transaktionsaufzeichnungen bis zehn Jahre nach Ende der Kundenbeziehung.",
+        "Die europäischen Datenschutzbehörden warnen, dass schon einzelne Zahlungen viel verraten: Spenden etwa politische oder religiöse Überzeugungen, Arztrechnungen die Gesundheit. In der Jahresmeldung stehen davon nur Jahressummen, beim Anbieter liegt jede einzelne Zahlung.",
+        "Wie schnell Zahlungswege und Finanzdaten gegen politische Anliegen gewendet werden, zeigen zwei bekannte Fälle. Im Dezember 2010 blockierten Visa, Mastercard und PayPal Spenden an WikiLeaks, ohne dazu gerichtlich verpflichtet zu sein. 2022 ließ Kanada während der Trucker-Proteste rund 280 Konten, Karten und Kreditlinien einfrieren, und Banken mussten Angaben über ihre Kunden an die Polizei weitergeben. Kanadische Gerichte urteilten 2024 und 2026, dass diese Weitergabe gegen den Schutz vor unangemessener Durchsuchung verstieß.",
+        "Überwachung wirkt auch ohne Datenleck. Das Bundesverfassungsgericht schrieb 1983: „Wer unsicher ist, ob abweichende Verhaltensweisen jederzeit notiert und als Information dauerhaft gespeichert, verwendet oder weitergegeben werden, wird versuchen, nicht durch solche Verhaltensweisen aufzufallen.“",
+      ],
+      sources: [
+        { href: transferRegulation, label: "Verordnung (EU) 2023/1113" },
+        { href: amlRetention, label: "§ 21 FM-GwG" },
+        { href: paymentGuidelines, label: "EDSA-Leitlinien 06/2020" },
+        { href: wikileaks, label: "Bridy 2015" },
+        { href: convoyReport, label: "Parlament Kanada" },
+        { href: convoyRuling, label: "2024 FC 42" },
+        { href: convoyAppeal, label: "2026 FCA 6" },
+        { href: censusRuling, label: "BVerfGE 65, 1" },
+      ],
+    },
+    en: {
+      short: "Privacy concerns everyone",
+      title: "Nobody has to be rich to need financial privacy.",
+      text: "Move bitcoin through an exchange, broker or app, and it stores who pays whom. That can show whom you donate to, whom you support and where you are a member.",
+      proof: [
+        "The EU transfer of funds regulation requires it: the names and wallet addresses of sender and recipient, even when the destination is your own wallet. The regulation requires these details to be kept for five years without suspicion; Austria’s anti-money-laundering act keeps transaction records until ten years after the relationship ends.",
+        "Europe’s data protection authorities warn that even single payments reveal a lot: donations can show political or religious beliefs, medical bills someone’s health. Of these, the annual report carries only yearly totals; the provider holds every single payment.",
+        "Two well-known cases show how quickly payment routes and financial data can be turned against political causes. In December 2010, Visa, Mastercard and PayPal blocked donations to WikiLeaks without any court order requiring them to. In 2022, during the trucker protests, Canada had around 280 accounts, cards and credit lines frozen, and banks had to pass information about their customers to the police. Canadian courts ruled in 2024 and 2026 that this sharing breached the protection against unreasonable search.",
+        "Surveillance has an effect even without a data leak. Germany’s Federal Constitutional Court wrote in 1983 that anyone unsure whether deviant behaviour is recorded at any time and permanently stored, used or passed on as information will try not to attract attention through such behaviour.",
+      ],
+      sources: [
+        { href: transferRegulation, label: "Regulation (EU) 2023/1113" },
+        { href: amlRetention, label: "Section 21 FM-GwG" },
+        { href: paymentGuidelines, label: "EDPB Guidelines 06/2020" },
+        { href: wikileaks, label: "Bridy 2015" },
+        { href: convoyReport, label: "Parliament of Canada" },
+        { href: convoyRuling, label: "2024 FC 42" },
+        { href: convoyAppeal, label: "2026 FCA 6" },
+        { href: censusRuling, label: "BVerfGE 65, 1" },
+      ],
+    },
+  },
+  {
+    id: "selbstverwahrung",
+    de: {
+      short: "Bitcoin ist digitales Bargeld",
+      title: "Bitcoin in der eigenen Wallet ist wie Bargeld daheim.",
+      text: "Bei der Selbstverwahrung hältst du die Schlüssel zu deinen Bitcoin selbst, in einer Wallet, also einer App oder einem Gerät. Wie beim Bargeld wird es vor allem dann gefährlich, wenn andere erfahren, wer vermutlich wie viel hat.",
+      proof: [
+        "Bitcoin wurde 2008 als elektronisches Bargeld entworfen, das ohne Bank von Person zu Person geht. Wer die Schlüssel hat, kann seine Bitcoin übertragen, ohne dass jemand zustimmen muss.",
+        "Das macht dich unabhängig, zieht aber wie Bargeld Kriminelle an, aus der Ferne ebenso wie vor Ort. Darum solltest du selbst entscheiden, wem du zeigst, wie viel du besitzt. Gefährlich sind Datenbestände, die Menschen identifizieren, nicht die eigene Wallet.",
+      ],
+      sources: [{ href: whitepaper, label: "Nakamoto 2008" }],
+    },
+    en: {
+      short: "Bitcoin is digital cash",
+      title: "Bitcoin in your own wallet is like cash at home.",
+      text: "In self-custody, you hold the keys to your bitcoin yourself, in a wallet, that is an app or a device. As with cash, the danger comes mainly when others learn who probably holds how much.",
+      proof: [
+        "Bitcoin was designed in 2008 as electronic cash that passes from person to person without a bank. Whoever has the keys can move their bitcoin without anyone’s approval.",
+        "That makes you independent, but like cash it draws criminals, from far away as well as in person. That is why you should decide for yourself whom you show how much you hold. The danger lies in data stores that identify people, not in your own wallet.",
+      ],
+      sources: [{ href: whitepaper, label: "Nakamoto 2008" }],
+    },
+  },
+  {
     id: "bargeld",
     alias: "verdacht",
     de: {
@@ -227,26 +302,39 @@ export const reasons: Reason[] = [
     },
   },
   {
-    id: "selbstverwahrung",
+    id: "pseudonym",
+    proofId: "zahlungsprofile",
     de: {
-      short: "Bitcoin ist digitales Bargeld",
-      title: "Bitcoin in der eigenen Wallet ist wie Bargeld daheim.",
-      text: "Diese Selbstverwahrung verteidigen wir. Gefährlich wird es wie beim Bargeld erst, wenn andere erfahren, wer vermutlich wie viel hat.",
+      short: "Pseudonym ist nicht anonym",
+      title: "Die Blockchain zeigt Zahlungen, aber keine Namen.",
+      text: "Die Blockchain, das öffentliche Verzeichnis aller Bitcoin-Zahlungen, führt sie unter Wallet-Adressen, einer Art Kontonummer. Verrät ein Datenleck, welche davon dir gehören, lassen sich dir ihre Zahlungen zuordnen, frühere wie künftige.",
       proof: [
-        "Bitcoin wurde 2008 als elektronisches Bargeld entworfen, das ohne Bank von Person zu Person geht. Eine Wallet ist eine App oder ein Gerät mit den Schlüsseln zu deinen Bitcoin. Wer die Schlüssel hat, kann sie übertragen, ohne dass jemand zustimmen muss.",
-        "Das macht dich unabhängig, zieht aber wie Bargeld Kriminelle an, aus der Ferne ebenso wie vor Ort. Darum sollte niemand wissen, wer wie viel besitzt. Wir kritisieren Datenbestände, die Menschen identifizieren, nicht die eigene Wallet.",
+        "Schon das Bitcoin-Whitepaper warnt: Wird bekannt, wem ein Schlüssel gehört, können durch Verknüpfungen weitere Transaktionen derselben Person erkennbar werden. Und die Blockchain vergisst nichts. Beim Berliner Identifizierungsdienst Fractal ID lagen Ausweis, Wohnadresse und Wallet-Adresse in einem Datensatz, bis Angreifer ihn kopierten.",
+        "Ist eine Wallet-Adresse einmal einem Namen zugeordnet, lassen ihre Zahlungen mit Angaben über die Empfänger Rückschlüsse auf Einkäufe, Spenden und Beziehungen zu.",
+        "Ein Profil ist kein Beweis. Welche Wallet-Adressen zusammengehören, leiten Analysefirmen aus Annahmen ab, und schon eine falsche kann die Zahlungen verschiedener Menschen zusammenwerfen. Wer nach einem solchen Profil beurteilt wird, muss Fehler finden und berichtigen können.",
       ],
-      sources: [{ href: whitepaper, label: "Nakamoto 2008" }],
+      sources: [
+        { href: whitepaper, label: "Nakamoto 2008" },
+        { href: fractal, label: "Fractal ID" },
+        { href: paymentStudy, label: "Goldfeder et al. 2018" },
+        { href: clusteringStudy, label: "Möser und Narayanan 2022" },
+      ],
     },
     en: {
-      short: "Bitcoin is digital cash",
-      title: "Bitcoin in your own wallet is like cash at home.",
-      text: "We defend this self-custody. As with cash, the danger starts when others learn who probably holds how much.",
+      short: "Pseudonymous is not anonymous",
+      title: "The blockchain shows payments, but no names.",
+      text: "The blockchain, the public record of all bitcoin payments, lists them under wallet addresses, a kind of account number. If a data breach reveals which ones are yours, their payments can be traced to you, past and future.",
       proof: [
-        "Bitcoin was designed in 2008 as electronic cash that passes from person to person without a bank. A wallet is an app or device that holds the keys to your bitcoin. Whoever has the keys can move it without anyone’s approval.",
-        "That makes you independent, but like cash it draws criminals, from far away as well as in person. That is why nobody should know who holds how much. We criticise data stores that identify people, not your own wallet.",
+        "The bitcoin whitepaper already warns: if the owner of a key is revealed, linking could reveal other transactions that belonged to the same owner. And the blockchain forgets nothing. At the Berlin identity verification service Fractal ID, ID documents, home addresses and wallet addresses sat in one record until attackers copied it.",
+        "Once a wallet address is tied to a name, its payments, together with information about the recipients, allow inferences about purchases, donations and relationships.",
+        "A profile is not proof. Analytics firms infer which wallet addresses belong together from assumptions, and a single wrong one can lump different people’s payments together. Anyone judged by such a profile must be able to find and correct errors.",
       ],
-      sources: [{ href: whitepaper, label: "Nakamoto 2008" }],
+      sources: [
+        { href: whitepaper, label: "Nakamoto 2008" },
+        { href: fractal, label: "Fractal ID" },
+        { href: paymentStudy, label: "Goldfeder et al. 2018" },
+        { href: clusteringStudy, label: "Möser and Narayanan 2022" },
+      ],
     },
   },
   {
@@ -261,7 +349,7 @@ export const reasons: Reason[] = [
         "Aus Summe und Anzahl der Käufe und Übertragungen lässt sich grob schätzen, wie viel jemand bewegt. Die Schätzung kann weit danebenliegen, weil dasselbe Geld mehrfach zählen kann. Wer die Daten erbeutet, filtert trotzdem Menschen heraus, die vermögend wirken.",
         "Beim französischen Krypto-Steuerdienst Waltio gelangten E-Mail-Adressen, Gewinne und Verluste sowie Jahresendbestände der Kunden in fremde Hände. Laut französischer Polizei ist das Datenleck ein Grund für die Zunahme solcher Gewalttaten: Täter wählen damit Opfer aus und irren sich dabei teils über deren tatsächliche Bestände.",
         "Beim Hardware-Wallet-Hersteller Ledger gelangten 2020 Namen, Anschriften und Telefonnummern von rund 272.000 Käufern ins Netz, eine Liste von Menschen, die Bitcoin vermutlich selbst verwahren.",
-        "In Österreich suchen Betrüger schon jetzt nach Krypto-Besitzern: Gefälschte FinanzOnline-Nachrichten berufen sich auf die neuen Krypto-Steuerregeln und fragen ab, wer Krypto, Gold oder Bargeld hat. Noch verschicken sie solche Nachrichten wahllos.",
+        "In Österreich nutzen Betrüger die neuen Krypto-Steuerregeln schon als Vorwand: Gefälschte FinanzOnline-Nachrichten fragen nach Krypto-Beständen, eine wahllos verschickte SMS-Masche auch nach Gold und Bargeld.",
       ],
       sources: [
         { href: waltio, label: "Waltio" },
@@ -279,7 +367,7 @@ export const reasons: Reason[] = [
         "Totals and counts of purchases and transfers give a rough estimate of how much someone moves. The estimate can be far off, because the same money can count more than once. Anyone who gets hold of the data still singles out people who appear wealthy.",
         "At the French crypto tax service Waltio, customers’ email addresses, gains and losses and year-end balances fell into the wrong hands. According to the French police, the leak is one reason for the rise in such violent crime: criminals use the data to select victims, sometimes misjudging what they actually hold.",
         "In 2020, the names, postal addresses and phone numbers of around 272,000 customers of the hardware wallet maker Ledger were leaked online: a list of people who probably keep bitcoin in self-custody.",
-        "In Austria, fraudsters are already looking for crypto holders: fake FinanzOnline messages invoke the new crypto tax rules and ask who holds crypto, gold or cash. For now, they send such messages at random.",
+        "In Austria, fraudsters already use the new crypto tax rules as a pretext: fake FinanzOnline messages ask about crypto holdings, and an SMS scam sent out at random also asks about gold and cash.",
       ],
       sources: [
         { href: waltio, label: "Waltio" },
@@ -297,12 +385,12 @@ export const reasons: Reason[] = [
     de: {
       short: "Jede Jahresmeldung bleibt zehn Jahre",
       title: "Mit jedem Jahr wird die Akte dicker.",
-      text: "Bleibst du Kunde, liegen ab 2036 laufend zehn Jahresmeldungen beim Anbieter. So wächst ein Honeypot, ein Datenbestand, der Angreifer umso mehr anzieht, je mehr darin liegt.",
+      text: "Bleibst du Kunde, liegen ab 2036 laufend zehn Jahresmeldungen beim Anbieter. Je mehr Jahre darin liegen, desto mehr verrät ein einziger Einbruch.",
       proof: [
         "Die Akte entsteht für alle: Der Anbieter muss die Meldedaten für jeden Kunden aufbereiten, auch für jene, die nie gemeldet werden. Damit geht Österreich über die EU-Richtlinie hinaus. Deutschland und die Niederlande verlangen das nur für Kunden, die tatsächlich gemeldet werden.",
-        "Der Anbieter löscht jede Jahresmeldung erst zehn Jahre nach ihrem Meldejahr, laut Gesetzesbegründung „aus Vereinfachungsgründen“. Für Meldungen über Bankkonten gelten fünf Jahre, Irland kommt bei Krypto-Anbietern mit sechs aus.",
+        "Der Anbieter löscht jede Jahresmeldung erst zehn Jahre nach ihrem Meldejahr, laut Gesetzesbegründung „aus Vereinfachungsgründen“. Für Meldungen über Bankkonten gelten fünf Jahre, Irland sieht bei Krypto-Anbietern grundsätzlich sechs vor.",
         "Daneben bewahrt der Anbieter nach den Geldwäschevorschriften Ausweis, Wallet-Adressen und einzelne Transaktionen auf, derzeit bis zehn Jahre nach Ende der Kundenbeziehung. Für DAC8 kommen Steuernummer und Steuerwohnsitz dazu. Beim Finanzamt laufen die Jahresmeldungen aller Anbieter zusammen, bei denen du Kunde bist; lebst du in Deutschland, beim deutschen.",
-        "Auch Steuerbehörden verlieren Daten: Aus der bulgarischen Steuerbehörde gelangten 2019 Daten von mehr als sechs Millionen Menschen ins Netz, darunter Kontodaten aus dem automatischen Austausch, über den künftig auch die DAC8-Meldungen laufen.",
+        "Auch Steuerbehörden verlieren Daten: Aus der bulgarischen Steuerbehörde gelangten 2019 Daten von mehr als sechs Millionen Menschen ins Netz. Laut OECD waren auch Kontodaten aus dem automatischen Austausch darunter, über den künftig die DAC8-Meldungen laufen.",
         "Entscheidend ist das Gesamtbild: Meldungen über mehrere Anbieter und Jahre, das Datenleck eines Steuertools und zuordenbare Blockchain-Daten können zusammen ein Profil von Aktivität und vermutetem Vermögen ergeben.",
       ],
       sources: [
@@ -313,17 +401,18 @@ export const reasons: Reason[] = [
         { href: irishRegulations, label: "S.I. 584/2025" },
         { href: amlRetention, label: "§ 21 FM-GwG" },
         { href: bulgaria, label: "EuGH C-340/21" },
+        { href: bulgariaOecd, label: "OECD 2019" },
       ],
     },
     en: {
       short: "Each annual report is kept ten years",
       title: "Every year, the file grows thicker.",
-      text: "If you remain a customer, from 2036 ten annual reports will always be on file. That builds a honeypot, a data store that draws more attackers the more it holds.",
+      text: "If you remain a customer, from 2036 ten annual reports will always be on file. The more years it holds, the more a single breach gives away.",
       proof: [
         "The file is built for everyone: the provider must prepare reporting data for every customer, including those who are never reported. Here Austria goes beyond the EU directive. Germany and the Netherlands require it only for customers who are actually reported.",
-        "The provider deletes each annual report only ten years after its reporting year, according to the bill’s explanatory notes “for reasons of simplicity”. For reports on bank accounts, the period is five years, and Ireland makes do with six for crypto-asset providers.",
+        "The provider deletes each annual report only ten years after its reporting year, according to the bill’s explanatory notes “for reasons of simplicity”. For reports on bank accounts, the period is five years, and Ireland generally sets six for crypto-asset providers.",
         "Under anti-money-laundering rules, the provider also keeps your ID, wallet addresses and individual transactions, currently until ten years after the relationship ends. For DAC8, it adds your tax identification number and tax residence. At the tax authority, the annual reports from every provider you use come together; if you live in Germany, at the German one.",
-        "Tax authorities lose data too: in 2019, data on more than six million people leaked from the Bulgarian tax authority, including account data from the automatic exchange that DAC8 reports will also travel through.",
+        "Tax authorities lose data too: in 2019, data on more than six million people leaked from the Bulgarian tax authority. According to the OECD, it included account data from the automatic exchange that DAC8 reports will travel through.",
         "What matters is the overall picture: reports across several providers and years, a breach at a tax tool and attributable blockchain data can together add up to a profile of activity and presumed wealth.",
       ],
       sources: [
@@ -334,96 +423,19 @@ export const reasons: Reason[] = [
         { href: irishRegulations, label: "S.I. 584/2025" },
         { href: amlRetention, label: "Section 21 FM-GwG" },
         { href: bulgaria, label: "CJEU C-340/21" },
-      ],
-    },
-  },
-  {
-    id: "pseudonym",
-    proofId: "zahlungsprofile",
-    de: {
-      short: "Pseudonym ist nicht anonym",
-      title: "Die Blockchain zeigt Zahlungen, aber keine Namen.",
-      text: "Sie stehen öffentlich unter Wallet-Adressen, einer Art Kontonummer. Verrät ein Datenleck, welche davon dir gehören, lassen sich dir ihre Zahlungen zuordnen, frühere wie künftige.",
-      proof: [
-        "Schon das Bitcoin-Whitepaper warnt: Wird bekannt, wem ein Schlüssel gehört, können durch Verknüpfungen weitere Transaktionen derselben Person erkennbar werden. Und die Blockchain vergisst nichts. Beim Berliner Identifizierungsdienst Fractal ID lagen Ausweis, Wohnadresse und Wallet-Adresse in einem Datensatz, bis Angreifer ihn kopierten.",
-        "Ist eine Wallet-Adresse einmal einem Namen zugeordnet, lassen ihre Zahlungen mit Angaben über die Empfänger Rückschlüsse auf Einkäufe, Spenden und Beziehungen zu.",
-        "Ein Profil ist kein Beweis. Welche Wallet-Adressen zusammengehören, leiten Analysefirmen aus Annahmen ab, und schon eine falsche kann die Zahlungen verschiedener Menschen zusammenwerfen. Wer nach einem solchen Profil beurteilt wird, muss Fehler finden und berichtigen können.",
-      ],
-      sources: [
-        { href: whitepaper, label: "Nakamoto 2008" },
-        { href: fractal, label: "Fractal ID" },
-        { href: paymentStudy, label: "Goldfeder et al. 2018" },
-        { href: clusteringStudy, label: "Möser und Narayanan 2022" },
-      ],
-    },
-    en: {
-      short: "Pseudonymous is not anonymous",
-      title: "The blockchain shows payments, but no names.",
-      text: "They appear publicly under wallet addresses, a kind of account number. If a data breach reveals which ones are yours, their payments can be traced to you, past and future.",
-      proof: [
-        "The bitcoin whitepaper already warns: if the owner of a key is revealed, linking could reveal other transactions that belonged to the same owner. And the blockchain forgets nothing. At the Berlin identity verification service Fractal ID, ID documents, home addresses and wallet addresses sat in one record until attackers copied it.",
-        "Once a wallet address is tied to a name, its payments, together with information about the recipients, reveal purchases, donations and relationships.",
-        "A profile is not proof. Analytics firms infer which wallet addresses belong together from assumptions, and a single wrong one can lump different people’s payments together. Anyone judged by such a profile must be able to find and correct errors.",
-      ],
-      sources: [
-        { href: whitepaper, label: "Nakamoto 2008" },
-        { href: fractal, label: "Fractal ID" },
-        { href: paymentStudy, label: "Goldfeder et al. 2018" },
-        { href: clusteringStudy, label: "Möser and Narayanan 2022" },
-      ],
-    },
-  },
-  {
-    id: "alle",
-    de: {
-      short: "Privatsphäre betrifft alle",
-      title:
-        "Niemand muss reich sein, um finanzielle Privatsphäre zu brauchen.",
-      text: "Beim Anbieter liegen auch einzelne Transaktionen. Aus ihnen kann hervorgehen, wem du spendest, wen du unterstützt und wo du Mitglied bist.",
-      proof: [
-        "Bei jeder Übertragung erfasst der Anbieter nach der EU-Geldtransferverordnung Namen und Wallet-Adressen von Absender und Empfänger, auch wenn das Ziel deine eigene Wallet ist. Die Geldtransferverordnung verlangt, diese Angaben ohne Verdacht fünf Jahre aufzubewahren, das österreichische Geldwäschegesetz Transaktionsaufzeichnungen bis zehn Jahre nach Ende der Kundenbeziehung.",
-        "Die europäischen Datenschutzbehörden warnen, dass schon einzelne Zahlungen viel verraten: Spenden etwa politische oder religiöse Überzeugungen, Arztrechnungen die Gesundheit. In der Jahresmeldung stehen davon nur Jahressummen, beim Anbieter liegt jede einzelne Zahlung.",
-        "Wie schnell Zahlungswege und Finanzdaten gegen politische Anliegen gewendet werden, zeigen zwei bekannte Fälle. Im Dezember 2010 blockierten Visa, Mastercard und PayPal Spenden an WikiLeaks, ohne dazu gerichtlich verpflichtet zu sein. 2022 ließ Kanada während der Trucker-Proteste rund 280 Konten, Karten und Kreditlinien einfrieren, und Banken mussten Angaben über ihre Kunden an die Polizei weitergeben. Kanadische Gerichte urteilten 2024 und 2026, dass diese Weitergabe gegen den Schutz vor unangemessener Durchsuchung verstieß.",
-      ],
-      sources: [
-        { href: transferRegulation, label: "Verordnung (EU) 2023/1113" },
-        { href: amlRetention, label: "§ 21 FM-GwG" },
-        { href: paymentGuidelines, label: "EDSA-Leitlinien 06/2020" },
-        { href: wikileaks, label: "Bridy 2015" },
-        { href: convoyReport, label: "Parlament Kanada" },
-        { href: convoyRuling, label: "2024 FC 42" },
-        { href: convoyAppeal, label: "2026 FCA 6" },
-      ],
-    },
-    en: {
-      short: "Privacy concerns everyone",
-      title: "Nobody has to be rich to need financial privacy.",
-      text: "The provider also holds individual transactions. They can show whom you donate to, whom you support and where you are a member.",
-      proof: [
-        "With every transfer, the provider records the names and wallet addresses of sender and recipient under the EU transfer of funds regulation, even when the destination is your own wallet. The regulation requires these details to be kept for five years without suspicion; Austria’s anti-money-laundering act keeps transaction records until ten years after the relationship ends.",
-        "Europe’s data protection authorities warn that even single payments reveal a lot: donations can show political or religious beliefs, medical bills someone’s health. Of these, the annual report carries only yearly totals; the provider holds every single payment.",
-        "Two well-known cases show how quickly payment routes and financial data can be turned against political causes. In December 2010, Visa, Mastercard and PayPal blocked donations to WikiLeaks without any court order requiring them to. In 2022, during the trucker protests, Canada had around 280 accounts, cards and credit lines frozen, and banks had to pass information about their customers to the police. Canadian courts ruled in 2024 and 2026 that this sharing breached the protection against unreasonable search.",
-      ],
-      sources: [
-        { href: transferRegulation, label: "Regulation (EU) 2023/1113" },
-        { href: amlRetention, label: "Section 21 FM-GwG" },
-        { href: paymentGuidelines, label: "EDPB Guidelines 06/2020" },
-        { href: wikileaks, label: "Bridy 2015" },
-        { href: convoyReport, label: "Parliament of Canada" },
-        { href: convoyRuling, label: "2024 FC 42" },
-        { href: convoyAppeal, label: "2026 FCA 6" },
+        { href: bulgariaOecd, label: "OECD 2019" },
       ],
     },
   },
   {
     id: "ehrliche",
     de: {
-      short: "Erfasst werden die Ehrlichen",
-      title: "In der Akte stehen die Ehrlichen.",
-      text: "Erfasst wird, wer über Börsen, Broker und Apps kauft und sich dort ausweist. Die EU-Kommission hält selbst für möglich, dass Handel auf Wege ausweicht, die DAC8 nicht erfasst.",
+      short: "Erfasst werden Unverdächtige",
+      title: "Wer ehrlich kauft, landet in der Akte.",
+      text: "Gemeldet wird, wer über Börsen, Broker und Apps kauft und sich dort ausweist. Die EU-Kommission hält selbst für möglich, dass Handel auf Wege ausweicht, die DAC8 nicht erfasst.",
       proof: [
         "Der Verfassungsgerichtshof hob 2014 die Vorratsdatenspeicherung von Telefon- und Internetdaten auf. Sie erfasse „fast ausschließlich Personen, die keinerlei Anlass […] für die Datenspeicherung gegeben haben“.",
-        "Wie viel anlasslose Erfassung bringt, zeigt die österreichische Geldwäschemeldestelle: 2024 gingen 11.111 Verdachtsmeldungen ein, 1.228 davon von Krypto-Anbietern. 8.138 davon ergaben keinen Anfangsverdacht, also keinen Anhaltspunkt für eine Straftat, und auch sonst keinen Ansatz. Gespeichert bleiben sie trotzdem, bis zu fünf Jahre.",
+        "Auch was ins Leere läuft, bleibt gespeichert: 2024 gingen bei der österreichischen Geldwäschemeldestelle 11.111 Verdachtsmeldungen ein, 1.228 davon von Krypto-Anbietern. 8.138 führten vorerst nicht weiter, mangels Anfangsverdachts, also eines Anhaltspunkts für eine Straftat, oder weiterer Ansätze. Sie bleiben für spätere Auswertungen bis zu fünf Jahre gespeichert.",
         "Die Ausweisprüfung zeigt, wessen Ausweis vorgelegt wurde, nicht wer das Konto nutzt. Laut Geldwäschemeldestelle eröffnen Kriminelle Konten mit gefälschten österreichischen Pässen, die Daten echter, unbeteiligter Menschen tragen.",
         "Die zusätzlichen Steuereinnahmen durch DAC8 schätzte die Kommission auf bis zu 2,4 Milliarden Euro im Jahr. Gerechnet hat sie mit der Steuer auf alle Gewinne aus Bitcoin, hochgerechnet auf alle Kryptowerte, obwohl sie nach eigenen Angaben nicht wusste, wie viel davon bereits versteuert war.",
       ],
@@ -434,12 +446,12 @@ export const reasons: Reason[] = [
       ],
     },
     en: {
-      short: "It records the honest",
-      title: "The file holds the honest.",
-      text: "It records those who buy through exchanges, brokers and apps and show their ID there. The European Commission itself considers it possible that trading moves to routes DAC8 does not cover.",
+      short: "It records people under no suspicion",
+      title: "Buy honestly, and you end up in the file.",
+      text: "It reports those who buy through exchanges, brokers and apps and show their ID there. The European Commission itself considers it possible that trading moves to routes DAC8 does not cover.",
       proof: [
         "In 2014, Austria’s Constitutional Court struck down the retention of phone and internet data. It found that the retention captured almost exclusively people who had given no cause for it.",
-        "Austria’s financial intelligence unit shows what collection without suspicion yields: in 2024 it received 11,111 suspicious transaction reports, 1,228 of them from crypto-asset providers. 8,138 of them gave no initial suspicion of a crime and no other lead. They are still kept, for up to five years.",
+        "Even what leads nowhere stays on file: in 2024, Austria’s financial intelligence unit received 11,111 suspicious transaction reports, 1,228 of them from crypto-asset providers. 8,138 led nowhere for now, for lack of an initial suspicion of a crime or of further leads. They are kept for later analysis for up to five years.",
         "The ID check shows whose ID was presented, not who uses the account. According to the financial intelligence unit, criminals open accounts with forged Austrian passports bearing the data of real, uninvolved people.",
         "The Commission estimated the extra tax revenue from DAC8 at up to 2.4 billion euros a year. It counted the tax on all bitcoin gains, scaled up to all crypto-assets, although by its own account it did not know how much of that had already been taxed.",
       ],
@@ -461,7 +473,6 @@ export const reasons: Reason[] = [
       proof: [
         "Wie so etwas wächst, zeigt Österreich: Das Kontenregister entstand 2015 im selben Gesetz, das das Bankgeheimnis lockerte. Seit Juli 2026 nutzt es auch das Amt für Betrugsbekämpfung, etwa gegen Sozialbetrug und Scheinfirmen. In Deutschland fragten Gerichtsvollzieher 2013 erst 61.760 Mal ab, wer welche Konten hat, 2023 schon 844.427 Mal.",
         "DAC8 ist ein Baustein unter mehreren: Den Ausweis prüft der Anbieter schon bei der Kontoeröffnung, Absender und Empfänger erfasst er bei jeder Übertragung. Bis 2029 werden die Kontenregister EU-weit vernetzt; sie erfassen dann auch Konten bei Krypto-Anbietern, ohne Kontostände.",
-        "Überwachung wirkt auch ohne Datenleck. Das Bundesverfassungsgericht schrieb 1983: „Wer unsicher ist, ob abweichende Verhaltensweisen jederzeit notiert und als Information dauerhaft gespeichert, verwendet oder weitergegeben werden, wird versuchen, nicht durch solche Verhaltensweisen aufzufallen.“",
       ],
       sources: [
         { href: dac8, label: "Richtlinie (EU) 2023/2226" },
@@ -469,7 +480,6 @@ export const reasons: Reason[] = [
         { href: registerLaw2026, label: "BGBl. I 46/2026" },
         { href: accountLookups, label: "BT-Drucksache 20/10841" },
         { href: accountRegistries, label: "Richtlinie (EU) 2024/1640" },
-        { href: censusRuling, label: "BVerfGE 65, 1" },
       ],
     },
     en: {
@@ -479,7 +489,6 @@ export const reasons: Reason[] = [
       proof: [
         "Austria shows how such uses grow: its account register was created in 2015 by the same act that loosened banking secrecy. Since July 2026, the anti-fraud office uses it too, for example against benefit fraud and shell companies. In Germany, bailiffs looked up who holds which accounts 61,760 times in 2013 and 844,427 times in 2023.",
         "DAC8 is one building block among several: the provider checks your ID when you open the account and records the sender and recipient of every transfer. By 2029, account registries will be connected across the EU and will then also cover accounts at crypto-asset providers, without balances.",
-        "Surveillance has an effect even without a data leak. Germany’s Federal Constitutional Court wrote in 1983 that anyone unsure whether deviant behaviour is recorded at any time and permanently stored, used or passed on as information will try not to attract attention through such behaviour.",
       ],
       sources: [
         { href: dac8, label: "Directive (EU) 2023/2226" },
@@ -487,7 +496,6 @@ export const reasons: Reason[] = [
         { href: registerLaw2026, label: "BGBl. I 46/2026" },
         { href: accountLookups, label: "Bundestag paper 20/10841" },
         { href: accountRegistries, label: "Directive (EU) 2024/1640" },
-        { href: censusRuling, label: "BVerfGE 65, 1" },
       ],
     },
   },
@@ -510,7 +518,7 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "„Es geht doch um Steuergerechtigkeit.“",
-      text: "Auch für die Steuer darf der Staat nur so viele Daten verlangen, wie er braucht. Bei Kunden in Österreich ziehen österreichische Anbieter die Steuer auf Kursgewinne seit 2024 ohnehin selbst ab. Wozu dann jedes Jahr die Summen aller Kunden, auch für Übertragungen, die keine Steuer auslösen?",
+      text: "Auch für die Steuer darf der Staat nur so viele Daten verlangen, wie er braucht. Wer in Österreich steuerlich ansässig ist, dem ziehen österreichische Anbieter die Steuer auf Kursgewinne seit 2024 ohnehin selbst ab; für Kunden in Deutschland gilt das nicht. Wo die Steuer schon abgezogen wird, muss der Staat begründen, wozu er zusätzlich jedes Jahr die Summen braucht, auch für Übertragungen, die keine Steuer auslösen.",
       sources: [{ href: capitalGainsWithholding, label: "BMF" }],
     },
     {
@@ -528,7 +536,7 @@ export const objections: Record<Language, Point[]> = {
     {
       title:
         "„Der Verfassungsgerichtshof hat den Austausch von Kontodaten doch erlaubt.“",
-      text: "Für Kontostand und Zinsen, ja. DAC8 meldet mehr: Beträge, Stückzahlen und die Zahl der Transaktionen je Kryptowert, auch über Kunden im Inland, und der Anbieter behält die Meldung zehn statt fünf Jahre.",
+      text: "Für Kontostand und Zinsen, ja: Diese berührten laut Gericht nicht den Kernbereich des Privatlebens. DAC8 meldet mehr, nämlich Beträge, Stückzahlen und die Zahl der Transaktionen je Kryptowert, auch über Kunden im Inland, und Österreich lässt die Anbieter die Meldung zehn statt fünf Jahre aufbewahren. Ob das verhältnismäßig ist, hat der Verfassungsgerichtshof bisher nicht entschieden.",
       sources: [{ href: accountDataRuling, label: "VfGH E 2097/2021" }],
     },
     {
@@ -547,7 +555,7 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "“It’s about tax fairness.”",
-      text: "Even for taxes, the state may only demand as much data as it needs. For customers in Austria, Austrian providers have withheld the tax on gains themselves since 2024. Why then every customer’s yearly totals, including transfers that trigger no tax?",
+      text: "Even for taxes, the state may only demand as much data as it needs. For anyone tax resident in Austria, Austrian providers have withheld the tax on gains themselves since 2024; this does not apply to customers in Germany. Where the tax is already withheld, the state must justify why it also needs the yearly totals, including transfers that trigger no tax.",
       sources: [{ href: capitalGainsWithholding, label: "Finance Ministry" }],
     },
     {
@@ -565,7 +573,7 @@ export const objections: Record<Language, Point[]> = {
     {
       title:
         "“The Constitutional Court has already allowed the exchange of account data.”",
-      text: "For balances and interest, yes. DAC8 reports more: amounts, units and the number of transactions per crypto-asset, also on customers at home, and the provider keeps the report ten years instead of five.",
+      text: "For balances and interest, yes: according to the court, they did not touch the core of private life. DAC8 reports more, namely amounts, units and the number of transactions per crypto-asset, also on customers at home, and Austria has providers keep the report ten years instead of five. Whether that is proportionate, the Constitutional Court has not yet decided.",
       sources: [{ href: accountDataRuling, label: "VfGH E 2097/2021" }],
     },
     {
@@ -589,7 +597,7 @@ export const demands: Record<Language, Demand[]> = {
   de: [
     {
       title: "Keine Daten auf Vorrat.",
-      text: "Erst klären, wessen Daten gemeldet werden müssen, statt sie für alle Kunden aufzubereiten. Deutschland und die Niederlande kommen ohne diese Vorratshaltung aus.",
+      text: "Erst klären, wessen Daten gemeldet werden müssen, statt sie für alle Kunden aufzubereiten. Deutschland und die Niederlande verlangen das nur für Kunden, die tatsächlich gemeldet werden.",
     },
     {
       title: "Übertragungen auf die eigene Wallet nicht melden.",
@@ -603,9 +611,9 @@ export const demands: Record<Language, Demand[]> = {
     },
     {
       title: "Kürzer speichern.",
-      text: "Für Meldungen über Bankkonten gelten fünf Jahre, Irland kommt bei Krypto-Anbietern mit sechs aus. Zehn Jahre „aus Vereinfachungsgründen“ sind keine Begründung. Kopien, die niemand mehr braucht, müssen auch bei Dienstleistern nachweislich gelöscht werden.",
+      text: "Für Meldungen über Bankkonten gelten fünf Jahre, Irland sieht bei Krypto-Anbietern grundsätzlich sechs vor. Zehn Jahre „aus Vereinfachungsgründen“ sind keine Begründung. Kopien, die niemand mehr braucht, müssen auch bei Dienstleistern nachweislich gelöscht werden.",
       letter:
-        "Kürzer speichern. Für Meldungen über Bankkonten gelten fünf Jahre, Irland kommt bei Krypto-Anbietern mit sechs aus; zehn Jahre „aus Vereinfachungsgründen“ sind keine Begründung. Nicht mehr benötigte Kopien müssen auch bei Dienstleistern nachweislich gelöscht werden.",
+        "Kürzer speichern. Für Meldungen über Bankkonten gelten fünf Jahre, Irland sieht bei Krypto-Anbietern grundsätzlich sechs vor; zehn Jahre „aus Vereinfachungsgründen“ sind keine Begründung. Nicht mehr benötigte Kopien müssen auch bei Dienstleistern nachweislich gelöscht werden.",
     },
     {
       title: "Zugriff begrenzen, Rechte sichern.",
@@ -617,7 +625,7 @@ export const demands: Record<Language, Demand[]> = {
   en: [
     {
       title: "No stockpiling of data.",
-      text: "Determine first whose data must be reported, instead of preparing it for all customers. Germany and the Netherlands manage without this stockpile.",
+      text: "Determine first whose data must be reported, instead of preparing it for all customers. Germany and the Netherlands require it only for customers who are actually reported.",
     },
     {
       title: "Do not report transfers to your own wallet.",
@@ -631,9 +639,9 @@ export const demands: Record<Language, Demand[]> = {
     },
     {
       title: "Keep data for less time.",
-      text: "For reports on bank accounts, the period is five years, and Ireland makes do with six for crypto-asset providers. Ten years “for reasons of simplicity” is no justification. Copies nobody needs any more must be verifiably deleted, including at service providers.",
+      text: "For reports on bank accounts, the period is five years, and Ireland generally sets six for crypto-asset providers. Ten years “for reasons of simplicity” is no justification. Copies nobody needs any more must be verifiably deleted, including at service providers.",
       letter:
-        "Keep data for less time. For reports on bank accounts, the period is five years, and Ireland makes do with six for crypto-asset providers; ten years “for reasons of simplicity” is no justification. Copies no longer needed must be verifiably deleted, including at service providers.",
+        "Keep data for less time. For reports on bank accounts, the period is five years, and Ireland generally sets six for crypto-asset providers; ten years “for reasons of simplicity” is no justification. Copies no longer needed must be verifiably deleted, including at service providers.",
     },
     {
       title: "Limit access, secure rights.",
