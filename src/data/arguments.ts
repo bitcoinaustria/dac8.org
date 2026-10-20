@@ -96,6 +96,10 @@ const waltio =
 const gendarmerie =
   "https://www.gendarmerie.interieur.gouv.fr/gendinfo/terrain/immersion/2026/la-strategie-de-la-gendarmerie-face-aux-cryptorapts-partie-2-2"
 const ledger = "https://www.ledger.com/message-ledgers-ceo-data-leak"
+// Orders from 2019 to 2021 leaked although the shipping provider had
+// confirmed their deletion in writing several times.
+const trezorShipping =
+  "https://trezor.io/blog/news/recent-customer-data-exposed-in-shipping-provider-incident"
 // Consumer platform, not an authority. The first campaign cites the crypto
 // tax rules; the second asks about gold, jewellery and cash and goes out
 // at random.
@@ -208,7 +212,7 @@ export const reasons: Reason[] = [
         "Niemand muss reich sein, um finanzielle Privatsphäre zu brauchen.",
       text: "Überträgst du Bitcoin über eine Börse, einen Broker oder eine App, wird dort gespeichert, wer an wen zahlt. Daraus kann hervorgehen, wem du spendest, wen du unterstützt und wo du Mitglied bist.",
       proof: [
-        "Das verlangt die EU-Geldtransferverordnung: Namen und Wallet-Adressen von Absender und Empfänger, auch wenn das Ziel deine eigene Wallet ist. Die Geldtransferverordnung verlangt, diese Angaben ohne Verdacht fünf Jahre aufzubewahren, das österreichische Geldwäschegesetz Transaktionsaufzeichnungen bis zehn Jahre nach Ende der Kundenbeziehung.",
+        "Das verlangt die EU-Geldtransferverordnung: Namen und Wallet-Adressen von Absender und Empfänger, auch wenn das Ziel deine eigene Wallet ist. Aufbewahrt wird das bei allen Kunden, ohne Verdacht und über Jahre.",
         "Die europäischen Datenschutzbehörden warnen, dass schon einzelne Zahlungen viel verraten: Spenden etwa politische oder religiöse Überzeugungen, Arztrechnungen die Gesundheit. In der Jahresmeldung stehen davon nur Jahressummen, beim Anbieter liegt jede einzelne Zahlung.",
         "Wie schnell Zahlungswege und Finanzdaten gegen politische Anliegen gewendet werden, zeigen zwei bekannte Fälle. Im Dezember 2010 blockierten Visa, Mastercard und PayPal Spenden an WikiLeaks, ohne dazu gerichtlich verpflichtet zu sein. 2022 ließ Kanada während der Trucker-Proteste rund 280 Konten, Karten und Kreditlinien einfrieren, und Banken mussten Angaben über ihre Kunden an die Polizei weitergeben. Kanadische Gerichte urteilten 2024 und 2026, dass diese Weitergabe gegen den Schutz vor unangemessener Durchsuchung verstieß.",
         "Überwachung wirkt auch ohne Datenleck. Das Bundesverfassungsgericht schrieb 1983: „Wer unsicher ist, ob abweichende Verhaltensweisen jederzeit notiert und als Information dauerhaft gespeichert, verwendet oder weitergegeben werden, wird versuchen, nicht durch solche Verhaltensweisen aufzufallen.“",
@@ -229,7 +233,7 @@ export const reasons: Reason[] = [
       title: "Nobody has to be rich to need financial privacy.",
       text: "Move bitcoin through an exchange, broker or app, and it stores who pays whom. That can show whom you donate to, whom you support and where you are a member.",
       proof: [
-        "The EU transfer of funds regulation requires it: the names and wallet addresses of sender and recipient, even when the destination is your own wallet. The regulation requires these details to be kept for five years without suspicion; Austria’s anti-money-laundering act keeps transaction records until ten years after the relationship ends.",
+        "The EU transfer of funds regulation requires it: the names and wallet addresses of sender and recipient, even when the destination is your own wallet. It is kept for every customer, without suspicion, for years.",
         "Europe’s data protection authorities warn that even single payments reveal a lot: donations can show political or religious beliefs, medical bills someone’s health. Of these, the annual report carries only yearly totals; the provider holds every single payment.",
         "Two well-known cases show how quickly payment routes and financial data can be turned against political causes. In December 2010, Visa, Mastercard and PayPal blocked donations to WikiLeaks without any court order requiring them to. In 2022, during the trucker protests, Canada had around 280 accounts, cards and credit lines frozen, and banks had to pass information about their customers to the police. Canadian courts ruled in 2024 and 2026 that this sharing breached the protection against unreasonable search.",
         "Surveillance has an effect even without a data leak. Germany’s Federal Constitutional Court wrote in 1983 that anyone unsure whether deviant behaviour is recorded at any time and permanently stored, used or passed on as information will try not to attract attention through such behaviour.",
@@ -389,6 +393,7 @@ export const reasons: Reason[] = [
       proof: [
         "Die Akte entsteht für alle: Der Anbieter muss die Meldedaten für jeden Kunden aufbereiten, auch für jene, die nie gemeldet werden. Damit geht Österreich über die EU-Richtlinie hinaus. Deutschland und die Niederlande verlangen das nur für Kunden, die tatsächlich gemeldet werden.",
         "Der Anbieter löscht jede Jahresmeldung erst zehn Jahre nach ihrem Meldejahr, laut Gesetzesbegründung „aus Vereinfachungsgründen“. Für Meldungen über Bankkonten gelten fünf Jahre, Irland sieht bei Krypto-Anbietern grundsätzlich sechs vor.",
+        "Und ob nach Ablauf der Frist wirklich gelöscht wird, musst du glauben. Beim Versanddienstleister des Wallet-Herstellers Trezor tauchten 2026 Bestellungen aus 2019 bis 2021 in einem Datenleck auf, obwohl er mehrfach schriftlich bestätigt hatte, sie gelöscht zu haben.",
         "Daneben bewahrt der Anbieter nach den Geldwäschevorschriften Ausweis, Wallet-Adressen und einzelne Transaktionen auf, derzeit bis zehn Jahre nach Ende der Kundenbeziehung. Für DAC8 kommen Steuernummer und Steuerwohnsitz dazu. Beim Finanzamt laufen die Jahresmeldungen aller Anbieter zusammen, bei denen du Kunde bist; lebst du in Deutschland, beim deutschen.",
         "Auch Steuerbehörden verlieren Daten: Aus der bulgarischen Steuerbehörde gelangten 2019 Daten von mehr als sechs Millionen Menschen ins Netz. Laut OECD waren auch Kontodaten aus dem automatischen Austausch darunter, über den künftig die DAC8-Meldungen laufen.",
         "Entscheidend ist das Gesamtbild: Meldungen über mehrere Anbieter und Jahre, das Datenleck eines Steuertools und zuordenbare Blockchain-Daten können zusammen ein Profil von Aktivität und vermutetem Vermögen ergeben.",
@@ -399,6 +404,7 @@ export const reasons: Reason[] = [
         { href: germanAct, label: "KStTG" },
         { href: dutchDecision, label: "Stb. 2026, 93" },
         { href: irishRegulations, label: "S.I. 584/2025" },
+        { href: trezorShipping, label: "Trezor" },
         { href: amlRetention, label: "§ 21 FM-GwG" },
         { href: bulgaria, label: "EuGH C-340/21" },
         { href: bulgariaOecd, label: "OECD 2019" },
@@ -411,6 +417,7 @@ export const reasons: Reason[] = [
       proof: [
         "The file is built for everyone: the provider must prepare reporting data for every customer, including those who are never reported. Here Austria goes beyond the EU directive. Germany and the Netherlands require it only for customers who are actually reported.",
         "The provider deletes each annual report only ten years after its reporting year, according to the bill’s explanatory notes “for reasons of simplicity”. For reports on bank accounts, the period is five years, and Ireland generally sets six for crypto-asset providers.",
+        "And whether the data is really deleted when the period ends, you have to take on trust. In 2026, orders from 2019 to 2021 turned up in a breach at the wallet maker Trezor’s shipping provider, although it had repeatedly confirmed in writing that it had deleted them.",
         "Under anti-money-laundering rules, the provider also keeps your ID, wallet addresses and individual transactions, currently until ten years after the relationship ends. For DAC8, it adds your tax identification number and tax residence. At the tax authority, the annual reports from every provider you use come together; if you live in Germany, at the German one.",
         "Tax authorities lose data too: in 2019, data on more than six million people leaked from the Bulgarian tax authority. According to the OECD, it included account data from the automatic exchange that DAC8 reports will travel through.",
         "What matters is the overall picture: reports across several providers and years, a breach at a tax tool and attributable blockchain data can together add up to a profile of activity and presumed wealth.",
@@ -421,6 +428,7 @@ export const reasons: Reason[] = [
         { href: germanAct, label: "KStTG" },
         { href: dutchDecision, label: "Stb. 2026, 93" },
         { href: irishRegulations, label: "S.I. 584/2025" },
+        { href: trezorShipping, label: "Trezor" },
         { href: amlRetention, label: "Section 21 FM-GwG" },
         { href: bulgaria, label: "CJEU C-340/21" },
         { href: bulgariaOecd, label: "OECD 2019" },
