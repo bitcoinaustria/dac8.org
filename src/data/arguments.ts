@@ -154,6 +154,10 @@ const taxOfficial =
   "https://www.ris.bka.gv.at/Dokumente/Dok/DKT_BMF_20160930_01069_7_DK_14_01072_7_DK_15_00/DKT_BMF_20160930_01069_7_DK_14_01072_7_DK_15_00.html"
 // Withholding by domestic providers, mandatory for income after 2023;
 // residents only, since non-residents owe no Austrian tax on crypto.
+// Federal constitutional act of 1993: tax on capital income such as
+// interest is settled by the withholding at source (Section 1(1)).
+const finalWithholding =
+  "https://www.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40172776/NOR40172776.html"
 const capitalGainsWithholding =
   "https://www.bmf.gv.at/themen/steuern/sparen-veranlagen/steuerliche-behandlung-von-kryptowaehrungen.html"
 // Constitutional Court on the exchange of bank-account data (CRS): balance
@@ -309,7 +313,7 @@ export const reasons: Reason[] = [
     id: "pseudonym",
     proofId: "zahlungsprofile",
     de: {
-      short: "Pseudonym ist nicht anonym",
+      short: "Privat, bis ein Datenleck Namen liefert",
       title: "Die Blockchain zeigt Zahlungen, aber keine Namen.",
       text: "Die Blockchain, das öffentliche Verzeichnis aller Bitcoin-Zahlungen, führt sie unter Wallet-Adressen, einer Art Kontonummer. Verrät ein Datenleck, welche davon dir gehören, lassen sich dir ihre Zahlungen zuordnen, frühere wie künftige.",
       proof: [
@@ -325,7 +329,7 @@ export const reasons: Reason[] = [
       ],
     },
     en: {
-      short: "Pseudonymous is not anonymous",
+      short: "Private until a leak supplies the names",
       title: "The blockchain shows payments, but no names.",
       text: "The blockchain, the public record of all bitcoin payments, lists them under wallet addresses, a kind of account number. If a data breach reveals which ones are yours, their payments can be traced to you, past and future.",
       proof: [
@@ -528,8 +532,11 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "„Es geht doch um Steuergerechtigkeit.“",
-      text: "Auch für die Steuer darf der Staat nur so viele Daten verlangen, wie er braucht. Wer in Österreich steuerlich ansässig ist, dem ziehen österreichische Anbieter die Steuer auf Kursgewinne seit 2024 ohnehin selbst ab; für Kunden in Deutschland gilt das nicht. Wo die Steuer schon abgezogen wird, muss der Staat begründen, wozu er zusätzlich jedes Jahr die Summen braucht, auch für Übertragungen, die keine Steuer auslösen.",
-      sources: [{ href: capitalGainsWithholding, label: "BMF" }],
+      text: "Auch für die Steuer darf der Staat nur so viele Daten verlangen, wie er braucht. Österreich hat 1993 sogar per Verfassungsgesetz festgelegt, dass die Steuer auf Zinsen mit dem Abzug durch die Bank abgegolten ist; eine Jahresmeldung über jeden Sparer braucht es dafür nicht. Genauso ziehen österreichische Anbieter seit 2024 die Steuer auf Kursgewinne selbst ab, bei allen, die in Österreich steuerlich ansässig sind; für Kunden in Deutschland gilt das nicht. Wo die Steuer schon abgezogen wird, muss der Staat begründen, wozu er zusätzlich jedes Jahr die Summen braucht, auch für Übertragungen, die keine Steuer auslösen.",
+      sources: [
+        { href: finalWithholding, label: "Endbesteuerungsgesetz" },
+        { href: capitalGainsWithholding, label: "BMF" },
+      ],
     },
     {
       title: "„Brauchen wir die Daten nicht gegen Kriminalität?“",
@@ -565,8 +572,11 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "“It’s about tax fairness.”",
-      text: "Even for taxes, the state may only demand as much data as it needs. For anyone tax resident in Austria, Austrian providers have withheld the tax on gains themselves since 2024; this does not apply to customers in Germany. Where the tax is already withheld, the state must justify why it also needs the yearly totals, including transfers that trigger no tax.",
-      sources: [{ href: capitalGainsWithholding, label: "Finance Ministry" }],
+      text: "Even for taxes, the state may only demand as much data as it needs. In 1993, Austria even laid down in a constitutional act that tax on interest is settled by the bank’s deduction; that needs no annual report on every saver. In the same way, Austrian providers have withheld the tax on gains themselves since 2024 for anyone tax resident in Austria; this does not apply to customers in Germany. Where the tax is already withheld, the state must justify why it also needs the yearly totals, including transfers that trigger no tax.",
+      sources: [
+        { href: finalWithholding, label: "Final Taxation Act" },
+        { href: capitalGainsWithholding, label: "Finance Ministry" },
+      ],
     },
     {
       title: "“Don’t we need the data to fight crime?”",
