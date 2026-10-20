@@ -175,8 +175,8 @@ export const reasons: Reason[] = [
     id: "privat",
     de: {
       short: "Privatsphäre heißt, selbst zu entscheiden",
-      title: "Privatsphäre heißt nicht, etwas zu verbergen.",
-      text: "Sie heißt, selbst zu entscheiden, wer was über dich weiß. Beim Bargeld ist das selbstverständlich: An der Kassa fragt niemand nach deinem Namen.",
+      title: "Du entscheidest, wer was über dich weiß.",
+      text: "Das ist Privatsphäre, und beim Bargeld ist sie selbstverständlich: An der Kassa fragt niemand nach deinem Namen.",
       proof: [
         "„Privatsphäre ist nicht Geheimhaltung“, schrieb Eric Hughes 1993 im Manifest der Cypherpunks, einer Bewegung von Programmierern, in deren Tradition Bitcoin steht. Privat ist, was man nicht der ganzen Welt mitteilen will, geheim, was niemand wissen soll. Privatsphäre ist die Macht, selbst zu entscheiden, was man von sich zeigt.",
         "Das deutsche Bundesverfassungsgericht sah es 1983 ebenso: Eine Rechtsordnung, „in der Bürger nicht mehr wissen können, wer was wann und bei welcher Gelegenheit über sie weiß“, wäre mit dem Recht auf informationelle Selbstbestimmung nicht vereinbar.",
@@ -190,8 +190,8 @@ export const reasons: Reason[] = [
     },
     en: {
       short: "Privacy means deciding for yourself",
-      title: "Privacy does not mean hiding something.",
-      text: "It means deciding for yourself who knows what about you. With cash, that goes without saying: nobody at the till asks for your name.",
+      title: "You decide who knows what about you.",
+      text: "That is privacy, and with cash it goes without saying: nobody at the till asks for your name.",
       proof: [
         "“Privacy is not secrecy,” Eric Hughes wrote in 1993 in the Cypherpunk’s Manifesto, the movement of programmers in whose tradition bitcoin stands. “A private matter is something one doesn’t want the whole world to know, but a secret matter is something one doesn’t want anybody to know. Privacy is the power to selectively reveal oneself to the world.”",
         "Germany’s Federal Constitutional Court saw it the same way in 1983: a legal order in which citizens can no longer know who knows what about them, when and on what occasion, would be incompatible with the right to informational self-determination.",
@@ -236,7 +236,7 @@ export const reasons: Reason[] = [
         "The EU transfer of funds regulation requires it: the names and wallet addresses of sender and recipient, even when the destination is your own wallet. It is kept for every customer, without suspicion, for years.",
         "Europe’s data protection authorities warn that even single payments reveal a lot: donations can show political or religious beliefs, medical bills someone’s health. Of these, the annual report carries only yearly totals; the provider holds every single payment.",
         "Two well-known cases show how quickly payment routes and financial data can be turned against political causes. In December 2010, Visa, Mastercard and PayPal blocked donations to WikiLeaks without any court order requiring them to. In 2022, during the trucker protests, Canada had around 280 accounts, cards and credit lines frozen, and banks had to pass information about the customers concerned to the police. Canadian courts ruled in 2024 and 2026, not yet finally, that this sharing breached the protection against unreasonable search.",
-        "Surveillance has an effect even without a data leak. Germany’s Federal Constitutional Court wrote in 1983 that anyone unsure whether deviant behaviour is recorded at any time and permanently stored, used or passed on as information will try not to attract attention through such behaviour.",
+        "Surveillance has an effect even without a data leak. Germany’s Federal Constitutional Court wrote in 1983 that anyone unsure whether behaviour that departs from the norm is recorded at any time and permanently stored, used or passed on as information will try not to attract attention through it.",
       ],
       sources: [
         { href: transferRegulation, label: "Regulation (EU) 2023/1113" },
@@ -255,7 +255,7 @@ export const reasons: Reason[] = [
     de: {
       short: "Bitcoin ist digitales Bargeld",
       title: "Bitcoin in der eigenen Wallet ist wie Bargeld daheim.",
-      text: "Bei der Selbstverwahrung hältst du die Schlüssel zu deinen Bitcoin selbst, in einer Wallet, also einer App oder einem Gerät. Wie beim Bargeld wird es vor allem dann gefährlich, wenn andere erfahren, wer vermutlich wie viel hat.",
+      text: "Bei der Selbstverwahrung hältst du die Schlüssel zu deinen Bitcoin selbst, in einer Wallet, also einer App oder einem Gerät. Wie beim Bargeld geht es niemanden etwas an, wie viel du hast; gefährlich wird es, wenn andere davon erfahren.",
       proof: [
         "Bitcoin wurde 2008 als elektronisches Bargeld entworfen, das ohne Bank von Person zu Person geht. Wer die Schlüssel hat, kann seine Bitcoin übertragen, ohne dass jemand zustimmen muss.",
         "Das macht dich unabhängig, zieht aber wie Bargeld Kriminelle an, aus der Ferne ebenso wie vor Ort. Darum solltest du selbst entscheiden, wem du zeigst, wie viel du besitzt. Gefährlich sind Datenbestände, die Menschen identifizieren, nicht die eigene Wallet.",
@@ -265,7 +265,7 @@ export const reasons: Reason[] = [
     en: {
       short: "Bitcoin is digital cash",
       title: "Bitcoin in your own wallet is like cash at home.",
-      text: "In self-custody, you hold the keys to your bitcoin yourself, in a wallet, that is an app or a device. As with cash, the danger comes mainly when others learn who probably holds how much.",
+      text: "In self-custody, you hold the keys to your bitcoin yourself, in a wallet, that is an app or a device. As with cash, how much you hold is nobody’s business; the danger comes when others find out.",
       proof: [
         "Bitcoin was designed in 2008 as electronic cash that passes from person to person without a bank. Whoever has the keys can move their bitcoin without anyone’s approval.",
         "That makes you independent, but like cash it draws criminals, from far away as well as in person. That is why you should decide for yourself whom you show how much you hold. The danger lies in data stores that identify people, not in your own wallet.",
@@ -438,10 +438,10 @@ export const reasons: Reason[] = [
   {
     id: "anlasslos",
     de: {
-      short: "Erfasst werden Unverdächtige",
+      short: "Erfasst wird jeder Kunde, ohne Verdacht",
       title:
         "In die Akte kommt, wer einen Anbieter nutzt, nicht wer verdächtig ist.",
-      text: "Gemeldet wird, wer über eine Börse, einen Broker oder eine App kauft, ohne jeden Verdacht. Wer Bitcoin direkt von Mensch zu Mensch kauft oder sich Waren und Arbeit in Bitcoin bezahlen lässt, steht nicht darin, und verdächtig ist keiner von beiden.",
+      text: "Gemeldet wird, wer über eine Börse, einen Broker oder eine App kauft. Wer Bitcoin von Mensch zu Mensch kauft oder sich in Bitcoin bezahlen lässt, steht nicht darin: Die Meldung folgt dem Weg, nicht einem Verdacht.",
       proof: [
         "Der Verfassungsgerichtshof hob 2014 die Vorratsdatenspeicherung von Telefon- und Internetdaten auf. Sie erfasse „fast ausschließlich Personen, die keinerlei Anlass […] für die Datenspeicherung gegeben haben“.",
         "Auch was ins Leere läuft, bleibt gespeichert: 2024 gingen bei der österreichischen Geldwäschemeldestelle 11.111 Verdachtsmeldungen ein, 1.228 davon von Krypto-Anbietern. 8.138 führten vorerst nicht weiter, mangels Anfangsverdachts, also eines Anhaltspunkts für eine Straftat, oder weiterer Ansätze. Sie bleiben für spätere Auswertungen bis zu fünf Jahre gespeichert.",
@@ -455,10 +455,10 @@ export const reasons: Reason[] = [
       ],
     },
     en: {
-      short: "It records people under no suspicion",
+      short: "Every customer is recorded, without suspicion",
       title:
         "The file holds whoever uses a provider, not whoever is suspected.",
-      text: "Anyone who buys through an exchange, broker or app is reported, without any suspicion. Anyone who buys bitcoin directly from another person or is paid in bitcoin for goods and work is not in it, and neither of them is suspect.",
+      text: "Anyone who buys through an exchange, broker or app is reported. Anyone who buys from another person or is paid in bitcoin is not: the report follows the route, not any suspicion.",
       proof: [
         "In 2014, Austria’s Constitutional Court struck down the retention of phone and internet data. It found that the retention captured almost exclusively people who had given no cause for it.",
         "Even what leads nowhere stays on file: in 2024, Austria’s financial intelligence unit received 11,111 suspicious transaction reports, 1,228 of them from crypto-asset providers. 8,138 led nowhere for now, for lack of an initial suspicion of a crime or of further leads. They are kept for later analysis for up to five years.",
@@ -477,9 +477,9 @@ export const reasons: Reason[] = [
     alias: "ausbau",
     history: true,
     de: {
-      short: "Finanzielle Überwachung braucht Grenzen",
+      short: "Überwachung wächst mit jedem Gesetz",
       title: "Was gesammelt ist, wird für mehr genutzt.",
-      text: "Seit DAC8 erlaubt die Richtlinie, alle Steuerdaten, die Staaten nach ihr austauschen, auch über Bankkonten, gegen Geldwäsche und für EU-Sanktionen zu nutzen. Wir wollen finanzielle Überwachung begrenzen, bevor sie weiter wächst.",
+      text: "Seit DAC8 erlaubt die Richtlinie, alle Steuerdaten, die Staaten nach ihr austauschen, auch über Bankkonten, gegen Geldwäsche und für EU-Sanktionen zu nutzen. Wir wollen finanzielle Überwachung zurückdrängen, statt zuzusehen, wie sie wächst.",
       proof: [
         "Wie so etwas wächst, zeigt Österreich: Das Kontenregister entstand 2015 im selben Gesetz, das das Bankgeheimnis lockerte. Seit Juli 2026 nutzt es auch das Amt für Betrugsbekämpfung, etwa gegen Sozialbetrug und Scheinfirmen. In Deutschland fragten Gerichtsvollzieher 2013 erst 61.760 Mal ab, wer welche Konten hat, 2023 schon 844.427 Mal.",
         "DAC8 ist ein Baustein unter mehreren: Den Ausweis prüft der Anbieter schon bei der Kontoeröffnung, Absender und Empfänger erfasst er bei jeder Übertragung. Bis 2029 werden die Kontenregister EU-weit vernetzt; sie erfassen dann auch Konten bei Krypto-Anbietern, ohne Kontostände.",
@@ -493,9 +493,9 @@ export const reasons: Reason[] = [
       ],
     },
     en: {
-      short: "Financial surveillance needs limits",
+      short: "Surveillance grows with every law",
       title: "What is collected gets used for more.",
-      text: "Since DAC8, the directive allows all tax data that states exchange under it, bank-account data included, to be used against money laundering and for EU sanctions. We want to limit financial surveillance before it grows further.",
+      text: "Since DAC8, the directive allows all tax data that states exchange under it, bank-account data included, to be used against money laundering and for EU sanctions. We want to push financial surveillance back instead of watching it grow.",
       proof: [
         "Austria shows how such uses grow: its account register was created in 2015 by the same act that loosened banking secrecy. Since July 2026, the anti-fraud office uses it too, for example against benefit fraud and shell companies. In Germany, bailiffs looked up who holds which accounts 61,760 times in 2013 and 844,427 times in 2023.",
         "DAC8 is one building block among several: the provider checks your ID when you open the account and records the sender and recipient of every transfer. By 2029, account registries will be connected across the EU and will then also cover accounts at crypto-asset providers, without balances.",
@@ -524,7 +524,7 @@ export const objections: Record<Language, Point[]> = {
   de: [
     {
       title: "„Ich habe nichts zu verbergen.“",
-      text: "Privatsphäre braucht keine Rechtfertigung, staatliche Eingriffe schon. Und auch wer nichts verbirgt, hat etwas zu schützen: seine Wohnadresse, sein Erspartes, seine Familie.",
+      text: "Privatsphäre braucht keine Rechtfertigung, staatliche Eingriffe schon. Und jeder hat etwas zu schützen: seine Wohnadresse, sein Erspartes, seine Familie.",
     },
     {
       title: "„Es geht doch um Steuergerechtigkeit.“",
@@ -555,13 +555,13 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "„Dann kauf halt nicht über eine Börse.“",
-      text: "Für die meisten ist eine Börse, ein Broker oder eine App der einfachste Weg zu Bitcoin. Privatsphäre darf nicht davon abhängen, auf diesen Weg zu verzichten. Der Schutz muss im Gesetz stehen.",
+      text: "Ob du Bitcoin über einen Anbieter kaufst, direkt mit anderen tauschst oder als Bezahlung erhältst: Privatsphäre gilt auf jedem Weg. Niemand soll einen Weg meiden müssen, um sie zu behalten; der Schutz muss im Gesetz stehen.",
     },
   ],
   en: [
     {
       title: "“I have nothing to hide.”",
-      text: "Privacy needs no justification; state interference does. And even if you hide nothing, you have something to protect: your home address, your savings, your family.",
+      text: "Privacy needs no justification; state interference does. And everyone has something to protect: their home address, their savings, their family.",
     },
     {
       title: "“It’s about tax fairness.”",
@@ -592,7 +592,7 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "“Then don’t buy through an exchange.”",
-      text: "For most people, an exchange, broker or app is the easiest way to buy bitcoin. Privacy must not depend on avoiding that route. The protection has to be in the law.",
+      text: "Whether you buy bitcoin through a provider, trade directly with others or receive it as payment: privacy applies on every route. Nobody should have to avoid one to keep it; the protection has to be in the law.",
     },
   ],
 }
@@ -606,8 +606,12 @@ export type Demand = { title: string; text: string; letter?: string }
 export const demands: Record<Language, Demand[]> = {
   de: [
     {
+      title: "Keine Finanzakte ohne Verdacht.",
+      text: "Ermittelt wird bei konkretem Verdacht, mit gesetzlicher Grundlage und unabhängiger Kontrolle, statt Daten über alle zu sammeln.",
+    },
+    {
       title: "Keine Daten auf Vorrat.",
-      text: "Erst klären, wessen Daten gemeldet werden müssen, statt sie für alle Kunden aufzubereiten. Deutschland und die Niederlande verlangen das nur für Kunden, die tatsächlich gemeldet werden.",
+      text: "Solange DAC8 gilt, soll Österreich die Meldedaten nicht für alle Kunden aufbereiten lassen. Deutschland und die Niederlande verlangen das nur für Kunden, die tatsächlich gemeldet werden.",
     },
     {
       title: "Übertragungen auf die eigene Wallet nicht melden.",
@@ -616,8 +620,8 @@ export const demands: Record<Language, Demand[]> = {
         "Übertragungen auf die eigene Wallet nicht melden. Sie lösen für sich genommen keine Steuer aus. Sie trotzdem zu melden ist, als würde die Bank dem Finanzamt sagen, wie viel Bargeld jemand nach Hause getragen hat. Nach einem Datenleck steht dann auf einer Liste, wer vermutlich wie viel Bitcoin daheim hat. Da die EU diese Meldung vorschreibt, soll sich Österreich in Brüssel für ihre Streichung einsetzen, auch bei der geplanten Neufassung der Richtlinie, die nur einstimmig beschlossen werden kann.",
     },
     {
-      title: "Nur erheben, was die Steuer braucht.",
-      text: "Wozu das Finanzamt neben den Beträgen auch Stückzahlen und die Zahl der Transaktionen braucht, muss belegt werden.",
+      title: "Nur erheben, was nachweislich nötig ist.",
+      text: "Wozu das Finanzamt neben den Beträgen auch Stückzahlen und die Zahl der Transaktionen braucht, muss der Staat belegen.",
     },
     {
       title: "Kürzer speichern.",
@@ -634,8 +638,12 @@ export const demands: Record<Language, Demand[]> = {
   ],
   en: [
     {
+      title: "No financial file without suspicion.",
+      text: "Investigate on specific suspicion, with a legal basis and independent oversight, instead of collecting data on everyone.",
+    },
+    {
       title: "No stockpiling of data.",
-      text: "Determine first whose data must be reported, instead of preparing it for all customers. Germany and the Netherlands require it only for customers who are actually reported.",
+      text: "As long as DAC8 applies, Austria should not have reporting data prepared for all customers. Germany and the Netherlands require it only for customers who are actually reported.",
     },
     {
       title: "Do not report transfers to your own wallet.",
@@ -644,8 +652,8 @@ export const demands: Record<Language, Demand[]> = {
         "Do not report transfers to your own wallet. They trigger no tax by themselves. Reporting their total is like a bank telling the tax authority how much cash someone has carried home. After a breach, it becomes a list of who probably keeps how much bitcoin at home. Since EU law requires this report, Austria should push in Brussels for its removal, including in the planned recast of the directive, which needs unanimity.",
     },
     {
-      title: "Collect only what taxation needs.",
-      text: "Why the tax authority needs units and the number of transactions as well as amounts must be demonstrated.",
+      title: "Collect only what is shown to be necessary.",
+      text: "Why the tax authority needs units and the number of transactions as well as amounts is for the state to demonstrate.",
     },
     {
       title: "Keep data for less time.",

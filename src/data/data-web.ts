@@ -173,12 +173,12 @@ export const scenes: Scene[] = [
       en: "Your profile. Your home address. A target.",
     },
     text: {
-      de: "Bitcoin in der eigenen Wallet ist wie Erspartes unter der Matratze. **Darum sollte niemand wissen, wer wie viel davon hat.**",
-      en: "Bitcoin in your own wallet is like savings under the mattress. **That is why nobody should know who holds how much.**",
+      de: "Bitcoin in der eigenen Wallet ist wie Bargeld daheim: deine Sache. **Gefährlich wird es, wenn eine Liste verrät, wer wie viel hat.**",
+      en: "Bitcoin in your own wallet is like cash at home: your business. **The danger is a list that shows who holds how much.**",
     },
     brief: {
-      de: "Wie Erspartes unter der Matratze: **Niemand sollte wissen, wer wie viel hat.**",
-      en: "Like savings under the mattress: **nobody should know who holds how much.**",
+      de: "Wie Bargeld daheim: **Niemand sollte wissen, wer wie viel hat.**",
+      en: "Like cash at home: **nobody should know who holds how much.**",
     },
   },
 ]
