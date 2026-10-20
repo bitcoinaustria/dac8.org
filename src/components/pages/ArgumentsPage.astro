@@ -5,8 +5,9 @@ import Layout from "@/layouts/Layout.astro"
 import { demands, objections, reasons } from "@/data/arguments"
 import { languageFor, pathFor } from "@/lib/i18n"
 
-// Why we oppose DAC8, in three groups: reasons, objections, demands. No
-// heading counts them, because the lists will still change. Each reason shows a headline and one sentence; the evidence opens
+// Why financial privacy matters, and what we demand of DAC8, in three
+// groups: reasons, objections, demands. No heading counts them, because the
+// lists will still change. Each reason shows a headline and one sentence; the evidence opens
 // on demand. The heading of the current group sticks under the site header
 // instead of a chapter bar. The dossier holds the facts, the attack map and
 // the leak list the proof; this page links to the map once, from the reason
@@ -23,7 +24,7 @@ const list = reasons.map((reason) => ({ ...reason, ...reason[language] }))
     <header class="hero">
       <div class="hero-text">
         <h1>
-          {en ? "Why we oppose DAC8." : "Warum wir DAC8 ablehnen."}
+          {en ? "Why financial privacy matters." : "Warum finanzielle Privatsphäre zählt."}
           <span>{en ? "And what we demand." : "Und was wir fordern."}</span>
         </h1>
         <p class="lead">

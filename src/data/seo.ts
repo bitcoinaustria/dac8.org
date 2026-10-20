@@ -42,16 +42,16 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
   },
   arguments: {
     de: {
-      title: "Warum wir DAC8 ablehnen und was wir fordern",
+      title: "Warum finanzielle Privatsphäre zählt und was wir fordern",
       description:
-        "Warum wir die anlasslose Erfassung aller Krypto-Kunden ablehnen: unsere Gründe vom Bargeld bis zur Zielliste, Antworten auf Einwände und unsere Forderungen.",
-      imageLines: ["Warum wir", "DAC8 ablehnen."],
+        "Warum finanzielle Privatsphäre zählt und wir die anlasslose Erfassung aller Krypto-Kunden ablehnen: unsere Gründe vom Bargeld bis zur Zielliste, Antworten auf Einwände und unsere Forderungen.",
+      imageLines: ["Warum finanzielle", "Privatsphäre zählt."],
     },
     en: {
-      title: "Why we oppose DAC8, and what we demand",
+      title: "Why financial privacy matters, and what we demand",
       description:
-        "Why we oppose collecting data on every crypto customer without suspicion: our reasons from cash to target lists, answers to objections and our demands.",
-      imageLines: ["Why we", "oppose DAC8."],
+        "Why financial privacy matters and we oppose collecting data on every crypto customer without suspicion: our reasons from cash to target lists, answers to objections and our demands.",
+      imageLines: ["Why financial", "privacy matters."],
     },
   },
   history: {
