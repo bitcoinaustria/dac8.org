@@ -351,7 +351,7 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "„Ich nutze nur meine eigene Wallet.“",
-      text: "Solange du nie über einen Anbieter kaufst oder verkaufst, meldet DAC8 dich nicht. Hast du dort gekauft und auf deine Wallet übertragen, steht die Jahressumme in der Regel in der Meldung, ohne Wallet-Adresse.",
+      text: "Solange du nie einen Anbieter nutzt, meldet DAC8 dich nicht. Hast du dort gekauft und auf deine Wallet übertragen, steht die Jahressumme in der Regel in der Meldung, ohne Wallet-Adresse.",
     },
     {
       title: "„Dann kauf halt nicht über eine Börse.“",
@@ -378,7 +378,7 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "“I only use my own wallet.”",
-      text: "As long as you never buy or sell through a provider, DAC8 does not report you. If you bought there and transferred to your wallet, the annual total usually appears in the report, without the wallet address.",
+      text: "As long as you never use a provider, DAC8 does not report you. If you bought there and transferred to your wallet, the annual total usually appears in the report, without the wallet address.",
     },
     {
       title: "“Then don’t buy through an exchange.”",
