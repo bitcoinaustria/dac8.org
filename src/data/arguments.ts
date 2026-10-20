@@ -60,6 +60,10 @@ const gendarmerie =
 // since 2005. It warns that 2005 and 2023 totals are not comparable because
 // the counting changed, so compare users, not totals.
 const accountLookups = "https://dserver.bundestag.de/btd/20/108/2010841.pdf"
+// Legal background of the 2005 lookups by tax offices and benefit agencies;
+// the paper above has the history only in the questioners' preamble.
+const lookupsSince2005 =
+  "https://www.bundesverfassungsgericht.de/SharedDocs/Pressemitteilungen/DE/2005/bvg05-028.html"
 const transferRegulation = "https://eur-lex.europa.eu/eli/reg/2023/1113/oj"
 const accountRegistries = "https://eur-lex.europa.eu/eli/dir/2024/1640/oj"
 // Section 5.1: donations, union fees and medical bills as payments that
@@ -97,7 +101,7 @@ export const reasons: Reason[] = [
         "Stell dir vor, deine Bank meldet dem Finanzamt jedes Jahr, wie viel Bargeld du abgehoben hast.",
       text: "Bei Bitcoin verlangt DAC8 genau das: Hebst du Bitcoin von der Börse ab, um sie selbst zu verwahren, steht die Jahressumme in der Regel in der Meldung, obwohl das für sich genommen keine Steuer auslöst.",
       proof: [
-        "Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, bevor feststeht, wer überhaupt gemeldet wird. Damit geht Österreich über die EU-Richtlinie hinaus.",
+        "Der Anbieter muss die Meldedaten für alle Kunden aufbereiten, auch für jene, die nie gemeldet werden. Damit geht Österreich über die EU-Richtlinie hinaus.",
         "Die Wallet-Adresse, gleichsam die Kontonummer deiner Wallet, steht nicht in der Meldung, nur die Summe. Gelangt so eine Meldung in falsche Hände, zeigt sie trotzdem, wer vermutlich Erspartes selbst verwahrt.",
       ],
       sources: [{ href: section20, label: "§ 20 Abs. 1 Krypto-MPfG" }],
@@ -108,7 +112,7 @@ export const reasons: Reason[] = [
         "Imagine your bank telling the tax authority every year how much cash you withdrew.",
       text: "For bitcoin, DAC8 requires exactly that: withdraw bitcoin from an exchange to keep it yourself, and the annual total usually appears in the report, although the transfer triggers no tax by itself.",
       proof: [
-        "Providers must prepare reporting data for all customers before it is clear who will be reported at all. Here Austria goes beyond the EU directive.",
+        "Providers must prepare reporting data for all customers, including those who are never reported. Here Austria goes beyond the EU directive.",
         "The wallet address, in effect your wallet’s account number, is not in the report, only the total. In the wrong hands, such a report still shows who probably keeps savings in self-custody.",
       ],
       sources: [{ href: section20, label: "Section 20(1) Krypto-MPfG" }],
@@ -184,7 +188,7 @@ export const reasons: Reason[] = [
       proof: [
         "Der Anbieter löscht jede Jahresmeldung erst zehn Jahre nach ihrem Meldejahr. Für Meldungen über Bankkonten gelten fünf Jahre.",
         "Daneben bewahrt der Anbieter nach den Geldwäschevorschriften Ausweis, Wallet-Adressen und einzelne Transaktionen auf, derzeit bis zehn Jahre nach Ende der Kundenbeziehung. Für DAC8 kommen Steuernummer und Steuerwohnsitz dazu. Beim Finanzamt laufen die Jahresmeldungen aller Anbieter zusammen, bei denen du Kunde bist.",
-        "Entscheidend ist das Gesamtbild: Meldungen über mehrere Anbieter und Jahre, das Datenleck eines Steuertools und zuordenbare Blockchain-Daten können zusammen ein weitreichendes Profil von Vermögen und Aktivität ergeben.",
+        "Entscheidend ist das Gesamtbild: Meldungen über mehrere Anbieter und Jahre, das Datenleck eines Steuertools und zuordenbare Blockchain-Daten können zusammen ein Profil von Aktivität und vermutetem Vermögen ergeben.",
       ],
       sources: [
         { href: section20, label: "§ 20 Abs. 4 Krypto-MPfG" },
@@ -198,7 +202,7 @@ export const reasons: Reason[] = [
       proof: [
         "The provider deletes each annual report only ten years after its reporting year. For reports on bank accounts, the period is five years.",
         "Under anti-money-laundering rules, the provider also keeps your ID, wallet addresses and individual transactions, currently until ten years after the relationship ends. For DAC8, it adds your tax identification number and tax residence. At the tax authority, the annual reports from every provider you use come together.",
-        "What matters is the overall picture: reports across several providers and years, a breach at a tax tool and attributable blockchain data can together add up to a far-reaching profile of wealth and activity.",
+        "What matters is the overall picture: reports across several providers and years, a breach at a tax tool and attributable blockchain data can together add up to a profile of activity and presumed wealth.",
       ],
       sources: [
         { href: section20, label: "Section 20(4) Krypto-MPfG" },
@@ -216,7 +220,7 @@ export const reasons: Reason[] = [
       text: "Schon der Verdacht auf Krypto-Vermögen kann Überfälle und Entführungen auslösen, ob der vermutete Bestand stimmt oder nicht. Daten bei Anbietern, Dienstleistern und Behörden können Tätern dafür Ansatzpunkte liefern.",
       proof: [
         "Aus Summe und Anzahl der Käufe und Übertragungen lässt sich grob schätzen, wie viel jemand bewegt. Die Schätzung kann weit danebenliegen, weil dasselbe Geld mehrfach zählen kann. Wer die Daten erbeutet, filtert trotzdem Menschen heraus, die vermögend wirken.",
-        "Beim französischen Krypto-Steuerdienst Waltio gelangten E-Mail-Adressen, Gewinne und Verluste sowie Jahresendbestände der Kunden in fremde Hände. Laut Gendarmerie wählen Täter damit Opfer für Gewalttaten aus und irren sich dabei teils über deren tatsächliche Bestände.",
+        "Beim französischen Krypto-Steuerdienst Waltio gelangten E-Mail-Adressen, Gewinne und Verluste sowie Jahresendbestände der Kunden in fremde Hände. Laut französischer Polizei ist das Datenleck ein Grund für die Zunahme solcher Gewalttaten: Täter wählen damit Opfer aus und irren sich dabei teils über deren tatsächliche Bestände.",
       ],
       sources: [
         { href: waltio, label: "Waltio" },
@@ -229,7 +233,7 @@ export const reasons: Reason[] = [
       text: "Suspected crypto wealth alone can lead to robberies and kidnappings, whether the presumed holdings are real or not. Data held by providers, service providers and authorities can give offenders a starting point.",
       proof: [
         "Totals and counts of purchases and transfers give a rough estimate of how much someone moves. The estimate can be far off, because the same money can count more than once. Anyone who gets hold of the data still singles out people who appear wealthy.",
-        "At the French crypto tax service Waltio, customers’ email addresses, gains and losses and year-end balances fell into the wrong hands. According to the Gendarmerie, criminals use the data to select victims of violent crime, sometimes misjudging what they actually hold.",
+        "At the French crypto tax service Waltio, customers’ email addresses, gains and losses and year-end balances fell into the wrong hands. According to the French police, the leak is one reason for the rise in such violent crime: criminals use the data to select victims, sometimes misjudging what they actually hold.",
       ],
       sources: [
         { href: waltio, label: "Waltio" },
@@ -243,7 +247,7 @@ export const reasons: Reason[] = [
       short: "Privatsphäre betrifft alle",
       title:
         "Niemand muss reich sein, um finanzielle Privatsphäre zu brauchen.",
-      text: "Beim Anbieter liegen auch einzelne Transaktionen. Aus ihnen lässt sich ablesen, wem du spendest, wo du Mitglied bist und welche Hilfe du suchst.",
+      text: "Beim Anbieter liegen auch einzelne Transaktionen. Aus ihnen kann hervorgehen, wem du spendest, wo du Mitglied bist und welche Hilfe du suchst.",
       proof: [
         "Bei jeder Übertragung erfasst der Anbieter nach der EU-Geldtransferverordnung Absender und Empfänger. Die Geldwäschevorschriften verlangen, diese Aufzeichnungen bei allen Kunden aufzubewahren, ohne Verdacht und derzeit bis zehn Jahre nach Ende der Kundenbeziehung.",
         "Die europäischen Datenschutzbehörden warnen, dass schon einzelne Zahlungen viel verraten: Spenden etwa politische oder religiöse Überzeugungen, Mitgliedsbeiträge die Gewerkschaft, Arztrechnungen die Gesundheit. In der Jahresmeldung stehen davon nur Jahressummen, beim Anbieter liegt jede einzelne Zahlung.",
@@ -259,7 +263,7 @@ export const reasons: Reason[] = [
     en: {
       short: "Privacy concerns everyone",
       title: "Nobody has to be rich to need financial privacy.",
-      text: "The provider also holds individual transactions. They show whom you donate to, where you are a member and what help you seek.",
+      text: "The provider also holds individual transactions. They can show whom you donate to, where you are a member and what help you seek.",
       proof: [
         "With every transfer, the provider records the sender and recipient under the EU transfer of funds regulation. Anti-money-laundering rules require it to keep these records for every customer, without suspicion, currently for up to ten years after the relationship ends.",
         "Europe’s data protection authorities warn that even single payments reveal a lot: donations can show political or religious beliefs, membership fees a trade union, medical bills someone’s health. Of these, the annual report carries only yearly totals; the provider holds every single payment.",
@@ -288,6 +292,7 @@ export const reasons: Reason[] = [
         "Überwachung wirkt auch ohne Datenleck. In einem Experiment mit 827 Internetnutzern aus der Deutschschweiz suchten Teilnehmer, die gerade einen Artikel über Datenüberwachung gelesen hatten, seltener nach heiklen Themen und beantworteten persönliche Fragen seltener. Dass die erzwungene Offenlegung von Mitgliederlisten Menschen davon abhalten kann, eine Vereinigung zu unterstützen, erkannte der US Supreme Court schon 1958 an.",
       ],
       sources: [
+        { href: lookupsSince2005, label: "BVerfG 2005" },
         { href: accountLookups, label: "BT-Drucksache 20/10841" },
         { href: accountRegistries, label: "Richtlinie (EU) 2024/1640" },
         { href: taxMisuse, label: "US-Senat 1976" },
@@ -306,6 +311,7 @@ export const reasons: Reason[] = [
         "Surveillance has an effect even without a data leak. In an experiment with 827 internet users from German-speaking Switzerland, participants who had just read an article about data surveillance searched less often for sensitive topics and answered personal questions less often. As early as 1958, the US Supreme Court recognised that forcing an association to hand over its membership list can keep people from supporting it.",
       ],
       sources: [
+        { href: lookupsSince2005, label: "Federal Constitutional Court 2005" },
         { href: accountLookups, label: "Bundestag paper 20/10841" },
         { href: accountRegistries, label: "Directive (EU) 2024/1640" },
         { href: taxMisuse, label: "US Senate 1976" },
@@ -345,7 +351,7 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "„Ich nutze nur meine eigene Wallet.“",
-      text: "Solange du nie über einen Anbieter kaufst oder verkaufst, meldet DAC8 dich nicht. Hast du dort gekauft und auf deine Wallet übertragen, steht die Jahressumme in der Regel in der Meldung, ohne Wallet-Adresse.",
+      text: "Solange du nie einen Anbieter nutzt, meldet DAC8 dich nicht. Hast du dort gekauft und auf deine Wallet übertragen, steht die Jahressumme in der Regel in der Meldung, ohne Wallet-Adresse.",
     },
     {
       title: "„Dann kauf halt nicht über eine Börse.“",
@@ -372,7 +378,7 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "“I only use my own wallet.”",
-      text: "As long as you never buy or sell through a provider, DAC8 does not report you. If you bought there and transferred to your wallet, the annual total usually appears in the report, without the wallet address.",
+      text: "As long as you never use a provider, DAC8 does not report you. If you bought there and transferred to your wallet, the annual total usually appears in the report, without the wallet address.",
     },
     {
       title: "“Then don’t buy through an exchange.”",
