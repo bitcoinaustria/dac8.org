@@ -168,8 +168,8 @@ export const leaks: Leak[] = [
       en: "Tax data as a target list.",
     },
     text: {
-      de: "Beim französischen Krypto-Steuerdienst gelangten E-Mail-Adressen, Gewinne und Verluste sowie Jahresendbestände der Kunden in fremde Hände. Laut Gendarmerie nutzen Täter die Daten, um Opfer für Gewalttaten auszuwählen, und irren sich dabei teils über deren tatsächliche Bestände.",
-      en: "At the French crypto tax service, customers’ email addresses, gains and losses and year-end balances fell into the wrong hands. According to the Gendarmerie, criminals use the data to select victims of violent crime, sometimes misjudging what they actually hold.",
+      de: "Beim französischen Krypto-Steuerdienst gelangten E-Mail-Adressen, Gewinne und Verluste sowie Jahresendbestände der Kunden in fremde Hände. Laut französischer Polizei nutzen Täter die Daten, um Opfer für Gewalttaten auszuwählen, und irren sich dabei teils über deren tatsächliche Bestände.",
+      en: "At the French crypto tax service, customers’ email addresses, gains and losses and year-end balances fell into the wrong hands. According to the French police, criminals use the data to select victims of violent crime, sometimes misjudging what they actually hold.",
     },
     sources: [
       {
@@ -274,8 +274,8 @@ export const leaks: Leak[] = [
       en: "The tax authority loses data from the account exchange.",
     },
     text: {
-      de: "Angreifer drangen in die Systeme der bulgarischen Steuerbehörde ein, danach standen Steuer- und Sozialversicherungsdaten von mehr als sechs Millionen Menschen im Netz. Darunter waren Kontodaten, die Bulgarien im automatischen Informationsaustausch von anderen Staaten erhalten hatte, auch über Konten in der Schweiz und in Deutschland. Der Austausch mit Bulgarien wurde ausgesetzt. Über denselben Austausch gehen künftig die DAC8-Meldungen zu Kryptowerten.",
-      en: "Attackers broke into the Bulgarian tax authority’s systems, and tax and social security data on more than six million people then appeared online. It included account data that Bulgaria had received from other states through the automatic exchange of information, including on accounts in Switzerland and Germany. Exchanges with Bulgaria were suspended. DAC8 reports on crypto-assets will travel through the same exchange.",
+      de: "Angreifer drangen in die Systeme der bulgarischen Steuerbehörde ein, danach standen Steuer- und Sozialversicherungsdaten von mehr als sechs Millionen Menschen im Netz. Darunter waren Kontodaten, die Bulgarien im automatischen Informationsaustausch von anderen Staaten erhalten hatte, auch über Konten in der Schweiz und in Deutschland. Danach mussten andere Staaten vorerst keine Daten mehr an Bulgarien senden. Über denselben Austausch gehen künftig die DAC8-Meldungen zu Kryptowerten.",
+      en: "Attackers broke into the Bulgarian tax authority’s systems, and tax and social security data on more than six million people then appeared online. It included account data that Bulgaria had received from other states through the automatic exchange of information, including on accounts in Switzerland and Germany. Afterwards, other states’ obligations to send data to Bulgaria were suspended. DAC8 reports on crypto-assets will travel through the same exchange.",
     },
     people: 6000000,
     sources: [
@@ -1170,8 +1170,8 @@ export const doorstepCases: DoorstepCase[] = [
       en: "Picked out through apparently hacked data.",
     },
     text: {
-      de: "Bewaffnete Täter halten einen Mann in seinem Haus fest und zwingen ihn, Kryptowerte im Wert von rund 68.000 Euro zu überweisen. Die Gendarmerie ordnet den Fall einer Serie zu, in der Täter Wallet-Besitzer ins Visier nehmen, deren persönliche Daten offenbar gehackt wurden.",
-      en: "Armed attackers hold a man in his home and force him to transfer crypto-assets worth around 68,000 euros. The Gendarmerie places the case in a series in which criminals target wallet holders whose personal data had apparently been hacked.",
+      de: "Bewaffnete Täter halten einen Mann in seinem Haus fest und zwingen ihn, Kryptowerte im Wert von rund 68.000 Euro zu überweisen. Die französische Polizei ordnet den Fall einer Serie zu, in der Täter Wallet-Besitzer ins Visier nehmen, deren persönliche Daten offenbar gehackt wurden.",
+      en: "Armed attackers hold a man in his home and force him to transfer crypto-assets worth around 68,000 euros. The French police place the case in a series in which criminals target wallet holders whose personal data had apparently been hacked.",
     },
     sources: [
       {

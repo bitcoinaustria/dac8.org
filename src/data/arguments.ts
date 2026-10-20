@@ -60,6 +60,10 @@ const gendarmerie =
 // since 2005. It warns that 2005 and 2023 totals are not comparable because
 // the counting changed, so compare users, not totals.
 const accountLookups = "https://dserver.bundestag.de/btd/20/108/2010841.pdf"
+// Legal background of the 2005 lookups by tax offices and benefit agencies;
+// the paper above has the history only in the questioners' preamble.
+const lookupsSince2005 =
+  "https://www.bundesverfassungsgericht.de/SharedDocs/Pressemitteilungen/DE/2005/bvg05-028.html"
 const transferRegulation = "https://eur-lex.europa.eu/eli/reg/2023/1113/oj"
 const accountRegistries = "https://eur-lex.europa.eu/eli/dir/2024/1640/oj"
 // Section 5.1: donations, union fees and medical bills as payments that
@@ -216,7 +220,7 @@ export const reasons: Reason[] = [
       text: "Schon der Verdacht auf Krypto-Vermögen kann Überfälle und Entführungen auslösen, ob der vermutete Bestand stimmt oder nicht. Daten bei Anbietern, Dienstleistern und Behörden können Tätern dafür Ansatzpunkte liefern.",
       proof: [
         "Aus Summe und Anzahl der Käufe und Übertragungen lässt sich grob schätzen, wie viel jemand bewegt. Die Schätzung kann weit danebenliegen, weil dasselbe Geld mehrfach zählen kann. Wer die Daten erbeutet, filtert trotzdem Menschen heraus, die vermögend wirken.",
-        "Beim französischen Krypto-Steuerdienst Waltio gelangten E-Mail-Adressen, Gewinne und Verluste sowie Jahresendbestände der Kunden in fremde Hände. Laut Gendarmerie wählen Täter damit Opfer für Gewalttaten aus und irren sich dabei teils über deren tatsächliche Bestände.",
+        "Beim französischen Krypto-Steuerdienst Waltio gelangten E-Mail-Adressen, Gewinne und Verluste sowie Jahresendbestände der Kunden in fremde Hände. Laut französischer Polizei ist das Datenleck ein Grund für die Zunahme solcher Gewalttaten: Täter wählen damit Opfer aus und irren sich dabei teils über deren tatsächliche Bestände.",
       ],
       sources: [
         { href: waltio, label: "Waltio" },
@@ -229,7 +233,7 @@ export const reasons: Reason[] = [
       text: "Suspected crypto wealth alone can lead to robberies and kidnappings, whether the presumed holdings are real or not. Data held by providers, service providers and authorities can give offenders a starting point.",
       proof: [
         "Totals and counts of purchases and transfers give a rough estimate of how much someone moves. The estimate can be far off, because the same money can count more than once. Anyone who gets hold of the data still singles out people who appear wealthy.",
-        "At the French crypto tax service Waltio, customers’ email addresses, gains and losses and year-end balances fell into the wrong hands. According to the Gendarmerie, criminals use the data to select victims of violent crime, sometimes misjudging what they actually hold.",
+        "At the French crypto tax service Waltio, customers’ email addresses, gains and losses and year-end balances fell into the wrong hands. According to the French police, the leak is one reason for the rise in such violent crime: criminals use the data to select victims, sometimes misjudging what they actually hold.",
       ],
       sources: [
         { href: waltio, label: "Waltio" },
@@ -288,6 +292,7 @@ export const reasons: Reason[] = [
         "Überwachung wirkt auch ohne Datenleck. In einem Experiment mit 827 Internetnutzern aus der Deutschschweiz suchten Teilnehmer, die gerade einen Artikel über Datenüberwachung gelesen hatten, seltener nach heiklen Themen und beantworteten persönliche Fragen seltener. Dass die erzwungene Offenlegung von Mitgliederlisten Menschen davon abhalten kann, eine Vereinigung zu unterstützen, erkannte der US Supreme Court schon 1958 an.",
       ],
       sources: [
+        { href: lookupsSince2005, label: "BVerfG 2005" },
         { href: accountLookups, label: "BT-Drucksache 20/10841" },
         { href: accountRegistries, label: "Richtlinie (EU) 2024/1640" },
         { href: taxMisuse, label: "US-Senat 1976" },
@@ -306,6 +311,7 @@ export const reasons: Reason[] = [
         "Surveillance has an effect even without a data leak. In an experiment with 827 internet users from German-speaking Switzerland, participants who had just read an article about data surveillance searched less often for sensitive topics and answered personal questions less often. As early as 1958, the US Supreme Court recognised that forcing an association to hand over its membership list can keep people from supporting it.",
       ],
       sources: [
+        { href: lookupsSince2005, label: "Federal Constitutional Court 2005" },
         { href: accountLookups, label: "Bundestag paper 20/10841" },
         { href: accountRegistries, label: "Directive (EU) 2024/1640" },
         { href: taxMisuse, label: "US Senate 1976" },
