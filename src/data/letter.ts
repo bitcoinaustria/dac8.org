@@ -31,7 +31,7 @@ const text = {
     intro:
       "seit 1. Jänner 2026 gilt in Österreich das Krypto-Meldepflichtgesetz, das die EU-Richtlinie DAC8 umsetzt. Krypto-Anbieter melden einmal im Jahr Identität und Jahreswerte an das Finanzamt: je Kryptowert und Vorgangsart Wert, Stückzahl und meist die Anzahl der Vorgänge. Das österreichische Gesetz geht dabei über die Richtlinie hinaus. Nach § 20 Abs. 1 Krypto-MPfG müssen Anbieter die Meldedaten für alle Kunden aufbereiten, auch für jene, die am Ende gar nicht gemeldet werden.",
     stance:
-      "Ich lehne diese anlasslose Erfassung ab. Wer Informationen über mein Geld hat, kann Rückschlüsse auf mein Leben ziehen. Solche Datenbestände gehen immer wieder verloren, bei Börsen ebenso wie bei Finanzverwaltungen. Organisierte Banden nutzen sie, um Opfer für Betrug, Erpressung und Überfälle auszuwählen.",
+      "Ich lehne diese anlasslose Erfassung ab. Wer Informationen über mein Geld hat, kann Rückschlüsse auf mein Leben ziehen. Solche Datenbestände gehen immer wieder verloren, bei Börsen ebenso wie bei Finanzverwaltungen. Kriminelle nutzen sie, um Opfer für Betrug und Erpressung auszuwählen, in Frankreich laut Polizei auch für Überfälle.",
     ask: "Ich ersuche Sie, sich im Nationalrat für folgende Punkte einzusetzen:",
     question:
       "Wie beurteilen Sie diese Fragen, und welche Schritte werden Sie unterstützen?",
@@ -48,7 +48,7 @@ const text = {
     intro:
       "Since 1 January 2026, Austria’s Crypto-Asset Reporting Obligations Act (Krypto-MPfG), which implements the EU directive DAC8, has been in force. Once a year, crypto-asset providers report identities and annual aggregates to the tax authority: for each crypto-asset and transaction type, the value, units and, for most categories, the number of transactions. Austrian law goes beyond the directive. Under Section 20(1) Krypto-MPfG, providers must prepare reporting data for all customers, including those who will not ultimately be reported.",
     stance:
-      "I oppose this collection without any specific suspicion. Information about my money can reveal details about my life. Such data stores are lost again and again, at exchanges as well as at tax administrations. Organised gangs use them to select victims for fraud, extortion and robbery.",
+      "I oppose this collection without any specific suspicion. Information about my money can reveal details about my life. Such data stores are lost again and again, at exchanges as well as at tax administrations. Criminals use them to select victims for fraud and extortion and, according to the French police, for robberies too.",
     ask: "I ask you to support the following points in the National Council:",
     question:
       "How do you assess these questions, and which steps will you support?",

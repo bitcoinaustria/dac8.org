@@ -181,10 +181,11 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   did little for the campaign and put a heavy load on the providers who
   received it. `/auskunft/` and `/en/access-request/` redirect to the
   participation page.
-- The earlier individual complaint generator is preserved in
-  `src/components/ParticipationTools.astro`, but is not exposed as a public
-  route while individual participation in the proceedings remains undefined.
-  Review its content and translate its interface before bringing it back.
+- The earlier individual complaint generator was removed in October 2026,
+  as it was never public and still asked readers to send access requests to
+  providers. If individual participation in the proceedings is defined,
+  start from `src/components/ParticipationTools.astro` in commit `788416c`
+  and review its content first.
 
 Run `pnpm test` for language routing and RSS regression checks, then
 `pnpm format:check` and `pnpm build` before publication.

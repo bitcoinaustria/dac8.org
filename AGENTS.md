@@ -60,10 +60,13 @@ to new copy, graphics and tools, not only to the pages they were found on.
   near-identical motifs side by side. A picture must fit the headline beside
   it at a glance; drop it rather than keep a decorative or ambiguous one.
 - Keep the share kit to a few scenes that work on their own.
-- Never present buying through an exchange, broker or app as the honest
-  route. Buying bitcoin person to person or being paid in bitcoin for goods
-  and work is just as legitimate; the point is that reporting follows the
-  route someone takes, not any suspicion.
+- Never talk privacy down; that is the state's framing. Do not concede that
+  privacy, cash or keeping something to yourself needs a justification, and
+  do not present buying through an exchange, broker or app as the honest or
+  normal route: buying person to person or being paid in bitcoin is just as
+  normal, and reporting follows the route someone takes, not any suspicion.
+  Avoid regulators' terms such as "self-hosted" or "unhosted" wallets; say
+  Selbstverwahrung or eigene Wallet (self-custody, your own wallet).
 - Do not build calls to action that put load on crypto-asset providers, such
   as mass access requests. The campaign targets the law, and providers are
   potential supporters.

@@ -368,7 +368,7 @@ export const history: Entry[] = [
     translations: {
       de: {
         when: "6. Dezember 2016, angewendet ab 2018",
-        title: "DAC5: Zugriff auf Geldwäschedaten",
+        title: "DAC5: Zugriff auf Ausweis- und Kundendaten",
         text: "Keine neue Meldung, aber ein neuer Zugang: Steuerbehörden dürfen auf Daten zugreifen, die Banken und andere zur Geldwäschebekämpfung erheben, etwa Identifizierung und wirtschaftliche Eigentümer.",
         more: "Vor allem sollen sie so prüfen können, ob die Kontenmeldungen unter DAC2 stimmen. Der Vorschlag erschien kurz nach den „Panama Papers“ und verweist auf an die Medien durchgesickerte Informationen.",
         reporters: "Keine neue Meldepflicht",
@@ -377,7 +377,7 @@ export const history: Entry[] = [
       },
       en: {
         when: "6 December 2016, applied from 2018",
-        title: "DAC5: access to anti-money laundering data",
+        title: "DAC5: access to ID and customer records",
         text: "Not a new report but new access: tax authorities may use data that banks and others collect to fight money laundering, such as customer identification and beneficial owners.",
         more: "Above all, this lets them check whether DAC2 account reports are correct. The proposal came shortly after the Panama Papers and refers to “recent media leaks”.",
         reporters: "No new reporting duty",
@@ -677,8 +677,8 @@ export const historyStack: {
         step: "DAC5",
         from: 2018,
         what: {
-          de: "Zugriff auf Geldwäschedaten",
-          en: "Anti-money laundering data",
+          de: "Zugriff auf Ausweis- und Kundendaten",
+          en: "Access to ID and customer records",
         },
         plain: {
           de: "Ausweis- und Kundendaten der Banken",

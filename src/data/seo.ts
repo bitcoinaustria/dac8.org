@@ -95,13 +95,13 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       title: "Angriffsarchiv: Angriffe auf Krypto-Besitzer weltweit",
       description:
         "Bekannte körperliche Angriffe auf Menschen, die Kryptowerte besitzen oder besitzen sollen, weltweit und jeweils mit dem ursprünglichen Bericht. Bei Weitem nicht vollständig.",
-      imageLines: ["Angriffe auf", "Krypto-Besitzer,", "weltweit."],
+      imageLines: ["Wenn bekannt ist,", "wer Krypto hat."],
     },
     en: {
       title: "Attack archive: attacks on crypto holders worldwide",
       description:
         "Known physical attacks on people who hold crypto-assets, or are believed to, worldwide and each with the original report. Far from complete.",
-      imageLines: ["Attacks on", "crypto holders,", "worldwide."],
+      imageLines: ["When people know", "who holds crypto."],
     },
   },
   leaks: {
