@@ -17,7 +17,16 @@ const isObjection = (title: string) => /^[„“"]/.test(title)
     <li class:list={{ objection: isObjection(point.title) }}>
       <strong>{point.title}</strong>
       <p>{point.text}</p>
-      {point.source && <small><a href={point.source.href}>{point.source.label}</a></small>}
+      {point.sources && (
+        <small>
+          {point.sources.map((source, position) => (
+            <>
+              {position > 0 && " · "}
+              <a href={source.href}>{source.label}</a>
+            </>
+          ))}
+        </small>
+      )}
     </li>
   ))}
 </ul>
