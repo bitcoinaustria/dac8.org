@@ -42,8 +42,6 @@ const items = steps.map((step, i) => ({
   i,
   scene: sceneOf.get(step.chapter) as Scene,
 }))
-const firstOf = (chapterId: string) =>
-  items.find((item) => item.chapter === chapterId)?.i ?? 0
 // A value per step for the big figure, carried forward to later steps.
 const counts = (values: Record<string, number>) =>
   JSON.stringify(
@@ -89,15 +87,61 @@ const cards = ruleChronicle.stack.flatMap((group) =>
     }
   }),
 )
-const rulePiles = [
-  { id: "steuern", label: en ? "Tax" : "Steuern" },
-  { id: "geldwaesche", label: en ? "Money laundering" : "Geldwäsche" },
-].map((p) => ({
-  ...p,
-  cards: cards
-    .filter((card) => card.domain === p.id)
-    .sort((a, b) => a.from - b.from),
+// The curve: how many rules apply in each year, drawn as steps, the year
+// running with the scroll. From 2015, when a new rule came about every
+// year, it turns red; after today the adopted and proposed ones follow as
+// a dashed line.
+const startYear = 1977
+const steepYear = 2015
+const endYear = 2029
+const inForce = (year: number) =>
+  cards.filter(
+    (card) =>
+      !card.ahead &&
+      card.from <= year &&
+      year <= (card.until ?? Number.POSITIVE_INFINITY),
+  ).length
+const withAhead = (year: number) =>
+  inForce(year) + cards.filter((card) => card.ahead && card.from <= year).length
+const maxCount = Math.max(withAhead(endYear) + 1, 22)
+const X = (year: number) =>
+  ((year - startYear) / (endYear + 1 - startYear)) * 1000
+const Y = (count: number) => 500 - (count / maxCount) * 500
+const stepPath = (
+  count: (year: number) => number,
+  from: number,
+  to: number,
+) => {
+  // Start at the level of the year before, so joined pieces meet.
+  const before = from > startYear ? count(from - 1) : count(from)
+  let d = `M${X(from).toFixed(1)} ${Y(before).toFixed(1)}`
+  for (let year = from; year <= to; year++) {
+    d += ` V${Y(count(year)).toFixed(1)} H${X(year + 1).toFixed(1)}`
+  }
+  return d
+}
+const curveEarly = stepPath(inForce, startYear, steepYear - 1)
+const curveSteep = stepPath(inForce, steepYear, thisYear)
+const curveEarlyArea = `${curveEarly} V500 H${X(startYear)} Z`
+const curveSteepArea = `${curveSteep} V500 H${X(steepYear)} Z`
+const curveAhead = stepPath(withAhead, thisYear + 1, endYear)
+const gridCounts = [5, 10, 15, 20]
+const curveMarks = [startYear, 1994, steepYear, thisYear].map((year) => ({
+  year,
+  style: `--at: ${(X(year) / 10).toFixed(2)}%`,
 }))
+// For the script: each rule's year and name, to show the newest.
+const curveRules = JSON.stringify(
+  cards
+    .map((card) => ({
+      from: card.from,
+      until: card.until,
+      what: card.what,
+      ahead: card.ahead,
+    }))
+    .sort((a, b) => a.from - b.from),
+)
+const curveScale = JSON.stringify({ startYear, endYear, maxCount })
 
 // ---------- Papier ----------------------------------------------------------
 const totalPages = pile.reduce((sum, block) => sum + block.pages, 0)
@@ -135,7 +179,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
   data-locale={locale}
   data-today={thisYear}
   data-scenes={JSON.stringify(items.map((item) => item.scene))}
-  data-chapters={JSON.stringify(items.map((item) => item.chapter))}
   data-ids={JSON.stringify(items.map((item) => item.id))}
   data-years={JSON.stringify(items.map((item) => item.years ?? null))}
 >
@@ -150,21 +193,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
   </div>
 
   <div class="stage">
-    <nav class="rail" aria-label={en ? "Chapters" : "Kapitel"}>
-      <ol>
-        {chapters.map((chapter, k) => (
-          <li>
-            <a
-              href={`#film-${steps[firstOf(chapter.id)].id}`}
-              data-chapter={chapter.id}
-            >
-              <span>{k + 1}</span> {chapter.label[language]}
-            </a>
-          </li>
-        ))}
-      </ol>
-    </nav>
-
     <div class="view" data-view data-scene={items[0].scene}>
       <div class="says">
         {items.map((item) => (
@@ -220,29 +248,38 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
             <span class="tally"
               ><b data-rule-count>0</b> {en ? "rules" : "Regeln"}
               <span data-rule-ahead-wrap hidden
-                >, <b data-rule-ahead>0</b> {en ? "coming" : "kommen"}</span
+                >· <b data-rule-ahead>0</b> {en ? "coming" : "kommen"}</span
               ></span
             >
           </p>
-          <div class="rule-piles">
-            {rulePiles.map((p) => (
-              <div class="rule-pile">
-                <ol>
-                  {p.cards.map((card) => (
-                    <li
-                      class:list={["rule-card", card.status]}
-                      data-from={card.from}
-                      data-until={card.until}
-                      data-ahead={card.ahead ? "" : undefined}
-                    >
-                      <span class="rule-year">{card.from}</span>
-                      <span class="rule-what">{card.what}</span>
-                    </li>
-                  ))}
-                </ol>
-                <p class="pile-name">{p.label}</p>
+          <div class="curve" data-curve={curveScale} data-rules={curveRules}>
+            <div class="curve-plot">
+              {gridCounts.map((count) => (
+                <span
+                  class="curve-grid"
+                  style={`--y: ${((count / maxCount) * 100).toFixed(2)}%`}
+                >
+                  <span>{count}</span>
+                </span>
+              ))}
+              <div class="curve-reveal">
+                <svg viewBox="0 0 1000 500" preserveAspectRatio="none">
+                  <path class="curve-area" d={curveEarlyArea} />
+                  <path class="curve-area steep" d={curveSteepArea} />
+                  <path class="curve-line" d={curveEarly} />
+                  <path class="curve-line steep" d={curveSteep} />
+                  <path class="curve-ahead" d={curveAhead} />
+                </svg>
               </div>
-            ))}
+              <span class="curve-head" data-curve-head>
+                <span class="curve-new" data-curve-new />
+              </span>
+            </div>
+            <div class="curve-axis">
+              {curveMarks.map((mark) => (
+                <span style={mark.style}>{mark.year}</span>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -321,16 +358,23 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
     const says = all("[data-say]")
     const ats = [...film.querySelectorAll<Element>("[data-at]")]
     const onlys = all("[data-only]")
-    const links = all("[data-chapter]")
     const counters = all("[data-counts]")
-    const cards = all("[data-from]")
+    const curve = film.querySelector<HTMLElement>("[data-curve]")
+    const head = film.querySelector<HTMLElement>("[data-curve-head]")
+    const newest = film.querySelector<HTMLElement>("[data-curve-new]")
+    const scale = JSON.parse(curve?.dataset.curve ?? "{}")
+    const rules: {
+      from: number
+      until?: number
+      what: string
+      ahead: boolean
+    }[] = JSON.parse(curve?.dataset.rules ?? "[]")
     const yearEl = film.querySelector<HTMLElement>("[data-year]")
     const countEl = film.querySelector<HTMLElement>("[data-rule-count]")
     const aheadEl = film.querySelector<HTMLElement>("[data-rule-ahead]")
     const aheadWrap = film.querySelector<HTMLElement>("[data-rule-ahead-wrap]")
     const parse = (key: string) => JSON.parse(film.dataset[key] ?? "[]")
     const stepScenes: string[] = parse("scenes")
-    const stepChapters: string[] = parse("chapters")
     const stepIds: string[] = parse("ids")
     const stepYears: ([number, number] | null)[] = parse("years")
     const today = Number(film.dataset.today)
@@ -361,6 +405,8 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
       requestAnimationFrame(run)
     }
 
+    // The rules chapter: the year runs with the scroll, the curve is drawn
+    // up to it, and the newest rule so far stands at its head.
     let shownYear = 0
     const scrub = (year: number) => {
       if (year === shownYear) return
@@ -369,23 +415,29 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
         yearEl.textContent = String(year)
         yearEl.classList.toggle("future", year > today)
       }
-      let count = 0
-      let ahead = 0
-      for (const card of cards) {
-        const from = Number(card.dataset.from)
-        const until = card.dataset.until
-          ? Number(card.dataset.until)
-          : Number.POSITIVE_INFINITY
-        const on = from <= year
-        card.classList.toggle("on", on)
-        card.classList.toggle("gone", on && year > until)
-        if (!on) continue
-        if (card.hasAttribute("data-ahead")) ahead++
-        else if (year <= until) count++
-      }
+      const live = rules.filter((rule) => rule.from <= year)
+      const count = live.filter(
+        (rule) =>
+          !rule.ahead && year <= (rule.until ?? Number.POSITIVE_INFINITY),
+      ).length
+      const ahead = live.filter((rule) => rule.ahead).length
       if (countEl) countEl.textContent = String(count)
       if (aheadEl) aheadEl.textContent = String(ahead)
       if (aheadWrap) aheadWrap.hidden = ahead === 0
+      if (curve && head) {
+        const span = scale.endYear + 1 - scale.startYear
+        const p = (year + 1 - scale.startYear) / span
+        curve.style.setProperty("--p", String(p))
+        const c = (count + ahead) / scale.maxCount
+        head.style.setProperty("--c", String(c))
+        head.classList.toggle("right", p > 0.6)
+        head.classList.toggle("high", c > 0.6)
+      }
+      const last = live.at(-1)
+      if (newest) {
+        newest.textContent = last ? `${last.from} · ${last.what}` : ""
+        newest.classList.toggle("ahead", Boolean(last?.ahead))
+      }
     }
 
     let current = -1
@@ -407,18 +459,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
           "on",
           (el.dataset.only ?? "").split(",").map(Number).includes(i),
         )
-      for (const link of links) {
-        const here = link.dataset.chapter === stepChapters[i]
-        if (here && !link.hasAttribute("aria-current")) {
-          const list = link.closest("ol")
-          list?.scrollTo({
-            left: link.offsetLeft - (list.clientWidth - link.offsetWidth) / 2,
-            behavior: motion.matches ? "auto" : "smooth",
-          })
-        }
-        if (here) link.setAttribute("aria-current", "step")
-        else link.removeAttribute("aria-current")
-      }
       for (const el of counters) {
         const value = valueAt(JSON.parse(el.dataset.counts ?? "{}"), i)
         if (value !== undefined) tween(el, value)
@@ -525,14 +565,13 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
     align-self: start;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr);
-    gap: var(--space-xs);
+    grid-template-rows: minmax(0, 1fr);
     block-size: calc(100dvh - var(--header-height));
     padding-block: var(--space-xs) var(--space-s);
   }
 
   /* Ohne Skript stehen die Schlagzeilen untereinander. */
-  .film:not([data-ready]) :is(.track, .scenes, .rail) {
+  .film:not([data-ready]) :is(.track, .scenes) {
     display: none;
   }
 
@@ -547,48 +586,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
 
   .film:not([data-ready]) .say {
     grid-area: auto;
-  }
-
-  /* ---------- Kapitel-Leiste -------------------------------------------- */
-
-  .rail {
-    border-block-end: 1px solid var(--line);
-  }
-
-  .rail ol {
-    display: flex;
-    gap: var(--space-2xs);
-    margin: 0;
-    padding: 0;
-    overflow-x: auto;
-    list-style: none;
-    scrollbar-width: none;
-  }
-
-  .rail a {
-    display: block;
-    padding: 0.55rem 0.5rem 0.6rem;
-    color: var(--muted-foreground);
-    font-size: var(--step--1);
-    white-space: nowrap;
-    text-decoration: none;
-    box-shadow: inset 0 -2px transparent;
-    transition:
-      color 0.2s,
-      box-shadow 0.2s;
-  }
-
-  .rail a span {
-    font-weight: var(--weight-heading);
-  }
-
-  .rail a:hover,
-  .rail a[aria-current] {
-    color: var(--foreground);
-  }
-
-  .rail a[aria-current] {
-    box-shadow: inset 0 -2px var(--accent);
   }
 
   /* ---------- Bühne ----------------------------------------------------- */
@@ -778,14 +775,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
     font-weight: var(--weight-heading);
   }
 
-  .pile-name {
-    padding-block-start: var(--space-2xs);
-    border-image: var(--metal-rule) 1;
-    border-block-start: 3px solid;
-    color: var(--ink);
-    font-weight: var(--weight-heading);
-  }
-
   /* ---------- Ausweis --------------------------------------------------- */
 
   .steps {
@@ -863,109 +852,145 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
 
   /* ---------- Regeln ---------------------------------------------------- */
 
-  .rule-piles {
+  /* Die Zahl der geltenden Regeln als Stufenkurve. Gezeichnet wird bis zum
+     Jahr, das mit dem Scrollen läuft; nach heute gestrichelt. */
+  .curve {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(0.5rem, 2cqi, 1.5rem);
-    align-items: end;
-    min-block-size: 0;
-  }
-
-  .rule-pile {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr) auto;
-    gap: var(--space-2xs);
-    min-inline-size: 0;
-    block-size: 100%;
+    gap: 0.4rem;
     min-block-size: 0;
   }
 
-  .rule-pile ol {
-    display: flex;
-    flex-direction: column-reverse;
-    gap: clamp(2px, 0.5cqh, 5px);
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  .curve-plot {
+    position: relative;
+    margin-inline-start: 2rem;
+    min-block-size: 0;
+    border-block-end: 1px solid var(--line);
   }
 
-  .rule-card {
-    display: flex;
-    align-items: baseline;
-    flex-shrink: 0;
-    gap: 0.6em;
-    min-inline-size: 0;
-    padding: clamp(0.1rem, 0.8cqh, 0.6rem) clamp(0.35rem, 1.2cqi, 0.75rem);
-    border: 1px solid var(--line);
-    border-inline-start: 4px solid var(--bar);
-    border-radius: var(--radius-sm);
-    background: var(--paper);
-    box-shadow: 0 1px 2px var(--material-shade);
-    font-size: clamp(0.56rem, min(1.9cqh, 2.4cqi), 1rem);
-    line-height: 1.2;
-    opacity: 0;
-    translate: 0 -2.5rem;
-    rotate: -2deg;
-    transition:
-      opacity 0.35s ease,
-      translate 0.5s cubic-bezier(0.3, 1.3, 0.5, 1),
-      rotate 0.5s ease;
+  .curve-grid {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: var(--y);
+    border-block-start: 1px solid var(--line);
   }
 
-  .rule-pile:nth-child(2) .rule-card {
-    border-inline-start-color: var(--material-edge);
-    rotate: 2deg;
-  }
-
-  .rule-pile .rule-card.on {
-    opacity: 1;
-    translate: 0 0;
-    rotate: 0deg;
-  }
-
-  .rule-year {
-    flex: none;
+  .curve-grid span {
+    position: absolute;
+    inset-inline-end: calc(100% + 0.4rem);
+    translate: 0 -50%;
     color: var(--ink-3);
+    font-size: var(--type-meta);
+    white-space: nowrap;
   }
 
-  .rule-what {
-    min-inline-size: 0;
-    overflow: hidden;
-    color: var(--foreground);
+  .curve-reveal {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0 calc(100% - var(--p, 0) * 100%) 0 0);
+  }
+
+  .curve-reveal svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+  }
+
+  .curve-area {
+    fill: color-mix(in oklab, var(--bar) 22%, transparent);
+  }
+
+  .curve-line,
+  .curve-ahead {
+    fill: none;
+    stroke: var(--bar);
+    stroke-width: 3;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .curve-area.steep {
+    fill: color-mix(in oklab, var(--red) 16%, transparent);
+  }
+
+  .curve-line.steep {
+    stroke: var(--red);
+  }
+
+  .curve-ahead {
+    stroke: var(--red);
+    stroke-dasharray: 6 5;
+  }
+
+  /* Der Kopf der Kurve: ein roter Punkt, daneben die neueste Regel. */
+  .curve-head {
+    position: absolute;
+    inset-inline-start: calc(var(--p, 0) * 100%);
+    inset-block-end: calc(var(--c, 0) * 100%);
+    inline-size: 0.9rem;
+    aspect-ratio: 1;
+    border: 2px solid var(--panel);
+    border-radius: 50%;
+    background: var(--red);
+    translate: -50% 50%;
+  }
+
+  .curve-new {
+    position: absolute;
+    inset-inline-start: 1.25rem;
+    inset-block-end: 0.75rem;
+    inline-size: max-content;
+    max-inline-size: 14rem;
+    padding: 0.25rem 0.55rem;
+    border-radius: var(--radius-sm);
+    background: var(--foreground);
+    color: var(--background);
+    font-size: var(--type-meta);
     font-weight: 560;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.25;
     overflow-wrap: normal;
   }
 
-  .rule-card.current {
-    border-color: color-mix(in oklab, var(--primary) 40%, transparent);
-    border-inline-start-color: var(--primary);
-    background: color-mix(in oklab, var(--primary) 8%, var(--paper));
+  .curve-new:empty {
+    display: none;
   }
 
-  .rule-card.current .rule-what {
-    color: var(--accent);
+  .curve-head.right .curve-new {
+    inset-inline-start: auto;
+    inset-inline-end: 1.25rem;
   }
 
-  .rule-pile .rule-card.gone {
-    opacity: 0.45;
+  /* Oben an der Kurve hängt die Beschriftung unter dem Punkt, damit sie
+     nicht in die Jahreszahl ragt. */
+  .curve-head.high .curve-new {
+    inset-block-start: 1.1rem;
+    inset-block-end: auto;
   }
 
-  .rule-card.gone .rule-what {
-    text-decoration: line-through;
-  }
-
-  .rule-card:is(.planned, .proposed) {
-    border-style: dashed;
-    border-inline-start-style: solid;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .rule-card:is(.planned, .proposed) .rule-what {
+  .curve-new.ahead {
+    border: 1.5px dashed var(--ink-3);
+    background: var(--paper);
     color: var(--ink-2);
+  }
+
+  .curve-axis {
+    position: relative;
+    block-size: 1.25rem;
+    margin-inline-start: 2rem;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  .curve-axis span {
+    position: absolute;
+    inset-inline-start: var(--at);
+    translate: -50% 0;
+    white-space: nowrap;
+  }
+
+  .curve-axis span:first-child {
+    translate: 0 0;
   }
 
   /* ---------- Papier ---------------------------------------------------- */
@@ -1202,15 +1227,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
 
     .steps li {
       grid-template-columns: 2.75rem minmax(0, 1fr);
-    }
-
-    .rule-card {
-      padding-block: clamp(0.08rem, 0.6cqh, 0.4rem);
-      font-size: clamp(0.56rem, min(1.7cqh, 2.6cqi), 0.85rem);
-    }
-
-    .rule-pile ol {
-      gap: 2px;
     }
 
     .field-callout {
