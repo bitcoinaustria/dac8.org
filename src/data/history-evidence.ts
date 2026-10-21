@@ -474,6 +474,15 @@ export const effectTiles: {
     source: fatfRatingsSource,
   },
   {
+    id: "krypto-anteil",
+    figure: { de: "rund 1 %", en: "about 1%" },
+    text: {
+      de: "des Krypto-Volumens ging 2025 an Kriminelle oder sanktionierte Stellen, nach Schätzung zweier Analysefirmen, eine Untergrenze",
+      en: "of crypto volume went to criminals or sanctioned entities in 2025, as two analysis firms estimate it, a lower bound",
+    },
+    source: cryptoIllicit.sources[0],
+  },
+  {
     id: "krypto-pruefung",
     figure: { de: "2027", en: "2027" },
     text: {

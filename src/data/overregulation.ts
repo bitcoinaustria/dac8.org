@@ -16,23 +16,15 @@ const eurlex = (path: string, de: string, en: string): Source => ({
   label: { de, en },
   href: `https://eur-lex.europa.eu/eli/${path}/oj`,
 })
-const ris = (year: number, number: number): Source => ({
-  label: {
-    de: `BGBl. I Nr. ${number}/${year}`,
-    en: `Federal Law Gazette I No. ${number}/${year}`,
-  },
-  href: `https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_${year}_I_${number}/BGBLA_${year}_I_${number}.html`,
-})
 
-export type Scene = "threshold" | "rules" | "tower" | "register" | "result"
+export type Scene = "threshold" | "rules" | "tower" | "result"
 
 // The story's order: what is asked of you, how many rules ask it, how much
-// paper they fill, who looks, and what comes of it.
+// paper they fill, and what comes of it.
 export const chapters: { id: string; scene: Scene; label: Text }[] = [
   { id: "ausweis", scene: "threshold", label: { de: "Ausweis", en: "ID" } },
   { id: "regeln", scene: "rules", label: { de: "Regeln", en: "Rules" } },
   { id: "papier", scene: "tower", label: { de: "Papier", en: "Paper" } },
-  { id: "zugriff", scene: "register", label: { de: "Zugriff", en: "Access" } },
   { id: "ergebnis", scene: "result", label: { de: "Ergebnis", en: "Result" } },
 ]
 
@@ -139,7 +131,10 @@ export const steps: Step[] = [
   {
     id: "ausweis-heute",
     chapter: "ausweis",
-    title: { de: "Heute: ab 0 €.", en: "Today: from 0 euros." },
+    title: {
+      de: "Heute gibt es keine Grenze mehr.",
+      en: "Today there is no limit left.",
+    },
     text: {
       de: "Jede Krypto-Übertragung über einen Anbieter trägt deinen Namen.",
       en: "Every crypto transfer through a provider carries your name.",
@@ -172,10 +167,13 @@ export const steps: Step[] = [
     id: "regeln-heute",
     chapter: "regeln",
     years: [1994, 2029],
-    title: { de: "Heute: 17 Regeln.", en: "Today: 17 rules." },
+    title: {
+      de: "Seit 2015: im Schnitt jedes Jahr eine neue Regel.",
+      en: "Since 2015: on average a new rule every year.",
+    },
     text: {
-      de: "Und 4 weitere sind beschlossen oder vorgeschlagen.",
-      en: "And 4 more are adopted or proposed.",
+      de: "Heute gelten 17, und 4 weitere kommen schon.",
+      en: "17 apply today, and 4 more are already coming.",
     },
     sources: [allRules],
   },
@@ -220,58 +218,17 @@ export const steps: Step[] = [
     ],
   },
 
-  // ---------- Zugriff: who may look up where you hold accounts.
-  {
-    id: "zugriff-2016",
-    chapter: "zugriff",
-    title: {
-      de: "2016: 3 Behördengruppen sehen, wo du Konten hast.",
-      en: "2016: 3 groups of authorities see where you hold accounts.",
-    },
-    text: {
-      de: "Im neuen Kontenregister.",
-      en: "In the new account register.",
-    },
-    sources: [ris(2015, 116)],
-  },
-  {
-    id: "zugriff-2026",
-    chapter: "zugriff",
-    title: { de: "2026: 8.", en: "2026: 8." },
-    text: {
-      de: "Polizei, Staatsschutz, Finanzaufsicht und andere kamen dazu.",
-      en: "Police, state security, financial supervision and others joined.",
-    },
-    sources: [ris(2021, 25), ris(2026, 46)],
-  },
-  {
-    id: "zugriff-2029",
-    chapter: "zugriff",
-    title: { de: "2029: ganz Europa.", en: "2029: all of Europe." },
-    text: {
-      de: "Die Kontenregister aller EU-Staaten werden verbunden.",
-      en: "The account registers of all EU countries get connected.",
-    },
-    sources: [
-      eurlex(
-        "dir/2024/1640",
-        "Richtlinie (EU) 2024/1640, Art. 16",
-        "Directive (EU) 2024/1640, Art. 16",
-      ),
-    ],
-  },
-
   // ---------- Ergebnis: what comes of it.
   {
     id: "ergebnis-2005",
     chapter: "ergebnis",
     title: {
-      de: "2005: 467 Verdachtsmeldungen.",
-      en: "2005: 467 suspicion reports.",
+      de: "Österreich 2005: 467 Verdachtsmeldungen.",
+      en: "Austria 2005: 467 suspicion reports.",
     },
     text: {
-      de: "In Österreich. Ein Punkt je Meldung.",
-      en: "In Austria. One dot per report.",
+      de: "Meldungen über verdächtige Geschäfte. Ein Punkt je Meldung.",
+      en: "Reports of suspicious transactions. One dot per report.",
     },
     sources: [
       {
@@ -283,7 +240,7 @@ export const steps: Step[] = [
   {
     id: "ergebnis-2025",
     chapter: "ergebnis",
-    title: { de: "2025: 13.989.", en: "2025: 13,989." },
+    title: { de: "Österreich 2025: 13.989.", en: "Austria 2025: 13,989." },
     text: {
       de: "Rund dreißigmal so viele, bei geänderter Zählweise.",
       en: "About thirty times as many, though counted differently.",
@@ -295,8 +252,8 @@ export const steps: Step[] = [
     chapter: "ergebnis",
     title: { de: "139 Verurteilungen.", en: "139 convictions." },
     text: {
-      de: "Wegen Geldwäsche, im selben Jahr.",
-      en: "For money laundering, in the same year.",
+      de: "Wegen Geldwäsche, in Österreich, im selben Jahr.",
+      en: "For money laundering, in Austria, in the same year.",
     },
     sources: [fiu2025],
   },
@@ -308,32 +265,10 @@ export const steps: Step[] = [
       en: "Of 100 euros from crime, about 1 is confiscated.",
     },
     text: {
-      de: "Schätzung von Europol für die EU.",
-      en: "Europol’s estimate for the EU.",
+      de: "In der EU, nach Schätzung von Europol.",
+      en: "In the EU, as Europol estimates it.",
     },
     sources: [europol],
-  },
-  {
-    id: "ergebnis-krypto",
-    chapter: "ergebnis",
-    title: {
-      de: "Krypto: rund 1 von 100 € an Kriminelle.",
-      en: "Crypto: about 1 in 100 euros to criminals.",
-    },
-    text: {
-      de: "Oder an sanktionierte Stellen. Schätzung zweier Analysefirmen.",
-      en: "Or to sanctioned entities. Two analysis firms’ estimate.",
-    },
-    sources: [
-      {
-        label: { de: "Chainalysis 2026", en: "Chainalysis 2026" },
-        href: "https://www.chainalysis.com/blog/2026-crypto-crime-report-introduction/",
-      },
-      {
-        label: { de: "TRM Labs 2026", en: "TRM Labs 2026" },
-        href: "https://www.trmlabs.com/reports-and-whitepapers/2026-crypto-crime-report",
-      },
-    ],
   },
 ]
 
@@ -362,45 +297,6 @@ export const thresholds: {
   { step: "ausweis-1991", year: 1991, amount: 15000, unit: "ECU" },
   { step: "ausweis-2017", year: 2017, amount: 1000, unit: "EUR" },
   { step: "ausweis-heute", year: 2024, amount: 0, unit: "EUR" },
-]
-
-// Who may look up the Austrian account register, by the step they appear.
-export const lookers: { step: string; label: Text }[] = [
-  {
-    step: "zugriff-2016",
-    label: { de: "Strafjustiz", en: "Criminal justice" },
-  },
-  {
-    step: "zugriff-2016",
-    label: { de: "Finanzstrafbehörden", en: "Fiscal-penal authorities" },
-  },
-  {
-    step: "zugriff-2016",
-    label: { de: "Abgabenbehörden", en: "Tax authorities" },
-  },
-  {
-    step: "zugriff-2026",
-    label: {
-      de: "Geldwäschemeldestelle, Staatsschutz",
-      en: "Financial intelligence, state security",
-    },
-  },
-  {
-    step: "zugriff-2026",
-    label: { de: "Finanzmarktaufsicht", en: "Financial market authority" },
-  },
-  {
-    step: "zugriff-2026",
-    label: { de: "Kriminalpolizei", en: "Criminal police" },
-  },
-  {
-    step: "zugriff-2026",
-    label: { de: "Sanktionsbehörden", en: "Sanctions authorities" },
-  },
-  {
-    step: "zugriff-2026",
-    label: { de: "Amt für Betrugsbekämpfung", en: "Anti-fraud office" },
-  },
 ]
 
 // Suspicion reports in Austria against convictions for money laundering.

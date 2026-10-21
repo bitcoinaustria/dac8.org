@@ -4,7 +4,6 @@ import { historyAsOf, isAhead } from "@/data/history"
 import {
   chapters,
   inTodaysMoney,
-  lookers,
   pile,
   reportField,
   type Scene,
@@ -70,6 +69,10 @@ const bars = thresholds.map((t) => ({
 const idCounts = counts(
   Object.fromEntries(thresholds.map((t) => [t.step, real(t)])),
 )
+const pastIds = thresholds
+  .filter((t) => t.amount > 0)
+  .map((t) => at(t.step))
+  .join(",")
 
 // ---------- Regeln ----------------------------------------------------------
 const statusOf = new Map(ruleChronicle.entries.map((e) => [e.id, e.status]))
@@ -98,39 +101,11 @@ const rulePiles = [
 
 // ---------- Papier ----------------------------------------------------------
 const totalPages = pile.reduce((sum, block) => sum + block.pages, 0)
-let below = 0
-const blocks = pile.map((block, k) => {
-  const style = `--from: ${(below / totalPages).toFixed(4)}; --pages: ${(block.pages / totalPages).toFixed(4)}; --k: ${k}`
-  below += block.pages
-  return { ...block, style }
-})
 const firstPages = pile[0].pages
-const firstShare = (firstPages / totalPages).toFixed(4)
+const pages = Array.from({ length: totalPages }, (_, k) => k)
 const pageCounts = counts({
   "papier-1991": firstPages,
   "papier-heute": totalPages,
-})
-
-// ---------- Zugriff ---------------------------------------------------------
-const ring = lookers.map((looker, k) => {
-  const angle = (k / lookers.length) * 2 * Math.PI - Math.PI / 2
-  const x = 50 + 37 * Math.cos(angle)
-  const y = 50 + 37 * Math.sin(angle)
-  return {
-    at: at(looker.step),
-    label: looker.label[language],
-    x,
-    y,
-    style: `--x: ${x.toFixed(2)}%; --y: ${y.toFixed(2)}%`,
-  }
-})
-const europe = Array.from({ length: 26 }, (_, k) => {
-  const angle = (k / 26) * 2 * Math.PI - Math.PI / 2
-  return `--x: ${(50 + 48 * Math.cos(angle)).toFixed(2)}%; --y: ${(50 + 48 * Math.sin(angle)).toFixed(2)}%; --k: ${k}`
-})
-const lookerCounts = counts({
-  "zugriff-2016": lookers.filter((l) => l.step === "zugriff-2016").length,
-  "zugriff-2026": lookers.length,
 })
 
 // ---------- Ergebnis --------------------------------------------------------
@@ -149,7 +124,7 @@ const reportCounts = counts({
 const fieldSteps = ["ergebnis-2005", "ergebnis-2025", "ergebnis-urteile"]
   .map(at)
   .join(",")
-const coinSteps = ["ergebnis-euro", "ergebnis-krypto"].map(at).join(",")
+const coinSteps = String(at("ergebnis-euro"))
 const coins = Array.from({ length: 100 }, (_, k) => k)
 ---
 
@@ -215,10 +190,15 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
         <!-- Ausweis -->
         <div class="scene" data-scene-id="threshold">
           <p class="big">
-            <strong data-counts={idCounts}>{n(real(thresholds[0]))}</strong>
-            <span
-              >{en ? "euros, today’s money" : "Euro, in heutigem Geld"}</span
-            >
+            <strong data-counts={idCounts} data-only={pastIds}>
+              {n(real(thresholds[0]))}
+            </strong>
+            <span data-only={pastIds}>
+              {en ? "euros, in today’s money" : "Euro, in heutigem Geld"}
+            </span>
+            <strong class="red" data-only={at("ausweis-heute")}>
+              {en ? "From the first cent" : "Ab dem ersten Cent"}
+            </strong>
           </p>
           <ul class="steps">
             {bars.map((bar) => (
@@ -266,79 +246,21 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
           </div>
         </div>
 
-        <!-- Papier: the first directive beside everything since -->
+        <!-- Papier: one tile per page, the first six red -->
         <div class="scene" data-scene-id="tower">
           <p class="big">
             <strong data-counts={pageCounts}>{n(firstPages)}</strong>
-            <span>{en ? "pages" : "Seiten"}</span>
+            <span>
+              {en
+                ? "pages of EU anti-money-laundering law"
+                : "Seiten Geldwäsche-Recht der EU"}
+            </span>
           </p>
-          <div class="piles">
-            <div class="paper">
-              <div class="stack">
-                <span
-                  class="sheet first"
-                  style={`--from: 0; --pages: ${firstShare}; --k: 0`}
-                />
-                <span class="stack-tag" style={`--top: ${firstShare}`}>
-                  {n(firstPages)}
-                </span>
-              </div>
-              <p class="pile-name">1991</p>
-            </div>
-            <div class="paper" data-at={at("papier-heute")}>
-              <div class="stack">
-                {blocks.map((block) => (
-                  <span class="sheet" style={block.style} />
-                ))}
-                <span class="stack-tag" style="--top: 1">{n(totalPages)}</span>
-              </div>
-              <p class="pile-name">{en ? "Today" : "Heute"}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Zugriff -->
-        <div class="scene" data-scene-id="register">
-          <p class="big">
-            <strong data-counts={lookerCounts}>3</strong>
-            <span>{en ? "groups of authorities" : "Behördengruppen"}</span>
-          </p>
-          <div class="ring-wrap">
-            <div class="ring">
-              <svg viewBox="0 0 100 100" class="ring-lines">
-                <circle
-                  class="ring-europe"
-                  cx="50"
-                  cy="50"
-                  r="48"
-                  data-at={at("zugriff-2029")}
-                />
-                {ring.map((looker) => (
-                  <line
-                    x1="50"
-                    y1="50"
-                    x2={looker.x}
-                    y2={looker.y}
-                    data-at={looker.at}
-                  />
-                ))}
-              </svg>
-              {europe.map((style) => (
-                <span
-                  class="ring-state"
-                  style={style}
-                  data-at={at("zugriff-2029")}
-                />
+          <div class="wall-wrap" data-wall>
+            <div class="wall" data-at={at("papier-heute")}>
+              {pages.map((k) => (
+                <span class:list={["page", { first: k < firstPages }]} style={`--k: ${k}`} />
               ))}
-              <span class="ring-you">{en ? "Your account" : "Dein Konto"}</span>
-              {ring.map((looker) => (
-                <span class="ring-chip" style={looker.style} data-at={looker.at}>
-                  {looker.label}
-                </span>
-              ))}
-              <span class="ring-eu" data-at={at("zugriff-2029")}>
-                {en ? "+ 26 EU countries" : "+ 26 EU-Staaten"}
-              </span>
             </div>
           </div>
         </div>
@@ -358,11 +280,8 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
             <strong class="red" data-only={coinSteps}>
               {en ? "1 euro" : "1 Euro"}
             </strong>
-            <span data-only={at("ergebnis-euro")}>
+            <span data-only={coinSteps}>
               {en ? "of 100 from crime" : "von 100 aus Straftaten"}
-            </span>
-            <span data-only={at("ergebnis-krypto")}>
-              {en ? "of 100 in crypto" : "von 100 in Krypto"}
             </span>
           </p>
           <div class="result">
@@ -506,6 +425,28 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
       }
     }
 
+    // The wall of pages: the column count at which all tiles are largest.
+    const wallWrap = film.querySelector<HTMLElement>("[data-wall]")
+    const wall = wallWrap?.firstElementChild as HTMLElement | null
+    const fit = () => {
+      if (!wallWrap || !wall) return
+      const count = wall.children.length
+      const { width, height } = wallWrap.getBoundingClientRect()
+      if (!width || !height) return
+      const gap = 2
+      let best = { cols: 1, tile: 0 }
+      for (let cols = 6; cols <= 60; cols++) {
+        const rows = Math.ceil(count / cols)
+        const tile = Math.min(
+          (width - gap * (cols - 1)) / cols,
+          ((height - gap * (rows - 1)) / rows) * (5 / 6),
+        )
+        if (tile > best.tile) best = { cols, tile }
+      }
+      wall.style.setProperty("--cols", String(best.cols))
+      wall.style.setProperty("--tile", `${Math.floor(best.tile * 10) / 10}px`)
+    }
+
     let queued = false
     const render = () => {
       queued = false
@@ -542,7 +483,11 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
     for (const el of counters)
       el.dataset.value = el.textContent?.replace(/\D/g, "") || "0"
     window.addEventListener("scroll", queue, { passive: true })
-    window.addEventListener("resize", queue)
+    window.addEventListener("resize", () => {
+      fit()
+      queue()
+    })
+    if (wallWrap) new ResizeObserver(fit).observe(wallWrap)
     film.toggleAttribute("data-ready", true)
     render()
   }
@@ -788,7 +733,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
   .view[data-scene="threshold"] [data-scene-id="threshold"],
   .view[data-scene="rules"] [data-scene-id="rules"],
   .view[data-scene="tower"] [data-scene-id="tower"],
-  .view[data-scene="register"] [data-scene-id="register"],
   .view[data-scene="result"] [data-scene-id="result"] {
     opacity: 1;
     visibility: visible;
@@ -1026,213 +970,46 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
 
   /* ---------- Papier ---------------------------------------------------- */
 
-  /* Zwei Stapel nebeneinander, gleicher Maßstab: 1991 und heute. */
-  .piles {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(1rem, 6cqi, 4rem);
-    align-items: end;
-    min-block-size: 0;
-  }
-
-  .paper {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) auto;
-    gap: var(--space-2xs);
-    block-size: 100%;
-    min-block-size: 0;
-    min-inline-size: 0;
-  }
-
-  .stack {
-    position: relative;
-    margin-inline: auto;
-    margin-block-start: 2rem;
-    inline-size: min(100%, 12rem);
-  }
-
-  .sheet {
-    --edge: color-mix(in oklab, var(--bar) 30%, var(--paper));
-    position: absolute;
-    inset-inline: 0;
-    inset-block-end: calc(var(--from) * 100%);
-    block-size: max(3px, calc(var(--pages) * 100%));
-    border-inline: 1px solid var(--material-edge);
-    background-color: var(--paper);
-    background-image: linear-gradient(
-      to top,
-      var(--edge) 0 1px,
-      transparent 1px
-    );
-    background-size: 100% 4px;
-    box-shadow: 0 1px 0 var(--material-shade);
-    translate: calc((var(--k) - 3.5) * 0.15rem) 0;
-    transform-origin: bottom;
-  }
-
-  /* Heute wächst der Stapel Akt für Akt. */
-  .paper[data-at] .sheet {
-    scale: 1 0;
-    transition: scale 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--k) * 90ms);
-  }
-
-  .paper[data-at].on .sheet {
-    scale: 1 1;
-  }
-
-  .paper[data-at]:not(.on) .stack-tag {
-    opacity: 0;
-  }
-
-  /* Die sechs Seiten von 1991, rot, damit man sie überhaupt sieht. */
-  .sheet.first {
-    border-color: var(--accent);
-    background: var(--red);
-    translate: none;
-  }
-
-  .stack-tag {
-    position: absolute;
-    inset-inline: 0;
-    inset-block-end: calc(var(--top) * 100% + 0.4rem);
-    color: var(--ink);
-    font-size: var(--type-lead);
-    font-weight: var(--weight-heading);
-    text-align: center;
-    transition: opacity 0.4s ease 0.6s;
-  }
-
-  .paper .pile-name {
-    text-align: center;
-  }
-
-  /* ---------- Zugriff --------------------------------------------------- */
-
-  .ring-wrap {
+  /* Eine Kachel je Seite im Amtsblatt. Das Skript wählt die Spaltenzahl,
+     bei der alle 488 am größten in den Platz passen. */
+  .wall-wrap {
     display: grid;
     place-items: center;
     min-block-size: 0;
   }
 
-  .ring {
-    position: relative;
-    inline-size: min(100cqh - 7rem, 100cqi - 2rem, 34rem);
-    aspect-ratio: 1;
-  }
-
-  .ring-lines {
-    position: absolute;
-    inset: 0;
-    overflow: visible;
-  }
-
-  .ring-lines line {
-    stroke: var(--accent);
-    stroke-width: 0.35;
-    stroke-dasharray: 40;
-    stroke-dashoffset: 40;
-    transition: stroke-dashoffset 0.7s ease;
-  }
-
-  .ring-lines line.on {
-    stroke-dashoffset: 0;
-  }
-
-  .ring-europe {
-    fill: none;
-    stroke: var(--bar);
-    stroke-width: 0.3;
-    stroke-dasharray: 1 1.2;
-    opacity: 0;
-    transition: opacity 0.6s ease;
-  }
-
-  .ring-europe.on {
-    opacity: 1;
-  }
-
-  .ring-you {
-    position: absolute;
-    inset-inline-start: 50%;
-    inset-block-start: 50%;
-    translate: -50% -50%;
+  .wall {
     display: grid;
-    place-items: center;
-    inline-size: 22%;
-    aspect-ratio: 1;
-    border: 1px solid light-dark(#b6000c, #fa5963);
-    border-radius: 50%;
-    background: linear-gradient(155deg, #e3000f, #be000c);
-    box-shadow:
-      inset 0 1px 0 #ffffff30,
-      0 0 0 0.5rem color-mix(in oklab, var(--primary) 12%, transparent);
-    color: #fff;
-    font-size: clamp(0.6rem, 2.4cqi, 1rem);
-    font-weight: var(--weight-heading);
-    text-align: center;
+    grid-template-columns: repeat(var(--cols, 24), var(--tile, 1rem));
+    gap: 2px;
   }
 
-  .ring-chip {
-    position: absolute;
-    inset-inline-start: var(--x);
-    inset-block-start: var(--y);
-    inline-size: max-content;
-    max-inline-size: 11rem;
-    padding: 0.35em 0.65em;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-full);
-    background: var(--paper);
-    box-shadow: 0 1px 2px var(--material-shade);
-    color: var(--foreground);
-    font-size: clamp(0.6rem, 1.9cqi, 0.875rem);
-    font-weight: 560;
-    line-height: 1.2;
-    text-align: center;
-    text-wrap: balance;
-    overflow-wrap: normal;
-    translate: -50% -50%;
+  .page {
+    aspect-ratio: 5 / 6;
+    border: 1px solid var(--material-edge);
+    border-radius: 1px;
+    background:
+      linear-gradient(var(--line), var(--line)) 20% 30% / 60% 1px no-repeat,
+      linear-gradient(var(--line), var(--line)) 20% 50% / 60% 1px no-repeat,
+      linear-gradient(var(--line), var(--line)) 20% 70% / 40% 1px no-repeat,
+      var(--paper);
     opacity: 0;
     scale: 0.6;
     transition:
-      opacity 0.4s ease,
-      scale 0.5s cubic-bezier(0.3, 1.4, 0.5, 1);
+      opacity 0.3s ease calc(var(--k) * 2ms),
+      scale 0.3s ease calc(var(--k) * 2ms);
   }
 
-  .ring-chip.on {
+  .view[data-scene="tower"] .page.first,
+  .wall.on .page {
     opacity: 1;
     scale: 1;
   }
 
-  .ring-state {
-    position: absolute;
-    inset-inline-start: var(--x);
-    inset-block-start: var(--y);
-    inline-size: 0.55rem;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: var(--bar);
-    translate: -50% -50%;
-    opacity: 0;
-    transition: opacity 0.3s ease calc(var(--k) * 25ms);
-  }
-
-  .ring-state.on {
-    opacity: 1;
-  }
-
-  .ring-eu {
-    position: absolute;
-    inset-inline-end: 0;
-    inset-block-start: 0;
-    color: var(--ink-2);
-    font-weight: var(--weight-heading);
-    opacity: 0;
-    transition: opacity 0.4s ease 0.3s;
-  }
-
-  .ring-eu.on {
-    opacity: 1;
+  /* Die sechs Seiten von 1991, rot. */
+  .page.first {
+    border-color: var(--accent);
+    background: var(--red);
   }
 
   /* ---------- Ergebnis -------------------------------------------------- */
@@ -1434,23 +1211,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
 
     .rule-pile ol {
       gap: 2px;
-    }
-
-    .ring-chip {
-      max-inline-size: 5.75rem;
-      padding: 0.25em 0.45em;
-      font-size: 0.625rem;
-    }
-
-    .ring-you {
-      inline-size: 18%;
-      font-size: 0.625rem;
-    }
-
-    .ring-eu {
-      inset-block-start: auto;
-      inset-block-end: -1.5rem;
-      font-size: 0.75rem;
     }
 
     .field-callout {
