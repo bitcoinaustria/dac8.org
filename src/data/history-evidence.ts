@@ -488,6 +488,13 @@ export const unexplained = {
     law: [
       {
         label: {
+          de: "Finanzministerium, Anfragebeantwortung 2591/AB (XXVIII. GP), S. 5",
+          en: "Finance ministry, answer 2591/AB (28th legislative period), p. 5, in German",
+        },
+        href: "https://www.parlament.gv.at/dokument/XXVIII/AB/2591/imfname_1710766.pdf",
+      },
+      {
+        label: {
           de: "Richtlinie 2014/92/EU, Art. 16 Abs. 7",
           en: "Directive 2014/92/EU, Article 16(7)",
         },
