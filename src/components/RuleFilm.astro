@@ -46,35 +46,31 @@ const items = steps.map((step, i) => ({
   i,
   scene: sceneOf.get(step.chapter) as Scene,
 }))
-// A value per step for the big figure, carried forward to later steps.
-const counts = (values: Record<string, number>) =>
-  JSON.stringify(
-    Object.fromEntries(Object.entries(values).map(([id, v]) => [at(id), v])),
-  )
 const thisYear = new Date(historyAsOf).getUTCFullYear()
 
 // ---------- Ausweis ---------------------------------------------------------
 const real = (t: (typeof thresholds)[number]) => inTodaysMoney(t.amount, t.year)
 const highest = Math.max(...thresholds.map(real))
+// Each bar carries its value in today's money and, small, the amount of
+// its time; the last one has no bar left, only the red label.
 const bars = thresholds.map((t) => ({
   year: t.year,
   at: at(t.step),
   zero: t.amount === 0,
-  then:
+  value:
     t.amount === 0
       ? en
-        ? "any amount"
-        : "jeder Betrag"
+        ? "From the first cent"
+        : "Ab dem ersten Cent"
+      : en
+        ? `€${n(real(t))}`
+        : `${n(real(t))} €`,
+  then:
+    t.amount === 0
+      ? undefined
       : `${en ? "then" : "damals"} ${n(t.amount)} ${t.unit === "ECU" ? "ECU" : "€"}`,
   style: `--w: ${((real(t) / highest) * 100).toFixed(2)}%`,
 }))
-const idCounts = counts(
-  Object.fromEntries(thresholds.map((t) => [t.step, real(t)])),
-)
-const pastIds = thresholds
-  .filter((t) => t.amount > 0)
-  .map((t) => at(t.step))
-  .join(",")
 
 // ---------- Regeln ----------------------------------------------------------
 const statusOf = new Map(ruleChronicle.entries.map((e) => [e.id, e.status]))
@@ -151,10 +147,6 @@ const curveScale = JSON.stringify({ startYear, endYear, maxCount })
 const totalPages = pile.reduce((sum, block) => sum + block.pages, 0)
 const firstPages = pile[0].pages
 const pages = Array.from({ length: totalPages }, (_, k) => k)
-const pageCounts = counts({
-  "papier-1991": firstPages,
-  "papier-heute": totalPages,
-})
 
 // ---------- Ergebnis --------------------------------------------------------
 const { first, latest, convictions } = reportField
@@ -164,11 +156,6 @@ const fieldStyle = [
   `--first: ${side(first).toFixed(4)}`,
   `--red-side: ${side(convictions).toFixed(4)}`,
 ].join("; ")
-const reportCounts = counts({
-  "ergebnis-2005": first,
-  "ergebnis-2025": latest,
-  "ergebnis-urteile": convictions,
-})
 const fieldSteps = ["ergebnis-2005", "ergebnis-2025", "ergebnis-urteile"]
   .map(at)
   .join(",")
@@ -180,7 +167,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
   class="film"
   aria-labelledby="film-title"
   data-film
-  data-locale={locale}
   data-today={thisYear}
   data-scenes={JSON.stringify(items.map((item) => item.scene))}
   data-ids={JSON.stringify(items.map((item) => item.id))}
@@ -217,23 +203,15 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
       <div class="scenes" aria-hidden="true">
         <!-- Ausweis -->
         <div class="scene" data-scene-id="threshold">
-          <p class="big">
-            <strong data-counts={idCounts} data-only={pastIds}>
-              {n(real(thresholds[0]))}
-            </strong>
-            <span data-only={pastIds}>
-              {en ? "euros, in today’s money" : "Euro, in heutigem Geld"}
-            </span>
-            <strong class="red" data-only={at("ausweis-heute")}>
-              {en ? "From the first cent" : "Ab dem ersten Cent"}
-            </strong>
-          </p>
           <ul class="steps">
             {bars.map((bar) => (
               <li class:list={{ zero: bar.zero }} data-at={bar.at} style={bar.style}>
                 <span class="steps-year">{bar.year}</span>
                 <span class="steps-track"><span class="steps-bar" /></span>
-                {bar.then && <span class="steps-then">{bar.then}</span>}
+                <span class="steps-value">
+                  <b>{bar.value}</b>
+                  {bar.then && <span>{bar.then}</span>}
+                </span>
               </li>
             ))}
           </ul>
@@ -241,11 +219,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
 
         <!-- Regeln -->
         <div class="scene" data-scene-id="rules">
-          <p class="big">
-            <strong data-year class="year"
-              >{steps[at("regeln-1977")].years?.[0]}</strong
-            >
-          </p>
           <div class="curve" data-curve={curveScale} data-rules={curveRules}>
             <div class="curve-plot">
               {gridCounts.map((count) => (
@@ -274,20 +247,15 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
               {curveMarks.map((mark) => (
                 <span style={mark.style}>{mark.year}</span>
               ))}
+              <strong class="curve-now" data-year
+                >{steps[at("regeln-1977")].years?.[0]}</strong
+              >
             </div>
           </div>
         </div>
 
         <!-- Papier: one tile per page, the first six red -->
         <div class="scene" data-scene-id="tower">
-          <p class="big">
-            <strong data-counts={pageCounts}>{n(firstPages)}</strong>
-            <span>
-              {en
-                ? "pages of EU anti-money-laundering law"
-                : "Seiten Geldwäsche-Recht der EU"}
-            </span>
-          </p>
           <div class="wall-wrap" data-wall>
             <div class="wall" data-at={at("papier-heute")}>
               {pages.map((k) => (
@@ -295,27 +263,15 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
               ))}
             </div>
           </div>
+          <p class="scene-caption">
+            {en
+              ? "One square per page in the EU Official Journal; red, the first directive of 1991."
+              : "Ein Kästchen je Seite im Amtsblatt der EU, rot die erste Richtlinie von 1991."}
+          </p>
         </div>
 
         <!-- Ergebnis -->
         <div class="scene" data-scene-id="result">
-          <p class="big">
-            <strong data-counts={reportCounts} data-only={fieldSteps}>
-              {n(first)}
-            </strong>
-            <span data-only={`${at("ergebnis-2005")},${at("ergebnis-2025")}`}>
-              {en ? "reports" : "Meldungen"}
-            </span>
-            <span class="red" data-only={at("ergebnis-urteile")}>
-              {en ? "convictions" : "Verurteilungen"}
-            </span>
-            <strong class="red" data-only={coinSteps}>
-              {en ? "1 euro" : "1 Euro"}
-            </strong>
-            <span data-only={coinSteps}>
-              {en ? "of 100 from crime" : "von 100 aus Straftaten"}
-            </span>
-          </p>
           <div class="result">
             <div class="field-wrap" data-only={fieldSteps}>
               <div class="field" style={fieldStyle}>
@@ -339,10 +295,9 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
 
 <script>
   // The step whose spacer has crossed the middle of the window is current:
-  // it picks the scene, the headline and the chapter, switches on what has
-  // appeared so far ([data-at]) or only now ([data-only]), and counts the
-  // big figure towards its value. In the rules chapter the year runs with
-  // the scroll and the cards drop onto their piles in their year.
+  // it picks the scene and the headline and switches on what has appeared
+  // so far ([data-at]) or only now ([data-only]). In the rules chapter the
+  // year runs with the scroll and the curve is drawn up to it.
   for (const film of document.querySelectorAll<HTMLElement>("[data-film]")) {
     const view = film.querySelector<HTMLElement>("[data-view]")
     if (!view) continue
@@ -353,7 +308,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
     const says = all("[data-say]")
     const ats = [...film.querySelectorAll<Element>("[data-at]")]
     const onlys = all("[data-only]")
-    const counters = all("[data-counts]")
     const curve = film.querySelector<HTMLElement>("[data-curve]")
     const head = film.querySelector<HTMLElement>("[data-curve-head]")
     const newest = film.querySelector<HTMLElement>("[data-curve-new]")
@@ -370,33 +324,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
     const stepIds: string[] = parse("ids")
     const stepYears: ([number, number] | null)[] = parse("years")
     const today = Number(film.dataset.today)
-    const motion = matchMedia("(prefers-reduced-motion: reduce)")
-    const format = (value: number) =>
-      new Intl.NumberFormat(film.dataset.locale).format(Math.round(value))
-
-    const valueAt = (map: Record<string, number>, i: number) => {
-      let value: number | undefined
-      for (let k = 0; k <= i; k++) if (k in map) value = map[k]
-      return value
-    }
-
-    const tween = (el: HTMLElement, to: number) => {
-      const from = Number(el.dataset.value ?? to)
-      el.dataset.value = String(to)
-      el.classList.toggle("zero", to === 0)
-      if (motion.matches || from === to) {
-        el.textContent = format(to)
-        return
-      }
-      const start = performance.now()
-      const run = (now: number) => {
-        const t = Math.min(1, (now - start) / 800)
-        el.textContent = format(from + (to - from) * (1 - (1 - t) ** 3))
-        if (t < 1 && el.dataset.value === String(to)) requestAnimationFrame(run)
-      }
-      requestAnimationFrame(run)
-    }
-
     // The rules chapter: the year runs with the scroll, the curve is drawn
     // up to it, and the newest rule so far stands at its head.
     let shownYear = 0
@@ -448,10 +375,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
           "on",
           (el.dataset.only ?? "").split(",").map(Number).includes(i),
         )
-      for (const el of counters) {
-        const value = valueAt(JSON.parse(el.dataset.counts ?? "{}"), i)
-        if (value !== undefined) tween(el, value)
-      }
     }
 
     // The wall of pages: the column count at which all tiles are largest.
@@ -509,8 +432,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
       queued = true
       requestAnimationFrame(render)
     }
-    for (const el of counters)
-      el.dataset.value = el.textContent?.replace(/\D/g, "") || "0"
     window.addEventListener("scroll", queue, { passive: true })
     window.addEventListener("resize", () => {
       fit()
@@ -675,7 +596,7 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
     grid-area: 1 / 1;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
     gap: var(--space-s);
     min-block-size: 0;
     padding: var(--space-m);
@@ -697,50 +618,18 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
     scale: 1;
   }
 
-  /* Die große Zahl der Szene, gezählt. */
-  .big {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0 0.4em;
-    color: var(--ink-2);
-    font-size: var(--type-lead);
-    line-height: 1;
-  }
-
-  .big strong {
-    color: var(--foreground);
-    font-size: clamp(2.5rem, 1rem + 9cqi, 6.5rem);
-    font-stretch: 94%;
-    font-weight: var(--weight-heading);
-    letter-spacing: -0.035em;
-    font-variant-numeric: tabular-nums;
-    transition: color 0.3s ease;
-  }
-
-  .big .red,
-  .big strong.zero {
-    color: var(--accent);
-  }
-
-  .big [data-only]:not(.on) {
-    display: none;
-  }
-
-  .big .year.future {
+  /* Die Szenen zeigen ihre Zahl im Bild, nicht als zweite Überschrift:
+     links steht die Aussage, rechts der Beleg. */
+  .scene-caption {
     color: var(--ink-3);
-  }
-
-  .big b {
-    color: var(--foreground);
-    font-weight: var(--weight-heading);
+    font-size: var(--type-meta);
   }
 
   /* ---------- Ausweis --------------------------------------------------- */
 
   .steps {
     display: grid;
-    align-content: end;
+    align-content: center;
     gap: var(--space-m);
     margin: 0;
     padding: 0;
@@ -805,10 +694,26 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
       color-mix(in oklab, var(--primary) 18%, transparent);
   }
 
-  .steps-then {
+  /* Der Wert am Balken, in heutigem Geld; klein der Betrag von damals. */
+  .steps-value {
     grid-column: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.6em;
     color: var(--ink-3);
     font-size: var(--type-meta);
+  }
+
+  .steps-value b {
+    color: var(--foreground);
+    font-size: var(--step-2);
+    font-weight: var(--weight-heading);
+    letter-spacing: -0.02em;
+  }
+
+  .steps .zero .steps-value b {
+    color: var(--accent);
   }
 
   /* ---------- Regeln ---------------------------------------------------- */
@@ -960,6 +865,26 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
 
   .curve-axis span:first-child {
     translate: 0 0;
+  }
+
+  /* Das laufende Jahr an der Zeichenkante; es deckt die festen Jahre ab,
+     an denen es vorbeizieht. */
+  .curve-now {
+    position: absolute;
+    inset-block-start: -0.1rem;
+    inset-inline-start: clamp(1.4rem, var(--p, 0) * 100%, 100% - 1.4rem);
+    z-index: 1;
+    padding: 0 0.35rem;
+    translate: -50% 0;
+    border-radius: var(--radius-sm);
+    background: var(--foreground);
+    color: var(--background);
+    font-weight: var(--weight-heading);
+    white-space: nowrap;
+  }
+
+  .curve-now.future {
+    background: var(--ink-3);
   }
 
   /* ---------- Papier ---------------------------------------------------- */
@@ -1179,10 +1104,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
 
     .say-text {
       font-size: var(--step--1);
-    }
-
-    .big {
-      font-size: var(--type-body);
     }
 
     .steps {
