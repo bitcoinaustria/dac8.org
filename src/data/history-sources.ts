@@ -5,6 +5,14 @@ import {
   reportingCostSources,
   type Source,
 } from "@/data/history-evidence"
+import {
+  admissions as gapAdmissions,
+  apparatus,
+  bankPackage,
+  corrected,
+  estimates,
+  reportSources,
+} from "@/data/history-gap"
 import { leaks } from "@/data/leaks"
 import { steps } from "@/data/overregulation"
 import { type Language, pathFor } from "@/lib/i18n"
@@ -83,6 +91,23 @@ export const historySources = (language: Language) => {
     })
   }
   for (const step of steps) step.sources.forEach(add)
+  // The gap, in the order of its blocks and quotations.
+  for (const source of [
+    ...apparatus.flatMap((row) => row.sources),
+    gapAdmissions.staff.source,
+    ...estimates.map((tile) => tile.source),
+    ...corrected.flatMap((fix) => fix.sources),
+    gapAdmissions.costs.source,
+    ...reportSources,
+    gapAdmissions.outcomes.source,
+    bankPackage.sources.bill,
+    gapAdmissions.revenue.source,
+    bankPackage.sources.answer,
+    bankPackage.sources.evaluation,
+    gapAdmissions.austria.source,
+    gapAdmissions.last.source,
+  ])
+    add(source)
   for (const sources of Object.values(balanceSources(language)))
     sources.forEach(add)
   // The numbers for a passage, each once, in order.

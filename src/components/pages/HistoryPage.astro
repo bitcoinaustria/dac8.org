@@ -5,6 +5,7 @@ import HistoryStack from "@/components/HistoryStack.astro"
 import LawGrowth from "@/components/LawGrowth.astro"
 import RuleBalance from "@/components/RuleBalance.astro"
 import RuleFilm from "@/components/RuleFilm.astro"
+import RuleGap from "@/components/RuleGap.astro"
 import StatTiles from "@/components/StatTiles.astro"
 import YearColumns from "@/components/YearColumns.astro"
 import { ruleChronicle } from "@/data/aml-history"
@@ -65,6 +66,8 @@ const sources = historySources(language).list
     </header>
 
     <RuleFilm language={language} />
+
+    <RuleGap language={language} />
 
     <RuleBalance language={language} />
 

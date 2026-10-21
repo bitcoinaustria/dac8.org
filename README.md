@@ -154,7 +154,14 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   coming; a wall of one tile per Official Journal page, six red ones from
   1991 among 488; and a sea of suspicion reports in Austria beside 139
   convictions and 100 coins of which one is red. Without JavaScript the
-  headlines stand as text. After the film comes the balance
+  headlines stand as text. After the film comes the gap
+  (`src/components/RuleGap.astro`, data in `src/data/history-gap.ts`):
+  what grows (staff and budgets of the financial intelligence units, the
+  FMA's supervision and the EU's new authority), what the laws were
+  estimated to cost business, what the reports bring and Austria's bank
+  package of 2015, each followed by an authority saying in its own words
+  that it does not measure, ending with what Austria and Germany plan to
+  evaluate of DAC8. Then the balance
   (`src/components/RuleBalance.astro`) in four fields of one picture each:
   what three tax reporting duties cost a year, what the Commission says all
   exchanged tax data bring and how much of that is modelled, how many
