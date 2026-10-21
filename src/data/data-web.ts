@@ -3,7 +3,7 @@ import type { PlatePart } from "@/data/target-plate"
 
 // "What happens to your data", told as one thread in five short steps: an
 // invented customer, Max, leaves his data with an exchange, a tax tool and
-// a hardware wallet shop; the exchange reports him to the tax office every
+// a hardware wallet maker; the exchange reports him to the tax office every
 // year; every one of these kinds of place has lost such data in real
 // cases, and each leak fills in a part of a target list at the offenders,
 // with Max at number 07; the list leads to his bedroom, where his savings
@@ -61,7 +61,7 @@ export const nodes: Node[] = [
   },
   {
     id: "shop",
-    name: { de: "Wallet-Shop", en: "Wallet shop" },
+    name: { de: "Wallet-Hersteller", en: "Wallet maker" },
     scene: 0,
     order: 3,
     holds: { de: "Wohnadresse", en: "Home address" },
@@ -96,57 +96,56 @@ export interface Scene {
   // The scene's name on the timeline.
   short: Text
   heading: Text
-  // One line at most. One key phrase may be marked with **…**; the page
+  // A short caption. One key phrase may be marked with **…**; the page
   // sets it in bold.
   text: Text
   // A shorter text for phones, where the caption shares the screen with
-  // the network: two lines at most, in the same style as text.
+  // the network, in the same style as text.
   brief?: Text
 }
 
+// The tax tool combines the accounts a user imports (not just one exchange):
+// https://help.waltio.com/en/articles/3633362-getting-started-on-waltio
+// Report deletion: § 20(4) Krypto-MPfG; other customer records: § 21 FM-GwG.
 export const scenes: Scene[] = [
   {
     id: "konto",
     short: { de: "Deine Daten", en: "Your data" },
     heading: {
-      de: "Deine Daten liegen an vielen Stellen.",
-      en: "Your data sits in many places.",
+      de: "Deine Daten liegen an immer mehr Stellen.",
+      en: "Your data ends up in more and more places.",
     },
     text: {
-      de: "Die Börse kennt Ausweis und jede Transaktion, das Steuertool deine Bestände, der Wallet-Shop deine Wohnadresse.",
-      en: "The exchange knows your ID and every transaction, the tax tool your holdings, the wallet shop your home address.",
-    },
-    brief: {
-      de: "Börse, Steuertool, Wallet-Shop: **Jede Stelle kennt einen Teil.**",
-      en: "Exchange, tax tool, wallet shop: **each knows a part.**",
+      de: "Börse: Ausweis und Geschäfte. Wallet-Hersteller: Lieferanschrift beim Gerätekauf. Steuertool: Daten mehrerer Börsen und Wallets. **Nicht jeden Empfänger wählst du selbst.**",
+      en: "Exchange: ID and trades. Wallet maker: delivery address when you order a device. Tax tool: data from multiple exchanges and wallets. **You do not choose every recipient.**",
     },
   },
   {
     id: "staat",
     short: { de: "Finanzamt", en: "Tax office" },
     heading: {
-      de: "Ab 2027 meldet dich die Börse jedes Jahr.",
-      en: "From 2027, the exchange reports you every year.",
+      de: "Ab 2027 meldet dich die Börse jedes Jahr automatisch.",
+      en: "From 2027, the exchange reports you automatically every year.",
     },
     text: {
-      de: "Ans Finanzamt, ohne Wallet-Adressen. **Jede Meldung bleibt zehn Jahre bei der Börse.**",
-      en: "To the tax office, without wallet addresses. **Each report stays with the exchange for ten years.**",
+      de: "Ans Finanzamt, ohne Wallet-Adressen. **Die Börse muss die Meldedaten zehn Jahre nach dem betreffenden Kalenderjahr löschen.** Andere Kundenunterlagen können länger bleiben.",
+      en: "To the tax office, without wallet addresses. **The exchange must delete the reported data ten years after the calendar year it covers.** Other customer records may remain longer.",
     },
     brief: {
-      de: "Ohne Wallet-Adressen. **Die Börse hebt jede Meldung zehn Jahre auf.**",
-      en: "Without wallet addresses. **The exchange keeps each report for ten years.**",
+      de: "Ohne Wallet-Adressen. **Meldedaten: Löschung nach zehn Jahren.** Andere Kundenunterlagen können länger bleiben.",
+      en: "Without wallet addresses. **Reported data: deleted after ten years.** Other customer records may remain longer.",
     },
   },
   {
     id: "lecks",
     short: { de: "Datenlecks", en: "Leaks" },
     heading: {
-      de: "Gespeichert. Gehackt. Verkauft.",
-      en: "Stored. Hacked. Sold.",
+      de: "Gespeichert, gehackt und verkauft.",
+      en: "Stored, hacked and sold.",
     },
     text: {
-      de: "Börsen, Steuertools, Wallet-Shops und Finanzverwaltungen haben solche Daten schon verloren. **Ein Datenleck nimmt nichts weg, es kopiert.**",
-      en: "Exchanges, tax tools, wallet shops and tax administrations have lost such data before. **A data leak takes nothing away; it copies.**",
+      de: "Börsen, Steuertools, Wallet-Hersteller und Finanzverwaltungen haben solche Daten schon verloren. **Ein Datenleck nimmt nichts weg, es kopiert.**",
+      en: "Exchanges, tax tools, wallet makers and tax administrations have lost such data before. **A data leak takes nothing away; it copies.**",
     },
     brief: {
       de: "**Ein Datenleck nimmt nichts weg, es kopiert.**",
@@ -157,8 +156,8 @@ export const scenes: Scene[] = [
     id: "liste",
     short: { de: "Zielliste", en: "Target list" },
     heading: {
-      de: "Aus den Datenlecks wird eine Zielliste.",
-      en: "The leaks become a target list.",
+      de: "Aus den Daten wird eine Zielliste.",
+      en: "The data becomes a target list.",
     },
     text: {
       de: "Sortiert nach Bestand, mit Wohnadresse.",
@@ -169,8 +168,8 @@ export const scenes: Scene[] = [
     id: "risiko",
     short: { de: "Zuhause", en: "At home" },
     heading: {
-      de: "Dein Profil. Deine Wohnadresse. Ein Angriffsziel.",
-      en: "Your profile. Your home address. A target.",
+      de: "Dein Profil wird zum Angriffsziel.",
+      en: "Your profile becomes a target.",
     },
     text: {
       de: "Bitcoin in der eigenen Wallet ist wie Bargeld daheim: deine Sache. **Gefährlich wird es, wenn eine Liste verrät, wer wie viel hat.**",
@@ -185,7 +184,7 @@ export const scenes: Scene[] = [
 
 // The reports pile up at the exchange: one card a year while the tax
 // office scene plays. The first report goes out in 2027 (for 2026), and
-// each is kept ten years after its reporting year (§ 20 Abs. 4
+// each is deleted ten years after the calendar year it covers (§ 20 Abs. 4
 // Krypto-MPfG), so a customer who stays has ten on file from 2036 on.
 export const reports = {
   first: 2027,

@@ -18,7 +18,8 @@ import { type Language, pathFor } from "@/lib/i18n"
 // case, and a leak copies its card as a red card to fraudsters and
 // extortionists, where it fills in its part of a target list: Max's photo
 // and name, his rank by holdings, his home address, his annual reports.
-// The camera then closes in on the list and a wrench slides in beside it,
+// Each arriving copy fills the list before the camera closes in on it.
+// A wrench then slides in beside it,
 // so the target list grows out of the network; the story ends in his
 // bedroom, where his savings lie under the mattress. Grey means "kept
 // there", red means "copied", and every card moves once, with the scroll.
@@ -510,8 +511,26 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         </g>
       </svg>
 
-      <div class="map" aria-hidden="true">
+      <div class="map">
         <img class="home" src={home} alt="">
+        <img class="home room-layer" src={render("room-02")} alt="">
+        <img class="home visitor-layer" src={render("figures-02")} alt="">
+        <button
+          class="room-control"
+          type="button"
+          data-room-control
+          hidden
+          aria-label="Max"
+        />
+        <button class="room-reset" type="button" data-room-reset hidden>
+          {en ? "Reset scene" : "Szene zurücksetzen"}
+        </button>
+        <span
+          class="sr-only"
+          role="status"
+          data-room-status
+          data-message={en ? "The intruders drop their wrench and list and run away." : "Die Eindringlinge lassen Schraubenschlüssel und Liste fallen und laufen weg."}
+        />
       </div>
     </div>
 
@@ -784,7 +803,8 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     min-block-size: 0;
     border-radius: var(--radius-xl);
     background: var(--panel);
-    overflow: hidden;
+    /* Keep focus on the room controls from scrolling the oversized art. */
+    overflow: clip;
   }
 
   .view > .says {
@@ -1154,6 +1174,88 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     translate: 0 calc((1 - var(--draw)) * 1.5rem);
   }
 
+  .room-layer,
+  .visitor-layer,
+  .map[data-room-active] > .home:first-child {
+    visibility: hidden;
+  }
+
+  .map[data-room-active] .room-layer,
+  .map[data-room-active] .visitor-layer {
+    visibility: visible;
+  }
+
+  .map[data-room-active] .visitor-layer {
+    animation: visitors-exit 1.6s 0.25s ease-in both;
+  }
+
+  @keyframes visitors-exit {
+    0% {
+      transform: translate(0, 0);
+      opacity: 1;
+    }
+    25% {
+      transform: translate(10%, -2%);
+      opacity: 1;
+    }
+    50% {
+      transform: translate(25%, -1%);
+      opacity: 1;
+    }
+    75% {
+      transform: translate(45%, -5%);
+      opacity: 0.7;
+    }
+    100% {
+      transform: translate(70%, -8%);
+      opacity: 0;
+    }
+  }
+
+  .room-control {
+    position: absolute;
+    min-inline-size: 44px;
+    min-block-size: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    background: transparent;
+    pointer-events: auto;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .room-control:focus-visible {
+    outline: 2px solid var(--signal);
+    outline-offset: 4px;
+  }
+
+  .room-reset {
+    position: absolute;
+    inset-block-end: 0.75rem;
+    inset-inline-end: 0.75rem;
+    min-block-size: 44px;
+    padding: 0.5rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+    color: var(--foreground);
+    font: inherit;
+    font-size: var(--step--1);
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
   /* Auf einem hochkant gedrehten Monitor ist das Zimmer so breit wie die
      Zielliste davor. */
   .net[data-shape="upright"] ~ .map .home {
@@ -1309,6 +1411,11 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .map[data-room-active] .visitor-layer {
+      animation: none;
+      visibility: hidden;
+    }
+
     .ripple,
     .fill[data-known] .flash {
       animation: none;
@@ -1394,8 +1501,8 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     tall: { 5: -1, 6: 1 },
   }
   const crookBends: Record<Shape, Record<string, number>> = {
-    wide: { taxOffice: -0.3, taxTool: -0.08 },
-    mid: { taxOffice: -0.3, taxTool: -0.08 },
+    wide: { taxOffice: -0.3 },
+    mid: { taxOffice: -0.3 },
     tall: { taxTool: -0.12 },
     upright: { provider: -0.22, taxOffice: 0.12 },
   }
@@ -1415,6 +1522,8 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     const edgeEls = [...root.querySelectorAll<SVGGElement>("[data-edge]")]
     const links = [...root.querySelectorAll<HTMLAnchorElement>("[data-goto]")]
     const net = root.querySelector<SVGSVGElement>("[data-net]")
+    const stage = one(".stage")
+    const track = one(".track")
     const view = one(".view")
     const map = one(".map")
     const railList = one(".rail ol")
@@ -1424,6 +1533,8 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     const wrenchTurn = one("[data-wrench-at]")
     if (
       !net ||
+      !stage ||
+      !track ||
       !view ||
       !map ||
       !railList ||
@@ -1459,6 +1570,35 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     const riskScene = 4
     // There is no scene after the risk; the last picture stays.
     const endScene = 99
+    const roomControl = root.querySelector<HTMLButtonElement>(
+      "[data-room-control]",
+    )
+    const roomStatus = one("[data-room-status]")
+    const roomReset = root.querySelector<HTMLButtonElement>("[data-room-reset]")
+    const homeImage = root.querySelector<HTMLImageElement>(".home")
+    let roomTaps = 0
+    let lastRoomTap = 0
+    const resetRoom = () => {
+      roomTaps = 0
+      lastRoomTap = 0
+      map.removeAttribute("data-room-active")
+      if (roomReset) roomReset.hidden = true
+      if (roomStatus) roomStatus.textContent = ""
+    }
+    roomReset?.addEventListener("click", () => {
+      resetRoom()
+      roomControl?.focus({ preventScroll: true })
+    })
+    roomControl?.addEventListener("click", () => {
+      if (roomControl.hidden || map.hasAttribute("data-room-active")) return
+      const now = performance.now()
+      roomTaps = now - lastRoomTap > 3000 ? 1 : roomTaps + 1
+      lastRoomTap = now
+      if (roomTaps < 5) return
+      map.setAttribute("data-room-active", "")
+      if (roomReset) roomReset.hidden = false
+      if (roomStatus) roomStatus.textContent = roomStatus.dataset.message ?? ""
+    })
     // Where a place's card and case lie, below its name. The exchange
     // keeps its pile of reports between the two.
     const cardBelow = 92
@@ -1489,7 +1629,7 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
       shape === "tall"
         ? leakScene + [0.1, 0.18, 0.26, 0.5][order]
         : leakScene + (order === 0 ? 0.08 : 0.22 + order * 0.13)
-    // When a leak's copy leaves for the list, and how long it travels. On
+    // When a copy follows the leak line to the offenders, before the list. On
     // phones the copies from the top leave together and travel with the
     // camera.
     const copyAt = (order: number) =>
@@ -1519,6 +1659,11 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     let shape: Shape = "wide"
     let at: Layout = layouts.wide
     let frame: Camera = frames.wide
+    let openingAt = 0.5
+    const leakPaths = new Map<
+      string,
+      { path: SVGPathElement; length: number }
+    >()
     let arranged = false
     let queued = false
     let visible = false
@@ -1581,6 +1726,15 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
             })
       if (arranged && next === shape) return
       arranged = true
+      // The opening waits until the sticky stage has reached the header.
+      // Account for the extra lead-in used on very tall screens as well.
+      openingAt =
+        clamp(
+          (window.innerHeight * 0.5 -
+            Number.parseFloat(getComputedStyle(stage).top) -
+            Number.parseFloat(getComputedStyle(track).paddingTop)) /
+            spacers[0].getBoundingClientRect().height,
+        ) + 0.04
       shape = next
       net.dataset.shape = shape
       at = layouts[shape]
@@ -1607,9 +1761,25 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
       for (const edge of edgeEls) {
         const from = edge.dataset.from ?? ""
         const to = edge.dataset.to ?? ""
-        const d = bend(from, to, to === "crooks" ? crookBend(from) : 0.12)
+        let d = bend(from, to, to === "crooks" ? crookBend(from) : 0.12)
+        if (to === "crooks") {
+          const [x1, y1] = below(from, ground)
+          const [x2, y2] = below(to, ground)
+          if ((shape === "wide" || shape === "mid") && from === "taxTool") {
+            // Pass above the tax office, clear of its name and report card.
+            const roof = Math.min(y1, at.taxOffice[1] - 100)
+            d = `M${x1} ${y1} C${x1 + 180} ${roof - 100} ${x2} ${roof} ${x2} ${y2}`
+          } else if (shape === "tall" && from === "taxOffice") {
+            // Leave sideways before descending, clear of its own label.
+            d = `M${x1} ${y1} C${x1 + 180} ${y1} ${x2 + 60} ${y2 - 45} ${x2} ${y2}`
+          }
+        }
         for (const path of edge.querySelectorAll("path"))
           path.setAttribute("d", d)
+        if (to === "crooks") {
+          const path = edge.querySelector<SVGPathElement>(".core")
+          if (path) leakPaths.set(from, { path, length: path.getTotalLength() })
+        }
       }
       fit()
     }
@@ -1647,12 +1817,12 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
       const p = shownP
       const scene = Math.min(Math.floor(p), says.length - 1)
 
-      // The scene texts cross-fade: in as their scene starts, out as it
-      // ends. The first stands from the start, the last stays.
+      // Finish the old caption's fade before revealing the next one.
+      // The first stands from the start, the last stays.
       says.forEach((say, index) => {
-        const into = index === 0 ? 1 : ramp(p, index - 0.12, index + 0.04)
+        const into = index === 0 ? 1 : ramp(p, index - 0.02, index + 0.08)
         const leave =
-          index === says.length - 1 ? 0 : ramp(p, index + 0.86, index + 0.98)
+          index === says.length - 1 ? 0 : ramp(p, index + 0.84, index + 0.96)
         const shown = snap(into * (1 - leave))
         set(say, "--o", shown)
         say.toggleAttribute("data-current", shown > 0.5)
@@ -1747,7 +1917,9 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         const node = nodeEls.find((candidate) => candidate.dataset.node === id)
         if (!node) continue
         const start =
-          id === "taxOffice" ? reportScene + 0.15 : appear(node) + 0.02
+          id === "taxOffice"
+            ? reportScene + 0.15
+            : openingAt + (Number(node.dataset.order) - 1) * 0.1
         const t = motion.matches
           ? snap(ramp(p, start, start + 0.2))
           : ease(ramp(p, start, start + 0.2))
@@ -1795,10 +1967,9 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         )
       }
 
-      // A leak copies the place's card: a red copy leaves the grey one,
-      // travels to the offenders and lands on the target list, where its
-      // part of the list fills in. The empty list appears with the first
-      // leak.
+      // Each copy follows its leak path, then lands directly in its slot.
+      // Its arrival fills the list while the network is still in view;
+      // the subsequent close-up shows the completed profile.
       set(list, "--list", snap(ramp(p, leakAt(0), leakAt(0) + 0.06)))
       const onList = (x: number, y: number): Point => [
         frame[0] + (x / 1000) * frame[2],
@@ -1808,23 +1979,31 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         const id = copy.dataset.copy ?? ""
         const order = leaking.findIndex((node) => node.dataset.node === id)
         const { start, time } = copyAt(order)
-        const t = motion.matches
-          ? snap(ramp(p, start, start + time))
-          : ease(ramp(p, start, start + time))
+        const t = snap(ease(ramp(p, start, start + time)))
         const part = fills.find((fill) => fill.dataset.fill === id)
+        const into = onList(Number(part?.dataset.x), Number(part?.dataset.y))
+        const route = leakPaths.get(id)
+        let position = below(id, cardBelow)
+        if (route && t > 0) {
+          const point = route.path.getPointAtLength(
+            route.length * ramp(t, 0.12, 0.82),
+          )
+          const onPath: Point = [point.x, point.y]
+          position =
+            t < 0.12
+              ? travel(position, onPath, t / 0.12, 0)
+              : t > 0.82
+                ? travel(onPath, into, ramp(t, 0.82, 1), 0)
+                : onPath
+        }
         const known = snap(ramp(p, start + time - 0.01, start + time + 0.02))
         if (part) {
           set(part, "--known", known)
           part.toggleAttribute("data-known", known >= 0.5)
         }
-        const into = onList(Number(part?.dataset.x), Number(part?.dataset.y))
-        place(
-          copy,
-          travel(below(id, cardBelow), into, t, 70),
-          t > 0 ? 1 - known : 0,
-        )
+        place(copy, position, t > 0 ? 1 - known : 0)
       }
-      // The wrench slides in beside the list once it is the target list.
+      // The wrench joins the completed list in the close-up.
       set(
         wrench,
         "--wrench",
@@ -1880,6 +2059,24 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         motion.matches ? 1 : out(ramp(p, riskScene, riskScene + 0.35)),
       )
       set(map, "--pin", snap(out(ramp(p, riskScene + 0.3, riskScene + 0.45))))
+
+      if (roomControl && homeImage) {
+        const ready = p >= riskScene + 0.3
+        roomControl.hidden = !ready
+        if (!ready) {
+          resetRoom()
+        } else {
+          // Match Max's bounds inside the contained 1600 × 1000 render,
+          // including the larger, cropped picture on phones.
+          const image = homeImage.getBoundingClientRect()
+          const parent = map.getBoundingClientRect()
+          const scale = Math.min(image.width / 1600, image.height / 1000)
+          roomControl.style.left = `${image.left - parent.left + (image.width - 1600 * scale) / 2 + 700 * scale}px`
+          roomControl.style.top = `${image.top - parent.top + (image.height - 1000 * scale) / 2 + 390 * scale}px`
+          roomControl.style.width = `${140 * scale}px`
+          roomControl.style.height = `${350 * scale}px`
+        }
+      }
 
       // The timeline marks the scene and keeps it in view in the pill.
       if (scene !== current) {
