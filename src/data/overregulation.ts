@@ -1,7 +1,7 @@
 import type { Language } from "@/lib/i18n"
 
 // The history page's scroll film: how the rules piled up and what came of
-// them, in five chapters of short steps. Each step is one sentence on the
+// them, in seven chapters of short steps. Each step is one sentence on the
 // stage and changes one picture. Every figure is verified in
 // dac8-wiki/.wiki/wiki/references/rule-growth-and-effect-evidence.md and
 // aml-kyc-history-austria.md; the charts below the film carry the full
@@ -22,9 +22,17 @@ const ris = (year: number, number: number): Source => ({
   href: `https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_${year}_I_${number}/BGBLA_${year}_I_${number}.html`,
 })
 
-export type Scene = "tower" | "threshold" | "register" | "reports" | "money"
+export type Scene =
+  | "rules"
+  | "tower"
+  | "threshold"
+  | "register"
+  | "reports"
+  | "money"
+  | "summary"
 
 export const chapters: { id: string; scene: Scene; label: Text }[] = [
+  { id: "regeln", scene: "rules", label: { de: "Regeln", en: "Rules" } },
   { id: "seiten", scene: "tower", label: { de: "Seiten", en: "Pages" } },
   {
     id: "schwelle",
@@ -38,11 +46,14 @@ export const chapters: { id: string; scene: Scene; label: Text }[] = [
     label: { de: "Meldungen", en: "Reports" },
   },
   { id: "ergebnis", scene: "money", label: { de: "Ergebnis", en: "Result" } },
+  { id: "bilanz", scene: "summary", label: { de: "Bilanz", en: "Balance" } },
 ]
 
 export type Step = {
   id: string
   chapter: string
+  // In the rules chapter the year runs with the scroll over this span.
+  years?: [number, number]
   title: Text
   text: Text
   sources: Source[]
@@ -60,7 +71,73 @@ const europol: Source = {
   href: "https://www.europol.europa.eu/sites/default/files/documents/criminal_asset_recovery_in_the_eu_web_version_0.pdf",
 }
 
+const allRules: Source = {
+  label: {
+    de: "Alle Regeln mit Quellen",
+    en: "Every rule with its sources",
+  },
+  href: "#regeln-title",
+}
+
 export const steps: Step[] = [
+  // ---------- Regeln: every rule as a card on two piles, year by year.
+  {
+    id: "regeln-1977",
+    chapter: "regeln",
+    years: [1977, 1993],
+    title: {
+      de: "1977: Amt fragt Amt.",
+      en: "1977: office asks office.",
+    },
+    text: {
+      de: "Steuerbehörden helfen einander im Einzelfall. Niemand muss automatisch etwas über seine Kunden melden, eine Bank braucht noch keinen Ausweis.",
+      en: "Tax authorities help each other in single cases. No one has to report anything about customers automatically, and a bank needs no ID yet.",
+    },
+    sources: [allRules],
+  },
+  {
+    id: "regeln-1994",
+    chapter: "regeln",
+    years: [1994, 2008],
+    title: {
+      de: "Ab 1994: Ausweis und Verdacht.",
+      en: "From 1994: ID and suspicion.",
+    },
+    text: {
+      de: "Banken müssen Kunden identifizieren und Verdacht melden, anonyme Depots und Sparbücher enden. In der EU werden erstmals Zinsen an Ausländer gemeldet.",
+      en: "Banks must identify customers and report suspicion, anonymous securities accounts and savings books end. In the EU, interest paid to foreigners is reported for the first time.",
+    },
+    sources: [allRules],
+  },
+  {
+    id: "regeln-2015",
+    chapter: "regeln",
+    years: [2009, 2026],
+    title: {
+      de: "Ab 2015: jedes Jahr mehr.",
+      en: "From 2015: more every year.",
+    },
+    text: {
+      de: "Konten, Löhne, Plattform-Einnahmen, Kryptowerte: Die Steuerbehörden bekommen jedes Jahr neue Daten. Das Kontenregister zeigt, wer wo Konten hat, und Namen gehen mit jeder Krypto-Übertragung mit.",
+      en: "Accounts, pay, platform income, crypto-assets: tax authorities get new data every year. The account register shows who holds accounts where, and names travel with every crypto transfer.",
+    },
+    sources: [allRules],
+  },
+  {
+    id: "regeln-2029",
+    chapter: "regeln",
+    years: [2027, 2029],
+    title: {
+      de: "Bis 2029: schon beschlossen.",
+      en: "By 2029: already adopted.",
+    },
+    text: {
+      de: "Keine anonymen Konten bei Anbietern, eine Obergrenze für Bargeld, vernetzte Kontenregister, und vorgeschlagen ist noch mehr Zugriff auf Register.",
+      en: "No anonymous accounts at providers, a cap on cash, connected account registers, and even more register access is proposed.",
+    },
+    sources: [allRules],
+  },
+
   // ---------- Seiten: every AML act the EU adopted, as a pile of pages.
   {
     id: "seiten-1991",
@@ -390,6 +467,26 @@ export const steps: Step[] = [
           en: "European Court of Auditors 03/2021, para 68",
         },
         href: "https://www.eca.europa.eu/Lists/ECADocuments/SR21_03/SR_Exchange_tax_inform_DE.pdf",
+      },
+    ],
+  },
+
+  // ---------- Bilanz: everything at a glance.
+  {
+    id: "bilanz",
+    chapter: "bilanz",
+    title: { de: "Die Bilanz.", en: "The balance." },
+    text: {
+      de: "Immer mehr Regeln erfassen alle, die eine Bank oder einen Anbieter nutzen. Was herauskommt, ist klein und kaum gemessen.",
+      en: "More and more rules capture everyone who uses a bank or a provider. What comes of it is small and hardly measured.",
+    },
+    sources: [
+      {
+        label: {
+          de: "Alle Zahlen zum Nachprüfen",
+          en: "Every figure, to check",
+        },
+        href: "#nachpruefen",
       },
     ],
   },
