@@ -1,6 +1,7 @@
 ---
 import {
   chapters,
+  inTodaysMoney,
   lookers,
   pile,
   reportField,
@@ -136,20 +137,27 @@ const ruler = [100, 200, 300, 400].map((pages) => ({
 }))
 
 // ---------- Thresholds ----------------------------------------------------
-const highest = Math.max(...thresholds.map((t) => t.amount))
+// Each amount also in today's money, the scale set by the largest of them:
+// the fall is steeper than the nominal amounts show.
+const real = (t: (typeof thresholds)[number]) => inTodaysMoney(t.amount, t.year)
+const highest = Math.max(...thresholds.map(real))
+const pct = (value: number) => `${((value / highest) * 100).toFixed(2)}%`
 const bars = thresholds.map((t) => ({
   ...t,
   at: at(t.step),
   text: `${n(t.amount)} ${t.unit === "ECU" ? "ECU" : "€"}`,
+  today:
+    real(t) !== t.amount
+      ? `${en ? "In today’s money" : "In heutiger Kaufkraft"} ${n(real(t))} €`
+      : undefined,
   label: t.label[language],
-  style: `--w: ${((t.amount / highest) * 100).toFixed(2)}%`,
+  style: `--w: ${pct(t.amount)}; --r: ${pct(real(t))}`,
 }))
-const thresholdCounts = counts({
-  "schwelle-1991": 15000,
-  "schwelle-2017": 1000,
-  "schwelle-2024": 0,
-  "schwelle-2027": 3000,
-})
+const thresholdCounts = counts(
+  Object.fromEntries(
+    thresholds.filter((t) => !t.cap).map((t) => [t.step, real(t)]),
+  ),
+)
 
 // ---------- Ring ----------------------------------------------------------
 const ring = lookers.map((looker, k) => {
@@ -206,8 +214,8 @@ const sceneNotes: Record<Scene, string> = {
     ? "Every anti-money-laundering act the EU adopted since 1991, repealed ones too, in pages of the Official Journal."
     : "Alle Geldwäsche-Rechtsakte, die die EU seit 1991 beschlossen hat, auch aufgehobene, in Seiten des Amtsblatts.",
   threshold: en
-    ? "From which amount you must show ID. 1991 in ECU, the euro’s forerunner."
-    : "Ab welchem Betrag du dich ausweisen musst. 1991 in ECU, dem Vorläufer des Euro.",
+    ? "From which amount you must show ID. Light bars: the amount in today’s money, by Austria’s consumer price index for 2025. 1991 in ECU, the euro’s forerunner, one to one."
+    : "Ab welchem Betrag du dich ausweisen musst. Helle Balken: der Betrag in heutiger Kaufkraft, nach dem österreichischen Verbraucherpreisindex 2025. 1991 in ECU, dem Vorläufer des Euro, eins zu eins.",
   register: en
     ? "Who may look up the Austrian account register."
     : "Wer im österreichischen Kontenregister nachsehen darf.",
@@ -407,14 +415,9 @@ const tally = [
         <div class="scene" data-scene-id="threshold">
           <p class="big">
             <strong data-counts={thresholdCounts}>{n(15000)}</strong>
-            <span data-only={at("schwelle-1991")}>ECU</span>
             <span
-              data-only={["schwelle-2017", "schwelle-2024", "schwelle-2027"]
-                .map(at)
-                .join(",")}
+              >{en ? "euros in today’s money" : "Euro in heutiger Kaufkraft"}</span
             >
-              {en ? "euros" : "Euro"}
-            </span>
           </p>
           <ul class="steps">
             {bars.map((bar) => (
@@ -425,10 +428,13 @@ const tally = [
               >
                 <span class="steps-year">{bar.year}</span>
                 <span class="steps-track">
+                  {bar.today && <span class="steps-real" />}
                   <span class="steps-bar" />
                 </span>
                 <span class="steps-text">
-                  <strong>{bar.text}</strong> {bar.label}
+                  <strong>{bar.text}</strong>{" "}
+                  {bar.label}
+                  {bar.today && <span class="steps-today">{bar.today}</span>}
                 </span>
               </li>
             ))}
@@ -1411,8 +1417,36 @@ const tally = [
   }
 
   .steps-track {
+    position: relative;
     display: block;
     block-size: 1rem;
+  }
+
+  /* Der Betrag in heutiger Kaufkraft: hell hinter dem damaligen. */
+  .steps-real {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: var(--r);
+    border: 1.5px dashed var(--mid);
+    border-radius: 0 5px 5px 0;
+    background: color-mix(in oklab, var(--bar) 10%, transparent);
+    transform-origin: left;
+    scale: 0 1;
+    transition: scale 1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.25s;
+  }
+
+  .steps li.on .steps-real {
+    scale: 1 1;
+  }
+
+  .steps-bar {
+    position: relative;
+  }
+
+  .steps-today {
+    display: block;
+    color: var(--ink-3);
   }
 
   .steps-bar {

@@ -71,6 +71,40 @@ const europol: Source = {
   href: "https://www.europol.europa.eu/sites/default/files/documents/criminal_asset_recovery_in_the_eu_web_version_0.pdf",
 }
 
+// Austria's consumer price index (VPI 86, 1986 = 100), annual averages, by
+// Statistik Austria, to show past amounts in today's money. 2025 is the
+// last full year. ECU became euro one to one (Regulation (EC) 1103/97,
+// Art. 2), so 1991 amounts convert like euro amounts.
+export const priceIndex: Record<number, number> = {
+  1991: 113.1,
+  2017: 189.9,
+  2025: 255.7,
+}
+export const priceBase = 2025
+export const priceSources: Source[] = [
+  {
+    label: {
+      de: "Statistik Austria, VPI 86",
+      en: "Statistik Austria, CPI 86",
+    },
+    href: "https://www.landesentwicklung.steiermark.at/cms/dokumente/12656747_144433982/914d3cca/6%20vpi86.pdf",
+  },
+  eurlex(
+    "reg/1997/1103",
+    "Verordnung (EG) 1103/97, Art. 2",
+    "Regulation (EC) 1103/97, Art. 2",
+  ),
+]
+// An amount of a past year in money of the base year, rounded so it does
+// not pretend more precision than an index gives.
+export const inTodaysMoney = (amount: number, year: number) => {
+  const index = priceIndex[year]
+  if (!index || year >= priceBase) return amount
+  const value = (amount * priceIndex[priceBase]) / index
+  const step = value >= 10000 ? 100 : 10
+  return Math.round(value / step) * step
+}
+
 const allRules: Source = {
   label: {
     de: "Alle Regeln mit Quellen",
@@ -239,10 +273,13 @@ export const steps: Step[] = [
   {
     id: "schwelle-1991",
     chapter: "schwelle",
-    title: { de: "1991: ab 15.000 ECU.", en: "1991: from 15,000 ECU." },
+    title: {
+      de: "1991: ab 15.000 ECU, heute fast 34.000 Euro.",
+      en: "1991: from 15,000 ECU, almost 34,000 euros today.",
+    },
     text: {
-      de: "Bei einzelnen Geschäften ohne Konto musste man sich erst ab diesem Betrag ausweisen.",
-      en: "For single transactions without an account, you had to show ID only from this amount.",
+      de: "Bei einzelnen Geschäften ohne Konto musste man sich erst ab diesem Betrag ausweisen. In heutiger Kaufkraft sind das rund 33.900 Euro.",
+      en: "For single transactions without an account, you had to show ID only from this amount. In today’s money that is about 33,900 euros.",
     },
     sources: [
       eurlex(
@@ -250,6 +287,7 @@ export const steps: Step[] = [
         "Richtlinie 91/308/EWG, Art. 3",
         "Directive 91/308/EEC, Art. 3",
       ),
+      ...priceSources,
     ],
   },
   {
@@ -257,8 +295,8 @@ export const steps: Step[] = [
     chapter: "schwelle",
     title: { de: "2017: ab 1.000 Euro.", en: "2017: from 1,000 euros." },
     text: {
-      de: "Für Geldtransfers ohne Konto sinkt die Grenze auf 1.000 Euro.",
-      en: "For money transfers without an account, the limit falls to 1,000 euros.",
+      de: "Für Geldtransfers ohne Konto sinkt die Grenze auf 1.000 Euro, heute rund 1.350 Euro: ein Fünfundzwanzigstel von 1991.",
+      en: "For money transfers without an account, the limit falls to 1,000 euros, about 1,350 in today’s money: a twenty-fifth of 1991.",
     },
     sources: [
       eurlex(
@@ -266,6 +304,7 @@ export const steps: Step[] = [
         "Richtlinie (EU) 2015/849, Art. 11",
         "Directive (EU) 2015/849, Art. 11",
       ),
+      priceSources[0],
     ],
   },
   {
