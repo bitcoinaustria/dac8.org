@@ -1,6 +1,8 @@
 ---
+import SourceRefs from "@/components/SourceRefs.astro"
 import { ruleChronicle } from "@/data/aml-history"
 import { historyAsOf, isAhead } from "@/data/history"
+import { historySources } from "@/data/history-sources"
 import {
   chapters,
   inTodaysMoney,
@@ -16,11 +18,12 @@ import type { Language } from "@/lib/i18n"
 // page's data story: the stage stands while the steps scroll past. Each
 // step is a headline of a few words and turns one picture into a contrast
 // you see before you read it: the amount from which you must show ID
-// falling to zero, the rules piling up, six pages beside 488, the ring of
-// authorities around your account, a sea of reports beside a few
-// convictions, and 100 coins of which one is red. Grey is what is
-// collected, red what comes of it or what is new. Without the script the
-// headlines stand as text one below the other.
+// falling to nothing, the rules adding up as a curve that never falls,
+// six pages beside 488, a sea of reports beside a few convictions, and
+// 100 coins of which one is red. Grey is what is collected, red what
+// comes of it or what is new. Each step cites its sources by number from
+// the list at the end of the page (src/data/history-sources.ts). Without
+// the script the headlines stand as text one below the other.
 interface Props {
   language: Language
 }
@@ -29,6 +32,7 @@ const { language } = Astro.props
 const en = language === "en"
 const locale = en ? "en-GB" : "de-DE"
 const n = (value: number) => new Intl.NumberFormat(locale).format(value)
+const { cite } = historySources(language)
 
 const index = new Map(steps.map((step, i) => [step.id, i]))
 const at = (id: string) => {
@@ -202,14 +206,10 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
             data-current={item.i === 0 ? "" : undefined}
           >
             <h3>{item.title[language]}</h3>
-            {item.text && <p class="say-text">{item.text[language]}</p>}
-            <ul class="say-sources">
-              {item.sources.map((source) => (
-                <li>
-                  <a href={source.href}>{source.label[language]}</a>
-                </li>
-              ))}
-            </ul>
+            <p class="say-text">
+              {item.text?.[language]}
+              <SourceRefs sources={cite(item.sources)} language={language} />
+            </p>
           </div>
         ))}
       </div>
@@ -667,34 +667,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
     font-size: var(--type-lead);
     line-height: 1.35;
     text-wrap: pretty;
-  }
-
-  .say-sources {
-    display: flex;
-    gap: 0 var(--space-s);
-    margin: var(--space-3xs) 0 0;
-    padding: 0;
-    overflow-x: auto;
-    font-size: var(--type-meta);
-    list-style: none;
-    scrollbar-width: none;
-  }
-
-  .say-sources li {
-    flex: none;
-  }
-
-  .say-sources a {
-    color: var(--ink-3);
-  }
-
-  .say-sources a::before {
-    content: "↗ ";
-    content: "↗ " / "";
-  }
-
-  .say-sources a:hover {
-    color: var(--ink);
   }
 
   /* ---------- Szenen ---------------------------------------------------- */
@@ -1207,10 +1179,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
 
     .say-text {
       font-size: var(--step--1);
-    }
-
-    .say-sources {
-      font-size: 0.75rem;
     }
 
     .big {

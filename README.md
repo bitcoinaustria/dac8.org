@@ -164,7 +164,12 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   conclusion with the one step to take, and at the end, folded away,
   everything to check: both lines of rules in one chart on one axis, the
   series and texts described next, and the length of the texts
-  (`src/components/LawGrowth.astro`); links into the folded part open it. `src/data/history.ts` holds the tax
+  (`src/components/LawGrowth.astro`); links into the folded part open it.
+  The film and the balance cite their sources as numbers in brackets
+  (`src/components/SourceRefs.astro`); `src/data/history-sources.ts`
+  numbers them in the order a reader meets them, and the page lists them
+  once at its end. Name a source in the text only where the story needs
+  it, such as a quotation. `src/data/history.ts` holds the tax
   chronicle from Directive 77/799/EEC to the pending DAC recast, verified in
   the wiki reference `dac-history-timeline`; `src/data/aml-history.ts` holds
   the anti-money-laundering duties in Austria from the first ID duty in 1994

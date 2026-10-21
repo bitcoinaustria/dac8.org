@@ -396,18 +396,24 @@ export const admissions: {
 // costs and benefit on one scale: the benefit covers more duties than the
 // costs shown.
 const swd2025: Source = {
-  label: { de: "SWD(2025) 365, S. 36–43", en: "SWD(2025) 365, pp. 36–43" },
+  label: {
+    de: "EU-Kommission, SWD(2025) 365, S. 36–43",
+    en: "European Commission, SWD(2025) 365, pp. 36–43",
+  },
   href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex:52025SC0365",
 }
 const swd2026: Source = {
   label: {
-    de: "SWD(2026) 166, S. 1–2, englisch",
-    en: "SWD(2026) 166, pp. 1–2",
+    de: "EU-Kommission, SWD(2026) 166, S. 1–2, englisch",
+    en: "European Commission, SWD(2026) 166, pp. 1–2",
   },
   href: "https://data.consilium.europa.eu/doc/document/ST-11060-2026-ADD-4/en/pdf",
 }
 const swd2022: Source = {
-  label: { de: "SWD(2022) 401, S. 36", en: "SWD(2022) 401, p. 36" },
+  label: {
+    de: "EU-Kommission, SWD(2022) 401, S. 36",
+    en: "European Commission, SWD(2022) 401, p. 36",
+  },
   href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=SWD:2022:401:FIN",
 }
 export const reportingCosts: {

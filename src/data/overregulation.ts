@@ -41,13 +41,16 @@ export type Step = {
 
 const fiu2025: Source = {
   label: {
-    de: "Lagebericht Geldwäsche 2025",
-    en: "Money laundering report 2025",
+    de: "Geldwäschemeldestelle, Lagebericht Geldwäsche 2025",
+    en: "Financial intelligence unit, money laundering report 2025",
   },
   href: "https://www.bundeskriminalamt.at/308/files/374-2026-geldwaeschebericht-2025-a4-v20260915-web-bf.pdf",
 }
 const europol: Source = {
-  label: { de: "Europol 2016", en: "Europol 2016" },
+  label: {
+    de: "Europol, Criminal asset recovery in the EU, 2016",
+    en: "Europol, Criminal asset recovery in the EU, 2016",
+  },
   href: "https://www.europol.europa.eu/sites/default/files/documents/criminal_asset_recovery_in_the_eu_web_version_0.pdf",
 }
 
@@ -87,8 +90,8 @@ export const inTodaysMoney = (amount: number, year: number) => {
 
 const allRules: Source = {
   label: {
-    de: "Alle Regeln mit Quellen",
-    en: "Every rule with its sources",
+    de: "Alle Regeln mit Datum, Inhalt und Primärquellen, im Abschnitt zum Nachprüfen",
+    en: "Every rule with its date, content and primary sources, in the section to check",
   },
   href: "#regeln-title",
 }
@@ -234,7 +237,10 @@ export const steps: Step[] = [
     },
     sources: [
       {
-        label: { de: "Anfragebeantwortung 4756/AB", en: "Answer 4756/AB" },
+        label: {
+          de: "Innenministerium, Anfragebeantwortung 4756/AB (XXIII. GP)",
+          en: "Interior ministry, answer 4756/AB (23rd legislative period)",
+        },
         href: "https://www.parlament.gv.at/dokument/XXIII/AB/4756/fname_141334.pdf",
       },
     ],

@@ -9,6 +9,7 @@ import StatTiles from "@/components/StatTiles.astro"
 import YearColumns from "@/components/YearColumns.astro"
 import { ruleChronicle } from "@/data/aml-history"
 import { historyResearchDate } from "@/data/history"
+import { historySources } from "@/data/history-sources"
 import {
   accountsExchanged,
   accountsSources,
@@ -41,6 +42,7 @@ const label = (source: { label: Record<string, string>; href: string }) => ({
   href: source.href,
 })
 const first = reportsByYear[0]
+const sources = historySources(language).list
 ---
 
 <Layout>
@@ -176,10 +178,25 @@ const first = reportsByYear[0]
         ))}
         </ul>
       </details>
+    </section>
+
+    <section id="quellen" aria-labelledby="quellen-heading">
+      <h2 id="quellen-heading">{en ? "Sources." : "Quellen."}</h2>
+      <ol class="source-list">
+        {sources.map((source) => (
+          <li id={`quelle-${source.n}`}>
+            <span class="source-n">[{source.n}]</span>
+            <span>
+              <a href={source.href}>{source.label}</a>
+              {source.host && <span class="source-host">{source.host}</span>}
+            </span>
+          </li>
+        ))}
+      </ol>
       <p class="history-research">
         {en
-          ? `Research by Bitcoin Austria, as of ${historyResearchDate.en}. Every step, row and chart links to its primary sources.`
-          : `Recherche von Bitcoin Austria, Stand: ${historyResearchDate.de}. Jeder Schritt, jede Zeile und jede Grafik verweist auf ihre Primärquellen.`}
+          ? `Research by Bitcoin Austria, as of ${historyResearchDate.en}. The numbers in brackets lead here; the charts to check carry their own sources.`
+          : `Recherche von Bitcoin Austria, Stand: ${historyResearchDate.de}. Die Nummern in eckigen Klammern führen hierher; die Grafiken zum Nachprüfen tragen ihre eigenen Quellen.`}
       </p>
     </section>
   </article>
@@ -335,6 +352,43 @@ const first = reportsByYear[0]
     .history-check > summary::after {
       transition: none;
     }
+  }
+
+  /* Die Quellen von Film und Bilanz, nummeriert wie die Verweise. */
+  .source-list {
+    columns: 2 22rem;
+    column-gap: var(--space-xl);
+    margin: var(--space-l) 0 0;
+    padding: 0;
+    font-size: var(--type-meta);
+    line-height: 1.4;
+    list-style: none;
+  }
+
+  .source-list li {
+    display: grid;
+    grid-template-columns: 2.4em minmax(0, 1fr);
+    gap: 0.4em;
+    margin: 0 -0.4em var(--space-2xs);
+    padding: 0.2em 0.4em;
+    break-inside: avoid;
+    border-radius: var(--radius-sm);
+    scroll-margin-block-start: calc(var(--header-height) + var(--space-l));
+    transition: background-color 0.6s ease;
+  }
+
+  .source-list li:target {
+    background: color-mix(in oklab, var(--primary) 14%, transparent);
+  }
+
+  .source-n {
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .source-host {
+    display: block;
+    color: var(--ink-3);
   }
 
   .history-research {

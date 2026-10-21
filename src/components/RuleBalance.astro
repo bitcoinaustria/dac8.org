@@ -1,15 +1,14 @@
 ---
+import SourceRefs from "@/components/SourceRefs.astro"
 import {
-  type Source,
   accountsExchanged,
-  accountsSources,
   formatNumber,
   reportingBenefit,
-  reportingCostSources,
   reportingCosts,
 } from "@/data/history-evidence"
+import { balanceSources, historySources } from "@/data/history-sources"
 import { leaks, peopleAffected, roundPeople } from "@/data/leaks"
-import { type Language, pathFor } from "@/lib/i18n"
+import type { Language } from "@/lib/i18n"
 
 interface Props {
   language: Language
@@ -25,10 +24,8 @@ const n = (value: number) => formatNumber(value, language)
 const millions = (value: number) =>
   en ? `€${n(Math.round(value))}m` : `${n(Math.round(value))} Mio. €`
 const percent = (value: number) => (en ? `${n(value)}%` : `${n(value)} %`)
-const label = (source: Source) => ({
-  label: source.label[language],
-  href: source.href,
-})
+const { cite } = historySources(language)
+const cited = balanceSources(language)
 
 // Kosten: each duty adds its yearly cost to those before it.
 let running = 0
@@ -100,11 +97,7 @@ const authorityCount = leaks.filter(atAuthority).length
         {en
           ? "The running cost of three duties to report to the tax office, every year, as the Commission estimates it."
           : "Laufende Kosten von drei Meldepflichten an die Steuer, jedes Jahr, nach Schätzung der Kommission."}
-      </p>
-      <p class="balance-sources">
-        {reportingCostSources.map(label).map((source) => (
-          <a href={source.href}>{source.label}</a>
-        ))}
+        <SourceRefs sources={cite(cited.costs)} language={language} />
       </p>
     </li>
 
@@ -147,16 +140,13 @@ const authorityCount = leaks.filter(atAuthority).length
         {en
           ? `What all exchanged tax data bring a year, as the Commission estimates it: €${n(benefit.billions)} billion.`
           : `So viel bringen alle ausgetauschten Steuerdaten im Jahr, schätzt die Kommission: ${n(benefit.billions)} Milliarden Euro.`}
+        <SourceRefs sources={cite(cited.benefit)} language={language} />
       </p>
       <p class="balance-admission">
         {en
           ? "In 2026 the Commission itself writes that some duties, such as the one for online platforms, produce “large volumes of information which has limited tax relevance”, at “disproportionate compliance costs”."
           : "2026 schreibt die Kommission selbst: Manche Meldepflichten, etwa die für Online-Plattformen, liefern große Mengen an Daten mit geringer steuerlicher Bedeutung, zu unverhältnismäßigen Kosten."}
-      </p>
-      <p class="balance-sources">
-        {benefit.sources.map(label).map((source) => (
-          <a href={source.href}>{source.label}</a>
-        ))}
+        <SourceRefs sources={cite(cited.admission)} language={language} />
       </p>
     </li>
 
@@ -191,11 +181,7 @@ const authorityCount = leaks.filter(atAuthority).length
         {en
           ? "Accounts on which tax authorities worldwide exchange data. What triggers a report is an account abroad, not a suspicion."
           : "Konten, zu denen Steuerbehörden weltweit Daten austauschen. Gemeldet wird, wer ein Konto im Ausland hat, nicht wer verdächtig ist."}
-      </p>
-      <p class="balance-sources">
-        {accountsSources.map(label).map((source) => (
-          <a href={source.href}>{source.label}</a>
-        ))}
+        <SourceRefs sources={cite(cited.captured)} language={language} />
       </p>
     </li>
 
@@ -226,17 +212,14 @@ const authorityCount = leaks.filter(atAuthority).length
             >{en ? `about ${roundPeople(peopleAffected, "en")}` : `rund ${roundPeople(peopleAffected, "de")}`}</b
           >
           {en ? `people affected in ${leaks.length} documented cases` : `Betroffene in ${leaks.length} belegten Fällen`}
+          <SourceRefs sources={cite(cited.cases)} language={language} />
         </p>
       </div>
       <p class="balance-line">
         {en
           ? "In 2019 Bulgaria’s tax authority lost data on more than six million people, including account data from the very exchange DAC8 reports will travel through."
           : "2019 verlor Bulgariens Steuerbehörde Daten von mehr als sechs Millionen Menschen, darunter Kontodaten aus dem Austausch, über den künftig auch DAC8 läuft."}
-      </p>
-      <p class="balance-sources">
-        <a href={pathFor("leaks", language)}
-          >{en ? "Every case with its sources" : "Alle Fälle mit Quellen"}</a
-        >
+        <SourceRefs sources={cite(cited.bulgaria)} language={language} />
       </p>
     </li>
   </ol>
@@ -270,11 +253,11 @@ const authorityCount = leaks.filter(atAuthority).length
 
   .balance-card {
     display: grid;
-    grid-template-rows: auto auto 1fr auto auto;
+    grid-template-rows: auto auto 1fr;
     align-content: start;
     gap: var(--space-s);
     min-inline-size: 0;
-    padding: var(--space-m) var(--space-m) var(--space-s);
+    padding: var(--space-m);
     border-radius: var(--radius);
     background: var(--panel);
   }
@@ -306,21 +289,6 @@ const authorityCount = leaks.filter(atAuthority).length
     font-weight: 560;
     line-height: 1.4;
     text-wrap: pretty;
-  }
-
-  .balance-sources {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.2rem 1rem;
-    font-size: var(--type-meta);
-  }
-
-  .campaign .balance-sources a {
-    color: var(--ink-3);
-  }
-
-  .campaign .balance-sources a:hover {
-    color: var(--ink);
   }
 
   /* ---------- Kosten ---------------------------------------------------- */

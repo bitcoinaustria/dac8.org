@@ -1,0 +1,35 @@
+---
+import { type HistorySource, refsHtml } from "@/data/history-sources"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  sources: HistorySource[]
+  language: Language
+}
+
+// Numbers in brackets that lead to the source list at the end of the
+// page, [3, 7]; hovering a number shows the source's name.
+const { sources, language } = Astro.props
+const html = refsHtml(sources, language)
+---
+
+{sources.length > 0 && <span class="refs" set:html={html} />}
+
+<style>
+  .refs {
+    color: var(--ink-3);
+    font-size: 0.8em;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .refs :global(a) {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .refs :global(a:hover) {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+</style>
