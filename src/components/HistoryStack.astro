@@ -45,7 +45,7 @@ const entryFor = (id: string) => {
   return entry
 }
 
-const { axisStart, ticks, common } = chronicle
+const { axisStart, ticks, commons = [] } = chronicle
 const axisEnd = 2031
 const asOf = new Date(historyAsOf)
 const thisYear = asOf.getUTCFullYear()
@@ -65,8 +65,13 @@ for (const entry of entries.values()) {
     eraOf.set(entry.id, entry.era)
 }
 
-const groups = shown.map((group) => ({
+const groups = shown.map((group, g) => ({
   label: group.label[language],
+  // The line's head, above its first group.
+  domain:
+    !compact && group.domain && group.domain.id !== shown[g - 1]?.domain?.id
+      ? { id: group.domain.id, label: group.domain.label[language] }
+      : undefined,
   rows: group.rows.map((row) => {
     const entry = entryFor(row.id)
     const kind = entry.status
@@ -143,8 +148,8 @@ const columns = Array.from(
 const peak = Math.max(...columns.map((column) => column.count))
 
 const words = {
-  de: "keine eine zwei drei vier fünf sechs sieben acht neun zehn elf zwölf",
-  en: "no one two three four five six seven eight nine ten eleven twelve",
+  de: "keine eine zwei drei vier fünf sechs sieben acht neun zehn elf zwölf dreizehn vierzehn fünfzehn sechzehn siebzehn achtzehn neunzehn zwanzig",
+  en: "no one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty",
 }
 const say = (count: number) =>
   words[language].split(" ")[count] ?? String(count)
@@ -222,6 +227,11 @@ let index = 0
 
   {groups.map((group) => (
     <section class="stack-group" aria-label={group.label}>
+      {group.domain && (
+        <p class="stack-domain" id={group.domain.id}>
+          {group.domain.label}
+        </p>
+      )}
       {!compact && <h4><span>{group.label}</span></h4>}
       <ul>
         {group.rows.map((row) => {
@@ -331,8 +341,11 @@ let index = 0
     {ticks.map((tick) => <span style={`--at: ${x(tick)}`}>{tick}</span>)}
   </div>
 
-  {!compact && common && (
-    <details id={common.id} class="stack-row stack-common">
+  {!compact && commons.map((common, c) => (
+    <details
+      id={common.id}
+      class:list={["stack-row", "stack-common", { follow: c > 0 }]}
+    >
       <summary>
         <span class="stack-line">
           <strong>{common.translations[language].label}</strong>
@@ -358,7 +371,7 @@ let index = 0
         </div>
       </div>
     </details>
-  )}
+  ))}
 
   {research && (
     <>
@@ -893,6 +906,8 @@ let index = 0
     translate: -50% 0;
     color: var(--ink-3);
     line-height: 1;
+    white-space: nowrap;
+    overflow-wrap: normal;
   }
 
   .stack-col.last .stack-count {
@@ -901,6 +916,29 @@ let index = 0
   }
 
   /* ---------- Für alle Regeln und Stand -------------------------------- */
+
+  /* Der Kopf einer Linie, wenn ein Diagramm mehrere trägt: groß, mit
+     Metallkante darüber wie die Kapitel der Geschichte. */
+  .stack-domain {
+    margin-block: var(--space-xl) var(--space-2xs);
+    padding-block-start: var(--space-s);
+    border-image: var(--metal-rule) 1;
+    border-block-start: 3px solid;
+    color: var(--ink);
+    font-size: var(--type-lead);
+    font-weight: var(--weight-heading);
+    line-height: 1.25;
+    scroll-margin-block-start: var(--space-xl);
+  }
+
+  .stack-group:first-of-type .stack-domain {
+    margin-block-start: var(--space-s);
+  }
+
+  .stack-common.follow {
+    margin-block-start: 0;
+    border-block-start: 0;
+  }
 
   .stack-common {
     margin-block-start: var(--space-m);

@@ -153,12 +153,14 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   around your account in the Austrian account register, one dot per
   suspicion report against the convictions, and 100 coins of which one is
   confiscated. Without JavaScript the steps stand as text. Below the film,
-  everything to check: the rows, series and texts described next, and the
-  length of the texts (`src/components/LawGrowth.astro`). `src/data/history.ts` holds the tax
+  everything to check: both lines of rules in one chart on one axis, the
+  series and texts described next, and the length of the texts
+  (`src/components/LawGrowth.astro`). `src/data/history.ts` holds the tax
   chronicle from Directive 77/799/EEC to the pending DAC recast, verified in
   the wiki reference `dac-history-timeline`; `src/data/aml-history.ts` holds
   the anti-money-laundering duties in Austria from the first ID duty in 1994
-  to the 2027 cash cap. Both feed the same chart
+  to the 2027 cash cap; `ruleChronicle` there joins both, each under its
+  own head, so one count adds up what has piled up. They feed the same chart
   (`src/components/HistoryStack.astro`, one row per duty from the year it
   applies, each row opening with its facts and sources), which also has a
   compact mode with only the tax rows about individuals for the home page.

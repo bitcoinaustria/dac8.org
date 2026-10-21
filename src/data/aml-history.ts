@@ -3,6 +3,9 @@ import {
   type Chronicle,
   type Entry,
   eli,
+  history,
+  historyCommon,
+  historyStack,
   type StackGroup,
   same,
 } from "@/data/history"
@@ -40,7 +43,7 @@ const amlr = eli("reg/2024/1624", {
   en: "Regulation (EU) 2024/1624",
 })
 
-export const amlHistory: Entry[] = [
+const amlEntries: Entry[] = [
   {
     id: "fatf-1990",
     status: "context",
@@ -601,6 +604,13 @@ export const amlHistory: Entry[] = [
   },
 ]
 
+// Who has to act, rather than who reports.
+const amlWho = { de: "Wer es tun muss", en: "Who must do it" }
+export const amlHistory: Entry[] = amlEntries.map((entry) => ({
+  ...entry,
+  who: amlWho,
+}))
+
 export const amlStack: StackGroup[] = [
   {
     label: { de: "Bei der Bank", en: "At the bank" },
@@ -698,34 +708,36 @@ export const amlChronicle: Chronicle = {
   id: "geldwaesche",
   entries: amlHistory,
   stack: amlStack,
-  common: {
-    id: "aufbewahrung",
-    translations: {
-      de: {
-        label: "Für alle Pflichten",
-        summary:
-          "Was die Anbieter dafür erfassen, bewahren sie derzeit bis zehn Jahre nach Ende der Kundenbeziehung auf.",
-        text: [
-          "Ausweis, Wallet-Adressen und einzelne Transaktionen bleiben beim Anbieter, derzeit bis zehn Jahre nach Ende der Kundenbeziehung. Behörden bekommen sie bei einer Verdachtsmeldung oder auf Anfrage, etwa im Strafverfahren.",
-        ],
+  commons: [
+    {
+      id: "aufbewahrung",
+      translations: {
+        de: {
+          label: "Für alle Geldwäsche-Pflichten",
+          summary:
+            "Was die Anbieter dafür erfassen, bewahren sie derzeit bis zehn Jahre nach Ende der Kundenbeziehung auf.",
+          text: [
+            "Ausweis, Wallet-Adressen und einzelne Transaktionen bleiben beim Anbieter, derzeit bis zehn Jahre nach Ende der Kundenbeziehung. Behörden bekommen sie bei einer Verdachtsmeldung oder auf Anfrage, etwa im Strafverfahren.",
+          ],
+        },
+        en: {
+          label: "For every AML duty",
+          summary:
+            "What providers record for these duties, they currently keep for up to ten years after the customer relationship ends.",
+          text: [
+            "ID, wallet addresses and individual transactions stay with the provider, currently for up to ten years after the customer relationship ends. Authorities receive them with a suspicion report or on request, for example in criminal proceedings.",
+          ],
+        },
       },
-      en: {
-        label: "For every duty",
-        summary:
-          "What providers record for these duties, they currently keep for up to ten years after the customer relationship ends.",
-        text: [
-          "ID, wallet addresses and individual transactions stay with the provider, currently for up to ten years after the customer relationship ends. Authorities receive them with a suspicion report or on request, for example in criminal proceedings.",
-        ],
-      },
+      sources: [
+        same(
+          "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009769",
+          "FM-GwG § 21",
+          "FM-GwG § 21",
+        ),
+      ],
     },
-    sources: [
-      same(
-        "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009769",
-        "FM-GwG § 21",
-        "FM-GwG § 21",
-      ),
-    ],
-  },
+  ],
   // From 1988, so the first years have room for their labels.
   axisStart: 1988,
   ticks: [1990, 2000, 2010, 2020, 2030],
@@ -740,4 +752,49 @@ export const amlChronicle: Chronicle = {
   noun: { de: "dieser Pflichten", en: "of these duties" },
   sum: { de: "Zusammen, Jahr für Jahr", en: "Together, year by year" },
   who: { de: "Wer es tun muss", en: "Who must do it" },
+}
+
+// Both lines in one chart, on one axis: what tax authorities receive and
+// what anti-money-laundering rules require of banks, providers and their
+// customers. One count adds them up, because together they are what has
+// piled up. Each line keeps its head, so tax reporting and what stays with
+// the provider never read as one.
+const taxDomain = {
+  id: "steuern",
+  label: {
+    de: "Steuern: was Behörden automatisch bekommen",
+    en: "Tax: what authorities receive automatically",
+  },
+}
+const amlDomain = {
+  id: "geldwaesche",
+  label: {
+    de: "Geldwäsche: was Banken und Anbieter prüfen und melden müssen",
+    en: "Money laundering: what banks and providers must check and report",
+  },
+}
+
+export const ruleChronicle: Chronicle = {
+  id: "regeln",
+  entries: [...history, ...amlHistory],
+  stack: [
+    ...historyStack.map((group) => ({ ...group, domain: taxDomain })),
+    ...amlStack.map((group) => ({ ...group, domain: amlDomain })),
+  ],
+  commons: [
+    { id: "gemeinsam", ...historyCommon },
+    ...(amlChronicle.commons ?? []),
+  ],
+  axisStart: 1988,
+  ticks: [1990, 2000, 2010, 2020, 2030],
+  title: {
+    de: "Wie sich die Regeln stapeln",
+    en: "How the rules pile up",
+  },
+  note: {
+    de: "Eine Zeile je Regel, ab dem Jahr, in dem sie gilt; bei der Geldwäsche in Österreich. Jede Zeile öffnet Einzelheiten und Quellen.",
+    en: "One row per rule, from the year it applies; for money laundering, in Austria. Open a row for details and sources.",
+  },
+  noun: { de: "dieser Regeln", en: "of these rules" },
+  sum: { de: "Zusammen, Jahr für Jahr", en: "Together, year by year" },
 }

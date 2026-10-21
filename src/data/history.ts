@@ -52,6 +52,8 @@ export type Source = {
 
 export type Entry = {
   id: string
+  // Label of the "reporters" fact, where it is not who reports.
+  who?: Record<Language, string>
   era?: Era
   status: Status
   year: string
@@ -641,6 +643,9 @@ export type StackRow = {
 // them.
 export type StackGroup = {
   label: Record<Language, string>
+  // The line of rules the group belongs to; the chart heads each line once
+  // where several share one chart.
+  domain?: { id: string; label: Record<Language, string> }
   compact?: boolean
   rows: StackRow[]
 }
@@ -814,7 +819,7 @@ export type Common = {
 export const historyCommon: Common = {
   translations: {
     de: {
-      label: "Für alle Regeln",
+      label: "Für alle Steuerdaten",
       summary:
         "Seit DAC8 dürfen alle diese Daten auch gegen Geldwäsche und Terrorismusfinanzierung verwendet werden.",
       text: [
@@ -823,7 +828,7 @@ export const historyCommon: Common = {
       ],
     },
     en: {
-      label: "For every rule",
+      label: "For all tax data",
       summary:
         "Since DAC8, all of this data may also be used to fight money laundering and terrorist financing.",
       text: [
@@ -856,7 +861,10 @@ export const entriesFor = (
     const facts = [
       { label: en ? "Date" : "Datum", text: text.when },
       text.reporters && {
-        label: who?.[language] ?? (en ? "Who reports" : "Wer meldet"),
+        label:
+          entry.who?.[language] ??
+          who?.[language] ??
+          (en ? "Who reports" : "Wer meldet"),
         text: text.reporters,
       },
       text.austria && {
@@ -894,7 +902,8 @@ export type Chronicle = {
   id: string
   entries: Entry[]
   stack: StackGroup[]
-  common?: Common & { id: string }
+  // Notes below the rows that hold for all of them.
+  commons?: (Common & { id: string })[]
   axisStart: number
   ticks: number[]
   title: Record<Language, string>
@@ -911,7 +920,7 @@ export const taxChronicle: Chronicle = {
   id: "stack",
   entries: history,
   stack: historyStack,
-  common: { id: "gemeinsam", ...historyCommon },
+  commons: [{ id: "gemeinsam", ...historyCommon }],
   axisStart: 2000,
   ticks: [2005, 2010, 2015, 2020, 2030],
   title: {

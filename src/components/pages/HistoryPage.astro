@@ -6,7 +6,7 @@ import LawGrowth from "@/components/LawGrowth.astro"
 import RuleFilm from "@/components/RuleFilm.astro"
 import StatTiles from "@/components/StatTiles.astro"
 import YearColumns from "@/components/YearColumns.astro"
-import { amlChronicle } from "@/data/aml-history"
+import { ruleChronicle } from "@/data/aml-history"
 import { historyResearchDate } from "@/data/history"
 import {
   accountsExchanged,
@@ -66,17 +66,14 @@ const first = reportsByYear[0]
       </h2>
       <p class="section-intro">
         {en
-          ? "Each rule with its date, its content and its primary sources, and the full series behind the film."
-          : "Jede Regel mit Datum, Inhalt und Primärquellen, und die ganzen Reihen hinter dem Film."}
+          ? "Tax and money-laundering rules in one chart, each with its date, content and primary sources, then the full series behind the film."
+          : "Steuer- und Geldwäsche-Regeln in einem Diagramm, jede mit Datum, Inhalt und Primärquellen, danach die ganzen Reihen hinter dem Film."}
       </p>
 
-      <div id="steuern" class="history-chart">
-        <HistoryStack language={language} research={false} />
-      </div>
-      <div id="geldwaesche" class="history-chart">
+      <div class="history-chart">
         <HistoryStack
           language={language}
-          chronicle={amlChronicle}
+          chronicle={ruleChronicle}
           research={false}
         />
       </div>
