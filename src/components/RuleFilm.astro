@@ -148,7 +148,7 @@ const bars = thresholds.map((t) => ({
   text: `${n(t.amount)} ${t.unit === "ECU" ? "ECU" : "€"}`,
   today:
     real(t) !== t.amount
-      ? `${en ? "In today’s money" : "In heutiger Kaufkraft"} ${n(real(t))} €`
+      ? `${en ? "today" : "heute"} ${n(real(t))} €`
       : undefined,
   label: t.label[language],
   style: `--w: ${pct(t.amount)}; --r: ${pct(real(t))}`,
@@ -214,8 +214,8 @@ const sceneNotes: Record<Scene, string> = {
     ? "Every anti-money-laundering act the EU adopted since 1991, repealed ones too, in pages of the Official Journal."
     : "Alle Geldwäsche-Rechtsakte, die die EU seit 1991 beschlossen hat, auch aufgehobene, in Seiten des Amtsblatts.",
   threshold: en
-    ? "From which amount you must show ID. Light bars: the amount in today’s money, by Austria’s consumer price index for 2025. 1991 in ECU, the euro’s forerunner, one to one."
-    : "Ab welchem Betrag du dich ausweisen musst. Helle Balken: der Betrag in heutiger Kaufkraft, nach dem österreichischen Verbraucherpreisindex 2025. 1991 in ECU, dem Vorläufer des Euro, eins zu eins.",
+    ? "Light bars: the amount in today’s money, by Austria’s consumer price index 2025. ECU, the euro’s forerunner, counts one to one."
+    : "Helle Balken: der Betrag in heutiger Kaufkraft, nach dem österreichischen Verbraucherpreisindex 2025. ECU, der Vorläufer des Euro, zählt eins zu eins.",
   register: en
     ? "Who may look up the Austrian account register."
     : "Wer im österreichischen Kontenregister nachsehen darf.",
@@ -986,6 +986,7 @@ const tally = [
   .scene {
     grid-area: 1 / 1;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr) auto;
     gap: var(--space-s);
     min-block-size: 0;
@@ -1085,6 +1086,7 @@ const tally = [
   .rule-pile {
     min-inline-size: 0;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr) auto;
     gap: var(--space-2xs);
     block-size: 100%;
@@ -1449,6 +1451,10 @@ const tally = [
     color: var(--ink-3);
   }
 
+  .steps-today::first-letter {
+    text-transform: uppercase;
+  }
+
   .steps-bar {
     display: block;
     inline-size: max(0.9rem, var(--w));
@@ -1504,7 +1510,7 @@ const tally = [
 
   .ring {
     position: relative;
-    inline-size: min(100cqh - 9rem, 100cqi - 2rem, 34rem);
+    inline-size: min(100cqh - 7rem, 100cqi - 2rem, 34rem);
     aspect-ratio: 1;
   }
 
@@ -1807,21 +1813,107 @@ const tally = [
 
   /* ---------- Schmal ---------------------------------------------------- */
 
+  /* Schmal: das Bild oben und groß, der Satz darunter in einer Leiste
+     fester Höhe, damit das Bild nicht mit jedem Satz springt. */
   @container campaign (width < 60rem) {
+    .view {
+      grid-template-rows: minmax(0, 1fr) auto;
+    }
+
+    .scenes {
+      grid-row: 1;
+    }
+
     .says {
+      grid-row: 2;
       align-content: start;
+      block-size: clamp(9.5rem, 30svh, 12.5rem);
+      padding: var(--space-xs) var(--space-s) var(--space-s);
+      border-block-start: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .say {
+      gap: 0.3rem;
+    }
+
+    .say-kicker {
+      display: none;
     }
 
     .say h3 {
-      font-size: var(--type-h3);
+      max-inline-size: none;
+      font-size: var(--step-1);
+      line-height: 1.15;
     }
 
     .say-text {
-      font-size: var(--type-body);
+      font-size: var(--step--1);
+      line-height: 1.4;
+    }
+
+    .say-sources {
+      flex-wrap: nowrap;
+      margin: 0;
+      overflow-x: auto;
+      font-size: 0.75rem;
+      scrollbar-width: none;
+    }
+
+    .say-sources li {
+      flex: none;
     }
 
     .scene {
-      padding: var(--space-xs) var(--space-s) var(--space-s);
+      gap: var(--space-2xs);
+      padding: var(--space-s) var(--space-s) var(--space-2xs);
+    }
+
+    .scene-note {
+      font-size: 0.6875rem;
+      line-height: 1.35;
+    }
+
+    .steps {
+      align-content: end;
+      gap: var(--space-xs);
+    }
+
+    .steps li {
+      grid-template-columns: 2.6rem minmax(0, 1fr);
+      gap: 0.15rem 0.5rem;
+    }
+
+    .steps-year {
+      font-size: 0.8125rem;
+    }
+
+    .steps-track {
+      block-size: 0.6rem;
+    }
+
+    .steps .zero .steps-bar {
+      inline-size: 0.6rem;
+    }
+
+    .steps-text {
+      font-size: var(--step--1);
+      line-height: 1.25;
+    }
+
+    .steps-today {
+      display: inline;
+      margin-inline-start: 0.4em;
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+    .big strong {
+      font-size: clamp(1.9rem, 9cqi, 3rem);
+    }
+
+    [data-scene-id="threshold"] .scene-note {
+      display: none;
     }
 
     .pile-label {
@@ -1829,14 +1921,20 @@ const tally = [
     }
 
     .ring-chip {
-      max-inline-size: 6.5rem;
-      padding: 0.3em 0.5em;
-      font-size: 0.6875rem;
+      max-inline-size: 5.75rem;
+      padding: 0.25em 0.45em;
+      font-size: 0.625rem;
+    }
+
+    .ring-you {
+      inline-size: 18%;
+      font-size: 0.625rem;
     }
 
     .ring-eu {
-      inset-block-start: -1.75rem;
-      font-size: var(--type-meta);
+      inset-block-start: auto;
+      inset-block-end: -1.5rem;
+      font-size: 0.75rem;
     }
 
     /* Der Satz steht unten über dem Bild, damit kurze Sätze keine Lücke
@@ -1888,7 +1986,17 @@ const tally = [
     .tally strong,
     .tally .red strong {
       flex: none;
-      font-size: clamp(1.15rem, 5cqi, 1.6rem);
+      font-size: clamp(1rem, min(4.6cqi, 5.5cqh), 1.6rem);
+    }
+
+    .tally span {
+      font-size: 0.75rem;
+      line-height: 1.25;
+    }
+
+    .tally-side h4 {
+      padding-block-end: 0.2rem;
+      font-size: 0.6875rem;
     }
 
     [data-scene-id="summary"] .scene-note {
