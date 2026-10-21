@@ -245,12 +245,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
             <strong data-year class="year"
               >{steps[at("regeln-1977")].years?.[0]}</strong
             >
-            <span class="tally"
-              ><b data-rule-count>0</b> {en ? "rules" : "Regeln"}
-              <span data-rule-ahead-wrap hidden
-                >· <b data-rule-ahead>0</b> {en ? "coming" : "kommen"}</span
-              ></span
-            >
           </p>
           <div class="curve" data-curve={curveScale} data-rules={curveRules}>
             <div class="curve-plot">
@@ -262,6 +256,7 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
                   <span>{count}</span>
                 </span>
               ))}
+              <span class="curve-unit">{en ? "rules" : "Regeln"}</span>
               <div class="curve-reveal">
                 <svg viewBox="0 0 1000 500" preserveAspectRatio="none">
                   <path class="curve-area" d={curveEarlyArea} />
@@ -370,9 +365,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
       ahead: boolean
     }[] = JSON.parse(curve?.dataset.rules ?? "[]")
     const yearEl = film.querySelector<HTMLElement>("[data-year]")
-    const countEl = film.querySelector<HTMLElement>("[data-rule-count]")
-    const aheadEl = film.querySelector<HTMLElement>("[data-rule-ahead]")
-    const aheadWrap = film.querySelector<HTMLElement>("[data-rule-ahead-wrap]")
     const parse = (key: string) => JSON.parse(film.dataset[key] ?? "[]")
     const stepScenes: string[] = parse("scenes")
     const stepIds: string[] = parse("ids")
@@ -421,9 +413,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
           !rule.ahead && year <= (rule.until ?? Number.POSITIVE_INFINITY),
       ).length
       const ahead = live.filter((rule) => rule.ahead).length
-      if (countEl) countEl.textContent = String(count)
-      if (aheadEl) aheadEl.textContent = String(ahead)
-      if (aheadWrap) aheadWrap.hidden = ahead === 0
       if (curve && head) {
         const span = scale.endYear + 1 - scale.startYear
         const p = (year + 1 - scale.startYear) / span
@@ -882,6 +871,14 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
     color: var(--ink-3);
     font-size: var(--type-meta);
     white-space: nowrap;
+  }
+
+  .curve-unit {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0.4rem;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
   }
 
   .curve-reveal {

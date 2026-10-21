@@ -167,13 +167,15 @@ export const steps: Step[] = [
     id: "regeln-heute",
     chapter: "regeln",
     years: [1994, 2029],
+    // Only the Savings Directive ever ended, repealed by Directive (EU)
+    // 2015/2060 because the broader DAC2 superseded it.
     title: {
-      de: "Seit 2015: im Schnitt jedes Jahr eine neue Regel.",
-      en: "Since 2015: on average a new rule every year.",
+      de: "Vom Sparbuch bis zum Bargeld: Es kommt nur dazu.",
+      en: "From savings books to cash: rules only get added.",
     },
     text: {
-      de: "Heute gelten 17, und 4 weitere kommen schon.",
-      en: "17 apply today, and 4 more are already coming.",
+      de: "Weggefallen ist seit 1977 eine einzige Regel, für eine umfassendere.",
+      en: "Since 1977 a single rule has gone, for a broader one.",
     },
     sources: [allRules],
   },
