@@ -154,9 +154,14 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   applies, each row opening with its facts and sources), which also has a
   compact mode with only the tax rows about individuals for the home page.
   `src/data/history-evidence.ts` holds the figures on volumes and effect
-  (reports against convictions, audit samples, asset recovery, FATF ratings,
-  the institutions' own words), drawn by `YearColumns`, `UnitGrid` and
-  `ShareBars`; each figure says what it measures and no more. The AML and
+  (reports against convictions, asset recovery, the share of crypto volume
+  traced to criminals, an audit sample of tax data, single figures and the
+  institutions' own words), drawn by `YearColumns`, `UnitGrid` and
+  `StatTiles`. Every effect chart shows the same picture, a large grey mass
+  and a small red remainder for what came of it; each figure says what it
+  measures and no more. The home page repeats the reports against
+  convictions as two bars (`src/components/EffectTeaser.astro`), and the
+  arguments page's reason on growing surveillance cites the same figures. The AML and
   evidence claims are verified in the wiki references
   `aml-kyc-history-austria` and `rule-growth-and-effect-evidence`. Update
   `historyAsOf` in `history.ts` with every content change on the page; it

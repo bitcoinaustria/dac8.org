@@ -3,7 +3,7 @@ import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import HistoryStack from "@/components/HistoryStack.astro"
 import LawGrowth from "@/components/LawGrowth.astro"
-import ShareBars from "@/components/ShareBars.astro"
+import StatTiles from "@/components/StatTiles.astro"
 import UnitGrid from "@/components/UnitGrid.astro"
 import YearColumns from "@/components/YearColumns.astro"
 import { amlChronicle } from "@/data/aml-history"
@@ -11,14 +11,12 @@ import { historyResearchDate } from "@/data/history"
 import {
   accountsExchanged,
   accountsSources,
-  cryptoReviewSources,
   admissions,
   assetRecovery,
   auditSample,
-  fatfRatings,
-  fatfRatingsSource,
+  cryptoIllicit,
+  effectTiles,
   formatNumber,
-  germany,
   reportsByYear,
   reportsByYearSources,
   reportsLatest,
@@ -40,7 +38,6 @@ const label = (source: { label: Record<string, string>; href: string }) => ({
   href: source.href,
 })
 const first = reportsByYear[0]
-const share = (part: number, whole: number) => Math.round((part / whole) * 100)
 ---
 
 <Layout>
@@ -56,8 +53,8 @@ const share = (part: number, whole: number) => Math.round((part / whole) * 100)
         </h1>
         <p class="lead">
           {en
-            ? "Tax authorities have helped each other since 1977, and in Austria you have had to show ID at the bank since 1994. Today banks and platforms report on their customers every year, crypto-asset providers from 2027, and names travel with every crypto transfer through a provider. Where auditors looked, they found hardly any figures on the effect and, for tax data, little use."
-            : "Seit 1977 helfen Steuerbehörden einander, seit 1994 musst du dich in Österreich bei der Bank ausweisen. Heute melden Banken und Plattformen jedes Jahr über ihre Kunden, ab 2027 auch Krypto-Anbieter, und zu jeder Krypto-Übertragung über einen Anbieter reisen Namen mit. Wo Prüfer nachgesehen haben, fanden sie kaum Zahlen zur Wirkung, bei den Steuerdaten wenig Nutzen."}
+            ? "At first it was about single cases. Today rules on tax and money laundering collect data about everyone who uses a bank or a provider. What that achieves, hardly anyone has counted."
+            : "Erst ging es um einzelne Fälle. Heute sammeln Regeln zu Steuern und Geldwäsche Daten über alle, die eine Bank oder einen Anbieter nutzen. Was das bringt, hat kaum jemand nachgezählt."}
         </p>
       </div>
       <LawGrowth language={language} />
@@ -65,12 +62,13 @@ const share = (part: number, whole: number) => Math.round((part / whole) * 100)
 
     <section id="steuern" aria-labelledby="steuern-heading">
       <h2 id="steuern-heading">
-        {en ? "Tax: from single requests to annual reports" : "Steuern: von der Anfrage zur Jahresmeldung"}
+        {en ? "Tax: first on request, " : "Steuern: erst auf Anfrage, "}
+        <span>{en ? "now every year." : "jetzt jedes Jahr."}</span>
       </h2>
       <p class="section-intro">
         {en
-          ? "At first, tax authorities asked each other about single cases. Today data on accounts, pay, platform income and crypto-assets flows automatically, year after year, without any cause."
-          : "Anfangs fragten Steuerbehörden einander zu einzelnen Fällen. Heute fließen Daten über Konten, Löhne, Plattform-Einnahmen und Kryptowerte automatisch, Jahr für Jahr, ohne Anlass."}
+          ? "First tax authorities asked about single cases. Today data on accounts, pay, platform income and crypto-assets flows every year, without any cause."
+          : "Erst fragten Steuerbehörden zu einzelnen Fällen nach. Heute fließen Daten über Konten, Löhne, Plattform-Einnahmen und Kryptowerte jedes Jahr, ohne Anlass."}
       </p>
       <div class="history-chart">
         <HistoryStack language={language} research={false} />
@@ -101,12 +99,13 @@ const share = (part: number, whole: number) => Math.round((part / whole) * 100)
       aria-labelledby="geldwaesche-heading"
     >
       <h2 id="geldwaesche-heading">
-        {en ? "Money laundering: from drug money to every account" : "Geldwäsche: vom Drogengeld zu jedem Konto"}
+        {en ? "Money laundering: first drug money, " : "Geldwäsche: erst Drogengeld, "}
+        <span>{en ? "now every transfer." : "jetzt jede Übertragung."}</span>
       </h2>
       <p class="section-intro">
         {en
-          ? "In 1988, states committed to punishing the laundering of drug money. What followed were duties for every bank and every customer. The rules against money laundering, AML for short, rest on checking the customer, called KYC for “know your customer”: whoever wants an account shows ID, and the bank keeps an eye on them."
-          : "1988 verpflichteten sich Staaten, das Waschen von Drogengeld zu bestrafen. Daraus wurden Pflichten für jede Bank und jeden Kunden. Die Regeln gegen Geldwäsche, kurz AML, beruhen auf der Kundenprüfung, kurz KYC für „Know Your Customer“: Wer ein Konto will, weist sich aus, und die Bank behält ihn im Blick."}
+          ? "In 1988 it was about drug money. Today the rules against money laundering, AML for short, apply to every customer: whoever wants an account shows ID, called KYC for “know your customer”, and every crypto transfer carries names."
+          : "1988 ging es um Drogengeld. Heute gelten die Regeln gegen Geldwäsche, kurz AML, für jeden Kunden: Wer ein Konto will, weist sich aus, kurz KYC für „Know Your Customer“, und jede Krypto-Übertragung trägt Namen."}
       </p>
       <div class="history-chart">
         <HistoryStack
@@ -119,108 +118,27 @@ const share = (part: number, whole: number) => Math.round((part / whole) * 100)
 
     <section id="wirkung" aria-labelledby="wirkung-heading">
       <h2 id="wirkung-heading">
-        {en ? "What the rules achieve" : "Was die Regeln bringen"}
+        {en ? "The reports grow. " : "Die Meldungen wachsen. "}
+        <span
+          >{en ? "The results stay small." : "Die Ergebnisse bleiben klein."}</span
+        >
       </h2>
       <p class="section-intro">
         {en
-          ? "Whether a rule works does not show in the number of reports, but in whether it prevents crime or brings in tax that would otherwise be missing. Hardly anyone measures that. These are the figures there are."
-          : "Ob eine Regel wirkt, zeigt nicht die Zahl der Meldungen, sondern ob sie Verbrechen verhindert oder Steuern einbringt, die sonst fehlen würden. Das misst kaum jemand. Diese Zahlen gibt es."}
+          ? "What the rules achieve is hardly measured. The figures there are all show the same picture: a lot of grey, a small red remainder."
+          : "Was die Regeln bringen, wird kaum gemessen. Die Zahlen, die es gibt, zeigen alle dasselbe Bild: viel Grau, ein kleiner roter Rest."}
       </p>
 
-      <h3>{en ? "Tax data" : "Steuerdaten"}</h3>
-      <div class="history-figures">
-        <UnitGrid
-          language={language}
-          id="stichprobe"
-          title={en
-            ? "What happened to 150 records"
-            : "Was mit 150 Datensätzen geschah"}
-          note={en
-            ? "Sample of the European Court of Auditors: data on bank accounts and income received in 2016 by five Member States. Austria was not among them."
-            : "Stichprobe des Europäischen Rechnungshofs: Daten über Konten und Einkommen, die fünf Mitgliedstaaten 2016 erhielten. Österreich war nicht dabei."}
-          columns={15}
-          parts={[
-            {
-              count: auditSample.notMatched,
-              kind: "faint",
-              label: en
-                ? "not matched to a taxpayer and not uploaded"
-                : "keinem Steuerpflichtigen zugeordnet und nicht in die Datenbanken geladen",
-            },
-            {
-              count: auditSample.disregarded,
-              kind: "mid",
-              label: en
-                ? "matched, then disregarded without risk analysis or reason"
-                : "zugeordnet, dann ohne Risikoanalyse oder Begründung unberücksichtigt",
-            },
-            {
-              count: auditSample.followedUp,
-              kind: "accent",
-              label: en
-                ? "led to further tax-related action"
-                : "führten zu weiteren steuerlichen Maßnahmen",
-            },
-          ]}
-          sources={[label(auditSample.source)]}
-        />
-        <div class="history-facts">
-          <p>
-            {en ? (
-              <>
-                The European Commission puts the benefit of all exchanged tax
-                data at about <strong>6.8 billion euros a year</strong>, about
-                0.3 percent of direct taxes in the EU. It attributes 5.6
-                billion of that to a step for which, in its own words, no data
-                are available.
-              </>
-            ) : (
-              <>
-                Die EU-Kommission schätzt den Nutzen aller ausgetauschten
-                Steuerdaten auf rund <strong>6,8 Milliarden Euro im Jahr</strong>,
-                rund 0,3 Prozent der direkten Steuern in der EU. 5,6 Milliarden
-                davon rechnet sie einem Teil zu, für den es nach eigenen Worten
-                keine Daten gibt.
-              </>
-            )}
-          </p>
-          <p>
-            {en ? (
-              <>
-                Reporting bank accounts alone costs banks about{" "}
-                <strong>550 million euros a year</strong>, around 12 euros per
-                account reported.
-              </>
-            ) : (
-              <>
-                Allein die Kontomeldungen kosten die Banken rund{" "}
-                <strong>550 Millionen Euro im Jahr</strong>, rund 12 Euro je
-                gemeldetem Konto.
-              </>
-            )}
-          </p>
-          <ul class="history-sources">
-            <li>
-              <a
-                href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex:52025SC0365"
-                >{en ? "SWD(2025) 365, pp. 36, 41 and 83" : "SWD(2025) 365, S. 36, 41 und 83"}</a
-              >
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <h3>{en ? "Anti-money-laundering rules" : "Geldwäsche-Regeln"}</h3>
       <div class="history-figures">
         <YearColumns
           language={language}
           id="meldungen"
           title={en
-            ? "Suspicion reports and convictions in Austria"
-            : "Verdachtsmeldungen und Verurteilungen in Österreich"}
+            ? `${n(reportsLatest.received)} suspicion reports, ${n(reportsLatest.convictions)} convictions`
+            : `${n(reportsLatest.received)} Verdachtsmeldungen, ${n(reportsLatest.convictions)} Verurteilungen`}
           note={en
-            ? `Both on one scale. Reports rose from ${n(first.reports)} in ${first.year} to ${n(reportsLatest.received)} in ${reportsLatest.year}; convictions for money laundering stayed in the low hundreds at most. Convictions are not linked to particular reports, and the way reports are counted changed several times; some years include reports from authorities.`
-            : `Beides auf einer Skala. Die Meldungen stiegen von ${n(first.reports)} im Jahr ${first.year} auf ${n(reportsLatest.received)} im Jahr ${reportsLatest.year}; Verurteilungen wegen Geldwäsche blieben höchstens im niedrigen dreistelligen Bereich. Sie lassen sich einzelnen Meldungen nicht zuordnen, und die Zählweise der Meldungen änderte sich mehrmals; manche Jahre schließen Meldungen von Behörden ein.`}
+            ? `Austria, ${first.year} to ${reportsLatest.year}, both on one scale. Convictions for money laundering are not linked to particular reports; the way reports are counted changed several times.`
+            : `Österreich, ${first.year} bis ${reportsLatest.year}, beides auf einer Skala. Verurteilungen wegen Geldwäsche lassen sich einzelnen Meldungen nicht zuordnen; die Zählweise der Meldungen änderte sich mehrmals.`}
           unit={{ de: "Meldungen", en: "reports" }}
           second={{
             de: "Verurteilungen wegen Geldwäsche",
@@ -236,79 +154,13 @@ const share = (part: number, whole: number) => Math.round((part / whole) * 100)
         />
         <UnitGrid
           language={language}
-          id="verbleib"
-          title={en
-            ? `What became of the reports of ${reportsLatest.year}`
-            : `Was aus den Meldungen von ${reportsLatest.year} wurde`}
-          note={en
-            ? `One square stands for 100 reports. ${n(reportsLatest.fromCrypto)} of the ${n(reportsLatest.received)} came from crypto-asset providers.`
-            : `Ein Kästchen steht für 100 Meldungen. ${n(reportsLatest.fromCrypto)} der ${n(reportsLatest.received)} kamen von Krypto-Anbietern.`}
-          columns={20}
-          parts={[
-            {
-              count: reportsLatest.passedOn / 100,
-              figure: n(reportsLatest.passedOn),
-              kind: "accent",
-              label: en
-                ? "passed on to law enforcement, tax and customs authorities or other countries’ units"
-                : "an Strafverfolgung, Steuer- und Zollbehörden oder Meldestellen anderer Staaten weitergegeben",
-            },
-            {
-              count: reportsLatest.keptOnFile / 100,
-              figure: n(reportsLatest.keptOnFile),
-              kind: "mid",
-              label: en
-                ? "kept on file for later analysis, for lack of an initial suspicion of a crime or further leads"
-                : "für spätere Auswertungen gespeichert, mangels Anfangsverdachts, also eines Anhaltspunkts für eine Straftat, oder weiterer Ansätze",
-            },
-          ]}
-          sources={[label(reportsLatest.source)]}
-        />
-        <div class="history-facts">
-          <p>
-            {en ? (
-              <>
-                Germany shows the same pattern: reports rose from{" "}
-                {n(germany.reports2008)} in 2008 to{" "}
-                <strong>{n(germany.reports2025)} in 2025</strong>, though the
-                counting changed several times. Of{" "}
-                {n(germany.feedback)} replies from prosecutors that year,{" "}
-                {n(germany.courtStage)}, about{" "}
-                {share(germany.courtStage, germany.feedback)} percent, concerned
-                a judgment, penalty order, court decision or indictment.
-              </>
-            ) : (
-              <>
-                In Deutschland dasselbe Bild: Die Meldungen stiegen von{" "}
-                {n(germany.reports2008)} im Jahr 2008 auf{" "}
-                <strong>{n(germany.reports2025)} im Jahr 2025</strong>, bei
-                mehrfach geänderter Zählweise. Von{" "}
-                {n(germany.feedback)} Rückmeldungen der Staatsanwaltschaften in
-                diesem Jahr betrafen {n(germany.courtStage)}, rund{" "}
-                {share(germany.courtStage, germany.feedback)} Prozent, ein
-                Urteil, einen Strafbefehl, also eine Strafe ohne Verhandlung,
-                einen Gerichtsbeschluss oder eine
-                Anklage.
-              </>
-            )}
-          </p>
-          <ul class="history-sources">
-            {germany.sources.map((source) => (
-              <li>
-                <a href={source.href}>{source.label[language]}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <UnitGrid
-          language={language}
           id="einziehung"
           title={en
-            ? "Of 100 euros from crime in the EU"
-            : "Von 100 Euro aus Straftaten in der EU"}
+            ? "Of 100 euros from crime, about 1 is confiscated"
+            : "Von 100 Euro aus Straftaten wird rund 1 Euro eingezogen"}
           note={en
-            ? "Europol’s estimate for 2010 to 2014. How much money crime brings in is itself an estimate."
-            : "Schätzung von Europol für 2010 bis 2014. Wie viel Geld Straftaten einbringen, ist selbst geschätzt."}
+            ? "EU, 2010 to 2014, as Europol estimates it. How much crime brings in is itself an estimate."
+            : "EU, 2010 bis 2014, nach Schätzung von Europol. Wie viel Straftaten einbringen, ist selbst geschätzt."}
           columns={10}
           parts={[
             {
@@ -323,7 +175,7 @@ const share = (part: number, whole: number) => Math.round((part / whole) * 100)
               kind: "mid",
               label: en
                 ? "frozen or seized for now, but not confiscated"
-                : "vorläufig eingefroren oder beschlagnahmt, aber nicht eingezogen",
+                : "vorläufig gesichert, aber nicht eingezogen",
             },
             {
               count: assetRecovery.confiscated,
@@ -334,34 +186,80 @@ const share = (part: number, whole: number) => Math.round((part / whole) * 100)
           ]}
           sources={[label(assetRecovery.source)]}
         />
-        <ShareBars
-          id="bewertung"
-          title={en
-            ? "Where the FATF’s assessors found the rules effective"
-            : "Wo die Prüfer der FATF die Regeln wirksam fanden"}
-          note={en
-            ? "Share of 120 evaluated countries rated effective to a high or substantial degree, as of 2021. A rating, not a count of crimes prevented."
-            : "Anteil von 120 geprüften Staaten mit hoher oder erheblicher Wirksamkeit, Stand 2021. Eine Bewertung, keine Zählung verhinderter Verbrechen."}
+        <UnitGrid
           language={language}
-          rows={fatfRatings.map((row) => ({
-            label: row.label[language],
-            share: row.share,
-          }))}
-          sources={[label(fatfRatingsSource)]}
+          id="krypto"
+          title={en
+            ? "Of 100 crypto euros, about 1 goes to criminals or sanctioned entities"
+            : "Von 100 Krypto-Euro geht rund 1 an Kriminelle oder Sanktionierte"}
+          note={en
+            ? "2025, as two analysis firms estimate it; a lower bound. According to the US Treasury, laundering with crypto-assets “remains well below” laundering with ordinary money, and many criminals prefer dollar-pegged stablecoins."
+            : "2025, nach Schätzung zweier Analysefirmen; eine Untergrenze. Laut US-Finanzministerium wird mit Kryptowerten weit weniger Geld gewaschen als mit herkömmlichem Geld, und viele Kriminelle bevorzugen an den Dollar gebundene Stablecoins."}
+          columns={10}
+          parts={[
+            {
+              count: 100 - cryptoIllicit.percent,
+              figure: en ? "about 99 €" : "rund 99 €",
+              kind: "faint",
+              label: en ? "everything else" : "alles andere",
+            },
+            {
+              count: cryptoIllicit.percent,
+              figure: en ? "about 1 €" : "rund 1 €",
+              kind: "accent",
+              label: en
+                ? "to addresses attributed to criminals or sanctioned entities"
+                : "an Adressen, die Kriminellen oder sanktionierten Stellen zugeordnet sind",
+            },
+          ]}
+          sources={cryptoIllicit.sources.map(label)}
+        />
+        <UnitGrid
+          language={language}
+          id="stichprobe"
+          title={en
+            ? "Of 150 tax records, 45 led to any action"
+            : "Von 150 Steuerdatensätzen führten 45 zu einer Maßnahme"}
+          note={en
+            ? "Data on accounts and income received in 2016 by five EU countries, sampled by the European Court of Auditors. Austria was not among them."
+            : "Daten über Konten und Einkommen, die fünf EU-Staaten 2016 erhielten, Stichprobe des Europäischen Rechnungshofs. Österreich war nicht dabei."}
+          columns={15}
+          parts={[
+            {
+              count: auditSample.notMatched,
+              kind: "faint",
+              label: en
+                ? "not matched to a taxpayer"
+                : "keinem Steuerpflichtigen zugeordnet",
+            },
+            {
+              count: auditSample.disregarded,
+              kind: "mid",
+              label: en
+                ? "matched, then left without risk analysis or reason"
+                : "zugeordnet, dann ohne Risikoanalyse oder Begründung liegen gelassen",
+            },
+            {
+              count: auditSample.followedUp,
+              kind: "accent",
+              label: en
+                ? "led to further tax-related action"
+                : "führten zu weiteren steuerlichen Maßnahmen",
+            },
+          ]}
+          sources={[label(auditSample.source)]}
         />
       </div>
-      <p class="prose">
-        {en
-          ? "The European Commission must report on how well the transfer-data rules for crypto-assets work only by 30 June 2027. So far the FATF counts who has introduced them: in 2026, 34 in 100 countries had largely done so, and six in ten countries with a transfer-data law had taken no supervisory action on it yet."
-          : "Wie gut die Regeln zu den Übertragungsdaten bei Kryptowerten wirken, muss die EU-Kommission erst bis 30. Juni 2027 berichten. Die FATF zählt bisher, wer sie eingeführt hat: 2026 hatten 34 von 100 Staaten das weitgehend getan, und sechs von zehn Staaten mit einem Gesetz zu den Übertragungsdaten hatten noch keine Aufsichtsmaßnahme dazu ergriffen."}
-      </p>
-      <ul class="history-sources history-sources-row">
-        {cryptoReviewSources.map((source) => (
-          <li>
-            <a href={source.href}>{source.label[language]}</a>
-          </li>
-        ))}
-      </ul>
+
+      <div class="history-tiles">
+        <StatTiles
+          tiles={effectTiles.map((tile) => ({
+            figure: tile.figure[language],
+            text: tile.text[language],
+            source: label(tile.source),
+          }))}
+        />
+      </div>
 
       <h3>
         {en ? "What the Commission and auditors say themselves" : "Was Kommission und Rechnungshöfe selbst sagen"}
@@ -417,6 +315,10 @@ const share = (part: number, whole: number) => Math.round((part / whole) * 100)
     margin-block-start: var(--space-xl);
   }
 
+  .history-tiles {
+    margin-block-start: var(--space-2xl);
+  }
+
   .history-figure {
     max-inline-size: 44rem;
     margin-block-start: var(--space-2xl);
@@ -441,47 +343,10 @@ const share = (part: number, whole: number) => Math.round((part / whole) * 100)
     }
   }
 
-  .history-facts {
-    display: grid;
-    align-content: start;
-    gap: var(--space-s);
-    max-inline-size: var(--measure-text);
-    color: var(--ink-2);
-    font-size: var(--type-lead);
-    line-height: 1.45;
-    text-wrap: pretty;
-  }
-
-  .history-facts strong {
-    color: var(--ink);
-    font-weight: var(--weight-heading);
-  }
-
-  .history-sources {
-    margin: 0;
-    padding: 0;
-    font-size: var(--type-meta);
-    list-style: none;
-  }
-
-  .history-sources-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 var(--space-s);
-    margin-block-start: var(--space-xs);
-  }
-
-  .history-sources a,
   .admission-who a {
     color: var(--ink-3);
   }
 
-  .history-sources a::before {
-    content: "↗ ";
-    content: "↗ " / "";
-  }
-
-  .history-sources a:hover,
   .admission-who a:hover {
     color: var(--ink);
   }

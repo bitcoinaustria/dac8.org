@@ -314,34 +314,10 @@ export const germany = {
 }
 
 // Assessors' ratings across 120 country evaluations published by December
-// 2021: share rated effective to a high or substantial degree. Ratings, not
-// a measure of crime prevented.
-export const fatfRatings: { id: string; label: Text; share: number }[] = [
-  {
-    id: "io6",
-    label: {
-      de: "Behörden nutzen die Meldungen",
-      en: "Authorities use the reports",
-    },
-    share: 28,
-  },
-  {
-    id: "io8",
-    label: {
-      de: "Behörden ziehen Vermögen ein",
-      en: "Authorities confiscate assets",
-    },
-    share: 19,
-  },
-  {
-    id: "io7",
-    label: {
-      de: "Behörden verfolgen Geldwäsche",
-      en: "Authorities prosecute laundering",
-    },
-    share: 9,
-  },
-]
+// 2021: 9 percent rated effective to a high or substantial degree at
+// investigating and prosecuting laundering (28 percent for using financial
+// intelligence, 19 for confiscation). Ratings, not a measure of crime
+// prevented.
 export const fatfRatingsSource: Source = {
   label: {
     de: "FATF, Report on the State of Effectiveness, 2022",
@@ -426,3 +402,84 @@ export const readingTime = (words: number, language: Language) => {
   const text = formatNumber(hours, language)
   return en ? `${text} hours` : `${text} Stunden`
 }
+
+// Share of crypto-asset volume that analysis firms trace to addresses they
+// attribute to criminals or sanctioned entities, 2025: Chainalysis below one
+// percent, TRM 1.2 percent of their own, different denominators. Vendor
+// lower bounds, revised upward as labels grow; sanctioned entities were a
+// large part. Not a share of people, nor of laundering. The US Treasury's
+// official assessment adds the comparison with ordinary money.
+export const cryptoIllicit = {
+  percent: 1,
+  sources: [
+    {
+      label: {
+        de: "Chainalysis, Crypto Crime Report 2026",
+        en: "Chainalysis, Crypto Crime Report 2026",
+      },
+      href: "https://www.chainalysis.com/blog/2026-crypto-crime-report-introduction/",
+    },
+    {
+      label: {
+        de: "TRM Labs, Crypto Crime Report 2026",
+        en: "TRM Labs, Crypto Crime Report 2026",
+      },
+      href: "https://www.trmlabs.com/reports-and-whitepapers/2026-crypto-crime-report",
+    },
+    {
+      label: {
+        de: "US-Finanzministerium, NMLRA 2026, S. 48",
+        en: "US Treasury, NMLRA 2026, p. 48",
+      },
+      href: "https://home.treasury.gov/system/files/246/2026-NMLRA.pdf",
+    },
+  ] satisfies Source[],
+}
+
+// Single figures beside the charts: one number, one line on what it counts.
+export const effectTiles: {
+  id: string
+  figure: Text
+  text: Text
+  source: Source
+}[] = [
+  {
+    id: "steuernutzen",
+    figure: { de: "0,3 %", en: "0.3%" },
+    text: {
+      de: "der direkten Steuern in der EU bringen alle ausgetauschten Steuerdaten laut Kommission, großteils geschätzt ohne Daten",
+      en: "of direct taxes in the EU is what all exchanged tax data bring, according to the Commission, mostly estimated without data",
+    },
+    source: {
+      label: { de: "SWD(2025) 365, S. 36", en: "SWD(2025) 365, p. 36" },
+      href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex:52025SC0365",
+    },
+  },
+  {
+    id: "deutschland",
+    figure: { de: "4 %", en: "4%" },
+    text: {
+      de: "der Rückmeldungen deutscher Staatsanwaltschaften zu Verdachtsmeldungen betrafen 2025 ein Urteil, eine Anklage oder einen Strafbefehl",
+      en: "of German prosecutors’ replies on suspicion reports concerned a judgment, indictment or penalty order in 2025",
+    },
+    source: germany.sources[1],
+  },
+  {
+    id: "fatf",
+    figure: { de: "9 %", en: "9%" },
+    text: {
+      de: "der von der FATF geprüften Staaten verfolgen Geldwäsche wirksam, nach der Bewertung ihrer Prüfer",
+      en: "of the countries the FATF evaluated prosecute money laundering effectively, as its assessors rate it",
+    },
+    source: fatfRatingsSource,
+  },
+  {
+    id: "krypto-pruefung",
+    figure: { de: "2027", en: "2027" },
+    text: {
+      de: "muss die EU-Kommission erstmals berichten, wie gut die Regeln zu Krypto-Übertragungen wirken",
+      en: "is when the European Commission first has to report how well the crypto transfer rules work",
+    },
+    source: cryptoReviewSources[0],
+  },
+]

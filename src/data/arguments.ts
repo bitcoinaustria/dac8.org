@@ -145,6 +145,14 @@ const registerLaw2015 =
 const registerLaw2026 =
   "https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_2026_I_46/BGBLA_2026_I_46.html"
 const accountRegistries = "https://eur-lex.europa.eu/eli/dir/2024/1640/oj"
+// Report 2025, pp. 29-37: reports received and final convictions for money
+// laundering, which the unit does not link to particular reports.
+const fiuReport2025 =
+  "https://www.bundeskriminalamt.at/308/files/374-2026-geldwaeschebericht-2025-a4-v20260915-web-bf.pdf"
+// 2010 to 2014: about 2.2 percent of estimated criminal proceeds frozen or
+// seized, 1.1 percent finally confiscated.
+const assetRecovery =
+  "https://www.europol.europa.eu/sites/default/files/documents/criminal_asset_recovery_in_the_eu_web_version_0.pdf"
 // Bribed support staff took data from systems they were allowed to use.
 const coinbaseIncident =
   "https://www.sec.gov/Archives/edgar/data/1679788/000167978825000094/coin-20250514.htm"
@@ -487,6 +495,7 @@ export const reasons: Reason[] = [
       proof: [
         "Wie so etwas wächst, zeigt Österreich: Das Kontenregister entstand 2015 im selben Gesetz, das das Bankgeheimnis lockerte. Seit Juli 2026 nutzt es auch das Amt für Betrugsbekämpfung, etwa gegen Sozialbetrug und Scheinfirmen. In Deutschland fragten Gerichtsvollzieher 2013 erst 61.760 Mal ab, wer welche Konten hat, 2023 schon 844.427 Mal.",
         "DAC8 ist ein Baustein unter mehreren: Den Ausweis prüft der Anbieter schon bei der Kontoeröffnung, Absender und Empfänger erfasst er bei jeder Übertragung. Bis 2029 werden die Kontenregister EU-weit vernetzt; sie erfassen dann auch Konten bei Krypto-Anbietern, ohne Kontostände.",
+        "Was das bringt, misst kaum jemand. 2025 gingen in Österreich 13.989 Verdachtsmeldungen ein, und es gab 139 Verurteilungen wegen Geldwäsche; einzelnen Meldungen lassen sie sich nicht zuordnen. Von 100 Euro aus Straftaten in der EU wurden laut Europol für 2010 bis 2014 rund 1,1 Euro endgültig eingezogen.",
       ],
       sources: [
         { href: dac8, label: "Richtlinie (EU) 2023/2226" },
@@ -494,6 +503,8 @@ export const reasons: Reason[] = [
         { href: registerLaw2026, label: "BGBl. I 46/2026" },
         { href: accountLookups, label: "BT-Drucksache 20/10841" },
         { href: accountRegistries, label: "Richtlinie (EU) 2024/1640" },
+        { href: fiuReport2025, label: "Geldwäsche-Lagebericht 2025" },
+        { href: assetRecovery, label: "Europol 2016" },
       ],
     },
     en: {
@@ -503,6 +514,7 @@ export const reasons: Reason[] = [
       proof: [
         "Austria shows how such uses grow: its account register was created in 2015 by the same act that loosened banking secrecy. Since July 2026, the anti-fraud office uses it too, for example against benefit fraud and shell companies. In Germany, bailiffs looked up who holds which accounts 61,760 times in 2013 and 844,427 times in 2023.",
         "DAC8 is one building block among several: the provider checks your ID when you open the account and records the sender and recipient of every transfer. By 2029, account registries will be connected across the EU and will then also cover accounts at crypto-asset providers, without balances.",
+        "What it achieves is hardly measured. In 2025, Austria received 13,989 suspicion reports, and there were 139 convictions for money laundering; the convictions cannot be traced to particular reports. Of 100 euros from crime in the EU, about 1.1 euros were finally confiscated in 2010 to 2014, as Europol estimates it.",
       ],
       sources: [
         { href: dac8, label: "Directive (EU) 2023/2226" },
@@ -510,6 +522,8 @@ export const reasons: Reason[] = [
         { href: registerLaw2026, label: "BGBl. I 46/2026" },
         { href: accountLookups, label: "Bundestag paper 20/10841" },
         { href: accountRegistries, label: "Directive (EU) 2024/1640" },
+        { href: fiuReport2025, label: "Money laundering report 2025" },
+        { href: assetRecovery, label: "Europol 2016" },
       ],
     },
   },

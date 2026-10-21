@@ -67,7 +67,6 @@ const columns = rows.map((row, i) => ({
   // The second value as a share of its own column.
   style: `--h: ${pct(row.value)}; --s: ${(((row.second ?? 0) / row.value) * 100).toFixed(2)}%`,
 }))
-const last = rows.at(-1)
 ---
 
 <figure class="year-columns" aria-labelledby={`${id}-title`}>
@@ -111,13 +110,6 @@ const last = rows.at(-1)
       ))}
     </ol>
   </div>
-
-  {last && last.second !== undefined && secondText && (
-    <p class="columns-end">
-      {last.year}: <strong>{n(last.value)} {unitText}</strong>,{" "}
-      <strong class="second">{n(last.second)} {secondText}</strong>
-    </p>
-  )}
 
   <div class="visually-hidden">
     <table>
@@ -356,20 +348,6 @@ const last = rows.at(-1)
 
   ol > li:is(:hover, :focus-visible) .columns-value {
     visibility: hidden;
-  }
-
-  .columns-end {
-    color: var(--ink-2);
-    font-size: var(--step-0);
-  }
-
-  .columns-end strong {
-    color: var(--ink);
-    font-weight: var(--weight-heading);
-  }
-
-  .columns-end strong.second {
-    color: var(--accent);
   }
 
   .columns-sources {
