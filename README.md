@@ -143,9 +143,18 @@ the participation, proceedings and arguments pages share components; the home pa
 dossier remain explicit Astro documents per language. Source URLs are shared in `src/data/sources.ts`.
 
 - Update `src/data/campaign.ts` when the procedural status changes.
-- The history page (`/geschichte/`, `/en/history/`) tells two lines of rules
-  and what they bring. The hero shows how long the texts have grown
-  (`src/components/LawGrowth.astro`). `src/data/history.ts` holds the tax
+- The history page (`/geschichte/`, `/en/history/`) tells the story of
+  over-regulation as a scroll film (`src/components/RuleFilm.astro`, steps
+  and figures in `src/data/overregulation.ts`), built like the home page's
+  data story: a sticky stage with a chapter rail, the step's sentence as
+  subtitle, and one picture per chapter that changes with each step. The
+  pile of Official Journal pages of EU anti-money-laundering law since 1991,
+  the amount from which you must show ID falling to zero, the authorities
+  around your account in the Austrian account register, one dot per
+  suspicion report against the convictions, and 100 coins of which one is
+  confiscated. Without JavaScript the steps stand as text. Below the film,
+  everything to check: the rows, series and texts described next, and the
+  length of the texts (`src/components/LawGrowth.astro`). `src/data/history.ts` holds the tax
   chronicle from Directive 77/799/EEC to the pending DAC recast, verified in
   the wiki reference `dac-history-timeline`; `src/data/aml-history.ts` holds
   the anti-money-laundering duties in Austria from the first ID duty in 1994
@@ -154,12 +163,10 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   applies, each row opening with its facts and sources), which also has a
   compact mode with only the tax rows about individuals for the home page.
   `src/data/history-evidence.ts` holds the figures on volumes and effect
-  (reports against convictions, asset recovery, the share of crypto volume
-  traced to criminals, an audit sample of tax data, single figures and the
-  institutions' own words), drawn by `YearColumns`, `UnitGrid` and
-  `StatTiles`. Every effect chart shows the same picture, a large grey mass
-  and a small red remainder for what came of it; each figure says what it
-  measures and no more. The home page repeats the reports against
+  (the report and conviction series, accounts exchanged, single figures and
+  the institutions' own words), drawn by `YearColumns` and `StatTiles`. In
+  the film and the charts grey is what is collected and red what comes of
+  it or what is new; each figure says what it measures and no more. The home page repeats the reports against
   convictions as two bars (`src/components/EffectTeaser.astro`), and the
   arguments page's reason on growing surveillance cites the same figures. The AML and
   evidence claims are verified in the wiki references

@@ -3,8 +3,8 @@ import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import HistoryStack from "@/components/HistoryStack.astro"
 import LawGrowth from "@/components/LawGrowth.astro"
+import RuleFilm from "@/components/RuleFilm.astro"
 import StatTiles from "@/components/StatTiles.astro"
-import UnitGrid from "@/components/UnitGrid.astro"
 import YearColumns from "@/components/YearColumns.astro"
 import { amlChronicle } from "@/data/aml-history"
 import { historyResearchDate } from "@/data/history"
@@ -12,9 +12,6 @@ import {
   accountsExchanged,
   accountsSources,
   admissions,
-  assetRecovery,
-  auditSample,
-  cryptoIllicit,
   effectTiles,
   formatNumber,
   reportsByYear,
@@ -23,13 +20,15 @@ import {
 } from "@/data/history-evidence"
 import { languageFor, pathFor } from "@/lib/i18n"
 
-// Two lines of rules and what they bring. The hero shows how long the
-// texts have grown; then the tax reports and the anti-money-laundering
-// duties, each as a chart of what applies year by year; then what audits
-// and the authorities themselves found about the effect. The page never
+// The story of over-regulation and its evidence. A short hero, then the
+// scroll film (src/components/RuleFilm.astro): pages of law piling up, the
+// amount from which you must show ID falling to zero, ever more authorities
+// looking at your account, reports multiplying against few convictions, and
+// the euro or so that comes of it. Below it everything to check: both
+// chronicles row by row with sources, the full series, the length of the
+// texts, single figures and the institutions' own words. The page never
 // argues that a rule would be justified if it worked: it closes on that.
-// In every chart red marks what came of the rules: the records followed
-// up, the reports passed on, the convictions, the money confiscated.
+// In every chart red marks what comes of the rules or what is new.
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
 const n = (value: number) => formatNumber(value, language)
@@ -53,83 +52,36 @@ const first = reportsByYear[0]
         </h1>
         <p class="lead">
           {en
-            ? "At first it was about single cases. Today rules on tax and money laundering collect data about everyone who uses a bank or a provider. What that achieves, hardly anyone has counted."
-            : "Erst ging es um einzelne Fälle. Heute sammeln Regeln zu Steuern und Geldwäsche Daten über alle, die eine Bank oder einen Anbieter nutzen. Was das bringt, hat kaum jemand nachgezählt."}
+            ? "At first it was about single cases. Today rules on tax and money laundering collect data about everyone who uses a bank or a provider. Scroll through how it got here, and what comes of it."
+            : "Erst ging es um einzelne Fälle. Heute sammeln Regeln zu Steuern und Geldwäsche Daten über alle, die eine Bank oder einen Anbieter nutzen. Scroll durch, wie es dazu kam und was dabei herauskommt."}
         </p>
       </div>
-      <LawGrowth language={language} />
     </header>
 
-    <section id="steuern" aria-labelledby="steuern-heading">
-      <h2 id="steuern-heading">
-        {en ? "Tax: first on request, " : "Steuern: erst auf Anfrage, "}
-        <span>{en ? "now every year." : "jetzt jedes Jahr."}</span>
+    <RuleFilm language={language} />
+
+    <section id="nachpruefen" aria-labelledby="nachpruefen-heading">
+      <h2 id="nachpruefen-heading">
+        {en ? "Every figure, to check." : "Alle Zahlen zum Nachprüfen."}
       </h2>
       <p class="section-intro">
         {en
-          ? "First tax authorities asked about single cases. Today data on accounts, pay, platform income and crypto-assets flows every year, without any cause."
-          : "Erst fragten Steuerbehörden zu einzelnen Fällen nach. Heute fließen Daten über Konten, Löhne, Plattform-Einnahmen und Kryptowerte jedes Jahr, ohne Anlass."}
+          ? "Each rule with its date, its content and its primary sources, and the full series behind the film."
+          : "Jede Regel mit Datum, Inhalt und Primärquellen, und die ganzen Reihen hinter dem Film."}
       </p>
-      <div class="history-chart">
+
+      <div id="steuern" class="history-chart">
         <HistoryStack language={language} research={false} />
       </div>
-      <div class="history-figure">
-        <YearColumns
-          language={language}
-          id="konten"
-          title={en
-            ? "Accounts on which tax authorities worldwide exchange data"
-            : "Konten, zu denen Steuerbehörden weltweit Daten austauschen"}
-          note={en
-            ? "In millions, by year of exchange. Reported by the tax administrations themselves; accounts with several holders may count more than once."
-            : "In Millionen, nach Jahr des Austauschs. Von den Steuerverwaltungen selbst gemeldet; Konten mit mehreren Inhabern zählen womöglich mehrfach."}
-          unit={{ de: "Mio. Konten", en: "million accounts" }}
-          rows={accountsExchanged.map((row) => ({
-            year: row.year,
-            value: row.millions,
-          }))}
-          sources={accountsSources.map(label)}
-        />
-      </div>
-    </section>
-
-    <section
-      id="geldwaesche"
-      class="band"
-      aria-labelledby="geldwaesche-heading"
-    >
-      <h2 id="geldwaesche-heading">
-        {en ? "Money laundering: first drug money, " : "Geldwäsche: erst Drogengeld, "}
-        <span>{en ? "now every transfer." : "jetzt jede Übertragung."}</span>
-      </h2>
-      <p class="section-intro">
-        {en
-          ? "In 1988 it was about drug money. Today the rules against money laundering, AML for short, apply to every customer: whoever wants an account shows ID, called KYC for “know your customer”, and every crypto transfer carries names."
-          : "1988 ging es um Drogengeld. Heute gelten die Regeln gegen Geldwäsche, kurz AML, für jeden Kunden: Wer ein Konto will, weist sich aus, kurz KYC für „Know Your Customer“, und jede Krypto-Übertragung trägt Namen."}
-      </p>
-      <div class="history-chart">
+      <div id="geldwaesche" class="history-chart">
         <HistoryStack
           language={language}
           chronicle={amlChronicle}
           research={false}
         />
       </div>
-    </section>
 
-    <section id="wirkung" aria-labelledby="wirkung-heading">
-      <h2 id="wirkung-heading">
-        {en ? "The reports grow. " : "Die Meldungen wachsen. "}
-        <span
-          >{en ? "The results stay small." : "Die Ergebnisse bleiben klein."}</span
-        >
-      </h2>
-      <p class="section-intro">
-        {en
-          ? "What the rules achieve is hardly measured. The figures there are all show the same picture: a lot of grey, a small red remainder."
-          : "Was die Regeln bringen, wird kaum gemessen. Die Zahlen, die es gibt, zeigen alle dasselbe Bild: viel Grau, ein kleiner roter Rest."}
-      </p>
-
-      <div class="history-figures">
+      <div id="wirkung" class="history-figures">
         <YearColumns
           language={language}
           id="meldungen"
@@ -152,103 +104,26 @@ const first = reportsByYear[0]
           breaks={[2009, 2012, 2024, 2025]}
           sources={reportsByYearSources.map(label)}
         />
-        <UnitGrid
+        <YearColumns
           language={language}
-          id="einziehung"
+          id="konten"
           title={en
-            ? "Of 100 euros from crime, about 1 is confiscated"
-            : "Von 100 Euro aus Straftaten wird rund 1 Euro eingezogen"}
+            ? "171 million accounts exchanged worldwide"
+            : "171 Millionen Konten weltweit ausgetauscht"}
           note={en
-            ? "EU, 2010 to 2014, as Europol estimates it. How much crime brings in is itself an estimate."
-            : "EU, 2010 bis 2014, nach Schätzung von Europol. Wie viel Straftaten einbringen, ist selbst geschätzt."}
-          columns={10}
-          parts={[
-            {
-              count: 100 - assetRecovery.seized,
-              figure: `${n(100 - assetRecovery.seized)} €`,
-              kind: "faint",
-              label: en ? "not frozen or seized" : "nicht gesichert",
-            },
-            {
-              count: assetRecovery.seized - assetRecovery.confiscated,
-              figure: `${n(assetRecovery.seized - assetRecovery.confiscated)} €`,
-              kind: "mid",
-              label: en
-                ? "frozen or seized for now, but not confiscated"
-                : "vorläufig gesichert, aber nicht eingezogen",
-            },
-            {
-              count: assetRecovery.confiscated,
-              figure: `${n(assetRecovery.confiscated)} €`,
-              kind: "accent",
-              label: en ? "finally confiscated" : "endgültig eingezogen",
-            },
-          ]}
-          sources={[label(assetRecovery.source)]}
+            ? "Accounts on which tax authorities exchange data, in millions, by year of exchange. Reported by the tax administrations; accounts with several holders may count more than once."
+            : "Konten, zu denen Steuerbehörden Daten austauschen, in Millionen, nach Jahr des Austauschs. Von den Steuerverwaltungen gemeldet; Konten mit mehreren Inhabern zählen womöglich mehrfach."}
+          unit={{ de: "Mio. Konten", en: "million accounts" }}
+          rows={accountsExchanged.map((row) => ({
+            year: row.year,
+            value: row.millions,
+          }))}
+          sources={accountsSources.map(label)}
         />
-        <UnitGrid
-          language={language}
-          id="krypto"
-          title={en
-            ? "Of 100 crypto euros, about 1 goes to criminals or sanctioned entities"
-            : "Von 100 Krypto-Euro geht rund 1 an Kriminelle oder Sanktionierte"}
-          note={en
-            ? "2025, as two analysis firms estimate it; a lower bound. According to the US Treasury, laundering with crypto-assets “remains well below” laundering with ordinary money, and many criminals prefer dollar-pegged stablecoins."
-            : "2025, nach Schätzung zweier Analysefirmen; eine Untergrenze. Laut US-Finanzministerium wird mit Kryptowerten weit weniger Geld gewaschen als mit herkömmlichem Geld, und viele Kriminelle bevorzugen an den Dollar gebundene Stablecoins."}
-          columns={10}
-          parts={[
-            {
-              count: 100 - cryptoIllicit.percent,
-              figure: en ? "about 99 €" : "rund 99 €",
-              kind: "faint",
-              label: en ? "everything else" : "alles andere",
-            },
-            {
-              count: cryptoIllicit.percent,
-              figure: en ? "about 1 €" : "rund 1 €",
-              kind: "accent",
-              label: en
-                ? "to addresses attributed to criminals or sanctioned entities"
-                : "an Adressen, die Kriminellen oder sanktionierten Stellen zugeordnet sind",
-            },
-          ]}
-          sources={cryptoIllicit.sources.map(label)}
-        />
-        <UnitGrid
-          language={language}
-          id="stichprobe"
-          title={en
-            ? "Of 150 tax records, 45 led to any action"
-            : "Von 150 Steuerdatensätzen führten 45 zu einer Maßnahme"}
-          note={en
-            ? "Data on accounts and income received in 2016 by five EU countries, sampled by the European Court of Auditors. Austria was not among them."
-            : "Daten über Konten und Einkommen, die fünf EU-Staaten 2016 erhielten, Stichprobe des Europäischen Rechnungshofs. Österreich war nicht dabei."}
-          columns={15}
-          parts={[
-            {
-              count: auditSample.notMatched,
-              kind: "faint",
-              label: en
-                ? "not matched to a taxpayer"
-                : "keinem Steuerpflichtigen zugeordnet",
-            },
-            {
-              count: auditSample.disregarded,
-              kind: "mid",
-              label: en
-                ? "matched, then left without risk analysis or reason"
-                : "zugeordnet, dann ohne Risikoanalyse oder Begründung liegen gelassen",
-            },
-            {
-              count: auditSample.followedUp,
-              kind: "accent",
-              label: en
-                ? "led to further tax-related action"
-                : "führten zu weiteren steuerlichen Maßnahmen",
-            },
-          ]}
-          sources={[label(auditSample.source)]}
-        />
+      </div>
+
+      <div class="history-law">
+        <LawGrowth language={language} />
       </div>
 
       <div class="history-tiles">
@@ -295,33 +170,25 @@ const first = reportsByYear[0]
       </p>
       <p class="history-research">
         {en
-          ? `Research by Bitcoin Austria, as of ${historyResearchDate.en}. Every row and chart links to its primary sources.`
-          : `Recherche von Bitcoin Austria, Stand: ${historyResearchDate.de}. Jede Zeile und jede Grafik verweist auf ihre Primärquellen.`}
+          ? `Research by Bitcoin Austria, as of ${historyResearchDate.en}. Every step, row and chart links to its primary sources.`
+          : `Recherche von Bitcoin Austria, Stand: ${historyResearchDate.de}. Jeder Schritt, jede Zeile und jede Grafik verweist auf ihre Primärquellen.`}
       </p>
     </section>
   </article>
 </Layout>
 
 <style>
-  /* Text links, die Längen der Regeln rechts daneben. */
-  @container campaign (width >= 56rem) {
-    .hero {
-      grid-template-columns: minmax(0, 7fr) minmax(0, 6fr);
-      align-items: start;
-    }
-  }
-
   .history-chart {
     margin-block-start: var(--space-xl);
   }
 
-  .history-tiles {
+  .history-tiles,
+  .history-law {
     margin-block-start: var(--space-2xl);
   }
 
-  .history-figure {
-    max-inline-size: 44rem;
-    margin-block-start: var(--space-2xl);
+  .history-law {
+    max-inline-size: 52rem;
   }
 
   .campaign > section > h3 {
@@ -333,7 +200,7 @@ const first = reportsByYear[0]
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-xl) var(--space-2xl);
-    margin-block-start: var(--space-l);
+    margin-block-start: var(--space-2xl);
   }
 
   @container campaign (width >= 56rem) {

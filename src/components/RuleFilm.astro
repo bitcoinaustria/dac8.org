@@ -1,0 +1,1393 @@
+---
+import {
+  chapters,
+  lookers,
+  pile,
+  reportField,
+  resultGrids,
+  type Scene,
+  steps,
+  thresholds,
+} from "@/data/overregulation"
+import type { Language } from "@/lib/i18n"
+
+// The story of over-regulation as a scroll film, in the manner of the home
+// page's data story: the stage stands while the steps scroll past, a rail
+// names the chapters, the step's sentence is the subtitle, and one picture
+// per chapter changes with every step. Five pictures: the pile of pages of
+// EU anti-money-laundering law, the falling amount from which you must
+// show ID, the ring of authorities around your account, a field of one dot
+// per suspicion report, and 100 coins of which one is confiscated. Grey is
+// what is collected, red what comes of it or what is new. Without the
+// script, the steps stand as text one below the other.
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+const en = language === "en"
+const locale = en ? "en-GB" : "de-DE"
+const n = (value: number, digits = 0) =>
+  new Intl.NumberFormat(locale, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(value)
+
+const index = new Map(steps.map((step, i) => [step.id, i]))
+const at = (id: string) => {
+  const i = index.get(id)
+  if (i === undefined) throw new Error(`Film: no step "${id}"`)
+  return i
+}
+const sceneOf = new Map(chapters.map((chapter) => [chapter.id, chapter.scene]))
+const items = steps.map((step, i) => {
+  const chapter = chapters.findIndex((c) => c.id === step.chapter)
+  return {
+    ...step,
+    i,
+    scene: sceneOf.get(step.chapter) as Scene,
+    number: chapter + 1,
+    chapterLabel: chapters[chapter].label[language],
+  }
+})
+const firstOf = (chapterId: string) =>
+  items.find((item) => item.chapter === chapterId)?.i ?? 0
+
+// Counters: a value per step, carried forward until the next one.
+const counts = (values: Record<string, number>) =>
+  JSON.stringify(
+    Object.fromEntries(Object.entries(values).map(([id, v]) => [at(id), v])),
+  )
+
+// ---------- Pile -----------------------------------------------------------
+const totalPages = pile.reduce((sum, block) => sum + block.pages, 0)
+let below = 0
+const blocks = pile.map((block, k) => {
+  const style = `--from: ${(below / totalPages).toFixed(4)}; --pages: ${(block.pages / totalPages).toFixed(4)}; --k: ${k}`
+  below += block.pages
+  return { ...block, at: at(block.step), style }
+})
+// One label per step, at the top of what it added.
+const pileSteps = [...new Set(pile.map((block) => block.step))].map((id) => {
+  const added = pile.filter((block) => block.step === id)
+  const top = pile
+    .slice(0, pile.indexOf(added.at(-1) as (typeof pile)[number]) + 1)
+    .reduce((sum, block) => sum + block.pages, 0)
+  const pages = added.reduce((sum, block) => sum + block.pages, 0)
+  const years = [...new Set(added.map((block) => block.year))]
+  return {
+    at: at(id),
+    top,
+    style: `--top: ${(top / totalPages).toFixed(4)}`,
+    years: years.length > 1 ? `${years[0]}–${years.at(-1)}` : `${years[0]}`,
+    pages,
+  }
+})
+const pileCounts = counts(
+  Object.fromEntries(pileSteps.map((s) => [steps[s.at].id, s.top])),
+)
+const pileHeights = JSON.stringify(
+  Object.fromEntries(pileSteps.map((s) => [s.at, s.top / totalPages])),
+)
+const ruler = [100, 200, 300, 400].map((pages) => ({
+  pages,
+  style: `--at: ${(pages / totalPages).toFixed(4)}`,
+}))
+
+// ---------- Thresholds ----------------------------------------------------
+const highest = Math.max(...thresholds.map((t) => t.amount))
+const bars = thresholds.map((t) => ({
+  ...t,
+  at: at(t.step),
+  text: `${n(t.amount)} ${t.unit === "ECU" ? "ECU" : "€"}`,
+  label: t.label[language],
+  style: `--w: ${((t.amount / highest) * 100).toFixed(2)}%`,
+}))
+const thresholdCounts = counts({
+  "schwelle-1991": 15000,
+  "schwelle-2017": 1000,
+  "schwelle-2024": 0,
+  "schwelle-2027": 3000,
+})
+
+// ---------- Ring ----------------------------------------------------------
+const ring = lookers.map((looker, k) => {
+  const angle = (k / lookers.length) * 2 * Math.PI - Math.PI / 2
+  const x = 50 + 36 * Math.cos(angle)
+  const y = 50 + 36 * Math.sin(angle)
+  return {
+    ...looker,
+    at: at(looker.step),
+    label: looker.label[language],
+    x,
+    y,
+    style: `--x: ${x.toFixed(2)}%; --y: ${y.toFixed(2)}%`,
+  }
+})
+// The other 26 member states around Austria once the registers connect.
+const europe = Array.from({ length: 26 }, (_, k) => {
+  const angle = (k / 26) * 2 * Math.PI - Math.PI / 2
+  return {
+    style: `--x: ${(50 + 48 * Math.cos(angle)).toFixed(2)}%; --y: ${(50 + 48 * Math.sin(angle)).toFixed(2)}%; --k: ${k}`,
+  }
+})
+const lookerCounts = counts({
+  "zugriff-2016": 3,
+  "zugriff-2021": 7,
+  "zugriff-2026": 8,
+  "zugriff-2029": 8,
+})
+
+// ---------- Report field --------------------------------------------------
+const { first, latest, convictions, keptOnFile } = reportField
+const side = (count: number) => Math.sqrt(count / latest)
+const perRow = Math.ceil(Math.sqrt(latest))
+const fieldStyle = [
+  `--per-row: ${perRow}`,
+  `--first: ${side(first).toFixed(4)}`,
+  `--red-side: ${side(convictions).toFixed(4)}`,
+  `--kept: ${(keptOnFile / latest).toFixed(4)}`,
+].join("; ")
+const reportCounts = counts({
+  "meldungen-2005": first,
+  "meldungen-2025": latest,
+  "meldungen-urteile": convictions,
+  "meldungen-gespeichert": keptOnFile,
+})
+
+// ---------- Coins and records ---------------------------------------------
+const coins = Array.from({ length: 100 }, (_, k) => k)
+const records = Array.from({ length: resultGrids.records.total }, (_, k) => k)
+const seizedCoins = Math.round(resultGrids.seized)
+
+const sceneNotes: Record<Scene, string> = {
+  tower: en
+    ? "Every anti-money-laundering act the EU adopted since 1991, repealed ones too, in pages of the Official Journal."
+    : "Alle Geldwäsche-Rechtsakte, die die EU seit 1991 beschlossen hat, auch aufgehobene, in Seiten des Amtsblatts.",
+  threshold: en
+    ? "From which amount you must show ID. 1991 in ECU, the euro’s forerunner."
+    : "Ab welchem Betrag du dich ausweisen musst. 1991 in ECU, dem Vorläufer des Euro.",
+  register: en
+    ? "Who may look up the Austrian account register."
+    : "Wer im österreichischen Kontenregister nachsehen darf.",
+  reports: en
+    ? "One dot per suspicion report in Austria."
+    : "Ein Punkt je Verdachtsmeldung in Österreich.",
+  money: en ? "One coin per euro." : "Eine Münze je Euro.",
+}
+---
+
+<section
+  class="film"
+  aria-labelledby="film-title"
+  data-film
+  data-locale={locale}
+  data-scenes={JSON.stringify(items.map((item) => item.scene))}
+  data-chapters={JSON.stringify(items.map((item) => item.chapter))}
+  data-ids={JSON.stringify(items.map((item) => item.id))}
+>
+  <h2 id="film-title" class="visually-hidden">
+    {en ? "The story of over-regulation" : "Die Geschichte der Überregulierung"}
+  </h2>
+
+  <div class="track" aria-hidden="true">
+    {items.map((item) => (
+      <div class="spacer" id={`film-${item.id}`} data-spacer={item.i} />
+    ))}
+  </div>
+
+  <div class="stage">
+    <nav class="rail" aria-label={en ? "Chapters" : "Kapitel"}>
+      <ol>
+        {chapters.map((chapter, k) => (
+          <li>
+            <a href={`#film-${steps[firstOf(chapter.id)].id}`} data-chapter={chapter.id}>
+              <span>{k + 1}</span> {chapter.label[language]}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <div class="view" data-view data-scene={items[0].scene}>
+      <div class="says">
+        {items.map((item) => (
+          <div class="say" data-say={item.i} data-current={item.i === 0 ? "" : undefined}>
+            <p class="say-kicker">
+              {item.number} · {item.chapterLabel}
+            </p>
+            <h3>{item.title[language]}</h3>
+            <p class="say-text">{item.text[language]}</p>
+            <ul class="say-sources">
+              {item.sources.map((source) => (
+                <li>
+                  <a href={source.href}>{source.label[language]}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <div class="scenes" aria-hidden="true">
+        <!-- Pile of pages -->
+        <div class="scene" data-scene-id="tower">
+          <p class="big">
+            <strong data-counts={pileCounts}>{n(pile[0].pages)}</strong>
+            <span>{en ? "pages" : "Seiten"}</span>
+          </p>
+          <div class="pile-wrap">
+            <div
+              class="pile"
+              data-pile
+              style={`--pile: ${(pile[0].pages / totalPages).toFixed(4)}`}
+              data-heights={pileHeights}
+            >
+              {ruler.map((mark) => (
+                <span class="pile-mark" style={mark.style}>{mark.pages}</span>
+              ))}
+              {blocks.map((block) => (
+                <span
+                  class="sheet"
+                  data-at={block.at}
+                  data-fresh={block.at}
+                  style={block.style}
+                />
+              ))}
+              <span class="pile-top" />
+              {pileSteps.map((label) => (
+                <span class="pile-label" data-only={label.at} style={label.style}>
+                  <strong>+{label.pages}</strong> {label.years}
+                </span>
+              ))}
+            </div>
+          </div>
+          <p class="scene-note">{sceneNotes.tower}</p>
+        </div>
+
+        <!-- Thresholds -->
+        <div class="scene" data-scene-id="threshold">
+          <p class="big">
+            <strong data-counts={thresholdCounts}>{n(15000)}</strong>
+            <span data-only={at("schwelle-1991")}>ECU</span>
+            <span
+              data-only={["schwelle-2017", "schwelle-2024", "schwelle-2027"]
+                .map(at)
+                .join(",")}
+            >
+              {en ? "euros" : "Euro"}
+            </span>
+          </p>
+          <ul class="steps">
+            {bars.map((bar) => (
+              <li
+                class:list={{ zero: bar.amount === 0, cap: bar.cap }}
+                data-at={bar.at}
+                style={bar.style}
+              >
+                <span class="steps-year">{bar.year}</span>
+                <span class="steps-track">
+                  <span class="steps-bar" />
+                </span>
+                <span class="steps-text">
+                  <strong>{bar.text}</strong> {bar.label}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p class="scene-note">{sceneNotes.threshold}</p>
+        </div>
+
+        <!-- Ring of authorities -->
+        <div class="scene" data-scene-id="register">
+          <p class="big">
+            <strong data-counts={lookerCounts}>3</strong>
+            <span>{en ? "groups of authorities" : "Behördengruppen"}</span>
+          </p>
+          <div class="ring-wrap">
+            <div class="ring">
+              <svg viewBox="0 0 100 100" class="ring-lines">
+                <circle
+                  class="ring-europe"
+                  cx="50"
+                  cy="50"
+                  r="48"
+                  data-at={at("zugriff-2029")}
+                />
+                {ring.map((looker) => (
+                  <line x1="50" y1="50" x2={looker.x} y2={looker.y} data-at={looker.at} />
+                ))}
+              </svg>
+              {europe.map((dot) => (
+                <span class="ring-state" style={dot.style} data-at={at("zugriff-2029")} />
+              ))}
+              <span class="ring-you">{en ? "Your account" : "Dein Konto"}</span>
+              {ring.map((looker) => (
+                <span class="ring-chip" style={looker.style} data-at={looker.at}>
+                  {looker.label}
+                </span>
+              ))}
+              <span class="ring-eu" data-at={at("zugriff-2029")}>
+                {en ? "+ 26 EU countries" : "+ 26 EU-Staaten"}
+              </span>
+            </div>
+          </div>
+          <p class="scene-note">{sceneNotes.register}</p>
+        </div>
+
+        <!-- Field of reports -->
+        <div class="scene" data-scene-id="reports">
+          <p class="big">
+            <strong data-counts={reportCounts}>{n(first)}</strong>
+            <span data-only={`${at("meldungen-2005")},${at("meldungen-2025")}`}>
+              {en ? "reports" : "Meldungen"}
+            </span>
+            <span class="red" data-only={at("meldungen-urteile")}>
+              {en ? "convictions" : "Verurteilungen"}
+            </span>
+            <span data-only={at("meldungen-gespeichert")}>
+              {en ? "kept on file" : "gespeichert"}
+            </span>
+          </p>
+          <div class="field-wrap">
+            <div class="field" style={fieldStyle}>
+              <span class="field-all" data-at={at("meldungen-2025")} />
+              <span class="field-kept" data-at={at("meldungen-gespeichert")} />
+              <span class="field-first" data-only={at("meldungen-2005")} />
+              <span class="field-red" data-at={at("meldungen-urteile")} />
+            </div>
+          </div>
+          <p class="scene-note">{sceneNotes.reports}</p>
+        </div>
+
+        <!-- Coins and records -->
+        <div class="scene" data-scene-id="money">
+          <p class="big">
+            <strong data-only={at("ergebnis-gesichert")}
+              >{n(resultGrids.seized, 2)}
+              €</strong
+            >
+            <strong class="red" data-only={at("ergebnis-eingezogen")}
+              >{n(resultGrids.confiscated, 2)}
+              €</strong
+            >
+            <strong class="red" data-only={at("ergebnis-krypto")}
+              >{en ? "about 1 €" : "rund 1 €"}</strong
+            >
+            <strong class="red" data-only={at("ergebnis-steuer")}>45</strong>
+            <span
+              data-only={`${at("ergebnis-gesichert")},${at("ergebnis-eingezogen")}`}
+            >
+              {en ? "of 100 euros" : "von 100 Euro"}
+            </span>
+            <span data-only={at("ergebnis-krypto")}
+              >{en ? "of 100 crypto euros" : "von 100 Krypto-Euro"}</span
+            >
+            <span data-only={at("ergebnis-steuer")}
+              >{en ? "of 150 records" : "von 150 Datensätzen"}</span
+            >
+          </p>
+          <div class="grids">
+            <div
+              class="coins"
+              data-only={`${at("ergebnis-gesichert")},${at("ergebnis-eingezogen")},${at("ergebnis-krypto")}`}
+            >
+              {coins.map((k) => (
+                <span
+                  class:list={[
+                    "coin",
+                    {
+                      seized: k >= 100 - seizedCoins,
+                      confiscated: k === 99,
+                    },
+                  ]}
+                />
+              ))}
+            </div>
+            <div class="records" data-only={at("ergebnis-steuer")}>
+              {records.map((k) => (
+                <span
+                  class:list={[
+                    "record",
+                    { followed: k >= records.length - resultGrids.records.followedUp },
+                  ]}
+                />
+              ))}
+            </div>
+          </div>
+          <p class="scene-note">{sceneNotes.money}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // The step whose spacer has crossed the middle of the window is current:
+  // it picks the scene, the subtitle and the chapter, switches on what has
+  // appeared so far ([data-at]) or only now ([data-only]), and counts the
+  // big figure towards its value for this step.
+  for (const film of document.querySelectorAll<HTMLElement>("[data-film]")) {
+    const view = film.querySelector<HTMLElement>("[data-view]")
+    const pile = film.querySelector<HTMLElement>("[data-pile]")
+    if (!view) continue
+    const spacers = [...film.querySelectorAll<HTMLElement>("[data-spacer]")]
+    const says = [...film.querySelectorAll<HTMLElement>("[data-say]")]
+    const ats = [
+      ...film.querySelectorAll<HTMLElement | SVGElement>("[data-at]"),
+    ]
+    const onlys = [...film.querySelectorAll<HTMLElement>("[data-only]")]
+    const freshes = [...film.querySelectorAll<HTMLElement>("[data-fresh]")]
+    const links = [
+      ...film.querySelectorAll<HTMLAnchorElement>("[data-chapter]"),
+    ]
+    const counters = [...film.querySelectorAll<HTMLElement>("[data-counts]")]
+    const stepIds = JSON.parse(film.dataset.ids ?? "[]") as string[]
+    const stepScenes = JSON.parse(film.dataset.scenes ?? "[]") as string[]
+    const stepChapters = JSON.parse(film.dataset.chapters ?? "[]") as string[]
+    const heights = JSON.parse(pile?.dataset.heights ?? "{}") as Record<
+      string,
+      number
+    >
+    const locale = film.dataset.locale ?? "de-DE"
+    const motion = matchMedia("(prefers-reduced-motion: reduce)")
+    const format = (value: number) =>
+      new Intl.NumberFormat(locale).format(Math.round(value))
+
+    const valueAt = (map: Record<string, number>, i: number) => {
+      let value: number | undefined
+      for (let k = 0; k <= i; k++) if (k in map) value = map[k]
+      return value
+    }
+
+    const tween = (el: HTMLElement, to: number) => {
+      const from = Number(el.dataset.value ?? to)
+      el.dataset.value = String(to)
+      el.classList.toggle("zero", to === 0)
+      if (motion.matches || from === to) {
+        el.textContent = format(to)
+        return
+      }
+      const start = performance.now()
+      const run = (now: number) => {
+        const t = Math.min(1, (now - start) / 700)
+        const eased = 1 - (1 - t) ** 3
+        el.textContent = format(from + (to - from) * eased)
+        if (t < 1 && el.dataset.value === String(to)) requestAnimationFrame(run)
+      }
+      requestAnimationFrame(run)
+    }
+
+    let current = -1
+    const show = (i: number) => {
+      current = i
+      view.dataset.scene = stepScenes[i]
+      view.dataset.stepId = stepIds[i]
+      for (const say of says)
+        say.toggleAttribute("data-current", Number(say.dataset.say) === i)
+      for (const el of ats)
+        el.classList.toggle("on", Number(el.dataset.at) <= i)
+      for (const el of onlys)
+        el.classList.toggle(
+          "on",
+          (el.dataset.only ?? "").split(",").map(Number).includes(i),
+        )
+      for (const el of freshes)
+        el.classList.toggle("fresh", Number(el.dataset.fresh) === i)
+      for (const link of links) {
+        const here = link.dataset.chapter === stepChapters[i]
+        if (here && !link.hasAttribute("aria-current")) {
+          const list = link.closest("ol")
+          list?.scrollTo({
+            left: link.offsetLeft - (list.clientWidth - link.offsetWidth) / 2,
+            behavior: motion.matches ? "auto" : "smooth",
+          })
+        }
+        if (here) link.setAttribute("aria-current", "step")
+        else link.removeAttribute("aria-current")
+      }
+      for (const el of counters) {
+        const value = valueAt(JSON.parse(el.dataset.counts ?? "{}"), i)
+        if (value !== undefined) tween(el, value)
+      }
+      const height = valueAt(heights, i)
+      if (pile && height !== undefined)
+        pile.style.setProperty("--pile", String(height))
+    }
+
+    let queued = false
+    const render = () => {
+      queued = false
+      const middle = window.innerHeight * 0.55
+      let i = 0
+      spacers.forEach((spacer, k) => {
+        if (spacer.getBoundingClientRect().top <= middle) i = k
+      })
+      if (i !== current) show(i)
+      const box = film.getBoundingClientRect()
+      document.documentElement.toggleAttribute(
+        "data-immersive",
+        box.top <= window.innerHeight * 0.2 && box.bottom >= window.innerHeight,
+      )
+    }
+    const queue = () => {
+      if (queued) return
+      queued = true
+      requestAnimationFrame(render)
+    }
+    for (const el of counters)
+      el.dataset.value = el.textContent?.replace(/\D/g, "") ?? "0"
+    window.addEventListener("scroll", queue, { passive: true })
+    window.addEventListener("resize", queue)
+    film.toggleAttribute("data-ready", true)
+    render()
+  }
+</script>
+
+<style>
+  /* Wie die Datengeschichte der Startseite: die Bühne füllt das Fenster und
+     steht, während die Schritte vorbeiziehen. Der Weg je Schritt wächst mit
+     der Fensterhöhe, aber nur bis zu einem 76rem hohen Fenster. */
+  .film {
+    --pace: min(1svh, 0.76rem);
+    --bar: light-dark(#3b4147, #a7afb6);
+    --faint: color-mix(in oklab, var(--bar) 16%, transparent);
+    --mid: color-mix(in oklab, var(--bar) 45%, transparent);
+    --red: var(--primary);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .track,
+  .stage {
+    grid-area: 1 / 1;
+  }
+
+  .track {
+    padding-block: calc(50svh - var(--header-height) / 2 - 40 * var(--pace))
+      calc(20 * var(--pace));
+  }
+
+  .spacer {
+    block-size: calc(80 * var(--pace));
+    scroll-margin-block-start: calc(var(--header-height) - 30 * var(--pace));
+  }
+
+  .stage {
+    position: sticky;
+    inset-block-start: var(--header-height);
+    align-self: start;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: var(--space-xs);
+    block-size: calc(100dvh - var(--header-height));
+    padding-block: var(--space-xs) var(--space-s);
+  }
+
+  /* Ohne Skript stehen die Schritte als Text untereinander. */
+  .film:not([data-ready]) .track,
+  .film:not([data-ready]) .scenes,
+  .film:not([data-ready]) .rail {
+    display: none;
+  }
+
+  .film:not([data-ready]) .stage {
+    position: static;
+    block-size: auto;
+  }
+
+  .film:not([data-ready]) .says {
+    gap: var(--space-xl);
+  }
+
+  .film:not([data-ready]) .say {
+    grid-area: auto;
+  }
+
+  /* ---------- Kapitel-Leiste -------------------------------------------- */
+
+  .rail {
+    border-block-end: 1px solid var(--line);
+  }
+
+  .rail ol {
+    display: flex;
+    gap: var(--space-2xs);
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    list-style: none;
+    scrollbar-width: none;
+  }
+
+  .rail a {
+    display: block;
+    padding: 0.55rem 0.5rem 0.6rem;
+    color: var(--muted-foreground);
+    font-size: var(--step--1);
+    white-space: nowrap;
+    text-decoration: none;
+    box-shadow: inset 0 -2px transparent;
+    transition:
+      color 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .rail a span {
+    font-weight: var(--weight-heading);
+  }
+
+  .rail a:hover {
+    color: var(--foreground);
+  }
+
+  .rail a[aria-current] {
+    color: var(--foreground);
+    box-shadow: inset 0 -2px var(--accent);
+  }
+
+  /* ---------- Bühne ----------------------------------------------------- */
+
+  /* Eine helle Fläche: am breiten Schirm der Satz links, das Bild rechts;
+     schmal der Satz oben. */
+  .view {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    min-block-size: 0;
+    border-radius: var(--radius-xl);
+    background: var(--panel);
+    overflow: clip;
+  }
+
+  @container campaign (width >= 60rem) {
+    .view {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      grid-template-rows: minmax(0, 1fr);
+    }
+  }
+
+  .says {
+    display: grid;
+    align-content: center;
+    padding: var(--space-m) var(--space-m) 0;
+  }
+
+  @container campaign (width >= 60rem) {
+    .says {
+      padding: var(--space-xl);
+    }
+  }
+
+  .say {
+    grid-area: 1 / 1;
+    display: grid;
+    align-content: start;
+    gap: var(--space-2xs);
+    transition:
+      opacity 0.35s ease,
+      translate 0.35s ease;
+  }
+
+  .film[data-ready] .say:not([data-current]) {
+    visibility: hidden;
+    opacity: 0;
+    translate: 0 0.75rem;
+  }
+
+  .say-kicker {
+    color: var(--accent);
+    font-size: var(--type-meta);
+    font-weight: var(--weight-heading);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .say h3 {
+    max-inline-size: 18ch;
+    color: var(--foreground);
+    font-size: var(--type-h2);
+    font-stretch: 94%;
+    font-weight: var(--weight-heading);
+    line-height: 1.05;
+    letter-spacing: -0.024em;
+    text-wrap: balance;
+  }
+
+  .say-text {
+    max-inline-size: 46ch;
+    color: var(--ink-2);
+    font-size: var(--type-lead);
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  .say-sources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-s);
+    margin: var(--space-3xs) 0 0;
+    padding: 0;
+    font-size: var(--type-meta);
+    list-style: none;
+  }
+
+  .say-sources a {
+    color: var(--ink-3);
+  }
+
+  .say-sources a::before {
+    content: "↗ ";
+    content: "↗ " / "";
+  }
+
+  .say-sources a:hover {
+    color: var(--ink);
+  }
+
+  /* ---------- Szenen ---------------------------------------------------- */
+
+  .scenes {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    min-block-size: 0;
+    container-type: size;
+  }
+
+  .scene {
+    grid-area: 1 / 1;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: var(--space-s);
+    min-block-size: 0;
+    padding: var(--space-m);
+    opacity: 0;
+    visibility: hidden;
+    scale: 0.97;
+    transition:
+      opacity 0.5s ease,
+      scale 0.5s ease,
+      visibility 0.5s;
+  }
+
+  .view[data-scene="tower"] [data-scene-id="tower"],
+  .view[data-scene="threshold"] [data-scene-id="threshold"],
+  .view[data-scene="register"] [data-scene-id="register"],
+  .view[data-scene="reports"] [data-scene-id="reports"],
+  .view[data-scene="money"] [data-scene-id="money"] {
+    opacity: 1;
+    visibility: visible;
+    scale: 1;
+  }
+
+  .scene-note {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    text-wrap: pretty;
+  }
+
+  /* Die große Zahl der Szene, gezählt. */
+  .big {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.4em;
+    color: var(--ink-2);
+    font-size: var(--type-lead);
+    line-height: 1;
+  }
+
+  .big strong {
+    color: var(--foreground);
+    font-size: clamp(2.75rem, 1.5rem + 5cqi, 5.5rem);
+    font-stretch: 94%;
+    font-weight: var(--weight-heading);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .big .red,
+  .big strong.red,
+  .big strong.zero {
+    color: var(--accent);
+  }
+
+  .big [data-only]:not(.on) {
+    display: none;
+  }
+
+  /* ---------- Papierstapel ---------------------------------------------- */
+
+  .pile-wrap {
+    display: grid;
+    place-items: end center;
+    min-block-size: 0;
+  }
+
+  .pile {
+    position: relative;
+    inline-size: min(15rem, 46cqi);
+    block-size: 100%;
+    max-block-size: 34rem;
+  }
+
+  /* Seitenmaß links: alle 100 Seiten ein Strich. */
+  .pile-mark {
+    position: absolute;
+    inset-inline-end: calc(100% + 0.75rem);
+    inset-block-end: calc(var(--at) * 100%);
+    translate: 0 50%;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    white-space: nowrap;
+  }
+
+  .pile-mark::after {
+    content: "";
+    position: absolute;
+    inset-inline-start: calc(100% + 0.3rem);
+    inset-block-start: 50%;
+    inline-size: 0.4rem;
+    border-block-start: 1px solid var(--line);
+  }
+
+  /* Jeder Rechtsakt ein Bündel Blätter; die Kanten sind feine Linien. */
+  .sheet {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: calc(var(--from) * 100%);
+    block-size: calc(var(--pages) * 100%);
+    --edge: color-mix(in oklab, var(--bar) 30%, var(--paper));
+    border-inline: 1px solid var(--material-edge);
+    background-color: var(--paper);
+    background-image: linear-gradient(
+      to top,
+      var(--edge) 0 1px,
+      transparent 1px
+    );
+    background-size: 100% 4px;
+    box-shadow: 0 1px 0 var(--material-shade);
+    translate: calc((var(--k) - 3.5) * 0.18rem) 0;
+    transform-origin: bottom;
+    scale: 1 0;
+    transition: scale 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .sheet.on {
+    scale: 1 1;
+  }
+
+  /* Was dieser Schritt dazulegt, mit roter Kante. */
+  .sheet.fresh {
+    --edge: color-mix(in oklab, var(--primary) 45%, var(--paper));
+    border-color: var(--accent);
+  }
+
+  /* Das oberste Blatt in Schrägsicht, auf der Höhe des Stapels. */
+  .pile-top {
+    position: absolute;
+    inset-inline: -0.4rem;
+    inset-block-end: calc(var(--pile) * 100%);
+    block-size: 1.1rem;
+    border: 1px solid var(--material-edge);
+    border-radius: 2px;
+    background: linear-gradient(
+      to bottom,
+      var(--paper),
+      color-mix(in oklab, var(--bar) 10%, var(--paper))
+    );
+    transform: perspective(18rem) rotateX(58deg);
+    transform-origin: bottom;
+    transition: inset-block-end 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .pile-label {
+    position: absolute;
+    inset-inline-start: calc(100% + 1rem);
+    inset-block-end: calc(var(--top) * 100%);
+    translate: 0 50%;
+    color: var(--ink-2);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.4s ease 0.3s;
+  }
+
+  .pile-label strong {
+    color: var(--accent);
+    font-weight: var(--weight-heading);
+  }
+
+  .pile-label::before {
+    content: "";
+    position: absolute;
+    inset-inline-end: calc(100% + 0.3rem);
+    inset-block-start: 50%;
+    inline-size: 0.7rem;
+    border-block-start: 1.5px solid var(--accent);
+  }
+
+  .pile-label.on {
+    opacity: 1;
+  }
+
+  /* ---------- Schwellen ------------------------------------------------- */
+
+  .steps {
+    display: grid;
+    align-content: center;
+    gap: var(--space-m);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .steps li {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+    gap: 0.35rem var(--space-s);
+    align-items: center;
+    opacity: 0.12;
+    transition: opacity 0.5s ease;
+  }
+
+  .steps li.on {
+    opacity: 1;
+  }
+
+  .steps-year {
+    grid-row: 1 / 3;
+    color: var(--ink-3);
+    font-weight: var(--weight-heading);
+  }
+
+  .steps-track {
+    display: block;
+    block-size: 1rem;
+  }
+
+  .steps-bar {
+    display: block;
+    inline-size: max(0.9rem, var(--w));
+    block-size: 100%;
+    border-radius: 0 5px 5px 0;
+    background: var(--bar);
+    transform-origin: left;
+    scale: 0 1;
+    transition: scale 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .steps li.on .steps-bar {
+    scale: 1 1;
+  }
+
+  /* Null Euro: kein Balken mehr, nur ein roter Punkt. */
+  .steps .zero .steps-bar {
+    inline-size: 1rem;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .steps .zero strong {
+    color: var(--accent);
+  }
+
+  /* Die Bargeld-Obergrenze ist eine Grenze, keine Schwelle: nur umrandet. */
+  .steps .cap .steps-bar {
+    border: 1.5px solid var(--bar);
+    background: repeating-linear-gradient(
+      135deg,
+      var(--mid) 0 2px,
+      transparent 2px 6px
+    );
+  }
+
+  .steps-text {
+    color: var(--ink-2);
+  }
+
+  .steps-text strong {
+    color: var(--foreground);
+    font-weight: var(--weight-heading);
+  }
+
+  /* ---------- Behördenkreis --------------------------------------------- */
+
+  .ring-wrap {
+    display: grid;
+    place-items: center;
+    min-block-size: 0;
+  }
+
+  .ring {
+    position: relative;
+    inline-size: min(100cqh - 9rem, 100cqi - 2rem, 34rem);
+    aspect-ratio: 1;
+  }
+
+  .ring-lines {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+  }
+
+  .ring-lines line {
+    stroke: var(--accent);
+    stroke-width: 0.35;
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    transition: stroke-dashoffset 0.7s ease;
+  }
+
+  .ring-lines line.on {
+    stroke-dashoffset: 0;
+  }
+
+  .ring-europe {
+    fill: none;
+    stroke: var(--bar);
+    stroke-width: 0.3;
+    stroke-dasharray: 1 1.2;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  .ring-europe.on {
+    opacity: 1;
+  }
+
+  .ring-you {
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 50%;
+    translate: -50% -50%;
+    display: grid;
+    place-items: center;
+    inline-size: 22%;
+    aspect-ratio: 1;
+    border: 1px solid light-dark(#b6000c, #fa5963);
+    border-radius: 50%;
+    background: linear-gradient(155deg, #e3000f, #be000c);
+    box-shadow:
+      inset 0 1px 0 #ffffff30,
+      0 0 0 0.5rem color-mix(in oklab, var(--primary) 12%, transparent);
+    color: #fff;
+    font-size: clamp(0.7rem, 2.4cqi, 1rem);
+    font-weight: var(--weight-heading);
+    text-align: center;
+  }
+
+  .ring-chip {
+    position: absolute;
+    inset-inline-start: var(--x);
+    inset-block-start: var(--y);
+    inline-size: max-content;
+    max-inline-size: 11rem;
+    padding: 0.35em 0.65em;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-full);
+    background: var(--paper);
+    box-shadow: 0 1px 2px var(--material-shade);
+    color: var(--foreground);
+    font-size: clamp(0.68rem, 1.9cqi, 0.875rem);
+    font-weight: 560;
+    line-height: 1.2;
+    text-align: center;
+    text-wrap: balance;
+    overflow-wrap: normal;
+    translate: -50% -50%;
+    opacity: 0;
+    scale: 0.6;
+    transition:
+      opacity 0.4s ease,
+      scale 0.5s cubic-bezier(0.3, 1.4, 0.5, 1);
+  }
+
+  .ring-chip.on {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .ring-state {
+    position: absolute;
+    inset-inline-start: var(--x);
+    inset-block-start: var(--y);
+    inline-size: 0.55rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--bar);
+    translate: -50% -50%;
+    opacity: 0;
+    transition: opacity 0.3s ease calc(var(--k) * 25ms);
+  }
+
+  .ring-state.on {
+    opacity: 1;
+  }
+
+  .ring-eu {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-start: 0;
+    color: var(--ink-2);
+    font-weight: var(--weight-heading);
+    opacity: 0;
+    transition: opacity 0.4s ease 0.3s;
+  }
+
+  .ring-eu.on {
+    opacity: 1;
+  }
+
+  /* ---------- Punktfeld der Meldungen ----------------------------------- */
+
+  .field-wrap {
+    display: grid;
+    place-items: center;
+    min-block-size: 0;
+  }
+
+  /* Ein Quadrat, so groß, dass 119 Punkte je Zeile alle Meldungen von 2025
+     fassen; die kleineren Mengen sind Quadrate gleicher Punktdichte. */
+  .field {
+    --size: min(100cqh - 9rem, 100cqi - 2rem, 32rem);
+    --pitch: calc(var(--size) / var(--per-row));
+    position: relative;
+    inline-size: var(--size);
+    aspect-ratio: 1;
+  }
+
+  .field > span {
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-end: 0;
+    background-image: radial-gradient(
+      circle at center,
+      var(--dot) 0 36%,
+      transparent 40%
+    );
+    background-size: var(--pitch) var(--pitch);
+    background-position: left bottom;
+    transform-origin: left bottom;
+    transition:
+      scale 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+      opacity 0.5s ease;
+  }
+
+  .field-all {
+    --dot: var(--bar);
+    inline-size: 100%;
+    block-size: 100%;
+    scale: var(--first);
+    opacity: 0;
+  }
+
+  .field-all.on {
+    scale: 1;
+    opacity: 1;
+  }
+
+  .field-first {
+    --dot: var(--bar);
+    inline-size: calc(var(--first) * 100%);
+    block-size: calc(var(--first) * 100%);
+    opacity: 0;
+  }
+
+  .field-first.on {
+    opacity: 1;
+  }
+
+  /* Was gespeichert bleibt: der obere Teil des Felds, blass. */
+  .field > .field-kept {
+    inset-block-end: auto;
+    inset-block-start: 0;
+    inline-size: 100%;
+    block-size: calc(var(--kept) * 100%);
+    background-color: var(--panel);
+    background-image: radial-gradient(
+      circle at center,
+      var(--mid) 0 36%,
+      transparent 40%
+    );
+    background-position: left bottom;
+    box-shadow: 0 1.5px 0 var(--ink-3);
+    opacity: 0;
+  }
+
+  .field-kept.on {
+    opacity: 1;
+  }
+
+  .field-red {
+    --dot: var(--red);
+    inline-size: calc(var(--red-side) * 100%);
+    block-size: calc(var(--red-side) * 100%);
+    opacity: 0;
+    box-shadow: 0 0 0 0.35rem
+      color-mix(in oklab, var(--primary) 14%, transparent);
+  }
+
+  .field-red.on {
+    opacity: 1;
+  }
+
+  /* ---------- Münzen und Datensätze ------------------------------------- */
+
+  .grids {
+    display: grid;
+    place-items: center;
+    min-block-size: 0;
+  }
+
+  .coins,
+  .records {
+    grid-area: 1 / 1;
+    display: grid;
+    gap: 0.4rem;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.5s ease,
+      visibility 0.5s;
+  }
+
+  .coins.on,
+  .records.on {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .coins {
+    --size: min(100cqh - 9rem, 100cqi - 2rem, 30rem);
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    inline-size: var(--size);
+  }
+
+  .records {
+    --size: min((100cqh - 9rem) * 1.5, 100cqi - 2rem, 36rem);
+    grid-template-columns: repeat(15, minmax(0, 1fr));
+    gap: 0.3rem;
+    inline-size: var(--size);
+  }
+
+  /* Münzen im Material der Illustrationen: gebürstetes Metall, eine Kante. */
+  .coin {
+    aspect-ratio: 1;
+    border: 1px solid var(--material-edge);
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 35% 30%,
+      var(--material-shine),
+      color-mix(in oklab, var(--bar) 18%, var(--paper)) 60%,
+      color-mix(in oklab, var(--bar) 30%, var(--paper))
+    );
+    box-shadow: 0 1px 1px var(--material-shade);
+    transition:
+      background 0.5s ease,
+      border-color 0.5s ease,
+      opacity 0.5s ease;
+  }
+
+  .record {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: var(--mid);
+    transition: background 0.5s ease;
+  }
+
+  /* Gesichert: zwei Münzen dunkel. Eingezogen: eine davon rot. Bei Krypto
+     zählt nur die rote. */
+  .view[data-step-id="ergebnis-gesichert"] .coin.seized,
+  .view[data-step-id="ergebnis-eingezogen"] .coin.seized {
+    background: radial-gradient(
+      circle at 35% 30%,
+      var(--material-shine),
+      var(--bar) 75%
+    );
+  }
+
+  .view[data-step-id="ergebnis-eingezogen"] .coin.confiscated,
+  .view[data-step-id="ergebnis-krypto"] .coin.confiscated {
+    border-color: light-dark(#b6000c, #fa5963);
+    background: radial-gradient(
+      circle at 35% 30%,
+      #ff6b72,
+      #e3000f 55%,
+      #9e000a
+    );
+  }
+
+  .records.on .record.followed {
+    background: var(--red);
+  }
+
+  /* ---------- Schmal ---------------------------------------------------- */
+
+  @container campaign (width < 60rem) {
+    .says {
+      align-content: start;
+    }
+
+    .say h3 {
+      font-size: var(--type-h3);
+    }
+
+    .say-text {
+      font-size: var(--type-body);
+    }
+
+    .scene {
+      padding: var(--space-xs) var(--space-s) var(--space-s);
+    }
+
+    .pile-label {
+      font-size: var(--type-meta);
+    }
+
+    .ring-chip {
+      max-inline-size: 6.5rem;
+      padding: 0.3em 0.5em;
+      font-size: 0.6875rem;
+    }
+
+    .ring-eu {
+      inset-block-start: -1.75rem;
+      font-size: var(--type-meta);
+    }
+
+    /* Der Satz steht unten über dem Bild, damit kurze Sätze keine Lücke
+       lassen. */
+    .says {
+      align-content: end;
+    }
+
+    .big {
+      font-size: var(--type-body);
+    }
+  }
+
+  /* Solange der Film den Bildschirm füllt, weicht die mobile Leiste. */
+  :global(html[data-immersive] [data-action-bar]) {
+    translate: 0 110%;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .film *,
+    .film *::before {
+      transition: none !important;
+    }
+  }
+</style>
