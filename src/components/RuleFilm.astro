@@ -149,18 +149,42 @@ const firstPages = pile[0].pages
 const pages = Array.from({ length: totalPages }, (_, k) => k)
 
 // ---------- Ergebnis --------------------------------------------------------
+// One grain per report on a canvas (src/lib/film-sand.ts): which state
+// belongs to which step.
 const { first, latest, convictions } = reportField
-const side = (count: number) => Math.sqrt(count / latest)
-const fieldStyle = [
-  `--per-row: ${Math.ceil(Math.sqrt(latest))}`,
-  `--first: ${side(first).toFixed(4)}`,
-  `--red-side: ${side(convictions).toFixed(4)}`,
-].join("; ")
+const sandStates = JSON.stringify({
+  [at("ergebnis-2005")]: "first",
+  [at("ergebnis-2025")]: "all",
+  [at("ergebnis-urteile")]: "heap",
+})
 const fieldSteps = ["ergebnis-2005", "ergebnis-2025", "ergebnis-urteile"]
   .map(at)
   .join(",")
+// 100 one-euro coins fall past a line: 99 stack up below in five towers,
+// the last one coin short; one stays on the line and turns red. Positions
+// in percent of the square, coins seen from the side.
 const coinSteps = String(at("ergebnis-euro"))
-const coins = Array.from({ length: 100 }, (_, k) => k)
+const seeded = (seed: number) => () => {
+  seed = (seed * 1664525 + 1013904223) % 4294967296
+  return seed / 4294967296
+}
+const jitter = seeded(2016)
+const towerX = (k: number) => 18 + k * 16
+const stacked = Array.from({ length: 5 }, (_, k) => k).flatMap((tower) =>
+  Array.from({ length: tower === 4 ? 19 : 20 }, (_, level) => ({
+    x: towerX(tower),
+    y: 95 - level * 1.62,
+    // Level by level, the towers in shuffled order, so they grow evenly.
+    delay: level * 0.085 + jitter() * 0.12,
+  })),
+)
+const coins = [
+  ...stacked.map((coin) => ({ ...coin, caught: false })),
+  { x: 50, y: 38, delay: 0.8, caught: true },
+].map((coin) => ({
+  caught: coin.caught,
+  style: `--x: ${coin.x.toFixed(2)}; --y: ${coin.y.toFixed(2)}; --d: ${coin.delay.toFixed(2)}s`,
+}))
 ---
 
 <section
@@ -273,18 +297,43 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
         <!-- Ergebnis -->
         <div class="scene" data-scene-id="result">
           <div class="result">
-            <div class="field-wrap" data-only={fieldSteps}>
-              <div class="field" style={fieldStyle}>
-                <span class="field-all" data-at={at("ergebnis-2025")} />
-                <span class="field-first" />
-                <span class="field-red" data-at={at("ergebnis-urteile")} />
-                <span class="field-callout" data-at={at("ergebnis-urteile")}>
-                  {n(convictions)}
-                </span>
-              </div>
+            <div
+              class="sand"
+              data-sand={sandStates}
+              data-sand-counts={JSON.stringify({ first, latest, convictions })}
+              data-only={fieldSteps}
+            >
+              <canvas />
+              <i data-sand-grey />
+              <i data-sand-red />
+              <span class="sand-label" data-sand-label="reports">
+                <b>{n(latest)}</b>
+                {en ? "reports" : "Meldungen"}
+              </span>
+              <span class="sand-label red" data-sand-label="convictions">
+                <b>{n(convictions)}</b>
+                {en ? "convictions" : "Verurteilungen"}
+              </span>
             </div>
-            <div class="coins" data-only={coinSteps}>
-              {coins.map((k) => <span class:list={["coin", { red: k === 99 }]} />)}
+            <div class="net" data-only={coinSteps}>
+              <svg
+                class="net-line"
+                viewBox="0 0 100 10"
+                preserveAspectRatio="none"
+              >
+                <path d="M0 2 Q50 7 100 2" />
+              </svg>
+              {coins.map((coin) => (
+                <span class:list={["coin", { caught: coin.caught }]} style={coin.style} />
+              ))}
+              <span class="net-label caught">
+                <b>{en ? "€1" : "1 €"}</b>
+                {en ? "confiscated" : "eingezogen"}
+              </span>
+              <span class="net-label gone">
+                <b>{en ? "€99" : "99 €"}</b>
+                {en ? "not confiscated" : "nicht eingezogen"}
+              </span>
             </div>
           </div>
         </div>
@@ -294,6 +343,8 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
 </section>
 
 <script>
+  import { createSand, type SandState } from "@/lib/film-sand"
+
   // The step whose spacer has crossed the middle of the window is current:
   // it picks the scene and the headline and switches on what has appeared
   // so far ([data-at]) or only now ([data-only]). In the rules chapter the
@@ -356,9 +407,22 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
       }
     }
 
+    // The result chapter's grains, one per report.
+    const sandRoot = film.querySelector<HTMLElement>("[data-sand]")
+    const sandStates: Record<string, SandState> = JSON.parse(
+      sandRoot?.dataset.sand ?? "{}",
+    )
+    const sand = sandRoot
+      ? createSand(sandRoot, JSON.parse(sandRoot.dataset.sandCounts ?? "{}"))
+      : null
+
     let current = -1
     const show = (i: number) => {
+      const previous = current
       current = i
+      const sandState = sandStates[i]
+      if (sandState) sand?.go(sandState, previous in sandStates)
+      else sand?.hide()
       view.dataset.scene = stepScenes[i]
       view.dataset.stepId = stepIds[i]
       for (const say of says)
@@ -571,15 +635,20 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
     translate: 0 0.75rem;
   }
 
+  /* Die Aussage: groß, aber so, dass lange Wörter wie
+     „Verdachtsmeldungen“ in die Spalte passen oder an der Silbe trennen
+     statt mitten im Wort zu brechen. */
   .say h3 {
-    max-inline-size: 16ch;
+    max-inline-size: 18ch;
     color: var(--foreground);
-    font-size: clamp(1.5rem, 1rem + 2.4vw, 3rem);
+    font-size: clamp(1.5rem, 0.9rem + 1.7vw, 2.5rem);
     font-stretch: 94%;
     font-weight: var(--weight-heading);
-    line-height: 1.04;
-    letter-spacing: -0.026em;
+    line-height: 1.08;
+    letter-spacing: -0.022em;
     text-wrap: balance;
+    overflow-wrap: normal;
+    hyphens: auto;
   }
 
   .say-text {
@@ -588,6 +657,7 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
     font-size: var(--type-lead);
     line-height: 1.35;
     text-wrap: pretty;
+    overflow-wrap: normal;
   }
 
   /* ---------- Szenen ---------------------------------------------------- */
@@ -939,8 +1009,8 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
     min-block-size: 0;
   }
 
-  .field-wrap,
-  .coins {
+  .sand,
+  .net {
     grid-area: 1 / 1;
     opacity: 0;
     visibility: hidden;
@@ -949,145 +1019,237 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
       visibility 0.5s;
   }
 
-  .field-wrap.on,
-  .coins.on {
+  .sand.on,
+  .net.on {
     opacity: 1;
     visibility: visible;
   }
 
-  /* Ein Punkt je Meldung: 119 je Zeile fassen 2025. */
-  .field {
-    --size: min(100cqh - 8rem, 100cqi - 2rem, 32rem);
-    --pitch: calc(var(--size) / var(--per-row));
+  /* Ein Korn je Meldung, auf einer Leinwand (src/lib/film-sand.ts). Die
+     beiden Farbproben liest das Skript, damit Hell und Dunkel stimmen. */
+  .sand {
+    position: relative;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .sand canvas {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .sand [data-sand-grey] {
+    display: none;
+    color: var(--bar);
+  }
+
+  .sand [data-sand-red] {
+    display: none;
+    color: var(--red);
+  }
+
+  /* Über den Haufen, sobald sie liegen. */
+  .sand-label {
+    position: absolute;
+    display: grid;
+    justify-items: center;
+    translate: -50% -100%;
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+    line-height: 1.2;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .sand-label b {
+    color: var(--foreground);
+    font-size: var(--step-2);
+    font-weight: var(--weight-heading);
+    letter-spacing: -0.02em;
+  }
+
+  .sand-label.red {
+    justify-items: end;
+    translate: -100% -100%;
+    color: var(--accent);
+  }
+
+  .sand-label.red b {
+    color: var(--accent);
+  }
+
+  .sand-label.red.below {
+    translate: -100% 0;
+  }
+
+  .sand[data-state="heap"] .sand-label {
+    opacity: 1;
+    transition-delay: 2.5s;
+  }
+
+  .sand[data-state="heap"] .sand-label.red {
+    transition-delay: 3.6s;
+  }
+
+  /* 100 Euro-Münzen fallen an einer Leine vorbei: 99 stapeln sich zu zehn
+     Türmen, eine bleibt auf der Leine liegen und wird rot. Positionen in
+     Prozent des Quadrats, die Münzen von der Seite gesehen, mit Riffelrand. */
+  .net {
+    --coin-light: light-dark(#f4f5f6, #c3c9ce);
+    --coin-mid: light-dark(#c8cdd1, #848c93);
+    --coin-dark: light-dark(#979ea4, #50575d);
+    --coin-shade: light-dark(#7a8188, #24292d);
+    --size: min(100cqh - 2rem, 100cqi - 2rem, 32rem);
     position: relative;
     inline-size: var(--size);
     aspect-ratio: 1;
+    container-type: size;
+    overflow: hidden;
   }
 
-  .field > span:not(.field-callout) {
+  .net-line {
     position: absolute;
-    inset-inline-start: 0;
-    inset-block-end: 0;
-    background-image: radial-gradient(
-      circle at center,
-      var(--dot) 0 36%,
-      transparent 40%
-    );
-    background-size: var(--pitch) var(--pitch);
-    background-position: left bottom;
-    transform-origin: left bottom;
-    transition:
-      scale 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
-      opacity 0.5s ease;
+    inset-inline-start: 2cqi;
+    inset-block-start: 36cqh;
+    inline-size: 96cqi;
+    block-size: 6cqh;
+    overflow: visible;
   }
 
-  .field-all {
-    --dot: var(--bar);
-    inline-size: 100%;
-    block-size: 100%;
-    scale: var(--first);
-    opacity: 0;
-  }
-
-  .field-all.on {
-    scale: 1;
-    opacity: 1;
-  }
-
-  .field-first {
-    --dot: var(--bar);
-    inline-size: calc(var(--first) * 100%);
-    block-size: calc(var(--first) * 100%);
-  }
-
-  .field-red {
-    --dot: var(--red);
-    inline-size: calc(var(--red-side) * 100%);
-    block-size: calc(var(--red-side) * 100%);
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-    opacity: 0;
-  }
-
-  .field-red.on {
-    opacity: 1;
-  }
-
-  /* Die Verurteilungen beschriftet, schräg über ihrem Feld. */
-  .field-callout {
-    position: absolute;
-    inset-inline-start: calc(var(--red-side) * 100% + 1.25rem);
-    inset-block-end: calc(var(--red-side) * 100% + 1.25rem);
-    padding: 0.2rem 0.55rem;
-    border-radius: var(--radius-sm);
-    background: var(--accent);
-    color: #fff;
-    font-size: var(--type-lead);
-    font-weight: var(--weight-heading);
-    opacity: 0;
-    translate: 0 0.5rem;
-    transition:
-      opacity 0.4s ease 0.4s,
-      translate 0.4s ease 0.4s;
-  }
-
-  .field-callout::before {
-    content: "";
-    position: absolute;
-    inset-inline-end: 100%;
-    inset-block-start: 100%;
-    inline-size: 1.4rem;
-    border-block-start: 2px solid var(--accent);
-    rotate: -45deg;
-    transform-origin: right center;
-  }
-
-  .field-callout.on {
-    opacity: 1;
-    translate: 0 0;
-  }
-
-  .field .field-callout {
-    color: #fff;
-  }
-
-  /* Sobald das große Feld steht, verschwindet das kleine darin. */
-  .field-all.on ~ .field-first {
-    opacity: 0;
-  }
-
-  /* 100 Münzen im Material der Illustrationen, eine davon rot. */
-  .coins {
-    --size: min(100cqh - 8rem, 100cqi - 2rem, 30rem);
-    display: grid;
-    grid-template-columns: repeat(10, minmax(0, 1fr));
-    gap: 0.4rem;
-    inline-size: var(--size);
+  .net-line path {
+    fill: none;
+    stroke: var(--ink-2);
+    stroke-width: 2;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
   }
 
   .coin {
-    aspect-ratio: 1;
-    border: 1px solid var(--material-edge);
-    border-radius: 50%;
-    background: radial-gradient(
-      circle at 35% 30%,
-      var(--material-shine),
-      color-mix(in oklab, var(--bar) 18%, var(--paper)) 60%,
-      color-mix(in oklab, var(--bar) 30%, var(--paper))
-    );
-    box-shadow: 0 1px 1px var(--material-shade);
+    position: absolute;
+    inset-inline-start: calc((var(--x) - 6) * 1cqi);
+    inset-block-start: calc((var(--y) - 0.9) * 1cqh);
+    inline-size: 12cqi;
+    block-size: 1.8cqh;
+    border-radius: 0.5cqh;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0 0.42cqi,
+        rgb(0 0 0 / 0.13) 0.42cqi 0.6cqi
+      ),
+      linear-gradient(
+        to bottom,
+        var(--coin-light),
+        var(--coin-mid) 45%,
+        var(--coin-dark)
+      );
+    box-shadow: 0 0.2cqh 0 var(--coin-shade);
+    translate: 0 calc((var(--y) + 8) * -1cqh);
   }
 
-  .coin.red {
-    border-color: light-dark(#b6000c, #fa5963);
-    background: radial-gradient(
-      circle at 35% 30%,
-      #ff6b72,
-      #e3000f 55%,
-      #9e000a
-    );
-    box-shadow: 0 0 0 0.3rem
-      color-mix(in oklab, var(--primary) 18%, transparent);
+  /* Die eine, die hängen bleibt, färbt sich rot, sobald sie liegt. */
+  .coin.caught::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0 0.42cqi,
+        rgb(0 0 0 / 0.18) 0.42cqi 0.6cqi
+      ),
+      linear-gradient(to bottom, #ff7a80, #e3000f 50%, #a3000b);
+    box-shadow: 0 0 0 0.5cqi
+      color-mix(in oklab, var(--primary) 22%, transparent);
+    opacity: 0;
+  }
+
+  .net.on .coin {
+    animation: coin-rain 0.6s cubic-bezier(0.5, 0, 0.9, 0.5) var(--d) both;
+  }
+
+  .net.on .coin.caught::after {
+    animation: coin-red 0.4s ease calc(var(--d) + 0.6s) both;
+  }
+
+  @keyframes coin-rain {
+    0% {
+      translate: 0 calc((var(--y) + 8) * -1cqh);
+    }
+
+    84% {
+      translate: 0 0;
+    }
+
+    92% {
+      translate: 0 -0.8cqh;
+    }
+
+    100% {
+      translate: 0 0;
+    }
+  }
+
+  @keyframes coin-red {
+    to {
+      opacity: 1;
+    }
+  }
+
+  .net-label {
+    position: absolute;
+    display: grid;
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+    line-height: 1.2;
+    opacity: 0;
+  }
+
+  .net-label b {
+    color: var(--foreground);
+    font-size: var(--step-2);
+    font-weight: var(--weight-heading);
+    letter-spacing: -0.02em;
+  }
+
+  .net-label.caught {
+    inset-inline-start: 57cqi;
+    inset-block-start: 22cqh;
+    color: var(--accent);
+  }
+
+  .net-label.caught b {
+    color: var(--accent);
+  }
+
+  .net-label.gone {
+    inset-inline-start: 5cqi;
+    inset-block-start: 52cqh;
+  }
+
+  .net.on .net-label {
+    animation: coin-red 0.4s ease 2.4s both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .coin {
+      translate: none;
+    }
+
+    .net.on .coin,
+    .net.on .coin.caught::after,
+    .net.on .net-label {
+      animation: none;
+      opacity: 1;
+    }
+
+    .coin.caught::after {
+      opacity: 1;
+    }
   }
 
   /* ---------- Schmal ---------------------------------------------------- */
@@ -1113,10 +1275,6 @@ const coins = Array.from({ length: 100 }, (_, k) => k)
 
     .steps li {
       grid-template-columns: 2.75rem minmax(0, 1fr);
-    }
-
-    .field-callout {
-      font-size: var(--type-body);
     }
   }
 

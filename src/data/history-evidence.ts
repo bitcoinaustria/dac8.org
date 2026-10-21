@@ -462,6 +462,48 @@ export const reportingBenefit = {
   sources: [swd2025, swd2026],
 }
 
+// Accounts refused or closed under anti-money-laundering duties, where the
+// bank may keep the reason to itself. Germany counted such cases once, for
+// basic accounts from 18 June 2016 to 30 June 2018 (BaFin, as relayed to
+// the Bundestag); the 1,300 closures mix the tipping-off ban with public
+// security. Austria does not count them at all. Basic accounts only, not
+// ordinary current accounts, and no figure on how many were unjustified.
+export const unexplained = {
+  germany: { refused: 1800, closed: 1300, from: 2016, to: 2018 },
+  sources: {
+    germany: {
+      label: {
+        de: "Bundesregierung, Drucksache 19/11479, S. 3–4",
+        en: "Federal Government, Bundestag paper 19/11479, pp. 3–4, in German",
+      },
+      href: "https://dserver.bundestag.de/btd/19/114/1911479.pdf",
+    },
+    austria: {
+      label: {
+        de: "Konsumentenschutzministerium, Anfragebeantwortung 7425/AB (XXVII. GP), S. 3–4",
+        en: "Consumer protection ministry, answer 7425/AB (27th legislative period), pp. 3–4, in German",
+      },
+      href: "https://www.parlament.gv.at/dokument/XXVII/AB/7425/imfname_999443.pdf",
+    },
+    law: [
+      {
+        label: {
+          de: "Richtlinie 2014/92/EU, Art. 16 Abs. 7",
+          en: "Directive 2014/92/EU, Article 16(7)",
+        },
+        href: "https://eur-lex.europa.eu/eli/dir/2014/92/oj",
+      },
+      {
+        label: {
+          de: "Verordnung (EU) 2024/1624",
+          en: "Regulation (EU) 2024/1624",
+        },
+        href: "https://eur-lex.europa.eu/eli/reg/2024/1624/oj",
+      },
+    ],
+  } satisfies Record<string, Source | Source[]>,
+}
+
 // Thousands with a dot in German, as in the copy ("13.989"); de-AT would
 // use a space.
 export const formatNumber = (value: number, language: Language) =>

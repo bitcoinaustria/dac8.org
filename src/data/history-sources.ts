@@ -1,5 +1,6 @@
 import {
   accountsSources,
+  unexplained,
   reportingBenefit,
   reportingCostSources,
   type Source,
@@ -47,6 +48,8 @@ export const balanceSources = (language: Language) => ({
       en: "OECD Global Forum, statement on the data breach at Bulgaria’s tax authority, 2019",
     },
   })) satisfies Source[],
+  unexplained: [unexplained.sources.germany, unexplained.sources.austria],
+  withheld: unexplained.sources.law,
 })
 
 // The bracket as one string, so that formatting the markup cannot put

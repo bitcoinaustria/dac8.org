@@ -228,12 +228,12 @@ export const steps: Step[] = [
     id: "ergebnis-2005",
     chapter: "ergebnis",
     title: {
-      de: "Österreich 2005: 467 Verdachtsmeldungen.",
-      en: "Austria 2005: 467 suspicion reports.",
+      de: "Österreich 2005: 467 Meldungen.",
+      en: "Austria 2005: 467 reports.",
     },
     text: {
-      de: "Meldungen über verdächtige Geschäfte. Ein Punkt je Meldung.",
-      en: "Reports of suspicious transactions. One dot per report.",
+      de: "Banken und andere Anbieter melden der Geldwäschemeldestelle der Polizei Geschäfte, die ihnen verdächtig vorkommen, samt Kundendaten. Ein Korn je Meldung.",
+      en: "Banks and other providers report transactions that look suspicious to them, with the customer’s data, to the police’s financial intelligence unit. One grain per report.",
     },
     sources: [
       {
@@ -250,8 +250,8 @@ export const steps: Step[] = [
     chapter: "ergebnis",
     title: { de: "Österreich 2025: 13.989.", en: "Austria 2025: 13,989." },
     text: {
-      de: "Rund dreißigmal so viele, bei geänderter Zählweise.",
-      en: "About thirty times as many, though counted differently.",
+      de: "Rund dreißigmal so viele wie 2005, zum Teil, weil heute anders gezählt wird.",
+      en: "About thirty times as many as in 2005, partly because they are counted differently today.",
     },
     sources: [fiu2025],
   },
@@ -260,8 +260,8 @@ export const steps: Step[] = [
     chapter: "ergebnis",
     title: { de: "139 Verurteilungen.", en: "139 convictions." },
     text: {
-      de: "Wegen Geldwäsche, in Österreich, im selben Jahr.",
-      en: "For money laundering, in Austria, in the same year.",
+      de: "Wegen Geldwäsche, in Österreich, im selben Jahr. Ein rotes Korn je Urteil.",
+      en: "For money laundering, in Austria, in the same year. One red grain per conviction.",
     },
     sources: [fiu2025],
   },

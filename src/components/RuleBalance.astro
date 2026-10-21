@@ -5,6 +5,7 @@ import {
   formatNumber,
   reportingBenefit,
   reportingCosts,
+  unexplained,
 } from "@/data/history-evidence"
 import { balanceSources, historySources } from "@/data/history-sources"
 import { leaks, peopleAffected, roundPeople } from "@/data/leaks"
@@ -58,6 +59,10 @@ const tiles = [...leaks].sort(
   (a, b) => Number(atAuthority(b)) - Number(atAuthority(a)),
 )
 const authorityCount = leaks.filter(atAuthority).length
+
+// Ohne Begründung: Germany's one count, Austria's none.
+const { germany } = unexplained
+const { refused, closed } = germany
 ---
 
 <section id="bilanz" class="balance" aria-labelledby="bilanz-heading">
@@ -220,6 +225,65 @@ const authorityCount = leaks.filter(atAuthority).length
           ? "In 2019 Bulgaria’s tax authority lost data on more than six million people, including account data from the very exchange DAC8 reports will travel through."
           : "2019 verlor Bulgariens Steuerbehörde Daten von mehr als sechs Millionen Menschen, darunter Kontodaten aus dem Austausch, über den künftig auch DAC8 läuft."}
         <SourceRefs sources={cite(cited.bulgaria)} language={language} />
+      </p>
+    </li>
+
+    <!-- Ohne Begründung: a notice whose reason is blacked out -->
+    <li class="balance-card wide">
+      <p class="balance-kicker">{en ? "No reason given" : "Ohne Begründung"}</p>
+      <h3>
+        {en ? "Refused or closed, without being told why." : "Abgelehnt oder gekündigt, ohne zu erfahren, warum."}
+      </h3>
+      <div class="withheld">
+        <div class="notice" aria-hidden="true">
+          <span class="notice-line short" />
+          <span class="notice-line" />
+          <span class="notice-line" />
+          <span class="notice-reason">
+            <span>{en ? "Reason:" : "Grund:"}</span>
+            <span class="notice-bar" />
+          </span>
+          <span class="notice-line" />
+          <span class="notice-line short" />
+        </div>
+        <dl class="withheld-figures">
+          <div>
+            <dt>{en ? `about ${n(refused)}` : `rund ${n(refused)}`}</dt>
+            <dd>
+              {en
+                ? "basic accounts refused on anti-money-laundering grounds"
+                : "Basiskonten abgelehnt, aus Gründen der Geldwäsche-Prüfung"}
+            </dd>
+          </div>
+          <div>
+            <dt>{en ? `about ${n(closed)}` : `rund ${n(closed)}`}</dt>
+            <dd>
+              {en
+                ? "closures whose reason the bank was not allowed to give"
+                : "Kündigungen, deren Grund die Bank nicht nennen durfte"}
+            </dd>
+          </div>
+          <div class="none">
+            <dt>{en ? "no figure" : "keine Zahl"}</dt>
+            <dd>
+              {en
+                ? "in Austria: the financial market authority has no figures on this"
+                : "in Österreich: „Hierzu liegen der FMA keine Angaben vor.“"}
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <p class="balance-line">
+        {en
+          ? `Germany, mid-${germany.from} to mid-${germany.to}, basic accounts only: the account everyone has a right to. How many basic accounts banks closed in all, the Federal Government does not know.`
+          : `Deutschland, Mitte ${germany.from} bis Mitte ${germany.to}, nur Basiskonten: das Konto, auf das jeder ein Recht hat. Wie viele Basiskonten Banken insgesamt kündigten, weiß die Bundesregierung nicht.`}
+        <SourceRefs sources={cite(cited.unexplained)} language={language} />
+      </p>
+      <p class="balance-line">
+        {en
+          ? "Where the bank may not reveal a suspicion report, it may keep the reason to itself. From 2027, the data of people refused are kept for five years."
+          : "Darf die Bank eine Verdachtsmeldung nicht verraten, darf sie auch den Grund verschweigen. Ab 2027 bleiben die Daten Abgelehnter fünf Jahre gespeichert."}
+        <SourceRefs sources={cite(cited.withheld)} language={language} />
       </p>
     </li>
   </ol>
@@ -513,6 +577,108 @@ const authorityCount = leaks.filter(atAuthority).length
   .square-first b {
     display: block;
     font-size: var(--step-1);
+  }
+
+  /* ---------- Ohne Begründung ------------------------------------------ */
+
+  /* Das letzte Feld über die ganze Breite: links ein Bescheid, dessen Grund
+     geschwärzt ist, rechts die einzigen Zahlen dazu. */
+  @container campaign (width >= 56rem) {
+    .balance-card.wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .withheld {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-m) var(--space-l);
+    align-items: center;
+    align-self: center;
+    margin-block: var(--space-2xs);
+  }
+
+  @container campaign (width >= 40rem) {
+    .withheld {
+      grid-template-columns: 9rem minmax(0, 1fr);
+    }
+  }
+
+  .notice {
+    display: grid;
+    gap: 0.55rem;
+    inline-size: 9rem;
+    aspect-ratio: 0.72;
+    padding: 1rem 0.9rem;
+    border-radius: var(--radius-sm);
+    background: var(--paper);
+    box-shadow:
+      0 0 0 1px var(--line),
+      0 0.6rem 1.4rem -0.8rem var(--material-shade);
+    align-content: start;
+  }
+
+  .notice-line {
+    block-size: 0.35rem;
+    border-radius: 1px;
+    background: color-mix(in oklab, var(--bar) 25%, transparent);
+  }
+
+  .notice-line.short {
+    inline-size: 55%;
+  }
+
+  .notice-reason {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-block: 0.35rem;
+    color: var(--ink-2);
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .notice-bar {
+    flex: 1;
+    block-size: 0.85rem;
+    background: var(--foreground);
+  }
+
+  .withheld-figures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    gap: var(--space-s) var(--space-m);
+    margin: 0;
+  }
+
+  .withheld-figures div {
+    display: grid;
+    align-content: start;
+    gap: 0.2rem;
+    padding-block-start: var(--space-2xs);
+    border-block-start: 2px solid var(--foreground);
+  }
+
+  .withheld-figures dt {
+    color: var(--ink);
+    font-size: var(--step-2);
+    font-weight: var(--weight-heading);
+    letter-spacing: -0.02em;
+  }
+
+  .withheld-figures dd {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+    line-height: 1.35;
+  }
+
+  .withheld-figures .none {
+    border-color: var(--red);
+  }
+
+  .withheld-figures .none dt {
+    color: var(--accent);
   }
 
   /* ---------- Risiko ---------------------------------------------------- */
