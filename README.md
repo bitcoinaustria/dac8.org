@@ -146,16 +146,14 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
 - The history page (`/geschichte/`, `/en/history/`) tells the story of
   over-regulation as a scroll film (`src/components/RuleFilm.astro`, steps
   and figures in `src/data/overregulation.ts`), built like the home page's
-  data story: a sticky stage with a chapter rail, the step's sentence as
-  subtitle, and one picture per chapter that changes with each step. Every
-  rule as a card dropping onto a tax or an anti-money-laundering pile while
-  the year runs with the scroll from 1977 to 2029, the pile of Official
-  Journal pages of EU anti-money-laundering law since 1991,
-  the amount from which you must show ID falling to zero, the authorities
-  around your account in the Austrian account register, one dot per
-  suspicion report against the convictions, 100 coins of which one is
-  confiscated, and a closing balance of what is collected against what
-  comes of it. Without JavaScript the steps stand as text. Below the film,
+  data story. Five chapters lead from the reader to the result, each step a
+  headline of a few words over one picture as a contrast: the amount from
+  which you must show ID in today's money, 33,900 euros in 1991 and zero
+  today; every rule as a card dropping onto a tax or an anti-money-laundering
+  pile while the year runs with the scroll; six pages of law beside 488; the
+  authorities around your account in the Austrian register; and a sea of
+  suspicion reports beside 139 convictions and 100 coins of which one is
+  red. Without JavaScript the headlines stand as text. Below the film,
   everything to check: both lines of rules in one chart on one axis, the
   series and texts described next, and the length of the texts
   (`src/components/LawGrowth.astro`). `src/data/history.ts` holds the tax

@@ -1,28 +1,27 @@
 ---
+import { ruleChronicle } from "@/data/aml-history"
+import { historyAsOf, isAhead } from "@/data/history"
 import {
   chapters,
   inTodaysMoney,
   lookers,
   pile,
   reportField,
-  resultGrids,
   type Scene,
   steps,
   thresholds,
 } from "@/data/overregulation"
-import { ruleChronicle } from "@/data/aml-history"
-import { historyAsOf, isAhead } from "@/data/history"
 import type { Language } from "@/lib/i18n"
 
-// The story of over-regulation as a scroll film, in the manner of the home
-// page's data story: the stage stands while the steps scroll past, a rail
-// names the chapters, the step's sentence is the subtitle, and one picture
-// per chapter changes with every step. Five pictures: the pile of pages of
-// EU anti-money-laundering law, the falling amount from which you must
-// show ID, the ring of authorities around your account, a field of one dot
-// per suspicion report, and 100 coins of which one is confiscated. Grey is
-// what is collected, red what comes of it or what is new. Without the
-// script, the steps stand as text one below the other.
+// The story of over-regulation as a scroll film, built like the home
+// page's data story: the stage stands while the steps scroll past. Each
+// step is a headline of a few words and turns one picture into a contrast
+// you see before you read it: the amount from which you must show ID
+// falling to zero, the rules piling up, six pages beside 488, the ring of
+// authorities around your account, a sea of reports beside a few
+// convictions, and 100 coins of which one is red. Grey is what is
+// collected, red what comes of it or what is new. Without the script the
+// headlines stand as text one below the other.
 interface Props {
   language: Language
 }
@@ -30,11 +29,7 @@ interface Props {
 const { language } = Astro.props
 const en = language === "en"
 const locale = en ? "en-GB" : "de-DE"
-const n = (value: number, digits = 0) =>
-  new Intl.NumberFormat(locale, {
-    minimumFractionDigits: digits,
-    maximumFractionDigits: digits,
-  }).format(value)
+const n = (value: number) => new Intl.NumberFormat(locale).format(value)
 
 const index = new Map(steps.map((step, i) => [step.id, i]))
 const at = (id: string) => {
@@ -43,35 +38,45 @@ const at = (id: string) => {
   return i
 }
 const sceneOf = new Map(chapters.map((chapter) => [chapter.id, chapter.scene]))
-const items = steps.map((step, i) => {
-  const chapter = chapters.findIndex((c) => c.id === step.chapter)
-  return {
-    ...step,
-    i,
-    scene: sceneOf.get(step.chapter) as Scene,
-    number: chapter + 1,
-    chapterLabel: chapters[chapter].label[language],
-  }
-})
+const items = steps.map((step, i) => ({
+  ...step,
+  i,
+  scene: sceneOf.get(step.chapter) as Scene,
+}))
 const firstOf = (chapterId: string) =>
   items.find((item) => item.chapter === chapterId)?.i ?? 0
-
-// Counters: a value per step, carried forward until the next one.
+// A value per step for the big figure, carried forward to later steps.
 const counts = (values: Record<string, number>) =>
   JSON.stringify(
     Object.fromEntries(Object.entries(values).map(([id, v]) => [at(id), v])),
   )
+const thisYear = new Date(historyAsOf).getUTCFullYear()
 
-// ---------- Rules on two piles -------------------------------------------
-// Every row of the combined chart as a card, on the pile of its line, the
-// oldest at the bottom. The year runs with the scroll; a card drops onto
-// its pile in its year, and the count adds up what applies.
+// ---------- Ausweis ---------------------------------------------------------
+const real = (t: (typeof thresholds)[number]) => inTodaysMoney(t.amount, t.year)
+const highest = Math.max(...thresholds.map(real))
+const bars = thresholds.map((t) => ({
+  year: t.year,
+  at: at(t.step),
+  zero: t.amount === 0,
+  then:
+    t.amount === 0
+      ? en
+        ? "any amount"
+        : "jeder Betrag"
+      : `${en ? "then" : "damals"} ${n(t.amount)} ${t.unit === "ECU" ? "ECU" : "€"}`,
+  style: `--w: ${((real(t) / highest) * 100).toFixed(2)}%`,
+}))
+const idCounts = counts(
+  Object.fromEntries(thresholds.map((t) => [t.step, real(t)])),
+)
+
+// ---------- Regeln ----------------------------------------------------------
 const statusOf = new Map(ruleChronicle.entries.map((e) => [e.id, e.status]))
 const cards = ruleChronicle.stack.flatMap((group) =>
   group.rows.map((row) => {
     const status = statusOf.get(row.id) ?? "past"
     return {
-      id: row.id,
       domain: group.domain?.id ?? "steuern",
       what: row.what[language],
       from: row.from,
@@ -84,88 +89,34 @@ const cards = ruleChronicle.stack.flatMap((group) =>
 const rulePiles = [
   { id: "steuern", label: en ? "Tax" : "Steuern" },
   { id: "geldwaesche", label: en ? "Money laundering" : "Geldwäsche" },
-].map((pile) => ({
-  ...pile,
+].map((p) => ({
+  ...p,
   cards: cards
-    .filter((card) => card.domain === pile.id)
+    .filter((card) => card.domain === p.id)
     .sort((a, b) => a.from - b.from),
 }))
-const thisYear = new Date(historyAsOf).getUTCFullYear()
-const inForce = (year: number) =>
-  cards.filter(
-    (card) =>
-      !card.ahead &&
-      card.from <= year &&
-      year <= (card.until ?? Number.POSITIVE_INFINITY),
-  ).length
-const rulesToday = inForce(thisYear)
-const rulesAhead = cards.filter((card) => card.ahead).length
 
-// ---------- Pile -----------------------------------------------------------
+// ---------- Papier ----------------------------------------------------------
 const totalPages = pile.reduce((sum, block) => sum + block.pages, 0)
 let below = 0
 const blocks = pile.map((block, k) => {
   const style = `--from: ${(below / totalPages).toFixed(4)}; --pages: ${(block.pages / totalPages).toFixed(4)}; --k: ${k}`
   below += block.pages
-  return { ...block, at: at(block.step), style }
+  return { ...block, style }
 })
-// One label per step, at the top of what it added.
-const pileSteps = [...new Set(pile.map((block) => block.step))].map((id) => {
-  const added = pile.filter((block) => block.step === id)
-  const top = pile
-    .slice(0, pile.indexOf(added.at(-1) as (typeof pile)[number]) + 1)
-    .reduce((sum, block) => sum + block.pages, 0)
-  const pages = added.reduce((sum, block) => sum + block.pages, 0)
-  const years = [...new Set(added.map((block) => block.year))]
-  return {
-    at: at(id),
-    top,
-    style: `--top: ${(top / totalPages).toFixed(4)}`,
-    years: years.length > 1 ? `${years[0]}–${years.at(-1)}` : `${years[0]}`,
-    pages,
-  }
+const firstPages = pile[0].pages
+const firstShare = (firstPages / totalPages).toFixed(4)
+const pageCounts = counts({
+  "papier-1991": firstPages,
+  "papier-heute": totalPages,
 })
-const pileCounts = counts(
-  Object.fromEntries(pileSteps.map((s) => [steps[s.at].id, s.top])),
-)
-const pileHeights = JSON.stringify(
-  Object.fromEntries(pileSteps.map((s) => [s.at, s.top / totalPages])),
-)
-const ruler = [100, 200, 300, 400].map((pages) => ({
-  pages,
-  style: `--at: ${(pages / totalPages).toFixed(4)}`,
-}))
 
-// ---------- Thresholds ----------------------------------------------------
-// Each amount also in today's money, the scale set by the largest of them:
-// the fall is steeper than the nominal amounts show.
-const real = (t: (typeof thresholds)[number]) => inTodaysMoney(t.amount, t.year)
-const highest = Math.max(...thresholds.map(real))
-const pct = (value: number) => `${((value / highest) * 100).toFixed(2)}%`
-const bars = thresholds.map((t) => ({
-  ...t,
-  at: at(t.step),
-  text: `${n(t.amount)} ${t.unit === "ECU" ? "ECU" : "€"}`,
-  today:
-    real(t) !== t.amount
-      ? `${en ? "today" : "heute"} ${n(real(t))} €`
-      : undefined,
-  label: t.label[language],
-  style: `--w: ${pct(t.amount)}; --r: ${pct(real(t))}`,
-}))
-const thresholdCounts = counts(
-  Object.fromEntries(
-    thresholds.filter((t) => !t.cap).map((t) => [t.step, real(t)]),
-  ),
-)
-
-// ---------- Ring ----------------------------------------------------------
+// ---------- Zugriff ---------------------------------------------------------
 const ring = lookers.map((looker, k) => {
   const angle = (k / lookers.length) * 2 * Math.PI - Math.PI / 2
-  const x = 50 + 36 * Math.cos(angle)
-  const y = 50 + 36 * Math.sin(angle)
+  const x = 50 + 37 * Math.cos(angle)
+  const y = 50 + 37 * Math.sin(angle)
   return {
-    ...looker,
     at: at(looker.step),
     label: looker.label[language],
     x,
@@ -173,116 +124,33 @@ const ring = lookers.map((looker, k) => {
     style: `--x: ${x.toFixed(2)}%; --y: ${y.toFixed(2)}%`,
   }
 })
-// The other 26 member states around Austria once the registers connect.
 const europe = Array.from({ length: 26 }, (_, k) => {
   const angle = (k / 26) * 2 * Math.PI - Math.PI / 2
-  return {
-    style: `--x: ${(50 + 48 * Math.cos(angle)).toFixed(2)}%; --y: ${(50 + 48 * Math.sin(angle)).toFixed(2)}%; --k: ${k}`,
-  }
+  return `--x: ${(50 + 48 * Math.cos(angle)).toFixed(2)}%; --y: ${(50 + 48 * Math.sin(angle)).toFixed(2)}%; --k: ${k}`
 })
 const lookerCounts = counts({
-  "zugriff-2016": 3,
-  "zugriff-2021": 7,
-  "zugriff-2026": 8,
-  "zugriff-2029": 8,
+  "zugriff-2016": lookers.filter((l) => l.step === "zugriff-2016").length,
+  "zugriff-2026": lookers.length,
 })
 
-// ---------- Report field --------------------------------------------------
-const { first, latest, convictions, keptOnFile } = reportField
+// ---------- Ergebnis --------------------------------------------------------
+const { first, latest, convictions } = reportField
 const side = (count: number) => Math.sqrt(count / latest)
-const perRow = Math.ceil(Math.sqrt(latest))
 const fieldStyle = [
-  `--per-row: ${perRow}`,
+  `--per-row: ${Math.ceil(Math.sqrt(latest))}`,
   `--first: ${side(first).toFixed(4)}`,
   `--red-side: ${side(convictions).toFixed(4)}`,
-  `--kept: ${(keptOnFile / latest).toFixed(4)}`,
 ].join("; ")
 const reportCounts = counts({
-  "meldungen-2005": first,
-  "meldungen-2025": latest,
-  "meldungen-urteile": convictions,
-  "meldungen-gespeichert": keptOnFile,
+  "ergebnis-2005": first,
+  "ergebnis-2025": latest,
+  "ergebnis-urteile": convictions,
 })
-
-// ---------- Coins and records ---------------------------------------------
+const fieldSteps = ["ergebnis-2005", "ergebnis-2025", "ergebnis-urteile"]
+  .map(at)
+  .join(",")
+const coinSteps = ["ergebnis-euro", "ergebnis-krypto"].map(at).join(",")
 const coins = Array.from({ length: 100 }, (_, k) => k)
-const records = Array.from({ length: resultGrids.records.total }, (_, k) => k)
-const seizedCoins = Math.round(resultGrids.seized)
-
-const sceneNotes: Record<Scene, string> = {
-  tower: en
-    ? "Every anti-money-laundering act the EU adopted since 1991, repealed ones too, in pages of the Official Journal."
-    : "Alle Geldwäsche-Rechtsakte, die die EU seit 1991 beschlossen hat, auch aufgehobene, in Seiten des Amtsblatts.",
-  threshold: en
-    ? "Light bars: the amount in today’s money, by Austria’s consumer price index 2025. ECU, the euro’s forerunner, counts one to one."
-    : "Helle Balken: der Betrag in heutiger Kaufkraft, nach dem österreichischen Verbraucherpreisindex 2025. ECU, der Vorläufer des Euro, zählt eins zu eins.",
-  register: en
-    ? "Who may look up the Austrian account register."
-    : "Wer im österreichischen Kontenregister nachsehen darf.",
-  reports: en
-    ? "One dot per suspicion report in Austria."
-    : "Ein Punkt je Verdachtsmeldung in Österreich.",
-  money: en ? "One coin per euro." : "Eine Münze je Euro.",
-  rules: en
-    ? "One card per rule, from the year it applies; for money laundering, in Austria."
-    : "Eine Karte je Regel, ab dem Jahr, in dem sie gilt; bei der Geldwäsche in Österreich.",
-  summary: en
-    ? "Every figure is on this page below, with its source."
-    : "Jede Zahl steht unten auf dieser Seite, mit Quelle.",
-}
-
-// ---------- Balance ---------------------------------------------------------
-const tally = [
-  {
-    figure: n(rulesToday),
-    text: en ? "rules apply today" : "Regeln gelten heute",
-  },
-  {
-    figure: n(totalPages),
-    text: en
-      ? "pages of EU anti-money-laundering law"
-      : "Seiten Geldwäsche-Recht der EU",
-  },
-  {
-    figure: "0 €",
-    text: en
-      ? "from which names travel with a crypto transfer"
-      : "ab da gehen bei Krypto-Übertragungen Namen mit",
-  },
-  {
-    figure: n(lookers.length),
-    text: en
-      ? "groups of authorities may look up where you hold accounts"
-      : "Behördengruppen dürfen nachsehen, wo du Konten hast",
-  },
-  {
-    figure: n(latest),
-    text: en
-      ? "suspicion reports in Austria, 2025"
-      : "Verdachtsmeldungen in Österreich, 2025",
-  },
-  {
-    figure: n(convictions),
-    text: en
-      ? "convictions for money laundering, 2025"
-      : "Verurteilungen wegen Geldwäsche, 2025",
-    red: true,
-  },
-  {
-    figure: `${n(resultGrids.confiscated, 2)} €`,
-    text: en
-      ? "of 100 euros from crime are confiscated"
-      : "von 100 Euro aus Straftaten werden eingezogen",
-    red: true,
-  },
-  {
-    figure: en ? "45 of 150" : "45 von 150",
-    text: en
-      ? "tax records led to any action"
-      : "Steuerdatensätzen führten zu einer Maßnahme",
-    red: true,
-  },
-]
 ---
 
 <section
@@ -290,11 +158,11 @@ const tally = [
   aria-labelledby="film-title"
   data-film
   data-locale={locale}
+  data-today={thisYear}
   data-scenes={JSON.stringify(items.map((item) => item.scene))}
   data-chapters={JSON.stringify(items.map((item) => item.chapter))}
   data-ids={JSON.stringify(items.map((item) => item.id))}
   data-years={JSON.stringify(items.map((item) => item.years ?? null))}
-  data-today={thisYear}
 >
   <h2 id="film-title" class="visually-hidden">
     {en ? "The story of over-regulation" : "Die Geschichte der Überregulierung"}
@@ -311,7 +179,10 @@ const tally = [
       <ol>
         {chapters.map((chapter, k) => (
           <li>
-            <a href={`#film-${steps[firstOf(chapter.id)].id}`} data-chapter={chapter.id}>
+            <a
+              href={`#film-${steps[firstOf(chapter.id)].id}`}
+              data-chapter={chapter.id}
+            >
               <span>{k + 1}</span> {chapter.label[language]}
             </a>
           </li>
@@ -322,12 +193,13 @@ const tally = [
     <div class="view" data-view data-scene={items[0].scene}>
       <div class="says">
         {items.map((item) => (
-          <div class="say" data-say={item.i} data-current={item.i === 0 ? "" : undefined}>
-            <p class="say-kicker">
-              {item.number} · {item.chapterLabel}
-            </p>
+          <div
+            class="say"
+            data-say={item.i}
+            data-current={item.i === 0 ? "" : undefined}
+          >
             <h3>{item.title[language]}</h3>
-            <p class="say-text">{item.text[language]}</p>
+            {item.text && <p class="say-text">{item.text[language]}</p>}
             <ul class="say-sources">
               {item.sources.map((source) => (
                 <li>
@@ -340,24 +212,43 @@ const tally = [
       </div>
 
       <div class="scenes" aria-hidden="true">
-        <!-- Rules on two piles -->
+        <!-- Ausweis -->
+        <div class="scene" data-scene-id="threshold">
+          <p class="big">
+            <strong data-counts={idCounts}>{n(real(thresholds[0]))}</strong>
+            <span
+              >{en ? "euros, today’s money" : "Euro, in heutigem Geld"}</span
+            >
+          </p>
+          <ul class="steps">
+            {bars.map((bar) => (
+              <li class:list={{ zero: bar.zero }} data-at={bar.at} style={bar.style}>
+                <span class="steps-year">{bar.year}</span>
+                <span class="steps-track"><span class="steps-bar" /></span>
+                {bar.then && <span class="steps-then">{bar.then}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Regeln -->
         <div class="scene" data-scene-id="rules">
-          <p class="big rules-big">
-            <strong data-year>{steps[0].years?.[0]}</strong>
-            <span class="rules-tally">
-              <span
-                ><b data-rule-count>0</b>
-                {en ? "rules apply" : "Regeln gelten"}</span
-              ><span class="rules-ahead" data-rule-ahead-wrap hidden
+          <p class="big">
+            <strong data-year class="year"
+              >{steps[at("regeln-1977")].years?.[0]}</strong
+            >
+            <span class="tally"
+              ><b data-rule-count>0</b> {en ? "rules" : "Regeln"}
+              <span data-rule-ahead-wrap hidden
                 >, <b data-rule-ahead>0</b> {en ? "coming" : "kommen"}</span
-              >
-            </span>
+              ></span
+            >
           </p>
           <div class="rule-piles">
-            {rulePiles.map((pile) => (
-              <div class:list={["rule-pile", pile.id]}>
+            {rulePiles.map((p) => (
+              <div class="rule-pile">
                 <ol>
-                  {pile.cards.map((card) => (
+                  {p.cards.map((card) => (
                     <li
                       class:list={["rule-card", card.status]}
                       data-from={card.from}
@@ -369,80 +260,44 @@ const tally = [
                     </li>
                   ))}
                 </ol>
-                <p class="rule-pile-name">{pile.label}</p>
+                <p class="pile-name">{p.label}</p>
               </div>
             ))}
           </div>
-          <p class="scene-note">{sceneNotes.rules}</p>
         </div>
 
-        <!-- Pile of pages -->
+        <!-- Papier: the first directive beside everything since -->
         <div class="scene" data-scene-id="tower">
           <p class="big">
-            <strong data-counts={pileCounts}>{n(pile[0].pages)}</strong>
+            <strong data-counts={pageCounts}>{n(firstPages)}</strong>
             <span>{en ? "pages" : "Seiten"}</span>
           </p>
-          <div class="pile-wrap">
-            <div
-              class="pile"
-              data-pile
-              style={`--pile: ${(pile[0].pages / totalPages).toFixed(4)}`}
-              data-heights={pileHeights}
-            >
-              {ruler.map((mark) => (
-                <span class="pile-mark" style={mark.style}>{mark.pages}</span>
-              ))}
-              {blocks.map((block) => (
+          <div class="piles">
+            <div class="paper">
+              <div class="stack">
                 <span
-                  class="sheet"
-                  data-at={block.at}
-                  data-fresh={block.at}
-                  style={block.style}
+                  class="sheet first"
+                  style={`--from: 0; --pages: ${firstShare}; --k: 0`}
                 />
-              ))}
-              <span class="pile-top" />
-              {pileSteps.map((label) => (
-                <span class="pile-label" data-only={label.at} style={label.style}>
-                  <strong>+{label.pages}</strong> {label.years}
+                <span class="stack-tag" style={`--top: ${firstShare}`}>
+                  {n(firstPages)}
                 </span>
-              ))}
+              </div>
+              <p class="pile-name">1991</p>
+            </div>
+            <div class="paper" data-at={at("papier-heute")}>
+              <div class="stack">
+                {blocks.map((block) => (
+                  <span class="sheet" style={block.style} />
+                ))}
+                <span class="stack-tag" style="--top: 1">{n(totalPages)}</span>
+              </div>
+              <p class="pile-name">{en ? "Today" : "Heute"}</p>
             </div>
           </div>
-          <p class="scene-note">{sceneNotes.tower}</p>
         </div>
 
-        <!-- Thresholds -->
-        <div class="scene" data-scene-id="threshold">
-          <p class="big">
-            <strong data-counts={thresholdCounts}>{n(15000)}</strong>
-            <span
-              >{en ? "euros in today’s money" : "Euro in heutiger Kaufkraft"}</span
-            >
-          </p>
-          <ul class="steps">
-            {bars.map((bar) => (
-              <li
-                class:list={{ zero: bar.amount === 0, cap: bar.cap }}
-                data-at={bar.at}
-                style={bar.style}
-              >
-                <span class="steps-year">{bar.year}</span>
-                <span class="steps-track">
-                  {bar.today && <span class="steps-real" />}
-                  <span class="steps-bar" />
-                </span>
-                <span class="steps-text">
-                  <strong>{bar.text}</strong>{" "}
-                  {bar.label}
-                  {bar.today && <span class="steps-today">{bar.today}</span>}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <p class="scene-note">{sceneNotes.threshold}</p>
-        </div>
-
-        <!-- Ring of authorities -->
+        <!-- Zugriff -->
         <div class="scene" data-scene-id="register">
           <p class="big">
             <strong data-counts={lookerCounts}>3</strong>
@@ -459,11 +314,21 @@ const tally = [
                   data-at={at("zugriff-2029")}
                 />
                 {ring.map((looker) => (
-                  <line x1="50" y1="50" x2={looker.x} y2={looker.y} data-at={looker.at} />
+                  <line
+                    x1="50"
+                    y1="50"
+                    x2={looker.x}
+                    y2={looker.y}
+                    data-at={looker.at}
+                  />
                 ))}
               </svg>
-              {europe.map((dot) => (
-                <span class="ring-state" style={dot.style} data-at={at("zugriff-2029")} />
+              {europe.map((style) => (
+                <span
+                  class="ring-state"
+                  style={style}
+                  data-at={at("zugriff-2029")}
+                />
               ))}
               <span class="ring-you">{en ? "Your account" : "Dein Konto"}</span>
               {ring.map((looker) => (
@@ -476,121 +341,45 @@ const tally = [
               </span>
             </div>
           </div>
-          <p class="scene-note">{sceneNotes.register}</p>
         </div>
 
-        <!-- Field of reports -->
-        <div class="scene" data-scene-id="reports">
+        <!-- Ergebnis -->
+        <div class="scene" data-scene-id="result">
           <p class="big">
-            <strong data-counts={reportCounts}>{n(first)}</strong>
-            <span data-only={`${at("meldungen-2005")},${at("meldungen-2025")}`}>
+            <strong data-counts={reportCounts} data-only={fieldSteps}>
+              {n(first)}
+            </strong>
+            <span data-only={`${at("ergebnis-2005")},${at("ergebnis-2025")}`}>
               {en ? "reports" : "Meldungen"}
             </span>
-            <span class="red" data-only={at("meldungen-urteile")}>
+            <span class="red" data-only={at("ergebnis-urteile")}>
               {en ? "convictions" : "Verurteilungen"}
             </span>
-            <span data-only={at("meldungen-gespeichert")}>
-              {en ? "kept on file" : "gespeichert"}
+            <strong class="red" data-only={coinSteps}>
+              {en ? "1 euro" : "1 Euro"}
+            </strong>
+            <span data-only={at("ergebnis-euro")}>
+              {en ? "of 100 from crime" : "von 100 aus Straftaten"}
+            </span>
+            <span data-only={at("ergebnis-krypto")}>
+              {en ? "of 100 in crypto" : "von 100 in Krypto"}
             </span>
           </p>
-          <div class="field-wrap">
-            <div class="field" style={fieldStyle}>
-              <span class="field-all" data-at={at("meldungen-2025")} />
-              <span class="field-kept" data-at={at("meldungen-gespeichert")} />
-              <span class="field-first" data-only={at("meldungen-2005")} />
-              <span class="field-red" data-at={at("meldungen-urteile")} />
+          <div class="result">
+            <div class="field-wrap" data-only={fieldSteps}>
+              <div class="field" style={fieldStyle}>
+                <span class="field-all" data-at={at("ergebnis-2025")} />
+                <span class="field-first" />
+                <span class="field-red" data-at={at("ergebnis-urteile")} />
+                <span class="field-callout" data-at={at("ergebnis-urteile")}>
+                  {n(convictions)}
+                </span>
+              </div>
+            </div>
+            <div class="coins" data-only={coinSteps}>
+              {coins.map((k) => <span class:list={["coin", { red: k === 99 }]} />)}
             </div>
           </div>
-          <p class="scene-note">{sceneNotes.reports}</p>
-        </div>
-
-        <!-- Coins and records -->
-        <div class="scene" data-scene-id="money">
-          <p class="big">
-            <strong data-only={at("ergebnis-gesichert")}
-              >{n(resultGrids.seized, 2)}
-              €</strong
-            >
-            <strong class="red" data-only={at("ergebnis-eingezogen")}
-              >{n(resultGrids.confiscated, 2)}
-              €</strong
-            >
-            <strong class="red" data-only={at("ergebnis-krypto")}
-              >{en ? "about 1 €" : "rund 1 €"}</strong
-            >
-            <strong class="red" data-only={at("ergebnis-steuer")}>45</strong>
-            <span
-              data-only={`${at("ergebnis-gesichert")},${at("ergebnis-eingezogen")}`}
-            >
-              {en ? "of 100 euros" : "von 100 Euro"}
-            </span>
-            <span data-only={at("ergebnis-krypto")}
-              >{en ? "of 100 crypto euros" : "von 100 Krypto-Euro"}</span
-            >
-            <span data-only={at("ergebnis-steuer")}
-              >{en ? "of 150 records" : "von 150 Datensätzen"}</span
-            >
-          </p>
-          <div class="grids">
-            <div
-              class="coins"
-              data-only={`${at("ergebnis-gesichert")},${at("ergebnis-eingezogen")},${at("ergebnis-krypto")}`}
-            >
-              {coins.map((k) => (
-                <span
-                  class:list={[
-                    "coin",
-                    {
-                      seized: k >= 100 - seizedCoins,
-                      confiscated: k === 99,
-                    },
-                  ]}
-                />
-              ))}
-            </div>
-            <div class="records" data-only={at("ergebnis-steuer")}>
-              {records.map((k) => (
-                <span
-                  class:list={[
-                    "record",
-                    { followed: k >= records.length - resultGrids.records.followedUp },
-                  ]}
-                />
-              ))}
-            </div>
-          </div>
-          <p class="scene-note">{sceneNotes.money}</p>
-        </div>
-
-        <!-- Balance -->
-        <div class="scene" data-scene-id="summary">
-          <div class="tally">
-            {[false, true].map((red) => (
-              <section class:list={["tally-side", { red }]}>
-                <h4>
-                  {red
-                    ? en
-                      ? "What comes of it"
-                      : "Was herauskommt"
-                    : en
-                      ? "What is collected"
-                      : "Was gesammelt wird"}
-                </h4>
-                <ul>
-                  {tally
-                    .map((item, k) => ({ ...item, k }))
-                    .filter((item) => Boolean(item.red) === red)
-                    .map((item) => (
-                      <li style={`--k: ${item.k}`}>
-                        <strong>{item.figure}</strong>
-                        <span>{item.text}</span>
-                      </li>
-                    ))}
-                </ul>
-              </section>
-            ))}
-          </div>
-          <p class="scene-note">{sceneNotes.summary}</p>
         </div>
       </div>
     </div>
@@ -599,72 +388,36 @@ const tally = [
 
 <script>
   // The step whose spacer has crossed the middle of the window is current:
-  // it picks the scene, the subtitle and the chapter, switches on what has
+  // it picks the scene, the headline and the chapter, switches on what has
   // appeared so far ([data-at]) or only now ([data-only]), and counts the
-  // big figure towards its value for this step.
+  // big figure towards its value. In the rules chapter the year runs with
+  // the scroll and the cards drop onto their piles in their year.
   for (const film of document.querySelectorAll<HTMLElement>("[data-film]")) {
     const view = film.querySelector<HTMLElement>("[data-view]")
-    const pile = film.querySelector<HTMLElement>("[data-pile]")
     if (!view) continue
-    const spacers = [...film.querySelectorAll<HTMLElement>("[data-spacer]")]
-    const says = [...film.querySelectorAll<HTMLElement>("[data-say]")]
-    const ats = [
-      ...film.querySelectorAll<HTMLElement | SVGElement>("[data-at]"),
+    const all = (selector: string) => [
+      ...film.querySelectorAll<HTMLElement>(selector),
     ]
-    const onlys = [...film.querySelectorAll<HTMLElement>("[data-only]")]
-    const freshes = [...film.querySelectorAll<HTMLElement>("[data-fresh]")]
-    const links = [
-      ...film.querySelectorAll<HTMLAnchorElement>("[data-chapter]"),
-    ]
-    const counters = [...film.querySelectorAll<HTMLElement>("[data-counts]")]
-    const stepIds = JSON.parse(film.dataset.ids ?? "[]") as string[]
-    const stepYears = JSON.parse(film.dataset.years ?? "[]") as (
-      | [number, number]
-      | null
-    )[]
+    const spacers = all("[data-spacer]")
+    const says = all("[data-say]")
+    const ats = [...film.querySelectorAll<Element>("[data-at]")]
+    const onlys = all("[data-only]")
+    const links = all("[data-chapter]")
+    const counters = all("[data-counts]")
+    const cards = all("[data-from]")
     const yearEl = film.querySelector<HTMLElement>("[data-year]")
     const countEl = film.querySelector<HTMLElement>("[data-rule-count]")
     const aheadEl = film.querySelector<HTMLElement>("[data-rule-ahead]")
     const aheadWrap = film.querySelector<HTMLElement>("[data-rule-ahead-wrap]")
-    const cardEls = [...film.querySelectorAll<HTMLElement>("[data-from]")]
-    let shownYear = 0
-    // The rules chapter: the year runs with the scroll, cards drop onto
-    // their pile in their year, and the counts follow.
-    const scrub = (year: number) => {
-      if (year === shownYear) return
-      shownYear = year
-      if (yearEl) {
-        yearEl.textContent = String(year)
-        yearEl.classList.toggle("future", year > Number(film.dataset.today))
-      }
-      let count = 0
-      let ahead = 0
-      for (const card of cardEls) {
-        const from = Number(card.dataset.from)
-        const until = card.dataset.until
-          ? Number(card.dataset.until)
-          : Number.POSITIVE_INFINITY
-        const on = from <= year
-        card.classList.toggle("on", on)
-        card.classList.toggle("gone", on && year > until)
-        if (!on) continue
-        if (card.hasAttribute("data-ahead")) ahead++
-        else if (year <= until) count++
-      }
-      if (countEl) countEl.textContent = String(count)
-      if (aheadEl) aheadEl.textContent = String(ahead)
-      if (aheadWrap) aheadWrap.hidden = ahead === 0
-    }
-    const stepScenes = JSON.parse(film.dataset.scenes ?? "[]") as string[]
-    const stepChapters = JSON.parse(film.dataset.chapters ?? "[]") as string[]
-    const heights = JSON.parse(pile?.dataset.heights ?? "{}") as Record<
-      string,
-      number
-    >
-    const locale = film.dataset.locale ?? "de-DE"
+    const parse = (key: string) => JSON.parse(film.dataset[key] ?? "[]")
+    const stepScenes: string[] = parse("scenes")
+    const stepChapters: string[] = parse("chapters")
+    const stepIds: string[] = parse("ids")
+    const stepYears: ([number, number] | null)[] = parse("years")
+    const today = Number(film.dataset.today)
     const motion = matchMedia("(prefers-reduced-motion: reduce)")
     const format = (value: number) =>
-      new Intl.NumberFormat(locale).format(Math.round(value))
+      new Intl.NumberFormat(film.dataset.locale).format(Math.round(value))
 
     const valueAt = (map: Record<string, number>, i: number) => {
       let value: number | undefined
@@ -682,12 +435,38 @@ const tally = [
       }
       const start = performance.now()
       const run = (now: number) => {
-        const t = Math.min(1, (now - start) / 700)
-        const eased = 1 - (1 - t) ** 3
-        el.textContent = format(from + (to - from) * eased)
+        const t = Math.min(1, (now - start) / 800)
+        el.textContent = format(from + (to - from) * (1 - (1 - t) ** 3))
         if (t < 1 && el.dataset.value === String(to)) requestAnimationFrame(run)
       }
       requestAnimationFrame(run)
+    }
+
+    let shownYear = 0
+    const scrub = (year: number) => {
+      if (year === shownYear) return
+      shownYear = year
+      if (yearEl) {
+        yearEl.textContent = String(year)
+        yearEl.classList.toggle("future", year > today)
+      }
+      let count = 0
+      let ahead = 0
+      for (const card of cards) {
+        const from = Number(card.dataset.from)
+        const until = card.dataset.until
+          ? Number(card.dataset.until)
+          : Number.POSITIVE_INFINITY
+        const on = from <= year
+        card.classList.toggle("on", on)
+        card.classList.toggle("gone", on && year > until)
+        if (!on) continue
+        if (card.hasAttribute("data-ahead")) ahead++
+        else if (year <= until) count++
+      }
+      if (countEl) countEl.textContent = String(count)
+      if (aheadEl) aheadEl.textContent = String(ahead)
+      if (aheadWrap) aheadWrap.hidden = ahead === 0
     }
 
     let current = -1
@@ -698,14 +477,17 @@ const tally = [
       for (const say of says)
         say.toggleAttribute("data-current", Number(say.dataset.say) === i)
       for (const el of ats)
-        el.classList.toggle("on", Number(el.dataset.at) <= i)
+        el.classList.toggle(
+          "on",
+          Number(
+            (el as HTMLElement).dataset?.at ?? el.getAttribute("data-at"),
+          ) <= i,
+        )
       for (const el of onlys)
         el.classList.toggle(
           "on",
           (el.dataset.only ?? "").split(",").map(Number).includes(i),
         )
-      for (const el of freshes)
-        el.classList.toggle("fresh", Number(el.dataset.fresh) === i)
       for (const link of links) {
         const here = link.dataset.chapter === stepChapters[i]
         if (here && !link.hasAttribute("aria-current")) {
@@ -722,9 +504,6 @@ const tally = [
         const value = valueAt(JSON.parse(el.dataset.counts ?? "{}"), i)
         if (value !== undefined) tween(el, value)
       }
-      const height = valueAt(heights, i)
-      if (pile && height !== undefined)
-        pile.style.setProperty("--pile", String(height))
     }
 
     let queued = false
@@ -745,8 +524,8 @@ const tally = [
           Math.max(0, (middle - box.top) / (box.height * 0.8)),
         )
         scrub(Math.round(span[0] + (span[1] - span[0]) * p))
-      } else if (i > 0) {
-        const last = stepYears.filter(Boolean).at(-1)
+      } else {
+        const last = stepYears.slice(0, i).filter(Boolean).at(-1)
         if (last) scrub(last[1])
       }
       const box = film.getBoundingClientRect()
@@ -761,7 +540,7 @@ const tally = [
       requestAnimationFrame(render)
     }
     for (const el of counters)
-      el.dataset.value = el.textContent?.replace(/\D/g, "") ?? "0"
+      el.dataset.value = el.textContent?.replace(/\D/g, "") || "0"
     window.addEventListener("scroll", queue, { passive: true })
     window.addEventListener("resize", queue)
     film.toggleAttribute("data-ready", true)
@@ -771,13 +550,10 @@ const tally = [
 
 <style>
   /* Wie die Datengeschichte der Startseite: die Bühne füllt das Fenster und
-     steht, während die Schritte vorbeiziehen. Der Weg je Schritt wächst mit
-     der Fensterhöhe, aber nur bis zu einem 76rem hohen Fenster. */
+     steht, während die Schritte vorbeiziehen. */
   .film {
     --pace: min(1svh, 0.76rem);
     --bar: light-dark(#3b4147, #a7afb6);
-    --faint: color-mix(in oklab, var(--bar) 16%, transparent);
-    --mid: color-mix(in oklab, var(--bar) 45%, transparent);
     --red: var(--primary);
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -810,10 +586,8 @@ const tally = [
     padding-block: var(--space-xs) var(--space-s);
   }
 
-  /* Ohne Skript stehen die Schritte als Text untereinander. */
-  .film:not([data-ready]) .track,
-  .film:not([data-ready]) .scenes,
-  .film:not([data-ready]) .rail {
+  /* Ohne Skript stehen die Schlagzeilen untereinander. */
+  .film:not([data-ready]) :is(.track, .scenes, .rail) {
     display: none;
   }
 
@@ -823,7 +597,7 @@ const tally = [
   }
 
   .film:not([data-ready]) .says {
-    gap: var(--space-xl);
+    gap: var(--space-l);
   }
 
   .film:not([data-ready]) .say {
@@ -863,28 +637,48 @@ const tally = [
     font-weight: var(--weight-heading);
   }
 
-  .rail a:hover {
+  .rail a:hover,
+  .rail a[aria-current] {
     color: var(--foreground);
   }
 
   .rail a[aria-current] {
-    color: var(--foreground);
     box-shadow: inset 0 -2px var(--accent);
   }
 
   /* ---------- Bühne ----------------------------------------------------- */
 
-  /* Eine helle Fläche: am breiten Schirm der Satz links, das Bild rechts;
-     schmal der Satz oben. */
+  /* Schmal: das Bild oben, die Schlagzeile in einer Leiste darunter.
+     Breit: links die Schlagzeile, rechts das Bild. */
   .view {
     position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
     min-block-size: 0;
     border-radius: var(--radius-xl);
     background: var(--panel);
     overflow: clip;
+  }
+
+  .scenes {
+    position: relative;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    min-block-size: 0;
+    container-type: size;
+  }
+
+  .says {
+    grid-row: 2;
+    display: grid;
+    align-content: start;
+    min-block-size: clamp(7.5rem, 22svh, 9.5rem);
+    padding: var(--space-s) var(--space-m) var(--space-m);
+    border-block-start: 1px solid var(--line);
+    background: var(--paper);
   }
 
   @container campaign (width >= 60rem) {
@@ -892,17 +686,20 @@ const tally = [
       grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
       grid-template-rows: minmax(0, 1fr);
     }
-  }
 
-  .says {
-    display: grid;
-    align-content: center;
-    padding: var(--space-m) var(--space-m) 0;
-  }
+    .scenes {
+      grid-column: 2;
+      grid-row: 1;
+    }
 
-  @container campaign (width >= 60rem) {
     .says {
+      grid-column: 1;
+      grid-row: 1;
+      align-content: center;
+      min-block-size: 0;
       padding: var(--space-xl);
+      border: 0;
+      background: none;
     }
   }
 
@@ -922,41 +719,38 @@ const tally = [
     translate: 0 0.75rem;
   }
 
-  .say-kicker {
-    color: var(--accent);
-    font-size: var(--type-meta);
-    font-weight: var(--weight-heading);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
   .say h3 {
-    max-inline-size: 18ch;
+    max-inline-size: 16ch;
     color: var(--foreground);
-    font-size: var(--type-h2);
+    font-size: clamp(1.5rem, 1rem + 2.4vw, 3rem);
     font-stretch: 94%;
     font-weight: var(--weight-heading);
-    line-height: 1.05;
-    letter-spacing: -0.024em;
+    line-height: 1.04;
+    letter-spacing: -0.026em;
     text-wrap: balance;
   }
 
   .say-text {
-    max-inline-size: 46ch;
+    max-inline-size: 40ch;
     color: var(--ink-2);
     font-size: var(--type-lead);
-    line-height: 1.4;
+    line-height: 1.35;
     text-wrap: pretty;
   }
 
   .say-sources {
     display: flex;
-    flex-wrap: wrap;
     gap: 0 var(--space-s);
     margin: var(--space-3xs) 0 0;
     padding: 0;
+    overflow-x: auto;
     font-size: var(--type-meta);
     list-style: none;
+    scrollbar-width: none;
+  }
+
+  .say-sources li {
+    flex: none;
   }
 
   .say-sources a {
@@ -974,20 +768,11 @@ const tally = [
 
   /* ---------- Szenen ---------------------------------------------------- */
 
-  .scenes {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr);
-    min-block-size: 0;
-    container-type: size;
-  }
-
   .scene {
     grid-area: 1 / 1;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr);
     gap: var(--space-s);
     min-block-size: 0;
     padding: var(--space-m);
@@ -1000,22 +785,14 @@ const tally = [
       visibility 0.5s;
   }
 
-  .view[data-scene="rules"] [data-scene-id="rules"],
-  .view[data-scene="summary"] [data-scene-id="summary"],
-  .view[data-scene="tower"] [data-scene-id="tower"],
   .view[data-scene="threshold"] [data-scene-id="threshold"],
+  .view[data-scene="rules"] [data-scene-id="rules"],
+  .view[data-scene="tower"] [data-scene-id="tower"],
   .view[data-scene="register"] [data-scene-id="register"],
-  .view[data-scene="reports"] [data-scene-id="reports"],
-  .view[data-scene="money"] [data-scene-id="money"] {
+  .view[data-scene="result"] [data-scene-id="result"] {
     opacity: 1;
     visibility: visible;
     scale: 1;
-  }
-
-  .scene-note {
-    color: var(--ink-3);
-    font-size: var(--type-meta);
-    text-wrap: pretty;
   }
 
   /* Die große Zahl der Szene, gezählt. */
@@ -1031,15 +808,15 @@ const tally = [
 
   .big strong {
     color: var(--foreground);
-    font-size: clamp(2.75rem, 1.5rem + 5cqi, 5.5rem);
+    font-size: clamp(2.5rem, 1rem + 9cqi, 6.5rem);
     font-stretch: 94%;
     font-weight: var(--weight-heading);
-    letter-spacing: -0.03em;
+    letter-spacing: -0.035em;
     font-variant-numeric: tabular-nums;
+    transition: color 0.3s ease;
   }
 
   .big .red,
-  .big strong.red,
   .big strong.zero {
     color: var(--accent);
   }
@@ -1048,33 +825,100 @@ const tally = [
     display: none;
   }
 
-  /* ---------- Regel-Stapel --------------------------------------------- */
-
-  /* Die Jahreszahl läuft mit, daneben die Zählung. */
-  .rules-big strong {
-    min-inline-size: 4ch;
-    transition: color 0.3s ease;
-  }
-
-  /* Jahre nach heute: blasser, es ist erst beschlossen. */
-  .rules-big strong.future {
+  .big .year.future {
     color: var(--ink-3);
   }
 
-  .rules-tally {
-    color: var(--ink-2);
-  }
-
-  .rules-tally b {
+  .big b {
     color: var(--foreground);
     font-weight: var(--weight-heading);
   }
 
-  .rules-ahead b {
-    color: var(--ink-2);
+  .pile-name {
+    padding-block-start: var(--space-2xs);
+    border-image: var(--metal-rule) 1;
+    border-block-start: 3px solid;
+    color: var(--ink);
+    font-weight: var(--weight-heading);
   }
 
-  /* Zwei Türme, die Karten fallen von oben auf ihren Turm. */
+  /* ---------- Ausweis --------------------------------------------------- */
+
+  .steps {
+    display: grid;
+    align-content: end;
+    gap: var(--space-m);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .steps li {
+    display: grid;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    gap: 0.4rem var(--space-s);
+    align-items: center;
+    opacity: 0;
+    translate: 0 0.75rem;
+    transition:
+      opacity 0.5s ease,
+      translate 0.5s ease;
+  }
+
+  .steps li.on {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .steps-year {
+    align-self: center;
+    color: var(--ink-3);
+    font-weight: var(--weight-heading);
+  }
+
+  .steps-track {
+    display: block;
+    block-size: clamp(2rem, 11cqh, 5.5rem);
+  }
+
+  .steps-bar {
+    display: block;
+    inline-size: max(0.9rem, var(--w));
+    block-size: 100%;
+    border-radius: 0 6px 6px 0;
+    background: var(--bar);
+    transform-origin: left;
+    scale: 0 1;
+    transition: scale 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s;
+  }
+
+  .steps li.on .steps-bar {
+    scale: 1 1;
+  }
+
+  /* Null Euro: kein Balken mehr, nur ein roter Punkt. */
+  .steps .zero .steps-track {
+    display: grid;
+    align-items: center;
+  }
+
+  .steps .zero .steps-bar {
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+    border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 0 0.4rem
+      color-mix(in oklab, var(--primary) 18%, transparent);
+  }
+
+  .steps-then {
+    grid-column: 2;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  /* ---------- Regeln ---------------------------------------------------- */
+
   .rule-piles {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1084,11 +928,11 @@ const tally = [
   }
 
   .rule-pile {
-    min-inline-size: 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr) auto;
     gap: var(--space-2xs);
+    min-inline-size: 0;
     block-size: 100%;
     min-block-size: 0;
   }
@@ -1096,35 +940,25 @@ const tally = [
   .rule-pile ol {
     display: flex;
     flex-direction: column-reverse;
-    justify-content: flex-start;
-    gap: clamp(2px, 0.6cqh, 6px);
+    gap: clamp(2px, 0.5cqh, 5px);
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .rule-pile-name {
-    padding-block-start: var(--space-2xs);
-    border-image: var(--metal-rule) 1;
-    border-block-start: 3px solid;
-    color: var(--ink);
-    font-weight: var(--weight-heading);
-  }
-
   .rule-card {
     display: flex;
     align-items: baseline;
-    gap: 0.6em;
-    min-block-size: 0;
-    min-inline-size: 0;
     flex-shrink: 0;
-    padding: clamp(0.1rem, 0.9cqh, 0.7rem) clamp(0.35rem, 1.2cqi, 0.75rem);
+    gap: 0.6em;
+    min-inline-size: 0;
+    padding: clamp(0.1rem, 0.8cqh, 0.6rem) clamp(0.35rem, 1.2cqi, 0.75rem);
     border: 1px solid var(--line);
     border-inline-start: 4px solid var(--bar);
     border-radius: var(--radius-sm);
     background: var(--paper);
     box-shadow: 0 1px 2px var(--material-shade);
-    font-size: clamp(0.58rem, min(2cqh, 2.4cqi), 1.05rem);
+    font-size: clamp(0.56rem, min(1.9cqh, 2.4cqi), 1rem);
     line-height: 1.2;
     opacity: 0;
     translate: 0 -2.5rem;
@@ -1149,7 +983,6 @@ const tally = [
   .rule-year {
     flex: none;
     color: var(--ink-3);
-    font-variant-numeric: tabular-nums;
   }
 
   .rule-what {
@@ -1162,8 +995,6 @@ const tally = [
     overflow-wrap: normal;
   }
 
-  /* Die jüngste Pflicht je Linie rot, Aufgehobenes durchgestrichen,
-     Kommendes nur umrandet. */
   .rule-card.current {
     border-color: color-mix(in oklab, var(--primary) 40%, transparent);
     border-inline-start-color: var(--primary);
@@ -1193,129 +1024,40 @@ const tally = [
     color: var(--ink-2);
   }
 
-  /* ---------- Bilanz ---------------------------------------------------- */
+  /* ---------- Papier ---------------------------------------------------- */
 
-  /* Links, was gesammelt wird, grau; rechts, was herauskommt, rot. */
-  .tally {
-    grid-row: 2;
-    align-self: center;
+  /* Zwei Stapel nebeneinander, gleicher Maßstab: 1991 und heute. */
+  .piles {
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-    gap: var(--space-l);
-  }
-
-  .tally-side {
-    display: grid;
-    align-content: start;
-    gap: var(--space-s);
-  }
-
-  .tally-side h4 {
-    padding-block-end: var(--space-2xs);
-    border-block-end: 3px solid var(--ink);
-    color: var(--ink);
-    font-size: var(--type-meta);
-    font-weight: var(--weight-heading);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .tally-side.red h4 {
-    border-block-end-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .tally ul {
-    display: grid;
-    gap: var(--space-s);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .tally li {
-    display: grid;
-    gap: 0.15rem;
-    opacity: 0;
-    translate: 0 1rem;
-    transition:
-      opacity 0.5s ease calc(var(--k) * 110ms),
-      translate 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--k) * 110ms);
-  }
-
-  .view[data-scene="summary"] .tally li {
-    opacity: 1;
-    translate: 0 0;
-  }
-
-  .tally strong {
-    color: var(--foreground);
-    font-size: clamp(1.6rem, 0.6rem + 4.2cqh, 3.5rem);
-    font-stretch: 94%;
-    font-weight: var(--weight-heading);
-    line-height: 1;
-    letter-spacing: -0.028em;
-    white-space: nowrap;
-  }
-
-  .tally .red strong {
-    color: var(--accent);
-    font-size: clamp(2rem, 0.8rem + 6cqh, 5rem);
-  }
-
-  .tally span {
-    color: var(--ink-2);
-    font-size: var(--type-meta);
-    line-height: 1.35;
-    text-wrap: pretty;
-  }
-
-  [data-scene-id="summary"] .scene-note {
-    grid-row: 3;
-  }
-
-  /* ---------- Papierstapel ---------------------------------------------- */
-
-  .pile-wrap {
-    display: grid;
-    place-items: end center;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1rem, 6cqi, 4rem);
+    align-items: end;
     min-block-size: 0;
   }
 
-  .pile {
-    position: relative;
-    inline-size: min(15rem, 46cqi);
+  .paper {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: var(--space-2xs);
     block-size: 100%;
-    max-block-size: 34rem;
+    min-block-size: 0;
+    min-inline-size: 0;
   }
 
-  /* Seitenmaß links: alle 100 Seiten ein Strich. */
-  .pile-mark {
-    position: absolute;
-    inset-inline-end: calc(100% + 0.75rem);
-    inset-block-end: calc(var(--at) * 100%);
-    translate: 0 50%;
-    color: var(--ink-3);
-    font-size: var(--type-meta);
-    white-space: nowrap;
+  .stack {
+    position: relative;
+    margin-inline: auto;
+    margin-block-start: 2rem;
+    inline-size: min(100%, 12rem);
   }
 
-  .pile-mark::after {
-    content: "";
-    position: absolute;
-    inset-inline-start: calc(100% + 0.3rem);
-    inset-block-start: 50%;
-    inline-size: 0.4rem;
-    border-block-start: 1px solid var(--line);
-  }
-
-  /* Jeder Rechtsakt ein Bündel Blätter; die Kanten sind feine Linien. */
   .sheet {
+    --edge: color-mix(in oklab, var(--bar) 30%, var(--paper));
     position: absolute;
     inset-inline: 0;
     inset-block-end: calc(var(--from) * 100%);
-    block-size: calc(var(--pages) * 100%);
-    --edge: color-mix(in oklab, var(--bar) 30%, var(--paper));
+    block-size: max(3px, calc(var(--pages) * 100%));
     border-inline: 1px solid var(--material-edge);
     background-color: var(--paper);
     background-image: linear-gradient(
@@ -1325,182 +1067,47 @@ const tally = [
     );
     background-size: 100% 4px;
     box-shadow: 0 1px 0 var(--material-shade);
-    translate: calc((var(--k) - 3.5) * 0.18rem) 0;
+    translate: calc((var(--k) - 3.5) * 0.15rem) 0;
     transform-origin: bottom;
+  }
+
+  /* Heute wächst der Stapel Akt für Akt. */
+  .paper[data-at] .sheet {
     scale: 1 0;
-    transition: scale 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition: scale 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--k) * 90ms);
   }
 
-  .sheet.on {
+  .paper[data-at].on .sheet {
     scale: 1 1;
   }
 
-  /* Was dieser Schritt dazulegt, mit roter Kante. */
-  .sheet.fresh {
-    --edge: color-mix(in oklab, var(--primary) 45%, var(--paper));
-    border-color: var(--accent);
-  }
-
-  /* Das oberste Blatt in Schrägsicht, auf der Höhe des Stapels. */
-  .pile-top {
-    position: absolute;
-    inset-inline: -0.4rem;
-    inset-block-end: calc(var(--pile) * 100%);
-    block-size: 1.1rem;
-    border: 1px solid var(--material-edge);
-    border-radius: 2px;
-    background: linear-gradient(
-      to bottom,
-      var(--paper),
-      color-mix(in oklab, var(--bar) 10%, var(--paper))
-    );
-    transform: perspective(18rem) rotateX(58deg);
-    transform-origin: bottom;
-    transition: inset-block-end 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
-  }
-
-  .pile-label {
-    position: absolute;
-    inset-inline-start: calc(100% + 1rem);
-    inset-block-end: calc(var(--top) * 100%);
-    translate: 0 50%;
-    color: var(--ink-2);
-    white-space: nowrap;
+  .paper[data-at]:not(.on) .stack-tag {
     opacity: 0;
-    transition: opacity 0.4s ease 0.3s;
   }
 
-  .pile-label strong {
-    color: var(--accent);
-    font-weight: var(--weight-heading);
-  }
-
-  .pile-label::before {
-    content: "";
-    position: absolute;
-    inset-inline-end: calc(100% + 0.3rem);
-    inset-block-start: 50%;
-    inline-size: 0.7rem;
-    border-block-start: 1.5px solid var(--accent);
-  }
-
-  .pile-label.on {
-    opacity: 1;
-  }
-
-  /* ---------- Schwellen ------------------------------------------------- */
-
-  .steps {
-    display: grid;
-    align-content: center;
-    gap: var(--space-m);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .steps li {
-    display: grid;
-    grid-template-columns: 3.5rem minmax(0, 1fr);
-    gap: 0.35rem var(--space-s);
-    align-items: center;
-    opacity: 0.12;
-    transition: opacity 0.5s ease;
-  }
-
-  .steps li.on {
-    opacity: 1;
-  }
-
-  .steps-year {
-    grid-row: 1 / 3;
-    color: var(--ink-3);
-    font-weight: var(--weight-heading);
-  }
-
-  .steps-track {
-    position: relative;
-    display: block;
-    block-size: 1rem;
-  }
-
-  /* Der Betrag in heutiger Kaufkraft: hell hinter dem damaligen. */
-  .steps-real {
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: 0;
-    inline-size: var(--r);
-    border: 1.5px dashed var(--mid);
-    border-radius: 0 5px 5px 0;
-    background: color-mix(in oklab, var(--bar) 10%, transparent);
-    transform-origin: left;
-    scale: 0 1;
-    transition: scale 1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.25s;
-  }
-
-  .steps li.on .steps-real {
-    scale: 1 1;
-  }
-
-  .steps-bar {
-    position: relative;
-  }
-
-  .steps-today {
-    display: block;
-    color: var(--ink-3);
-  }
-
-  .steps-today::first-letter {
-    text-transform: uppercase;
-  }
-
-  .steps-bar {
-    display: block;
-    inline-size: max(0.9rem, var(--w));
-    block-size: 100%;
-    border-radius: 0 5px 5px 0;
-    background: var(--bar);
-    transform-origin: left;
-    scale: 0 1;
-    transition: scale 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
-  }
-
-  .steps li.on .steps-bar {
-    scale: 1 1;
-  }
-
-  /* Null Euro: kein Balken mehr, nur ein roter Punkt. */
-  .steps .zero .steps-bar {
-    inline-size: 1rem;
-    border-radius: 50%;
+  /* Die sechs Seiten von 1991, rot, damit man sie überhaupt sieht. */
+  .sheet.first {
+    border-color: var(--accent);
     background: var(--red);
+    translate: none;
   }
 
-  .steps .zero strong {
-    color: var(--accent);
-  }
-
-  /* Die Bargeld-Obergrenze ist eine Grenze, keine Schwelle: nur umrandet. */
-  .steps .cap .steps-bar {
-    border: 1.5px solid var(--bar);
-    background: repeating-linear-gradient(
-      135deg,
-      var(--mid) 0 2px,
-      transparent 2px 6px
-    );
-  }
-
-  .steps-text {
-    color: var(--ink-2);
-  }
-
-  .steps-text strong {
-    color: var(--foreground);
+  .stack-tag {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: calc(var(--top) * 100% + 0.4rem);
+    color: var(--ink);
+    font-size: var(--type-lead);
     font-weight: var(--weight-heading);
+    text-align: center;
+    transition: opacity 0.4s ease 0.6s;
   }
 
-  /* ---------- Behördenkreis --------------------------------------------- */
+  .paper .pile-name {
+    text-align: center;
+  }
+
+  /* ---------- Zugriff --------------------------------------------------- */
 
   .ring-wrap {
     display: grid;
@@ -1561,7 +1168,7 @@ const tally = [
       inset 0 1px 0 #ffffff30,
       0 0 0 0.5rem color-mix(in oklab, var(--primary) 12%, transparent);
     color: #fff;
-    font-size: clamp(0.7rem, 2.4cqi, 1rem);
+    font-size: clamp(0.6rem, 2.4cqi, 1rem);
     font-weight: var(--weight-heading);
     text-align: center;
   }
@@ -1578,7 +1185,7 @@ const tally = [
     background: var(--paper);
     box-shadow: 0 1px 2px var(--material-shade);
     color: var(--foreground);
-    font-size: clamp(0.68rem, 1.9cqi, 0.875rem);
+    font-size: clamp(0.6rem, 1.9cqi, 0.875rem);
     font-weight: 560;
     line-height: 1.2;
     text-align: center;
@@ -1628,25 +1235,40 @@ const tally = [
     opacity: 1;
   }
 
-  /* ---------- Punktfeld der Meldungen ----------------------------------- */
+  /* ---------- Ergebnis -------------------------------------------------- */
 
-  .field-wrap {
+  .result {
     display: grid;
     place-items: center;
     min-block-size: 0;
   }
 
-  /* Ein Quadrat, so groß, dass 119 Punkte je Zeile alle Meldungen von 2025
-     fassen; die kleineren Mengen sind Quadrate gleicher Punktdichte. */
+  .field-wrap,
+  .coins {
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.5s ease,
+      visibility 0.5s;
+  }
+
+  .field-wrap.on,
+  .coins.on {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Ein Punkt je Meldung: 119 je Zeile fassen 2025. */
   .field {
-    --size: min(100cqh - 9rem, 100cqi - 2rem, 32rem);
+    --size: min(100cqh - 8rem, 100cqi - 2rem, 32rem);
     --pitch: calc(var(--size) / var(--per-row));
     position: relative;
     inline-size: var(--size);
     aspect-ratio: 1;
   }
 
-  .field > span {
+  .field > span:not(.field-callout) {
     position: absolute;
     inset-inline-start: 0;
     inset-block-end: 0;
@@ -1680,87 +1302,73 @@ const tally = [
     --dot: var(--bar);
     inline-size: calc(var(--first) * 100%);
     block-size: calc(var(--first) * 100%);
-    opacity: 0;
-  }
-
-  .field-first.on {
-    opacity: 1;
-  }
-
-  /* Was gespeichert bleibt: der obere Teil des Felds, blass. */
-  .field > .field-kept {
-    inset-block-end: auto;
-    inset-block-start: 0;
-    inline-size: 100%;
-    block-size: calc(var(--kept) * 100%);
-    background-color: var(--panel);
-    background-image: radial-gradient(
-      circle at center,
-      var(--mid) 0 36%,
-      transparent 40%
-    );
-    background-position: left bottom;
-    box-shadow: 0 1.5px 0 var(--ink-3);
-    opacity: 0;
-  }
-
-  .field-kept.on {
-    opacity: 1;
   }
 
   .field-red {
     --dot: var(--red);
     inline-size: calc(var(--red-side) * 100%);
     block-size: calc(var(--red-side) * 100%);
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
     opacity: 0;
-    box-shadow: 0 0 0 0.35rem
-      color-mix(in oklab, var(--primary) 14%, transparent);
   }
 
   .field-red.on {
     opacity: 1;
   }
 
-  /* ---------- Münzen und Datensätze ------------------------------------- */
-
-  .grids {
-    display: grid;
-    place-items: center;
-    min-block-size: 0;
-  }
-
-  .coins,
-  .records {
-    grid-area: 1 / 1;
-    display: grid;
-    gap: 0.4rem;
+  /* Die Verurteilungen beschriftet, schräg über ihrem Feld. */
+  .field-callout {
+    position: absolute;
+    inset-inline-start: calc(var(--red-side) * 100% + 1.25rem);
+    inset-block-end: calc(var(--red-side) * 100% + 1.25rem);
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radius-sm);
+    background: var(--accent);
+    color: #fff;
+    font-size: var(--type-lead);
+    font-weight: var(--weight-heading);
     opacity: 0;
-    visibility: hidden;
+    translate: 0 0.5rem;
     transition:
-      opacity 0.5s ease,
-      visibility 0.5s;
+      opacity 0.4s ease 0.4s,
+      translate 0.4s ease 0.4s;
   }
 
-  .coins.on,
-  .records.on {
+  .field-callout::before {
+    content: "";
+    position: absolute;
+    inset-inline-end: 100%;
+    inset-block-start: 100%;
+    inline-size: 1.4rem;
+    border-block-start: 2px solid var(--accent);
+    rotate: -45deg;
+    transform-origin: right center;
+  }
+
+  .field-callout.on {
     opacity: 1;
-    visibility: visible;
+    translate: 0 0;
   }
 
+  .field .field-callout {
+    color: #fff;
+  }
+
+  /* Sobald das große Feld steht, verschwindet das kleine darin. */
+  .field-all.on ~ .field-first {
+    opacity: 0;
+  }
+
+  /* 100 Münzen im Material der Illustrationen, eine davon rot. */
   .coins {
-    --size: min(100cqh - 9rem, 100cqi - 2rem, 30rem);
+    --size: min(100cqh - 8rem, 100cqi - 2rem, 30rem);
+    display: grid;
     grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 0.4rem;
     inline-size: var(--size);
   }
 
-  .records {
-    --size: min((100cqh - 9rem) * 1.5, 100cqi - 2rem, 36rem);
-    grid-template-columns: repeat(15, minmax(0, 1fr));
-    gap: 0.3rem;
-    inline-size: var(--size);
-  }
-
-  /* Münzen im Material der Illustrationen: gebürstetes Metall, eine Kante. */
   .coin {
     aspect-ratio: 1;
     border: 1px solid var(--material-edge);
@@ -1772,32 +1380,9 @@ const tally = [
       color-mix(in oklab, var(--bar) 30%, var(--paper))
     );
     box-shadow: 0 1px 1px var(--material-shade);
-    transition:
-      background 0.5s ease,
-      border-color 0.5s ease,
-      opacity 0.5s ease;
   }
 
-  .record {
-    aspect-ratio: 1;
-    border-radius: 2px;
-    background: var(--mid);
-    transition: background 0.5s ease;
-  }
-
-  /* Gesichert: zwei Münzen dunkel. Eingezogen: eine davon rot. Bei Krypto
-     zählt nur die rote. */
-  .view[data-step-id="ergebnis-gesichert"] .coin.seized,
-  .view[data-step-id="ergebnis-eingezogen"] .coin.seized {
-    background: radial-gradient(
-      circle at 35% 30%,
-      var(--material-shine),
-      var(--bar) 75%
-    );
-  }
-
-  .view[data-step-id="ergebnis-eingezogen"] .coin.confiscated,
-  .view[data-step-id="ergebnis-krypto"] .coin.confiscated {
+  .coin.red {
     border-color: light-dark(#b6000c, #fa5963);
     background: radial-gradient(
       circle at 35% 30%,
@@ -1805,119 +1390,50 @@ const tally = [
       #e3000f 55%,
       #9e000a
     );
-  }
-
-  .records.on .record.followed {
-    background: var(--red);
+    box-shadow: 0 0 0 0.3rem
+      color-mix(in oklab, var(--primary) 18%, transparent);
   }
 
   /* ---------- Schmal ---------------------------------------------------- */
 
-  /* Schmal: das Bild oben und groß, der Satz darunter in einer Leiste
-     fester Höhe, damit das Bild nicht mit jedem Satz springt. */
   @container campaign (width < 60rem) {
-    .view {
-      grid-template-rows: minmax(0, 1fr) auto;
-    }
-
-    .scenes {
-      grid-row: 1;
-    }
-
-    .says {
-      grid-row: 2;
-      align-content: start;
-      block-size: clamp(9.5rem, 30svh, 12.5rem);
-      padding: var(--space-xs) var(--space-s) var(--space-s);
-      border-block-start: 1px solid var(--line);
-      background: var(--paper);
-    }
-
-    .say {
-      gap: 0.3rem;
-    }
-
-    .say-kicker {
-      display: none;
+    .scene {
+      gap: var(--space-2xs);
+      padding: var(--space-s) var(--space-s) var(--space-xs);
     }
 
     .say h3 {
       max-inline-size: none;
-      font-size: var(--step-1);
-      line-height: 1.15;
     }
 
     .say-text {
       font-size: var(--step--1);
-      line-height: 1.4;
     }
 
     .say-sources {
-      flex-wrap: nowrap;
-      margin: 0;
-      overflow-x: auto;
       font-size: 0.75rem;
-      scrollbar-width: none;
     }
 
-    .say-sources li {
-      flex: none;
-    }
-
-    .scene {
-      gap: var(--space-2xs);
-      padding: var(--space-s) var(--space-s) var(--space-2xs);
-    }
-
-    .scene-note {
-      font-size: 0.6875rem;
-      line-height: 1.35;
+    .big {
+      font-size: var(--type-body);
     }
 
     .steps {
       align-content: end;
-      gap: var(--space-xs);
+      gap: var(--space-m);
     }
 
     .steps li {
-      grid-template-columns: 2.6rem minmax(0, 1fr);
-      gap: 0.15rem 0.5rem;
+      grid-template-columns: 2.75rem minmax(0, 1fr);
     }
 
-    .steps-year {
-      font-size: 0.8125rem;
+    .rule-card {
+      padding-block: clamp(0.08rem, 0.6cqh, 0.4rem);
+      font-size: clamp(0.56rem, min(1.7cqh, 2.6cqi), 0.85rem);
     }
 
-    .steps-track {
-      block-size: 0.6rem;
-    }
-
-    .steps .zero .steps-bar {
-      inline-size: 0.6rem;
-    }
-
-    .steps-text {
-      font-size: var(--step--1);
-      line-height: 1.25;
-    }
-
-    .steps-today {
-      display: inline;
-      margin-inline-start: 0.4em;
-      font-size: 0.75rem;
-      white-space: nowrap;
-    }
-
-    .big strong {
-      font-size: clamp(1.9rem, 9cqi, 3rem);
-    }
-
-    [data-scene-id="threshold"] .scene-note {
-      display: none;
-    }
-
-    .pile-label {
-      font-size: var(--type-meta);
+    .rule-pile ol {
+      gap: 2px;
     }
 
     .ring-chip {
@@ -1937,70 +1453,8 @@ const tally = [
       font-size: 0.75rem;
     }
 
-    /* Der Satz steht unten über dem Bild, damit kurze Sätze keine Lücke
-       lassen. */
-    .says {
-      align-content: end;
-    }
-
-    .big {
+    .field-callout {
       font-size: var(--type-body);
-    }
-
-    .big strong {
-      font-size: clamp(2rem, 9cqi, 3rem);
-    }
-
-    /* Schmal reicht der Platz nur für die Türme: der Hinweis entfällt,
-       die Karten werden enger. */
-    [data-scene-id="rules"] .scene-note {
-      display: none;
-    }
-
-    .rule-card {
-      padding-block: clamp(0.08rem, 0.6cqh, 0.4rem);
-      font-size: clamp(0.56rem, min(1.7cqh, 2.6cqi), 0.85rem);
-    }
-
-    .rule-pile ol {
-      gap: 2px;
-    }
-
-    /* Die Bilanz als zwei Listen untereinander, Zahl und Text je Zeile. */
-    .tally {
-      grid-template-columns: minmax(0, 1fr);
-      gap: var(--space-s);
-    }
-
-    .tally-side,
-    .tally ul {
-      gap: var(--space-3xs);
-    }
-
-    .tally li {
-      display: flex;
-      align-items: baseline;
-      gap: 0.5em;
-    }
-
-    .tally strong,
-    .tally .red strong {
-      flex: none;
-      font-size: clamp(1rem, min(4.6cqi, 5.5cqh), 1.6rem);
-    }
-
-    .tally span {
-      font-size: 0.75rem;
-      line-height: 1.25;
-    }
-
-    .tally-side h4 {
-      padding-block-end: 0.2rem;
-      font-size: 0.6875rem;
-    }
-
-    [data-scene-id="summary"] .scene-note {
-      display: none;
     }
   }
 

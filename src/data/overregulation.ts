@@ -1,8 +1,10 @@
 import type { Language } from "@/lib/i18n"
 
-// The history page's scroll film: how the rules piled up and what came of
-// them, in seven chapters of short steps. Each step is one sentence on the
-// stage and changes one picture. Every figure is verified in
+// The history page's scroll film: how the rules piled up and how little
+// came of it, in five chapters of very short steps. It starts with the
+// reader, from which amount you have to show ID, and ends with the result.
+// Each step is a headline of a few words, at most one line under it, and
+// changes one picture: a contrast you see before you read. Every figure is verified in
 // dac8-wiki/.wiki/wiki/references/rule-growth-and-effect-evidence.md and
 // aml-kyc-history-austria.md; the charts below the film carry the full
 // series. Keep both languages in sync and say no more than the source does.
@@ -22,31 +24,16 @@ const ris = (year: number, number: number): Source => ({
   href: `https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_${year}_I_${number}/BGBLA_${year}_I_${number}.html`,
 })
 
-export type Scene =
-  | "rules"
-  | "tower"
-  | "threshold"
-  | "register"
-  | "reports"
-  | "money"
-  | "summary"
+export type Scene = "threshold" | "rules" | "tower" | "register" | "result"
 
+// The story's order: what is asked of you, how many rules ask it, how much
+// paper they fill, who looks, and what comes of it.
 export const chapters: { id: string; scene: Scene; label: Text }[] = [
+  { id: "ausweis", scene: "threshold", label: { de: "Ausweis", en: "ID" } },
   { id: "regeln", scene: "rules", label: { de: "Regeln", en: "Rules" } },
-  { id: "seiten", scene: "tower", label: { de: "Seiten", en: "Pages" } },
-  {
-    id: "schwelle",
-    scene: "threshold",
-    label: { de: "Schwellen", en: "Thresholds" },
-  },
+  { id: "papier", scene: "tower", label: { de: "Papier", en: "Paper" } },
   { id: "zugriff", scene: "register", label: { de: "Zugriff", en: "Access" } },
-  {
-    id: "meldungen",
-    scene: "reports",
-    label: { de: "Meldungen", en: "Reports" },
-  },
-  { id: "ergebnis", scene: "money", label: { de: "Ergebnis", en: "Result" } },
-  { id: "bilanz", scene: "summary", label: { de: "Bilanz", en: "Balance" } },
+  { id: "ergebnis", scene: "result", label: { de: "Ergebnis", en: "Result" } },
 ]
 
 export type Step = {
@@ -55,7 +42,8 @@ export type Step = {
   // In the rules chapter the year runs with the scroll over this span.
   years?: [number, number]
   title: Text
-  text: Text
+  // One short line at most; the picture says the rest.
+  text?: Text
   sources: Source[]
 }
 
@@ -114,98 +102,30 @@ const allRules: Source = {
 }
 
 export const steps: Step[] = [
-  // ---------- Regeln: every rule as a card on two piles, year by year.
+  // ---------- Ausweis: from which amount you must show ID, in today's money.
   {
-    id: "regeln-1977",
-    chapter: "regeln",
-    years: [1977, 1993],
+    id: "ausweis-1991",
+    chapter: "ausweis",
     title: {
-      de: "1977: Amt fragt Amt.",
-      en: "1977: office asks office.",
+      de: "1991: Ausweis erst ab 33.900 €.",
+      en: "1991: ID only from 33,900 euros.",
     },
     text: {
-      de: "Steuerbehörden helfen einander im Einzelfall. Niemand muss automatisch etwas über seine Kunden melden, eine Bank braucht noch keinen Ausweis.",
-      en: "Tax authorities help each other in single cases. No one has to report anything about customers automatically, and a bank needs no ID yet.",
-    },
-    sources: [allRules],
-  },
-  {
-    id: "regeln-1994",
-    chapter: "regeln",
-    years: [1994, 2008],
-    title: {
-      de: "Ab 1994: Ausweis und Verdacht.",
-      en: "From 1994: ID and suspicion.",
-    },
-    text: {
-      de: "Banken müssen Kunden identifizieren und Verdacht melden, anonyme Depots und Sparbücher enden. In der EU werden erstmals Zinsen an Ausländer gemeldet.",
-      en: "Banks must identify customers and report suspicion, anonymous securities accounts and savings books end. In the EU, interest paid to foreigners is reported for the first time.",
-    },
-    sources: [allRules],
-  },
-  {
-    id: "regeln-2015",
-    chapter: "regeln",
-    years: [2009, 2026],
-    title: {
-      de: "Ab 2015: jedes Jahr mehr.",
-      en: "From 2015: more every year.",
-    },
-    text: {
-      de: "Konten, Löhne, Plattform-Einnahmen, Kryptowerte: Die Steuerbehörden bekommen jedes Jahr neue Daten. Das Kontenregister zeigt, wer wo Konten hat, und Namen gehen mit jeder Krypto-Übertragung mit.",
-      en: "Accounts, pay, platform income, crypto-assets: tax authorities get new data every year. The account register shows who holds accounts where, and names travel with every crypto transfer.",
-    },
-    sources: [allRules],
-  },
-  {
-    id: "regeln-2029",
-    chapter: "regeln",
-    years: [2027, 2029],
-    title: {
-      de: "Bis 2029: schon beschlossen.",
-      en: "By 2029: already adopted.",
-    },
-    text: {
-      de: "Keine anonymen Konten bei Anbietern, eine Obergrenze für Bargeld, vernetzte Kontenregister, und vorgeschlagen ist noch mehr Zugriff auf Register.",
-      en: "No anonymous accounts at providers, a cap on cash, connected account registers, and even more register access is proposed.",
-    },
-    sources: [allRules],
-  },
-
-  // ---------- Seiten: every AML act the EU adopted, as a pile of pages.
-  {
-    id: "seiten-1991",
-    chapter: "seiten",
-    title: { de: "1991: sechs Seiten.", en: "1991: six pages." },
-    text: {
-      de: "So lang ist die erste Geldwäsche-Richtlinie der EU im Amtsblatt. Wer ein Konto eröffnet, weist sich aus.",
-      en: "That is the length of the EU’s first anti-money-laundering directive in the Official Journal. Whoever opens an account shows ID.",
+      de: "Für ein einzelnes Geschäft ohne Konto, in heutigem Geld.",
+      en: "For a single transaction without an account, in today’s money.",
     },
     sources: [
       eurlex("dir/1991/308", "Richtlinie 91/308/EWG", "Directive 91/308/EEC"),
+      ...priceSources,
     ],
   },
   {
-    id: "seiten-2006",
-    chapter: "seiten",
-    title: { de: "Bis 2006: 44 Seiten mehr.", en: "By 2006: 44 more pages." },
+    id: "ausweis-2017",
+    chapter: "ausweis",
+    title: { de: "2017: ab 1.350 €.", en: "2017: from 1,350 euros." },
     text: {
-      de: "Die zweite und dritte Richtlinie und die ersten Regeln für Überweisungen. Die Bank muss jetzt wissen, wem ein Konto letztlich gehört, und es laufend beobachten.",
-      en: "The second and third directives and the first rules on transfers. The bank now has to know who ultimately owns an account and watch it continuously.",
-    },
-    sources: [
-      eurlex("dir/2001/97", "Richtlinie 2001/97/EG", "Directive 2001/97/EC"),
-      eurlex("dir/2005/60", "Richtlinie 2005/60/EG", "Directive 2005/60/EC"),
-      eurlex("reg/2006/1781", "Verordnung 1781/2006", "Regulation 1781/2006"),
-    ],
-  },
-  {
-    id: "seiten-2018",
-    chapter: "seiten",
-    title: { de: "Bis 2018: 104 Seiten mehr.", en: "By 2018: 104 more pages." },
-    text: {
-      de: "Die vierte und fünfte Richtlinie, neue Überweisungsregeln und Geldwäsche im Strafrecht. Erstmals müssen auch Krypto-Börsen ihre Kunden prüfen.",
-      en: "The fourth and fifth directives, new transfer rules and money laundering in criminal law. For the first time, crypto exchanges must check their customers too.",
+      de: "Für einen Geldtransfer ohne Konto, in heutigem Geld.",
+      en: "For a money transfer without an account, in today’s money.",
     },
     sources: [
       eurlex(
@@ -213,23 +133,16 @@ export const steps: Step[] = [
         "Richtlinie (EU) 2015/849",
         "Directive (EU) 2015/849",
       ),
-      eurlex(
-        "dir/2018/843",
-        "Richtlinie (EU) 2018/843",
-        "Directive (EU) 2018/843",
-      ),
+      priceSources[0],
     ],
   },
   {
-    id: "seiten-2023",
-    chapter: "seiten",
-    title: {
-      de: "2023: 39 Seiten für Krypto-Übertragungen.",
-      en: "2023: 39 pages on crypto transfers.",
-    },
+    id: "ausweis-heute",
+    chapter: "ausweis",
+    title: { de: "Heute: ab 0 €.", en: "Today: from 0 euros." },
     text: {
-      de: "Ab Ende 2024 gehen Name und Wallet-Adresse, ähnlich einer Kontonummer, mit jeder Übertragung über einen Anbieter mit.",
-      en: "From the end of 2024, name and wallet address, much like an account number, travel with every transfer through a provider.",
+      de: "Jede Krypto-Übertragung über einen Anbieter trägt deinen Namen.",
+      en: "Every crypto transfer through a provider carries your name.",
     },
     sources: [
       eurlex(
@@ -239,16 +152,54 @@ export const steps: Step[] = [
       ),
     ],
   },
+
+  // ---------- Regeln: every rule as a card, the year running with the scroll.
   {
-    id: "seiten-2024",
-    chapter: "seiten",
+    id: "regeln-1977",
+    chapter: "regeln",
+    years: [1977, 1993],
     title: {
-      de: "2024: 295 Seiten auf einmal.",
-      en: "2024: 295 pages at once.",
+      de: "Bis 1993: keine dieser Regeln.",
+      en: "Until 1993: none of these rules.",
     },
     text: {
-      de: "Ein neues Regelwerk, eine neue Richtlinie und eine neue EU-Behörde. Zusammen 488 Seiten Geldwäsche-Recht seit 1991, rund 270.000 Wörter: gut 22 Stunden Lesezeit.",
-      en: "A new rulebook, a new directive and a new EU authority. Together, 488 pages of anti-money-laundering law since 1991, about 270,000 words: over 22 hours of reading.",
+      de: "Steuerbehörden fragten einander nur im Einzelfall.",
+      en: "Tax authorities asked each other only in single cases.",
+    },
+    sources: [allRules],
+  },
+  {
+    id: "regeln-heute",
+    chapter: "regeln",
+    years: [1994, 2029],
+    title: { de: "Heute: 17 Regeln.", en: "Today: 17 rules." },
+    text: {
+      de: "Und 4 weitere sind beschlossen oder vorgeschlagen.",
+      en: "And 4 more are adopted or proposed.",
+    },
+    sources: [allRules],
+  },
+
+  // ---------- Papier: the first directive beside everything since.
+  {
+    id: "papier-1991",
+    chapter: "papier",
+    title: { de: "1991: 6 Seiten.", en: "1991: 6 pages." },
+    text: {
+      de: "Die erste Geldwäsche-Richtlinie der EU.",
+      en: "The EU’s first anti-money-laundering directive.",
+    },
+    sources: [
+      eurlex("dir/1991/308", "Richtlinie 91/308/EWG", "Directive 91/308/EEC"),
+    ],
+  },
+  {
+    id: "papier-heute",
+    chapter: "papier",
+    title: { de: "Heute: 488 Seiten.", en: "Today: 488 pages." },
+    text: {
+      de: "Gut 22 Stunden Lesezeit, nur für das Geldwäsche-Recht der EU.",
+      en: "Over 22 hours of reading, for EU anti-money-laundering law alone.",
     },
     sources: [
       eurlex(
@@ -269,115 +220,37 @@ export const steps: Step[] = [
     ],
   },
 
-  // ---------- Schwellen: from which amount you have to show ID.
-  {
-    id: "schwelle-1991",
-    chapter: "schwelle",
-    title: {
-      de: "1991: ab 15.000 ECU, heute fast 34.000 Euro.",
-      en: "1991: from 15,000 ECU, almost 34,000 euros today.",
-    },
-    text: {
-      de: "Bei einzelnen Geschäften ohne Konto musste man sich erst ab diesem Betrag ausweisen. In heutiger Kaufkraft sind das rund 33.900 Euro.",
-      en: "For single transactions without an account, you had to show ID only from this amount. In today’s money that is about 33,900 euros.",
-    },
-    sources: [
-      eurlex(
-        "dir/1991/308",
-        "Richtlinie 91/308/EWG, Art. 3",
-        "Directive 91/308/EEC, Art. 3",
-      ),
-      ...priceSources,
-    ],
-  },
-  {
-    id: "schwelle-2017",
-    chapter: "schwelle",
-    title: { de: "2017: ab 1.000 Euro.", en: "2017: from 1,000 euros." },
-    text: {
-      de: "Für Geldtransfers ohne Konto sinkt die Grenze auf 1.000 Euro, heute rund 1.350 Euro: ein Fünfundzwanzigstel von 1991.",
-      en: "For money transfers without an account, the limit falls to 1,000 euros, about 1,350 in today’s money: a twenty-fifth of 1991.",
-    },
-    sources: [
-      eurlex(
-        "dir/2015/849",
-        "Richtlinie (EU) 2015/849, Art. 11",
-        "Directive (EU) 2015/849, Art. 11",
-      ),
-      priceSources[0],
-    ],
-  },
-  {
-    id: "schwelle-2024",
-    chapter: "schwelle",
-    title: { de: "2024: ab null Euro.", en: "2024: from zero euros." },
-    text: {
-      de: "Bei Krypto-Übertragungen über einen Anbieter gehen die Namen mit, bei jedem Betrag.",
-      en: "With crypto transfers through a provider, the names travel along, at any amount.",
-    },
-    sources: [
-      eurlex(
-        "reg/2023/1113",
-        "Verordnung (EU) 2023/1113, Art. 14",
-        "Regulation (EU) 2023/1113, Art. 14",
-      ),
-    ],
-  },
-  {
-    id: "schwelle-2027",
-    chapter: "schwelle",
-    title: { de: "2027: auch beim Bargeld.", en: "2027: cash too." },
-    text: {
-      de: "Ab 3.000 Euro bar braucht es bei einzelnen Geschäften einen Ausweis. Über 10.000 Euro dürfen Händler gar kein Bargeld mehr annehmen.",
-      en: "From 3,000 euros in cash, single transactions need ID. Above 10,000 euros, traders may not accept cash at all.",
-    },
-    sources: [
-      eurlex(
-        "reg/2024/1624",
-        "Verordnung (EU) 2024/1624, Art. 19, 80",
-        "Regulation (EU) 2024/1624, Art. 19, 80",
-      ),
-    ],
-  },
-
-  // ---------- Zugriff: who may look up your accounts in Austria.
+  // ---------- Zugriff: who may look up where you hold accounts.
   {
     id: "zugriff-2016",
     chapter: "zugriff",
-    title: { de: "2016: drei dürfen nachsehen.", en: "2016: three may look." },
+    title: {
+      de: "2016: 3 Behördengruppen sehen, wo du Konten hast.",
+      en: "2016: 3 groups of authorities see where you hold accounts.",
+    },
     text: {
-      de: "Das Kontenregister zeigt, wer bei welcher Bank Konten hat, ohne Kontostände. Abfragen dürfen Strafjustiz, Finanzstrafbehörden und Abgabenbehörden.",
-      en: "The account register shows who holds accounts at which bank, without balances. Criminal justice, fiscal-penal and tax authorities may look it up.",
+      de: "Im neuen Kontenregister.",
+      en: "In the new account register.",
     },
     sources: [ris(2015, 116)],
   },
   {
-    id: "zugriff-2021",
-    chapter: "zugriff",
-    title: { de: "2021: sieben.", en: "2021: seven." },
-    text: {
-      de: "Dazu kommen Geldwäschemeldestelle und Staatsschutz, Finanzmarktaufsicht, Kriminalpolizei für schwere Delikte und Sanktionsbehörden.",
-      en: "Added: the financial intelligence unit and state security, the financial market authority, criminal police for serious offences, and sanctions authorities.",
-    },
-    sources: [ris(2021, 25)],
-  },
-  {
     id: "zugriff-2026",
     chapter: "zugriff",
-    title: { de: "2026: acht.", en: "2026: eight." },
+    title: { de: "2026: 8.", en: "2026: 8." },
     text: {
-      de: "Seit Juli fragt auch das Amt für Betrugsbekämpfung ab, etwa gegen Sozialbetrug.",
-      en: "Since July, the anti-fraud office looks too, for example against benefit fraud.",
+      de: "Polizei, Staatsschutz, Finanzaufsicht und andere kamen dazu.",
+      en: "Police, state security, financial supervision and others joined.",
     },
-    sources: [ris(2026, 46)],
+    sources: [ris(2021, 25), ris(2026, 46)],
   },
   {
     id: "zugriff-2029",
     chapter: "zugriff",
     title: { de: "2029: ganz Europa.", en: "2029: all of Europe." },
     text: {
-      de: "Die Kontenregister der EU-Staaten werden verbunden. Sie erfassen dann auch Konten bei Krypto-Anbietern.",
-      en: "The EU countries’ account registers get connected. They will then also cover accounts at crypto-asset providers.",
+      de: "Die Kontenregister aller EU-Staaten werden verbunden.",
+      en: "The account registers of all EU countries get connected.",
     },
     sources: [
       eurlex(
@@ -388,14 +261,17 @@ export const steps: Step[] = [
     ],
   },
 
-  // ---------- Meldungen: suspicion reports in Austria.
+  // ---------- Ergebnis: what comes of it.
   {
-    id: "meldungen-2005",
-    chapter: "meldungen",
-    title: { de: "2005: 467 Meldungen.", en: "2005: 467 reports." },
+    id: "ergebnis-2005",
+    chapter: "ergebnis",
+    title: {
+      de: "2005: 467 Verdachtsmeldungen.",
+      en: "2005: 467 suspicion reports.",
+    },
     text: {
-      de: "So viele Meldungen über verdächtige Geschäfte erhielt Österreichs Geldwäschemeldestelle. Jeder Punkt ist eine.",
-      en: "That many reports of suspicious transactions reached Austria’s financial intelligence unit. Each dot is one.",
+      de: "In Österreich. Ein Punkt je Meldung.",
+      en: "In Austria. One dot per report.",
     },
     sources: [
       {
@@ -405,60 +281,35 @@ export const steps: Step[] = [
     ],
   },
   {
-    id: "meldungen-2025",
-    chapter: "meldungen",
+    id: "ergebnis-2025",
+    chapter: "ergebnis",
     title: { de: "2025: 13.989.", en: "2025: 13,989." },
     text: {
-      de: "Rund dreißigmal so viele, bei mehrmals geänderter Zählweise. 2.671 kamen von Krypto-Anbietern.",
-      en: "About thirty times as many, though the counting changed several times. 2,671 came from crypto-asset providers.",
+      de: "Rund dreißigmal so viele, bei geänderter Zählweise.",
+      en: "About thirty times as many, though counted differently.",
     },
     sources: [fiu2025],
   },
   {
-    id: "meldungen-urteile",
-    chapter: "meldungen",
+    id: "ergebnis-urteile",
+    chapter: "ergebnis",
     title: { de: "139 Verurteilungen.", en: "139 convictions." },
     text: {
-      de: "So oft wurde 2025 wegen Geldwäsche verurteilt. Auf eine Verurteilung kommen rund 100 Meldungen, auch wenn sich die Urteile einzelnen Meldungen nicht zuordnen lassen.",
-      en: "That is how many convictions for money laundering there were in 2025. There are about 100 reports for each, though the convictions cannot be traced to particular reports.",
+      de: "Wegen Geldwäsche, im selben Jahr.",
+      en: "For money laundering, in the same year.",
     },
     sources: [fiu2025],
   },
   {
-    id: "meldungen-gespeichert",
-    chapter: "meldungen",
-    title: { de: "9.665 bleiben gespeichert.", en: "9,665 stay on file." },
-    text: {
-      de: "Fast sieben von zehn Meldungen gab die Stelle vorerst nicht weiter, mangels Anfangsverdachts, also eines Anhaltspunkts für eine Straftat. Sie bleiben für spätere Auswertungen liegen.",
-      en: "The unit passed almost seven in ten reports on to no one for now, for lack of an initial suspicion of a crime. They stay on file for later analysis.",
-    },
-    sources: [fiu2025],
-  },
-
-  // ---------- Ergebnis: what comes of it.
-  {
-    id: "ergebnis-gesichert",
+    id: "ergebnis-euro",
     chapter: "ergebnis",
     title: {
-      de: "Von 100 Euro aus Straftaten …",
-      en: "Of 100 euros from crime …",
+      de: "Von 100 € aus Straftaten wird rund 1 € eingezogen.",
+      en: "Of 100 euros from crime, about 1 is confiscated.",
     },
     text: {
-      de: "… werden in der EU 2,20 Euro vorläufig eingefroren oder beschlagnahmt.",
-      en: "… 2.20 euros are frozen or seized for now in the EU.",
-    },
-    sources: [europol],
-  },
-  {
-    id: "ergebnis-eingezogen",
-    chapter: "ergebnis",
-    title: {
-      de: "… und 1,10 Euro eingezogen.",
-      en: "… and 1.10 euros confiscated.",
-    },
-    text: {
-      de: "Endgültig, nach Schätzung von Europol für 2010 bis 2014. Wie viel Straftaten einbringen, ist selbst geschätzt.",
-      en: "Finally, as Europol estimates it for 2010 to 2014. How much crime brings in is itself an estimate.",
+      de: "Schätzung von Europol für die EU.",
+      en: "Europol’s estimate for the EU.",
     },
     sources: [europol],
   },
@@ -466,12 +317,12 @@ export const steps: Step[] = [
     id: "ergebnis-krypto",
     chapter: "ergebnis",
     title: {
-      de: "Krypto: rund 1 von 100 Euro.",
-      en: "Crypto: about 1 in 100 euros.",
+      de: "Krypto: rund 1 von 100 € an Kriminelle.",
+      en: "Crypto: about 1 in 100 euros to criminals.",
     },
     text: {
-      de: "So viel ordnen zwei Analysefirmen für 2025 Kriminellen oder sanktionierten Stellen zu, als Untergrenze. Laut US-Finanzministerium wird mit Kryptowerten weit weniger Geld gewaschen als mit herkömmlichem Geld.",
-      en: "That is what two analysis firms attribute to criminals or sanctioned entities for 2025, as a lower bound. According to the US Treasury, laundering with crypto-assets “remains well below” laundering with ordinary money.",
+      de: "Oder an sanktionierte Stellen. Schätzung zweier Analysefirmen.",
+      en: "Or to sanctioned entities. Two analysis firms’ estimate.",
     },
     sources: [
       {
@@ -482,132 +333,38 @@ export const steps: Step[] = [
         label: { de: "TRM Labs 2026", en: "TRM Labs 2026" },
         href: "https://www.trmlabs.com/reports-and-whitepapers/2026-crypto-crime-report",
       },
-      {
-        label: { de: "US-Finanzministerium 2026", en: "US Treasury 2026" },
-        href: "https://home.treasury.gov/system/files/246/2026-NMLRA.pdf",
-      },
-    ],
-  },
-  {
-    id: "ergebnis-steuer",
-    chapter: "ergebnis",
-    title: {
-      de: "Steuerdaten: 45 von 150.",
-      en: "Tax data: 45 of 150.",
-    },
-    text: {
-      de: "So viele Datensätze über Konten und Einkommen führten in einer Stichprobe des EU-Rechnungshofs zu einer weiteren Maßnahme. Der Rest blieb ohne weiteren Schritt.",
-      en: "That many records on accounts and income led to further action in a sample by the European Court of Auditors. The rest led to no further step.",
-    },
-    sources: [
-      {
-        label: {
-          de: "EU-Rechnungshof 03/2021, Rn. 68",
-          en: "European Court of Auditors 03/2021, para 68",
-        },
-        href: "https://www.eca.europa.eu/Lists/ECADocuments/SR21_03/SR_Exchange_tax_inform_DE.pdf",
-      },
-    ],
-  },
-
-  // ---------- Bilanz: everything at a glance.
-  {
-    id: "bilanz",
-    chapter: "bilanz",
-    title: { de: "Die Bilanz.", en: "The balance." },
-    text: {
-      de: "Immer mehr Regeln erfassen alle, die eine Bank oder einen Anbieter nutzen. Was herauskommt, ist klein und kaum gemessen.",
-      en: "More and more rules capture everyone who uses a bank or a provider. What comes of it is small and hardly measured.",
-    },
-    sources: [
-      {
-        label: {
-          de: "Alle Zahlen zum Nachprüfen",
-          en: "Every figure, to check",
-        },
-        href: "#nachpruefen",
-      },
     ],
   },
 ]
 
 // The pile: every EU anti-money-laundering act since 1991 by year, in pages
 // of the Official Journal (for the 2024 acts, published one per issue, the
-// pages of each act). Repealed acts count too: it is what was adopted. Each
-// year joins the pile at the step named.
-export const pile: {
-  year: number
-  pages: number
-  step: string
-  acts: string
-}[] = [
-  { year: 1991, pages: 6, step: "seiten-1991", acts: "91/308" },
-  { year: 2001, pages: 7, step: "seiten-2006", acts: "2001/97" },
-  { year: 2005, pages: 22, step: "seiten-2006", acts: "2005/60" },
-  { year: 2006, pages: 15, step: "seiten-2006", acts: "2006/70, 1781/2006" },
-  { year: 2015, pages: 63, step: "seiten-2018", acts: "2015/849, 2015/847" },
-  { year: 2018, pages: 41, step: "seiten-2018", acts: "2018/843, 2018/1673" },
-  { year: 2023, pages: 39, step: "seiten-2023", acts: "2023/1113" },
-  {
-    year: 2024,
-    pages: 295,
-    step: "seiten-2024",
-    acts: "2024/1624, 2024/1640, 2024/1620",
-  },
+// pages of each act). Repealed acts count too: it is what was adopted. The
+// first directive also stands alone beside it.
+export const pile: { year: number; pages: number; acts: string }[] = [
+  { year: 1991, pages: 6, acts: "91/308" },
+  { year: 2001, pages: 7, acts: "2001/97" },
+  { year: 2005, pages: 22, acts: "2005/60" },
+  { year: 2006, pages: 15, acts: "2006/70, 1781/2006" },
+  { year: 2015, pages: 63, acts: "2015/849, 2015/847" },
+  { year: 2018, pages: 41, acts: "2018/843, 2018/1673" },
+  { year: 2023, pages: 39, acts: "2023/1113" },
+  { year: 2024, pages: 295, acts: "2024/1624, 2024/1640, 2024/1620" },
 ]
 
-// From which amount ID is needed, in euros (1991: ECU). The 2027 cap is
-// not an ID threshold but a ban above it, so it is drawn as a line.
+// From which amount ID is needed, shown in today's money; 1991 in ECU.
 export const thresholds: {
   step: string
   year: number
   amount: number
   unit: "ECU" | "EUR"
-  label: Text
-  cap?: true
 }[] = [
-  {
-    step: "schwelle-1991",
-    year: 1991,
-    amount: 15000,
-    unit: "ECU",
-    label: { de: "Einzelgeschäft", en: "Single transaction" },
-  },
-  {
-    step: "schwelle-2017",
-    year: 2017,
-    amount: 1000,
-    unit: "EUR",
-    label: { de: "Geldtransfer", en: "Money transfer" },
-  },
-  {
-    step: "schwelle-2024",
-    year: 2024,
-    amount: 0,
-    unit: "EUR",
-    label: { de: "Krypto-Übertragung", en: "Crypto transfer" },
-  },
-  {
-    step: "schwelle-2027",
-    year: 2027,
-    amount: 3000,
-    unit: "EUR",
-    label: { de: "Bargeschäft", en: "Cash transaction" },
-  },
-  {
-    step: "schwelle-2027",
-    year: 2027,
-    amount: 10000,
-    unit: "EUR",
-    label: {
-      de: "darüber kein Bargeld an Händler",
-      en: "no cash to traders above",
-    },
-    cap: true,
-  },
+  { step: "ausweis-1991", year: 1991, amount: 15000, unit: "ECU" },
+  { step: "ausweis-2017", year: 2017, amount: 1000, unit: "EUR" },
+  { step: "ausweis-heute", year: 2024, amount: 0, unit: "EUR" },
 ]
 
-// Who may look up the Austrian account register, by the year they joined.
+// Who may look up the Austrian account register, by the step they appear.
 export const lookers: { step: string; label: Text }[] = [
   {
     step: "zugriff-2016",
@@ -622,22 +379,22 @@ export const lookers: { step: string; label: Text }[] = [
     label: { de: "Abgabenbehörden", en: "Tax authorities" },
   },
   {
-    step: "zugriff-2021",
+    step: "zugriff-2026",
     label: {
       de: "Geldwäschemeldestelle, Staatsschutz",
       en: "Financial intelligence, state security",
     },
   },
   {
-    step: "zugriff-2021",
+    step: "zugriff-2026",
     label: { de: "Finanzmarktaufsicht", en: "Financial market authority" },
   },
   {
-    step: "zugriff-2021",
+    step: "zugriff-2026",
     label: { de: "Kriminalpolizei", en: "Criminal police" },
   },
   {
-    step: "zugriff-2021",
+    step: "zugriff-2026",
     label: { de: "Sanktionsbehörden", en: "Sanctions authorities" },
   },
   {
@@ -646,18 +403,5 @@ export const lookers: { step: string; label: Text }[] = [
   },
 ]
 
-// Suspicion reports in Austria and what became of them.
-export const reportField = {
-  first: 467,
-  latest: 13989,
-  convictions: 139,
-  keptOnFile: 9665,
-}
-
-// Shares of 100 euros and of 150 records, for the result chapter.
-export const resultGrids = {
-  seized: 2.2,
-  confiscated: 1.1,
-  crypto: 1,
-  records: { total: 150, followedUp: 45 },
-}
+// Suspicion reports in Austria against convictions for money laundering.
+export const reportField = { first: 467, latest: 13989, convictions: 139 }
