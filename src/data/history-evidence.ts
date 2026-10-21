@@ -386,6 +386,76 @@ export const admissions: {
   },
 ]
 
+// The balance under the film: what the tax reporting duties cost each year
+// and what the Commission says they bring. Costs are the Commission's own
+// recurring estimates for three duties that report on ordinary people,
+// without set-up costs; DAC8's is an estimate made before it applied, which
+// "do not necessarily reflect the actual costs". Their sum is ours. The
+// benefit is the Commission's central estimate for all exchanged tax data,
+// most of it modelled because "no data are available for DAC4". Never put
+// costs and benefit on one scale: the benefit covers more duties than the
+// costs shown.
+const swd2025: Source = {
+  label: { de: "SWD(2025) 365, S. 36–43", en: "SWD(2025) 365, pp. 36–43" },
+  href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex:52025SC0365",
+}
+const swd2026: Source = {
+  label: {
+    de: "SWD(2026) 166, S. 1–2, englisch",
+    en: "SWD(2026) 166, pp. 1–2",
+  },
+  href: "https://data.consilium.europa.eu/doc/document/ST-11060-2026-ADD-4/en/pdf",
+}
+const swd2022: Source = {
+  label: { de: "SWD(2022) 401, S. 36", en: "SWD(2022) 401, p. 36" },
+  href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=SWD:2022:401:FIN",
+}
+export const reportingCosts: {
+  id: string
+  since: number
+  // Million euros a year.
+  millions: number
+  what: Text
+  note?: Text
+}[] = [
+  {
+    id: "dac2",
+    since: 2016,
+    millions: 550,
+    what: { de: "Konten im Ausland", en: "Accounts abroad" },
+    note: { de: "rund 12 € je Konto", en: "around 12 euros per account" },
+  },
+  {
+    id: "dac7",
+    since: 2023,
+    millions: 678,
+    what: {
+      de: "Online verkaufen oder vermieten",
+      en: "Selling or renting online",
+    },
+  },
+  {
+    id: "dac8",
+    since: 2026,
+    millions: 22.6,
+    what: { de: "Krypto über Anbieter", en: "Crypto through providers" },
+    note: {
+      de: "dazu 259 Mio. € für den Start",
+      en: "plus €259m to set up",
+    },
+  },
+]
+export const reportingCostSources: Source[] = [swd2025, swd2026, swd2022]
+// Billion euros a year, as the Commission estimates the benefit of all
+// exchanged tax data: modelled and data-based parts.
+export const reportingBenefit = {
+  billions: 6.8,
+  modelled: 5.6,
+  fromData: 1.2,
+  shareOfDirectTaxes: 0.3,
+  sources: [swd2025, swd2026],
+}
+
 // Thousands with a dot in German, as in the copy ("13.989"); de-AT would
 // use a space.
 export const formatNumber = (value: number, language: Language) =>

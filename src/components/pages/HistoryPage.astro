@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import HistoryStack from "@/components/HistoryStack.astro"
 import LawGrowth from "@/components/LawGrowth.astro"
+import RuleBalance from "@/components/RuleBalance.astro"
 import RuleFilm from "@/components/RuleFilm.astro"
 import StatTiles from "@/components/StatTiles.astro"
 import YearColumns from "@/components/YearColumns.astro"
@@ -21,14 +22,17 @@ import {
 import { languageFor, pathFor } from "@/lib/i18n"
 
 // The story of over-regulation and its evidence. A short hero, then the
-// scroll film (src/components/RuleFilm.astro): pages of law piling up, the
-// amount from which you must show ID falling to zero, ever more authorities
-// looking at your account, reports multiplying against few convictions, and
-// the euro or so that comes of it. Below it everything to check: both
-// chronicles row by row with sources, the full series, the length of the
-// texts, single figures and the institutions' own words. The page never
-// argues that a rule would be justified if it worked: it closes on that.
-// In every chart red marks what comes of the rules or what is new.
+// scroll film (src/components/RuleFilm.astro): the amount from which you
+// must show ID falling to nothing, the rules adding up, the pages of law,
+// and reports multiplying against few convictions and the euro or so that
+// comes of it. Then the balance (src/components/RuleBalance.astro): what
+// the reporting costs, what it brings, whom it captures and what the data
+// become. The conclusion follows with the one step to take, and at the end,
+// folded away, everything to check: the rules row by row with sources, the
+// full series, the length of the texts, single figures and the
+// institutions' own words. The page never argues that a rule would be
+// justified if it worked: its conclusion says so. In every chart red marks
+// what comes of the rules or what is new.
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
 const n = (value: number) => formatNumber(value, language)
@@ -60,84 +64,106 @@ const first = reportsByYear[0]
 
     <RuleFilm language={language} />
 
-    <section id="nachpruefen" aria-labelledby="nachpruefen-heading">
-      <h2 id="nachpruefen-heading">
-        {en ? "Every figure, to check." : "Alle Zahlen zum Nachprüfen."}
+    <RuleBalance language={language} />
+
+    <section id="grenzen" class="band" aria-labelledby="grenzen-heading">
+      <h2 id="grenzen-heading">
+        {en ? "This cannot go on." : "So kann es nicht weitergehen."}
+        <span
+          >{en ? "That is why we push back." : "Darum wehren wir uns."}</span
+        >
       </h2>
       <p class="section-intro">
         {en
-          ? "Tax and money-laundering rules in one chart, each with its date, content and primary sources, then the full series behind the film."
-          : "Steuer- und Geldwäsche-Regeln in einem Diagramm, jede mit Datum, Inhalt und Primärquellen, danach die ganzen Reihen hinter dem Film."}
+          ? "Almost every new rule captures everyone who uses a bank or a provider, costs money every year and creates data that can get lost. Hardly anyone measures what it achieves. Even a rule that works needs limits: investigations should start from a concrete suspicion, not with everyone."
+          : "Fast jede neue Regel erfasst alle, die eine Bank oder einen Anbieter nutzen, kostet jedes Jahr und legt Daten an, die verloren gehen können. Was sie bringt, misst kaum jemand. Auch eine Regel, die wirkt, braucht Grenzen: Ermittelt werden soll bei konkretem Verdacht, nicht bei allen."}
       </p>
+      <a class="button primary" href={pathFor("participate", language)}
+        >{en ? "Get involved" : "Mitmachen"}</a
+      >
+    </section>
 
-      <div class="history-chart">
-        <HistoryStack
-          language={language}
-          chronicle={ruleChronicle}
-          research={false}
-        />
-      </div>
+    <section aria-labelledby="nachpruefen-heading">
+      <details id="nachpruefen" class="history-check">
+        <summary>
+          <h2 id="nachpruefen-heading">
+            {en ? "Every rule and figure, to check." : "Alle Regeln und Zahlen zum Nachprüfen."}
+          </h2>
+          <span class="history-check-what">
+            {en
+              ? "Each rule with its date, content and primary sources, then the full series behind the film."
+              : "Jede Regel mit Datum, Inhalt und Primärquellen, danach die ganzen Reihen hinter dem Film."}
+          </span>
+        </summary>
 
-      <div id="wirkung" class="history-figures">
-        <YearColumns
-          language={language}
-          id="meldungen"
-          title={en
+        <div class="history-chart">
+          <HistoryStack
+            language={language}
+            chronicle={ruleChronicle}
+            research={false}
+          />
+        </div>
+
+        <div id="wirkung" class="history-figures">
+          <YearColumns
+            language={language}
+            id="meldungen"
+            title={en
             ? `Austria ${reportsLatest.year}: ${n(reportsLatest.received)} suspicion reports, ${n(reportsLatest.convictions)} convictions`
             : `Österreich ${reportsLatest.year}: ${n(reportsLatest.received)} Verdachtsmeldungen, ${n(reportsLatest.convictions)} Verurteilungen`}
-          note={en
+            note={en
             ? `Austria, ${first.year} to ${reportsLatest.year}, both on one scale. Convictions for money laundering are not linked to particular reports; the way reports are counted changed several times.`
             : `Österreich, ${first.year} bis ${reportsLatest.year}, beides auf einer Skala. Verurteilungen wegen Geldwäsche lassen sich einzelnen Meldungen nicht zuordnen; die Zählweise der Meldungen änderte sich mehrmals.`}
-          unit={{ de: "Meldungen", en: "reports" }}
-          second={{
+            unit={{ de: "Meldungen", en: "reports" }}
+            second={{
             de: "Verurteilungen wegen Geldwäsche",
             en: "convictions for money laundering",
           }}
-          rows={reportsByYear.map((row) => ({
+            rows={reportsByYear.map((row) => ({
             year: row.year,
             value: row.reports,
             second: row.convictions,
           }))}
-          breaks={[2009, 2012, 2024, 2025]}
-          sources={reportsByYearSources.map(label)}
-        />
-        <YearColumns
-          language={language}
-          id="konten"
-          title={en
+            breaks={[2009, 2012, 2024, 2025]}
+            sources={reportsByYearSources.map(label)}
+          />
+          <YearColumns
+            language={language}
+            id="konten"
+            title={en
             ? "2024: 171 million accounts exchanged worldwide"
             : "2024: 171 Millionen Konten weltweit ausgetauscht"}
-          note={en
+            note={en
             ? "Accounts on which tax authorities exchange data, in millions, by year of exchange; the OECD has not yet published newer figures. Reported by the tax administrations; accounts with several holders may count more than once."
             : "Konten, zu denen Steuerbehörden Daten austauschen, in Millionen, nach Jahr des Austauschs; neuere Zahlen hat die OECD noch nicht veröffentlicht. Von den Steuerverwaltungen gemeldet; Konten mit mehreren Inhabern zählen womöglich mehrfach."}
-          unit={{ de: "Mio. Konten", en: "million accounts" }}
-          rows={accountsExchanged.map((row) => ({
+            unit={{ de: "Mio. Konten", en: "million accounts" }}
+            rows={accountsExchanged.map((row) => ({
             year: row.year,
             value: row.millions,
           }))}
-          sources={accountsSources.map(label)}
-        />
-      </div>
+            sources={accountsSources.map(label)}
+          />
+        </div>
 
-      <div class="history-law">
-        <LawGrowth language={language} />
-      </div>
+        <div class="history-law">
+          <LawGrowth language={language} />
+        </div>
 
-      <div class="history-tiles">
-        <StatTiles
-          tiles={effectTiles.map((tile) => ({
+        <div class="history-tiles">
+          <StatTiles
+            tiles={effectTiles.map((tile) => ({
             figure: tile.figure[language],
             text: tile.text[language],
             source: label(tile.source),
           }))}
-        />
-      </div>
+          />
+        </div>
 
-      <h3>
-        {en ? "What the Commission and auditors say themselves" : "Was Kommission und Rechnungshöfe selbst sagen"}
-      </h3>
-      <ul class="history-admissions">
-        {admissions.map((item) => (
+        <h3>
+          {en ? "What the Commission and auditors say themselves" : "Was Kommission und Rechnungshöfe selbst sagen"}
+        </h3>
+        <ul class="history-admissions">
+          {admissions.map((item) => (
           <li>
             <blockquote>
               <p>{item.quote[language]}</p>
@@ -148,23 +174,8 @@ const first = reportsByYear[0]
             </p>
           </li>
         ))}
-      </ul>
-    </section>
-
-    <section id="grenzen" class="band" aria-labelledby="grenzen-heading">
-      <h2 id="grenzen-heading">
-        {en ? "Even a rule that works needs limits." : "Auch eine Regel, die wirkt, braucht Grenzen."}
-      </h2>
-      <p class="section-intro">
-        {en
-          ? "Almost every one of these rules captures everyone who uses a bank or a provider, not those suspected of a crime. That needs a justification, whether the rule works or not. Investigations should start from a concrete suspicion."
-          : "Fast jede dieser Regeln erfasst alle, die eine Bank oder einen Anbieter nutzen, nicht die, die einer Straftat verdächtig sind. Das braucht eine Begründung, ob die Regel wirkt oder nicht. Ermittelt werden soll bei konkretem Verdacht."}
-      </p>
-      <p class="history-next">
-        <a class="text-link" href={pathFor("arguments", language)}>
-          {en ? "Why financial privacy matters" : "Warum finanzielle Privatsphäre zählt"}
-        </a>
-      </p>
+        </ul>
+      </details>
       <p class="history-research">
         {en
           ? `Research by Bitcoin Austria, as of ${historyResearchDate.en}. Every step, row and chart links to its primary sources.`
@@ -173,6 +184,30 @@ const first = reportsByYear[0]
     </section>
   </article>
 </Layout>
+
+<script>
+  // Links to a figure or a rule that now sits in the folded part open it;
+  // rows of the rule chart open themselves (HistoryStack.astro).
+  const reveal = () => {
+    const id = decodeURIComponent(location.hash.slice(1))
+    const target = id ? document.getElementById(id) : null
+    if (!target || target.closest(".stack")) return
+    const closed: HTMLDetailsElement[] = []
+    let details: HTMLDetailsElement | null =
+      target instanceof HTMLDetailsElement
+        ? target
+        : target.closest<HTMLDetailsElement>("details")
+    while (details) {
+      if (!details.open) closed.push(details)
+      details = details.parentElement?.closest("details") ?? null
+    }
+    if (closed.length === 0) return
+    for (const each of closed) each.open = true
+    target.scrollIntoView({ block: "start" })
+  }
+  reveal()
+  addEventListener("hashchange", reveal)
+</script>
 
 <style>
   .history-chart {
@@ -188,7 +223,7 @@ const first = reportsByYear[0]
     max-inline-size: 52rem;
   }
 
-  .campaign > section > h3 {
+  .history-check > h3 {
     margin-block-start: var(--space-2xl);
   }
 
@@ -251,8 +286,55 @@ const first = reportsByYear[0]
     font-size: var(--type-meta);
   }
 
-  .history-next {
-    margin-block-start: var(--space-l);
+  /* Zum Nachprüfen: eingeklappt, die Überschrift ist der Schalter. */
+  .history-check > summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-2xs) var(--space-m);
+    padding: var(--space-m);
+    border-radius: var(--radius);
+    background: var(--panel);
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .history-check > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .history-check > summary::after {
+    content: "+";
+    grid-row: 1;
+    grid-column: 2;
+    color: var(--ink-3);
+    font-size: var(--type-h2);
+    font-weight: 500;
+    line-height: 1;
+    transition: rotate 160ms ease;
+  }
+
+  .history-check > summary:hover::after {
+    color: var(--ink);
+  }
+
+  .history-check[open] > summary::after {
+    rotate: 45deg;
+  }
+
+  .history-check h2 {
+    font-size: var(--type-h3);
+  }
+
+  .history-check-what {
+    grid-column: 1;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .history-check > summary::after {
+      transition: none;
+    }
   }
 
   .history-research {

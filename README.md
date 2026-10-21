@@ -149,14 +149,22 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   data story. Four chapters lead from the reader to the result, each step a
   headline of a few words over one picture as a contrast: the amount from
   which you must show ID in today's money, 33,900 euros in 1991 and the
-  first cent today; every rule as a card dropping onto a tax or an
-  anti-money-laundering pile while the year runs with the scroll; a wall of
-  one tile per Official Journal page, six red ones from 1991 among 488; and
-  a sea of suspicion reports in Austria beside 139 convictions and 100 coins
-  of which one is red. Without JavaScript the headlines stand as text. Below the film,
+  first cent today; the number of rules in force as a step curve drawn
+  while the year runs with the scroll, red from 2015 and dashed for what is
+  coming; a wall of one tile per Official Journal page, six red ones from
+  1991 among 488; and a sea of suspicion reports in Austria beside 139
+  convictions and 100 coins of which one is red. Without JavaScript the
+  headlines stand as text. After the film comes the balance
+  (`src/components/RuleBalance.astro`) in four fields of one picture each:
+  what three tax reporting duties cost a year, what the Commission says all
+  exchanged tax data bring and how much of that is modelled, how many
+  accounts are reported without suspicion, and the documented data leaks
+  from `src/data/leaks.ts`. Costs and benefit stay on separate scales,
+  because the benefit covers more duties than the costs shown. Then the
+  conclusion with the one step to take, and at the end, folded away,
   everything to check: both lines of rules in one chart on one axis, the
   series and texts described next, and the length of the texts
-  (`src/components/LawGrowth.astro`). `src/data/history.ts` holds the tax
+  (`src/components/LawGrowth.astro`); links into the folded part open it. `src/data/history.ts` holds the tax
   chronicle from Directive 77/799/EEC to the pending DAC recast, verified in
   the wiki reference `dac-history-timeline`; `src/data/aml-history.ts` holds
   the anti-money-laundering duties in Austria from the first ID duty in 1994

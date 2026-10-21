@@ -386,16 +386,24 @@ let index = 0
 
 <script>
   // Links into the page may point at an entry that now sits inside a closed
-  // row, or at a chapter of the former timeline: open the row that holds it.
+  // row, or at a chapter of the former timeline: open the row that holds it
+  // and anything folded around the chart.
   const reveal = () => {
     const id = decodeURIComponent(location.hash.slice(1))
     const target = id ? document.getElementById(id) : null
     if (!target?.closest(".stack")) return
-    const details =
+    const closed: HTMLDetailsElement[] = []
+    let details: HTMLDetailsElement | null =
       target.closest("details") ??
-      target.closest(".stack-row")?.querySelector("details")
-    if (!details || details.open) return
-    details.open = true
+      target.closest(".stack-row")?.querySelector("details") ??
+      target.closest(".stack")?.closest("details") ??
+      null
+    while (details) {
+      if (!details.open) closed.push(details)
+      details = details.parentElement?.closest("details") ?? null
+    }
+    if (closed.length === 0) return
+    for (const each of closed) each.open = true
     target.scrollIntoView({ block: "start" })
   }
   reveal()

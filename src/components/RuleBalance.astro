@@ -1,0 +1,611 @@
+---
+import {
+  type Source,
+  accountsExchanged,
+  accountsSources,
+  formatNumber,
+  reportingBenefit,
+  reportingCostSources,
+  reportingCosts,
+} from "@/data/history-evidence"
+import { leaks, peopleAffected, roundPeople } from "@/data/leaks"
+import { type Language, pathFor } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+
+// The balance under the film, in four fields of one picture each: what the
+// reporting costs every year, what it brings, whom it captures and what
+// the collected data become. Red marks what the headline beside it names.
+// Costs and benefit stay on separate scales (see history-evidence.ts).
+const { language } = Astro.props
+const en = language === "en"
+const n = (value: number) => formatNumber(value, language)
+const millions = (value: number) =>
+  en ? `€${n(Math.round(value))}m` : `${n(Math.round(value))} Mio. €`
+const percent = (value: number) => (en ? `${n(value)}%` : `${n(value)} %`)
+const label = (source: Source) => ({
+  label: source.label[language],
+  href: source.href,
+})
+
+// Kosten: each duty adds its yearly cost to those before it.
+let running = 0
+const costRows = reportingCosts.map((cost) => {
+  const before = running
+  running += cost.millions
+  return { ...cost, before }
+})
+const costTotal = running
+const costStyle = (before: number, add: number) =>
+  `--before: ${((before / costTotal) * 100).toFixed(2)}%; --add: ${((add / costTotal) * 100).toFixed(2)}%`
+// "über 1,2 Milliarden": rounded down to a tenth of a billion.
+const costFloor = n(Math.floor(costTotal / 100) / 10)
+
+// Nutzen: the share of direct taxes, then that share opened up.
+const benefit = reportingBenefit
+const fromDataShare = ((benefit.fromData / benefit.billions) * 100).toFixed(2)
+
+// Erfasst: the first and the latest year of the global account exchange,
+// as two squares whose areas compare.
+const firstAccounts = accountsExchanged[0]
+const lastAccounts = accountsExchanged[accountsExchanged.length - 1]
+const firstSide = Math.sqrt(firstAccounts.millions / lastAccounts.millions)
+const timesMore = Math.floor(lastAccounts.millions / firstAccounts.millions)
+
+// Risiko: one tile per documented case, those at authorities first.
+const atAuthority = (leak: (typeof leaks)[number]) =>
+  leak.holders.includes("authority")
+const tiles = [...leaks].sort(
+  (a, b) => Number(atAuthority(b)) - Number(atAuthority(a)),
+)
+const authorityCount = leaks.filter(atAuthority).length
+---
+
+<section id="bilanz" class="balance" aria-labelledby="bilanz-heading">
+  <h2 id="bilanz-heading">
+    {en ? "The balance." : "Die Bilanz."}
+    <span
+      >{en ? "Much captured, much paid, little measured." : "Viel erfasst, viel bezahlt, wenig gemessen."}</span
+    >
+  </h2>
+
+  <ol class="balance-grid">
+    <!-- Kosten: the yearly cost grows with every duty -->
+    <li class="balance-card">
+      <p class="balance-kicker">{en ? "Cost" : "Kosten"}</p>
+      <h3>
+        {en
+          ? `Over ${costFloor} billion euros a year.`
+          : `Über ${costFloor} Milliarden Euro im Jahr.`}
+      </h3>
+      <ol class="costs">
+        {costRows.map((cost) => (
+          <li style={costStyle(cost.before, cost.millions)}>
+            <span class="cost-what">
+              <b>{en ? `From ${cost.since}` : `Ab ${cost.since}`}</b>
+              {cost.what[language]}
+            </span>
+            <span class="cost-bar" aria-hidden="true">
+              <span class="cost-old" />
+              <span class="cost-new" />
+            </span>
+            <span class="cost-value">+{millions(cost.millions)}</span>
+            {cost.note && <span class="cost-note">{cost.note[language]}</span>}
+          </li>
+        ))}
+      </ol>
+      <p class="balance-line">
+        {en
+          ? "The running cost of three duties to report to the tax office, every year, as the Commission estimates it."
+          : "Laufende Kosten von drei Meldepflichten an die Steuer, jedes Jahr, nach Schätzung der Kommission."}
+      </p>
+      <p class="balance-sources">
+        {reportingCostSources.map(label).map((source) => (
+          <a href={source.href}>{source.label}</a>
+        ))}
+      </p>
+    </li>
+
+    <!-- Nutzen: a sliver of the taxes, and most of it a model -->
+    <li class="balance-card">
+      <p class="balance-kicker">{en ? "Benefit" : "Nutzen"}</p>
+      <h3>
+        {en
+          ? `${percent(benefit.shareOfDirectTaxes)} of direct taxes, mostly estimated.`
+          : `${percent(benefit.shareOfDirectTaxes)} der direkten Steuern, großteils geschätzt.`}
+      </h3>
+      <div class="benefit" aria-hidden="true">
+        <div class="benefit-all">
+          <span
+            >{en ? "All direct taxes in the EU" : "Alle direkten Steuern in der EU"}</span
+          >
+          <span class="benefit-sliver" />
+        </div>
+        <div class="benefit-zoom" />
+        <div class="benefit-part" style={`--data: ${fromDataShare}%`}>
+          <span class="benefit-data" />
+          <span class="benefit-model" />
+        </div>
+        <div class="benefit-labels">
+          <span>
+            <b
+              >{en ? `€${n(benefit.fromData)}bn` : `${n(benefit.fromData)} Mrd. €`}</b
+            >
+            {en ? "from data" : "aus Daten"}
+          </span>
+          <span class="model">
+            <b
+              >{en ? `€${n(benefit.modelled)}bn` : `${n(benefit.modelled)} Mrd. €`}</b
+            >
+            {en ? "modelled without data" : "Modell ohne Daten"}
+          </span>
+        </div>
+      </div>
+      <p class="balance-line">
+        {en
+          ? `What all exchanged tax data bring a year, as the Commission estimates it: €${n(benefit.billions)} billion.`
+          : `So viel bringen alle ausgetauschten Steuerdaten im Jahr, schätzt die Kommission: ${n(benefit.billions)} Milliarden Euro.`}
+      </p>
+      <p class="balance-admission">
+        {en
+          ? "In 2026 the Commission itself writes that some duties, such as the one for online platforms, produce “large volumes of information which has limited tax relevance”, at “disproportionate compliance costs”."
+          : "2026 schreibt die Kommission selbst: Manche Meldepflichten, etwa die für Online-Plattformen, liefern große Mengen an Daten mit geringer steuerlicher Bedeutung, zu unverhältnismäßigen Kosten."}
+      </p>
+      <p class="balance-sources">
+        {benefit.sources.map(label).map((source) => (
+          <a href={source.href}>{source.label}</a>
+        ))}
+      </p>
+    </li>
+
+    <!-- Erfasst: two squares, 2017 inside 2024 -->
+    <li class="balance-card">
+      <p class="balance-kicker">{en ? "Captured" : "Erfasst"}</p>
+      <h3>
+        {en ? "Reported without suspicion." : "Gemeldet wird ohne Verdacht."}
+      </h3>
+      <div class="captured">
+        <div
+          class="squares"
+          style={`--first: ${(firstSide * 100).toFixed(2)}%`}
+        >
+          <span class="square-last">
+            <b>{n(lastAccounts.millions)}</b>
+            {en ? `million accounts, ${lastAccounts.year}` : `Millionen Konten, ${lastAccounts.year}`}
+          </span>
+          <span class="square-first">
+            <span>
+              <b>{n(firstAccounts.millions)}</b>
+              {en ? `million, ${firstAccounts.year}` : `Mio., ${firstAccounts.year}`}
+            </span>
+          </span>
+        </div>
+        <p class="captured-ratio">
+          <b>{en ? `over ${timesMore} times` : `über ${timesMore}-mal`}</b>
+          {en ? `as many as in ${firstAccounts.year}` : `so viele wie ${firstAccounts.year}`}
+        </p>
+      </div>
+      <p class="balance-line">
+        {en
+          ? "Accounts on which tax authorities worldwide exchange data. What triggers a report is an account abroad, not a suspicion."
+          : "Konten, zu denen Steuerbehörden weltweit Daten austauschen. Gemeldet wird, wer ein Konto im Ausland hat, nicht wer verdächtig ist."}
+      </p>
+      <p class="balance-sources">
+        {accountsSources.map(label).map((source) => (
+          <a href={source.href}>{source.label}</a>
+        ))}
+      </p>
+    </li>
+
+    <!-- Risiko: one tile per documented case, red at authorities -->
+    <li class="balance-card">
+      <p class="balance-kicker">{en ? "Risk" : "Risiko"}</p>
+      <h3>
+        {en ? "Collected data get lost, at authorities too." : "Gesammelte Daten gehen verloren, auch bei Behörden."}
+      </h3>
+      <div class="cases">
+        <ul class="case-tiles" aria-hidden="true">
+          {tiles.map((leak) => (
+            <li class:list={{ authority: atAuthority(leak) }} />
+          ))}
+        </ul>
+        <p class="case-legend">
+          <span class="authority">
+            {en ? `${authorityCount} at authorities` : `${authorityCount} bei Behörden`}
+          </span>
+          <span>
+            {en
+              ? `${leaks.length - authorityCount} at providers, tax tools or service providers`
+              : `${leaks.length - authorityCount} bei Anbietern, Steuertools oder Dienstleistern`}
+          </span>
+        </p>
+        <p class="case-count">
+          <b
+            >{en ? `about ${roundPeople(peopleAffected, "en")}` : `rund ${roundPeople(peopleAffected, "de")}`}</b
+          >
+          {en ? `people affected in ${leaks.length} documented cases` : `Betroffene in ${leaks.length} belegten Fällen`}
+        </p>
+      </div>
+      <p class="balance-line">
+        {en
+          ? "In 2019 Bulgaria’s tax authority lost data on more than six million people, including account data from the very exchange DAC8 reports will travel through."
+          : "2019 verlor Bulgariens Steuerbehörde Daten von mehr als sechs Millionen Menschen, darunter Kontodaten aus dem Austausch, über den künftig auch DAC8 läuft."}
+      </p>
+      <p class="balance-sources">
+        <a href={pathFor("leaks", language)}
+          >{en ? "Every case with its sources" : "Alle Fälle mit Quellen"}</a
+        >
+      </p>
+    </li>
+  </ol>
+</section>
+
+<style>
+  .balance {
+    --bar: light-dark(#3b4147, #a7afb6);
+    --red: var(--primary);
+    --hatch: repeating-linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--red) 70%, transparent) 0 2px,
+      transparent 2px 6px
+    );
+  }
+
+  .balance-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-m);
+    margin: var(--space-xl) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @container campaign (width >= 56rem) {
+    .balance-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .balance-card {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    align-content: start;
+    gap: var(--space-s);
+    min-inline-size: 0;
+    padding: var(--space-m) var(--space-m) var(--space-s);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+
+  .balance-kicker {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    font-weight: 560;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .balance-card h3 {
+    max-inline-size: 22ch;
+  }
+
+  .balance-line {
+    max-inline-size: 52ch;
+    color: var(--ink-2);
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .balance-admission {
+    max-inline-size: 52ch;
+    padding-inline-start: var(--space-s);
+    border-inline-start: 3px solid var(--red);
+    color: var(--ink);
+    font-weight: 560;
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  .balance-sources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 1rem;
+    font-size: var(--type-meta);
+  }
+
+  .campaign .balance-sources a {
+    color: var(--ink-3);
+  }
+
+  .campaign .balance-sources a:hover {
+    color: var(--ink);
+  }
+
+  /* ---------- Kosten ---------------------------------------------------- */
+
+  /* Jede Zeile trägt die Kosten davor grau und die neue Pflicht rot. */
+  .costs {
+    display: grid;
+    gap: var(--space-s);
+    align-self: center;
+    margin: var(--space-2xs) 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .costs li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.3rem var(--space-s);
+    align-items: baseline;
+  }
+
+  .cost-what {
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+  }
+
+  .cost-what b {
+    margin-inline-end: 0.4em;
+    color: var(--ink);
+  }
+
+  .cost-bar {
+    position: relative;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    block-size: 1.6rem;
+    border-radius: var(--radius-sm);
+    background: color-mix(in oklab, var(--bar) 8%, transparent);
+  }
+
+  .cost-old,
+  .cost-new {
+    position: absolute;
+    inset-block: 0;
+  }
+
+  .cost-old {
+    inset-inline-start: 0;
+    inline-size: var(--before);
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    background: var(--bar);
+  }
+
+  .cost-new {
+    inset-inline-start: var(--before);
+    inline-size: max(3px, var(--add));
+    border-radius: var(--radius-sm);
+    background: var(--red);
+  }
+
+  .cost-value {
+    grid-row: 1;
+    grid-column: 2;
+    font-weight: 600;
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  .cost-note {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  /* ---------- Nutzen ---------------------------------------------------- */
+
+  /* Oben alle direkten Steuern mit dem roten Splitter, darunter der
+     Splitter aufgezogen: links aus Daten, rechts nur ein Modell. */
+  .benefit {
+    display: grid;
+    align-self: center;
+    margin-block: var(--space-2xs);
+  }
+
+  .benefit-all {
+    position: relative;
+    display: flex;
+    align-items: center;
+    block-size: 2rem;
+    padding-inline: 0.6rem;
+    border-radius: var(--radius-sm);
+    background: color-mix(in oklab, var(--bar) 22%, transparent);
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+  }
+
+  .benefit-sliver {
+    position: absolute;
+    inset-block: -0.2rem;
+    inset-inline-end: 0;
+    inline-size: 3px;
+    background: var(--red);
+  }
+
+  .benefit-zoom {
+    block-size: 2.5rem;
+    background: color-mix(in oklab, var(--red) 10%, transparent);
+    clip-path: polygon(calc(100% - 3px) 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  .benefit-part {
+    display: flex;
+    block-size: 2rem;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    box-shadow: inset 0 0 0 1.5px var(--red);
+  }
+
+  .benefit-data {
+    flex: 0 0 var(--data);
+    background: var(--red);
+  }
+
+  .benefit-model {
+    flex: 1;
+    background: var(--hatch);
+  }
+
+  .benefit-labels {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-s);
+    margin-block-start: 0.4rem;
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+  }
+
+  .benefit-labels b {
+    display: block;
+    color: var(--ink);
+    font-size: var(--step-0);
+  }
+
+  .benefit-labels .model {
+    text-align: end;
+  }
+
+  /* ---------- Erfasst --------------------------------------------------- */
+
+  /* Zwei Quadrate, deren Flächen sich verhalten wie die Zahlen, daneben
+     das Verhältnis. */
+  .captured {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    align-self: center;
+    gap: var(--space-s) var(--space-m);
+    margin-block: var(--space-2xs);
+  }
+
+  .squares {
+    position: relative;
+    flex: 0 1 18rem;
+    aspect-ratio: 1;
+  }
+
+  .captured-ratio {
+    flex: 1 1 8rem;
+    color: var(--ink-2);
+    line-height: 1.3;
+  }
+
+  .captured-ratio b {
+    display: block;
+    color: var(--ink);
+    font-size: var(--step-2);
+    font-weight: var(--weight-heading);
+    letter-spacing: -0.02em;
+  }
+
+  .square-last {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: start;
+    padding: 0.75rem 0.9rem;
+    border-radius: var(--radius-sm);
+    background: var(--red);
+    color: #fff;
+    font-size: var(--type-meta);
+    line-height: 1.3;
+  }
+
+  .square-last b {
+    font-size: clamp(2.5rem, 2rem + 2cqi, 3.5rem);
+    font-weight: var(--weight-heading);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .square-first {
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-end: 0;
+    inline-size: var(--first);
+    aspect-ratio: 1;
+    border-radius: var(--radius-sm) 0 var(--radius-sm) var(--radius-sm);
+    background: var(--bar);
+  }
+
+  .square-first > span {
+    position: absolute;
+    inset-inline-start: calc(100% + 0.5rem);
+    inset-block-end: 0;
+    color: #fff;
+    font-size: var(--type-meta);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .square-first b {
+    display: block;
+    font-size: var(--step-1);
+  }
+
+  /* ---------- Risiko ---------------------------------------------------- */
+
+  .cases {
+    display: grid;
+    align-self: center;
+    gap: var(--space-xs);
+    margin-block: var(--space-2xs);
+  }
+
+  .case-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(2rem, 1fr));
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .case-tiles li {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    background: color-mix(in oklab, var(--bar) 45%, transparent);
+  }
+
+  .case-tiles li.authority {
+    background: var(--red);
+  }
+
+  .case-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem var(--space-s);
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+  }
+
+  .case-legend span::before {
+    content: "";
+    display: inline-block;
+    inline-size: 0.7em;
+    aspect-ratio: 1;
+    margin-inline-end: 0.4em;
+    border-radius: 2px;
+    background: color-mix(in oklab, var(--bar) 45%, transparent);
+  }
+
+  .case-legend .authority::before {
+    background: var(--red);
+  }
+
+  .case-count {
+    color: var(--ink-2);
+  }
+
+  .case-count b {
+    margin-inline-end: 0.3em;
+    color: var(--ink);
+    font-size: var(--step-2);
+    font-weight: var(--weight-heading);
+    letter-spacing: -0.02em;
+  }
+</style>
