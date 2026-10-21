@@ -1,12 +1,12 @@
 ---
 import {
+  type Chronicle,
+  entriesFor,
   historyAsOf,
-  historyCommon,
-  historyFor,
   historyResearchDate,
-  historyStack,
-  isProposed,
+  isAhead,
   stepsInForce,
+  taxChronicle,
 } from "@/data/history"
 import type { Language } from "@/lib/i18n"
 
@@ -16,22 +16,36 @@ import type { Language } from "@/lib/i18n"
 // Every row opens in place with its text, facts and primary sources, and
 // entries without a row of their own open inside the row they led to.
 // "compact" is the version on the home page: only the steps about
-// individuals and the proposal, plain bars without rows to open.
+// individuals and the proposal, plain bars without rows to open. The
+// history page draws the same chart for each chronicle it tells.
 interface Props {
   language: Language
+  chronicle?: Chronicle
   compact?: boolean
+  // The research line closes the last chart on a page.
+  research?: boolean
 }
 
-const { language, compact = false } = Astro.props
+const {
+  language,
+  chronicle = taxChronicle,
+  compact = false,
+  research = !compact,
+} = Astro.props
 const en = language === "en"
-const entries = new Map(historyFor(language).map((entry) => [entry.id, entry]))
+const entries = new Map(
+  entriesFor(chronicle.entries, language, chronicle.who).map((entry) => [
+    entry.id,
+    entry,
+  ]),
+)
 const entryFor = (id: string) => {
   const entry = entries.get(id)
   if (!entry) throw new Error(`History chart: no entry "${id}"`)
   return entry
 }
 
-const axisStart = 2000
+const { axisStart, ticks, common } = chronicle
 const axisEnd = 2031
 const asOf = new Date(historyAsOf)
 const thisYear = asOf.getUTCFullYear()
@@ -39,16 +53,15 @@ const today =
   thisYear + (asOf.getTime() - Date.UTC(thisYear, 0, 1)) / (365 * 86_400_000)
 const at = (year: number) => ((year - axisStart) / (axisEnd - axisStart)) * 100
 const x = (year: number) => `${at(year).toFixed(2)}%`
-const ticks = [2005, 2010, 2015, 2020, 2030]
 
-const shown = historyStack.filter((group) => !compact || group.compact)
+const shown = chronicle.stack.filter((group) => !compact || group.compact)
 const rows = shown.flatMap((group) => group.rows)
 
 // Links to the former timeline's chapters land on the first row of each.
 const eraOf = new Map<string, string>()
 for (const entry of entries.values()) {
   const isRow = rows.some((row) => row.id === entry.id)
-  if (isRow && ![...eraOf.values()].includes(entry.era))
+  if (isRow && entry.era && ![...eraOf.values()].includes(entry.era))
     eraOf.set(entry.id, entry.era)
 }
 
@@ -58,21 +71,21 @@ const groups = shown.map((group) => ({
     const entry = entryFor(row.id)
     const kind = entry.status
     const end =
-      row.until !== undefined
-        ? row.until + 1
-        : kind === "proposed"
-          ? axisEnd
-          : today
+      row.until !== undefined ? row.until + 1 : isAhead(kind) ? axisEnd : today
     const span =
       kind === "proposed"
         ? en
           ? `planned from ${row.from}`
           : `geplant ab ${row.from}`
-        : row.until !== undefined
-          ? `${row.from}–${row.until}`
-          : en
-            ? `since ${row.from}`
-            : `seit ${row.from}`
+        : kind === "planned"
+          ? en
+            ? `applies from ${row.from}`
+            : `gilt ab ${row.from}`
+          : row.until !== undefined
+            ? `${row.from}–${row.until}`
+            : en
+              ? `since ${row.from}`
+              : `seit ${row.from}`
     const context = (row.context ?? []).map((id) => {
       const nested = entryFor(id)
       const before = nested.status !== "context"
@@ -98,7 +111,22 @@ const groups = shown.map((group) => ({
 
 // The escalation in one sentence and one row of columns, both counted from
 // the rows above: how many steps applied in each year.
-const counted = rows.filter((row) => !isProposed(row))
+const counted = rows.filter((row) => !isAhead(entryFor(row.id).status))
+const legend = [
+  { kind: "past", label: en ? "Applies" : "Gilt" },
+  rows.some((row) => entryFor(row.id).status === "repealed") && {
+    kind: "repealed",
+    label: en ? "Repealed" : "Aufgehoben",
+  },
+  rows.some((row) => entryFor(row.id).status === "planned") && {
+    kind: "planned",
+    label: en ? "Adopted, applies later" : "Beschlossen, gilt später",
+  },
+  rows.some((row) => entryFor(row.id).status === "proposed") && {
+    kind: "proposed",
+    label: en ? "Proposal" : "Vorschlag",
+  },
+].filter((item): item is { kind: string; label: string } => Boolean(item))
 const firstYear = Math.min(...counted.map((row) => row.from))
 const columns = Array.from(
   { length: thisYear - axisStart + 1 },
@@ -133,7 +161,8 @@ const [first, ...rest] = milestones
 const middle = rest.slice(0, -1)
 const last = rest.at(-1) ?? first
 const one = (count: number) => count === 1
-const noun = en ? "of these rules" : "dieser Regeln"
+const noun = chronicle.noun[language]
+const titleId = `${chronicle.id}-title`
 const were = (count: number) => (one(count) ? "war es" : "waren es")
 type Part = string | { strong: string }
 const sentence: Part[] = en
@@ -173,24 +202,16 @@ let index = 0
 
 <figure
   class:list={["stack", { compact }]}
-  aria-labelledby={compact ? undefined : "stack-title"}
+  aria-labelledby={compact ? undefined : titleId}
   style={`--today: ${x(today)}; --peak: ${peak}`}
 >
   {!compact && (
     <figcaption>
-      <h2 id="stack-title">
-        {en ? "What tax authorities receive today" : "Was die Steuerbehörden heute bekommen"}
-      </h2>
+      <h3 id={titleId}>{chronicle.title[language]}</h3>
       <p class="figure-line" set:html={counter} />
-      <p class="stack-note">
-        {en
-          ? "One row per rule, from the year it applies. Open a row for details and sources."
-          : "Eine Zeile je Regel, ab dem Jahr, in dem sie angewendet wird. Jede Zeile öffnet Einzelheiten und Quellen."}
-      </p>
+      <p class="stack-note">{chronicle.note[language]}</p>
       <ul class="stack-legend" aria-hidden="true">
-        <li class="past">{en ? "In force" : "In Kraft"}</li>
-        <li class="repealed">{en ? "Repealed" : "Aufgehoben"}</li>
-        <li class="proposed">{en ? "Proposal" : "Vorschlag"}</li>
+        {legend.map((item) => <li class={item.kind}>{item.label}</li>)}
       </ul>
     </figcaption>
   )}
@@ -201,7 +222,7 @@ let index = 0
 
   {groups.map((group) => (
     <section class="stack-group" aria-label={group.label}>
-      {!compact && <h3><span>{group.label}</span></h3>}
+      {!compact && <h4><span>{group.label}</span></h4>}
       <ul>
         {group.rows.map((row) => {
           const line = (
@@ -249,7 +270,7 @@ let index = 0
                         {nested && (
                           <>
                             <p class="stack-kicker">{"kicker" in entry && entry.kicker}</p>
-                            <h4>{entry.title}</h4>
+                            <h5>{entry.title}</h5>
                           </>
                         )}
                         <div class="stack-text">
@@ -288,7 +309,7 @@ let index = 0
   {!compact && (
     <div class="stack-sum" aria-hidden="true">
       <span class="stack-sum-label">
-        {en ? "Rules in force" : "Regeln in Kraft"}
+        {chronicle.sum[language]}
       </span>
       <span class="stack-track">
         {columns.map((column) => (
@@ -310,36 +331,37 @@ let index = 0
     {ticks.map((tick) => <span style={`--at: ${x(tick)}`}>{tick}</span>)}
   </div>
 
-  {!compact && (
-    <>
-      <details id="gemeinsam" class="stack-row stack-common">
-        <summary>
-          <span class="stack-line">
-            <strong>{historyCommon.translations[language].label}</strong>
-            <span class="stack-what">
-              {historyCommon.translations[language].summary}
-            </span>
+  {!compact && common && (
+    <details id={common.id} class="stack-row stack-common">
+      <summary>
+        <span class="stack-line">
+          <strong>{common.translations[language].label}</strong>
+          <span class="stack-what">
+            {common.translations[language].summary}
           </span>
-        </summary>
-        <div class="stack-detail">
-          <div class="stack-entry">
-            <div class="stack-text">
-              {historyCommon.translations[language].text.map((text) => (
-                <p>{text}</p>
+        </span>
+      </summary>
+      <div class="stack-detail">
+        <div class="stack-entry">
+          <div class="stack-text">
+            {common.translations[language].text.map((text) => <p>{text}</p>)}
+          </div>
+          <div class="stack-facts">
+            <ul class="stack-sources">
+              {common.sources.map((source) => (
+                <li>
+                  <a href={source.href[language]}>{source.label[language]}</a>
+                </li>
               ))}
-            </div>
-            <div class="stack-facts">
-              <ul class="stack-sources">
-                {historyCommon.sources.map((source) => (
-                  <li>
-                    <a href={source.href[language]}>{source.label[language]}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            </ul>
           </div>
         </div>
-      </details>
+      </div>
+    </details>
+  )}
+
+  {research && (
+    <>
       <p class="stack-research">
         {en
           ? `Research by Bitcoin Austria, as of ${historyResearchDate.en}. Every row links to its primary sources.`
@@ -391,11 +413,11 @@ let index = 0
     margin-block-end: var(--space-m);
   }
 
-  figcaption :is(h2, p) {
+  figcaption :is(h3, p) {
     grid-column: 1;
   }
 
-  figcaption h2 {
+  figcaption h3 {
     max-inline-size: none;
     font-size: var(--type-h3);
     font-stretch: 100%;
@@ -455,12 +477,17 @@ let index = 0
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--bar) 45%, transparent);
   }
 
-  .proposed {
+  .proposed,
+  .planned {
     --swatch: transparent;
   }
 
   .stack-legend .proposed::before {
     border: 1.5px dashed var(--ink-3);
+  }
+
+  .stack-legend .planned::before {
+    border: 1.5px solid var(--bar);
   }
 
   /* ---------- Achse ------------------------------------------------------ */
@@ -523,7 +550,7 @@ let index = 0
 
   /* ---------- Gruppen und Zeilen ---------------------------------------- */
 
-  .stack-group h3 {
+  .stack-group h4 {
     display: grid;
     grid-template-columns: var(--stack-cols);
     color: var(--ink-3);
@@ -536,14 +563,14 @@ let index = 0
   }
 
   /* Die Gruppe darf in die Spur ragen; die Heute-Linie läuft darunter. */
-  .stack-group h3 span {
+  .stack-group h4 span {
     z-index: 1;
     grid-column: 2 / -1;
     grid-row: 1;
     white-space: nowrap;
   }
 
-  .stack-group h3::after {
+  .stack-group h4::after {
     content: "";
     grid-column: 4;
     grid-row: 1;
@@ -609,12 +636,17 @@ let index = 0
     border: 1.5px dashed var(--ink-3);
   }
 
+  /* Beschlossen, aber erst ab einem späteren Jahr: durchgezogen umrandet. */
+  .planned .stack-bar {
+    border: 1.5px solid var(--bar);
+  }
+
   /* Der Vorschlag beginnt knapp nach heute: seine Jahreszahl deckt die
      Heute-Linie ab, statt von ihr durchgestrichen zu werden. */
-  .proposed .stack-year {
+  :is(.proposed, .planned) .stack-year {
     padding-inline: 0.15rem;
     border-radius: 2px;
-    background: var(--background);
+    background: var(--band-fill, var(--background));
   }
 
   .stack-year {
@@ -635,7 +667,8 @@ let index = 0
     color: var(--ink-3);
   }
 
-  /* DAC8: die jüngste Pflicht über Privatpersonen, in Markenrot. */
+  /* Die jüngste Pflicht über Privatpersonen, in Markenrot: DAC8 bei den
+     Steuern, die Namen bei jeder Übertragung bei der Geldwäsche. */
   .current {
     --swatch: var(--primary);
     --row-fill: color-mix(in oklab, var(--primary) 9%, transparent);
@@ -747,7 +780,7 @@ let index = 0
     color: var(--ink-3);
   }
 
-  .stack-entry h4 {
+  .stack-entry h5 {
     margin-block-start: calc(var(--space-s) * -0.75);
     max-inline-size: 60ch;
     font-size: var(--type-body);
@@ -812,7 +845,7 @@ let index = 0
     }
 
     .stack-kicker,
-    .stack-entry h4 {
+    .stack-entry h5 {
       grid-column: 1 / -1;
     }
   }
@@ -994,18 +1027,18 @@ let index = 0
       grid-column: 1;
     }
 
-    .stack-group h3 {
+    .stack-group h4 {
       grid-template-columns: minmax(0, 1fr);
       margin-block-start: var(--space-xs);
       line-height: 1.4;
       padding-block: 0.3rem;
     }
 
-    .stack-group h3 span {
+    .stack-group h4 span {
       grid-column: 1;
     }
 
-    .stack-group h3::after {
+    .stack-group h4::after {
       content: none;
     }
 
