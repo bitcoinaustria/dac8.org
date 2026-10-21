@@ -1,0 +1,139 @@
+---
+import type { Language } from "@/lib/i18n"
+
+// Shares out of a hundred as bars on a full-width track, the value at the
+// end of each bar. For a few ratings, not for comparing close values.
+interface Props {
+  language: Language
+  id: string
+  title: string
+  note?: string
+  rows: { label: string; share: number }[]
+  sources: { label: string; href: string }[]
+}
+
+const { language, id, title, note, rows, sources } = Astro.props
+// "28 %" in German, "28%" in English.
+const percent = (share: number) =>
+  language === "en" ? `${share}%` : `${share}\u00a0%`
+---
+
+<figure class="share-bars" aria-labelledby={`${id}-title`}>
+  <figcaption>
+    <h3 id={`${id}-title`}>{title}</h3>
+    {note && <p class="bars-note">{note}</p>}
+  </figcaption>
+  <ul class="bars">
+    {rows.map((row) => (
+      <li style={`--w: ${row.share}%`}>
+        <span class="bars-label">{row.label}</span>
+        <span class="bars-track" aria-hidden="true">
+          <span class="bars-fill" />
+        </span>
+        <strong class="bars-value">{percent(row.share)}</strong>
+      </li>
+    ))}
+  </ul>
+  <ul class="bars-sources">
+    {sources.map((source) => (
+      <li>
+        <a href={source.href}>{source.label}</a>
+      </li>
+    ))}
+  </ul>
+</figure>
+
+<style>
+  .share-bars {
+    --bar: light-dark(#3b4147, #a7afb6);
+    display: grid;
+    gap: var(--space-s);
+    margin: 0;
+    font-size: var(--type-meta);
+    line-height: 1.4;
+  }
+
+  h3 {
+    max-inline-size: 34ch;
+    font-size: var(--step-1);
+    font-stretch: 100%;
+    line-height: 1.25;
+  }
+
+  .bars-note {
+    margin-block-start: var(--space-3xs);
+    color: var(--ink-3);
+    text-wrap: pretty;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bars {
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .bars li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 3.5rem;
+    align-items: center;
+    gap: 0.3rem var(--space-xs);
+  }
+
+  .bars-label {
+    grid-column: 1 / -1;
+    color: var(--ink-2);
+  }
+
+  .bars-track {
+    display: block;
+    block-size: 0.625rem;
+    border-radius: 3px;
+    background: color-mix(in oklab, var(--bar) 14%, transparent);
+  }
+
+  .bars-fill {
+    display: block;
+    inline-size: var(--w);
+    block-size: 100%;
+    border-radius: 3px;
+    background: var(--bar);
+    transform-origin: left center;
+  }
+
+  .bars-value {
+    color: var(--ink);
+    text-align: end;
+    font-weight: var(--weight-heading);
+  }
+
+  .bars-sources a {
+    color: var(--ink-3);
+  }
+
+  .bars-sources a::before {
+    content: "↗ ";
+    content: "↗ " / "";
+  }
+
+  .bars-sources a:hover {
+    color: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .bars-fill {
+      animation: bars-grow 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      animation-delay: 200ms;
+    }
+  }
+
+  @keyframes bars-grow {
+    from {
+      scale: 0 1;
+    }
+  }
+</style>

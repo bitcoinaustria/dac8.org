@@ -70,7 +70,7 @@ that follow the navigation labels:
 | Angriffe: archive of known physical attacks, map and list | `/angriffe/` | `/en/attacks/` |
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
-| Geschichte: a chart of what tax authorities receive today and one chronology since 1977 by era; linked from dossier and footer | `/geschichte/` | `/en/history/` |
+| Geschichte: how tax reporting and anti-money-laundering rules grew, and what audits found about their effect; linked from dossier and footer | `/geschichte/` | `/en/history/` |
 
 A top bar carries the navigation and a permanent donate button that leads to
 `#spenden` on the participation page; on mobile a bottom bar keeps donating and
@@ -143,15 +143,24 @@ the participation, proceedings and arguments pages share components; the home pa
 dossier remain explicit Astro documents per language. Source URLs are shared in `src/data/sources.ts`.
 
 - Update `src/data/campaign.ts` when the procedural status changes.
-- The history page (`/geschichte/`, `/en/history/`) renders `src/data/history.ts`,
-  a chronology from Directive 77/799/EEC to the pending DAC recast. Its claims
-  are verified in the wiki reference `dac-history-timeline`. Update
-  `historyAsOf` in the same file with every content change; the page shows it
-  as the research status and places the chart's "today" line by it. Each
-  entry keeps a one-sentence summary visible and the rest under "Details";
-  `historyStack` in the same file feeds the chart
-  (`src/components/HistoryStack.astro`), which also has a compact mode with
-  only the rows about individuals for use as a teaser elsewhere.
+- The history page (`/geschichte/`, `/en/history/`) tells two lines of rules
+  and what they bring. The hero shows how long the texts have grown
+  (`src/components/LawGrowth.astro`). `src/data/history.ts` holds the tax
+  chronicle from Directive 77/799/EEC to the pending DAC recast, verified in
+  the wiki reference `dac-history-timeline`; `src/data/aml-history.ts` holds
+  the anti-money-laundering duties in Austria from the first ID duty in 1994
+  to the 2027 cash cap. Both feed the same chart
+  (`src/components/HistoryStack.astro`, one row per duty from the year it
+  applies, each row opening with its facts and sources), which also has a
+  compact mode with only the tax rows about individuals for the home page.
+  `src/data/history-evidence.ts` holds the figures on volumes and effect
+  (reports against convictions, audit samples, asset recovery, FATF ratings,
+  the institutions' own words), drawn by `YearColumns`, `UnitGrid` and
+  `ShareBars`; each figure says what it measures and no more. The AML and
+  evidence claims are verified in the wiki references
+  `aml-kyc-history-austria` and `rule-growth-and-effect-evidence`. Update
+  `historyAsOf` in `history.ts` with every content change on the page; it
+  shows as the research status and places the "today" line.
 - Add confirmed public milestones to `src/data/updates.ts`, with a stable ID,
   publication timestamp including timezone, both translations and an optional
   source URL. Future-dated entries stay hidden until a build after that date.

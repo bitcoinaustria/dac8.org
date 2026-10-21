@@ -2,13 +2,45 @@
 import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import HistoryStack from "@/components/HistoryStack.astro"
-import { languageFor } from "@/lib/i18n"
+import LawGrowth from "@/components/LawGrowth.astro"
+import ShareBars from "@/components/ShareBars.astro"
+import UnitGrid from "@/components/UnitGrid.astro"
+import YearColumns from "@/components/YearColumns.astro"
+import { amlChronicle } from "@/data/aml-history"
+import { historyResearchDate } from "@/data/history"
+import {
+  accountsExchanged,
+  accountsSources,
+  cryptoReviewSources,
+  admissions,
+  assetRecovery,
+  auditSample,
+  fatfRatings,
+  fatfRatingsSource,
+  formatNumber,
+  germany,
+  reportsByYear,
+  reportsByYearSources,
+  reportsLatest,
+} from "@/data/history-evidence"
+import { languageFor, pathFor } from "@/lib/i18n"
 
-// One message and its evidence: every step of EU tax cooperation has added
-// data, and the next is proposed. The chart is the page; each row opens with
-// its facts and primary sources, so there is no separate chronicle.
+// Two lines of rules and what they bring. The hero shows how long the
+// texts have grown; then the tax reports and the anti-money-laundering
+// duties, each as a chart of what applies year by year; then what audits
+// and the authorities themselves found about the effect. The page never
+// argues that a rule would be justified if it worked: it closes on that.
+// In every chart red marks what came of the rules: the records followed
+// up, the reports passed on, the convictions, the money confiscated.
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
+const n = (value: number) => formatNumber(value, language)
+const label = (source: { label: Record<string, string>; href: string }) => ({
+  label: source.label[language],
+  href: source.href,
+})
+const first = reportsByYear[0]
+const share = (part: number, whole: number) => Math.round((part / whole) * 100)
 ---
 
 <Layout>
@@ -17,18 +49,486 @@ const en = language === "en"
     <header class="hero">
       <div class="hero-text">
         <h1>
-          {en ? "Each new rule adds more data. " : "Jede neue Regel bringt mehr Daten. "}
+          {en ? "More and more rules, more and more data. " : "Immer mehr Regeln, immer mehr Daten. "}
           <span
-            >{en ? "Until someone sets limits." : "Bis jemand Grenzen setzt."}</span
+            >{en ? "Hardly anyone measures what they achieve." : "Wie viel sie bringen, misst kaum jemand."}</span
           >
         </h1>
         <p class="lead">
           {en
-            ? "In 1977, tax authorities asked each other about individual cases. Today, banks, platforms and crypto-asset providers report on their customers every year. The next extension has already been proposed."
-            : "1977 fragten Steuerbehörden einander zu einzelnen Fällen. Heute melden Banken, Plattformen und Krypto-Anbieter jedes Jahr Daten über ihre Kunden. Die nächste Erweiterung ist schon vorgeschlagen."}
+            ? "Tax authorities have helped each other since 1977, and in Austria you have had to show ID at the bank since 1994. Today banks and platforms report on their customers every year, crypto-asset providers from 2027, and names travel with every crypto transfer through a provider. Where auditors looked, they found hardly any figures on the effect and, for tax data, little use."
+            : "Seit 1977 helfen Steuerbehörden einander, seit 1994 musst du dich in Österreich bei der Bank ausweisen. Heute melden Banken und Plattformen jedes Jahr über ihre Kunden, ab 2027 auch Krypto-Anbieter, und zu jeder Krypto-Übertragung über einen Anbieter reisen Namen mit. Wo Prüfer nachgesehen haben, fanden sie kaum Zahlen zur Wirkung, bei den Steuerdaten wenig Nutzen."}
         </p>
       </div>
-      <HistoryStack language={language} />
+      <LawGrowth language={language} />
     </header>
+
+    <section id="steuern" aria-labelledby="steuern-heading">
+      <h2 id="steuern-heading">
+        {en ? "Tax: from single requests to annual reports" : "Steuern: von der Anfrage zur Jahresmeldung"}
+      </h2>
+      <p class="section-intro">
+        {en
+          ? "At first, tax authorities asked each other about single cases. Today data on accounts, pay, platform income and crypto-assets flows automatically, year after year, without any cause."
+          : "Anfangs fragten Steuerbehörden einander zu einzelnen Fällen. Heute fließen Daten über Konten, Löhne, Plattform-Einnahmen und Kryptowerte automatisch, Jahr für Jahr, ohne Anlass."}
+      </p>
+      <div class="history-chart">
+        <HistoryStack language={language} research={false} />
+      </div>
+      <div class="history-figure">
+        <YearColumns
+          language={language}
+          id="konten"
+          title={en
+            ? "Accounts on which tax authorities worldwide exchange data"
+            : "Konten, zu denen Steuerbehörden weltweit Daten austauschen"}
+          note={en
+            ? "In millions, by year of exchange. Reported by the tax administrations themselves; accounts with several holders may count more than once."
+            : "In Millionen, nach Jahr des Austauschs. Von den Steuerverwaltungen selbst gemeldet; Konten mit mehreren Inhabern zählen womöglich mehrfach."}
+          unit={{ de: "Mio. Konten", en: "million accounts" }}
+          rows={accountsExchanged.map((row) => ({
+            year: row.year,
+            value: row.millions,
+          }))}
+          sources={accountsSources.map(label)}
+        />
+      </div>
+    </section>
+
+    <section
+      id="geldwaesche"
+      class="band"
+      aria-labelledby="geldwaesche-heading"
+    >
+      <h2 id="geldwaesche-heading">
+        {en ? "Money laundering: from drug money to every account" : "Geldwäsche: vom Drogengeld zu jedem Konto"}
+      </h2>
+      <p class="section-intro">
+        {en
+          ? "In 1988, states committed to punishing the laundering of drug money. What followed were duties for every bank and every customer. The rules against money laundering, AML for short, rest on checking the customer, called KYC for “know your customer”: whoever wants an account shows ID, and the bank keeps an eye on them."
+          : "1988 verpflichteten sich Staaten, das Waschen von Drogengeld zu bestrafen. Daraus wurden Pflichten für jede Bank und jeden Kunden. Die Regeln gegen Geldwäsche, kurz AML, beruhen auf der Kundenprüfung, kurz KYC für „Know Your Customer“: Wer ein Konto will, weist sich aus, und die Bank behält ihn im Blick."}
+      </p>
+      <div class="history-chart">
+        <HistoryStack
+          language={language}
+          chronicle={amlChronicle}
+          research={false}
+        />
+      </div>
+    </section>
+
+    <section id="wirkung" aria-labelledby="wirkung-heading">
+      <h2 id="wirkung-heading">
+        {en ? "What the rules achieve" : "Was die Regeln bringen"}
+      </h2>
+      <p class="section-intro">
+        {en
+          ? "Whether a rule works does not show in the number of reports, but in whether it prevents crime or brings in tax that would otherwise be missing. Hardly anyone measures that. These are the figures there are."
+          : "Ob eine Regel wirkt, zeigt nicht die Zahl der Meldungen, sondern ob sie Verbrechen verhindert oder Steuern einbringt, die sonst fehlen würden. Das misst kaum jemand. Diese Zahlen gibt es."}
+      </p>
+
+      <h3>{en ? "Tax data" : "Steuerdaten"}</h3>
+      <div class="history-figures">
+        <UnitGrid
+          language={language}
+          id="stichprobe"
+          title={en
+            ? "What happened to 150 records"
+            : "Was mit 150 Datensätzen geschah"}
+          note={en
+            ? "Sample of the European Court of Auditors: data on bank accounts and income received in 2016 by five Member States. Austria was not among them."
+            : "Stichprobe des Europäischen Rechnungshofs: Daten über Konten und Einkommen, die fünf Mitgliedstaaten 2016 erhielten. Österreich war nicht dabei."}
+          columns={15}
+          parts={[
+            {
+              count: auditSample.notMatched,
+              kind: "faint",
+              label: en
+                ? "not matched to a taxpayer and not uploaded"
+                : "keinem Steuerpflichtigen zugeordnet und nicht in die Datenbanken geladen",
+            },
+            {
+              count: auditSample.disregarded,
+              kind: "mid",
+              label: en
+                ? "matched, then disregarded without risk analysis or reason"
+                : "zugeordnet, dann ohne Risikoanalyse oder Begründung unberücksichtigt",
+            },
+            {
+              count: auditSample.followedUp,
+              kind: "accent",
+              label: en
+                ? "led to further tax-related action"
+                : "führten zu weiteren steuerlichen Maßnahmen",
+            },
+          ]}
+          sources={[label(auditSample.source)]}
+        />
+        <div class="history-facts">
+          <p>
+            {en ? (
+              <>
+                The European Commission puts the benefit of all exchanged tax
+                data at about <strong>6.8 billion euros a year</strong>, about
+                0.3 percent of direct taxes in the EU. It attributes 5.6
+                billion of that to a step for which, in its own words, no data
+                are available.
+              </>
+            ) : (
+              <>
+                Die EU-Kommission schätzt den Nutzen aller ausgetauschten
+                Steuerdaten auf rund <strong>6,8 Milliarden Euro im Jahr</strong>,
+                rund 0,3 Prozent der direkten Steuern in der EU. 5,6 Milliarden
+                davon rechnet sie einem Teil zu, für den es nach eigenen Worten
+                keine Daten gibt.
+              </>
+            )}
+          </p>
+          <p>
+            {en ? (
+              <>
+                Reporting bank accounts alone costs banks about{" "}
+                <strong>550 million euros a year</strong>, around 12 euros per
+                account reported.
+              </>
+            ) : (
+              <>
+                Allein die Kontomeldungen kosten die Banken rund{" "}
+                <strong>550 Millionen Euro im Jahr</strong>, rund 12 Euro je
+                gemeldetem Konto.
+              </>
+            )}
+          </p>
+          <ul class="history-sources">
+            <li>
+              <a
+                href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex:52025SC0365"
+                >{en ? "SWD(2025) 365, pp. 36, 41 and 83" : "SWD(2025) 365, S. 36, 41 und 83"}</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>{en ? "Anti-money-laundering rules" : "Geldwäsche-Regeln"}</h3>
+      <div class="history-figures">
+        <YearColumns
+          language={language}
+          id="meldungen"
+          title={en
+            ? "Suspicion reports and convictions in Austria"
+            : "Verdachtsmeldungen und Verurteilungen in Österreich"}
+          note={en
+            ? `Both on one scale. Reports rose from ${n(first.reports)} in ${first.year} to ${n(reportsLatest.received)} in ${reportsLatest.year}; convictions for money laundering stayed in the low hundreds at most. Convictions are not linked to particular reports, and the way reports are counted changed several times; some years include reports from authorities.`
+            : `Beides auf einer Skala. Die Meldungen stiegen von ${n(first.reports)} im Jahr ${first.year} auf ${n(reportsLatest.received)} im Jahr ${reportsLatest.year}; Verurteilungen wegen Geldwäsche blieben höchstens im niedrigen dreistelligen Bereich. Sie lassen sich einzelnen Meldungen nicht zuordnen, und die Zählweise der Meldungen änderte sich mehrmals; manche Jahre schließen Meldungen von Behörden ein.`}
+          unit={{ de: "Meldungen", en: "reports" }}
+          second={{
+            de: "Verurteilungen wegen Geldwäsche",
+            en: "convictions for money laundering",
+          }}
+          rows={reportsByYear.map((row) => ({
+            year: row.year,
+            value: row.reports,
+            second: row.convictions,
+          }))}
+          breaks={[2009, 2012, 2024, 2025]}
+          sources={reportsByYearSources.map(label)}
+        />
+        <UnitGrid
+          language={language}
+          id="verbleib"
+          title={en
+            ? `What became of the reports of ${reportsLatest.year}`
+            : `Was aus den Meldungen von ${reportsLatest.year} wurde`}
+          note={en
+            ? `One square stands for 100 reports. ${n(reportsLatest.fromCrypto)} of the ${n(reportsLatest.received)} came from crypto-asset providers.`
+            : `Ein Kästchen steht für 100 Meldungen. ${n(reportsLatest.fromCrypto)} der ${n(reportsLatest.received)} kamen von Krypto-Anbietern.`}
+          columns={20}
+          parts={[
+            {
+              count: reportsLatest.passedOn / 100,
+              figure: n(reportsLatest.passedOn),
+              kind: "accent",
+              label: en
+                ? "passed on to law enforcement, tax and customs authorities or other countries’ units"
+                : "an Strafverfolgung, Steuer- und Zollbehörden oder Meldestellen anderer Staaten weitergegeben",
+            },
+            {
+              count: reportsLatest.keptOnFile / 100,
+              figure: n(reportsLatest.keptOnFile),
+              kind: "mid",
+              label: en
+                ? "kept on file for later analysis, for lack of an initial suspicion of a crime or further leads"
+                : "für spätere Auswertungen gespeichert, mangels Anfangsverdachts, also eines Anhaltspunkts für eine Straftat, oder weiterer Ansätze",
+            },
+          ]}
+          sources={[label(reportsLatest.source)]}
+        />
+        <div class="history-facts">
+          <p>
+            {en ? (
+              <>
+                Germany shows the same pattern: reports rose from{" "}
+                {n(germany.reports2008)} in 2008 to{" "}
+                <strong>{n(germany.reports2025)} in 2025</strong>, though the
+                counting changed several times. Of{" "}
+                {n(germany.feedback)} replies from prosecutors that year,{" "}
+                {n(germany.courtStage)}, about{" "}
+                {share(germany.courtStage, germany.feedback)} percent, concerned
+                a judgment, penalty order, court decision or indictment.
+              </>
+            ) : (
+              <>
+                In Deutschland dasselbe Bild: Die Meldungen stiegen von{" "}
+                {n(germany.reports2008)} im Jahr 2008 auf{" "}
+                <strong>{n(germany.reports2025)} im Jahr 2025</strong>, bei
+                mehrfach geänderter Zählweise. Von{" "}
+                {n(germany.feedback)} Rückmeldungen der Staatsanwaltschaften in
+                diesem Jahr betrafen {n(germany.courtStage)}, rund{" "}
+                {share(germany.courtStage, germany.feedback)} Prozent, ein
+                Urteil, einen Strafbefehl, also eine Strafe ohne Verhandlung,
+                einen Gerichtsbeschluss oder eine
+                Anklage.
+              </>
+            )}
+          </p>
+          <ul class="history-sources">
+            {germany.sources.map((source) => (
+              <li>
+                <a href={source.href}>{source.label[language]}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <UnitGrid
+          language={language}
+          id="einziehung"
+          title={en
+            ? "Of 100 euros from crime in the EU"
+            : "Von 100 Euro aus Straftaten in der EU"}
+          note={en
+            ? "Europol’s estimate for 2010 to 2014. How much money crime brings in is itself an estimate."
+            : "Schätzung von Europol für 2010 bis 2014. Wie viel Geld Straftaten einbringen, ist selbst geschätzt."}
+          columns={10}
+          parts={[
+            {
+              count: 100 - assetRecovery.seized,
+              figure: `${n(100 - assetRecovery.seized)} €`,
+              kind: "faint",
+              label: en ? "not frozen or seized" : "nicht gesichert",
+            },
+            {
+              count: assetRecovery.seized - assetRecovery.confiscated,
+              figure: `${n(assetRecovery.seized - assetRecovery.confiscated)} €`,
+              kind: "mid",
+              label: en
+                ? "frozen or seized for now, but not confiscated"
+                : "vorläufig eingefroren oder beschlagnahmt, aber nicht eingezogen",
+            },
+            {
+              count: assetRecovery.confiscated,
+              figure: `${n(assetRecovery.confiscated)} €`,
+              kind: "accent",
+              label: en ? "finally confiscated" : "endgültig eingezogen",
+            },
+          ]}
+          sources={[label(assetRecovery.source)]}
+        />
+        <ShareBars
+          id="bewertung"
+          title={en
+            ? "Where the FATF’s assessors found the rules effective"
+            : "Wo die Prüfer der FATF die Regeln wirksam fanden"}
+          note={en
+            ? "Share of 120 evaluated countries rated effective to a high or substantial degree, as of 2021. A rating, not a count of crimes prevented."
+            : "Anteil von 120 geprüften Staaten mit hoher oder erheblicher Wirksamkeit, Stand 2021. Eine Bewertung, keine Zählung verhinderter Verbrechen."}
+          language={language}
+          rows={fatfRatings.map((row) => ({
+            label: row.label[language],
+            share: row.share,
+          }))}
+          sources={[label(fatfRatingsSource)]}
+        />
+      </div>
+      <p class="prose">
+        {en
+          ? "The European Commission must report on how well the transfer-data rules for crypto-assets work only by 30 June 2027. So far the FATF counts who has introduced them: in 2026, 34 in 100 countries had largely done so, and six in ten countries with a transfer-data law had taken no supervisory action on it yet."
+          : "Wie gut die Regeln zu den Übertragungsdaten bei Kryptowerten wirken, muss die EU-Kommission erst bis 30. Juni 2027 berichten. Die FATF zählt bisher, wer sie eingeführt hat: 2026 hatten 34 von 100 Staaten das weitgehend getan, und sechs von zehn Staaten mit einem Gesetz zu den Übertragungsdaten hatten noch keine Aufsichtsmaßnahme dazu ergriffen."}
+      </p>
+      <ul class="history-sources history-sources-row">
+        {cryptoReviewSources.map((source) => (
+          <li>
+            <a href={source.href}>{source.label[language]}</a>
+          </li>
+        ))}
+      </ul>
+
+      <h3>
+        {en ? "What the Commission and auditors say themselves" : "Was Kommission und Rechnungshöfe selbst sagen"}
+      </h3>
+      <ul class="history-admissions">
+        {admissions.map((item) => (
+          <li>
+            <blockquote>
+              <p>{item.quote[language]}</p>
+            </blockquote>
+            <p class="admission-who">
+              {item.who[language]},{" "}
+              <a href={item.source.href}>{item.source.label[language]}</a>
+            </p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section id="grenzen" class="band" aria-labelledby="grenzen-heading">
+      <h2 id="grenzen-heading">
+        {en ? "Even a rule that works needs limits." : "Auch eine Regel, die wirkt, braucht Grenzen."}
+      </h2>
+      <p class="section-intro">
+        {en
+          ? "Almost every one of these rules captures everyone who uses a bank or a provider, not those suspected of a crime. That needs a justification, whether the rule works or not. Investigations should start from a concrete suspicion."
+          : "Fast jede dieser Regeln erfasst alle, die eine Bank oder einen Anbieter nutzen, nicht die, die einer Straftat verdächtig sind. Das braucht eine Begründung, ob die Regel wirkt oder nicht. Ermittelt werden soll bei konkretem Verdacht."}
+      </p>
+      <p class="history-next">
+        <a class="text-link" href={pathFor("arguments", language)}>
+          {en ? "Why financial privacy matters" : "Warum finanzielle Privatsphäre zählt"}
+        </a>
+      </p>
+      <p class="history-research">
+        {en
+          ? `Research by Bitcoin Austria, as of ${historyResearchDate.en}. Every row and chart links to its primary sources.`
+          : `Recherche von Bitcoin Austria, Stand: ${historyResearchDate.de}. Jede Zeile und jede Grafik verweist auf ihre Primärquellen.`}
+      </p>
+    </section>
   </article>
 </Layout>
+
+<style>
+  /* Text links, die Längen der Regeln rechts daneben. */
+  @container campaign (width >= 56rem) {
+    .hero {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 6fr);
+      align-items: start;
+    }
+  }
+
+  .history-chart {
+    margin-block-start: var(--space-xl);
+  }
+
+  .history-figure {
+    max-inline-size: 44rem;
+    margin-block-start: var(--space-2xl);
+  }
+
+  .campaign > section > h3 {
+    margin-block-start: var(--space-2xl);
+  }
+
+  /* Die Grafiken eines Abschnitts in zwei Spalten, schmal untereinander. */
+  .history-figures {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-xl) var(--space-2xl);
+    margin-block-start: var(--space-l);
+  }
+
+  @container campaign (width >= 56rem) {
+    .history-figures {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+
+  .history-facts {
+    display: grid;
+    align-content: start;
+    gap: var(--space-s);
+    max-inline-size: var(--measure-text);
+    color: var(--ink-2);
+    font-size: var(--type-lead);
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .history-facts strong {
+    color: var(--ink);
+    font-weight: var(--weight-heading);
+  }
+
+  .history-sources {
+    margin: 0;
+    padding: 0;
+    font-size: var(--type-meta);
+    list-style: none;
+  }
+
+  .history-sources-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-s);
+    margin-block-start: var(--space-xs);
+  }
+
+  .history-sources a,
+  .admission-who a {
+    color: var(--ink-3);
+  }
+
+  .history-sources a::before {
+    content: "↗ ";
+    content: "↗ " / "";
+  }
+
+  .history-sources a:hover,
+  .admission-who a:hover {
+    color: var(--ink);
+  }
+
+  .history-admissions {
+    display: grid;
+    gap: var(--space-l) var(--space-2xl);
+    margin: var(--space-l) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @container campaign (width >= 56rem) {
+    .history-admissions {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .history-admissions li {
+    display: grid;
+    align-content: start;
+    gap: var(--space-xs);
+    padding-block-start: var(--space-s);
+    border-block-start: 2px solid var(--ink);
+  }
+
+  .history-admissions blockquote {
+    margin: 0;
+    color: var(--ink);
+    font-size: var(--type-lead);
+    font-weight: 560;
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  .admission-who {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  .history-next {
+    margin-block-start: var(--space-l);
+  }
+
+  .history-research {
+    margin-block-start: var(--space-xl);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+</style>

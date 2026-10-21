@@ -1,0 +1,176 @@
+---
+import { formatNumber } from "@/data/history-evidence"
+import type { Language } from "@/lib/i18n"
+
+// A whole split into equal squares, one per unit, filled in the order of
+// `parts`: what the reader should see first comes last, in red. The legend
+// names every part with its count, so colour never carries it alone.
+interface Props {
+  language: Language
+  id: string
+  title: string
+  note?: string
+  columns?: number
+  parts: {
+    count: number
+    // The figure in the legend, if it differs from the count of squares.
+    figure?: string
+    label: string
+    kind: "faint" | "mid" | "strong" | "accent"
+  }[]
+  sources: { label: string; href: string }[]
+}
+
+const { language, id, title, note, columns = 20, parts, sources } = Astro.props
+const cells = parts.flatMap((part) =>
+  Array.from({ length: Math.round(part.count) }, () => part.kind),
+)
+---
+
+<figure class="unit-grid" aria-labelledby={`${id}-title`}>
+  <figcaption>
+    <h3 id={`${id}-title`}>{title}</h3>
+    {note && <p class="grid-note">{note}</p>}
+  </figcaption>
+  <div class="grid-cells" style={`--columns: ${columns}`} aria-hidden="true">
+    {cells.map((kind) => <span class={kind} />)}
+  </div>
+  <ul class="grid-legend">
+    {parts.map((part) => (
+      <li class={part.kind}>
+        <span>
+          <strong>{part.figure ?? formatNumber(part.count, language)}</strong>{" "}
+          {part.label}
+        </span>
+      </li>
+    ))}
+  </ul>
+  <ul class="grid-sources">
+    {sources.map((source) => (
+      <li>
+        <a href={source.href}>{source.label}</a>
+      </li>
+    ))}
+  </ul>
+</figure>
+
+<style>
+  .unit-grid {
+    --bar: light-dark(#3b4147, #a7afb6);
+    display: grid;
+    gap: var(--space-s);
+    margin: 0;
+    font-size: var(--type-meta);
+    line-height: 1.4;
+  }
+
+  h3 {
+    max-inline-size: 34ch;
+    font-size: var(--step-1);
+    font-stretch: 100%;
+    line-height: 1.25;
+  }
+
+  .grid-note {
+    margin-block-start: var(--space-3xs);
+    color: var(--ink-3);
+    text-wrap: pretty;
+  }
+
+  .grid-cells {
+    display: grid;
+    grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+    gap: 2px;
+    max-inline-size: calc(var(--columns) * 1.25rem);
+  }
+
+  .grid-cells span {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: var(--swatch);
+  }
+
+  .faint {
+    --swatch: color-mix(in oklab, var(--bar) 16%, transparent);
+  }
+
+  .mid {
+    --swatch: color-mix(in oklab, var(--bar) 45%, transparent);
+  }
+
+  .strong {
+    --swatch: var(--bar);
+  }
+
+  .accent {
+    --swatch: var(--primary);
+  }
+
+  .grid-legend,
+  .grid-sources {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .grid-legend {
+    display: grid;
+    gap: var(--space-3xs);
+    color: var(--ink-2);
+  }
+
+  .grid-legend li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45em;
+  }
+
+  .grid-legend li::before {
+    content: "";
+    flex: none;
+    inline-size: 0.625rem;
+    block-size: 0.625rem;
+    border-radius: 2px;
+    background: var(--swatch);
+    translate: 0 0.05em;
+  }
+
+  .grid-legend strong {
+    color: var(--ink);
+    font-weight: var(--weight-heading);
+  }
+
+  .grid-legend .accent strong {
+    color: var(--accent);
+  }
+
+  .grid-sources a {
+    color: var(--ink-3);
+  }
+
+  .grid-sources a::before {
+    content: "↗ ";
+    content: "↗ " / "";
+  }
+
+  .grid-sources a:hover {
+    color: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .grid-cells span {
+      animation: cell-in 0.4s ease both;
+      animation-delay: 150ms;
+    }
+
+    .grid-cells .accent {
+      animation-delay: 450ms;
+    }
+  }
+
+  @keyframes cell-in {
+    from {
+      opacity: 0;
+    }
+  }
+</style>
