@@ -196,7 +196,6 @@ const ways = wayList.map((way, k) => {
         from: row.from,
         until: row.until,
         ahead: isAhead(statusOf.get(row.id) ?? "past"),
-        what: row.what[language],
         x: at.x,
         y: at.y,
         bar: `M${from.x.toFixed(1)} ${from.y.toFixed(1)} L${to.x.toFixed(1)} ${to.y.toFixed(1)}`,
@@ -216,8 +215,7 @@ const ways = wayList.map((way, k) => {
     ].join("; "),
   }
 })
-// For the script: every mark with its way, to switch them by year and to
-// name the newest.
+// For the script: every mark with its way, to switch them by year.
 const wayRules = JSON.stringify(
   ways
     .flatMap((way) =>
@@ -225,7 +223,6 @@ const wayRules = JSON.stringify(
         way: way.id,
         from: mark.from,
         until: mark.until,
-        what: mark.what,
         ahead: mark.ahead,
       })),
     )
@@ -408,7 +405,6 @@ const noteKeep = String(kept / 100)
         <!-- Regeln -->
         <div class="scene" data-scene-id="rules">
           <div class="ways-wrap" data-ways={wayRules}>
-            <p class="ways-new" data-ways-new />
             <div class="ways">
               <img
                 class="ways-base"
@@ -459,10 +455,10 @@ const noteKeep = String(kept / 100)
             </p>
             <p class="ways-key">
               <span class="key-check">
-                {en ? "Check at the bank or provider: ID, monitoring, a cap" : "Kontrolle bei Bank oder Anbieter: Ausweis, Überwachung, Obergrenze"}
+                {en ? "check at the provider" : "Kontrolle beim Anbieter"}
               </span>
               <span class="key-report">
-                {en ? "Automatic report to the tax office" : "Automatische Meldung ans Finanzamt"}
+                {en ? "report to the tax office" : "Meldung ans Finanzamt"}
               </span>
             </p>
           </div>
@@ -600,13 +596,11 @@ const noteKeep = String(kept / 100)
     const ats = [...film.querySelectorAll<Element>("[data-at]")]
     const onlys = all("[data-only]")
     const waysRoot = film.querySelector<HTMLElement>("[data-ways]")
-    const newest = film.querySelector<HTMLElement>("[data-ways-new]")
     const counter = film.querySelector<HTMLElement>("[data-ways-count]")
     const rules: {
       way: string
       from: number
       until?: number
-      what: string
       ahead: boolean
     }[] = JSON.parse(waysRoot?.dataset.ways ?? "[]")
     const marks = [
@@ -625,7 +619,7 @@ const noteKeep = String(kept / 100)
     const stepYears: ([number, number] | null)[] = parse("years")
     const today = Number(film.dataset.today)
     // The rules chapter: the year runs with the scroll, the marks that apply
-    // by then are set on their ways, and the newest one is named.
+    // by then are set on their ways.
     let shownYear = 0
     const scrub = (year: number) => {
       if (year === shownYear) return
@@ -655,11 +649,6 @@ const noteKeep = String(kept / 100)
         el.classList.toggle("covered", covered.has(id))
       }
       if (counter) counter.textContent = String(covered.size)
-      const last = live.at(-1)
-      if (newest) {
-        newest.textContent = last ? `${last.from} · ${last.what}` : ""
-        newest.classList.toggle("ahead", Boolean(last?.ahead))
-      }
     }
 
     // The result chapter's grains, one per report.
@@ -1109,7 +1098,7 @@ const noteKeep = String(kept / 100)
     }
 
     .view .ways {
-      inline-size: min(100%, (100cqh - 14rem) * 1.111);
+      inline-size: min(100%, (100cqh - 12rem) * 1.111);
     }
   }
 
@@ -1284,23 +1273,10 @@ const noteKeep = String(kept / 100)
      färben sich rot. */
   .ways-wrap {
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    grid-template-rows: minmax(0, 1fr) auto auto;
     justify-items: center;
     gap: var(--space-2xs);
     min-block-size: 0;
-  }
-
-  .ways-new {
-    min-block-size: 1.3em;
-    color: var(--accent);
-    font-size: var(--type-meta);
-    font-weight: 600;
-    text-align: center;
-    text-wrap: balance;
-  }
-
-  .ways-new.ahead {
-    color: var(--ink-3);
   }
 
   .ways {
@@ -1308,7 +1284,7 @@ const noteKeep = String(kept / 100)
     container-type: inline-size;
     isolation: isolate;
     align-self: center;
-    inline-size: min(100%, (100cqh - 10.5rem) * 1.111);
+    inline-size: min(100%, (100cqh - 8.5rem) * 1.111);
     aspect-ratio: 1600 / 1440;
   }
 
