@@ -300,6 +300,34 @@ const noteKeep = String(kept / 100)
             </p>
           </div>
         ))}
+        <!-- Back and forth by click as well as by scroll. -->
+        <nav
+          class="film-nav"
+          aria-label={en ? "Steps of the story" : "Schritte der Geschichte"}
+        >
+          <button
+            type="button"
+            data-film-prev
+            aria-label={en ? "Previous step" : "Vorheriger Schritt"}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 5l-7 7 7 7" />
+            </svg>
+          </button>
+          <span class="film-count" aria-live="polite">
+            <b data-film-at>1</b>
+            / {items.length}
+          </span>
+          <button
+            type="button"
+            data-film-next
+            aria-label={en ? "Next step" : "Nächster Schritt"}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </nav>
       </div>
 
       <div class="scenes" aria-hidden="true">
@@ -489,6 +517,9 @@ const noteKeep = String(kept / 100)
       ...film.querySelectorAll<HTMLElement>(selector),
     ]
     const spacers = all("[data-spacer]")
+    const prev = film.querySelector<HTMLButtonElement>("[data-film-prev]")
+    const next = film.querySelector<HTMLButtonElement>("[data-film-next]")
+    const stepAt = film.querySelector<HTMLElement>("[data-film-at]")
     const says = all("[data-say]")
     const ats = [...film.querySelectorAll<Element>("[data-at]")]
     const onlys = all("[data-only]")
@@ -581,6 +612,8 @@ const noteKeep = String(kept / 100)
       else note?.hide()
       view.dataset.scene = stepScenes[i]
       view.dataset.stepId = stepIds[i]
+      if (stepAt) stepAt.textContent = String(i + 1)
+      if (prev) prev.disabled = i === 0
       for (const say of says)
         say.toggleAttribute("data-current", Number(say.dataset.say) === i)
       for (const el of ats)
@@ -658,6 +691,29 @@ const noteKeep = String(kept / 100)
       queue()
     })
     if (wallWrap) new ResizeObserver(fit).observe(wallWrap)
+    // The buttons scroll to the step before or after: a little way into
+    // it, or, where the year runs, to its end, so the year runs through.
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)")
+    const goTo = (j: number) => {
+      const behavior = reduce.matches ? "auto" : "smooth"
+      if (j >= spacers.length) {
+        const after = film.getBoundingClientRect().bottom + window.scrollY
+        window.scrollTo({ top: after - 80, behavior })
+        return
+      }
+      const box = spacers[Math.max(0, j)].getBoundingClientRect()
+      const into = stepYears[Math.max(0, j)] ? 0.86 : 0.3
+      window.scrollTo({
+        top:
+          window.scrollY +
+          box.top -
+          window.innerHeight * 0.55 +
+          box.height * into,
+        behavior,
+      })
+    }
+    prev?.addEventListener("click", () => goTo(current - 1))
+    next?.addEventListener("click", () => goTo(current + 1))
     film.toggleAttribute("data-ready", true)
     render()
   }
@@ -817,6 +873,69 @@ const noteKeep = String(kept / 100)
     line-height: 1.35;
     text-wrap: pretty;
     overflow-wrap: normal;
+  }
+
+  /* Zurück und vor: unter der Aussage, schmal wie breit. */
+  .film-nav {
+    grid-area: 2 / 1;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-block-start: var(--space-s);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .film:not([data-ready]) .film-nav {
+    display: none;
+  }
+
+  .film-nav button {
+    display: grid;
+    place-items: center;
+    inline-size: 2.5rem;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--panel);
+    color: var(--foreground);
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  .film-nav button:hover {
+    border-color: var(--ink-3);
+    background: var(--paper);
+  }
+
+  .film-nav button:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .film-nav button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .film-nav svg {
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .film-count b {
+    color: var(--foreground);
+    font-weight: 700;
   }
 
   /* ---------- Szenen ---------------------------------------------------- */
