@@ -21,8 +21,8 @@ type Grain = {
 // The note appears, then the edge of the crumbling runs from the right to
 // the kept strip, then the strip turns red.
 const appear = 0.45
-const begin = 0.55
-const run = 2.1
+const begin = 1.3
+const run = 2.4
 const red = begin + run + 0.35
 const maxLife = 1.6
 const end = red + maxLife
@@ -68,7 +68,10 @@ export const createNote = (root: HTMLElement, keep: number) => {
   let alive = 0
   let swept = false
 
-  // A plain note: frame, wavy lines, the ring of stars and the value.
+  // The note: a picture of one (data-note-image) once it has loaded, a
+  // plain drawn one until then.
+  const picture = new Image()
+  let ready = false
   const paint = (c: CanvasRenderingContext2D) => {
     const { x, y, w, h, r } = note
     const family = getComputedStyle(root).fontFamily
@@ -76,6 +79,11 @@ export const createNote = (root: HTMLElement, keep: number) => {
     c.beginPath()
     c.roundRect(x, y, w, h, r)
     c.clip()
+    if (ready) {
+      c.drawImage(picture, x, y, w, h)
+      c.restore()
+      return
+    }
     c.fillStyle = ink.paper
     c.fillRect(x, y, w, h)
     const light = c.createLinearGradient(x, y, x + w, y + h)
@@ -142,16 +150,18 @@ export const createNote = (root: HTMLElement, keep: number) => {
       c.height = Math.round(box.height * dpr)
     }
     context.setTransform(dpr, 0, 0, dpr, 0, 0)
-    // A euro note is about 1.9 times as wide as it is high.
+    // A euro note is about 1.9 times as wide as it is high; a picture
+    // keeps its own proportions.
+    const ratio = ready ? picture.naturalWidth / picture.naturalHeight : 1.9
     const w = Math.round(Math.min(box.width * 0.86, box.height * 1.05, 560))
-    const h = Math.round(w / 1.9)
+    const h = Math.round(w / ratio)
     // The note and the label beneath it stand in the middle together.
     note = {
       x: Math.round((box.width - w) / 2),
       y: Math.round((box.height - h - 64) / 2),
       w,
       h,
-      r: Math.round(h * 0.05),
+      r: Math.round(h * 0.025),
     }
     readInk()
     const pc = paper.getContext("2d")
@@ -367,6 +377,17 @@ export const createNote = (root: HTMLElement, keep: number) => {
   })
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redraw)
   document.fonts?.ready.then(redraw)
+  const source = root.dataset.noteImage
+  if (source) {
+    picture.src = source
+    picture
+      .decode()
+      .then(() => {
+        ready = true
+        redraw()
+      })
+      .catch(() => {})
+  }
 
   return {
     go,
