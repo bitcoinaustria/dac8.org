@@ -148,13 +148,16 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   and figures in `src/data/overregulation.ts`), built like the home page's
   data story. Four chapters lead from the reader to the result, each step a
   headline of a few words over one picture as a contrast: the amount from
-  which you must show ID in today's money, 33,900 euros in 1991 and the
-  first cent today; the number of rules in force as a step curve drawn
+  which you must show ID in today's money, rendered at true scale in
+  Blender (`scripts/artwork/render-cash.py`, fictional notes generated with
+  Codex): a brick of 339 hundred-euro notes in 1991, 13 and a fifty in
+  2017, a single cent today, all three in view; the number of rules in force as a step curve drawn
   while the year runs with the scroll, red from 2015 and dashed for what is
   coming; a wall of one tile per Official Journal page, six red ones from
   1991 among 488; and a sea of suspicion reports in Austria beside 139
-  convictions, then a 100-euro note that crumbles to dust until the red
-  sliver confiscated remains (`src/lib/film-note.ts`). Without JavaScript the
+  convictions, then a fictional 100-euro note with a masked face that
+  crumbles to dust until the red sliver confiscated remains
+  (`src/lib/film-note.ts`). Without JavaScript the
   headlines stand as text. The page frames DAC8 as the latest piece of a
   wider apparatus of anti-money-laundering and tax-reporting rules and
   builds on the film in three steps: what it means for you
@@ -162,12 +165,12 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   suspicion, accounts refused or closed without a reason, data leaks from
   `src/data/leaks.ts`); the bill (`src/components/RuleBill.astro`, data in
   `src/data/history-gap.ts`: report landscapes in
-  `src/components/ReportLandscape.astro` and `ReportSkyline.astro`, with one
-  flat column per year for Germany and Austria, using the campaign’s shared
-  surfaces, grey and red in light and dark mode, each on a labelled
-  linear scale starting at zero; selecting a column shows its exact value.
-  Columns rise as they enter the viewport, with a static reduced-motion and
-  no-JavaScript fallback. Counting changes are marked below the years. A
+  `src/components/ReportLandscape.astro` and `ReportCompare.astro`, which
+  set suspicion reports against convictions for money laundering in
+  Germany and Austria from a year the reader picks, both as a multiple of
+  that year, with the two growth factors set large and the convictions per
+  100 reports in the first and last year; without JavaScript the first year
+  stands against the last. Counting changes are named in the notes. A
   separate illustration names the missing link between reports and outcomes
   in Austria, without plotting it as zero. Then, Europol's assessment of
   confiscation, what three tax reporting duties cost

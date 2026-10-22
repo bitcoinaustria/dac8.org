@@ -11,6 +11,7 @@ import {
   apparatus,
   corrected,
   estimates,
+  germanConvictionsSources,
   germanReportsSources,
   recovery,
 } from "@/data/history-gap"
@@ -113,6 +114,7 @@ export const historySources = (language: Language) => {
     ...cited.withheld,
     ...reportsByYearSources,
     ...germanReportsSources,
+    ...germanConvictionsSources,
     ...recovery.sources,
     ...cited.costs,
     ...estimates.map((tile) => tile.source),

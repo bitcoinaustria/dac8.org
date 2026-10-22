@@ -358,6 +358,48 @@ export const germanReportsSources: Source[] = [
   },
 ]
 
+// Germany: persons convicted with money laundering (§ 261 StGB) as the
+// recorded offence, by year of the final decision. Only the offence with
+// the heaviest penalty is recorded, so laundering beside a heavier crime
+// is missing; the reform of March 2021 widened the offence to all crimes.
+// Verified in dac8-wiki raw records 2026-10-21-gap-de-destatis-*.
+export const germanConvictionsByYear: { year: number; convictions: number }[] =
+  [
+    { year: 2008, convictions: 608 },
+    { year: 2009, convictions: 416 },
+    { year: 2010, convictions: 704 },
+    { year: 2011, convictions: 903 },
+    { year: 2012, convictions: 897 },
+    { year: 2013, convictions: 828 },
+    { year: 2014, convictions: 781 },
+    { year: 2015, convictions: 734 },
+    { year: 2016, convictions: 854 },
+    { year: 2017, convictions: 763 },
+    { year: 2018, convictions: 727 },
+    { year: 2019, convictions: 712 },
+    { year: 2020, convictions: 829 },
+    { year: 2021, convictions: 1146 },
+    { year: 2022, convictions: 1375 },
+    { year: 2023, convictions: 2098 },
+    { year: 2024, convictions: 3157 },
+  ]
+export const germanConvictionsSources: Source[] = [
+  {
+    label: {
+      de: "Statistisches Bundesamt, Strafverfolgung, Fachserie 10 Reihe 3, Tabelle 2.1, 2008 bis 2021",
+      en: "Federal Statistical Office, prosecution statistics, series 10.3, table 2.1, 2008 to 2021, in German",
+    },
+    href: "https://www.destatis.de/DE/Themen/Staat/Justiz-Rechtspflege/Publikationen/Downloads-Strafverfolgung-Strafvollzug/strafverfolgung-2100300217004.pdf?__blob=publicationFile",
+  },
+  {
+    label: {
+      de: "Statistisches Bundesamt, Statistischer Bericht Strafverfolgung 2024, Tabelle 24311-05",
+      en: "Federal Statistical Office, prosecution report 2024, table 24311-05, in German",
+    },
+    href: "https://www.destatis.de/static/DE/dokumente/2100300247005_SBb.xlsx",
+  },
+]
+
 // The share of criminal proceeds confiscated in the EU, as Europol puts
 // it: 1.1 percent for 2010 to 2014, and in 2025 "stagnated at around an
 // estimated 2 %", without a period or method. Nothing measured between.

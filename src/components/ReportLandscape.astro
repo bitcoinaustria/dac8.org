@@ -1,8 +1,13 @@
 ---
-import ReportSkyline from "@/components/ReportSkyline.astro"
+import ReportCompare from "@/components/ReportCompare.astro"
 import SourceRefs from "@/components/SourceRefs.astro"
 import { reportsByYear, reportsByYearSources } from "@/data/history-evidence"
-import { germanReportsByYear, germanReportsSources } from "@/data/history-gap"
+import {
+  germanConvictionsByYear,
+  germanConvictionsSources,
+  germanReportsByYear,
+  germanReportsSources,
+} from "@/data/history-gap"
 import { pairs } from "@/data/history-promises"
 import { historySources } from "@/data/history-sources"
 import type { Language } from "@/lib/i18n"
@@ -33,24 +38,26 @@ if (!missing) throw new Error("Missing Austrian report outcome evidence")
   </div>
 
   <div class="landscape-charts">
-    <ReportSkyline
+    <ReportCompare
       language={language}
       id="de"
       country={en ? "Germany" : "Deutschland"}
-      rows={germanReportsByYear}
-      maximum={400000}
-      breaks={[2017]}
-      note={en ? "Counting changed in 2017." : "Seit 2017 wird anders gezählt."}
-      sources={cite(germanReportsSources)}
+      reports={germanReportsByYear.map((row) => ({ year: row.year, value: row.reports }))}
+      convictions={germanConvictionsByYear.map((row) => ({ year: row.year, value: row.convictions }))}
+      note={en
+        ? "Reports counted differently from 2017. Convictions only where laundering was the most serious offence; since 2021 any crime can be the source of laundered money. 2025 convictions are not yet published."
+        : "Meldungen seit 2017 anders gezählt. Verurteilungen nur, wo Geldwäsche die schwerste Tat war; seit 2021 kann jede Straftat Quelle gewaschenen Geldes sein. Verurteilungen für 2025 sind noch nicht veröffentlicht."}
+      sources={cite([...germanReportsSources, ...germanConvictionsSources])}
     />
-    <ReportSkyline
+    <ReportCompare
       language={language}
       id="at"
       country={en ? "Austria" : "Österreich"}
-      rows={reportsByYear}
-      maximum={15000}
-      breaks={[2012, 2024, 2025]}
-      note={en ? "Counting changed in 2012, 2024 and 2025." : "Seit 2012, 2024 und 2025 wird anders gezählt."}
+      reports={reportsByYear.map((row) => ({ year: row.year, value: row.reports }))}
+      convictions={reportsByYear.flatMap((row) => row.convictions === undefined ? [] : [{ year: row.year, value: row.convictions }])}
+      note={en
+        ? "Reports counted differently from 2012, 2024 and 2025. Final convictions for money laundering as the financial intelligence unit reports them."
+        : "Meldungen seit 2012, 2024 und 2025 anders gezählt. Rechtskräftige Verurteilungen wegen Geldwäscherei nach Angaben der Geldwäschemeldestelle."}
       sources={cite(reportsByYearSources)}
     />
   </div>
