@@ -151,11 +151,14 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   which you must show ID in today's money, rendered at true scale in
   Blender (`scripts/artwork/render-cash.py`, fictional notes generated with
   Codex): a brick of 339 hundred-euro notes in 1991, 13 and a fifty in
-  2017, a single cent today, all three in view; the number of rules in force as a step curve drawn
-  while the year runs with the scroll, red from 2015 and dashed for what is
-  coming; a wall of one tile per Official Journal page, six red ones from
-  1991 among 488; and a sea of suspicion reports in Austria beside 139
-  convictions, then a fictional 100-euro note with a masked robber that
+  2017, a single cent today, all three in view; eight ways money can take
+  around "your money", on which red marks appear as the year runs with the
+  scroll, a bar for a check at the bank or provider and a dot for an
+  automatic report to the tax office, until every way is covered; a wall
+  of one tile per Official Journal page, six red ones from 1991 among 488;
+  a sea of suspicion reports in Austria beside 139 convictions, then
+  Germany's heap beside it at the same grain with both counts as multiples
+  of 2008; then a fictional 100-euro note with a masked robber that
   crumbles to dust until the red sliver confiscated remains
   (`src/lib/film-note.ts`). Without JavaScript the
   headlines stand as text. The page frames DAC8 as the latest piece of a

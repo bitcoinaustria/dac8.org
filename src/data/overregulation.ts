@@ -1,3 +1,9 @@
+import {
+  germanConvictionsByYear,
+  germanConvictionsSources,
+  germanReportsByYear,
+  germanReportsSources,
+} from "@/data/history-gap"
 import type { Language } from "@/lib/i18n"
 
 // The history page's scroll film: how the rules piled up and how little
@@ -268,6 +274,19 @@ export const steps: Step[] = [
     sources: [fiu2025],
   },
   {
+    id: "ergebnis-de",
+    chapter: "ergebnis",
+    title: {
+      de: "Deutschland: 51-mal so viele Meldungen wie 2008.",
+      en: "Germany: 51 times as many reports as in 2008.",
+    },
+    text: {
+      de: "374.693 im Jahr 2025, auch weil seit 2017 anders gezählt wird. Wegen Geldwäsche verurteilt wurden 2024 3.157 Menschen, gut fünfmal so viele wie 2008.",
+      en: "374,693 in 2025, partly because they are counted differently since 2017. 3,157 people were convicted of money laundering in 2024, just over five times as many as in 2008.",
+    },
+    sources: [...germanReportsSources, ...germanConvictionsSources],
+  },
+  {
     id: "ergebnis-euro",
     chapter: "ergebnis",
     title: {
@@ -311,3 +330,25 @@ export const thresholds: {
 
 // Suspicion reports in Austria against convictions for money laundering.
 export const reportField = { first: 467, latest: 13989, convictions: 139 }
+
+// Germany beside it: the latest reports and convictions, and both in the
+// first year with both counts, for the growth.
+const firstOf = <T extends { year: number }>(rows: T[]) => rows[0]
+const lastOf = <T extends { year: number }>(rows: T[]) => rows[rows.length - 1]
+const baseYear = Math.max(
+  firstOf(germanReportsByYear).year,
+  firstOf(germanConvictionsByYear).year,
+)
+const reportsIn = (year: number) =>
+  germanReportsByYear.find((row) => row.year === year)?.reports ?? 0
+const convictionsIn = (year: number) =>
+  germanConvictionsByYear.find((row) => row.year === year)?.convictions ?? 0
+export const germanField = {
+  baseYear,
+  reports: lastOf(germanReportsByYear).reports,
+  reportsYear: lastOf(germanReportsByYear).year,
+  reportsBase: reportsIn(baseYear),
+  convictions: lastOf(germanConvictionsByYear).convictions,
+  convictionsYear: lastOf(germanConvictionsByYear).year,
+  convictionsBase: convictionsIn(baseYear),
+}

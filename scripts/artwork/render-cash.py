@@ -17,6 +17,12 @@ import bpy
 
 args = sys.argv[sys.argv.index("--") + 1 :]
 which, out = args[0], args[1]
+import os
+KEY = float(os.environ.get("KEY", 78000))
+RIM = float(os.environ.get("RIM", 24000))
+FILL = float(os.environ.get("FILL", 10000))
+PCT = int(os.environ.get("PCT", 100))
+SAMPLES = int(os.environ.get("SAMPLES", 320))
 TEX100 = args[2] if len(args) > 2 else "/tmp/dac8-note/tex-3.png"
 TEX50 = args[3] if len(args) > 3 else "/tmp/dac8-note/tex-4.png"
 
@@ -29,16 +35,16 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
 scene.render.engine = "CYCLES"
 scene.cycles.device = "CPU"
-scene.cycles.samples = 160
+scene.cycles.samples = SAMPLES
 scene.cycles.use_denoising = True
 scene.render.film_transparent = True
 scene.render.resolution_x = 2400
 scene.render.resolution_y = 1500
-scene.render.resolution_percentage = 100
+scene.render.resolution_percentage = PCT
 scene.render.image_settings.file_format = "PNG"
 scene.render.image_settings.color_mode = "RGBA"
 scene.view_settings.view_transform = "AgX"
-scene.view_settings.look = "AgX - Medium High Contrast"
+scene.view_settings.look = "AgX - Punchy"
 
 rnd = random.Random(1991)
 
@@ -52,8 +58,8 @@ def material_note(path, name):
     tex.image = bpy.data.images.load(path)
     tex.interpolation = "Cubic"
     mat.node_tree.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
-    bsdf.inputs["Roughness"].default_value = 0.62
-    bsdf.inputs["Specular IOR Level"].default_value = 0.35
+    bsdf.inputs["Roughness"].default_value = 0.48
+    bsdf.inputs["Specular IOR Level"].default_value = 0.5
     return mat
 
 
@@ -67,7 +73,7 @@ def material_edge(name, base, line):
     wave = nt.nodes.new("ShaderNodeTexWave")
     wave.wave_type = "BANDS"
     wave.bands_direction = "Z"
-    wave.inputs["Scale"].default_value = 1 / NOTE / 6.3
+    wave.inputs["Scale"].default_value = 1 / NOTE / 6.3 / 2.5
     wave.inputs["Distortion"].default_value = 0.6
     wave.inputs["Detail"].default_value = 1.5
     noise = nt.nodes.new("ShaderNodeTexNoise")
@@ -86,7 +92,12 @@ def material_edge(name, base, line):
     nt.links.new(noise.outputs["Fac"], mix.inputs[1])
     nt.links.new(mix.outputs[0], ramp.inputs["Fac"])
     nt.links.new(ramp.outputs["Color"], bsdf.inputs["Base Color"])
-    bsdf.inputs["Roughness"].default_value = 0.85
+    bump = nt.nodes.new("ShaderNodeBump")
+    bump.inputs["Strength"].default_value = 0.35
+    bump.inputs["Distance"].default_value = 0.002
+    nt.links.new(wave.outputs["Fac"], bump.inputs["Height"])
+    nt.links.new(bump.outputs["Normal"], bsdf.inputs["Normal"])
+    bsdf.inputs["Roughness"].default_value = 0.8
     return mat
 
 
@@ -144,9 +155,44 @@ def band(name, w, h, d, at, mat, width=3.0):
 
 note100 = material_note(TEX100, "note100")
 note50 = material_note(TEX50, "note50")
-edge100 = material_edge("edge100", (0.86, 0.89, 0.82), (0.66, 0.72, 0.63))
-edge50 = material_edge("edge50", (0.93, 0.84, 0.74), (0.78, 0.64, 0.5))
-band_mat = material_plain("band", (0.92, 0.9, 0.84), 0.7)
+edge100 = material_edge("edge100", (0.93, 0.95, 0.88), (0.62, 0.68, 0.58))
+edge50 = material_edge("edge50", (0.97, 0.88, 0.77), (0.76, 0.6, 0.46))
+
+
+def material_band(name):
+    # Paper band: cream with a green stripe near each edge.
+    mat = bpy.data.materials.new(name)
+    mat.use_nodes = True
+    nt = mat.node_tree
+    bsdf = nt.nodes["Principled BSDF"]
+    coord = nt.nodes.new("ShaderNodeTexCoord")
+    sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+    absx = nt.nodes.new("ShaderNodeMath")
+    absx.operation = "ABSOLUTE"
+    ramp = nt.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.interpolation = "CONSTANT"
+    cream = (0.95, 0.93, 0.86, 1)
+    green = (0.12, 0.42, 0.22, 1)
+    els = ramp.color_ramp.elements
+    els[0].position = 0.0
+    els[0].color = cream
+    els[1].position = 0.30
+    els[1].color = green
+    e = els.new(0.38)
+    e.color = cream
+    nt.links.new(coord.outputs["Generated"], sep.inputs["Vector"])
+    sub = nt.nodes.new("ShaderNodeMath")
+    sub.operation = "SUBTRACT"
+    sub.inputs[1].default_value = 0.5
+    nt.links.new(sep.outputs["X"], sub.inputs[0])
+    nt.links.new(sub.outputs[0], absx.inputs[0])
+    nt.links.new(absx.outputs[0], ramp.inputs["Fac"])
+    nt.links.new(ramp.outputs["Color"], bsdf.inputs["Base Color"])
+    bsdf.inputs["Roughness"].default_value = 0.7
+    return mat
+
+
+band_mat = material_band("band")
 
 objects = []
 if which == "brick":
@@ -205,23 +251,31 @@ floor.is_shadow_catcher = True
 world = bpy.data.worlds.new("world")
 scene.world = world
 world.use_nodes = True
-world.node_tree.nodes["Background"].inputs["Color"].default_value = (0.5, 0.5, 0.52, 1)
-world.node_tree.nodes["Background"].inputs["Strength"].default_value = 0.55
+world.node_tree.nodes["Background"].inputs["Color"].default_value = (0.42, 0.44, 0.48, 1)
+world.node_tree.nodes["Background"].inputs["Strength"].default_value = 0.22
 
-key = bpy.data.lights.new("key", "AREA")
-key.energy = 9000
-key.size = 60
-key_obj = bpy.data.objects.new("key", key)
-key_obj.location = (-40, -30, 70)
-key_obj.rotation_euler = (math.radians(35), math.radians(-25), 0)
-scene.collection.objects.link(key_obj)
-fill = bpy.data.lights.new("fill", "AREA")
-fill.energy = 2500
-fill.size = 80
-fill_obj = bpy.data.objects.new("fill", fill)
-fill_obj.location = (60, -50, 30)
-fill_obj.rotation_euler = (math.radians(60), math.radians(40), 0)
-scene.collection.objects.link(fill_obj)
+
+def light(name, energy, size, at, color, target=(0, 0, 1.5)):
+    data = bpy.data.lights.new(name, "AREA")
+    data.energy = energy
+    data.size = size
+    data.color = color
+    obj = bpy.data.objects.new(name, data)
+    obj.location = at
+    scene.collection.objects.link(obj)
+    from mathutils import Vector as V
+
+    d = V(target) - V(at)
+    obj.rotation_euler = d.to_track_quat("-Z", "Y").to_euler()
+    return obj
+
+
+# A warm, fairly hard key from the front left and above, a cool rim from
+# behind to lift the edges off a dark page, and a weak fill from the
+# right so the front faces keep their paper texture.
+light("key", KEY, 26, (-38, -42, 58), (1.0, 0.95, 0.88))
+light("rim", RIM, 30, (30, 55, 26), (0.82, 0.9, 1.0))
+light("fill", FILL, 60, (55, -35, 18), (0.9, 0.94, 1.0))
 
 # The same orthographic camera for all three: from the front right, about
 # 30 degrees above the table.
