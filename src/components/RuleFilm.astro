@@ -2,6 +2,7 @@
 import SourceRefs from "@/components/SourceRefs.astro"
 import { ruleChronicle } from "@/data/aml-history"
 import { historyAsOf, isAhead } from "@/data/history"
+import { recovery } from "@/data/history-gap"
 import { historySources } from "@/data/history-sources"
 import {
   chapters,
@@ -20,7 +21,7 @@ import type { Language } from "@/lib/i18n"
 // you see before you read it: the amount from which you must show ID
 // falling to nothing, the rules adding up as a curve that never falls,
 // six pages beside 488, a sea of reports beside a few convictions, and
-// 100 coins of which one is red. Grey is what is collected, red what
+// a 100-euro note that crumbles to a red sliver. Grey is what is collected, red what
 // comes of it or what is new. Each step cites its sources by number from
 // the list at the end of the page (src/data/history-sources.ts). Without
 // the script the headlines stand as text one below the other.
@@ -168,31 +169,12 @@ const sandStates = JSON.stringify({
 const fieldSteps = ["ergebnis-2005", "ergebnis-2025", "ergebnis-urteile"]
   .map(at)
   .join(",")
-// 100 one-euro coins fall past a line: 99 stack up below in five towers,
-// the last one coin short; one stays on the line and turns red. Positions
-// in percent of the square, coins seen from the side.
-const coinSteps = String(at("ergebnis-euro"))
-const seeded = (seed: number) => () => {
-  seed = (seed * 1664525 + 1013904223) % 4294967296
-  return seed / 4294967296
-}
-const jitter = seeded(2016)
-const towerX = (k: number) => 18 + k * 16
-const stacked = Array.from({ length: 5 }, (_, k) => k).flatMap((tower) =>
-  Array.from({ length: tower === 4 ? 19 : 20 }, (_, level) => ({
-    x: towerX(tower),
-    y: 95 - level * 1.62,
-    // Level by level, the towers in shuffled order, so they grow evenly.
-    delay: level * 0.085 + jitter() * 0.12,
-  })),
-)
-const coins = [
-  ...stacked.map((coin) => ({ ...coin, caught: false })),
-  { x: 50, y: 38, delay: 0.8, caught: true },
-].map((coin) => ({
-  caught: coin.caught,
-  style: `--x: ${coin.x.toFixed(2)}; --y: ${coin.y.toFixed(2)}; --d: ${coin.delay.toFixed(2)}s`,
-}))
+// A 100-euro note crumbles into dust on a canvas (src/lib/film-note.ts)
+// until the share confiscated remains, as Europol last estimated it.
+const noteStep = at("ergebnis-euro")
+const kept = recovery.latest.percent
+const euro = (value: number) => (en ? `€${n(value)}` : `${n(value)} €`)
+const noteKeep = String(kept / 100)
 ---
 
 <section
@@ -341,23 +323,23 @@ const coins = [
                 {en ? "convictions" : "Verurteilungen"}
               </span>
             </div>
-            <div class="net" data-only={coinSteps}>
-              <svg
-                class="net-line"
-                viewBox="0 0 100 10"
-                preserveAspectRatio="none"
-              >
-                <path d="M0 2 Q50 7 100 2" />
-              </svg>
-              {coins.map((coin) => (
-                <span class:list={["coin", { caught: coin.caught }]} style={coin.style} />
-              ))}
-              <span class="net-label caught">
-                <b>{en ? "€1" : "1 €"}</b>
+            <div
+              class="note"
+              data-note={noteKeep}
+              data-note-step={noteStep}
+              data-only={String(noteStep)}
+            >
+              <canvas />
+              <i data-note-paper />
+              <i data-note-edge />
+              <i data-note-line />
+              <i data-note-red />
+              <span class="note-label kept" data-note-label="kept">
+                <b>{euro(kept)}</b>
                 {en ? "confiscated" : "eingezogen"}
               </span>
-              <span class="net-label gone">
-                <b>{en ? "€99" : "99 €"}</b>
+              <span class="note-label gone" data-note-label="gone">
+                <b>{euro(100 - kept)}</b>
                 {en ? "not confiscated" : "nicht eingezogen"}
               </span>
             </div>
@@ -369,6 +351,7 @@ const coins = [
 </section>
 
 <script>
+  import { createNote } from "@/lib/film-note"
   import { createSand, type SandState } from "@/lib/film-sand"
 
   // The step whose spacer has crossed the middle of the window is current:
@@ -441,6 +424,12 @@ const coins = [
     const sand = sandRoot
       ? createSand(sandRoot, JSON.parse(sandRoot.dataset.sandCounts ?? "{}"))
       : null
+    // The last step's note, which crumbles each time the step comes up.
+    const noteRoot = film.querySelector<HTMLElement>("[data-note]")
+    const note = noteRoot
+      ? createNote(noteRoot, Number(noteRoot.dataset.note))
+      : null
+    const noteStep = Number(noteRoot?.dataset.noteStep ?? -1)
 
     let current = -1
     const show = (i: number) => {
@@ -449,6 +438,8 @@ const coins = [
       const sandState = sandStates[i]
       if (sandState) sand?.go(sandState, previous in sandStates)
       else sand?.hide()
+      if (i === noteStep) note?.go(previous !== -1)
+      else note?.hide()
       view.dataset.scene = stepScenes[i]
       view.dataset.stepId = stepIds[i]
       for (const say of says)
@@ -540,6 +531,9 @@ const coins = [
     --pace: min(1svh, 0.76rem);
     --bar: light-dark(#3b4147, #a7afb6);
     --red: var(--primary);
+    /* Die Hunderter am Anfang und am Ende des Films. */
+    --note: light-dark(#d2dbcd, #66716a);
+    --note-edge: light-dark(#8f9d8b, #3a413c);
     display: grid;
     grid-template-columns: minmax(0, 1fr);
   }
@@ -727,8 +721,6 @@ const coins = [
      der Scheine, die Umrisse halten die früheren Höhen fest. */
   .cash {
     --tall: min(56cqh, 30rem);
-    --note: light-dark(#dfe4dd, #5c645e);
-    --note-edge: light-dark(#a9b2a7, #3d433f);
     --stack-w: clamp(5.5rem, 22cqi, 9rem);
     display: grid;
     align-items: end;
@@ -1128,7 +1120,7 @@ const coins = [
   }
 
   .sand,
-  .net {
+  .note {
     grid-area: 1 / 1;
     opacity: 0;
     visibility: hidden;
@@ -1138,7 +1130,7 @@ const coins = [
   }
 
   .sand.on,
-  .net.on {
+  .note.on {
     opacity: 1;
     visibility: visible;
   }
@@ -1212,162 +1204,82 @@ const coins = [
     transition-delay: 3.6s;
   }
 
-  /* 100 Euro-Münzen fallen an einer Leine vorbei: 99 stapeln sich zu zehn
-     Türmen, eine bleibt auf der Leine liegen und wird rot. Positionen in
-     Prozent des Quadrats, die Münzen von der Seite gesehen, mit Riffelrand. */
-  .net {
-    --coin-light: light-dark(#f4f5f6, #c3c9ce);
-    --coin-mid: light-dark(#c8cdd1, #848c93);
-    --coin-dark: light-dark(#979ea4, #50575d);
-    --coin-shade: light-dark(#7a8188, #24292d);
-    --size: min(100cqh - 2rem, 100cqi - 2rem, 32rem);
+  /* Ein Hunderter zerfällt zu Staub (src/lib/film-note.ts), bis der
+     eingezogene Anteil bleibt. Das Feld hat ein festes Seitenverhältnis,
+     damit die Leiste des Browsers beim Scrollen nichts neu zeichnet. */
+  .note {
     position: relative;
-    inline-size: var(--size);
-    aspect-ratio: 1;
-    container-type: size;
-    overflow: hidden;
+    inline-size: min(100%, 100cqh * 1.15);
+    aspect-ratio: 1.25;
   }
 
-  .net-line {
-    position: absolute;
-    inset-inline-start: 2cqi;
-    inset-block-start: 36cqh;
-    inline-size: 96cqi;
-    block-size: 6cqh;
-    overflow: visible;
-  }
-
-  .net-line path {
-    fill: none;
-    stroke: var(--ink-2);
-    stroke-width: 2;
-    stroke-linecap: round;
-    vector-effect: non-scaling-stroke;
-  }
-
-  .coin {
-    position: absolute;
-    inset-inline-start: calc((var(--x) - 6) * 1cqi);
-    inset-block-start: calc((var(--y) - 0.9) * 1cqh);
-    inline-size: 12cqi;
-    block-size: 1.8cqh;
-    border-radius: 0.5cqh;
-    background:
-      repeating-linear-gradient(
-        90deg,
-        transparent 0 0.42cqi,
-        rgb(0 0 0 / 0.13) 0.42cqi 0.6cqi
-      ),
-      linear-gradient(
-        to bottom,
-        var(--coin-light),
-        var(--coin-mid) 45%,
-        var(--coin-dark)
-      );
-    box-shadow: 0 0.2cqh 0 var(--coin-shade);
-    translate: 0 calc((var(--y) + 8) * -1cqh);
-  }
-
-  /* Die eine, die hängen bleibt, färbt sich rot, sobald sie liegt. */
-  .coin.caught::after {
-    content: "";
+  .note canvas {
     position: absolute;
     inset: 0;
-    border-radius: inherit;
-    background:
-      repeating-linear-gradient(
-        90deg,
-        transparent 0 0.42cqi,
-        rgb(0 0 0 / 0.18) 0.42cqi 0.6cqi
-      ),
-      linear-gradient(to bottom, #ff7a80, #e3000f 50%, #a3000b);
-    box-shadow: 0 0 0 0.5cqi
-      color-mix(in oklab, var(--primary) 22%, transparent);
-    opacity: 0;
+    inline-size: 100%;
+    block-size: 100%;
   }
 
-  .net.on .coin {
-    animation: coin-rain 0.6s cubic-bezier(0.5, 0, 0.9, 0.5) var(--d) both;
+  .note i {
+    display: none;
   }
 
-  .net.on .coin.caught::after {
-    animation: coin-red 0.4s ease calc(var(--d) + 0.6s) both;
+  .note [data-note-paper] {
+    color: var(--note);
   }
 
-  @keyframes coin-rain {
-    0% {
-      translate: 0 calc((var(--y) + 8) * -1cqh);
-    }
-
-    84% {
-      translate: 0 0;
-    }
-
-    92% {
-      translate: 0 -0.8cqh;
-    }
-
-    100% {
-      translate: 0 0;
-    }
+  .note [data-note-edge] {
+    color: var(--note-edge);
   }
 
-  @keyframes coin-red {
-    to {
-      opacity: 1;
-    }
+  .note [data-note-line] {
+    color: var(--ink-3);
   }
 
-  .net-label {
+  .note [data-note-red] {
+    color: var(--red);
+  }
+
+  .note-label {
     position: absolute;
     display: grid;
     color: var(--ink-2);
     font-size: var(--type-meta);
     line-height: 1.2;
+    white-space: nowrap;
     opacity: 0;
+    translate: 0 0.4rem;
+    transition:
+      opacity 0.5s ease,
+      translate 0.5s ease;
   }
 
-  .net-label b {
+  .note-label b {
     color: var(--foreground);
-    font-size: var(--step-2);
+    font-size: clamp(1.5rem, 1rem + 2.5cqi, 2.6rem);
     font-weight: var(--weight-heading);
-    letter-spacing: -0.02em;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
   }
 
-  .net-label.caught {
-    inset-inline-start: 57cqi;
-    inset-block-start: 22cqh;
+  .note-label.kept,
+  .note-label.kept b {
     color: var(--accent);
   }
 
-  .net-label.caught b {
-    color: var(--accent);
+  .note-label.gone {
+    justify-items: center;
+    translate: -50% -40%;
   }
 
-  .net-label.gone {
-    inset-inline-start: 5cqi;
-    inset-block-start: 52cqh;
+  .note[data-done] .note-label {
+    opacity: 1;
+    translate: 0 0;
   }
 
-  .net.on .net-label {
-    animation: coin-red 0.4s ease 2.4s both;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .coin {
-      translate: none;
-    }
-
-    .net.on .coin,
-    .net.on .coin.caught::after,
-    .net.on .net-label {
-      animation: none;
-      opacity: 1;
-    }
-
-    .coin.caught::after {
-      opacity: 1;
-    }
+  .note[data-done] .note-label.gone {
+    translate: -50% -50%;
+    transition-delay: 0.35s;
   }
 
   /* ---------- Schmal ---------------------------------------------------- */

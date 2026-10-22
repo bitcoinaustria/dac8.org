@@ -46,12 +46,14 @@ const fiu2025: Source = {
   },
   href: "https://www.bundeskriminalamt.at/308/files/374-2026-geldwaeschebericht-2025-a4-v20260915-web-bf.pdf",
 }
-const europol: Source = {
+// Europol's latest estimate of the share confiscated, the same source as
+// the bill's scissors chart (src/data/history-gap.ts, recovery).
+const socta: Source = {
   label: {
-    de: "Europol, Criminal asset recovery in the EU, 2016",
-    en: "Europol, Criminal asset recovery in the EU, 2016",
+    de: "Europol, EU-SOCTA 2025, S. 13 und 25",
+    en: "Europol, EU-SOCTA 2025, pp. 13 and 25",
   },
-  href: "https://www.europol.europa.eu/sites/default/files/documents/criminal_asset_recovery_in_the_eu_web_version_0.pdf",
+  href: "https://www.europol.europa.eu/cms/sites/default/files/documents/EU-SOCTA-2025.pdf",
 }
 
 // Austria's consumer price index (VPI 86, 1986 = 100), annual averages, by
@@ -269,14 +271,14 @@ export const steps: Step[] = [
     id: "ergebnis-euro",
     chapter: "ergebnis",
     title: {
-      de: "Von 100 € aus Straftaten wird rund 1 € eingezogen.",
-      en: "Of 100 euros from crime, about 1 is confiscated.",
+      de: "Von 100 € aus Straftaten werden rund 2 € eingezogen.",
+      en: "Of 100 euros from crime, about 2 are confiscated.",
     },
     text: {
-      de: "In der EU, nach Schätzung von Europol.",
-      en: "In the EU, as Europol estimates it.",
+      de: "Schätzt Europol für die EU, und spricht trotz aller Investitionen und Gesetze von Stillstand.",
+      en: "Europol’s estimate for the EU; despite all the investment and laws, it speaks of stagnation.",
     },
-    sources: [europol],
+    sources: [socta],
   },
 ]
 
