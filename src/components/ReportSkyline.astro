@@ -20,8 +20,8 @@ const en = language === "en"
 const n = (v: number) => formatNumber(v, language)
 const latest = rows[rows.length - 1]
 const first = rows[0]
-// Only height encodes quantity. Every column has the same width and depth;
-// bevels extend above the measured front face and do not change the scale.
+// Each flat column encodes the yearly count through height on a linear scale.
+// Colours and surfaces inherit the campaign palette in both appearances.
 const floor = 360
 const height = 280
 const step = 680 / rows.length
@@ -36,6 +36,7 @@ const ticks = Array.from({ length: 5 }, (_, k) => (maximum * k) / 4)
 ---
 
 <figure
+  id={`reports-${id}`}
   class="skyline"
   data-skyline
   data-latest={n(latest.reports)}
@@ -57,38 +58,13 @@ const ticks = Array.from({ length: 5 }, (_, k) => (maximum * k) / 4)
     role="group"
     aria-label={en ? `${country}: suspicion reports per year. Each column can be selected to read its value.` : `${country}: Verdachtsmeldungen pro Jahr. Jede Säule lässt sich auswählen, um ihren Wert zu lesen.`}
   >
-    <defs>
-      <linearGradient id={`paper-${id}`} x1="0" x2="1">
-        <stop offset="0" stop-color="#a8b2bb" />
-        <stop offset=".2" stop-color="#eef0f2" />
-        <stop offset="1" stop-color="#9ca6b0" />
-      </linearGradient>
-      <linearGradient id={`red-${id}`} x1="0" x2="1">
-        <stop offset="0" stop-color="#e3000f" />
-        <stop offset=".55" stop-color="#ff5961" />
-        <stop offset="1" stop-color="#c9000d" />
-      </linearGradient>
-      <pattern
-        id={`sheets-${id}`}
-        width="4"
-        height="5"
-        patternUnits="userSpaceOnUse"
-      >
-        <path
-          d="M0 4.5 H4"
-          stroke="#18202b"
-          stroke-opacity=".32"
-          stroke-width=".8"
-        />
-      </pattern>
-    </defs>
     <g class="skyline-grid" aria-hidden="true">
       {ticks.map((value) => {
         const y = floor - value / maximum * height
         return <g><path d={`M88 ${y} H792`} /><text x="76" y={y+5} text-anchor="end">{n(value)}</text></g>
       })}
       <text x="88" y="40">{en ? "Reports / year" : "Meldungen / Jahr"}</text>
-      <path class="floor-depth" d="M88 360 H792 L810 346" />
+      <path class="skyline-baseline" d="M88 360 H792" />
     </g>
     {bars.map((bar) => (
       <g class:list={["skyline-bar", {latest: bar.last}]} tabindex={bar.last ? "0" : "-1"} role="button"
@@ -98,11 +74,7 @@ const ticks = Array.from({ length: 5 }, (_, k) => (maximum * k) / 4)
         <title>{bar.year}: {n(bar.reports)}</title>
         <rect class="bar-hit" x={bar.x-3} y="60" width={step} height="306" fill="transparent" />
         <g class="bar-solid">
-          <path class="bar-side" d={`M${bar.x+width} ${floor} l12 -9 V${bar.y-9} l-12 9 Z`} />
-          <rect class="bar-face" x={bar.x} y={bar.y} width={width} height={bar.h} fill={`url(#${bar.last ? "red" : "paper"}-${id})`} />
-          <rect x={bar.x} y={bar.y} width={width} height={bar.h} fill={`url(#sheets-${id})`} />
-          <path class="bar-top" d={`M${bar.x} ${bar.y} l12 -9 h${width} l-12 9 Z`} />
-          <path class="bar-edge" d={`M${bar.x} ${floor} V${bar.y} h${width}`} />
+          <rect class="bar-face" x={bar.x} y={bar.y} width={width} height={bar.h} />
         </g>
         {breaks.includes(bar.year) && <path class="count-break" d={`M${bar.x+width/2} 374 v7`} aria-hidden="true" />}
         {(bar.k === 0 || bar.last || bar.year % 5 === 0) && <text class="year" x={bar.x+width/2} y="405" text-anchor="middle" aria-hidden="true">{bar.year}</text>}
@@ -209,36 +181,14 @@ const ticks = Array.from({ length: 5 }, (_, k) => (maximum * k) / 4)
 
 <style>
   .skyline {
-    --ink-3: #a4aab3;
-    --ink: #f4f4f5;
-    position: relative;
-    isolation: isolate;
+    --bar: light-dark(#3b4147, #a7afb6);
     min-inline-size: 0;
     display: grid;
     align-content: start;
-    padding: clamp(1.25rem, 3vw, 2.5rem);
-    border: 1px solid #ffffff14;
+    padding: var(--space-m);
     border-radius: var(--radius);
-    background: radial-gradient(
-      ellipse at 75% 60%,
-      #30353e 0,
-      #191b20 48%,
-      #121316 100%
-    );
+    background: var(--panel);
     color: var(--ink);
-    overflow: hidden;
-  }
-  .skyline::after {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    inset: 38% -20% -40%;
-    background:
-      repeating-linear-gradient(0deg, transparent 0 39px, #ffffff05 39px 40px),
-      repeating-linear-gradient(90deg, transparent 0 39px, #ffffff05 39px 40px);
-    transform: perspective(400px) rotateX(55deg);
-    mask-image: linear-gradient(transparent, #000);
-    pointer-events: none;
   }
   .skyline-heading {
     display: grid;
@@ -248,28 +198,28 @@ const ticks = Array.from({ length: 5 }, (_, k) => (maximum * k) / 4)
   }
   .skyline-country {
     font-size: var(--type-lead);
-    font-weight: 550;
+    font-weight: var(--weight-heading);
   }
   .skyline-period {
-    color: #a4aab3;
+    color: var(--ink-3);
     font-size: var(--type-meta);
   }
   .skyline-heading strong {
     grid-column: 1 / -1;
     margin-block-start: 0.65rem;
-    font-size: clamp(3rem, 6.6vw, 5.8rem);
-    letter-spacing: -0.065em;
+    font-size: clamp(2.75rem, 5.5vw, 4.5rem);
+    letter-spacing: -0.03em;
     line-height: 1;
-    font-weight: 550;
+    font-weight: var(--weight-heading);
     font-variant-numeric: tabular-nums;
   }
   .skyline-unit {
     grid-column: 1 / -1;
-    color: #c0c5cd;
+    color: var(--ink-2);
     font-size: var(--type-meta);
   }
   .skyline-unit b {
-    color: #f4f4f5;
+    color: var(--ink);
     font-weight: 500;
   }
   .skyline-plot {
@@ -281,61 +231,46 @@ const ticks = Array.from({ length: 5 }, (_, k) => (maximum * k) / 4)
   }
   .skyline-grid path {
     fill: none;
-    stroke: #ffffff12;
+    stroke: var(--line);
   }
   .skyline-grid text {
-    fill: #a4aab3;
+    fill: var(--ink-3);
     font-size: 19px;
   }
-  .skyline-grid .floor-depth {
-    stroke: #ffffff40;
+  .skyline-grid .skyline-baseline {
+    stroke: var(--ink-3);
   }
   .skyline-bar {
     cursor: pointer;
     outline: none;
   }
-  .bar-solid {
-    transition: filter 180ms ease;
+  .bar-face {
+    fill: var(--bar);
+    transition: fill 180ms ease;
   }
-  .bar-side {
-    fill: #626f7c;
-  }
-  .bar-top {
-    fill: #f2f5f6;
-  }
-  .bar-edge {
-    fill: none;
-    stroke: #ffffff70;
-    stroke-width: 0.8;
-  }
-  .latest .bar-side {
-    fill: #93000b;
-  }
-  .latest .bar-top {
-    fill: #ff9d9e;
-  }
-  .skyline-bar.selected .bar-solid,
-  .skyline-bar:focus-visible .bar-solid {
-    filter: brightness(1.45) drop-shadow(0 0 6px #ffffff35);
+  .latest .bar-face,
+  .skyline-bar.selected .bar-face,
+  .skyline-bar:focus-visible .bar-face {
+    fill: var(--primary);
   }
   .skyline-bar:focus-visible .bar-hit {
-    stroke: #ffffff;
+    stroke: var(--ink);
     stroke-width: 1.5;
     stroke-dasharray: 4 5;
   }
   .year {
-    fill: #c0c5cd;
+    fill: var(--ink-2);
     font-size: 21px;
   }
   .latest .year {
-    fill: #ff8f95;
+    fill: var(--accent);
   }
   .count-break {
-    stroke: #ff8f95;
+    stroke: var(--accent);
     stroke-width: 3;
   }
   .skyline-note {
-    color: #a4aab3;
+    color: var(--ink-3);
     font-size: var(--type-meta);
     line-height: 1.5;
   }
@@ -344,7 +279,7 @@ const ticks = Array.from({ length: 5 }, (_, k) => (maximum * k) / 4)
     align-items: center;
     gap: 0.75rem;
     margin-block: 0.25rem 1rem;
-    color: #c0c5cd;
+    color: var(--ink-2);
     font-size: var(--type-meta);
   }
   .skyline-interactive .skyline-scrub {
@@ -354,20 +289,45 @@ const ticks = Array.from({ length: 5 }, (_, k) => (maximum * k) / 4)
     flex-shrink: 0;
   }
   .skyline-scrub input {
+    appearance: none;
+    background: transparent;
     min-inline-size: 0;
     inline-size: 100%;
     block-size: 2rem;
     margin: 0;
-    accent-color: #ff5961;
+    accent-color: var(--primary);
     cursor: ew-resize;
   }
+  .skyline-scrub input::-webkit-slider-runnable-track {
+    block-size: 2px;
+    background: var(--ink-3);
+  }
+  .skyline-scrub input::-moz-range-track {
+    block-size: 2px;
+    background: var(--ink-3);
+  }
+  .skyline-scrub input::-webkit-slider-thumb {
+    appearance: none;
+    inline-size: 14px;
+    block-size: 14px;
+    margin-block-start: -6px;
+    border-radius: 50%;
+    background: var(--primary);
+  }
+  .skyline-scrub input::-moz-range-thumb {
+    inline-size: 14px;
+    block-size: 14px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--primary);
+  }
   .skyline-scrub input:focus-visible {
-    outline: 2px solid #fff;
+    outline: 2px solid var(--ring);
     outline-offset: 3px;
     border-radius: 4px;
   }
   .break-key {
-    color: #ff8f95;
+    color: var(--accent);
     font-weight: 700;
   }
   .skyline-animate:not(.skyline-seen) .bar-solid {
@@ -392,6 +352,7 @@ const ticks = Array.from({ length: 5 }, (_, k) => (maximum * k) / 4)
     }
   }
   @media (prefers-reduced-motion: reduce) {
+    .skyline .bar-face,
     .skyline .bar-solid {
       transform: none !important;
       animation: none !important;

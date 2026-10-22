@@ -163,7 +163,8 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   `src/data/leaks.ts`); the bill (`src/components/RuleBill.astro`, data in
   `src/data/history-gap.ts`: report landscapes in
   `src/components/ReportLandscape.astro` and `ReportSkyline.astro`, with one
-  sculpted paper column per year for Germany and Austria, each on a labelled
+  flat column per year for Germany and Austria, using the campaign’s shared
+  surfaces, grey and red in light and dark mode, each on a labelled
   linear scale starting at zero; selecting a column shows its exact value.
   Columns rise as they enter the viewport, with a static reduced-motion and
   no-JavaScript fallback. Counting changes are marked below the years. A
