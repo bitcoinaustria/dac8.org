@@ -2,11 +2,14 @@
 import SourceRefs from "@/components/SourceRefs.astro"
 import { ruleChronicle } from "@/data/aml-history"
 import { historyAsOf, isAhead } from "@/data/history"
-import { recovery } from "@/data/history-gap"
+import {
+  germanConvictionsByYear,
+  germanReportsByYear,
+  recovery,
+} from "@/data/history-gap"
 import { historySources } from "@/data/history-sources"
 import {
   chapters,
-  germanField,
   inTodaysMoney,
   pile,
   reportField,
@@ -233,29 +236,47 @@ const sandStates = JSON.stringify({
   [at("ergebnis-2005")]: "first",
   [at("ergebnis-2025")]: "all",
   [at("ergebnis-urteile")]: "heap",
-  [at("ergebnis-de")]: "germany",
 })
-const fieldSteps = [
-  "ergebnis-2005",
-  "ergebnis-2025",
-  "ergebnis-urteile",
-  "ergebnis-de",
-]
+const fieldSteps = ["ergebnis-2005", "ergebnis-2025", "ergebnis-urteile"]
   .map(at)
   .join(",")
-// Germany beside Austria, at the same grain: how many times as many as in
-// the first year with both counts.
-const de = germanField
-const times = (to: number, from: number) => {
-  const k = to / from
-  return `×${n(k >= 10 ? Math.round(k) : Math.round(k * 10) / 10)}`
+// Germany as a race from the same start (src/lib/film-race.ts): from the
+// first year with both counts, each year's count as a multiple of it.
+const raceStep = at("ergebnis-de")
+const reportsBy = new Map(
+  germanReportsByYear.map((row) => [row.year, row.reports]),
+)
+const convictionsBy = new Map(
+  germanConvictionsByYear.map((row) => [row.year, row.convictions]),
+)
+const raceFirst = Math.max(
+  germanReportsByYear[0].year,
+  germanConvictionsByYear[0].year,
+)
+const raceLast = germanReportsByYear[germanReportsByYear.length - 1].year
+const raceYears = Array.from(
+  { length: raceLast - raceFirst + 1 },
+  (_, k) => raceFirst + k,
+)
+const series = (by: Map<number, number>) => {
+  const start = by.get(raceFirst) ?? 1
+  const values = raceYears.map((year) => by.get(year) ?? null)
+  return {
+    values,
+    times: values.map((value) => (value === null ? null : value / start)),
+  }
 }
-const sandCounts = JSON.stringify({
-  first,
-  latest,
-  convictions,
-  deReports: de.reports,
-  deConvictions: de.convictions,
+const raceReports = series(reportsBy)
+const raceConvictions = series(convictionsBy)
+const race = JSON.stringify({
+  years: raceYears,
+  reports: raceReports.times,
+  convictions: raceConvictions.times,
+  values: {
+    reports: raceReports.values,
+    convictions: raceConvictions.values,
+  },
+  locale,
 })
 // A 100-euro note crumbles into dust on a canvas (src/lib/film-note.ts)
 // until the share confiscated remains, as Europol last estimated it.
@@ -437,7 +458,7 @@ const noteKeep = String(kept / 100)
             <div
               class="sand"
               data-sand={sandStates}
-              data-sand-counts={sandCounts}
+              data-sand-counts={JSON.stringify({ first, latest, convictions })}
               data-only={fieldSteps}
             >
               <canvas />
@@ -451,28 +472,46 @@ const noteKeep = String(kept / 100)
                 <b>{n(convictions)}</b>
                 {en ? "convictions" : "Verurteilungen"}
               </span>
-              <span class="sand-label country" data-sand-label="at">
-                {en ? "Austria" : "Österreich"}
-              </span>
-              <span class="sand-label country" data-sand-label="de">
-                {en ? "Germany" : "Deutschland"}
-              </span>
-              <span class="sand-label de" data-sand-label="de-reports">
-                <b>{n(de.reports)}</b>
-                {en ? `reports, ${de.reportsYear}` : `Meldungen, ${de.reportsYear}`}
-                <em
-                  >{times(de.reports, de.reportsBase)} {en ? "since" : "seit"}
-                  {de.baseYear}</em
-                >
-              </span>
-              <span class="sand-label de red" data-sand-label="de-convictions">
-                <b>{n(de.convictions)}</b>
-                {en ? `convicted, ${de.convictionsYear}` : `Verurteilte, ${de.convictionsYear}`}
-                <em
-                  >{times(de.convictions, de.convictionsBase)}
-                  {en ? "since" : "seit"} {de.baseYear}</em
-                >
-              </span>
+            </div>
+            <div class="race" data-race={race} data-only={String(raceStep)}>
+              <p class="race-year">
+                <b data-race-year>{raceFirst}</b>
+              </p>
+              <div class="race-plot">
+                <div class="race-inner">
+                  <span class="race-base" data-race-base>
+                    <span>{raceFirst} = ×1</span>
+                  </span>
+                  <div class="race-col reports" data-race-col="reports">
+                    <span class="race-times" data-race-times>×1</span>
+                    <span class="race-bar" />
+                  </div>
+                  <div class="race-col convictions" data-race-col="convictions">
+                    <span class="race-times" data-race-times>×1</span>
+                    <span class="race-bar" />
+                  </div>
+                </div>
+              </div>
+              <div class="race-labels">
+                <p class="reports">
+                  <b>{en ? "Suspicion reports" : "Verdachtsmeldungen"}</b>
+                  <span
+                    >{n(raceReports.values[0] ?? 0)}
+                    → {n(reportsBy.get(raceLast) ?? 0)}</span
+                  >
+                </p>
+                <p class="convictions">
+                  <b
+                    >{en ? "Convicted of money laundering" : "Verurteilte wegen Geldwäsche"}</b
+                  >
+                  <span
+                    >{n(raceConvictions.values[0] ?? 0)}
+                    →
+                    {n(germanConvictionsByYear[germanConvictionsByYear.length - 1].convictions)}
+                    ({germanConvictionsByYear[germanConvictionsByYear.length - 1].year})</span
+                  >
+                </p>
+              </div>
             </div>
             <div
               class="note"
@@ -504,6 +543,7 @@ const noteKeep = String(kept / 100)
 
 <script>
   import { createNote } from "@/lib/film-note"
+  import { createRace } from "@/lib/film-race"
   import { createSand, type SandState } from "@/lib/film-sand"
 
   // The step whose spacer has crossed the middle of the window is current:
@@ -600,6 +640,10 @@ const noteKeep = String(kept / 100)
       ? createNote(noteRoot, Number(noteRoot.dataset.note))
       : null
     const noteStep = Number(noteRoot?.dataset.noteStep ?? -1)
+    // Germany's race, run each time its step comes up.
+    const raceRoot = film.querySelector<HTMLElement>("[data-race]")
+    const race = raceRoot ? createRace(raceRoot) : null
+    const raceStep = Number(raceRoot?.dataset.only ?? -1)
 
     let current = -1
     const show = (i: number) => {
@@ -610,6 +654,8 @@ const noteKeep = String(kept / 100)
       else sand?.hide()
       if (i === noteStep) note?.go(previous !== -1)
       else note?.hide()
+      if (i === raceStep) race?.go()
+      else race?.hide()
       view.dataset.scene = stepScenes[i]
       view.dataset.stepId = stepIds[i]
       if (stepAt) stepAt.textContent = String(i + 1)
@@ -875,9 +921,11 @@ const noteKeep = String(kept / 100)
     overflow-wrap: normal;
   }
 
-  /* Zurück und vor: unter der Aussage, schmal wie breit. */
+  /* Zurück und vor: schmal rechts unter der Aussage, breit unten rechts
+     im Bild. */
   .film-nav {
     grid-area: 2 / 1;
+    justify-self: end;
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -885,6 +933,20 @@ const noteKeep = String(kept / 100)
     color: var(--ink-3);
     font-size: var(--type-meta);
     font-variant-numeric: tabular-nums;
+  }
+
+  @container campaign (width >= 60rem) {
+    .film-nav {
+      position: absolute;
+      inset-block-end: var(--space-m);
+      inset-inline-end: var(--space-m);
+      z-index: 2;
+      margin: 0;
+    }
+
+    .view .scene {
+      padding-block-end: calc(var(--space-m) + 3.25rem);
+    }
   }
 
   .film:not([data-ready]) .film-nav {
@@ -1432,43 +1494,147 @@ const noteKeep = String(kept / 100)
     transition-delay: 3.6s;
   }
 
-  .sand[data-state="heap"][data-settled] .sand-label {
-    transition-delay: 0s;
+  /* Deutschland als Rennen: beide Säulen beginnen 2008 bei ×1, dann laufen
+     die Jahre, und der Maßstab zieht mit den Meldungen davon. */
+  .result > .race {
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.5s ease,
+      visibility 0.5s;
   }
 
-  /* Deutschland daneben: die Länder unter den Haufen, darüber die Zahlen
-     und wie oft so viele wie im ersten Jahr. */
-  .sand-label.country {
-    translate: -50% 0;
-    color: var(--ink-3);
+  .result > .race.on {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .race {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: var(--space-xs);
+    inline-size: min(100%, 36rem);
+    block-size: 100%;
+    container-type: inline-size;
+  }
+
+  .race-year b {
+    color: var(--foreground);
+    font-size: clamp(2rem, 1rem + 6cqi, 3.6rem);
+    font-weight: var(--weight-heading);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  .race-plot {
+    display: grid;
+    min-block-size: 0;
+    padding-block-start: clamp(2.2rem, 1rem + 6cqi, 4rem);
+    padding-inline: 8cqi;
+    border-block-end: 1px solid var(--ink-3);
+  }
+
+  .race-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14cqi;
+    min-block-size: 0;
+  }
+
+  /* Die Linie von 2008: wo beide begannen. */
+  .race-base {
+    position: absolute;
+    inset-inline: -2cqi;
+    inset-block-end: var(--h, 33%);
+    z-index: 1;
+    border-block-start: 1.5px dashed var(--foreground);
+    opacity: 0.7;
+  }
+
+  .race-base span {
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: 0;
+    padding: 0.05rem 0.4rem;
+    translate: -50% -50%;
+    border-radius: var(--radius-sm);
+    background: var(--panel);
+    color: var(--foreground);
+    font-size: var(--type-meta);
     font-weight: 600;
+    white-space: nowrap;
   }
 
-  .sand-label.de.red {
-    translate: -100% 0;
+  .race-col {
+    position: relative;
+    display: grid;
+    align-content: end;
+    block-size: 100%;
   }
 
-  .sand-label em {
-    color: var(--ink-3);
-    font-style: normal;
-    font-weight: 600;
+  .race-bar {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    block-size: var(--h, 33%);
+    border-radius: 4px 4px 0 0;
+    background: linear-gradient(
+      to top,
+      color-mix(in oklab, var(--bar) 70%, transparent),
+      var(--bar)
+    );
   }
 
-  .sand-label.de.red em {
+  .race-col.convictions .race-bar {
+    background: linear-gradient(
+      to top,
+      color-mix(in oklab, var(--red) 70%, transparent),
+      var(--red)
+    );
+    box-shadow: 0 0 1.2rem color-mix(in oklab, var(--red) 35%, transparent);
+  }
+
+  .race-times {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: calc(var(--h, 33%) + 0.3rem);
+    color: var(--foreground);
+    font-size: clamp(1.6rem, 0.8rem + 6cqi, 3.4rem);
+    font-weight: var(--weight-heading);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-align: center;
+  }
+
+  .race-col.convictions .race-times {
     color: var(--accent);
   }
 
-  .sand[data-state="germany"] :is(.country, .de) {
-    opacity: 1;
-    transition-delay: 1s;
+  .race-labels {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14cqi;
+    padding-inline: 8cqi;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    line-height: 1.3;
+    text-align: center;
+    overflow-wrap: normal;
+    hyphens: auto;
   }
 
-  .sand[data-state="germany"] .de {
-    transition-delay: 2.5s;
+  .race-labels b {
+    display: block;
+    color: var(--ink-2);
+    font-weight: 600;
   }
 
-  .sand[data-state="germany"] .de.red {
-    transition-delay: 3.2s;
+  .race-labels .convictions b {
+    color: var(--accent);
   }
 
   /* Ein Hunderter zerfällt zu Staub (src/lib/film-note.ts), bis der

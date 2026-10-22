@@ -4,11 +4,9 @@
 // of the latest year stand in a square; then the square falls into a dune
 // and, beside it on the same scale, a pinch of red grains settles, one per
 // conviction. The two heaps stand apart on purpose: convictions are not
-// linked to particular reports. Last, the camera pulls back further and
-// Germany's heap rises beside Austria's at the same grain, with its own
-// pinch of convictions; drawn as shapes, since 374,693 grains would not.
+// linked to particular reports.
 
-export type SandState = "first" | "all" | "heap" | "germany"
+export type SandState = "first" | "all" | "heap"
 
 type Layout = {
   // Size of the canvas in CSS pixels.
@@ -24,11 +22,6 @@ type Layout = {
   grain: number
   dune: { x: number; r: number; h: number }
   pinch: { x: number; r: number; h: number }
-  // Germany beside it, and how far the camera pulls back and lifts.
-  de: { x: number; r: number; h: number }
-  dePinch: { x: number; r: number; h: number }
-  far: number
-  lift: number
 }
 
 type Particle = {
@@ -106,26 +99,16 @@ const outline = (
 
 export const createSand = (
   root: HTMLElement,
-  counts: {
-    first: number
-    latest: number
-    convictions: number
-    deReports: number
-    deConvictions: number
-  },
+  counts: { first: number; latest: number; convictions: number },
 ) => {
   const canvas = root.querySelector("canvas")
   const context = canvas?.getContext("2d")
   if (!canvas || !context) return null
-  const label = (name: string) =>
-    root.querySelector<HTMLElement>(`[data-sand-label="${name}"]`)
   const labels = {
-    reports: label("reports"),
-    convictions: label("convictions"),
-    at: label("at"),
-    de: label("de"),
-    deReports: label("de-reports"),
-    deConvictions: label("de-convictions"),
+    reports: root.querySelector<HTMLElement>('[data-sand-label="reports"]'),
+    convictions: root.querySelector<HTMLElement>(
+      '[data-sand-label="convictions"]',
+    ),
   }
   const motion = matchMedia("(prefers-reduced-motion: reduce)")
   const ink = { grey: "#3b4147", red: "#e3000f" }
@@ -146,8 +129,6 @@ export const createSand = (
   let start = 0
   let span = 0
   let frame = 0
-  // Coming back from Germany the heap is already settled.
-  let settled = false
 
   const build = () => {
     const box = root.getBoundingClientRect()
@@ -173,16 +154,6 @@ export const createSand = (
     const pinchX = left + side * 0.945
     const dune = pile(latest, grain, duneX, base)
     const pinch = pile(convictions, grain, pinchX, base)
-    // Germany's heaps at the same grain, as shapes: a heap of n grains has
-    // a half width of sqrt(n / slope) grains.
-    const radius = (n: number) => Math.sqrt(n / slope) * grain
-    const deR = radius(counts.deReports)
-    const dePinchR = radius(counts.deConvictions)
-    const gap = side * 0.14
-    const deX = pinchX + pinch.r + gap + deR
-    const dePinchX = deX + deR + gap * 0.5 + dePinchR
-    const far = (side * 0.97) / (dePinchX + dePinchR - left)
-    const lift = Math.max(0, (side - deR * slope * far) / 2 - side * 0.06)
     layout = {
       width: box.width,
       height: box.height,
@@ -194,10 +165,6 @@ export const createSand = (
       grain,
       dune: { x: duneX, r: dune.r, h: dune.h },
       pinch: { x: pinchX, r: pinch.r, h: pinch.h },
-      de: { x: deX, r: deR, h: deR * slope },
-      dePinch: { x: dePinchX, r: dePinchR, h: dePinchR * slope },
-      far,
-      lift,
     }
 
     // Cells: the first year's reports fill a square in the corner, row by
@@ -271,21 +238,14 @@ export const createSand = (
     if (!layout) return { x: 0, y: 0, s: 0, a: 0 }
     const dot = layout.pitch * 0.62
     const grain = layout.grain * 0.85
-    if (to === "heap" || to === "germany")
-      return { x: p.hx, y: p.hy, s: grain, a: 1 }
+    if (to === "heap") return { x: p.hx, y: p.hy, s: grain, a: 1 }
     if (p.red) return { x: p.gx, y: p.gy, s: grain, a: 0 }
     const visible = to === "all" || p.ring === 0
     return { x: p.gx, y: p.gy, s: dot, a: visible ? 1 : 0 }
   }
 
   const zoomOf = (to: SandState) =>
-    !layout
-      ? 1
-      : to === "first"
-        ? layout.cols / layout.block
-        : to === "germany"
-          ? layout.far
-          : 1
+    to === "first" && layout ? layout.cols / layout.block : 1
 
   // Delays: the field fills ring by ring; the dune from the bottom up, the
   // red grains after it; going back, everything at once.
@@ -293,7 +253,6 @@ export const createSand = (
     if (!layout) return 0
     if (to === "all" && from === "first")
       return 0.25 + (p.ring / layout.cols) * 0.9
-    if (to === "germany" || (to === "heap" && from === "germany")) return 0
     if (to === "heap") {
       if (p.red) return 1.7 + (p.slot / Math.max(1, counts.convictions)) * 0.6
       return (p.slot / counts.latest) * 1.3
@@ -313,64 +272,13 @@ export const createSand = (
     // Once the grains have landed they merge into a clean heap: grey after
     // the dune is complete, red after the pinch.
     const settle = (from: number) =>
-      state === "germany" || (state === "heap" && settled)
-        ? 1
-        : state !== "heap"
-          ? 0
-          : span
-            ? easeInOut(Math.min(1, Math.max(0, (t - from) / 0.6)))
-            : 1
+      state !== "heap"
+        ? 0
+        : span
+          ? easeInOut(Math.min(1, Math.max(0, (t - from) / 0.6)))
+          : 1
     const greySettled = settle(2.1)
     const redSettled = settle(3.1)
-    if (state === "germany") {
-      // The camera pulls back and lifts; Germany rises beside Austria.
-      const { left, base, dune, pinch, de, dePinch, far, lift } = layout
-      const up = zoom < 1 ? (lift * (1 - zoom)) / (1 - far) : 0
-      const sx = (x: number) => left + (x - left) * zoom
-      const ground = base - up
-      const grow = (from: number, length: number) =>
-        span ? easeInOut(Math.min(1, Math.max(0, (t - from) / length))) : 1
-      const rise = grow(1.1, 1.6)
-      const pinchRise = grow(2.7, 0.6)
-      if (pinchRise < 1) busy = true
-      context.globalAlpha = 0.35
-      context.fillStyle = ink.grey
-      context.fillRect(
-        sx(left),
-        ground,
-        (dePinch.x + dePinch.r - left) * zoom,
-        1,
-      )
-      context.globalAlpha = 1
-      outline(context, sx(dune.x), ground, dune.r * zoom, dune.h * zoom)
-      context.fill()
-      if (rise > 0) {
-        outline(
-          context,
-          sx(de.x),
-          ground,
-          de.r * zoom * rise,
-          de.h * zoom * rise,
-        )
-        context.fill()
-      }
-      context.fillStyle = ink.red
-      outline(context, sx(pinch.x), ground, pinch.r * zoom, pinch.h * zoom)
-      context.fill()
-      if (pinchRise > 0) {
-        outline(
-          context,
-          sx(dePinch.x),
-          ground,
-          dePinch.r * zoom * pinchRise,
-          dePinch.h * zoom * pinchRise,
-        )
-        context.fill()
-      }
-      if (busy && !motion.matches) frame = requestAnimationFrame(draw)
-      else frame = 0
-      return
-    }
     if (state === "heap") {
       if (redSettled < 1) busy = true
       const { left, base, dune, pinch } = layout
@@ -434,19 +342,6 @@ export const createSand = (
         ? `${base + 10}px`
         : `${base - pinch.h - 14}px`
     }
-    // Germany: where the shapes stand once the camera has pulled back.
-    const { left, far, lift, de, dePinch } = layout
-    const sx = (x: number) => `${left + (x - left) * far}px`
-    const ground = base - lift
-    const set = (el: HTMLElement | null, x: string, y: number) => {
-      if (!el) return
-      el.style.left = x
-      el.style.top = `${y}px`
-    }
-    set(labels.at, sx(dune.x), ground + 8)
-    set(labels.de, sx(de.x), ground + 8)
-    set(labels.deReports, sx(de.x), ground - de.h * far - 12)
-    set(labels.deConvictions, sx(dePinch.x + dePinch.r), ground + 8)
   }
 
   const go = (to: SandState, animate: boolean) => {
@@ -482,8 +377,6 @@ export const createSand = (
     }
     zoomFrom = smooth ? zoomNow : zoomOf(to)
     zoomTo = zoomOf(to)
-    settled = to === "heap" && from === "germany"
-    root.toggleAttribute("data-settled", settled)
     state = to
     start = now()
     span = smooth ? 1 : 0

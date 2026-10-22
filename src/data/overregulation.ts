@@ -1,7 +1,5 @@
 import {
-  germanConvictionsByYear,
   germanConvictionsSources,
-  germanReportsByYear,
   germanReportsSources,
 } from "@/data/history-gap"
 import type { Language } from "@/lib/i18n"
@@ -330,25 +328,3 @@ export const thresholds: {
 
 // Suspicion reports in Austria against convictions for money laundering.
 export const reportField = { first: 467, latest: 13989, convictions: 139 }
-
-// Germany beside it: the latest reports and convictions, and both in the
-// first year with both counts, for the growth.
-const firstOf = <T extends { year: number }>(rows: T[]) => rows[0]
-const lastOf = <T extends { year: number }>(rows: T[]) => rows[rows.length - 1]
-const baseYear = Math.max(
-  firstOf(germanReportsByYear).year,
-  firstOf(germanConvictionsByYear).year,
-)
-const reportsIn = (year: number) =>
-  germanReportsByYear.find((row) => row.year === year)?.reports ?? 0
-const convictionsIn = (year: number) =>
-  germanConvictionsByYear.find((row) => row.year === year)?.convictions ?? 0
-export const germanField = {
-  baseYear,
-  reports: lastOf(germanReportsByYear).reports,
-  reportsYear: lastOf(germanReportsByYear).year,
-  reportsBase: reportsIn(baseYear),
-  convictions: lastOf(germanConvictionsByYear).convictions,
-  convictionsYear: lastOf(germanConvictionsByYear).year,
-  convictionsBase: convictionsIn(baseYear),
-}

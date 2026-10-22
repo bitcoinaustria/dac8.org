@@ -157,8 +157,9 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   automatic report to the tax office, until every way is covered; a wall
   of one tile per Official Journal page, six red ones from 1991 among 488;
   a sea of suspicion reports in Austria beside 139 convictions, then
-  Germany's heap beside it at the same grain with both counts as multiples
-  of 2008; then a fictional 100-euro note with a masked robber that
+  Germany as a race from the same start (`src/lib/film-race.ts`): reports
+  and convictions both at ×1 in 2008, growing year by year while the scale
+  pulls back, to ×51 and ×5.2; then a fictional 100-euro note with a masked robber that
   crumbles to dust until the red sliver confiscated remains
   (`src/lib/film-note.ts`). Without JavaScript the
   headlines stand as text. The page frames DAC8 as the latest piece of a
