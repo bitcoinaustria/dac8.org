@@ -77,6 +77,135 @@ export const pairs: Pair[] = [
     ],
   },
   {
+    id: "fraud-package-at",
+    topic: {
+      de: "Paket gegen Steuerbetrug mit Krypto-Datenaustausch, Österreich",
+      en: "Anti-fraud package with crypto data exchange, Austria",
+    },
+    promise: {
+      who: {
+        de: "Markus Marterbauer, Finanzminister, in der Fragestunde des Nationalrats, über ein Paket, das auch den Datenaustausch zu Kryptowerten umfasst",
+        en: "Markus Marterbauer, finance minister, at question time in the Nationalrat, on a package that includes the data exchange on crypto",
+      },
+      year: 2026,
+      original: "de",
+      quote: {
+        de: "„Wir erwarten im heurigen Jahr ein Aufkommen von zusätzlich 270 Millionen Euro …“",
+        en: "We expect additional revenue of 270 million euros this year.",
+      },
+      source: {
+        label: {
+          de: "Nationalrat, 73. Sitzung, 26. März 2026, Fragestunde",
+          en: "Nationalrat, 73rd sitting, 26 March 2026, question time, in German",
+        },
+        href: "https://www.parlament.gv.at/dokument/XXVIII/NRSITZ/73/A_-_10_09_23_00931336.html",
+      },
+    },
+    record: [
+      {
+        who: {
+          de: "Derselbe Minister in derselben Antwort",
+          en: "The same minister in the same answer",
+        },
+        year: 2026,
+        original: "de",
+        quote: {
+          de: "„Es ist gar nicht so einfach, das sozusagen zu messen …“ Und zur Steuerlücke: „Wir haben auch nicht vor, eine eigene Studie dazu zu machen.“",
+          en: "It is not at all easy to measure this, he said; and on the tax gap: nor do we plan a study of our own.",
+        },
+        source: {
+          label: {
+            de: "Nationalrat, 73. Sitzung, 26. März 2026, Fragestunde",
+            en: "Nationalrat, 73rd sitting, 26 March 2026, question time, in German",
+          },
+          href: "https://www.parlament.gv.at/dokument/XXVIII/NRSITZ/73/A_-_10_09_23_00931336.html",
+        },
+      },
+      {
+        who: {
+          de: "Die Folgenabschätzung zur Krypto-Meldepflicht",
+          en: "The impact assessment of the crypto reporting duty",
+        },
+        year: 2025,
+        original: "de",
+        quote: {
+          de: "Aus der Krypto-Meldepflicht erwartet sie für 2026 Mehreinnahmen von 5 Millionen Euro.",
+          en: "From the crypto reporting duty it expects extra revenue of 5 million euros in 2026.",
+        },
+        source: {
+          label: {
+            de: "RV 306 (XXVIII. GP), Vorblatt und Folgenabschätzung",
+            en: "RV 306 (28th legislative period), cover sheet and impact assessment, in German",
+          },
+          href: "https://www.parlament.gv.at/dokument/XXVIII/I/306/imfname_1723218.pdf",
+        },
+      },
+    ],
+  },
+  {
+    id: "bank-package",
+    topic: { de: "Bankenpaket, Österreich", en: "Bank package, Austria" },
+    promise: {
+      who: {
+        de: "Österreichische Bundesregierung zu Kontenregister, Kontenaustausch und Lockerung des Bankgeheimnisses",
+        en: "Austria’s government on the account register, account exchange and looser banking secrecy",
+      },
+      year: 2015,
+      original: "de",
+      quote: {
+        de: "„Die Mehreinnahmen … werden im Jahr 2016 mit 700 Mio Euro angenommen.“",
+        en: "The extra revenue is assumed at 700 million euros in 2016.",
+      },
+      source: {
+        label: {
+          de: "RV 685 (XXV. GP), Vorblatt und Folgenabschätzung, S. 5",
+          en: "RV 685 (25th legislative period), cover sheet and impact assessment, p. 5, in German",
+        },
+        href: "https://www.parlament.gv.at/dokument/XXV/I/685/fname_423806.pdf",
+      },
+    },
+    record: [
+      {
+        who: {
+          de: "Finanzminister Hans Jörg Schelling, gefragt, was das Bankenpaket 2016 brachte",
+          en: "Finance minister Hans Jörg Schelling, asked what the bank package brought in 2016",
+        },
+        year: 2017,
+        original: "de",
+        quote: {
+          de: "„Die meisten Mehreinnahmen durch das so genannte Bankenpaket sind nicht separat auswertbar.“",
+          en: "Most of the extra revenue from the bank package cannot be evaluated separately.",
+        },
+        source: {
+          label: {
+            de: "Finanzministerium, Anfragebeantwortung 11924/AB (XXV. GP), S. 4",
+            en: "Finance ministry, answer 11924/AB (25th legislative period), p. 4, in German",
+          },
+          href: "https://www.parlament.gv.at/dokument/XXV/AB/11924/imfname_635488.pdf",
+        },
+      },
+      {
+        who: {
+          de: "Die eigene Evaluierung, die die Ziele trotzdem „zur Gänze erreicht“ nennt",
+          en: "The government’s own evaluation, which still rates the goals fully achieved",
+        },
+        year: 2020,
+        original: "de",
+        quote: {
+          de: "„Eine direkte Ermittlung der tatsächlichen Mehreinnahmen … ist nicht möglich.“",
+          en: "A direct determination of the actual extra revenue is not possible.",
+        },
+        source: {
+          label: {
+            de: "Bundesregierung, Bericht über die Wirkungsorientierte Folgenabschätzung 2020, S. 229–231, Archivkopie",
+            en: "Federal Government, report on impact assessments 2020, pp. 229–231, archived copy, in German",
+          },
+          href: "https://web.archive.org/web/2024/https://wirkungsmonitoring.gv.at/wp-content/uploads/2023/05/WFA_Bericht_2020.pdf",
+        },
+      },
+    ],
+  },
+  {
     id: "dac8-de",
     topic: { de: "DAC8 in Deutschland", en: "DAC8 in Germany" },
     promise: {
@@ -140,111 +269,67 @@ export const pairs: Pair[] = [
     ],
   },
   {
-    id: "travel-rule",
+    id: "a-fiu-at",
     topic: {
-      de: "Namen bei jeder Krypto-Übertragung",
-      en: "Names on every crypto transfer",
+      de: "Geldwäschemeldestelle, Österreich",
+      en: "Financial intelligence unit, Austria",
     },
     promise: {
       who: {
-        de: "Assita Kanko, Berichterstatterin im EU-Parlament, über die Prüfung von Übertragungen an eigene Wallets",
-        en: "Assita Kanko, rapporteur in the European Parliament, on checks of transfers to people’s own wallets",
+        de: "Innenministerium unter Gerhard Karner, Presseaussendung",
+        en: "Interior ministry under Gerhard Karner, press release",
       },
       year: 2023,
-      original: "en",
-      quote: {
-        de: "Der Prüfaufwand für die Krypto-Anbieter sei sehr gering.",
-        en: "“The verification burden on CASPs is very limited.”",
-      },
-      source: {
-        label: {
-          de: "Europäisches Parlament, Plenardebatte 19. April 2023",
-          en: "European Parliament, plenary debate of 19 April 2023",
-        },
-        href: "https://www.europarl.europa.eu/doceo/document/CRE-9-2023-04-19-ITM-015_EN.html",
-      },
-    },
-    record: [
-      {
-        who: {
-          de: "EU-Kommission im Vorschlag für dieses Gesetz",
-          en: "The Commission in its proposal for this law",
-        },
-        year: 2021,
-        original: "en",
-        quote: {
-          de: "Genaue Kostenschätzungen lägen nicht vor; auch der Nutzen sei nicht leicht abzuschätzen. Die Prüfung von Übertragungen an eigene Wallets kam erst später dazu und wurde nie bewertet.",
-          en: "“No precise estimated costs were provided”, and the benefits are “not easy to assess either”. The checks on transfers to people’s own wallets were added later and never assessed.",
-        },
-        source: {
-          label: {
-            de: "EU-Kommission, COM(2021) 422",
-            en: "European Commission, COM(2021) 422",
-          },
-          href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52021PC0422",
-        },
-      },
-    ],
-  },
-  {
-    id: "bank-package",
-    topic: { de: "Bankenpaket, Österreich", en: "Bank package, Austria" },
-    promise: {
-      who: {
-        de: "Österreichische Bundesregierung zu Kontenregister, Kontenaustausch und Lockerung des Bankgeheimnisses",
-        en: "Austria’s government on the account register, account exchange and looser banking secrecy",
-      },
-      year: 2015,
       original: "de",
       quote: {
-        de: "„Die Mehreinnahmen … werden im Jahr 2016 mit 700 Mio Euro angenommen.“",
-        en: "The extra revenue is assumed at 700 million euros in 2016.",
+        de: "„Karner: Sensibilisierung bei Geldwäsche zeigt Wirkung“ – das Dunkelfeld werde „immer weiter verkleinert“.",
+        en: "Raising awareness of money laundering is working, it said; the hidden part is shrinking ever further.",
       },
       source: {
         label: {
-          de: "RV 685 (XXV. GP), Vorblatt und Folgenabschätzung, S. 5",
-          en: "RV 685 (25th legislative period), cover sheet and impact assessment, p. 5, in German",
+          de: "Innenministerium, OTS-Aussendung vom 5. Oktober 2023",
+          en: "Interior ministry, press release of 5 October 2023, in German",
         },
-        href: "https://www.parlament.gv.at/dokument/XXV/I/685/fname_423806.pdf",
+        href: "https://www.ots.at/presseaussendung/OTS_20231005_OTS0135",
       },
     },
     record: [
       {
         who: {
-          de: "Finanzministerium über die Abfragen im Kontenregister",
-          en: "The finance ministry on account-register queries",
+          de: "Dieselbe Aussendung, weiter unten",
+          en: "The same release, further down",
         },
-        year: 2019,
+        year: 2023,
         original: "de",
         quote: {
-          de: "„Es ist elektronisch nicht auswertbar, ob … ein Mehrergebnis erzielt wurde.“",
-          en: "Whether the queries produced extra tax cannot be evaluated electronically.",
+          de: "„… 81 rechtskräftige Urteile wegen Geldwäscherei …, was ein Minus von fünf Prozent im Vergleich zum Vorjahr bedeutet.“",
+          en: "81 final convictions for money laundering, five percent fewer than the year before.",
         },
         source: {
           label: {
-            de: "Finanzministerium, Anfragebeantwortung 2843/AB (XXVI. GP), S. 2 und 8",
-            en: "Finance ministry, answer 2843/AB (26th legislative period), pp. 2 and 8, in German",
+            de: "Innenministerium, OTS-Aussendung vom 5. Oktober 2023",
+            en: "Interior ministry, press release of 5 October 2023, in German",
           },
-          href: "https://www.parlament.gv.at/dokument/XXVI/AB/2843/imfname_748144.pdf",
+          href: "https://www.ots.at/presseaussendung/OTS_20231005_OTS0135",
         },
       },
       {
         who: {
-          de: "Seine eigene Evaluierung, die die Ziele trotzdem „zur Gänze erreicht“ nennt",
-          en: "Its own evaluation, which still rates the goals fully achieved",
+          de: "Derselbe Minister, gefragt, was aus den Meldungen wurde",
+          en: "The same minister, asked what came of the reports",
         },
-        year: 2020,
+        year: 2024,
         original: "de",
         quote: {
-          de: "„Eine direkte Ermittlung der tatsächlichen Mehreinnahmen … ist nicht möglich.“",
-          en: "A direct determination of the actual extra revenue is not possible.",
+          de: "„Die gewünschte statistische Auswertung … gegliedert nach Urhebern, Empfängern und Ausgang des Verfahrens ist technisch nicht möglich.“",
+          en: "A breakdown by sender, recipient and outcome of the proceedings is technically impossible.",
         },
         source: {
           label: {
-            de: "Bundesregierung, Bericht über die Wirkungsorientierte Folgenabschätzung 2020, S. 229–231, Archivkopie",
-            en: "Federal Government, report on impact assessments 2020, pp. 229–231, archived copy, in German",
+            de: "Innenministerium, Anfragebeantwortung 16404/AB (XXVII. GP), S. 10",
+            en: "Interior ministry, answer 16404/AB (27th legislative period), p. 10, in German",
           },
-          href: "https://web.archive.org/web/2024/https://wirkungsmonitoring.gv.at/wp-content/uploads/2023/05/WFA_Bericht_2020.pdf",
+          href: "https://www.parlament.gv.at/dokument/XXVII/AB/16404/imfname_1605860.pdf",
         },
       },
     ],
@@ -292,6 +377,53 @@ export const pairs: Pair[] = [
             en: "Federal Government, Bundestag paper 20/6467, p. 12, in German",
           },
           href: "https://dserver.bundestag.de/btd/20/064/2006467.pdf",
+        },
+      },
+    ],
+  },
+  {
+    id: "travel-rule",
+    topic: {
+      de: "Namen bei jeder Krypto-Übertragung",
+      en: "Names on every crypto transfer",
+    },
+    promise: {
+      who: {
+        de: "Assita Kanko, Berichterstatterin im EU-Parlament, über die Prüfung von Übertragungen an eigene Wallets",
+        en: "Assita Kanko, rapporteur in the European Parliament, on checks of transfers to people’s own wallets",
+      },
+      year: 2023,
+      original: "en",
+      quote: {
+        de: "Der Prüfaufwand für die Krypto-Anbieter sei sehr gering.",
+        en: "“The verification burden on CASPs is very limited.”",
+      },
+      source: {
+        label: {
+          de: "Europäisches Parlament, Plenardebatte 19. April 2023",
+          en: "European Parliament, plenary debate of 19 April 2023",
+        },
+        href: "https://www.europarl.europa.eu/doceo/document/CRE-9-2023-04-19-ITM-015_EN.html",
+      },
+    },
+    record: [
+      {
+        who: {
+          de: "EU-Kommission im Vorschlag für dieses Gesetz",
+          en: "The Commission in its proposal for this law",
+        },
+        year: 2021,
+        original: "en",
+        quote: {
+          de: "Genaue Kostenschätzungen lägen nicht vor; auch der Nutzen sei nicht leicht abzuschätzen. Die Prüfung von Übertragungen an eigene Wallets kam erst später dazu und wurde nie bewertet.",
+          en: "“No precise estimated costs were provided”, and the benefits are “not easy to assess either”. The checks on transfers to people’s own wallets were added later and never assessed.",
+        },
+        source: {
+          label: {
+            de: "EU-Kommission, COM(2021) 422",
+            en: "European Commission, COM(2021) 422",
+          },
+          href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52021PC0422",
         },
       },
     ],
@@ -346,6 +478,50 @@ export const pairs: Pair[] = [
             en: "AMLA, programming document 2026–2028",
           },
           href: "https://www.amla.europa.eu/document/download/27549516-d110-4e91-b1ed-d3552b8f9661_en?filename=AMLA%20SPD%202026-2028.pdf",
+        },
+      },
+    ],
+  },
+  {
+    id: "fatf-at",
+    topic: { de: "FATF-Prüfung, Österreich", en: "FATF evaluation, Austria" },
+    promise: {
+      who: {
+        de: "Alma Zadić, Justizministerin, die zugleich Probleme bei der Strafverfolgung nannte",
+        en: "Alma Zadić, justice minister, who also mentioned problems with prosecution",
+      },
+      year: 2024,
+      original: "de",
+      quote: {
+        de: "„Die Prüfung durch die FATF kam zu dem Ergebnis, dass in Österreich ein umfassendes und gut funktionierendes System … existiert und angewendet wird.“",
+        en: "The FATF evaluation, she wrote, found a comprehensive and well-functioning system in Austria.",
+      },
+      source: {
+        label: {
+          de: "Justizministerium, Anfragebeantwortung 17872/AB (XXVII. GP), S. 4–5",
+          en: "Justice ministry, answer 17872/AB (27th legislative period), pp. 4–5, in German",
+        },
+        href: "https://www.parlament.gv.at/dokument/XXVII/AB/17872/imfname_1639379.pdf",
+      },
+    },
+    record: [
+      {
+        who: {
+          de: "Die FATF in dieser Prüfung",
+          en: "The FATF in that evaluation",
+        },
+        year: 2016,
+        original: "en",
+        quote: {
+          de: "Die Nutzung der Verdachtsmeldungen und die Verfolgung von Geldwäsche bewertete sie mit „Low“, der schlechtesten Stufe; Staatsanwälte sähen in den Meldungen keine wertvolle Informationsquelle.",
+          en: "It rated the use of financial intelligence and the prosecution of money laundering “Low”, its lowest grade; prosecutors “do not see STRs … as a valuable source of information”.",
+        },
+        source: {
+          label: {
+            de: "FATF, Länderprüfung Österreich 2016, S. 11",
+            en: "FATF, mutual evaluation of Austria, 2016, p. 11",
+          },
+          href: "https://www.fatf-gafi.org/media/fatf/documents/reports/mer4/MER-Austria-2016.pdf",
         },
       },
     ],
