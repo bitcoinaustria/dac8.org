@@ -21,6 +21,8 @@ import cashBrick from "@/assets/history/cash-brick.webp"
 import cashCent from "@/assets/history/cash-cent.webp"
 import cashSlim from "@/assets/history/cash-slim.webp"
 import noteCrime from "@/assets/history/note-crime.webp"
+import panopticon from "@/assets/history/panopticon.json"
+import panBase from "@/assets/history/panopticon-base.webp"
 import type { Language } from "@/lib/i18n"
 
 // The story of over-regulation as a scroll film, built like the home
@@ -107,6 +109,10 @@ const rowsById = new Map(
   ),
 )
 const statusOf = new Map(ruleChronicle.entries.map((e) => [e.id, e.status]))
+const panLights = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/history/panopticon-light-*.webp",
+  { eager: true },
+)
 const wayList: {
   id: string
   label: { de: string; en: string }
@@ -160,35 +166,18 @@ const wayList: {
     rows: ["bargeld-2027"],
   },
 ]
-// Geometry in a square of 1000 units, drawn as the plan of a panopticon: a
-// ring of cells, one per way, around a courtyard with the watchtower in
-// the middle. Each way's marks sit on the sightline from the tower to its
-// cell, in the order they came; once a mark applies, a beam reaches into
-// the cell. The ring is turned by half a cell, so no cell sits at the
-// sides and every label has room outside the wall.
-const C = 500
-const polar = (angle: number, r: number) => ({
-  x: C + Math.cos(angle) * r,
-  y: C + Math.sin(angle) * r,
-})
-const pt = (p: { x: number; y: number }) =>
-  `${p.x.toFixed(1)} ${p.y.toFixed(1)}`
-const plan = {
-  tower: 88,
-  inner: 238,
-  outer: 330,
-  label: 350,
-  first: 112,
-  gap: 22,
-}
-const half = Math.PI / wayList.length
-// A ring segment between two angles and two radii.
-const sector = (a0: number, a1: number, r0: number, r1: number) =>
-  `M${pt(polar(a0, r1))} A${r1} ${r1} 0 0 1 ${pt(polar(a1, r1))} L${pt(polar(a1, r0))} A${r0} ${r0} 0 0 0 ${pt(polar(a0, r0))} Z`
-const arc = (a0: number, a1: number, r: number) =>
-  `M${pt(polar(a0, r))} A${r} ${r} 0 0 1 ${pt(polar(a1, r))}`
+// The panopticon rendered in Blender (scripts/artwork/render-panopticon.py):
+// a base picture at night and, per cell, a light pass with the searchlight
+// from the tower, added by screen blending once a mark on that way
+// applies. The render also gives, in percent of the picture, where each
+// cell's label stands, where its marks sit along the beam and where the
+// tower's top is.
+const [panW, panH] = panopticon.size
+const px = ([x, y]: number[]) => ({ x: (x / 100) * panW, y: (y / 100) * panH })
 const ways = wayList.map((way, k) => {
-  const angle = -Math.PI / 2 + half + k * 2 * half
+  const cell = panopticon.cells[k]
+  const light = panLights[`../assets/history/panopticon-light-${k}.webp`]
+  if (!cell || !light) throw new Error(`Film: no render for cell ${k}`)
   const marks = way.rows
     .map((id) => {
       const found = rowsById.get(id)
@@ -197,9 +186,10 @@ const ways = wayList.map((way, k) => {
     })
     .sort((a, b) => a.row.from - b.row.from)
     .map(({ row, tax }, m) => {
-      const at = polar(angle, plan.first + m * plan.gap)
-      // A check is a bar across the sightline; a report a dot on it.
-      const across = { x: -Math.sin(angle) * 16, y: Math.cos(angle) * 16 }
+      const place = cell.marks[m]
+      const at = px(place.at)
+      const from = px(place.from)
+      const to = px(place.to)
       return {
         tax,
         from: row.from,
@@ -208,37 +198,22 @@ const ways = wayList.map((way, k) => {
         what: row.what[language],
         x: at.x,
         y: at.y,
-        bar: `M${(at.x - across.x).toFixed(1)} ${(at.y - across.y).toFixed(1)} L${(at.x + across.x).toFixed(1)} ${(at.y + across.y).toFixed(1)}`,
+        bar: `M${from.x.toFixed(1)} ${from.y.toFixed(1)} L${to.x.toFixed(1)} ${to.y.toFixed(1)}`,
       }
     })
-  const label = polar(angle, plan.label)
+  // Behind the tower the label stands above its point, in front below.
+  const behind = cell.label[1] < panopticon.centre[1]
   return {
     ...way,
     label: way.label[language],
-    cell: sector(
-      angle - half + 0.025,
-      angle + half - 0.025,
-      plan.inner,
-      plan.outer,
-    ),
-    beam: `M${pt(polar(angle - 0.05, plan.tower))} L${pt(polar(angle - 0.2, plan.inner))} A${plan.inner} ${plan.inner} 0 0 1 ${pt(polar(angle + 0.2, plan.inner))} L${pt(polar(angle + 0.05, plan.tower))} Z`,
-    sight: `M${pt(polar(angle, plan.tower))} L${pt(polar(angle, plan.inner))}`,
-    window: arc(angle - 0.12, angle + 0.12, plan.inner),
-    slit: arc(angle - 0.12, angle + 0.12, plan.tower),
+    light: light.default.src,
     marks,
-    // The label leans away from the wall: its nearest edge at the point.
     style: [
-      `--x: ${(label.x / 10).toFixed(2)}%`,
-      `--y: ${(label.y / 10).toFixed(2)}%`,
-      `--dx: ${(-50 + Math.cos(angle) * 50).toFixed(1)}%`,
-      `--dy: ${(-50 + Math.sin(angle) * 50).toFixed(1)}%`,
+      `--x: ${cell.label[0]}%`,
+      `--y: ${cell.label[1]}%`,
+      `--dy: ${behind ? "-100%" : "0%"}`,
     ].join("; "),
   }
-})
-// The walls between the cells.
-const walls = wayList.map((_, k) => {
-  const angle = -Math.PI / 2 + k * 2 * half
-  return `M${pt(polar(angle, plan.inner))} L${pt(polar(angle, plan.outer))}`
 })
 // For the script: every mark with its way, to switch them by year and to
 // name the newest.
@@ -413,61 +388,39 @@ const noteKeep = String(kept / 100)
           <div class="ways-wrap" data-ways={wayRules}>
             <p class="ways-new" data-ways-new />
             <div class="ways">
-              <svg viewBox="0 0 1000 1000">
-                <defs>
-                  <radialGradient
-                    id="ways-beam"
-                    cx="500"
-                    cy="500"
-                    r={plan.inner}
-                    gradientUnits="userSpaceOnUse"
-                  >
-                    <stop offset="0.3" class="beam-near" />
-                    <stop offset="1" class="beam-far" />
-                  </radialGradient>
-                </defs>
-                {ways.map((way) => (
-                  <g class="way" data-way={way.id}>
-                    <path class="way-cell" d={way.cell} />
-                    <path class="way-beam" d={way.beam} />
-                    <path class="way-sight" d={way.sight} />
-                    <path class="way-window" d={way.window} />
-                    <path class="way-slit" d={way.slit} />
-                    {way.marks.map((mark) =>
-                      mark.tax ? (
-                        <circle
-                          class:list={["way-mark", "report", { ahead: mark.ahead }]}
-                          cx={mark.x}
-                          cy={mark.y}
-                          r="10"
-                          data-from={mark.from}
-                          data-until={mark.until}
-                        />
-                      ) : (
-                        <path
-                          class:list={["way-mark", "check", { ahead: mark.ahead }]}
-                          d={mark.bar}
-                          data-from={mark.from}
-                          data-until={mark.until}
-                        />
-                      ),
-                    )}
-                  </g>
-                ))}
-                <circle
-                  class="plan-wall inner"
-                  cx="500"
-                  cy="500"
-                  r={plan.inner}
-                />
-                <circle
-                  class="plan-wall outer"
-                  cx="500"
-                  cy="500"
-                  r={plan.outer}
-                />
-                {walls.map((d) => <path class="plan-wall" d={d} />)}
-                <circle class="ways-core" cx="500" cy="500" r={plan.tower} />
+              <img
+                class="ways-base"
+                src={panBase.src}
+                width={panBase.width}
+                height={panBase.height}
+                alt=""
+                decoding="async"
+              >
+              {ways.map((way) => (
+                <img class="way-light" data-way={way.id} src={way.light} alt="" decoding="async" />
+              ))}
+              <svg viewBox={`0 0 ${panW} ${panH}`}>
+                {ways.flatMap((way) =>
+                  way.marks.map((mark) =>
+                    mark.tax ? (
+                      <circle
+                        class:list={["way-mark", "report", { ahead: mark.ahead }]}
+                        cx={mark.x}
+                        cy={mark.y}
+                        r="15"
+                        data-from={mark.from}
+                        data-until={mark.until}
+                      />
+                    ) : (
+                      <path
+                        class:list={["way-mark", "check", { ahead: mark.ahead }]}
+                        d={mark.bar}
+                        data-from={mark.from}
+                        data-until={mark.until}
+                      />
+                    ),
+                  ),
+                )}
               </svg>
               {ways.map((way) => (
                 <span class="way-label" data-way-label={way.id} style={way.style}>
@@ -1004,6 +957,10 @@ const noteKeep = String(kept / 100)
     .view .scene {
       padding-block-end: calc(var(--space-m) + 3.25rem);
     }
+
+    .view .ways {
+      inline-size: min(100%, (100cqh - 14rem) * 1.111);
+    }
   }
 
   .film:not([data-ready]) .film-nav {
@@ -1199,80 +1156,37 @@ const noteKeep = String(kept / 100)
   .ways {
     position: relative;
     container-type: inline-size;
+    isolation: isolate;
     align-self: center;
-    inline-size: min(100%, 100cqh - 7.5rem);
-    aspect-ratio: 1;
+    inline-size: min(100%, (100cqh - 10.5rem) * 1.111);
+    aspect-ratio: 1600 / 1440;
   }
 
-  /* Der Grundriss: Zellen im Ring, Mauern, Hof und Turm. Eine erfasste
-     Zelle leuchtet rot, ein Lichtkegel reicht vom Turm hinein. */
-  .way-cell {
-    fill: color-mix(in oklab, var(--paper) 70%, var(--panel));
-    transition: fill 0.6s ease;
+  /* Das Panoptikum bei Nacht, darüber je Zelle ihr Licht: ein roter
+     Scheinwerfer vom Turm durch das Gitter, aufgehellt durch Bildschirm-
+     Mischung, sobald eine Regel auf diesem Weg gilt. */
+  .ways-base,
+  .way-light {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    border-radius: var(--radius);
   }
 
-  .way.covered .way-cell {
-    fill: color-mix(in oklab, var(--red) 40%, var(--panel));
-  }
-
-  .plan-wall {
-    fill: none;
-    stroke: var(--ink-3);
-    stroke-width: 5;
-    stroke-linecap: round;
-  }
-
-  .plan-wall.outer {
-    stroke-width: 12;
-  }
-
-  .beam-near {
-    stop-color: var(--red);
-    stop-opacity: 0.05;
-  }
-
-  .beam-far {
-    stop-color: var(--red);
-    stop-opacity: 0.5;
-  }
-
-  .way-beam {
-    fill: url(#ways-beam);
+  .way-light {
     opacity: 0;
-    transition: opacity 0.6s ease;
+    mix-blend-mode: screen;
+    transition: opacity 0.9s ease;
   }
 
-  .way.covered .way-beam {
+  .way-light.covered {
     opacity: 1;
   }
 
-  .way-sight {
-    stroke: var(--ink-3);
-    stroke-width: 2;
-    stroke-dasharray: 4 7;
-    opacity: 0.6;
-  }
-
-  /* Das Fenster der Zelle zum Hof und der Sehschlitz im Turm. */
-  .way-window,
-  .way-slit {
-    fill: none;
-    stroke: var(--panel);
-    stroke-width: 12;
-    transition:
-      stroke 0.5s ease,
-      filter 0.5s ease;
-  }
-
-  .way-slit {
-    stroke-width: 9;
-  }
-
-  .way.covered :is(.way-window, .way-slit) {
-    stroke: var(--red);
-    filter: drop-shadow(
-      0 0 8px color-mix(in oklab, var(--red) 70%, transparent)
-    );
+  .ways svg {
+    position: absolute;
+    inset: 0;
   }
 
   .way-mark {
@@ -1330,19 +1244,15 @@ const noteKeep = String(kept / 100)
     stroke: var(--ink-3);
   }
 
-  .ways-core {
-    fill: var(--paper);
-    stroke: var(--ink-3);
-    stroke-width: 6;
-  }
-
   .way-label {
     position: absolute;
     inset-inline-start: var(--x);
     inset-block-start: var(--y);
     max-inline-size: 7.5em;
-    translate: var(--dx) var(--dy);
-    color: var(--ink-2);
+    translate: -50% var(--dy);
+    text-shadow: 0 1px 6px rgb(0 0 0 / 0.9);
+    /* Auf dem nächtlichen Bild hell, in beiden Farbschemata. */
+    color: #d9dde3;
     font-size: clamp(0.7rem, 0.5rem + 1.6cqi, 0.95rem);
     font-weight: 600;
     line-height: 1.15;
@@ -1353,21 +1263,21 @@ const noteKeep = String(kept / 100)
   }
 
   .way-label.covered {
-    color: var(--accent);
+    color: #ff5a55;
   }
 
+  /* Das Jahr groß in der Ecke des Bildes. */
   .ways-centre {
     position: absolute;
-    inset: 0;
-    display: grid;
-    place-content: center;
-    justify-items: center;
+    inset-block-start: 3%;
+    inset-inline-start: 3.5%;
     pointer-events: none;
   }
 
   .ways-centre strong {
-    color: var(--foreground);
-    font-size: clamp(1.1rem, 0.4rem + 4.6cqi, 2.4rem);
+    color: #fff;
+    text-shadow: 0 2px 10px rgb(0 0 0 / 0.8);
+    font-size: clamp(1.15rem, 0.2rem + 6cqi, 3.2rem);
     font-weight: var(--weight-heading);
     font-variant-numeric: tabular-nums;
     line-height: 1;
@@ -1375,7 +1285,7 @@ const noteKeep = String(kept / 100)
   }
 
   .ways-centre strong.future {
-    color: var(--ink-3);
+    color: #aab0b8;
   }
 
   .ways-count {
@@ -1788,11 +1698,6 @@ const noteKeep = String(kept / 100)
   /* ---------- Schmal ---------------------------------------------------- */
 
   @container campaign (width < 60rem) {
-    /* Seitlich Luft für die Namen der Zellen. */
-    .ways {
-      inline-size: min(100% - 2.5rem, 100cqh - 7.5rem);
-    }
-
     .cash {
       --pile: min(50cqi, (100cqh - 9rem) * 0.86);
     }

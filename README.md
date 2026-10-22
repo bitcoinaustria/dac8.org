@@ -151,10 +151,12 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   which you must show ID in today's money, rendered at true scale in
   Blender (`scripts/artwork/render-cash.py`, fictional notes generated with
   Codex): a brick of 339 hundred-euro notes in 1991, 13 and a fifty in
-  2017, a single cent today, all three in view; the plan of a panopticon, a ring of
-  eight cells, one per way money can take, around a watchtower; red marks
-  appear on the sightlines as the year runs with the scroll and covered
-  cells light up, a bar for a check at the bank or provider and a dot for an
+  2017, a single cent today, all three in view; a panopticon at night rendered in Blender
+  (`scripts/artwork/render-panopticon.py`), a ring of eight cells, one per
+  way money can take, around a watchtower; red marks appear on the
+  searchlight paths as the year runs with the scroll, and once one applies
+  a light pass of that cell's searchlight is screen-blended over the base
+  picture, a bar for a check at the bank or provider and a dot for an
   automatic report to the tax office, until every way is covered; a wall
   of one tile per Official Journal page, six red ones from 1991 among 488;
   a sea of suspicion reports in Austria beside 139 convictions, then
