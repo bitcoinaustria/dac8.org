@@ -39,6 +39,7 @@ const labels = {
         <p class="pair-topic">{pair.topic[language]}</p>
         <div class="pair-side promise">
           <p class="pair-label">{labels.promise}</p>
+          <p class="pair-token">{pair.token.promise[language]}</p>
           <blockquote>{pair.promise.quote[language]}</blockquote>
           <p class="pair-who">
             {pair.promise.who[language]}, {pair.promise.year}
@@ -47,6 +48,7 @@ const labels = {
         </div>
         <div class="pair-side record">
           <p class="pair-label">{labels.record}</p>
+          <p class="pair-token">{pair.token.record[language]}</p>
           {pair.record.map((said) => (
             <div class="pair-said">
               <blockquote>{said.quote[language]}</blockquote>
@@ -71,6 +73,7 @@ const labels = {
         <p class="pair-topic">{pair.topic[language]}</p>
         <div class="pair-side promise">
           <p class="pair-label">{labels.promise}</p>
+          <p class="pair-token">{pair.token.promise[language]}</p>
           <blockquote>{pair.promise.quote[language]}</blockquote>
           <p class="pair-who">
             {pair.promise.who[language]}, {pair.promise.year}
@@ -79,6 +82,7 @@ const labels = {
         </div>
         <div class="pair-side record">
           <p class="pair-label">{labels.record}</p>
+          <p class="pair-token">{pair.token.record[language]}</p>
           {pair.record.map((said) => (
             <div class="pair-said">
               <blockquote>{said.quote[language]}</blockquote>
@@ -161,6 +165,21 @@ const labels = {
   }
 
   .record .pair-label {
+    color: var(--accent);
+  }
+
+  /* Die paar Worte, die man im Vorbeiscrollen liest. */
+  .pair-token {
+    margin-block-end: 0.2rem;
+    color: var(--ink-3);
+    font-size: clamp(1.6rem, 1rem + 2.4vw, 2.6rem);
+    font-weight: var(--weight-heading);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .record .pair-token {
     color: var(--accent);
   }
 

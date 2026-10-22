@@ -22,6 +22,8 @@ export type Said = {
 export type Pair = {
   id: string
   topic: Text
+  // A few words each side, set large, so the pair reads at a glance.
+  token: { promise: Text; record: Text }
   promise: Said
   record: Said[]
 }
@@ -34,6 +36,10 @@ const commission = (path: string, ref: string): Source => ({
 export const pairs: Pair[] = [
   {
     id: "dac8",
+    token: {
+      promise: { de: "2,4 Mrd. €", en: "€2.4bn" },
+      record: { de: "keine Informationen", en: "no information" },
+    },
     topic: { de: "DAC8", en: "DAC8" },
     promise: {
       who: {
@@ -78,6 +84,10 @@ export const pairs: Pair[] = [
   },
   {
     id: "fraud-package-at",
+    token: {
+      promise: { de: "270 Mio. €", en: "€270m" },
+      record: { de: "schwer zu messen", en: "hard to measure" },
+    },
     topic: {
       de: "Paket gegen Steuerbetrug mit Krypto-Datenaustausch, Österreich",
       en: "Anti-fraud package with crypto data exchange, Austria",
@@ -144,6 +154,10 @@ export const pairs: Pair[] = [
   },
   {
     id: "bank-package",
+    token: {
+      promise: { de: "700 Mio. €", en: "€700m" },
+      record: { de: "nicht auswertbar", en: "cannot be evaluated" },
+    },
     topic: { de: "Bankenpaket, Österreich", en: "Bank package, Austria" },
     promise: {
       who: {
@@ -207,6 +221,10 @@ export const pairs: Pair[] = [
   },
   {
     id: "dac8-de",
+    token: {
+      promise: { de: "besser verhindern", en: "better prevented" },
+      record: { de: "kein Nachweis", en: "no proof" },
+    },
     topic: { de: "DAC8 in Deutschland", en: "DAC8 in Germany" },
     promise: {
       who: {
@@ -270,6 +288,10 @@ export const pairs: Pair[] = [
   },
   {
     id: "a-fiu-at",
+    token: {
+      promise: { de: "zeigt Wirkung", en: "it works" },
+      record: { de: "−5 % Urteile", en: "−5% convictions" },
+    },
     topic: {
       de: "Geldwäschemeldestelle, Österreich",
       en: "Financial intelligence unit, Austria",
@@ -336,6 +358,10 @@ export const pairs: Pair[] = [
   },
   {
     id: "fiu-de",
+    token: {
+      promise: { de: "größte weltweit", en: "largest in the world" },
+      record: { de: "289.823 offen", en: "289,823 open" },
+    },
     topic: {
       de: "Geldwäschemeldestelle, Deutschland",
       en: "Financial intelligence unit, Germany",
@@ -383,6 +409,10 @@ export const pairs: Pair[] = [
   },
   {
     id: "travel-rule",
+    token: {
+      promise: { de: "sehr gering", en: "very limited" },
+      record: { de: "keine Kostenschätzung", en: "no cost estimate" },
+    },
     topic: {
       de: "Namen bei jeder Krypto-Übertragung",
       en: "Names on every crypto transfer",
@@ -430,6 +460,10 @@ export const pairs: Pair[] = [
   },
   {
     id: "amla",
+    token: {
+      promise: { de: "ab 2026", en: "from 2026" },
+      record: { de: "ab 2028", en: "from 2028" },
+    },
     topic: {
       de: "Neue EU-Geldwäschebehörde AMLA",
       en: "The new EU anti-money-laundering authority, AMLA",
@@ -484,6 +518,10 @@ export const pairs: Pair[] = [
   },
   {
     id: "fatf-at",
+    token: {
+      promise: { de: "gut funktionierend", en: "well-functioning" },
+      record: { de: "„Low“", en: "“Low”" },
+    },
     topic: { de: "FATF-Prüfung, Österreich", en: "FATF evaluation, Austria" },
     promise: {
       who: {
@@ -528,6 +566,10 @@ export const pairs: Pair[] = [
   },
   {
     id: "crs-de",
+    token: {
+      promise: { de: "Milliarden", en: "billions" },
+      record: { de: "nicht signifikant", en: "not significant" },
+    },
     topic: {
       de: "Kontenaustausch, Deutschland",
       en: "Account exchange, Germany",
@@ -575,6 +617,10 @@ export const pairs: Pair[] = [
   },
   {
     id: "dac6",
+    token: {
+      promise: { de: "ebenso wirksam", en: "just as effective" },
+      record: { de: "kein Zusammenhang", en: "no causal link" },
+    },
     topic: {
       de: "DAC6, Meldepflicht für Steuergestaltungen",
       en: "DAC6, reporting of tax arrangements",
@@ -635,6 +681,10 @@ export const pairs: Pair[] = [
   },
   {
     id: "dac7",
+    token: {
+      promise: { de: "gute Nachricht", en: "good news" },
+      record: { de: "geringe Relevanz", en: "limited relevance" },
+    },
     topic: {
       de: "DAC7, Meldepflicht für Online-Plattformen",
       en: "DAC7, reporting by online platforms",
@@ -676,6 +726,10 @@ export const pairs: Pair[] = [
   },
   {
     id: "dirty-money",
+    token: {
+      promise: { de: "kein Platz", en: "no place" },
+      record: { de: "keine Methode", en: "no method" },
+    },
     topic: { de: "Geldwäsche", en: "Money laundering" },
     promise: {
       who: {
