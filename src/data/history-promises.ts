@@ -74,10 +74,54 @@ export const pairs: Pair[] = [
           href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=SWD:2022:401:FIN",
         },
       },
+    ],
+  },
+  {
+    id: "dac8-de",
+    topic: { de: "DAC8 in Deutschland", en: "DAC8 in Germany" },
+    promise: {
+      who: {
+        de: "Jens Behrens (SPD) in der Schlussdebatte im Bundestag",
+        en: "Jens Behrens (SPD) in the Bundestag’s final debate",
+      },
+      year: 2025,
+      original: "de",
+      quote: {
+        de: "„So können wir Steuervermeidung und -hinterziehung im Bereich der Kryptowährung besser verhindern.“",
+        en: "This way, he said, tax avoidance and evasion with crypto can be better prevented.",
+      },
+      source: {
+        label: {
+          de: "Bundestag, Plenarprotokoll 21/37, S. 4202",
+          en: "Bundestag, plenary record 21/37, p. 4202, in German",
+        },
+        href: "https://dserver.bundestag.de/btp/21/21037.pdf",
+      },
+    },
+    record: [
       {
         who: {
-          de: "Deutsche Bundesregierung im Gesetz zu DAC8",
-          en: "Germany’s Federal Government in its DAC8 bill",
+          de: "Deutsche Bundesregierung sieben Wochen davor",
+          en: "Germany’s Federal Government seven weeks earlier",
+        },
+        year: 2025,
+        original: "de",
+        quote: {
+          de: "„Daher ist ein statistischer Nachweis der Höhe der Einnahmen aus der Besteuerung von Kryptowerten nicht möglich.“",
+          en: "A statistical proof of how much tax crypto brings in is therefore not possible.",
+        },
+        source: {
+          label: {
+            de: "Bundesregierung, Drucksache 21/1707, S. 2",
+            en: "Federal Government, Bundestag paper 21/1707, p. 2, in German",
+          },
+          href: "https://dserver.bundestag.de/btd/21/017/2101707.pdf",
+        },
+      },
+      {
+        who: {
+          de: "Und im Gesetz selbst",
+          en: "And in the law itself",
         },
         year: 2025,
         original: "de",
@@ -91,6 +135,53 @@ export const pairs: Pair[] = [
             en: "Federal Government, Bundestag paper 21/1937, p. 46, in German",
           },
           href: "https://dserver.bundestag.de/btd/21/019/2101937.pdf",
+        },
+      },
+    ],
+  },
+  {
+    id: "travel-rule",
+    topic: {
+      de: "Namen bei jeder Krypto-Übertragung",
+      en: "Names on every crypto transfer",
+    },
+    promise: {
+      who: {
+        de: "Assita Kanko, Berichterstatterin im EU-Parlament, über die Prüfung von Übertragungen an eigene Wallets",
+        en: "Assita Kanko, rapporteur in the European Parliament, on checks of transfers to people’s own wallets",
+      },
+      year: 2023,
+      original: "en",
+      quote: {
+        de: "Der Prüfaufwand für die Krypto-Anbieter sei sehr gering.",
+        en: "“The verification burden on CASPs is very limited.”",
+      },
+      source: {
+        label: {
+          de: "Europäisches Parlament, Plenardebatte 19. April 2023",
+          en: "European Parliament, plenary debate of 19 April 2023",
+        },
+        href: "https://www.europarl.europa.eu/doceo/document/CRE-9-2023-04-19-ITM-015_EN.html",
+      },
+    },
+    record: [
+      {
+        who: {
+          de: "EU-Kommission im Vorschlag für dieses Gesetz",
+          en: "The Commission in its proposal for this law",
+        },
+        year: 2021,
+        original: "en",
+        quote: {
+          de: "Genaue Kostenschätzungen lägen nicht vor; auch der Nutzen sei nicht leicht abzuschätzen. Die Prüfung von Übertragungen an eigene Wallets kam erst später dazu und wurde nie bewertet.",
+          en: "“No precise estimated costs were provided”, and the benefits are “not easy to assess either”. The checks on transfers to people’s own wallets were added later and never assessed.",
+        },
+        source: {
+          label: {
+            de: "EU-Kommission, COM(2021) 422",
+            en: "European Commission, COM(2021) 422",
+          },
+          href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52021PC0422",
         },
       },
     ],
@@ -154,6 +245,154 @@ export const pairs: Pair[] = [
             en: "Federal Government, report on impact assessments 2020, pp. 229–231, archived copy, in German",
           },
           href: "https://web.archive.org/web/2024/https://wirkungsmonitoring.gv.at/wp-content/uploads/2023/05/WFA_Bericht_2020.pdf",
+        },
+      },
+    ],
+  },
+  {
+    id: "fiu-de",
+    topic: {
+      de: "Geldwäschemeldestelle, Deutschland",
+      en: "Financial intelligence unit, Germany",
+    },
+    promise: {
+      who: {
+        de: "Christian Lindner, Finanzminister, im Bundestag",
+        en: "Christian Lindner, finance minister, in the Bundestag",
+      },
+      year: 2023,
+      original: "de",
+      quote: {
+        de: "„… unsere Behörde zur Bekämpfung der Geldwäsche, die FIU, ist die größte weltweit.“",
+        en: "Germany’s financial intelligence unit, he said, is the largest in the world.",
+      },
+      source: {
+        label: {
+          de: "Bundestag, Plenarprotokoll 20/87, S. 10356",
+          en: "Bundestag, plenary record 20/87, p. 10356, in German",
+        },
+        href: "https://dserver.bundestag.de/btp/20/20087.pdf",
+      },
+    },
+    record: [
+      {
+        who: {
+          de: "Die Geldwäschemeldestelle an die Bundesregierung, einen Monat davor",
+          en: "The unit to the Federal Government, a month earlier",
+        },
+        year: 2023,
+        original: "de",
+        quote: {
+          de: "289.823 Meldungen waren nicht abgeschlossen oder hatten einen unklaren Status.",
+          en: "289,823 reports were not finalised or of unclear status.",
+        },
+        source: {
+          label: {
+            de: "Bundesregierung, Drucksache 20/6467, S. 12",
+            en: "Federal Government, Bundestag paper 20/6467, p. 12, in German",
+          },
+          href: "https://dserver.bundestag.de/btd/20/064/2006467.pdf",
+        },
+      },
+    ],
+  },
+  {
+    id: "amla",
+    topic: {
+      de: "Neue EU-Geldwäschebehörde AMLA",
+      en: "The new EU anti-money-laundering authority, AMLA",
+    },
+    promise: {
+      who: {
+        de: "Mairead McGuinness, EU-Kommissarin für Finanzmärkte",
+        en: "Mairead McGuinness, EU commissioner for financial services",
+      },
+      year: 2022,
+      original: "en",
+      quote: {
+        de: "AMLA sei ein Wendepunkt im Kampf gegen Geldwäsche, voll besetzt 2025 und mit direkter Aufsicht ab 2026.",
+        en: "“AMLA is a game-changer in the fight against money laundering”, to reach “full staffing in 2025, and to start carrying out direct supervision in 2026”.",
+      },
+      source: commission("speech_22_5593", "SPEECH/22/5593"),
+    },
+    record: [
+      {
+        who: { de: "AMLA im Jahresbericht", en: "AMLA in its annual report" },
+        year: 2025,
+        original: "de",
+        quote: {
+          de: "Ende 2025 arbeiteten dort 119 Menschen.",
+          en: "At the end of 2025 it had 119 staff.",
+        },
+        source: {
+          label: {
+            de: "AMLA, Jahresbericht 2025",
+            en: "AMLA, annual activity report 2025",
+          },
+          href: "https://www.amla.europa.eu/document/download/d126651b-59ba-403a-bc51-a92d14112e08_en?filename=Consolidated_Annual_Activity_Report_2025.pdf",
+        },
+      },
+      {
+        who: { de: "AMLA in ihrer Planung", en: "AMLA in its planning" },
+        year: 2026,
+        original: "de",
+        quote: {
+          de: "Volle Besetzung ist jetzt für 2027 geplant, die direkte Aufsicht über 40 Institute ab 2028.",
+          en: "Full staffing is now planned for 2027, direct supervision of 40 institutions from 2028.",
+        },
+        source: {
+          label: {
+            de: "AMLA, Programmplanung 2026–2028",
+            en: "AMLA, programming document 2026–2028",
+          },
+          href: "https://www.amla.europa.eu/document/download/27549516-d110-4e91-b1ed-d3552b8f9661_en?filename=AMLA%20SPD%202026-2028.pdf",
+        },
+      },
+    ],
+  },
+  {
+    id: "crs-de",
+    topic: {
+      de: "Kontenaustausch, Deutschland",
+      en: "Account exchange, Germany",
+    },
+    promise: {
+      who: {
+        de: "Wolfgang Schäuble, Finanzminister, in einer Regierungserklärung",
+        en: "Wolfgang Schäuble, finance minister, in a government statement",
+      },
+      year: 2014,
+      original: "de",
+      quote: {
+        de: "„Damit bekämpfen wir das Problem, dass den öffentlichen Haushalten durch Steuerflucht Steuereinnahmen in Milliardenhöhe fehlen.“",
+        en: "With the exchange, he said, Germany was tackling the billions in tax revenue lost to tax flight.",
+      },
+      source: {
+        label: {
+          de: "Bundestag, Plenarprotokoll 18/63, S. 5786–5788",
+          en: "Bundestag, plenary record 18/63, pp. 5786–5788, in German",
+        },
+        href: "https://dserver.bundestag.de/btp/18/18063.pdf",
+      },
+    },
+    record: [
+      {
+        who: {
+          de: "Deutsche Bundesregierung fünf Jahre später",
+          en: "Germany’s Federal Government five years later",
+        },
+        year: 2019,
+        original: "de",
+        quote: {
+          de: "Sie erwartet „keine signifikanten Steuermehreinnahmen“; der Austausch „hat insgesamt auch nicht zum Ziel, steuerliche Mehreinnahmen zu generieren“.",
+          en: "It expects no significant extra revenue, and the exchange is not even meant to raise any.",
+        },
+        source: {
+          label: {
+            de: "Bundesregierung, Drucksache 19/12586, S. 4",
+            en: "Federal Government, Bundestag paper 19/12586, p. 4, in German",
+          },
+          href: "https://dserver.bundestag.de/btd/19/125/1912586.pdf",
         },
       },
     ],
@@ -260,107 +499,6 @@ export const pairs: Pair[] = [
     ],
   },
   {
-    id: "travel-rule",
-    topic: {
-      de: "Namen bei jeder Krypto-Übertragung",
-      en: "Names on every crypto transfer",
-    },
-    promise: {
-      who: {
-        de: "Assita Kanko, Berichterstatterin im EU-Parlament, über die Prüfung von Übertragungen an eigene Wallets",
-        en: "Assita Kanko, rapporteur in the European Parliament, on checks of transfers to people’s own wallets",
-      },
-      year: 2023,
-      original: "en",
-      quote: {
-        de: "Der Prüfaufwand für die Krypto-Anbieter sei sehr gering.",
-        en: "“The verification burden on CASPs is very limited.”",
-      },
-      source: {
-        label: {
-          de: "Europäisches Parlament, Plenardebatte 19. April 2023",
-          en: "European Parliament, plenary debate of 19 April 2023",
-        },
-        href: "https://www.europarl.europa.eu/doceo/document/CRE-9-2023-04-19-ITM-015_EN.html",
-      },
-    },
-    record: [
-      {
-        who: {
-          de: "EU-Kommission im Vorschlag für dieses Gesetz",
-          en: "The Commission in its proposal for this law",
-        },
-        year: 2021,
-        original: "en",
-        quote: {
-          de: "Genaue Kostenschätzungen lägen nicht vor; auch der Nutzen sei nicht leicht abzuschätzen. Die Prüfung von Übertragungen an eigene Wallets kam erst später dazu und wurde nie bewertet.",
-          en: "“No precise estimated costs were provided”, and the benefits are “not easy to assess either”. The checks on transfers to people’s own wallets were added later and never assessed.",
-        },
-        source: {
-          label: {
-            de: "EU-Kommission, COM(2021) 422",
-            en: "European Commission, COM(2021) 422",
-          },
-          href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52021PC0422",
-        },
-      },
-    ],
-  },
-  {
-    id: "amla",
-    topic: {
-      de: "Neue EU-Geldwäschebehörde AMLA",
-      en: "The new EU anti-money-laundering authority, AMLA",
-    },
-    promise: {
-      who: {
-        de: "Mairead McGuinness, EU-Kommissarin für Finanzmärkte",
-        en: "Mairead McGuinness, EU commissioner for financial services",
-      },
-      year: 2022,
-      original: "en",
-      quote: {
-        de: "AMLA sei ein Wendepunkt im Kampf gegen Geldwäsche, voll besetzt 2025 und mit direkter Aufsicht ab 2026.",
-        en: "“AMLA is a game-changer in the fight against money laundering”, to reach “full staffing in 2025, and to start carrying out direct supervision in 2026”.",
-      },
-      source: commission("speech_22_5593", "SPEECH/22/5593"),
-    },
-    record: [
-      {
-        who: { de: "AMLA im Jahresbericht", en: "AMLA in its annual report" },
-        year: 2025,
-        original: "de",
-        quote: {
-          de: "Ende 2025 arbeiteten dort 119 Menschen.",
-          en: "At the end of 2025 it had 119 staff.",
-        },
-        source: {
-          label: {
-            de: "AMLA, Jahresbericht 2025",
-            en: "AMLA, annual activity report 2025",
-          },
-          href: "https://www.amla.europa.eu/document/download/d126651b-59ba-403a-bc51-a92d14112e08_en?filename=Consolidated_Annual_Activity_Report_2025.pdf",
-        },
-      },
-      {
-        who: { de: "AMLA in ihrer Planung", en: "AMLA in its planning" },
-        year: 2026,
-        original: "de",
-        quote: {
-          de: "Volle Besetzung ist jetzt für 2027 geplant, die direkte Aufsicht über 40 Institute ab 2028.",
-          en: "Full staffing is now planned for 2027, direct supervision of 40 institutions from 2028.",
-        },
-        source: {
-          label: {
-            de: "AMLA, Programmplanung 2026–2028",
-            en: "AMLA, programming document 2026–2028",
-          },
-          href: "https://www.amla.europa.eu/document/download/27549516-d110-4e91-b1ed-d3552b8f9661_en?filename=AMLA%20SPD%202026-2028.pdf",
-        },
-      },
-    ],
-  },
-  {
     id: "dirty-money",
     topic: { de: "Geldwäsche", en: "Money laundering" },
     promise: {
@@ -399,6 +537,9 @@ export const pairs: Pair[] = [
     ],
   },
 ]
+
+// Shown open; the rest fold away under "more".
+export const openPairs = 6
 
 export const pairSources = (): Source[] =>
   pairs.flatMap((pair) => [
