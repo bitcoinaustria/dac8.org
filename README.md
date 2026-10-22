@@ -158,7 +158,11 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   a light pass of that cell's searchlight is screen-blended over the base
   picture, a bar for a check at the bank or provider and a dot for an
   automatic report to the tax office, until every way is covered; a wall
-  of one tile per Official Journal page, six red ones from 1991 among 488;
+  of one tile per Official Journal page, six red ones from 1991 among 488,
+  which on request reads the law aloud: verbatim passages of the 1991
+  directive and the 2024 regulation (`src/data/law-voices.ts`), spoken with
+  Qwen3-TTS (`scripts/artwork/speak-law.py`) and overlapping until they
+  drown each other out, each with its caption and reference;
   a sea of suspicion reports in Austria beside 139 convictions, then
   Germany as a race from the same start (`src/lib/film-race.ts`): reports
   and convictions both at ×1 in 2008, growing year by year while the scale

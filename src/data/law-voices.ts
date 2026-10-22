@@ -1,0 +1,139 @@
+import type { Language } from "@/lib/i18n"
+
+// The paper chapter of the history film reads the law aloud when the
+// reader asks for it: in 1991 one voice reads the first directive's duty
+// to show ID; today ten passages of the anti-money-laundering regulation
+// of 2024 start one after another until they talk over each other. The
+// words are verbatim from the Official Journal (EUR-Lex, via the
+// Publications Office), in the page's language; the voices are generated
+// with Qwen3-TTS (scripts/artwork/speak-law.py) and checked with Whisper.
+// The audio lives in public/audio/law/<id>-<lang>.mp3.
+
+type Text = Record<Language, string>
+export type LawVoice = { id: string; ref: Text; text: Text }
+
+export const firstVoice = "1991"
+
+export const lawVoices: LawVoice[] = [
+  {
+    id: "1991",
+    ref: {
+      de: "Richtlinie 91/308/EWG, Art. 3 Abs. 1",
+      en: "Directive 91/308/EEC, Art. 3(1)",
+    },
+    text: {
+      de: "Die Mitgliedstaaten sorgen dafür, daß die Kredit- und Finanzinstitute von ihren Kunden die Bekanntgabe ihrer Identität durch ein beweiskräftiges Dokument verlangen, wenn diese mit ihnen Geschäftsbeziehungen anknüpfen, insbesondere, wenn sie ein Sparkonto oder ein anderes Konto eröffnen oder Vermögensverwahrungsleistungen anbieten.",
+      en: "Member States shall ensure that credit and financial institutions require identification of their customers by means of supporting evidence when entering into business relations, particularly when opening an account or savings accounts, or when offering safe custody facilities.",
+    },
+  },
+  {
+    id: "art2",
+    ref: {
+      de: "Verordnung (EU) 2024/1624, Art. 2",
+      en: "Regulation (EU) 2024/1624, Art. 2",
+    },
+    text: {
+      de: "„Krypto-Dienstleistungen“ Krypto-Dienstleistungen im Sinne von Artikel 3 Absatz 1 Nummer 16 der Verordnung (EU) 2023/1114 mit Ausnahme der Beratung zu Kryptowerten gemäß Artikel 3 Absatz 1 Nummer 16 Buchstabe h jener Verordnung.",
+      en: "‘crypto-asset services’ means crypto-asset services as defined in Article 3(1), point (16), of Regulation (EU) 2023/1114, with the exception of providing advice on crypto-assets as referred to in Article 3(1), point (16)(h), of that Regulation.",
+    },
+  },
+  {
+    id: "art70",
+    ref: {
+      de: "Verordnung (EU) 2024/1624, Art. 70 Abs. 1",
+      en: "Regulation (EU) 2024/1624, Art. 70(1)",
+    },
+    text: {
+      de: "Abweichend von Artikel 69 Absatz 1 dürfen Mitgliedstaaten den in Artikel 3 Nummer 3 Buchstaben a und b genannten Verpflichteten gestatten, die in Artikel 69 Absatz 1 genannten Informationen an eine von dem Mitgliedstaat benannte Selbstverwaltungseinrichtung weiterzuleiten.",
+      en: "By way of derogation from Article 69(1), Member States may allow obliged entities referred to in Article 3, point (3)(a) and (b), to transmit the information referred to in Article 69(1) to a self-regulatory body designated by the Member State.",
+    },
+  },
+  {
+    id: "art31",
+    ref: {
+      de: "Verordnung (EU) 2024/1624, Art. 31",
+      en: "Regulation (EU) 2024/1624, Art. 31",
+    },
+    text: {
+      de: "Der in Unterabsatz 1 des vorliegenden Absatzes genannte Durchführungsrechtsakt wird gemäß dem in Artikel 86 Absatz 2 genannten Prüfverfahren erlassen.",
+      en: "The implementing act referred to in the first subparagraph of this paragraph shall be adopted in accordance with the examination procedure referred to in Article 86(2).",
+    },
+  },
+  {
+    id: "art22",
+    ref: {
+      de: "Verordnung (EU) 2024/1624, Art. 22 Abs. 1 Buchst. a",
+      en: "Regulation (EU) 2024/1624, Art. 22(1)(a)",
+    },
+    text: {
+      de: "Bei natürlichen Personen: alle Vor- und Nachnamen; Geburtsort und vollständiges Geburtsdatum; Staatsangehörigkeiten oder ob es sich bei der betreffenden Person gegebenenfalls um einen Staatenlosen, einen Flüchtling oder eine Person mit subsidiärem Schutzstatus handelt, sowie gegebenenfalls die nationale Identifikationsnummer; gewöhnlicher Aufenthaltsort oder für den Fall, dass die Person nicht über eine feste Meldeadresse und einen rechtmäßigen Aufenthaltstitel in der Union verfügt, die Postanschrift, unter der sie erreichbar ist, sowie — falls verfügbar — die Steueridentifikationsnummer.",
+      en: "for a natural person: all names and surnames; place and full date of birth; nationalities, or statelessness and refugee or subsidiary protection status where applicable, and the national identification number, where applicable; the usual place of residence or, if there is no fixed residential address with legitimate residence in the Union, the postal address at which the natural person can be reached and, where available the tax identification number.",
+    },
+  },
+  {
+    id: "art22b",
+    ref: {
+      de: "Verordnung (EU) 2024/1624, Art. 22",
+      en: "Regulation (EU) 2024/1624, Art. 22",
+    },
+    text: {
+      de: "Lässt sich nach Ausschöpfung aller möglichen Ermittlungswege keine natürlichen Personen als wirtschaftliche Eigentümer ermitteln oder besteht Zweifel daran, dass es sich bei den ermittelten Personen um die wirtschaftlichen Eigentümer handelt, so halten die Verpflichteten fest, dass kein wirtschaftlicher Eigentümer ermittelt wurde, und ermitteln alle natürlichen Personen, die in der Gesellschaft oder einer anderen juristischen Person der Führungsebene angehören, und überprüfen deren Identität.",
+      en: "Where, after having exhausted all possible means of identification, no natural persons are identified as beneficial owners, or where there are doubts that the persons identified are the beneficial owners, obliged entities shall record that no beneficial owner was identified and identify all the natural persons holding the positions of senior managing officials in the legal entity and shall verify their identity.",
+    },
+  },
+  {
+    id: "art24",
+    ref: {
+      de: "Verordnung (EU) 2024/1624, Art. 24",
+      en: "Regulation (EU) 2024/1624, Art. 24",
+    },
+    text: {
+      de: "Die in Unterabsatz 1 genannten Unstimmigkeiten werden unverzüglich und jedenfalls innerhalb von 14 Kalendertagen nach ihrer Feststellung gemeldet.",
+      en: "The discrepancies referred to in the first subparagraph shall be reported without undue delay and, in any case, within 14 calendar days of their detection.",
+    },
+  },
+  {
+    id: "art24b",
+    ref: {
+      de: "Verordnung (EU) 2024/1624, Art. 24",
+      en: "Regulation (EU) 2024/1624, Art. 24",
+    },
+    text: {
+      de: "Die Anforderungen des vorliegenden Artikels gelten jedoch, wenn die in Unterabsatz 1 genannten Verpflichteten in einer der in Artikel 21 Absatz 2 Unterabsatz 2 genannten Situationen Rechtsberatung leisten.",
+      en: "However, the requirements of this Article shall apply when the obliged entities referred to in the first subparagraph of this paragraph provide legal advice in any of the situations covered by Article 21(2), second subparagraph.",
+    },
+  },
+  {
+    id: "rec108",
+    ref: {
+      de: "Verordnung (EU) 2024/1624, Erwägungsgrund 108",
+      en: "Regulation (EU) 2024/1624, recital 108",
+    },
+    text: {
+      de: "Im Fall einer indirekten Beteiligung sollten die wirtschaftlichen Eigentümer durch Multiplikation der Anteile in der Eigentumskette ermittelt werden.",
+      en: "In the case of indirect shareholding, the beneficial owners should be identified by multiplying the shares in the ownership chain.",
+    },
+  },
+  {
+    id: "rec110",
+    ref: {
+      de: "Verordnung (EU) 2024/1624, Erwägungsgrund 110",
+      en: "Regulation (EU) 2024/1624, recital 110",
+    },
+    text: {
+      de: "Kontrolle sollte als die tatsächliche Fähigkeit verstanden werden, der Entscheidungsfindung der Gesellschaft in wesentlichen Fragen den eigenen Willen aufzuzwingen.",
+      en: "Control should be understood as the effective ability to impose one’s will on the corporate entity’s decision-making on substantive issues.",
+    },
+  },
+  {
+    id: "rec69",
+    ref: {
+      de: "Verordnung (EU) 2024/1624, Erwägungsgrund 69",
+      en: "Regulation (EU) 2024/1624, recital 69",
+    },
+    text: {
+      de: "Solche Überprüfungen sollten in regelmäßigen Abständen erfolgen, sollten aber auch durch Veränderungen der maßgeblichen Umstände des Kunden ausgelöst werden, wenn Tatsachen und Informationen auf eine potenzielle Änderung des Risikoprofils oder der Identifizierungsmerkmale des Kunden hindeuten.",
+      en: "Such reviews should be done on a periodic basis but should also be triggered by changes in relevant circumstances of the customer, when facts and information point towards a potential change in the risk profile or identification details of the customer.",
+    },
+  },
+]

@@ -8,6 +8,7 @@ import {
   recovery,
 } from "@/data/history-gap"
 import { historySources } from "@/data/history-sources"
+import { firstVoice, lawVoices } from "@/data/law-voices"
 import {
   chapters,
   inTodaysMoney,
@@ -232,6 +233,17 @@ const wayRules = JSON.stringify(
 )
 
 // ---------- Papier ----------------------------------------------------------
+// Read aloud on request (src/data/law-voices.ts): the 1991 passage alone,
+// then today's passages one after another until they overlap.
+const voices = JSON.stringify(
+  lawVoices.map((voice) => ({
+    id: voice.id,
+    first: voice.id === firstVoice,
+    ref: voice.ref[language],
+    text: voice.text[language],
+    src: `/audio/law/${voice.id}-${language}.mp3`,
+  })),
+)
 const totalPages = pile.reduce((sum, block) => sum + block.pages, 0)
 const firstPages = pile[0].pages
 const pages = Array.from({ length: totalPages }, (_, k) => k)
@@ -302,6 +314,7 @@ const noteKeep = String(kept / 100)
   data-scenes={JSON.stringify(items.map((item) => item.scene))}
   data-ids={JSON.stringify(items.map((item) => item.id))}
   data-years={JSON.stringify(items.map((item) => item.years ?? null))}
+  data-voices={voices}
 >
   <h2 id="film-title" class="visually-hidden">
     {en ? "The story of over-regulation" : "Die Geschichte der Überregulierung"}
@@ -327,6 +340,15 @@ const noteKeep = String(kept / 100)
               {item.text?.[language]}
               <SourceRefs sources={cite(item.sources)} language={language} />
             </p>
+            {item.chapter === "papier" && (
+              <button type="button" class="say-voice" data-film-voice aria-pressed="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 9h4l5-4v14l-5-4H4z" />
+                  <path class="wave" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" />
+                </svg>
+                <span data-voice-label>{en ? "Read it aloud" : "Vorlesen lassen"}</span>
+              </button>
+            )}
           </div>
         ))}
         <!-- Back and forth by click as well as by scroll. -->
@@ -454,6 +476,10 @@ const noteKeep = String(kept / 100)
                 <span class:list={["page", { first: k < firstPages }]} style={`--k: ${k}`} />
               ))}
             </div>
+            <p class="wall-voice" data-voice-caption>
+              <small data-voice-ref />
+              <span data-voice-text />
+            </p>
           </div>
           <p class="scene-caption">
             {en
@@ -655,6 +681,129 @@ const noteKeep = String(kept / 100)
     const race = raceRoot ? createRace(raceRoot) : null
     const raceStep = Number(raceRoot?.dataset.only ?? -1)
 
+    // The law read aloud, only when asked for: the button under the paper
+    // chapter's headline turns it on and off. In 1991 one voice reads; today
+    // voices start one after another and go on until they talk over each
+    // other. Each speaking page lights up; the newest passage stands as a
+    // caption.
+    type Voice = {
+      id: string
+      first: boolean
+      ref: string
+      text: string
+      src: string
+    }
+    const voiceList: Voice[] = parse("voices")
+    const voiceButtons = all("[data-film-voice]") as HTMLButtonElement[]
+    const caption = film.querySelector<HTMLElement>("[data-voice-caption]")
+    const captionText = film.querySelector<HTMLElement>("[data-voice-text]")
+    const captionRef = film.querySelector<HTMLElement>("[data-voice-ref]")
+    const pagesEls = all(".page")
+    const players = new Map<string, HTMLAudioElement>()
+    const timers: number[] = []
+    let voiceOn = false
+    let voiceStep = ""
+    const player = (voice: Voice) => {
+      let audio = players.get(voice.id)
+      if (!audio) {
+        audio = new Audio(voice.src)
+        audio.preload = "auto"
+        players.set(voice.id, audio)
+      }
+      return audio
+    }
+    const fade = (audio: HTMLAudioElement, to: number, ms: number) => {
+      const from = audio.volume
+      const start = performance.now()
+      const step = (now: number) => {
+        const t = Math.min(1, (now - start) / ms)
+        audio.volume = from + (to - from) * t
+        if (t < 1) requestAnimationFrame(step)
+        else if (to === 0) audio.pause()
+      }
+      requestAnimationFrame(step)
+    }
+    const silence = () => {
+      for (const id of timers.splice(0)) clearTimeout(id)
+      for (const audio of players.values()) {
+        audio.onended = null
+        if (!audio.paused) fade(audio, 0, 500)
+      }
+      for (const page of pagesEls) page.classList.remove("speaking")
+      caption?.classList.remove("on")
+    }
+    const speak = (voice: Voice, pages: HTMLElement[], again: boolean) => {
+      const audio = player(voice)
+      audio.currentTime = 0
+      audio.volume = 0
+      audio.play().catch(() => {})
+      fade(audio, voice.first ? 0.9 : 0.6, 300)
+      for (const page of pages) page.classList.add("speaking")
+      if (captionText) captionText.textContent = voice.text
+      if (captionRef) captionRef.textContent = voice.ref
+      caption?.classList.add("on")
+      audio.onended = () => {
+        for (const page of pages) page.classList.remove("speaking")
+        if (again)
+          timers.push(
+            window.setTimeout(
+              () => speak(voice, [randomPage()], true),
+              600 + Math.random() * 2400,
+            ),
+          )
+      }
+    }
+    const randomPage = () =>
+      pagesEls[6 + Math.floor(Math.random() * Math.max(1, pagesEls.length - 6))]
+    const voiceFor = (stepId: string) => {
+      if (stepId === voiceStep) return
+      voiceStep = stepId
+      silence()
+      if (!voiceOn) return
+      if (stepId === "papier-1991") {
+        const first = voiceList.find((voice) => voice.first)
+        if (first) speak(first, pagesEls.slice(0, 6), false)
+      } else if (stepId === "papier-heute") {
+        voiceList
+          .filter((voice) => !voice.first)
+          .forEach((voice, k) =>
+            timers.push(
+              window.setTimeout(
+                () => speak(voice, [randomPage()], true),
+                400 + k * 2600,
+              ),
+            ),
+          )
+      }
+    }
+    const setVoice = (on: boolean) => {
+      voiceOn = on
+      for (const button of voiceButtons) {
+        button.setAttribute("aria-pressed", String(on))
+        const label = button.querySelector<HTMLElement>("[data-voice-label]")
+        if (label)
+          label.textContent = on
+            ? document.documentElement.lang.startsWith("en")
+              ? "Stop reading"
+              : "Vorlesen stoppen"
+            : document.documentElement.lang.startsWith("en")
+              ? "Read it aloud"
+              : "Vorlesen lassen"
+      }
+      voiceStep = ""
+      voiceFor(stepIds[current] ?? "")
+    }
+    for (const button of voiceButtons)
+      button.addEventListener("click", () => setVoice(!voiceOn))
+    // Leaving the page or the tab stops the voices.
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) silence()
+      else {
+        voiceStep = ""
+        voiceFor(stepIds[current] ?? "")
+      }
+    })
+
     let current = -1
     const show = (i: number) => {
       const previous = current
@@ -668,6 +817,7 @@ const noteKeep = String(kept / 100)
       else race?.hide()
       view.dataset.scene = stepScenes[i]
       view.dataset.stepId = stepIds[i]
+      voiceFor(stepIds[i])
       if (stepAt) stepAt.textContent = String(i + 1)
       if (prev) prev.disabled = i === 0
       for (const say of says)
@@ -1341,9 +1491,133 @@ const noteKeep = String(kept / 100)
   /* Eine Kachel je Seite im Amtsblatt. Das Skript wählt die Spaltenzahl,
      bei der alle 488 am größten in den Platz passen. */
   .wall-wrap {
+    position: relative;
     display: grid;
     place-items: center;
     min-block-size: 0;
+  }
+
+  /* Eine Seite, die gerade vorliest. */
+  .page.speaking {
+    border-color: var(--accent);
+    background: color-mix(in oklab, var(--red) 55%, var(--paper));
+    box-shadow: 0 0 0.8rem color-mix(in oklab, var(--red) 60%, transparent);
+    animation: page-speak 0.9s ease-in-out infinite alternate;
+  }
+
+  @keyframes page-speak {
+    to {
+      scale: 1.35;
+    }
+  }
+
+  /* Was gerade gelesen wird, wörtlich, mit Fundstelle. */
+  .wall-voice {
+    position: absolute;
+    inset-inline: 4%;
+    inset-block-end: 3%;
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.7rem 1rem;
+    border-inline-start: 4px solid var(--red);
+    border-radius: var(--radius-sm);
+    background: color-mix(in oklab, var(--paper) 92%, transparent);
+    box-shadow: 0 0.6rem 2rem rgb(0 0 0 / 0.35);
+    color: var(--foreground);
+    font-size: clamp(0.8rem, 0.7rem + 0.4vw, 1rem);
+    line-height: 1.4;
+    opacity: 0;
+    translate: 0 0.6rem;
+    transition:
+      opacity 0.4s ease,
+      translate 0.4s ease;
+    pointer-events: none;
+  }
+
+  .wall-voice.on {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .wall-voice small {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  /* Lange Passagen enden nach wenigen Zeilen mit Auslassung. */
+  .wall-voice span {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    line-clamp: 6;
+    overflow: hidden;
+  }
+
+  @container campaign (width < 60rem) {
+    .wall-voice {
+      font-size: 0.8rem;
+      line-height: 1.35;
+    }
+
+    .wall-voice small {
+      font-size: 0.72rem;
+    }
+
+    .wall-voice span {
+      -webkit-line-clamp: 4;
+      line-clamp: 4;
+    }
+  }
+
+  .say-voice {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-self: start;
+    margin-block-start: var(--space-xs);
+    padding: 0.45rem 0.9rem 0.45rem 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--foreground);
+    font: inherit;
+    font-size: var(--type-meta);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .say-voice:hover {
+    border-color: var(--ink-3);
+  }
+
+  .say-voice:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .say-voice svg {
+    inline-size: 1.2rem;
+    block-size: 1.2rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .say-voice[aria-pressed="true"] {
+    border-color: var(--red);
+    background: color-mix(in oklab, var(--red) 15%, var(--panel));
+  }
+
+  .say-voice[aria-pressed="true"] .wave {
+    animation: voice-wave 0.8s ease-in-out infinite alternate;
+  }
+
+  @keyframes voice-wave {
+    to {
+      opacity: 0.25;
+    }
   }
 
   .wall {
