@@ -680,10 +680,9 @@ const noteKeep = String(kept / 100)
     const raceStep = Number(raceRoot?.dataset.only ?? -1)
 
     // The law read aloud, only when asked for: the loudspeaker shown in the
-    // paper chapter turns it on and off. In 1991 one voice reads; today
-    // voices start one after another and go on until they talk over each
-    // other. Each speaking page lights up; the newest passage stands as a
-    // caption.
+    // paper chapter turns it on and off. In 1991 one voice reads; today up
+    // to three talk over each other, taking turns through all passages.
+    // Each speaking page lights up; the newest passage stands as a caption.
     type Voice = {
       id: string
       first: boolean
@@ -730,7 +729,7 @@ const noteKeep = String(kept / 100)
       for (const page of pagesEls) page.classList.remove("speaking")
       caption?.classList.remove("on")
     }
-    const speak = (voice: Voice, pages: HTMLElement[], again: boolean) => {
+    const speak = (voice: Voice, pages: HTMLElement[], then?: () => void) => {
       const audio = player(voice)
       audio.currentTime = 0
       audio.volume = 0
@@ -742,14 +741,21 @@ const noteKeep = String(kept / 100)
       caption?.classList.add("on")
       audio.onended = () => {
         for (const page of pages) page.classList.remove("speaking")
-        if (again)
-          timers.push(
-            window.setTimeout(
-              () => speak(voice, [randomPage()], true),
-              600 + Math.random() * 2400,
-            ),
-          )
+        then?.()
       }
+    }
+    // Today: at most three voices at once. When one ends, the next passage
+    // in line follows after a short pause, so all of them come round.
+    const together = 3
+    let nextVoice = 0
+    const chorus = () => {
+      const today = voiceList.filter((voice) => !voice.first)
+      if (!today.length) return
+      const voice = today[nextVoice % today.length]
+      nextVoice++
+      speak(voice, [randomPage()], () =>
+        timers.push(window.setTimeout(chorus, 600 + Math.random() * 1400)),
+      )
     }
     const randomPage = () =>
       pagesEls[6 + Math.floor(Math.random() * Math.max(1, pagesEls.length - 6))]
@@ -760,18 +766,11 @@ const noteKeep = String(kept / 100)
       if (!voiceOn) return
       if (stepId === "papier-1991") {
         const first = voiceList.find((voice) => voice.first)
-        if (first) speak(first, pagesEls.slice(0, 6), false)
+        if (first) speak(first, pagesEls.slice(0, 6))
       } else if (stepId === "papier-heute") {
-        voiceList
-          .filter((voice) => !voice.first)
-          .forEach((voice, k) =>
-            timers.push(
-              window.setTimeout(
-                () => speak(voice, [randomPage()], true),
-                400 + k * 2600,
-              ),
-            ),
-          )
+        nextVoice = 0
+        for (let k = 0; k < together; k++)
+          timers.push(window.setTimeout(chorus, 400 + k * 2600))
       }
     }
     const setVoice = (on: boolean) => {

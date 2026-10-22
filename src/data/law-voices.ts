@@ -3,8 +3,8 @@ import type { Language } from "@/lib/i18n"
 // The paper chapter of the history film reads the law aloud when the
 // reader presses the loudspeaker: in 1991 one voice reads the first
 // directive's duty to show ID; today nine passages of the
-// anti-money-laundering regulation of 2024 start one after another until
-// they talk over each other, chosen for what they reach into (cash, the
+// anti-money-laundering regulation of 2024 take turns, up to three talking
+// over each other at a time, chosen for what they reach into (cash, the
 // data on every customer, continuous monitoring, family members) and for
 // how they read aloud. The words are verbatim from the Official Journal
 // (via the Publications Office), in the page's language; the voices are
