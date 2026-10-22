@@ -2,13 +2,50 @@
 import Layout from "@/layouts/Layout.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import HistoryStack from "@/components/HistoryStack.astro"
-import { languageFor } from "@/lib/i18n"
+import LawGrowth from "@/components/LawGrowth.astro"
+import RuleBalance from "@/components/RuleBalance.astro"
+import RuleFilm from "@/components/RuleFilm.astro"
+import RuleBill from "@/components/RuleBill.astro"
+import RulePromises from "@/components/RulePromises.astro"
+import StatTiles from "@/components/StatTiles.astro"
+import YearColumns from "@/components/YearColumns.astro"
+import { ruleChronicle } from "@/data/aml-history"
+import { historyResearchDate } from "@/data/history"
+import { historySources } from "@/data/history-sources"
+import {
+  accountsExchanged,
+  accountsSources,
+  admissions,
+  effectTiles,
+  formatNumber,
+  reportsByYear,
+  reportsByYearSources,
+  reportsLatest,
+} from "@/data/history-evidence"
+import { languageFor, pathFor } from "@/lib/i18n"
 
-// One message and its evidence: every step of EU tax cooperation has added
-// data, and the next is proposed. The chart is the page; each row opens with
-// its facts and primary sources, so there is no separate chronicle.
+// The apparatus of anti-money-laundering and tax-reporting rules, of which
+// DAC8 is the latest piece, told in four steps that build on each other:
+// the scroll film (src/components/RuleFilm.astro) shows how it grew and
+// what comes of it; "what it means for you" (RuleBalance.astro) shows that
+// everyone is captured, accounts are refused without a reason and data get
+// lost; "the bill" (RuleBill.astro) sets rising effort against flat
+// results, costs, a benefit mostly modelled and a growing apparatus;
+// "promised, measured" (RulePromises.astro) pairs what politicians
+// announced with what their own institutions know. The conclusion offers
+// the one step to take; at the end, folded away, everything to check. The
+// page never argues that a rule would be justified if it worked: its
+// conclusion says so. In every chart red marks what comes of the rules or
+// what is new.
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
+const n = (value: number) => formatNumber(value, language)
+const label = (source: { label: Record<string, string>; href: string }) => ({
+  label: source.label[language],
+  href: source.href,
+})
+const first = reportsByYear[0]
+const sources = historySources(language).list
 ---
 
 <Layout>
@@ -17,18 +54,353 @@ const en = language === "en"
     <header class="hero">
       <div class="hero-text">
         <h1>
-          {en ? "Each new rule adds more data. " : "Jede neue Regel bringt mehr Daten. "}
+          {en ? "More and more rules. " : "Immer mehr Regeln. "}
           <span
-            >{en ? "Until someone sets limits." : "Bis jemand Grenzen setzt."}</span
+            >{en ? "Their effect is hardly measured." : "Gemessen wird kaum."}</span
           >
         </h1>
         <p class="lead">
           {en
-            ? "In 1977, tax authorities asked each other about individual cases. Today, banks, platforms and crypto-asset providers report on their customers every year. The next extension has already been proposed."
-            : "1977 fragten Steuerbehörden einander zu einzelnen Fällen. Heute melden Banken, Plattformen und Krypto-Anbieter jedes Jahr Daten über ihre Kunden. Die nächste Erweiterung ist schon vorgeschlagen."}
+            ? "Since 1991 an apparatus of ID and reporting duties against money laundering and tax evasion has grown. Today it captures everyone and costs billions every year, and hardly anyone measures what it brings. DAC8 is its latest piece."
+            : "Seit 1991 wächst ein Apparat aus Ausweis- und Meldepflichten gegen Geldwäsche und Steuerbetrug. Heute erfasst er alle und kostet jedes Jahr Milliarden, und was er bringt, misst kaum jemand. DAC8 ist sein neuestes Stück."}
         </p>
       </div>
-      <HistoryStack language={language} />
     </header>
+
+    <RuleFilm language={language} />
+
+    <RuleBalance language={language} />
+
+    <RuleBill language={language} />
+
+    <RulePromises language={language} />
+
+    <section id="grenzen" class="band" aria-labelledby="grenzen-heading">
+      <h2 id="grenzen-heading">
+        {en ? "This cannot go on." : "So kann es nicht weitergehen."}
+        <span
+          >{en ? "That is why we push back." : "Darum wehren wir uns."}</span
+        >
+      </h2>
+      <p class="section-intro">
+        {en
+          ? "Almost every new rule captures everyone who uses a bank or a provider, costs money every year and creates data that can get lost. Hardly anyone measures what it achieves. Even a rule that works needs limits: investigations should start from a concrete suspicion, not with everyone."
+          : "Fast jede neue Regel erfasst alle, die eine Bank oder einen Anbieter nutzen, kostet jedes Jahr und legt Daten an, die verloren gehen können. Was sie bringt, misst kaum jemand. Auch eine Regel, die wirkt, braucht Grenzen: Ermittelt werden soll bei konkretem Verdacht, nicht bei allen."}
+      </p>
+      <a class="button primary" href={pathFor("participate", language)}
+        >{en ? "Get involved" : "Mitmachen"}</a
+      >
+    </section>
+
+    <section aria-labelledby="nachpruefen-heading">
+      <details id="nachpruefen" class="history-check">
+        <summary>
+          <h2 id="nachpruefen-heading">
+            {en ? "Every rule and figure, to check." : "Alle Regeln und Zahlen zum Nachprüfen."}
+          </h2>
+          <span class="history-check-what">
+            {en
+              ? "Each rule with its date, content and primary sources, then the full series behind the film."
+              : "Jede Regel mit Datum, Inhalt und Primärquellen, danach die ganzen Reihen hinter dem Film."}
+          </span>
+        </summary>
+
+        <div class="history-chart">
+          <HistoryStack
+            language={language}
+            chronicle={ruleChronicle}
+            research={false}
+          />
+        </div>
+
+        <div id="wirkung" class="history-figures">
+          <YearColumns
+            language={language}
+            id="meldungen"
+            title={en
+            ? `Austria ${reportsLatest.year}: ${n(reportsLatest.received)} suspicion reports, ${n(reportsLatest.convictions)} convictions`
+            : `Österreich ${reportsLatest.year}: ${n(reportsLatest.received)} Verdachtsmeldungen, ${n(reportsLatest.convictions)} Verurteilungen`}
+            note={en
+            ? `Austria, ${first.year} to ${reportsLatest.year}, both on one scale. Convictions for money laundering are not linked to particular reports; the way reports are counted changed several times.`
+            : `Österreich, ${first.year} bis ${reportsLatest.year}, beides auf einer Skala. Verurteilungen wegen Geldwäsche lassen sich einzelnen Meldungen nicht zuordnen; die Zählweise der Meldungen änderte sich mehrmals.`}
+            unit={{ de: "Meldungen", en: "reports" }}
+            second={{
+            de: "Verurteilungen wegen Geldwäsche",
+            en: "convictions for money laundering",
+          }}
+            rows={reportsByYear.map((row) => ({
+            year: row.year,
+            value: row.reports,
+            second: row.convictions,
+          }))}
+            breaks={[2009, 2012, 2024, 2025]}
+            sources={reportsByYearSources.map(label)}
+          />
+          <YearColumns
+            language={language}
+            id="konten"
+            title={en
+            ? "2024: 171 million accounts exchanged worldwide"
+            : "2024: 171 Millionen Konten weltweit ausgetauscht"}
+            note={en
+            ? "Accounts on which tax authorities exchange data, in millions, by year of exchange; the OECD has not yet published newer figures. Reported by the tax administrations; accounts with several holders may count more than once."
+            : "Konten, zu denen Steuerbehörden Daten austauschen, in Millionen, nach Jahr des Austauschs; neuere Zahlen hat die OECD noch nicht veröffentlicht. Von den Steuerverwaltungen gemeldet; Konten mit mehreren Inhabern zählen womöglich mehrfach."}
+            unit={{ de: "Mio. Konten", en: "million accounts" }}
+            rows={accountsExchanged.map((row) => ({
+            year: row.year,
+            value: row.millions,
+          }))}
+            sources={accountsSources.map(label)}
+          />
+        </div>
+
+        <div class="history-law">
+          <LawGrowth language={language} />
+        </div>
+
+        <div class="history-tiles">
+          <StatTiles
+            tiles={effectTiles.map((tile) => ({
+            figure: tile.figure[language],
+            text: tile.text[language],
+            source: label(tile.source),
+          }))}
+          />
+        </div>
+
+        <h3>
+          {en ? "What the Commission and auditors say themselves" : "Was Kommission und Rechnungshöfe selbst sagen"}
+        </h3>
+        <ul class="history-admissions">
+          {admissions.map((item) => (
+          <li>
+            <blockquote>
+              <p>{item.quote[language]}</p>
+            </blockquote>
+            <p class="admission-who">
+              {item.who[language]},{" "}
+              <a href={item.source.href}>{item.source.label[language]}</a>
+            </p>
+          </li>
+        ))}
+        </ul>
+      </details>
+    </section>
+
+    <section id="quellen" aria-labelledby="quellen-heading">
+      <h2 id="quellen-heading">{en ? "Sources." : "Quellen."}</h2>
+      <ol class="source-list">
+        {sources.map((source) => (
+          <li id={`quelle-${source.n}`}>
+            <span class="source-n">[{source.n}]</span>
+            <span>
+              <a href={source.href}>{source.label}</a>
+              {source.host && <span class="source-host">{source.host}</span>}
+            </span>
+          </li>
+        ))}
+      </ol>
+      <p class="history-research">
+        {en
+          ? `Research by Bitcoin Austria, as of ${historyResearchDate.en}. The numbers in brackets lead here; the charts to check carry their own sources.`
+          : `Recherche von Bitcoin Austria, Stand: ${historyResearchDate.de}. Die Nummern in eckigen Klammern führen hierher; die Grafiken zum Nachprüfen tragen ihre eigenen Quellen.`}
+      </p>
+    </section>
   </article>
 </Layout>
+
+<script>
+  // Links to a figure or a rule that now sits in the folded part open it;
+  // rows of the rule chart open themselves (HistoryStack.astro).
+  const reveal = () => {
+    const id = decodeURIComponent(location.hash.slice(1))
+    const target = id ? document.getElementById(id) : null
+    if (!target || target.closest(".stack")) return
+    const closed: HTMLDetailsElement[] = []
+    let details: HTMLDetailsElement | null =
+      target instanceof HTMLDetailsElement
+        ? target
+        : target.closest<HTMLDetailsElement>("details")
+    while (details) {
+      if (!details.open) closed.push(details)
+      details = details.parentElement?.closest("details") ?? null
+    }
+    if (closed.length === 0) return
+    for (const each of closed) each.open = true
+    target.scrollIntoView({ block: "start" })
+  }
+  reveal()
+  addEventListener("hashchange", reveal)
+</script>
+
+<style>
+  .history-chart {
+    margin-block-start: var(--space-xl);
+  }
+
+  .history-tiles,
+  .history-law {
+    margin-block-start: var(--space-2xl);
+  }
+
+  .history-law {
+    max-inline-size: 52rem;
+  }
+
+  .history-check > h3 {
+    margin-block-start: var(--space-2xl);
+  }
+
+  /* Die Grafiken eines Abschnitts in zwei Spalten, schmal untereinander. */
+  .history-figures {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-xl) var(--space-2xl);
+    margin-block-start: var(--space-2xl);
+  }
+
+  @container campaign (width >= 56rem) {
+    .history-figures {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+
+  .admission-who a {
+    color: var(--ink-3);
+  }
+
+  .admission-who a:hover {
+    color: var(--ink);
+  }
+
+  .history-admissions {
+    display: grid;
+    gap: var(--space-l) var(--space-2xl);
+    margin: var(--space-l) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @container campaign (width >= 56rem) {
+    .history-admissions {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .history-admissions li {
+    display: grid;
+    align-content: start;
+    gap: var(--space-xs);
+    padding-block-start: var(--space-s);
+    border-block-start: 2px solid var(--ink);
+  }
+
+  .history-admissions blockquote {
+    margin: 0;
+    color: var(--ink);
+    font-size: var(--type-lead);
+    font-weight: 560;
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  .admission-who {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  /* Zum Nachprüfen: eingeklappt, die Überschrift ist der Schalter. */
+  .history-check > summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-2xs) var(--space-m);
+    padding: var(--space-m);
+    border-radius: var(--radius);
+    background: var(--panel);
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .history-check > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .history-check > summary::after {
+    content: "+";
+    grid-row: 1;
+    grid-column: 2;
+    color: var(--ink-3);
+    font-size: var(--type-h2);
+    font-weight: 500;
+    line-height: 1;
+    transition: rotate 160ms ease;
+  }
+
+  .history-check > summary:hover::after {
+    color: var(--ink);
+  }
+
+  .history-check[open] > summary::after {
+    rotate: 45deg;
+  }
+
+  .history-check h2 {
+    font-size: var(--type-h3);
+  }
+
+  .history-check-what {
+    grid-column: 1;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .history-check > summary::after {
+      transition: none;
+    }
+  }
+
+  /* Die Quellen von Film und Bilanz, nummeriert wie die Verweise. */
+  .source-list {
+    columns: 2 22rem;
+    column-gap: var(--space-xl);
+    margin: var(--space-l) 0 0;
+    padding: 0;
+    font-size: var(--type-meta);
+    line-height: 1.4;
+    list-style: none;
+  }
+
+  .source-list li {
+    display: grid;
+    grid-template-columns: 2.4em minmax(0, 1fr);
+    gap: 0.4em;
+    margin: 0 -0.4em var(--space-2xs);
+    padding: 0.2em 0.4em;
+    break-inside: avoid;
+    border-radius: var(--radius-sm);
+    scroll-margin-block-start: calc(var(--header-height) + var(--space-l));
+    transition: background-color 0.6s ease;
+  }
+
+  .source-list li:target {
+    background: color-mix(in oklab, var(--primary) 14%, transparent);
+  }
+
+  .source-n {
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .source-host {
+    display: block;
+    color: var(--ink-3);
+  }
+
+  .history-research {
+    margin-block-start: var(--space-xl);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+</style>

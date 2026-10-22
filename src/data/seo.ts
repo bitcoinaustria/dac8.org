@@ -56,23 +56,25 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
   },
   history: {
     de: {
-      title: "Von der Amtshilfe zu DAC8: Jede neue Regel bringt mehr Daten",
+      title:
+        "Steuern und Geldwäsche: immer mehr Regeln, kaum gemessene Wirkung",
       description:
-        "Von der Amtshilfe 1977 bis zu jährlichen Meldungen von Banken, Plattformen und Krypto-Anbietern: DAC1 bis DAC9 und die vorgeschlagene Neufassung, mit Primärquellen.",
+        "Von der Amtshilfe 1977 und dem Ausweis bei der Bank bis zu DAC8 und der Bargeldgrenze: wie die Regeln gewachsen sind und was Prüfer über ihre Wirkung fanden, mit Primärquellen.",
       imageLines: [
-        "Jede neue Regel",
-        "bringt mehr Daten.",
-        "Bis jemand Grenzen setzt.",
+        "Immer mehr Regeln.",
+        "Wie viel sie bringen,",
+        "misst kaum jemand.",
       ],
     },
     en: {
-      title: "From mutual assistance to DAC8: each new rule adds more data",
+      title:
+        "Tax and money laundering: more and more rules, little measured effect",
       description:
-        "From mutual assistance in 1977 to annual reports by banks, platforms and crypto-asset providers: DAC1 to DAC9 and the proposed recast, with primary sources.",
+        "From mutual assistance in 1977 and ID at the bank to DAC8 and the cash cap: how the rules have grown and what auditors found about their effect, with primary sources.",
       imageLines: [
-        "Each new rule",
-        "adds more data.",
-        "Until someone sets limits.",
+        "More and more rules.",
+        "Hardly anyone measures",
+        "what they achieve.",
       ],
     },
   },

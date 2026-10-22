@@ -70,7 +70,7 @@ that follow the navigation labels:
 | Angriffe: archive of known physical attacks, map and list | `/angriffe/` | `/en/attacks/` |
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
-| Geschichte: a chart of what tax authorities receive today and one chronology since 1977 by era; linked from dossier and footer | `/geschichte/` | `/en/history/` |
+| Geschichte: how tax reporting and anti-money-laundering rules grew, and what audits found about their effect; linked from dossier and footer | `/geschichte/` | `/en/history/` |
 
 A top bar carries the navigation and a permanent donate button that leads to
 `#spenden` on the participation page; on mobile a bottom bar keeps donating and
@@ -143,15 +143,82 @@ the participation, proceedings and arguments pages share components; the home pa
 dossier remain explicit Astro documents per language. Source URLs are shared in `src/data/sources.ts`.
 
 - Update `src/data/campaign.ts` when the procedural status changes.
-- The history page (`/geschichte/`, `/en/history/`) renders `src/data/history.ts`,
-  a chronology from Directive 77/799/EEC to the pending DAC recast. Its claims
-  are verified in the wiki reference `dac-history-timeline`. Update
-  `historyAsOf` in the same file with every content change; the page shows it
-  as the research status and places the chart's "today" line by it. Each
-  entry keeps a one-sentence summary visible and the rest under "Details";
-  `historyStack` in the same file feeds the chart
-  (`src/components/HistoryStack.astro`), which also has a compact mode with
-  only the rows about individuals for use as a teaser elsewhere.
+- The history page (`/geschichte/`, `/en/history/`) tells the story of
+  over-regulation as a scroll film (`src/components/RuleFilm.astro`, steps
+  and figures in `src/data/overregulation.ts`), built like the home page's
+  data story. Four chapters lead from the reader to the result, each step a
+  headline of a few words over one picture as a contrast: the amount from
+  which you must show ID in today's money, rendered at true scale in
+  Blender (`scripts/artwork/render-cash.py`, fictional notes generated with
+  Codex): a brick of 339 hundred-euro notes in 1991, 13 and a fifty in
+  2017, a single cent today, all three in view; a panopticon at night rendered in Blender
+  (`scripts/artwork/render-panopticon.py`), a ring of eight cells, one per
+  way money can take, around a watchtower; red marks appear on the
+  searchlight paths as the year runs with the scroll, and once one applies
+  a light pass of that cell's searchlight is screen-blended over the base
+  picture, a bar for a check at the bank or provider and a dot for an
+  automatic report to the tax office, until every way is covered; a wall
+  of one tile per Official Journal page, six red ones from 1991 among 488,
+  which on request reads the law aloud: verbatim passages of the 1991
+  directive and the 2024 regulation (`src/data/law-voices.ts`), spoken with
+  Qwen3-TTS (`scripts/artwork/speak-law.py`) and overlapping until they
+  drown each other out, each with its caption and reference;
+  a sea of suspicion reports in Austria beside 139 convictions, then
+  Germany as a race from the same start (`src/lib/film-race.ts`): reports
+  and convictions both at ×1 in 2008, growing year by year while the scale
+  pulls back, to ×51 and ×5.2; then a fictional 100-euro note with a masked robber that
+  crumbles to dust until the red sliver confiscated remains
+  (`src/lib/film-note.ts`). Without JavaScript the
+  headlines stand as text. The page frames DAC8 as the latest piece of a
+  wider apparatus of anti-money-laundering and tax-reporting rules and
+  builds on the film in three steps: what it means for you
+  (`src/components/RuleBalance.astro`: accounts reported without
+  suspicion, accounts refused or closed without a reason, data leaks from
+  `src/data/leaks.ts`); the bill (`src/components/RuleBill.astro`, data in
+  `src/data/history-gap.ts`: report landscapes in
+  `src/components/ReportLandscape.astro` and `ReportCompare.astro`, which
+  set suspicion reports against convictions for money laundering in
+  Germany and Austria from a year the reader picks, both as a multiple of
+  that year, with the two growth factors set large and the convictions per
+  100 reports in the first and last year; without JavaScript the first year
+  stands against the last. Counting changes are named in the notes. A
+  separate illustration names the missing link between reports and outcomes
+  in Austria, without plotting it as zero. Then, Europol's assessment of
+  confiscation, what three tax reporting duties cost
+  a year, how much of the claimed benefit is modelled, and how the
+  apparatus grows); and promised, measured
+  (`src/components/RulePromises.astro`, data in
+  `src/data/history-promises.ts`), pairs of what politicians announced and
+  what their own institutions know. Costs and benefit stay on separate
+  scales, because the benefit covers more duties than the costs shown. Then
+  the conclusion with the one step to take, and at the end, folded away,
+  everything to check: both lines of rules in one chart on one axis, the
+  series and texts described next, and the length of the texts
+  (`src/components/LawGrowth.astro`); links into the folded part open it.
+  The film and the balance cite their sources as numbers in brackets
+  (`src/components/SourceRefs.astro`); `src/data/history-sources.ts`
+  numbers them in the order a reader meets them, and the page lists them
+  once at its end. Name a source in the text only where the story needs
+  it, such as a quotation. `src/data/history.ts` holds the tax
+  chronicle from Directive 77/799/EEC to the pending DAC recast, verified in
+  the wiki reference `dac-history-timeline`; `src/data/aml-history.ts` holds
+  the anti-money-laundering duties in Austria from the first ID duty in 1994
+  to the 2027 cash cap; `ruleChronicle` there joins both, each under its
+  own head, so one count adds up what has piled up. They feed the same chart
+  (`src/components/HistoryStack.astro`, one row per duty from the year it
+  applies, each row opening with its facts and sources), which also has a
+  compact mode with only the tax rows about individuals for the home page.
+  `src/data/history-evidence.ts` holds the figures on volumes and effect
+  (the report and conviction series, accounts exchanged, single figures and
+  the institutions' own words), drawn by `YearColumns` and `StatTiles`. In
+  the film and the charts grey is what is collected and red what comes of
+  it or what is new; each figure says what it measures and no more. The home page repeats the reports against
+  convictions as two bars (`src/components/EffectTeaser.astro`), and the
+  arguments page's reason on growing surveillance cites the same figures. The AML and
+  evidence claims are verified in the wiki references
+  `aml-kyc-history-austria` and `rule-growth-and-effect-evidence`. Update
+  `historyAsOf` in `history.ts` with every content change on the page; it
+  shows as the research status and places the "today" line.
 - Add confirmed public milestones to `src/data/updates.ts`, with a stable ID,
   publication timestamp including timezone, both translations and an optional
   source URL. Future-dated entries stay hidden until a build after that date.

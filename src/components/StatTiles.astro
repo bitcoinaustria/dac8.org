@@ -1,0 +1,71 @@
+---
+// Single figures that need no chart: the number large, one line below on
+// what it counts, the source under that. A row on wide screens.
+interface Props {
+  tiles: {
+    figure: string
+    text: string
+    source: { label: string; href: string }
+  }[]
+}
+
+const { tiles } = Astro.props
+---
+
+<ul class="stat-tiles">
+  {tiles.map((tile) => (
+    <li>
+      <strong>{tile.figure}</strong>
+      <p>{tile.text}</p>
+      <a href={tile.source.href}>{tile.source.label}</a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .stat-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: var(--space-l) var(--space-xl);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2xs);
+    padding-block-start: var(--space-s);
+    border-block-start: 2px solid var(--ink);
+  }
+
+  strong {
+    color: var(--accent);
+    font-size: var(--type-display);
+    font-stretch: 94%;
+    font-weight: var(--weight-heading);
+    line-height: 1;
+    letter-spacing: -0.028em;
+    white-space: nowrap;
+  }
+
+  p {
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  a {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  a::before {
+    content: "↗ ";
+    content: "↗ " / "";
+  }
+
+  a:hover {
+    color: var(--ink);
+  }
+</style>

@@ -1,0 +1,496 @@
+---
+import SourceRefs from "@/components/SourceRefs.astro"
+import {
+  accountsExchanged,
+  formatNumber,
+  unexplained,
+} from "@/data/history-evidence"
+import { balanceSources, historySources } from "@/data/history-sources"
+import { leaks, peopleAffected, roundPeople } from "@/data/leaks"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+
+// What it means for you, right after the film, in three fields of one
+// picture each: everyone with an account abroad is reported without
+// suspicion, collected data get lost, and accounts are refused or closed
+// without a reason. Red marks what the headline beside it names.
+const { language } = Astro.props
+const en = language === "en"
+const n = (value: number) => formatNumber(value, language)
+const { cite } = historySources(language)
+const cited = balanceSources(language)
+
+// Erfasst: the first and the latest year of the global account exchange,
+// as two squares whose areas compare.
+const firstAccounts = accountsExchanged[0]
+const lastAccounts = accountsExchanged[accountsExchanged.length - 1]
+const firstSide = Math.sqrt(firstAccounts.millions / lastAccounts.millions)
+const timesMore = Math.floor(lastAccounts.millions / firstAccounts.millions)
+
+// Risiko: one tile per documented case, those at authorities first.
+const atAuthority = (leak: (typeof leaks)[number]) =>
+  leak.holders.includes("authority")
+const tiles = [...leaks].sort(
+  (a, b) => Number(atAuthority(b)) - Number(atAuthority(a)),
+)
+const authorityCount = leaks.filter(atAuthority).length
+
+// Ohne Begründung: Germany's one count, Austria's none.
+const { germany } = unexplained
+const { refused, closed } = germany
+---
+
+<section id="fuer-dich" class="balance" aria-labelledby="fuer-dich-heading">
+  <h2 id="fuer-dich-heading">
+    {en ? "What it means for you." : "Was das für dich heißt."}
+    <span
+      >{en ? "Reported without suspicion, refused without a reason." : "Erfasst ohne Verdacht, abgelehnt ohne Grund."}</span
+    >
+  </h2>
+
+  <ol class="balance-grid">
+    <!-- Erfasst: two squares, 2017 inside 2024 -->
+    <li class="balance-card">
+      <p class="balance-kicker">{en ? "Captured" : "Erfasst"}</p>
+      <h3>
+        {en ? "Reported without suspicion." : "Gemeldet wird ohne Verdacht."}
+      </h3>
+      <div class="captured">
+        <div
+          class="squares"
+          style={`--first: ${(firstSide * 100).toFixed(2)}%`}
+        >
+          <span class="square-last">
+            <b>{n(lastAccounts.millions)}</b>
+            {en ? `million accounts, ${lastAccounts.year}` : `Millionen Konten, ${lastAccounts.year}`}
+          </span>
+          <span class="square-first">
+            <span>
+              <b>{n(firstAccounts.millions)}</b>
+              {en ? `million, ${firstAccounts.year}` : `Mio., ${firstAccounts.year}`}
+            </span>
+          </span>
+        </div>
+        <p class="captured-ratio">
+          <b>{en ? `over ${timesMore} times` : `über ${timesMore}-mal`}</b>
+          {en ? `as many as in ${firstAccounts.year}` : `so viele wie ${firstAccounts.year}`}
+        </p>
+      </div>
+      <p class="balance-line">
+        {en
+          ? "Accounts on which tax authorities worldwide exchange data. What triggers a report is an account abroad, not a suspicion."
+          : "Konten, zu denen Steuerbehörden weltweit Daten austauschen. Gemeldet wird, wer ein Konto im Ausland hat, nicht wer verdächtig ist."}
+        <SourceRefs sources={cite(cited.captured)} language={language} />
+      </p>
+    </li>
+
+    <!-- Risiko: one tile per documented case, red at authorities -->
+    <li class="balance-card">
+      <p class="balance-kicker">{en ? "Risk" : "Risiko"}</p>
+      <h3>
+        {en ? "Collected data get lost, at authorities too." : "Gesammelte Daten gehen verloren, auch bei Behörden."}
+      </h3>
+      <div class="cases">
+        <ul class="case-tiles" aria-hidden="true">
+          {tiles.map((leak) => (
+            <li class:list={{ authority: atAuthority(leak) }} />
+          ))}
+        </ul>
+        <p class="case-legend">
+          <span class="authority">
+            {en ? `${authorityCount} at authorities` : `${authorityCount} bei Behörden`}
+          </span>
+          <span>
+            {en
+              ? `${leaks.length - authorityCount} at providers, tax tools or service providers`
+              : `${leaks.length - authorityCount} bei Anbietern, Steuertools oder Dienstleistern`}
+          </span>
+        </p>
+        <p class="case-count">
+          <b
+            >{en ? `about ${roundPeople(peopleAffected, "en")}` : `rund ${roundPeople(peopleAffected, "de")}`}</b
+          >
+          {en ? `people affected in ${leaks.length} documented cases` : `Betroffene in ${leaks.length} belegten Fällen`}
+          <SourceRefs sources={cite(cited.cases)} language={language} />
+        </p>
+      </div>
+      <p class="balance-line">
+        {en
+          ? "In 2019 Bulgaria’s tax authority lost data on more than six million people, including account data from the very exchange DAC8 reports will travel through."
+          : "2019 verlor Bulgariens Steuerbehörde Daten von mehr als sechs Millionen Menschen, darunter Kontodaten aus dem Austausch, über den künftig auch DAC8 läuft."}
+        <SourceRefs sources={cite(cited.bulgaria)} language={language} />
+      </p>
+    </li>
+
+    <!-- Ohne Begründung: a notice whose reason is blacked out -->
+    <li class="balance-card wide">
+      <p class="balance-kicker">{en ? "No reason given" : "Ohne Begründung"}</p>
+      <h3>
+        {en ? "Refused or closed, without being told why." : "Abgelehnt oder gekündigt, ohne zu erfahren, warum."}
+      </h3>
+      <div class="withheld">
+        <div class="notice" aria-hidden="true">
+          <span class="notice-line short" />
+          <span class="notice-line" />
+          <span class="notice-line" />
+          <span class="notice-reason">
+            <span>{en ? "Reason:" : "Grund:"}</span>
+            <span class="notice-bar" />
+          </span>
+          <span class="notice-line" />
+          <span class="notice-line short" />
+        </div>
+        <dl class="withheld-figures">
+          <div>
+            <dt>{en ? `about ${n(refused)}` : `rund ${n(refused)}`}</dt>
+            <dd>
+              {en
+                ? "basic accounts refused on anti-money-laundering grounds"
+                : "Basiskonten abgelehnt, aus Gründen der Geldwäsche-Prüfung"}
+            </dd>
+          </div>
+          <div>
+            <dt>{en ? `about ${n(closed)}` : `rund ${n(closed)}`}</dt>
+            <dd>
+              {en
+                ? "closures whose reason the bank was not allowed to give"
+                : "Kündigungen, deren Grund die Bank nicht nennen durfte"}
+            </dd>
+          </div>
+          <div class="none">
+            <dt>{en ? "no figure" : "keine Zahl"}</dt>
+            <dd>
+              {en
+                ? "in Austria: the financial market authority has no figures on this"
+                : "in Österreich: „Hierzu liegen der FMA keine Angaben vor.“"}
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <p class="balance-line">
+        {en
+          ? `Germany, mid-${germany.from} to mid-${germany.to}, basic accounts only: the account everyone has a right to. How many basic accounts banks closed in all, the Federal Government does not know.`
+          : `Deutschland, Mitte ${germany.from} bis Mitte ${germany.to}, nur Basiskonten: das Konto, auf das jeder ein Recht hat. Wie viele Basiskonten Banken insgesamt kündigten, weiß die Bundesregierung nicht.`}
+        <SourceRefs sources={cite(cited.unexplained)} language={language} />
+      </p>
+      <p class="balance-line">
+        {en
+          ? "Where the bank may not reveal a suspicion report, it may keep the reason to itself; for accounts other than basic ones, Austrian banks need give no reason anyway. From 2027, the data of people refused are kept for five years."
+          : "Darf die Bank eine Verdachtsmeldung nicht verraten, darf sie auch den Grund verschweigen; bei anderen als Basiskonten muss sie in Österreich ohnehin keinen nennen. Ab 2027 bleiben die Daten Abgelehnter fünf Jahre gespeichert."}
+        <SourceRefs sources={cite(cited.withheld)} language={language} />
+      </p>
+    </li>
+  </ol>
+</section>
+
+<style>
+  .balance {
+    --bar: light-dark(#3b4147, #a7afb6);
+    --red: var(--primary);
+    --hatch: repeating-linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--red) 70%, transparent) 0 2px,
+      transparent 2px 6px
+    );
+  }
+
+  .balance-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-m);
+    margin: var(--space-xl) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @container campaign (width >= 56rem) {
+    .balance-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .balance-card {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    align-content: start;
+    gap: var(--space-s);
+    min-inline-size: 0;
+    padding: var(--space-m);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+
+  .balance-kicker {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    font-weight: 560;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .balance-card h3 {
+    max-inline-size: 22ch;
+  }
+
+  .balance-line {
+    max-inline-size: 52ch;
+    color: var(--ink-2);
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .balance-admission {
+    max-inline-size: 52ch;
+    padding-inline-start: var(--space-s);
+    border-inline-start: 3px solid var(--red);
+    color: var(--ink);
+    font-weight: 560;
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  /* ---------- Erfasst --------------------------------------------------- */
+
+  /* Zwei Quadrate, deren Flächen sich verhalten wie die Zahlen, daneben
+     das Verhältnis. */
+  .captured {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    align-self: center;
+    gap: var(--space-s) var(--space-m);
+    margin-block: var(--space-2xs);
+  }
+
+  .squares {
+    position: relative;
+    flex: 0 1 18rem;
+    aspect-ratio: 1;
+  }
+
+  .captured-ratio {
+    flex: 1 1 8rem;
+    color: var(--ink-2);
+    line-height: 1.3;
+  }
+
+  .captured-ratio b {
+    display: block;
+    color: var(--ink);
+    font-size: var(--step-2);
+    font-weight: var(--weight-heading);
+    letter-spacing: -0.02em;
+  }
+
+  .square-last {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: start;
+    padding: 0.75rem 0.9rem;
+    border-radius: var(--radius-sm);
+    background: var(--red);
+    color: #fff;
+    font-size: var(--type-meta);
+    line-height: 1.3;
+  }
+
+  .square-last b {
+    font-size: clamp(2.5rem, 2rem + 2cqi, 3.5rem);
+    font-weight: var(--weight-heading);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .square-first {
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-end: 0;
+    inline-size: var(--first);
+    aspect-ratio: 1;
+    border-radius: var(--radius-sm) 0 var(--radius-sm) var(--radius-sm);
+    background: var(--bar);
+  }
+
+  .square-first > span {
+    position: absolute;
+    inset-inline-start: calc(100% + 0.5rem);
+    inset-block-end: 0;
+    color: #fff;
+    font-size: var(--type-meta);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .square-first b {
+    display: block;
+    font-size: var(--step-1);
+  }
+
+  /* ---------- Ohne Begründung ------------------------------------------ */
+
+  /* Das letzte Feld über die ganze Breite: links ein Bescheid, dessen Grund
+     geschwärzt ist, rechts die einzigen Zahlen dazu. */
+  @container campaign (width >= 56rem) {
+    .balance-card.wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .withheld {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-m) var(--space-l);
+    align-items: center;
+    align-self: center;
+    margin-block: var(--space-2xs);
+  }
+
+  @container campaign (width >= 40rem) {
+    .withheld {
+      grid-template-columns: 9rem minmax(0, 1fr);
+    }
+  }
+
+  .notice {
+    display: grid;
+    gap: 0.55rem;
+    inline-size: 9rem;
+    aspect-ratio: 0.72;
+    padding: 1rem 0.9rem;
+    border-radius: var(--radius-sm);
+    background: var(--paper);
+    box-shadow:
+      0 0 0 1px var(--line),
+      0 0.6rem 1.4rem -0.8rem var(--material-shade);
+    align-content: start;
+  }
+
+  .notice-line {
+    block-size: 0.35rem;
+    border-radius: 1px;
+    background: color-mix(in oklab, var(--bar) 25%, transparent);
+  }
+
+  .notice-line.short {
+    inline-size: 55%;
+  }
+
+  .notice-reason {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-block: 0.35rem;
+    color: var(--ink-2);
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .notice-bar {
+    flex: 1;
+    block-size: 0.85rem;
+    background: var(--foreground);
+  }
+
+  .withheld-figures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    gap: var(--space-s) var(--space-m);
+    margin: 0;
+  }
+
+  .withheld-figures div {
+    display: grid;
+    align-content: start;
+    gap: 0.2rem;
+    padding-block-start: var(--space-2xs);
+    border-block-start: 2px solid var(--foreground);
+  }
+
+  .withheld-figures dt {
+    color: var(--ink);
+    font-size: var(--step-2);
+    font-weight: var(--weight-heading);
+    letter-spacing: -0.02em;
+  }
+
+  .withheld-figures dd {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+    line-height: 1.35;
+  }
+
+  .withheld-figures .none {
+    border-color: var(--red);
+  }
+
+  .withheld-figures .none dt {
+    color: var(--accent);
+  }
+
+  /* ---------- Risiko ---------------------------------------------------- */
+
+  .cases {
+    display: grid;
+    align-self: center;
+    gap: var(--space-xs);
+    margin-block: var(--space-2xs);
+  }
+
+  .case-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(2rem, 1fr));
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .case-tiles li {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    background: color-mix(in oklab, var(--bar) 45%, transparent);
+  }
+
+  .case-tiles li.authority {
+    background: var(--red);
+  }
+
+  .case-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem var(--space-s);
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+  }
+
+  .case-legend span::before {
+    content: "";
+    display: inline-block;
+    inline-size: 0.7em;
+    aspect-ratio: 1;
+    margin-inline-end: 0.4em;
+    border-radius: 2px;
+    background: color-mix(in oklab, var(--bar) 45%, transparent);
+  }
+
+  .case-legend .authority::before {
+    background: var(--red);
+  }
+
+  .case-count {
+    color: var(--ink-2);
+  }
+
+  .case-count b {
+    margin-inline-end: 0.3em;
+    color: var(--ink);
+    font-size: var(--step-2);
+    font-weight: var(--weight-heading);
+    letter-spacing: -0.02em;
+  }
+</style>

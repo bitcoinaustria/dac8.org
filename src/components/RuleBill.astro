@@ -1,0 +1,634 @@
+---
+import ReportLandscape from "@/components/ReportLandscape.astro"
+import SourceRefs from "@/components/SourceRefs.astro"
+import {
+  formatNumber,
+  reportingBenefit,
+  reportingCosts,
+} from "@/data/history-evidence"
+import {
+  admissions,
+  apparatus,
+  corrected,
+  estimates,
+  recovery,
+} from "@/data/history-gap"
+import { balanceSources, historySources } from "@/data/history-sources"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+
+// The bill: report volumes on separate, labelled scales, the missing
+// connection to outcomes, then Europol's assessment, reporting costs,
+// estimated benefit and the growing apparatus.
+const { language } = Astro.props
+const en = language === "en"
+const n = (value: number) => formatNumber(value, language)
+const { cite } = historySources(language)
+const cited = balanceSources(language)
+const millions = (value: number) =>
+  en ? `€${n(Math.round(value))}m` : `${n(Math.round(value))} Mio. €`
+const percent = (value: number) => (en ? `${n(value)}%` : `${n(value)} %`)
+
+// Kosten: each duty adds its yearly cost to those before it.
+let running = 0
+const costRows = reportingCosts.map((cost) => {
+  const before = running
+  running += cost.millions
+  return { ...cost, before }
+})
+const costTotal = running
+const costStyle = (before: number, add: number) =>
+  `--before: ${((before / costTotal) * 100).toFixed(2)}%; --add: ${((add / costTotal) * 100).toFixed(2)}%`
+// "über 1,2 Milliarden": rounded down to a tenth of a billion.
+const costFloor = n(Math.floor(costTotal / 100) / 10)
+
+// Nutzen: the share of direct taxes, then that share opened up.
+const benefit = reportingBenefit
+const fromDataShare = ((benefit.fromData / benefit.billions) * 100).toFixed(2)
+
+// The apparatus: each row on its own scale, the plan at full width.
+const growth = apparatus.map((row) => {
+  const top = row.planned?.value ?? row.now.value
+  return {
+    ...row,
+    times: n(Math.round((row.now.value / row.start.value) * 10) / 10),
+    style: [
+      `--start: ${((row.start.value / top) * 100).toFixed(2)}%`,
+      `--now: ${((row.now.value / top) * 100).toFixed(2)}%`,
+    ].join("; "),
+    show: (value: number) =>
+      n(Math.round(value * 10 ** row.digits) / 10 ** row.digits),
+  }
+})
+
+// Laws without a cost figure, and Germany's DAC8 estimate raised.
+const unknownLaws = estimates.filter(
+  (tile) => tile.none && tile.none !== "not-material",
+).length
+const dac8Fix = corrected.find((fix) => fix.id === "dac8") ?? corrected[0]
+---
+
+<section id="rechnung" class="scissors" aria-labelledby="rechnung-heading">
+  <h2 id="rechnung-heading">
+    {en ? "The bill." : "Die Rechnung."}
+    <span
+      >{en ? "The effort grows. What does it achieve?" : "Der Aufwand wächst. Was bringt er?"}</span
+    >
+  </h2>
+
+  <ReportLandscape language={language} />
+
+  <blockquote class="sc-quote" data-reveal>
+    <p>{recovery.quote[language]}</p>
+    <footer>
+      {en ? "Europol, 2025" : "Europol, 2025"}
+      <SourceRefs sources={cite([recovery.sources[1]])} language={language} />
+    </footer>
+  </blockquote>
+
+  <ol class="balance-grid">
+    <!-- Kosten: the yearly cost grows with every duty -->
+    <li class="balance-card">
+      <p class="balance-kicker">{en ? "Cost" : "Kosten"}</p>
+      <h3>
+        {en
+          ? `Over ${costFloor} billion euros a year.`
+          : `Über ${costFloor} Milliarden Euro im Jahr.`}
+      </h3>
+      <ol class="costs">
+        {costRows.map((cost) => (
+          <li style={costStyle(cost.before, cost.millions)}>
+            <span class="cost-what">
+              <b>{en ? `From ${cost.since}` : `Ab ${cost.since}`}</b>
+              {cost.what[language]}
+            </span>
+            <span class="cost-bar" aria-hidden="true">
+              <span class="cost-old" />
+              <span class="cost-new" />
+            </span>
+            <span class="cost-value">+{millions(cost.millions)}</span>
+            {cost.note && <span class="cost-note">{cost.note[language]}</span>}
+          </li>
+        ))}
+      </ol>
+      <p class="balance-line">
+        {en
+          ? "The running cost of three duties to report to the tax office, every year, as the Commission estimates it."
+          : "Laufende Kosten von drei Meldepflichten an die Steuer, jedes Jahr, nach Schätzung der Kommission."}
+        <SourceRefs sources={cite(cited.costs)} language={language} />
+      </p>
+      <p class="balance-line">
+        {en
+          ? `What the rules cost business is often not even estimated: for ${unknownLaws} of ${estimates.length} Austrian laws on money laundering and tax reporting since 2015 there is no figure. Germany first put the one-off cost of DAC8 at €${n(dac8Fix.before)}m, then at €${n(dac8Fix.after)}m.`
+          : `Was die Regeln die Wirtschaft kosten, wird oft nicht einmal geschätzt: Für ${unknownLaws} von ${estimates.length} österreichischen Gesetzen zu Geldwäsche und Steuermeldungen seit 2015 gibt es keine Zahl. Deutschland schätzte die einmaligen Kosten von DAC8 erst auf ${n(dac8Fix.before)}, dann auf ${n(dac8Fix.after)} Mio. €.`}
+        <SourceRefs
+          sources={cite([...estimates.map((tile) => tile.source), ...dac8Fix.sources])}
+          language={language}
+        />
+      </p>
+    </li>
+
+    <!-- Nutzen: a sliver of the taxes, and most of it a model -->
+    <li class="balance-card">
+      <p class="balance-kicker">{en ? "Benefit" : "Nutzen"}</p>
+      <h3>
+        {en
+          ? `${percent(benefit.shareOfDirectTaxes)} of direct taxes, mostly estimated.`
+          : `${percent(benefit.shareOfDirectTaxes)} der direkten Steuern, großteils geschätzt.`}
+      </h3>
+      <div class="benefit" aria-hidden="true">
+        <div class="benefit-all">
+          <span
+            >{en ? "All direct taxes in the EU" : "Alle direkten Steuern in der EU"}</span
+          >
+          <span class="benefit-sliver" />
+        </div>
+        <div class="benefit-zoom" />
+        <div class="benefit-part" style={`--data: ${fromDataShare}%`}>
+          <span class="benefit-data" />
+          <span class="benefit-model" />
+        </div>
+        <div class="benefit-labels">
+          <span>
+            <b
+              >{en ? `€${n(benefit.fromData)}bn` : `${n(benefit.fromData)} Mrd. €`}</b
+            >
+            {en ? "from data" : "aus Daten"}
+          </span>
+          <span class="model">
+            <b
+              >{en ? `€${n(benefit.modelled)}bn` : `${n(benefit.modelled)} Mrd. €`}</b
+            >
+            {en ? "modelled without data" : "Modell ohne Daten"}
+          </span>
+        </div>
+      </div>
+      <p class="balance-line">
+        {en
+          ? `What all exchanged tax data bring a year, as the Commission estimates it: €${n(benefit.billions)} billion.`
+          : `So viel bringen alle ausgetauschten Steuerdaten im Jahr, schätzt die Kommission: ${n(benefit.billions)} Milliarden Euro.`}
+        <SourceRefs sources={cite(cited.benefit)} language={language} />
+      </p>
+    </li>
+  </ol>
+
+  <!-- 1. The apparatus -->
+  <div class="gap-block" data-reveal>
+    <h3>{en ? "More staff, more budget." : "Mehr Personal, mehr Budget."}</h3>
+    <ol class="growth">
+      {growth.map((row) => (
+        <li style={row.style}>
+          <p class="growth-who">
+            {row.who[language]}
+            <span>{row.unit[language]}</span>
+          </p>
+          <p class="growth-times">×{row.times}</p>
+          <div class="growth-track" aria-hidden="true">
+            <span class="growth-now" />
+            <span class="growth-plan" />
+            <span class="growth-start" />
+          </div>
+          <p class="growth-values">
+            <span><b>{row.show(row.start.value)}</b> {row.start.year}</span>
+            <span><b>{row.show(row.now.value)}</b> {row.now.year}</span>
+            {row.planned && (
+              <span class="planned">
+                {en ? "planned" : "geplant"} <b>{row.show(row.planned.value)}</b>
+                {row.planned.year && ` ${row.planned.year}`}
+              </span>
+            )}
+          </p>
+        </li>
+      ))}
+    </ol>
+    <p class="gap-line">
+      {en
+        ? "Each row on its own scale; the dashed part is planned."
+        : "Jede Zeile auf ihrem eigenen Maßstab; gestrichelt, was geplant ist."}
+      <SourceRefs
+        sources={cite(apparatus.flatMap((row) => row.sources))}
+        language={language}
+      />
+    </p>
+  </div>
+  <blockquote class="gap-quote" data-reveal>
+    <p>{admissions.staff.quote[language]}</p>
+    <footer>
+      {admissions.staff.who[language]}
+      <SourceRefs
+        sources={cite([admissions.staff.source])}
+        language={language}
+      />
+    </footer>
+  </blockquote>
+</section>
+
+<script>
+  // Lines draw themselves once the chart comes into view.
+  const parts = document.querySelectorAll<HTMLElement>(
+    ".scissors [data-reveal]",
+  )
+  const watch = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries)
+        if (entry.isIntersecting) {
+          entry.target.classList.add("seen")
+          watch.unobserve(entry.target)
+        }
+    },
+    { rootMargin: "0px 0px -20% 0px" },
+  )
+  for (const part of parts) watch.observe(part)
+  document.documentElement.classList.add("scissors-ready")
+</script>
+
+<style>
+  .scissors {
+    --bar: light-dark(#3b4147, #a7afb6);
+    --red: var(--primary);
+    --hatch: repeating-linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--red) 70%, transparent) 0 2px,
+      transparent 2px 6px
+    );
+    display: grid;
+    gap: var(--space-l);
+  }
+
+  .sc-quote {
+    display: grid;
+    gap: var(--space-2xs);
+    max-inline-size: 52rem;
+    margin: 0;
+    padding-inline-start: var(--space-l);
+    border-inline-start: 6px solid var(--red);
+  }
+
+  .sc-quote p {
+    color: var(--ink);
+    font-size: var(--type-h3);
+    font-weight: var(--weight-heading);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    text-wrap: pretty;
+  }
+
+  .sc-quote footer {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  /* ---------- Kosten und Nutzen, Personal ------------------------------ */
+
+  .balance-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-m);
+    margin: var(--space-xl) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @container campaign (width >= 56rem) {
+    .balance-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .balance-card {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    align-content: start;
+    gap: var(--space-s);
+    min-inline-size: 0;
+    padding: var(--space-m);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+
+  .balance-kicker {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    font-weight: 560;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .balance-card h3 {
+    max-inline-size: 22ch;
+  }
+
+  .balance-line {
+    max-inline-size: 52ch;
+    color: var(--ink-2);
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .balance-admission {
+    max-inline-size: 52ch;
+    padding-inline-start: var(--space-s);
+    border-inline-start: 3px solid var(--red);
+    color: var(--ink);
+    font-weight: 560;
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  /* ---------- Kosten ---------------------------------------------------- */
+
+  /* Jede Zeile trägt die Kosten davor grau und die neue Pflicht rot. */
+  .costs {
+    display: grid;
+    gap: var(--space-s);
+    align-self: center;
+    margin: var(--space-2xs) 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .costs li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.3rem var(--space-s);
+    align-items: baseline;
+  }
+
+  .cost-what {
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+  }
+
+  .cost-what b {
+    margin-inline-end: 0.4em;
+    color: var(--ink);
+  }
+
+  .cost-bar {
+    position: relative;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    block-size: 1.6rem;
+    border-radius: var(--radius-sm);
+    background: color-mix(in oklab, var(--bar) 8%, transparent);
+  }
+
+  .cost-old,
+  .cost-new {
+    position: absolute;
+    inset-block: 0;
+  }
+
+  .cost-old {
+    inset-inline-start: 0;
+    inline-size: var(--before);
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    background: var(--bar);
+  }
+
+  .cost-new {
+    inset-inline-start: var(--before);
+    inline-size: max(3px, var(--add));
+    border-radius: var(--radius-sm);
+    background: var(--red);
+  }
+
+  .cost-value {
+    grid-row: 1;
+    grid-column: 2;
+    font-weight: 600;
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  .cost-note {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  /* ---------- Nutzen ---------------------------------------------------- */
+
+  /* Oben alle direkten Steuern mit dem roten Splitter, darunter der
+     Splitter aufgezogen: links aus Daten, rechts nur ein Modell. */
+  .benefit {
+    display: grid;
+    align-self: center;
+    margin-block: var(--space-2xs);
+  }
+
+  .benefit-all {
+    position: relative;
+    display: flex;
+    align-items: center;
+    block-size: 2rem;
+    padding-inline: 0.6rem;
+    border-radius: var(--radius-sm);
+    background: color-mix(in oklab, var(--bar) 22%, transparent);
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+  }
+
+  .benefit-sliver {
+    position: absolute;
+    inset-block: -0.2rem;
+    inset-inline-end: 0;
+    inline-size: 3px;
+    background: var(--red);
+  }
+
+  .benefit-zoom {
+    block-size: 2.5rem;
+    background: color-mix(in oklab, var(--red) 10%, transparent);
+    clip-path: polygon(calc(100% - 3px) 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  .benefit-part {
+    display: flex;
+    block-size: 2rem;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    box-shadow: inset 0 0 0 1.5px var(--red);
+  }
+
+  .benefit-data {
+    flex: 0 0 var(--data);
+    background: var(--red);
+  }
+
+  .benefit-model {
+    flex: 1;
+    background: var(--hatch);
+  }
+
+  .benefit-labels {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-s);
+    margin-block-start: 0.4rem;
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+  }
+
+  .benefit-labels b {
+    display: block;
+    color: var(--ink);
+    font-size: var(--step-0);
+  }
+
+  .benefit-labels .model {
+    text-align: end;
+  }
+
+  .gap-block {
+    display: grid;
+    gap: var(--space-m);
+    max-inline-size: 60rem;
+    padding: var(--space-m);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+
+  .gap-line {
+    max-inline-size: 62ch;
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  /* ---------- Personal ------------------------------------------------- */
+
+  .growth {
+    display: grid;
+    gap: var(--space-m);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .growth li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.35rem var(--space-s);
+    align-items: end;
+  }
+
+  .growth-who {
+    color: var(--ink);
+    font-weight: 560;
+    line-height: 1.3;
+  }
+
+  .growth-who span {
+    display: block;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    font-weight: 400;
+  }
+
+  .growth-times {
+    color: var(--accent);
+    font-size: var(--step-3);
+    font-weight: var(--weight-heading);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .growth-track {
+    position: relative;
+    grid-column: 1 / -1;
+    block-size: 1.1rem;
+  }
+
+  .growth-now,
+  .growth-plan,
+  .growth-start {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    border-radius: var(--radius-sm);
+  }
+
+  .growth-plan {
+    inline-size: 100%;
+    border: 1.5px dashed var(--ink-3);
+  }
+
+  .growth-now {
+    z-index: 1;
+    inline-size: var(--now);
+    background: var(--bar);
+    transform-origin: left;
+  }
+
+  .growth-start {
+    z-index: 2;
+    inline-size: max(3px, var(--start));
+    background: var(--red);
+  }
+
+  .growth-values {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-m);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  .growth-values b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .growth-values span:first-child b {
+    color: var(--accent);
+  }
+
+  .gap-quote {
+    display: grid;
+    gap: var(--space-2xs);
+    max-inline-size: 46rem;
+    margin: 0;
+    margin-inline-start: clamp(0rem, 8vw, 6rem);
+    padding-inline-start: var(--space-m);
+    border-inline-start: 3px solid var(--red);
+  }
+
+  .gap-quote p {
+    color: var(--ink);
+    font-size: var(--type-lead);
+    font-weight: 560;
+    line-height: 1.35;
+    text-wrap: pretty;
+  }
+
+  .gap-quote footer {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  /* ---------- Auftritt beim Scrollen ----------------------------------- */
+
+  :global(html.scissors-ready) [data-reveal].sc-quote:not(.seen) {
+    opacity: 0;
+    translate: 0 1rem;
+  }
+
+  .sc-quote {
+    transition:
+      opacity 0.6s ease,
+      translate 0.6s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sc-quote {
+      transition: none !important;
+    }
+  }
+</style>

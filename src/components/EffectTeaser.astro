@@ -1,0 +1,131 @@
+---
+import { formatNumber, reportsLatest } from "@/data/history-evidence"
+import type { Language } from "@/lib/i18n"
+
+// The history page's effect chart in one glance, for the home page: the
+// year's suspicion reports and convictions as two bars on one scale. The
+// red sliver is the point; the history page carries the series and caveats.
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+const en = language === "en"
+const n = (value: number) => formatNumber(value, language)
+const { year, received, convictions, source } = reportsLatest
+const rows = [
+  {
+    kind: "value",
+    figure: n(received),
+    label: en
+      ? `suspicion reports in Austria, ${year}`
+      : `Verdachtsmeldungen in Österreich, ${year}`,
+    width: "100%",
+  },
+  {
+    kind: "second",
+    figure: n(convictions),
+    label: en
+      ? "convictions for money laundering"
+      : "Verurteilungen wegen Geldwäsche",
+    width: `${((convictions / received) * 100).toFixed(2)}%`,
+  },
+]
+---
+
+<figure class="effect-teaser">
+  <ul>
+    {rows.map((row) => (
+      <li class={row.kind} style={`--w: ${row.width}`}>
+        <span class="teaser-bar" aria-hidden="true" />
+        <span class="teaser-text">
+          <strong>{row.figure}</strong> {row.label}
+        </span>
+      </li>
+    ))}
+  </ul>
+  <figcaption>
+    {en
+      ? "Both on one scale. Convictions are not linked to particular reports."
+      : "Beides auf einer Skala. Verurteilungen lassen sich einzelnen Meldungen nicht zuordnen."}{" "}
+    <a href={source.href}>{source.label[language]}</a>
+  </figcaption>
+</figure>
+
+<style>
+  .effect-teaser {
+    --bar: light-dark(#3b4147, #a7afb6);
+    display: grid;
+    gap: var(--space-s);
+    max-inline-size: 44rem;
+    margin: var(--space-l) 0 0;
+  }
+
+  ul {
+    display: grid;
+    gap: var(--space-s);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .teaser-bar {
+    display: block;
+    inline-size: max(3px, var(--w));
+    block-size: 0.875rem;
+    border-radius: 0 4px 4px 0;
+    background: var(--bar);
+    transform-origin: left center;
+  }
+
+  .second .teaser-bar {
+    background: var(--primary);
+  }
+
+  .teaser-text {
+    color: var(--ink-2);
+    font-size: var(--type-lead);
+    line-height: 1.3;
+  }
+
+  .teaser-text strong {
+    color: var(--ink);
+    font-weight: var(--weight-heading);
+  }
+
+  .second .teaser-text strong {
+    color: var(--accent);
+  }
+
+  figcaption {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  figcaption a {
+    color: inherit;
+  }
+
+  figcaption a::before {
+    content: "↗ ";
+    content: "↗ " / "";
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .teaser-bar {
+      animation: teaser-grow 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      animation-delay: 200ms;
+    }
+  }
+
+  @keyframes teaser-grow {
+    from {
+      scale: 0 1;
+    }
+  }
+</style>

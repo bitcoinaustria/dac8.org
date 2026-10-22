@@ -1,0 +1,397 @@
+---
+import { formatNumber } from "@/data/history-evidence"
+import type { Language } from "@/lib/i18n"
+
+// One column per year on one scale. An optional second value per year sits
+// at the foot of its column in red, on the same scale, so a small outcome
+// stays small beside a large input. The first and last columns carry their
+// values; pointing at any column shows its own. Years in `breaks` changed
+// how the value is counted and are marked below the axis.
+interface Props {
+  language: Language
+  id: string
+  title: string
+  note?: string
+  unit: { de: string; en: string }
+  second?: { de: string; en: string }
+  rows: { year: number; value: number; second?: number }[]
+  breaks?: number[]
+  sources: { label: string; href: string }[]
+}
+
+const {
+  language,
+  id,
+  title,
+  note,
+  unit,
+  second,
+  rows,
+  breaks = [],
+  sources,
+} = Astro.props
+const en = language === "en"
+const max = Math.max(...rows.map((row) => row.value))
+// Two or three gridlines at round values below the top.
+const magnitude = 10 ** Math.floor(Math.log10(max))
+const step =
+  [1, 2, 2.5, 5, 10].map((f) => f * magnitude).find((s) => max / s <= 3) ??
+  magnitude
+const grid = Array.from(
+  { length: Math.floor(max / step) },
+  (_, i) => (i + 1) * step,
+)
+const pct = (value: number) => `${((value / max) * 100).toFixed(2)}%`
+const n = (value: number) => formatNumber(value, language)
+const unitText = unit[language]
+const secondText = second?.[language]
+const columns = rows.map((row, i) => ({
+  ...row,
+  edge: i === 0 || i === rows.length - 1,
+  // Tips sit at the chart's edge nearer the column.
+  late: i >= rows.length / 2,
+  // Years on the axis: first, last and every fifth, so they never crowd.
+  labelled:
+    i === 0 ||
+    i === rows.length - 1 ||
+    (row.year % 5 === 0 && i > 1 && i < rows.length - 2),
+  broken: breaks.includes(row.year),
+  tip: [
+    `${row.year}: ${n(row.value)} ${unitText}`,
+    row.second !== undefined && secondText
+      ? `${n(row.second)} ${secondText}`
+      : undefined,
+  ]
+    .filter(Boolean)
+    .join(", "),
+  // The second value as a share of its own column.
+  style: `--h: ${pct(row.value)}; --s: ${(((row.second ?? 0) / row.value) * 100).toFixed(2)}%`,
+}))
+---
+
+<figure class="year-columns" aria-labelledby={`${id}-title`}>
+  <figcaption>
+    <h3 id={`${id}-title`}>{title}</h3>
+    {note && <p class="columns-note">{note}</p>}
+    {secondText && (
+      <ul class="columns-legend" aria-hidden="true">
+        <li class="value">{unitText}</li>
+        <li class="second">{secondText}</li>
+      </ul>
+    )}
+  </figcaption>
+
+  <div class="columns-plot" aria-hidden="true">
+    {grid.map((value) => (
+      <span class="columns-grid" style={`--f: ${(value / max).toFixed(4)}`}>
+        <span>{n(value)}</span>
+      </span>
+    ))}
+    <ol style={`--count: ${columns.length}`}>
+      {columns.map((column) => (
+        <li
+          class:list={{ edge: column.edge, late: column.late }}
+          style={column.style}
+          tabindex="0"
+          aria-label={column.tip}
+        >
+          <span class="columns-bar">
+            {column.second !== undefined && <span class="columns-second" />}
+            {column.edge && <span class="columns-value">{n(column.value)}</span>}
+          </span>
+          <span class="columns-tip">{column.tip}</span>
+          <span
+            class:list={[
+              "columns-year",
+              { broken: column.broken, hidden: !column.labelled && rows.length > 10 },
+            ]}>{column.year}</span
+          >
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <div class="visually-hidden">
+    <table>
+      <caption>
+        {title}
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">{en ? "Year" : "Jahr"}</th>
+          <th scope="col">{unitText}</th>
+          {secondText && <th scope="col">{secondText}</th>}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => (
+        <tr>
+          <th scope="row">{row.year}</th>
+          <td>{n(row.value)}</td>
+          {secondText && <td>{row.second === undefined ? "–" : n(row.second)}</td>}
+        </tr>
+      ))}
+      </tbody>
+    </table>
+  </div>
+
+  <ul class="columns-sources">
+    {breaks.length > 0 && (
+      <li class="columns-break">
+        {en
+          ? `Counting changed in ${breaks.join(", ")}.`
+          : `Zählweise geändert ${breaks.join(", ")}.`}
+      </li>
+    )}
+    {sources.map((source) => (
+      <li>
+        <a href={source.href}>{source.label}</a>
+      </li>
+    ))}
+  </ul>
+</figure>
+
+<style>
+  .year-columns {
+    --bar: light-dark(#3b4147, #a7afb6);
+    --plot: 11rem;
+    display: grid;
+    gap: var(--space-s);
+    margin: 0;
+    font-size: var(--type-meta);
+    line-height: 1.4;
+  }
+
+  h3 {
+    max-inline-size: 34ch;
+    font-size: var(--step-1);
+    font-stretch: 100%;
+    line-height: 1.25;
+  }
+
+  .columns-note {
+    margin-block-start: var(--space-3xs);
+    color: var(--ink-3);
+    text-wrap: pretty;
+  }
+
+  .columns-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs) var(--space-s);
+    margin: var(--space-2xs) 0 0;
+    padding: 0;
+    color: var(--ink-3);
+    list-style: none;
+  }
+
+  .columns-legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+  }
+
+  .columns-legend li::before {
+    content: "";
+    inline-size: 0.625rem;
+    block-size: 0.625rem;
+    border-radius: 2px;
+    background: var(--bar);
+  }
+
+  .columns-legend .second::before {
+    background: var(--primary);
+  }
+
+  /* Säulen über der Grundlinie, Jahre darunter; Hilfslinien als Haarlinien. */
+  .columns-plot {
+    position: relative;
+    margin-block-start: 1.25rem;
+    padding-inline-start: 2.75rem;
+  }
+
+  .columns-grid {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: calc(1.5rem + var(--plot) * var(--f));
+    border-block-start: 1px solid var(--line);
+  }
+
+  .columns-grid span {
+    position: absolute;
+    inset-inline-start: 0;
+    translate: 0 -55%;
+    padding-inline-end: 0.25rem;
+    background: var(--band-fill, var(--background));
+    color: var(--ink-3);
+  }
+
+  /* Hinweise hängen an der ganzen Grafik, nicht an der Säule: so bleiben
+     sie auch schmal im Bild. */
+  ol {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+    align-items: end;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Eine Spalte bleibt so schmal wie ihre Spur; Jahreszahlen dürfen über
+     den Rand ragen. */
+  ol > li {
+    display: grid;
+    min-inline-size: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: var(--plot) 1.5rem;
+    align-items: end;
+    outline-offset: 2px;
+  }
+
+  .columns-bar {
+    position: relative;
+    display: block;
+    block-size: var(--h);
+    min-block-size: 1px;
+    border-radius: 3px 3px 0 0;
+    background: var(--bar);
+    transform-origin: bottom;
+  }
+
+  /* Der zweite Wert am Fuß der Säule, mindestens zwei Pixel hoch, damit er
+     sichtbar bleibt. */
+  .columns-second {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    block-size: max(2px, var(--s));
+    background: var(--primary);
+  }
+
+  .columns-value {
+    position: absolute;
+    inset-block-end: calc(100% + 0.2rem);
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    color: var(--ink);
+    font-weight: var(--weight-heading);
+    white-space: nowrap;
+  }
+
+  .columns-year {
+    align-self: start;
+    justify-self: center;
+    padding-block-start: 0.3rem;
+    color: var(--ink-3);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  ol > li:first-child .columns-year {
+    justify-self: start;
+  }
+
+  ol > li:last-child .columns-year {
+    justify-self: end;
+  }
+
+  .columns-year.hidden {
+    visibility: hidden;
+  }
+
+  .columns-year.broken::after {
+    content: "*";
+    color: var(--ink);
+  }
+
+  .columns-tip {
+    position: absolute;
+    z-index: 2;
+    inset-block-end: calc(1.5rem + var(--plot) + 0.25rem);
+    inset-inline-start: 0;
+    padding: 0.3rem 0.5rem;
+    border-radius: var(--radius-sm);
+    background: var(--foreground);
+    color: var(--background);
+    inline-size: max-content;
+    max-inline-size: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+  }
+
+  ol > li:first-child .columns-value {
+    inset-inline-start: 0;
+    translate: 0 0;
+  }
+
+  ol > li.late .columns-tip {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+  }
+
+  ol > li:last-child .columns-value {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+    translate: 0 0;
+  }
+
+  ol > li:is(:hover, :focus-visible) .columns-tip {
+    opacity: 1;
+  }
+
+  ol > li:is(:hover, :focus-visible) .columns-bar {
+    background: var(--ink);
+  }
+
+  ol > li:is(:hover, :focus-visible) .columns-value {
+    visibility: hidden;
+  }
+
+  .columns-sources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-s);
+    margin: 0;
+    padding: 0;
+    color: var(--ink-3);
+    list-style: none;
+  }
+
+  .columns-sources a {
+    color: var(--ink-3);
+  }
+
+  .columns-sources a::before {
+    content: "↗ ";
+    content: "↗ " / "";
+  }
+
+  .columns-sources a:hover {
+    color: var(--ink);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .columns-bar {
+      animation: columns-rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      animation-delay: 150ms;
+    }
+  }
+
+  @keyframes columns-rise {
+    from {
+      scale: 1 0;
+    }
+  }
+</style>

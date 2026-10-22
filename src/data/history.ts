@@ -6,7 +6,7 @@ import type { Language } from "@/lib/i18n"
 
 // Research status shown at the bottom of the history page. Update it with every
 // change to the entries below, so readers can tell how current the page is.
-export const historyAsOf = "2026-09-30"
+export const historyAsOf = "2026-10-22"
 
 const longDate = (locale: string) =>
   new Intl.DateTimeFormat(locale, {
@@ -25,7 +25,14 @@ export const historyResearchDate: Record<Language, string> = {
 // chart row of each era.
 type Era = "anfaenge" | "automatik" | "konzerne" | "neue-bereiche" | "ausblick"
 // context: outside the directive, e.g. OECD standards. proposed: not law.
-type Status = "context" | "repealed" | "past" | "current" | "proposed"
+// planned: adopted, but applies only from a later date.
+type Status =
+  | "context"
+  | "repealed"
+  | "past"
+  | "current"
+  | "planned"
+  | "proposed"
 
 type Text = {
   when: string
@@ -38,14 +45,16 @@ type Text = {
   austria?: string
 }
 
-type Source = {
+export type Source = {
   label: Record<Language, string>
   href: Record<Language, string>
 }
 
-type Entry = {
+export type Entry = {
   id: string
-  era: Era
+  // Label of the "reporters" fact, where it is not who reports.
+  who?: Record<Language, string>
+  era?: Era
   status: Status
   year: string
   // ISO date of adoption, publication or proposal.
@@ -56,21 +65,25 @@ type Entry = {
 }
 
 // EUR-Lex in the reader's language.
-const eli = (path: string, label: Record<Language, string>): Source => ({
+export const eli = (path: string, label: Record<Language, string>): Source => ({
   label,
   href: {
     de: `https://eur-lex.europa.eu/eli/${path}/oj/deu`,
     en: `https://eur-lex.europa.eu/eli/${path}/oj/eng`,
   },
 })
-const celex = (id: string, label: Record<Language, string>): Source => ({
+export const celex = (id: string, label: Record<Language, string>): Source => ({
   label,
   href: {
     de: `https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:${id}`,
     en: `https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=CELEX:${id}`,
   },
 })
-const bgbl = (year: number, part: "I" | "II", number: number): Source => ({
+export const bgbl = (
+  year: number,
+  part: "I" | "II",
+  number: number,
+): Source => ({
   label: {
     de: `BGBl. ${part} Nr. ${number}/${year}`,
     en: `Federal Law Gazette ${part} No. ${number}/${year}`,
@@ -80,7 +93,7 @@ const bgbl = (year: number, part: "I" | "II", number: number): Source => ({
     en: `https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_${year}_${part}_${number}/BGBLA_${year}_${part}_${number}.html`,
   },
 })
-const same = (href: string, de: string, en: string): Source => ({
+export const same = (href: string, de: string, en: string): Source => ({
   label: { de, en },
   href: { de: href, en: href },
 })
@@ -628,11 +641,16 @@ export type StackRow = {
 // "compact" groups also appear in the short chart on the home page: the
 // steps about individuals and the proposal, which would add registers about
 // them.
-export const historyStack: {
+export type StackGroup = {
   label: Record<Language, string>
+  // The line of rules the group belongs to; the chart heads each line once
+  // where several share one chart.
+  domain?: { id: string; label: Record<Language, string> }
   compact?: boolean
   rows: StackRow[]
-}[] = [
+}
+
+export const historyStack: StackGroup[] = [
   {
     label: { de: "Über Privatpersonen", en: "About individuals" },
     compact: true,
@@ -776,31 +794,32 @@ export const historyStack: {
   },
 ]
 
-const statusOf = new Map(history.map((entry) => [entry.id, entry.status]))
-export const isProposed = (row: StackRow) => statusOf.get(row.id) === "proposed"
+// Steps that do not apply yet: proposals and adopted acts with a later start.
+export const isAhead = (status: Status) =>
+  status === "proposed" || status === "planned"
 
-// How many of the given rows apply in a year: proposals do not count, and a
-// step applies from its first year until it is repealed.
+// How many of the given rows apply in a year: a step applies from its first
+// year until it is repealed. Callers leave out the steps ahead.
 export const stepsInForce = (rows: StackRow[], year: number) =>
   rows.filter(
     (row) =>
-      !isProposed(row) &&
-      row.from <= year &&
-      year <= (row.until ?? Number.POSITIVE_INFINITY),
+      row.from <= year && year <= (row.until ?? Number.POSITIVE_INFINITY),
   ).length
 
-// What every step shares: each amends Directive 2011/16/EU, whose Article 16
-// says what exchanged data may be used for. The history chart closes with it.
-export const historyCommon: {
+export type Common = {
   translations: Record<
     Language,
     { label: string; summary: string; text: string[] }
   >
   sources: Source[]
-} = {
+}
+
+// What every step shares: each amends Directive 2011/16/EU, whose Article 16
+// says what exchanged data may be used for. The history chart closes with it.
+export const historyCommon: Common = {
   translations: {
     de: {
-      label: "Für alle Regeln",
+      label: "Für alle Steuerdaten",
       summary:
         "Seit DAC8 dürfen alle diese Daten auch gegen Geldwäsche und Terrorismusfinanzierung verwendet werden.",
       text: [
@@ -809,7 +828,7 @@ export const historyCommon: {
       ],
     },
     en: {
-      label: "For every rule",
+      label: "For all tax data",
       summary:
         "Since DAC8, all of this data may also be used to fight money laundering and terrorist financing.",
       text: [
@@ -830,15 +849,22 @@ export const historyCommon: {
   ],
 }
 
-export const historyFor = (language: Language) => {
+export const entriesFor = (
+  entries: Entry[],
+  language: Language,
+  who?: Record<Language, string>,
+) => {
   const en = language === "en"
-  return history.map((entry) => {
+  return entries.map((entry) => {
     const { translations, short, sources, ...rest } = entry
     const text = translations[language]
     const facts = [
       { label: en ? "Date" : "Datum", text: text.when },
       text.reporters && {
-        label: en ? "Who reports" : "Wer meldet",
+        label:
+          entry.who?.[language] ??
+          who?.[language] ??
+          (en ? "Who reports" : "Wer meldet"),
         text: text.reporters,
       },
       text.austria && {
@@ -866,4 +892,45 @@ export const historyFor = (language: Language) => {
       })),
     }
   })
+}
+
+// One chart of the history page: its entries, the rows drawn from them and
+// the words around the chart. The tax chart is also the teaser on the home
+// page; its ids stay as they were, so links into it keep working.
+export type Chronicle = {
+  // Prefix of the chart's title id.
+  id: string
+  entries: Entry[]
+  stack: StackGroup[]
+  // Notes below the rows that hold for all of them.
+  commons?: (Common & { id: string })[]
+  axisStart: number
+  ticks: number[]
+  title: Record<Language, string>
+  note: Record<Language, string>
+  // Counted in the sentence above the chart: "five of these ...".
+  noun: Record<Language, string>
+  // Beside the columns that add the rows up, year by year.
+  sum: Record<Language, string>
+  // Label of the "reporters" fact.
+  who?: Record<Language, string>
+}
+
+export const taxChronicle: Chronicle = {
+  id: "stack",
+  entries: history,
+  stack: historyStack,
+  commons: [{ id: "gemeinsam", ...historyCommon }],
+  axisStart: 2000,
+  ticks: [2005, 2010, 2015, 2020, 2030],
+  title: {
+    de: "Was die Steuerbehörden heute bekommen",
+    en: "What tax authorities receive today",
+  },
+  note: {
+    de: "Eine Zeile je Regel, ab dem Jahr, in dem sie gilt. Jede Zeile öffnet Einzelheiten und Quellen.",
+    en: "One row per rule, from the year it applies. Open a row for details and sources.",
+  },
+  noun: { de: "dieser Regeln", en: "of these rules" },
+  sum: { de: "Zusammen, Jahr für Jahr", en: "Together, year by year" },
 }

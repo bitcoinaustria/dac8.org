@@ -1,0 +1,206 @@
+---
+import {
+  formatNumber,
+  lawGrowth,
+  readingTime,
+  wordsPerMinute,
+} from "@/data/history-evidence"
+import type { Language } from "@/lib/i18n"
+
+// How long the rules have grown: for each line of rules the first text and
+// today's, as two bars on one scale, with words and reading time beside
+// them. The first text is a sliver next to today's, which is the point.
+interface Props {
+  language: Language
+}
+
+const { language } = Astro.props
+const en = language === "en"
+const max = Math.max(...lawGrowth.map((row) => row.now.words))
+const width = (words: number) => `${((words / max) * 100).toFixed(2)}%`
+const rows = lawGrowth.map((row) => ({
+  ...row,
+  label: row.label[language],
+  note: row.note?.[language],
+  times: Math.round(row.now.words / row.then.words),
+  parts: [row.then, row.now].map((part, i) => ({
+    year: part.year,
+    act: part.act[language],
+    kind: i === 0 ? "then" : "now",
+    words: `${formatNumber(part.words, language)} ${en ? "words" : "Wörter"}`,
+    time: readingTime(part.words, language),
+    style: `--w: ${width(part.words)}`,
+  })),
+}))
+---
+
+<figure class="law-growth" aria-labelledby="law-growth-title">
+  <figcaption>
+    <h2 id="law-growth-title" class="figure-title">
+      {en ? "How long the rules have become" : "Wie lang die Regeln geworden sind"}
+    </h2>
+    <p class="figure-note">
+      {en
+        ? `The FATF is the international task force against money laundering; states write its recommendations into law. Words of each text without the reasons placed before it; reading time at ${wordsPerMinute} words a minute.`
+        : `Die FATF ist die internationale Arbeitsgruppe gegen Geldwäsche; ihre Empfehlungen schreiben die Staaten in ihre Gesetze. Gezählt sind die Wörter jedes Texts ohne die vorangestellte Begründung; Lesezeit bei ${wordsPerMinute} Wörtern pro Minute.`}
+    </p>
+  </figcaption>
+  <ul>
+    {rows.map((row) => (
+      <li>
+        <p class="law-label">
+          <strong>{row.label}</strong>
+          <span>
+            {en ? `${row.times} times as long` : `${row.times}-mal so lang`}
+          </span>
+        </p>
+        {row.parts.map((part) => (
+          <p
+            class:list={["law-part", part.kind]}
+            style={part.style}
+            title={part.act}
+          >
+            <span class="law-bar" aria-hidden="true" />
+            <span class="law-text">
+              <strong>{part.year}</strong> {part.words}, {part.time}
+            </span>
+          </p>
+        ))}
+        {row.note && <p class="law-note">{row.note}</p>}
+        <ul class="law-sources">
+          {row.sources.map((source) => (
+            <li>
+              <a href={source.href}>{source.label[language]}</a>
+            </li>
+          ))}
+        </ul>
+      </li>
+    ))}
+  </ul>
+</figure>
+
+<style>
+  .law-growth {
+    --bar: light-dark(#3b4147, #a7afb6);
+    display: grid;
+    gap: var(--space-m);
+    margin: 0;
+    font-size: var(--type-meta);
+    line-height: 1.4;
+  }
+
+  .figure-title {
+    max-inline-size: none;
+    font-size: var(--type-h3);
+    font-stretch: 100%;
+    line-height: 1.2;
+    letter-spacing: -0.018em;
+  }
+
+  .figure-note {
+    margin-block-start: var(--space-2xs);
+    color: var(--ink-3);
+  }
+
+  ul {
+    display: grid;
+    gap: var(--space-m);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+    gap: var(--space-3xs);
+  }
+
+  .law-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0 var(--space-s);
+    font-size: var(--step-0);
+  }
+
+  .law-label strong {
+    color: var(--ink);
+    font-weight: var(--weight-heading);
+  }
+
+  .law-label span {
+    color: var(--accent);
+    font-weight: var(--weight-heading);
+  }
+
+  /* Balken und Beschriftung in einer Zeile: der Text steht rechts neben dem
+     Balken, solange er passt, sonst darunter. */
+  .law-part {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
+  }
+
+  .law-bar {
+    display: block;
+    inline-size: max(3px, var(--w));
+    block-size: 0.75rem;
+    border-radius: 0 4px 4px 0;
+    background: var(--bar);
+    transform-origin: left center;
+  }
+
+  .then .law-bar {
+    background: color-mix(in oklab, var(--bar) 55%, transparent);
+  }
+
+  .law-text {
+    color: var(--ink-2);
+  }
+
+  .law-text strong {
+    color: var(--ink);
+    font-weight: var(--weight-heading);
+  }
+
+  .law-note {
+    color: var(--ink-3);
+  }
+
+  .law-sources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-s);
+  }
+
+  .law-sources a {
+    color: var(--ink-3);
+  }
+
+  .law-sources a::before {
+    content: "↗ ";
+    content: "↗ " / "";
+  }
+
+  .law-sources a:hover {
+    color: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .law-bar {
+      animation: law-grow 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      animation-delay: 200ms;
+    }
+
+    .now .law-bar {
+      animation-delay: 350ms;
+    }
+  }
+
+  @keyframes law-grow {
+    from {
+      scale: 0 1;
+    }
+  }
+</style>

@@ -1,0 +1,635 @@
+---
+import SourceRefs from "@/components/SourceRefs.astro"
+import { formatNumber } from "@/data/history-evidence"
+import type { HistorySource } from "@/data/history-sources"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+  id: string
+  country: string
+  reports: { year: number; value: number }[]
+  convictions: { year: number; value: number }[]
+  note: string
+  sources: HistorySource[]
+}
+
+// Suspicion reports against convictions for money laundering, compared
+// from a year the reader picks: both as a multiple of that year, so the
+// two counts, of very different size, share one scale. Only the years
+// with both counts are shown. The two are not linked case by case; the
+// chart compares how they grew, not which report led to which judgment.
+// Without the script it shows the first year against the last.
+const { language, id, country, reports, convictions, note, sources } =
+  Astro.props
+const en = language === "en"
+const n = (value: number) => formatNumber(value, language)
+
+const byYear = new Map(convictions.map((row) => [row.year, row.value]))
+const rows = reports
+  .filter((row) => byYear.has(row.year))
+  .map((row) => ({
+    year: row.year,
+    reports: row.value,
+    convictions: byYear.get(row.year) ?? 0,
+  }))
+const first = rows[0]
+const last = rows[rows.length - 1]
+const times = (to: number, from: number) => {
+  const k = to / from
+  return `×${n(k >= 10 ? Math.round(k) : Math.round(k * 10) / 10)}`
+}
+// One decimal always, so 1 reads as 1,0 beside 3,2.
+const tenth = new Intl.NumberFormat(en ? "en-GB" : "de-DE", {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+})
+const per100 = (row: (typeof rows)[number]) =>
+  tenth.format((row.convictions / row.reports) * 100)
+
+// The plot in SVG units: bars and line from left to right, one slot per
+// year; the script sets heights and the line for the chosen year.
+const left = 64
+const right = 828
+const top = 28
+const floor = 330
+const slot = (right - left) / rows.length
+const bars = rows.map((row, k) => ({
+  ...row,
+  k,
+  x: left + k * slot + slot * 0.16,
+  w: slot * 0.68,
+  cx: left + (k + 0.5) * slot,
+  // First, last and every fifth year, unless it would crowd the ends.
+  label:
+    k === 0 ||
+    k === rows.length - 1 ||
+    (row.year % 5 === 0 && k > 1 && k < rows.length - 2),
+}))
+const script = JSON.stringify({
+  rows: rows.map((row) => [row.year, row.reports, row.convictions]),
+  geometry: { left, right, top, floor, slot },
+  locale: en ? "en-GB" : "de-DE",
+  words: {
+    since: en ? "Since" : "Seit",
+    per100: en
+      ? "{a} convictions per 100 reports in {from}, {b} in {to}."
+      : "{from} kamen auf 100 Meldungen {a} Verurteilungen, {to} waren es {b}.",
+  },
+})
+const count = rows.length
+---
+
+<figure
+  id={`reports-${id}`}
+  class="report-compare"
+  data-compare={script}
+  style={`--count: ${count}`}
+>
+  <figcaption class="compare-head">
+    <span class="compare-country">{country}</span>
+    <span class="compare-since">
+      <span data-since>{en ? "Since" : "Seit"} {first.year}</span>
+      {en ? `to ${last.year}` : `bis ${last.year}`}
+    </span>
+  </figcaption>
+
+  <div class="compare-pair">
+    <p class="compare-count reports">
+      <b data-times="reports">{times(last.reports, first.reports)}</b>
+      <span>{en ? "suspicion reports" : "Verdachtsmeldungen"}</span>
+      <small data-span="reports">{n(first.reports)} → {n(last.reports)}</small>
+    </p>
+    <p class="compare-count convictions">
+      <b data-times="convictions"
+        >{times(last.convictions, first.convictions)}</b
+      >
+      <span
+        >{en ? "convictions for money laundering" : "Verurteilungen wegen Geldwäsche"}</span
+      >
+      <small data-span="convictions"
+        >{n(first.convictions)}
+        → {n(last.convictions)}</small
+      >
+    </p>
+  </div>
+
+  <svg
+    class="compare-plot"
+    viewBox="0 0 840 372"
+    aria-hidden="true"
+    preserveAspectRatio="xMidYMid meet"
+  >
+    <g class="compare-grid" data-grid></g>
+    {bars.map((bar) => (
+      <g class="compare-year" data-year={bar.year} data-k={bar.k}>
+        <rect class="compare-hit" x={bar.x - slot * 0.16} y={top} width={slot} height={floor - top + 40} />
+        <rect class="compare-bar" x={bar.x} y={top} width={bar.w} height={floor - top} style={`--k: ${bar.k}`} />
+        {bar.label && (
+          <text class="compare-label" x={bar.cx} y={floor + 30} text-anchor="middle">
+            {bar.year}
+          </text>
+        )}
+      </g>
+    ))}
+    <line class="compare-one" x1={left} x2={right} data-one />
+    <path class="compare-line" data-line />
+    <g data-dots>
+      {bars.map((bar) => <circle class="compare-dot" cx={bar.cx} r="5" />)}
+    </g>
+  </svg>
+
+  <label class="compare-pick">
+    <span>{en ? "Compare from" : "Vergleichen ab"}</span>
+    <input
+      type="range"
+      min="0"
+      max={rows.length - 2}
+      value="0"
+      aria-label={en ? `${country}: compare from year` : `${country}: vergleichen ab Jahr`}
+      aria-valuetext={String(first.year)}
+    >
+    <output data-pick>{first.year}</output>
+  </label>
+
+  <p class="compare-ratio" data-ratio>
+    {en
+      ? `${per100(first)} convictions per 100 reports in ${first.year}, ${per100(last)} in ${last.year}.`
+      : `${first.year} kamen auf 100 Meldungen ${per100(first)} Verurteilungen, ${last.year} waren es ${per100(last)}.`}
+  </p>
+
+  <p class="compare-note">
+    {en
+      ? "Grey: reports, red: convictions, each as a multiple of the year chosen. Convictions cannot be traced to particular reports."
+      : "Grau: Meldungen, rot: Verurteilungen, je als Vielfaches des gewählten Jahres. Verurteilungen lassen sich keinen einzelnen Meldungen zuordnen."}
+    {note}
+    <SourceRefs sources={sources} language={language} />
+  </p>
+</figure>
+
+<script>
+  // Picking a year makes it the base: every bar and the line show the
+  // count as a multiple of that year's, and the two figures above say how
+  // many times as many there were in the last year. The change is tweened.
+  type Config = {
+    rows: [number, number, number][]
+    geometry: {
+      left: number
+      right: number
+      top: number
+      floor: number
+      slot: number
+    }
+    locale: string
+    words: { since: string; per100: string }
+  }
+  const motion = matchMedia("(prefers-reduced-motion: reduce)")
+  const svgNS = "http://www.w3.org/2000/svg"
+  for (const figure of document.querySelectorAll<HTMLElement>(
+    "[data-compare]",
+  )) {
+    const config: Config = JSON.parse(figure.dataset.compare ?? "{}")
+    const { rows, geometry } = config
+    const { left, right, top, floor, slot } = geometry
+    const format = new Intl.NumberFormat(config.locale)
+    const one = (k: number) =>
+      k >= 10 ? Math.round(k) : Math.round(k * 10) / 10
+    const times = (k: number) => `×${format.format(one(k))}`
+    const tenth = new Intl.NumberFormat(config.locale, {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    })
+    const per100 = (c: number, r: number) => tenth.format((c / r) * 100)
+    const $ = <T extends Element>(selector: string) =>
+      figure.querySelector<T>(selector)
+    const years = [...figure.querySelectorAll<SVGGElement>("[data-year]")]
+    const bars = years.map((g) =>
+      g.querySelector<SVGRectElement>(".compare-bar"),
+    )
+    const dots = [...figure.querySelectorAll<SVGCircleElement>(".compare-dot")]
+    const line = $<SVGPathElement>("[data-line]")
+    const oneLine = $<SVGLineElement>("[data-one]")
+    const grid = $<SVGGElement>("[data-grid]")
+    const slider = $<HTMLInputElement>("input[type=range]")
+    const pick = $<HTMLOutputElement>("[data-pick]")
+    const since = $<HTMLElement>("[data-since]")
+    const ratio = $<HTMLElement>("[data-ratio]")
+    const timesEl = {
+      reports: $<HTMLElement>('[data-times="reports"]'),
+      convictions: $<HTMLElement>('[data-times="convictions"]'),
+    }
+    const spanEl = {
+      reports: $<HTMLElement>('[data-span="reports"]'),
+      convictions: $<HTMLElement>('[data-span="convictions"]'),
+    }
+
+    // A round top for the scale, so that the grid lines fall on whole
+    // multiples.
+    const niceTop = (value: number) => {
+      const steps = [1.5, 2, 3, 4, 5, 6, 8, 10, 15, 20, 30, 40, 50, 60, 80]
+      return steps.find((s) => s >= value) ?? Math.ceil(value / 20) * 20
+    }
+    type State = { reports: number[]; convictions: number[]; top: number }
+    const target = (base: number): State => {
+      const [, r0, c0] = rows[base]
+      const reports = rows.map((row) => row[1] / r0)
+      const convictions = rows.map((row) => row[2] / c0)
+      return {
+        reports,
+        convictions,
+        top: niceTop(Math.max(...reports, ...convictions) * 1.04),
+      }
+    }
+    const y = (value: number, max: number) =>
+      floor - (value / max) * (floor - top)
+
+    const draw = (state: State, base: number) => {
+      const h = floor - top
+      state.reports.forEach((value, k) => {
+        const bar = bars[k]
+        if (!bar) return
+        const height = Math.max(1, (value / state.top) * h)
+        bar.setAttribute("y", String(floor - height))
+        bar.setAttribute("height", String(height))
+      })
+      const points = state.convictions.map(
+        (value, k) => [left + (k + 0.5) * slot, y(value, state.top)] as const,
+      )
+      line?.setAttribute(
+        "d",
+        points
+          .map(
+            ([px, py], k) =>
+              `${k ? "L" : "M"}${px.toFixed(1)} ${py.toFixed(1)}`,
+          )
+          .join(" "),
+      )
+      points.forEach(([px, py], k) => {
+        dots[k]?.setAttribute("cx", px.toFixed(1))
+        dots[k]?.setAttribute("cy", py.toFixed(1))
+      })
+      oneLine?.setAttribute("y1", y(1, state.top).toFixed(1))
+      oneLine?.setAttribute("y2", y(1, state.top).toFixed(1))
+      years.forEach((g, k) => g.classList.toggle("before", k < base))
+      years.forEach((g, k) => g.classList.toggle("base", k === base))
+    }
+
+    // Grid lines at a few whole multiples of the base year.
+    const drawGrid = (max: number) => {
+      if (!grid) return
+      grid.replaceChildren()
+      const step =
+        max <= 2
+          ? 0.5
+          : max <= 5
+            ? 1
+            : max <= 12
+              ? 2
+              : max <= 30
+                ? 5
+                : max <= 60
+                  ? 10
+                  : 20
+      for (let value = step; value <= max + 1e-9; value += step) {
+        const gy = y(value, max)
+        const path = document.createElementNS(svgNS, "path")
+        path.setAttribute("d", `M${left} ${gy.toFixed(1)} H${right}`)
+        const text = document.createElementNS(svgNS, "text")
+        text.setAttribute("x", String(left - 12))
+        text.setAttribute("y", (gy + 6).toFixed(1))
+        text.setAttribute("text-anchor", "end")
+        text.textContent = `×${format.format(value)}`
+        grid.append(path, text)
+      }
+    }
+
+    let shown = target(0)
+    let frame = 0
+    const choose = (base: number) => {
+      const next = target(base)
+      const from = shown
+      const last = rows.length - 1
+      const [y0, r0, c0] = rows[base]
+      const [y1, r1, c1] = rows[last]
+      if (since) since.textContent = `${config.words.since} ${y0}`
+      if (pick) pick.textContent = String(y0)
+      if (slider) {
+        slider.value = String(base)
+        slider.setAttribute("aria-valuetext", String(y0))
+      }
+      if (timesEl.reports) timesEl.reports.textContent = times(r1 / r0)
+      if (timesEl.convictions) timesEl.convictions.textContent = times(c1 / c0)
+      if (spanEl.reports)
+        spanEl.reports.textContent = `${format.format(r0)} → ${format.format(r1)}`
+      if (spanEl.convictions)
+        spanEl.convictions.textContent = `${format.format(c0)} → ${format.format(c1)}`
+      if (ratio)
+        ratio.textContent = config.words.per100
+          .replace("{a}", per100(c0, r0))
+          .replace("{b}", per100(c1, r1))
+          .replace("{from}", String(y0))
+          .replace("{to}", String(y1))
+      drawGrid(next.top)
+      cancelAnimationFrame(frame)
+      if (motion.matches) {
+        shown = next
+        draw(next, base)
+        return
+      }
+      const start = performance.now()
+      const step = (now: number) => {
+        const t = Math.min(1, (now - start) / 450)
+        const e = 1 - (1 - t) ** 3
+        const mix = (a: number[], b: number[]) =>
+          b.map((value, k) => a[k] + (value - a[k]) * e)
+        shown = {
+          reports: mix(from.reports, next.reports),
+          convictions: mix(from.convictions, next.convictions),
+          top: from.top + (next.top - from.top) * e,
+        }
+        draw(shown, base)
+        if (t < 1) frame = requestAnimationFrame(step)
+      }
+      frame = requestAnimationFrame(step)
+    }
+
+    slider?.addEventListener("input", () => choose(Number(slider.value)))
+    years.forEach((g, k) => {
+      if (k > rows.length - 2) return
+      g.addEventListener("click", () => choose(k))
+    })
+    figure.toggleAttribute("data-ready", true)
+    drawGrid(shown.top)
+    draw(shown, 0)
+
+    // The bars rise once the chart comes into view.
+    if (!motion.matches) {
+      figure.classList.add("compare-hidden")
+      new IntersectionObserver(
+        (entries, observer) => {
+          for (const entry of entries)
+            if (entry.isIntersecting) {
+              figure.classList.remove("compare-hidden")
+              observer.disconnect()
+            }
+        },
+        { threshold: 0.25 },
+      ).observe(figure)
+    }
+  }
+</script>
+
+<style>
+  .report-compare {
+    --bar: light-dark(#3b4147, #a7afb6);
+    --red: var(--primary);
+    min-inline-size: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: var(--space-s);
+    margin: 0;
+    padding: var(--space-m);
+    border-radius: var(--radius);
+    background: var(--panel);
+    color: var(--ink);
+  }
+
+  .compare-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.3rem 1rem;
+  }
+
+  .compare-country {
+    font-size: var(--type-lead);
+    font-weight: var(--weight-heading);
+  }
+
+  .compare-since {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  .compare-since [data-since] {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* Zwei Zahlen nebeneinander, grau und rot: so oft so viele wie damals. */
+  .compare-pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-s);
+  }
+
+  .compare-count {
+    display: grid;
+    align-content: start;
+    gap: 0.15rem;
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+    line-height: 1.3;
+  }
+
+  .compare-count b {
+    color: var(--foreground);
+    font-size: clamp(2.6rem, 1.4rem + 4.2vw, 4.4rem);
+    font-weight: var(--weight-heading);
+    font-variant-numeric: tabular-nums;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+  }
+
+  .compare-count small {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .compare-count.convictions b,
+  .compare-count.convictions > span {
+    color: var(--accent);
+  }
+
+  .compare-plot {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    overflow: visible;
+  }
+
+  .compare-grid :global(path) {
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .compare-grid :global(text) {
+    fill: var(--ink-3);
+    font-size: 19px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .compare-hit {
+    fill: transparent;
+  }
+
+  .compare-bar {
+    fill: var(--bar);
+    transition: opacity 0.3s ease;
+  }
+
+  .compare-year {
+    cursor: pointer;
+  }
+
+  .compare-year.before .compare-bar {
+    opacity: 0.22;
+  }
+
+  .compare-year.base .compare-bar {
+    fill: var(--foreground);
+  }
+
+  .compare-label {
+    fill: var(--ink-3);
+    font-size: 20px;
+  }
+
+  .compare-year.base .compare-label {
+    fill: var(--foreground);
+    font-weight: 700;
+  }
+
+  .compare-one {
+    stroke: var(--ink-3);
+    stroke-width: 1.5;
+    stroke-dasharray: 5 6;
+  }
+
+  .compare-line {
+    fill: none;
+    stroke: var(--red);
+    stroke-width: 4;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .compare-dot {
+    fill: var(--red);
+    stroke: var(--panel);
+    stroke-width: 2.5;
+  }
+
+  .report-compare:not([data-ready])
+    :is(.compare-line, .compare-dot, .compare-pick) {
+    display: none;
+  }
+
+  /* Beim ersten Erscheinen wachsen die Säulen, dann die rote Linie. */
+  .compare-bar {
+    transform-box: fill-box;
+    transform-origin: bottom;
+    transition:
+      opacity 0.3s ease,
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: 0s, calc(var(--k, 0) * 30ms);
+  }
+
+  .report-compare.compare-hidden .compare-bar {
+    transform: scaleY(0.001);
+  }
+
+  .compare-line,
+  .compare-dot {
+    transition: opacity 0.5s ease 0.8s;
+  }
+
+  .report-compare.compare-hidden :is(.compare-line, .compare-dot) {
+    opacity: 0;
+    transition-delay: 0s;
+  }
+
+  .compare-pick {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+  }
+
+  .compare-pick > span,
+  .compare-pick output {
+    flex-shrink: 0;
+  }
+
+  .compare-pick output {
+    min-inline-size: 2.6rem;
+    color: var(--foreground);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .compare-pick input {
+    appearance: none;
+    min-inline-size: 0;
+    inline-size: 100%;
+    block-size: 2rem;
+    margin: 0;
+    background: transparent;
+    cursor: ew-resize;
+  }
+
+  .compare-pick input::-webkit-slider-runnable-track {
+    block-size: 2px;
+    background: var(--ink-3);
+  }
+
+  .compare-pick input::-moz-range-track {
+    block-size: 2px;
+    background: var(--ink-3);
+  }
+
+  .compare-pick input::-webkit-slider-thumb {
+    appearance: none;
+    inline-size: 18px;
+    block-size: 18px;
+    margin-block-start: -8px;
+    border-radius: 50%;
+    background: var(--foreground);
+  }
+
+  .compare-pick input::-moz-range-thumb {
+    inline-size: 18px;
+    block-size: 18px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--foreground);
+  }
+
+  .compare-pick input:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .compare-ratio {
+    color: var(--ink);
+    font-size: var(--type-body, 1rem);
+    line-height: 1.4;
+  }
+
+  .compare-note {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    line-height: 1.5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .report-compare * {
+      transition: none !important;
+    }
+  }
+</style>
