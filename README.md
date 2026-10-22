@@ -161,11 +161,15 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   (`src/components/RuleBalance.astro`: accounts reported without
   suspicion, accounts refused or closed without a reason, data leaks from
   `src/data/leaks.ts`); the bill (`src/components/RuleBill.astro`, data in
-  `src/data/history-gap.ts`: the scissors, `src/components/RuleScissors.astro`,
-  a panel that stands while the years run with the scroll from 2005 to
-  today, rules and reports rising against the share confiscated on a scale
-  of 100 euros, and in the gap between them, year by year, an institution
-  saying the effect is not or cannot be measured; what three tax reporting duties cost
+  `src/data/history-gap.ts`: report landscapes in
+  `src/components/ReportLandscape.astro` and `ReportSkyline.astro`, with one
+  sculpted paper column per year for Germany and Austria, each on a labelled
+  linear scale starting at zero; selecting a column shows its exact value.
+  Columns rise as they enter the viewport, with a static reduced-motion and
+  no-JavaScript fallback. Counting changes are marked below the years. A
+  separate illustration names the missing link between reports and outcomes
+  in Austria, without plotting it as zero. Then, Europol's assessment of
+  confiscation, what three tax reporting duties cost
   a year, how much of the claimed benefit is modelled, and how the
   apparatus grows); and promised, measured
   (`src/components/RulePromises.astro`, data in

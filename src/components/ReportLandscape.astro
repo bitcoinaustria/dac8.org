@@ -1,0 +1,190 @@
+---
+import ReportSkyline from "@/components/ReportSkyline.astro"
+import SourceRefs from "@/components/SourceRefs.astro"
+import { reportsByYear, reportsByYearSources } from "@/data/history-evidence"
+import { germanReportsByYear, germanReportsSources } from "@/data/history-gap"
+import { pairs } from "@/data/history-promises"
+import { historySources } from "@/data/history-sources"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+const { language } = Astro.props
+const en = language === "en"
+const { cite } = historySources(language)
+const missing = pairs.find((pair) => pair.id === "a-fiu-at")?.record[1]
+if (!missing) throw new Error("Missing Austrian report outcome evidence")
+---
+
+<div class="report-landscape">
+  <div class="landscape-intro">
+    <p class="landscape-kicker">
+      {en ? "The data pile up" : "Die Daten stapeln sich"}
+    </p>
+    <h3>
+      {en ? "More reports. More success?" : "Mehr Meldungen. Mehr Erfolg?"}
+    </h3>
+    <p>
+      {en
+      ? "Banks and other businesses report suspected money laundering to the authorities. The number of reports has grown sharply."
+      : "Banken und andere Unternehmen melden den Behörden einen Verdacht auf Geldwäsche. Die Zahl dieser Meldungen ist stark gewachsen."}
+    </p>
+  </div>
+
+  <div class="landscape-charts">
+    <ReportSkyline
+      language={language}
+      id="de"
+      country={en ? "Germany" : "Deutschland"}
+      rows={germanReportsByYear}
+      maximum={400000}
+      breaks={[2017]}
+      note={en ? "Counting changed in 2017." : "Seit 2017 wird anders gezählt."}
+      sources={cite(germanReportsSources)}
+    />
+    <ReportSkyline
+      language={language}
+      id="at"
+      country={en ? "Austria" : "Österreich"}
+      rows={reportsByYear}
+      maximum={15000}
+      breaks={[2012, 2024, 2025]}
+      note={en ? "Counting changed in 2012, 2024 and 2025." : "Seit 2012, 2024 und 2025 wird anders gezählt."}
+      sources={cite(reportsByYearSources)}
+    />
+  </div>
+
+  <div class="landscape-gap">
+    <div class="gap-signal" aria-hidden="true">
+      <svg viewBox="0 0 360 220" fill="none">
+        {Array.from({length: 9}, (_, i) => (
+          <path d={`M0 ${30+i*20} H${50+i*9} L170 110 H205`} />
+        ))}
+        <circle cx="205" cy="110" r="5" />
+        <path class="signal-missing" d="M230 110 H360" />
+      </svg>
+      <span>?</span>
+    </div>
+    <div class="gap-answer">
+      <p class="landscape-kicker">
+        {en ? "Austria · the missing link" : "Österreich · die offene Frage"}
+      </p>
+      <h3>
+        {en ? "Which reports lead to convictions?" : "Welche Meldungen führen zu Verurteilungen?"}
+      </h3>
+      <p>
+        {en
+        ? "The number of reports alone cannot tell us. In 2024, parliament asked about reports concerning sanctions and Russia. The interior ministry said it could not break them down by sender, recipient and outcome of proceedings."
+        : "Die Zahl der Meldungen allein verrät das nicht. 2024 fragte das Parlament nach Meldungen zu Sanktionen und Russland. Eine Auswertung nach Absender, Empfänger und Ausgang der Verfahren sei technisch nicht möglich, antwortete das Innenministerium."}
+        <SourceRefs sources={cite([missing.source])} language={language} />
+      </p>
+      <p class="gap-date">
+        {en ? "Reply to parliament, 2024" : "Antwort an das Parlament, 2024"}
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .report-landscape {
+    display: grid;
+    gap: var(--space-l);
+  }
+  .landscape-intro {
+    display: grid;
+    gap: var(--space-xs);
+    max-inline-size: 48rem;
+  }
+  .landscape-kicker {
+    color: var(--accent);
+    font-size: var(--type-meta);
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+  .landscape-intro h3,
+  .gap-answer h3 {
+    max-inline-size: 23ch;
+    font-size: clamp(1.8rem, 1.2rem + 2vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  .landscape-intro > p:last-child,
+  .gap-answer > p {
+    color: var(--ink-2);
+    max-inline-size: 56ch;
+    text-wrap: pretty;
+  }
+  .landscape-charts {
+    display: grid;
+    gap: var(--space-m);
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .landscape-gap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-m);
+    align-items: center;
+    padding-block: var(--space-l);
+    border-block-end: 1px solid var(--line);
+  }
+  .gap-signal {
+    position: relative;
+    inline-size: min(100%, 22rem);
+    justify-self: center;
+    color: var(--accent);
+  }
+  .gap-signal svg {
+    display: block;
+    inline-size: 100%;
+    overflow: visible;
+  }
+  .gap-signal path {
+    stroke: var(--ink-3);
+    stroke-width: 1;
+  }
+  .gap-signal circle {
+    fill: var(--accent);
+  }
+  .gap-signal .signal-missing {
+    stroke: var(--accent);
+    stroke-dasharray: 3 8;
+  }
+  .gap-signal span {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    margin-inline-start: 48%;
+    background: radial-gradient(
+      ellipse,
+      var(--background) 26%,
+      transparent 68%
+    );
+    font-size: 8rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .gap-answer {
+    display: grid;
+    gap: var(--space-s);
+  }
+  .gap-answer .landscape-kicker {
+    color: var(--accent);
+  }
+  .gap-answer .gap-date {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+  @container campaign (width >= 50rem) {
+    .landscape-charts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .landscape-gap {
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: var(--space-xl);
+    }
+  }
+</style>

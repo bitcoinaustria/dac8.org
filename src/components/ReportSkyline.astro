@@ -1,0 +1,401 @@
+---
+import SourceRefs from "@/components/SourceRefs.astro"
+import type { HistorySource } from "@/data/history-sources"
+import { formatNumber } from "@/data/history-evidence"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+  id: string
+  country: string
+  rows: { year: number; reports: number }[]
+  maximum: number
+  breaks: number[]
+  note: string
+  sources: HistorySource[]
+}
+const { language, id, country, rows, maximum, breaks, note, sources } =
+  Astro.props
+const en = language === "en"
+const n = (v: number) => formatNumber(v, language)
+const latest = rows[rows.length - 1]
+const first = rows[0]
+// Only height encodes quantity. Every column has the same width and depth;
+// bevels extend above the measured front face and do not change the scale.
+const floor = 360
+const height = 280
+const step = 680 / rows.length
+const width = step * 0.68
+const bars = rows.map((row, k) => {
+  const x = 102 + k * step
+  const h = (row.reports / maximum) * height
+  const y = floor - h
+  return { ...row, k, x, y, h, last: k === rows.length - 1 }
+})
+const ticks = Array.from({ length: 5 }, (_, k) => (maximum * k) / 4)
+---
+
+<figure
+  class="skyline"
+  data-skyline
+  data-latest={n(latest.reports)}
+  data-year={latest.year}
+>
+  <figcaption class="skyline-heading">
+    <span class="skyline-country">{country}</span>
+    <span class="skyline-period">{first.year}–{latest.year}</span>
+    <strong data-skyline-value>{n(latest.reports)}</strong>
+    <span class="skyline-unit"
+      >{en ? "suspicion reports" : "Verdachtsmeldungen"}
+      <b data-skyline-year>{latest.year}</b></span
+    >
+  </figcaption>
+
+  <svg
+    class="skyline-plot"
+    viewBox="0 0 840 430"
+    role="group"
+    aria-label={en ? `${country}: suspicion reports per year. Each column can be selected to read its value.` : `${country}: Verdachtsmeldungen pro Jahr. Jede Säule lässt sich auswählen, um ihren Wert zu lesen.`}
+  >
+    <defs>
+      <linearGradient id={`paper-${id}`} x1="0" x2="1">
+        <stop offset="0" stop-color="#a8b2bb" />
+        <stop offset=".2" stop-color="#eef0f2" />
+        <stop offset="1" stop-color="#9ca6b0" />
+      </linearGradient>
+      <linearGradient id={`red-${id}`} x1="0" x2="1">
+        <stop offset="0" stop-color="#e3000f" />
+        <stop offset=".55" stop-color="#ff5961" />
+        <stop offset="1" stop-color="#c9000d" />
+      </linearGradient>
+      <pattern
+        id={`sheets-${id}`}
+        width="4"
+        height="5"
+        patternUnits="userSpaceOnUse"
+      >
+        <path
+          d="M0 4.5 H4"
+          stroke="#18202b"
+          stroke-opacity=".32"
+          stroke-width=".8"
+        />
+      </pattern>
+    </defs>
+    <g class="skyline-grid" aria-hidden="true">
+      {ticks.map((value) => {
+        const y = floor - value / maximum * height
+        return <g><path d={`M88 ${y} H792`} /><text x="76" y={y+5} text-anchor="end">{n(value)}</text></g>
+      })}
+      <text x="88" y="40">{en ? "Reports / year" : "Meldungen / Jahr"}</text>
+      <path class="floor-depth" d="M88 360 H792 L810 346" />
+    </g>
+    {bars.map((bar) => (
+      <g class:list={["skyline-bar", {latest: bar.last}]} tabindex={bar.last ? "0" : "-1"} role="button"
+        aria-label={`${bar.year}: ${n(bar.reports)} ${en ? "suspicion reports" : "Verdachtsmeldungen"}`}
+        data-value={n(bar.reports)} data-year={bar.year}
+        style={`--delay: ${bar.k*35}ms; transform-origin: ${bar.x}px ${floor}px;`}>
+        <title>{bar.year}: {n(bar.reports)}</title>
+        <rect class="bar-hit" x={bar.x-3} y="60" width={step} height="306" fill="transparent" />
+        <g class="bar-solid">
+          <path class="bar-side" d={`M${bar.x+width} ${floor} l12 -9 V${bar.y-9} l-12 9 Z`} />
+          <rect class="bar-face" x={bar.x} y={bar.y} width={width} height={bar.h} fill={`url(#${bar.last ? "red" : "paper"}-${id})`} />
+          <rect x={bar.x} y={bar.y} width={width} height={bar.h} fill={`url(#sheets-${id})`} />
+          <path class="bar-top" d={`M${bar.x} ${bar.y} l12 -9 h${width} l-12 9 Z`} />
+          <path class="bar-edge" d={`M${bar.x} ${floor} V${bar.y} h${width}`} />
+        </g>
+        {breaks.includes(bar.year) && <path class="count-break" d={`M${bar.x+width/2} 374 v7`} aria-hidden="true" />}
+        {(bar.k === 0 || bar.last || bar.year % 5 === 0) && <text class="year" x={bar.x+width/2} y="405" text-anchor="middle" aria-hidden="true">{bar.year}</text>}
+      </g>
+    ))}
+  </svg>
+  <label class="skyline-scrub">
+    <span>{en ? "Choose a year" : "Jahr auswählen"}</span>
+    <input
+      type="range"
+      min="0"
+      max={rows.length - 1}
+      value={rows.length - 1}
+      aria-label={en ? `${country}: choose a year` : `${country}: Jahr auswählen`}
+      aria-valuetext={`${latest.year}: ${n(latest.reports)}`}
+    >
+  </label>
+  <p class="skyline-note">
+    {en ? "Height = number of reports. Own scale." : "Höhe = Zahl der Meldungen. Eigene Skala."}
+    <span class="break-key" aria-hidden="true">|</span> {note}
+    <SourceRefs sources={sources} language={language} />
+  </p>
+</figure>
+
+<script>
+  const motion = matchMedia("(prefers-reduced-motion: reduce)")
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries)
+        if (entry.isIntersecting) {
+          entry.target.classList.add("skyline-seen")
+          observer.unobserve(entry.target)
+        }
+    },
+    { threshold: 0.2 },
+  )
+  for (const chart of document.querySelectorAll<HTMLElement>(
+    "[data-skyline]",
+  )) {
+    if (!motion.matches) {
+      chart.classList.add("skyline-animate")
+      observer.observe(chart)
+    }
+    const value = chart.querySelector<HTMLElement>("[data-skyline-value]")
+    const year = chart.querySelector<HTMLElement>("[data-skyline-year]")
+    const bars = [...chart.querySelectorAll<SVGElement>(".skyline-bar")]
+    const slider = chart.querySelector<HTMLInputElement>('input[type="range"]')
+    chart.classList.add("skyline-interactive")
+    const show = (bar?: SVGElement) => {
+      if (value)
+        value.textContent = bar?.dataset.value ?? chart.dataset.latest ?? ""
+      if (year) year.textContent = bar?.dataset.year ?? chart.dataset.year ?? ""
+      const active = bar ?? bars[bars.length - 1]
+      if (slider) {
+        slider.value = String(bars.indexOf(active))
+        slider.setAttribute(
+          "aria-valuetext",
+          `${active.dataset.year}: ${active.dataset.value}`,
+        )
+      }
+      for (const other of bars) {
+        other.classList.toggle("selected", other === bar)
+        other.setAttribute("tabindex", other === active ? "0" : "-1")
+      }
+    }
+    slider?.addEventListener("input", () => show(bars[Number(slider.value)]))
+    for (const [index, bar] of bars.entries()) {
+      bar.addEventListener("pointerenter", () => show(bar))
+      bar.addEventListener("focus", () => show(bar))
+      bar.addEventListener("click", () => show(bar))
+      bar.addEventListener("keydown", (event) => {
+        const target =
+          event.key === "ArrowLeft"
+            ? index - 1
+            : event.key === "ArrowRight"
+              ? index + 1
+              : event.key === "Home"
+                ? 0
+                : event.key === "End"
+                  ? bars.length - 1
+                  : null
+        if (target !== null) {
+          event.preventDefault()
+          bars[Math.max(0, Math.min(bars.length - 1, target))].focus()
+        }
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault()
+          show(bar)
+        }
+        if (event.key === "Escape") {
+          bar.blur()
+          show()
+        }
+      })
+    }
+    chart.addEventListener("pointerleave", () => {
+      if (!chart.contains(document.activeElement)) show()
+    })
+    chart.addEventListener("focusout", (event) => {
+      if (!chart.contains(event.relatedTarget as Node | null)) show()
+    })
+  }
+</script>
+
+<style>
+  .skyline {
+    --ink-3: #a4aab3;
+    --ink: #f4f4f5;
+    position: relative;
+    isolation: isolate;
+    min-inline-size: 0;
+    display: grid;
+    align-content: start;
+    padding: clamp(1.25rem, 3vw, 2.5rem);
+    border: 1px solid #ffffff14;
+    border-radius: var(--radius);
+    background: radial-gradient(
+      ellipse at 75% 60%,
+      #30353e 0,
+      #191b20 48%,
+      #121316 100%
+    );
+    color: var(--ink);
+    overflow: hidden;
+  }
+  .skyline::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 38% -20% -40%;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 39px, #ffffff05 39px 40px),
+      repeating-linear-gradient(90deg, transparent 0 39px, #ffffff05 39px 40px);
+    transform: perspective(400px) rotateX(55deg);
+    mask-image: linear-gradient(transparent, #000);
+    pointer-events: none;
+  }
+  .skyline-heading {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 0.3rem;
+  }
+  .skyline-country {
+    font-size: var(--type-lead);
+    font-weight: 550;
+  }
+  .skyline-period {
+    color: #a4aab3;
+    font-size: var(--type-meta);
+  }
+  .skyline-heading strong {
+    grid-column: 1 / -1;
+    margin-block-start: 0.65rem;
+    font-size: clamp(3rem, 6.6vw, 5.8rem);
+    letter-spacing: -0.065em;
+    line-height: 1;
+    font-weight: 550;
+    font-variant-numeric: tabular-nums;
+  }
+  .skyline-unit {
+    grid-column: 1 / -1;
+    color: #c0c5cd;
+    font-size: var(--type-meta);
+  }
+  .skyline-unit b {
+    color: #f4f4f5;
+    font-weight: 500;
+  }
+  .skyline-plot {
+    display: block;
+    inline-size: calc(100% + 1.5rem);
+    max-inline-size: none;
+    margin: 1.3rem -0.75rem 0.5rem;
+    overflow: visible;
+  }
+  .skyline-grid path {
+    fill: none;
+    stroke: #ffffff12;
+  }
+  .skyline-grid text {
+    fill: #a4aab3;
+    font-size: 19px;
+  }
+  .skyline-grid .floor-depth {
+    stroke: #ffffff40;
+  }
+  .skyline-bar {
+    cursor: pointer;
+    outline: none;
+  }
+  .bar-solid {
+    transition: filter 180ms ease;
+  }
+  .bar-side {
+    fill: #626f7c;
+  }
+  .bar-top {
+    fill: #f2f5f6;
+  }
+  .bar-edge {
+    fill: none;
+    stroke: #ffffff70;
+    stroke-width: 0.8;
+  }
+  .latest .bar-side {
+    fill: #93000b;
+  }
+  .latest .bar-top {
+    fill: #ff9d9e;
+  }
+  .skyline-bar.selected .bar-solid,
+  .skyline-bar:focus-visible .bar-solid {
+    filter: brightness(1.45) drop-shadow(0 0 6px #ffffff35);
+  }
+  .skyline-bar:focus-visible .bar-hit {
+    stroke: #ffffff;
+    stroke-width: 1.5;
+    stroke-dasharray: 4 5;
+  }
+  .year {
+    fill: #c0c5cd;
+    font-size: 21px;
+  }
+  .latest .year {
+    fill: #ff8f95;
+  }
+  .count-break {
+    stroke: #ff8f95;
+    stroke-width: 3;
+  }
+  .skyline-note {
+    color: #a4aab3;
+    font-size: var(--type-meta);
+    line-height: 1.5;
+  }
+  .skyline-scrub {
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    margin-block: 0.25rem 1rem;
+    color: #c0c5cd;
+    font-size: var(--type-meta);
+  }
+  .skyline-interactive .skyline-scrub {
+    display: flex;
+  }
+  .skyline-scrub > span {
+    flex-shrink: 0;
+  }
+  .skyline-scrub input {
+    min-inline-size: 0;
+    inline-size: 100%;
+    block-size: 2rem;
+    margin: 0;
+    accent-color: #ff5961;
+    cursor: ew-resize;
+  }
+  .skyline-scrub input:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  .break-key {
+    color: #ff8f95;
+    font-weight: 700;
+  }
+  .skyline-animate:not(.skyline-seen) .bar-solid {
+    transform: scaleY(0.001);
+  }
+  .skyline-animate .bar-solid {
+    transform-box: fill-box;
+    transform-origin: bottom;
+  }
+  .skyline-animate.skyline-seen .bar-solid {
+    animation: stack-rise 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: var(--delay);
+  }
+  @keyframes stack-rise {
+    from {
+      transform: scaleY(0.001);
+      opacity: 0.2;
+    }
+    to {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skyline .bar-solid {
+      transform: none !important;
+      animation: none !important;
+      transition: none;
+    }
+  }
+</style>

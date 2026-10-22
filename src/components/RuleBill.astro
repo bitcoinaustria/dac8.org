@@ -1,5 +1,5 @@
 ---
-import RuleScissors from "@/components/RuleScissors.astro"
+import ReportLandscape from "@/components/ReportLandscape.astro"
 import SourceRefs from "@/components/SourceRefs.astro"
 import {
   formatNumber,
@@ -20,10 +20,9 @@ interface Props {
   language: Language
 }
 
-// The bill: first the scissors (src/components/RuleScissors.astro), what
-// rises against what is confiscated, run with the scroll, and Europol's
-// own sentence; then what the reporting costs, what it is said to bring,
-// and how the apparatus grows.
+// The bill: report volumes on separate, labelled scales, the missing
+// connection to outcomes, then Europol's assessment, reporting costs,
+// estimated benefit and the growing apparatus.
 const { language } = Astro.props
 const en = language === "en"
 const n = (value: number) => formatNumber(value, language)
@@ -70,19 +69,17 @@ const unknownLaws = estimates.filter(
   (tile) => tile.none && tile.none !== "not-material",
 ).length
 const dac8Fix = corrected.find((fix) => fix.id === "dac8") ?? corrected[0]
-
-const count = growth.length
 ---
 
 <section id="rechnung" class="scissors" aria-labelledby="rechnung-heading">
   <h2 id="rechnung-heading">
     {en ? "The bill." : "Die Rechnung."}
     <span
-      >{en ? "The effort grows. As little is confiscated." : "Der Aufwand wächst. Eingezogen wird gleich wenig."}</span
+      >{en ? "The effort grows. What does it achieve?" : "Der Aufwand wächst. Was bringt er?"}</span
     >
   </h2>
 
-  <RuleScissors language={language} />
+  <ReportLandscape language={language} />
 
   <blockquote class="sc-quote" data-reveal>
     <p>{recovery.quote[language]}</p>

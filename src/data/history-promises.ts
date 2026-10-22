@@ -343,8 +343,8 @@ export const pairs: Pair[] = [
         year: 2024,
         original: "de",
         quote: {
-          de: "„Die gewünschte statistische Auswertung … gegliedert nach Urhebern, Empfängern und Ausgang des Verfahrens ist technisch nicht möglich.“",
-          en: "A breakdown by sender, recipient and outcome of the proceedings is technically impossible.",
+          de: "Gefragt nach Meldungen zu Sanktionen und Russland: „Die gewünschte statistische Auswertung bestimmter Phänomenbereiche gegliedert nach Urhebern, Empfängern und Ausgang des Verfahrens ist technisch nicht möglich.“",
+          en: "Asked about reports concerning sanctions and Russia, the ministry said a breakdown of particular subject areas by sender, recipient and outcome of proceedings was technically impossible.",
         },
         source: {
           label: {
@@ -770,93 +770,6 @@ export const pairs: Pair[] = [
 
 // Shown open; the rest fold away under "more".
 export const openPairs = 6
-
-// The chorus in the bill's scissors chart (src/components/RuleScissors.astro):
-// year by year, an institution saying that what a rule brings is not or
-// cannot be measured. Each is a record from the pairs, shortened to its
-// core; the pairs give the context and the promise beside it.
-const recordOf = (id: string, index: number) => {
-  const said = pairs.find((pair) => pair.id === id)?.record[index]
-  if (!said) throw new Error(`Pairs: no record ${index} for "${id}"`)
-  return said
-}
-export type Unmeasured = { who: Text; words: Text; said: Said }
-export const unmeasured: Unmeasured[] = [
-  {
-    said: recordOf("bank-package", 0),
-    who: {
-      de: "Österreichs Finanzministerium zum Bankenpaket",
-      en: "Austria’s finance ministry on the bank package",
-    },
-    words: {
-      de: "„Die meisten Mehreinnahmen … sind nicht separat auswertbar.“",
-      en: "Most of the extra revenue cannot be evaluated separately.",
-    },
-  },
-  {
-    said: recordOf("dirty-money", 0),
-    who: {
-      de: "Europäischer Rechnungshof zur Geldwäsche",
-      en: "European Court of Auditors on money laundering",
-    },
-    words: {
-      de: "Wie viel Geld gewaschen wird, lässt sich nicht schätzen: Eurostat hat dafür keine Methode.",
-      en: "“Eurostat does not have a methodology to … estimate quantitative volumes of money laundering.”",
-    },
-  },
-  {
-    said: recordOf("dac8", 0),
-    who: { de: "EU-Kommission zu DAC8", en: "European Commission on DAC8" },
-    words: {
-      de: "Wie viel der Krypto-Gewinne schon versteuert wird, darüber gebe es keine Informationen.",
-      en: "“There is no information available about how much realised capital gains have actually been taxed.”",
-    },
-  },
-  {
-    said: recordOf("dac6", 1),
-    who: {
-      de: "Deutsche Bundesregierung zu DAC6",
-      en: "Germany’s Federal Government on DAC6",
-    },
-    words: {
-      de: "„… da die finanziellen Auswirkungen … naturgemäß nicht erfasst werden können.“",
-      en: "The financial effects by their nature cannot be captured.",
-    },
-  },
-  {
-    said: recordOf("a-fiu-at", 1),
-    who: {
-      de: "Österreichs Innenministerium zu den Verdachtsmeldungen",
-      en: "Austria’s interior ministry on suspicion reports",
-    },
-    words: {
-      de: "Eine Auswertung nach Ausgang der Verfahren sei „technisch nicht möglich“.",
-      en: "A breakdown by outcome of the proceedings is technically impossible.",
-    },
-  },
-  {
-    said: recordOf("dac8-de", 1),
-    who: {
-      de: "Deutsche Bundesregierung zu DAC8",
-      en: "Germany’s Federal Government on DAC8",
-    },
-    words: {
-      de: "„Eine Evaluierung ist nicht vorgesehen …“",
-      en: "No evaluation is planned.",
-    },
-  },
-  {
-    said: recordOf("fraud-package-at", 0),
-    who: {
-      de: "Österreichs Finanzminister zum Paket gegen Steuerbetrug",
-      en: "Austria’s finance minister on the anti-fraud package",
-    },
-    words: {
-      de: "„Es ist gar nicht so einfach, das sozusagen zu messen …“",
-      en: "It is not at all easy to measure this.",
-    },
-  },
-]
 
 export const pairSources = (): Source[] =>
   pairs.flatMap((pair) => [

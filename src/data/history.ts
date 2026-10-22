@@ -6,7 +6,7 @@ import type { Language } from "@/lib/i18n"
 
 // Research status shown at the bottom of the history page. Update it with every
 // change to the entries below, so readers can tell how current the page is.
-export const historyAsOf = "2026-10-21"
+export const historyAsOf = "2026-10-22"
 
 const longDate = (locale: string) =>
   new Intl.DateTimeFormat(locale, {
