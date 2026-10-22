@@ -1,0 +1,172 @@
+---
+import SourceRefs from "@/components/SourceRefs.astro"
+import { historySources } from "@/data/history-sources"
+import { pairs } from "@/data/history-promises"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+
+// Promised, measured: a dark band of pairs, what politicians announced for
+// a rule on the left, what their own institutions know about it on the
+// right. Data and verification in src/data/history-promises.ts.
+const { language } = Astro.props
+const en = language === "en"
+const { cite } = historySources(language)
+const labels = {
+  promise: en ? "Promised" : "Versprochen",
+  record: en ? "Measured" : "Gemessen",
+}
+---
+
+<section
+  id="versprochen"
+  class="band promises"
+  aria-labelledby="versprochen-heading"
+>
+  <h2 id="versprochen-heading">
+    {en ? "Promised, measured." : "Versprochen, gemessen."}
+    <span
+      >{en ? "What they announce, and what their own institutions know." : "Was sie ankündigen, und was ihre eigenen Behörden wissen."}</span
+    >
+  </h2>
+  <ol class="pairs">
+    {pairs.map((pair) => (
+      <li class="pair">
+        <p class="pair-topic">{pair.topic[language]}</p>
+        <div class="pair-side promise">
+          <p class="pair-label">{labels.promise}</p>
+          <blockquote>{pair.promise.quote[language]}</blockquote>
+          <p class="pair-who">
+            {pair.promise.who[language]}, {pair.promise.year}
+            <SourceRefs sources={cite([pair.promise.source])} language={language} />
+          </p>
+        </div>
+        <div class="pair-side record">
+          <p class="pair-label">{labels.record}</p>
+          {pair.record.map((said) => (
+            <div class="pair-said">
+              <blockquote>{said.quote[language]}</blockquote>
+              <p class="pair-who">
+                {said.who[language]}, {said.year}
+                <SourceRefs sources={cite([said.source])} language={language} />
+              </p>
+            </div>
+          ))}
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  /* Ein dunkles Band in beiden Modi; links die Ankündigung, rechts, was
+     die eigenen Stellen wissen, rot abgesetzt. */
+  :global(.campaign) > section.band.promises {
+    --band-fill: light-dark(#161616, #050505);
+    --foreground: #f2f2f2;
+    --ink: #f2f2f2;
+    --ink-2: #cfcfcf;
+    --ink-3: #9a9a9a;
+    --line: rgb(255 255 255 / 0.14);
+    --accent: #ff4f58;
+    color: var(--foreground);
+  }
+
+  .promises > h2 {
+    color: var(--foreground);
+  }
+
+  .pairs {
+    display: grid;
+    gap: var(--space-xl);
+    margin: var(--space-xl) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-s) var(--space-xl);
+    padding-block-start: var(--space-s);
+    border-block-start: 1px solid var(--line);
+  }
+
+  @container campaign (width >= 52rem) {
+    .pair {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pair-topic {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .pair-topic {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .pair-side {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2xs);
+  }
+
+  .pair-label {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    font-weight: 700;
+  }
+
+  .record .pair-label {
+    color: var(--accent);
+  }
+
+  .pair blockquote {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .promise blockquote {
+    color: var(--ink-2);
+    font-size: var(--type-lead);
+    line-height: 1.35;
+  }
+
+  .record {
+    padding-inline-start: var(--space-s);
+    border-inline-start: 3px solid var(--accent);
+  }
+
+  .record blockquote {
+    color: var(--ink);
+    font-size: var(--type-lead);
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .pair-said {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .pair-said + .pair-said {
+    margin-block-start: var(--space-s);
+  }
+
+  .pair-who {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    line-height: 1.4;
+  }
+
+  .pair-who :global(a) {
+    color: var(--ink-3);
+  }
+</style>

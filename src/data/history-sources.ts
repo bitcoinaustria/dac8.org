@@ -9,22 +9,20 @@ import {
 import {
   admissions as gapAdmissions,
   apparatus,
-  bankPackage,
   corrected,
   estimates,
   germanReportsSources,
   recovery,
-  reportSources,
-  voices,
 } from "@/data/history-gap"
+import { pairSources } from "@/data/history-promises"
 import { leaks } from "@/data/leaks"
 import { steps } from "@/data/overregulation"
 import { type Language, pathFor } from "@/lib/i18n"
 
-// The history page cites the film and the balance by number, [3], and
-// lists every source once at the end of the page. The numbers follow the
-// order in which a reader meets the sources: the film's steps, then the
-// balance's four fields. A source cited again keeps its number. Where the
+// The history page cites its sources by number, [3], and lists every
+// source once at the end of the page. The numbers follow the order in
+// which a reader meets the sources: the film, what it means for you, the
+// bill and the pairs of promise and record. A source cited again keeps its number. Where the
 // story needs the name, such as a quotation, the text names it as well.
 // The charts to check, folded away below, keep their own source lists.
 export type HistorySource = {
@@ -41,7 +39,6 @@ const bulgaria = leaks.find((leak) => leak.id === "bulgaria")
 export const balanceSources = (language: Language) => ({
   costs: reportingCostSources,
   benefit: reportingBenefit.sources.slice(0, 1),
-  admission: reportingBenefit.sources.slice(1),
   captured: accountsSources,
   cases: [
     {
@@ -68,13 +65,23 @@ export const balanceSources = (language: Language) => ({
 // spaces inside it.
 const escape = (text: string) =>
   text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;")
+// Three or more numbers in a row shrink to a range, [29–41].
 export const refsHtml = (sources: HistorySource[], language: Language) => {
   const word = language === "en" ? "Source" : "Quelle"
-  const links = sources.map(
-    (source) =>
-      `<a href="#quelle-${source.n}" title="${escape(source.label)}" aria-label="${escape(`${word} ${source.n}: ${source.label}`)}">${source.n}</a>`,
+  const link = (source: HistorySource) =>
+    `<a href="#quelle-${source.n}" title="${escape(source.label)}" aria-label="${escape(`${word} ${source.n}: ${source.label}`)}">${source.n}</a>`
+  const runs: HistorySource[][] = []
+  for (const source of sources) {
+    const run = runs.at(-1)
+    if (run && run[run.length - 1].n === source.n - 1) run.push(source)
+    else runs.push([source])
+  }
+  const parts = runs.flatMap((run) =>
+    run.length >= 3
+      ? [`${link(run[0])}–${link(run[run.length - 1])}`]
+      : run.map(link),
   )
-  return `[${links.join(", ")}]`
+  return `[${parts.join(", ")}]`
 }
 
 export const historySources = (language: Language) => {
@@ -95,33 +102,27 @@ export const historySources = (language: Language) => {
     })
   }
   for (const step of steps) step.sources.forEach(add)
-  // The scissors and the quotations after the film.
+  const cited = balanceSources(language)
+  // In the order of the page: what it means for you, the bill, and the
+  // pairs of promise and record.
   for (const source of [
+    ...cited.captured,
+    ...cited.cases,
+    ...cited.bulgaria,
+    ...cited.unexplained,
+    ...cited.withheld,
     ...reportsByYearSources,
     ...germanReportsSources,
     ...recovery.sources,
-    ...voices.map((voice) => voice.source),
-  ])
-    add(source)
-  // The gap, in the order of its blocks and quotations.
-  for (const source of [
+    ...cited.costs,
+    ...estimates.map((tile) => tile.source),
+    ...(corrected.find((fix) => fix.id === "dac8")?.sources ?? []),
+    ...cited.benefit,
     ...apparatus.flatMap((row) => row.sources),
     gapAdmissions.staff.source,
-    ...estimates.map((tile) => tile.source),
-    ...corrected.flatMap((fix) => fix.sources),
-    gapAdmissions.costs.source,
-    ...reportSources,
-    gapAdmissions.outcomes.source,
-    bankPackage.sources.bill,
-    gapAdmissions.revenue.source,
-    bankPackage.sources.answer,
-    bankPackage.sources.evaluation,
-    gapAdmissions.austria.source,
-    gapAdmissions.last.source,
+    ...pairSources(),
   ])
     add(source)
-  for (const sources of Object.values(balanceSources(language)))
-    sources.forEach(add)
   // The numbers for a passage, each once, in order.
   const cite = (sources: Source[]) =>
     [...new Set(sources.map((source) => numbers.get(source.href)))]

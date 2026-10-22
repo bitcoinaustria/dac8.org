@@ -5,9 +5,8 @@ import HistoryStack from "@/components/HistoryStack.astro"
 import LawGrowth from "@/components/LawGrowth.astro"
 import RuleBalance from "@/components/RuleBalance.astro"
 import RuleFilm from "@/components/RuleFilm.astro"
-import RuleGap from "@/components/RuleGap.astro"
-import RuleScissors from "@/components/RuleScissors.astro"
-import RuleVoices from "@/components/RuleVoices.astro"
+import RuleBill from "@/components/RuleBill.astro"
+import RulePromises from "@/components/RulePromises.astro"
 import StatTiles from "@/components/StatTiles.astro"
 import YearColumns from "@/components/YearColumns.astro"
 import { ruleChronicle } from "@/data/aml-history"
@@ -25,18 +24,19 @@ import {
 } from "@/data/history-evidence"
 import { languageFor, pathFor } from "@/lib/i18n"
 
-// The story of over-regulation and its evidence. A short hero, then the
-// scroll film (src/components/RuleFilm.astro): the amount from which you
-// must show ID falling to nothing, the rules adding up, the pages of law,
-// and reports multiplying against few convictions and the euro or so that
-// comes of it. Then the balance (src/components/RuleBalance.astro): what
-// the reporting costs, what it brings, whom it captures and what the data
-// become. The conclusion follows with the one step to take, and at the end,
-// folded away, everything to check: the rules row by row with sources, the
-// full series, the length of the texts, single figures and the
-// institutions' own words. The page never argues that a rule would be
-// justified if it worked: its conclusion says so. In every chart red marks
-// what comes of the rules or what is new.
+// The apparatus of anti-money-laundering and tax-reporting rules, of which
+// DAC8 is the latest piece, told in four steps that build on each other:
+// the scroll film (src/components/RuleFilm.astro) shows how it grew and
+// what comes of it; "what it means for you" (RuleBalance.astro) shows that
+// everyone is captured, accounts are refused without a reason and data get
+// lost; "the bill" (RuleBill.astro) sets rising effort against flat
+// results, costs, a benefit mostly modelled and a growing apparatus;
+// "promised, measured" (RulePromises.astro) pairs what politicians
+// announced with what their own institutions know. The conclusion offers
+// the one step to take; at the end, folded away, everything to check. The
+// page never argues that a rule would be justified if it worked: its
+// conclusion says so. In every chart red marks what comes of the rules or
+// what is new.
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
 const n = (value: number) => formatNumber(value, language)
@@ -61,21 +61,19 @@ const sources = historySources(language).list
         </h1>
         <p class="lead">
           {en
-            ? "It used to be about single cases. Today the rules capture everyone and cost billions every year."
-            : "Früher ging es um einzelne Fälle. Heute erfassen die Regeln alle und kosten jedes Jahr Milliarden."}
+            ? "Since 1991 an apparatus of ID and reporting duties against money laundering and tax evasion has grown. Today it captures everyone and costs billions every year, and hardly anyone measures what it brings. DAC8 is its latest piece."
+            : "Seit 1991 wächst ein Apparat aus Ausweis- und Meldepflichten gegen Geldwäsche und Steuerbetrug. Heute erfasst er alle und kostet jedes Jahr Milliarden, und was er bringt, misst kaum jemand. DAC8 ist sein neuestes Stück."}
         </p>
       </div>
     </header>
 
     <RuleFilm language={language} />
 
-    <RuleScissors language={language} />
-
-    <RuleVoices language={language} />
-
-    <RuleGap language={language} />
-
     <RuleBalance language={language} />
+
+    <RuleBill language={language} />
+
+    <RulePromises language={language} />
 
     <section id="grenzen" class="band" aria-labelledby="grenzen-heading">
       <h2 id="grenzen-heading">

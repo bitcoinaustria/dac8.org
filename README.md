@@ -154,27 +154,21 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   coming; a wall of one tile per Official Journal page, six red ones from
   1991 among 488; and a sea of suspicion reports in Austria beside 139
   convictions and 100 coins of which one is red. Without JavaScript the
-  headlines stand as text. After the film come the scissors
-  (`src/components/RuleScissors.astro`): the rules in force and suspicion
-  reports in Austria and Germany rising, each on its own scale, against
-  the share of criminal proceeds confiscated in the EU on a scale of 100
-  euros, with Europol's own word that it has stagnated; then a dark band
-  of authorities saying in their own words that they do not know what the
-  rules bring (`src/components/RuleVoices.astro`); then the gap
-  (`src/components/RuleGap.astro`, data in `src/data/history-gap.ts`):
-  what grows (staff and budgets of the financial intelligence units, the
-  FMA's supervision and the EU's new authority), what the laws were
-  estimated to cost business, what the reports bring and Austria's bank
-  package of 2015, each followed by an authority saying in its own words
-  that it does not measure, ending with what Austria and Germany plan to
-  evaluate of DAC8. Then the balance
-  (`src/components/RuleBalance.astro`) in four fields of one picture each:
-  what three tax reporting duties cost a year, what the Commission says all
-  exchanged tax data bring and how much of that is modelled, how many
-  accounts are reported without suspicion, and the documented data leaks
-  from `src/data/leaks.ts`. Costs and benefit stay on separate scales,
-  because the benefit covers more duties than the costs shown. Then the
-  conclusion with the one step to take, and at the end, folded away,
+  headlines stand as text. The page frames DAC8 as the latest piece of a
+  wider apparatus of anti-money-laundering and tax-reporting rules and
+  builds on the film in three steps: what it means for you
+  (`src/components/RuleBalance.astro`: accounts reported without
+  suspicion, accounts refused or closed without a reason, data leaks from
+  `src/data/leaks.ts`); the bill (`src/components/RuleBill.astro`, data in
+  `src/data/history-gap.ts`: rules and reports rising against the share
+  confiscated on a scale of 100 euros, what three tax reporting duties cost
+  a year, how much of the claimed benefit is modelled, and how the
+  apparatus grows); and promised, measured
+  (`src/components/RulePromises.astro`, data in
+  `src/data/history-promises.ts`), pairs of what politicians announced and
+  what their own institutions know. Costs and benefit stay on separate
+  scales, because the benefit covers more duties than the costs shown. Then
+  the conclusion with the one step to take, and at the end, folded away,
   everything to check: both lines of rules in one chart on one axis, the
   series and texts described next, and the length of the texts
   (`src/components/LawGrowth.astro`); links into the folded part open it.

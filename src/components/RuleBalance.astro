@@ -3,8 +3,6 @@ import SourceRefs from "@/components/SourceRefs.astro"
 import {
   accountsExchanged,
   formatNumber,
-  reportingBenefit,
-  reportingCosts,
   unexplained,
 } from "@/data/history-evidence"
 import { balanceSources, historySources } from "@/data/history-sources"
@@ -15,35 +13,15 @@ interface Props {
   language: Language
 }
 
-// The balance under the film, in four fields of one picture each: what the
-// reporting costs every year, what it brings, whom it captures and what
-// the collected data become. Red marks what the headline beside it names.
-// Costs and benefit stay on separate scales (see history-evidence.ts).
+// What it means for you, right after the film, in three fields of one
+// picture each: everyone with an account abroad is reported without
+// suspicion, collected data get lost, and accounts are refused or closed
+// without a reason. Red marks what the headline beside it names.
 const { language } = Astro.props
 const en = language === "en"
 const n = (value: number) => formatNumber(value, language)
-const millions = (value: number) =>
-  en ? `€${n(Math.round(value))}m` : `${n(Math.round(value))} Mio. €`
-const percent = (value: number) => (en ? `${n(value)}%` : `${n(value)} %`)
 const { cite } = historySources(language)
 const cited = balanceSources(language)
-
-// Kosten: each duty adds its yearly cost to those before it.
-let running = 0
-const costRows = reportingCosts.map((cost) => {
-  const before = running
-  running += cost.millions
-  return { ...cost, before }
-})
-const costTotal = running
-const costStyle = (before: number, add: number) =>
-  `--before: ${((before / costTotal) * 100).toFixed(2)}%; --add: ${((add / costTotal) * 100).toFixed(2)}%`
-// "über 1,2 Milliarden": rounded down to a tenth of a billion.
-const costFloor = n(Math.floor(costTotal / 100) / 10)
-
-// Nutzen: the share of direct taxes, then that share opened up.
-const benefit = reportingBenefit
-const fromDataShare = ((benefit.fromData / benefit.billions) * 100).toFixed(2)
 
 // Erfasst: the first and the latest year of the global account exchange,
 // as two squares whose areas compare.
@@ -65,96 +43,15 @@ const { germany } = unexplained
 const { refused, closed } = germany
 ---
 
-<section id="bilanz" class="balance" aria-labelledby="bilanz-heading">
-  <h2 id="bilanz-heading">
-    {en ? "The balance." : "Die Bilanz."}
+<section id="fuer-dich" class="balance" aria-labelledby="fuer-dich-heading">
+  <h2 id="fuer-dich-heading">
+    {en ? "What it means for you." : "Was das für dich heißt."}
     <span
-      >{en ? "Much captured, much paid, little proven." : "Viel erfasst, viel bezahlt, wenig belegt."}</span
+      >{en ? "Reported without suspicion, refused without a reason." : "Erfasst ohne Verdacht, abgelehnt ohne Grund."}</span
     >
   </h2>
 
   <ol class="balance-grid">
-    <!-- Kosten: the yearly cost grows with every duty -->
-    <li class="balance-card">
-      <p class="balance-kicker">{en ? "Cost" : "Kosten"}</p>
-      <h3>
-        {en
-          ? `Over ${costFloor} billion euros a year.`
-          : `Über ${costFloor} Milliarden Euro im Jahr.`}
-      </h3>
-      <ol class="costs">
-        {costRows.map((cost) => (
-          <li style={costStyle(cost.before, cost.millions)}>
-            <span class="cost-what">
-              <b>{en ? `From ${cost.since}` : `Ab ${cost.since}`}</b>
-              {cost.what[language]}
-            </span>
-            <span class="cost-bar" aria-hidden="true">
-              <span class="cost-old" />
-              <span class="cost-new" />
-            </span>
-            <span class="cost-value">+{millions(cost.millions)}</span>
-            {cost.note && <span class="cost-note">{cost.note[language]}</span>}
-          </li>
-        ))}
-      </ol>
-      <p class="balance-line">
-        {en
-          ? "The running cost of three duties to report to the tax office, every year, as the Commission estimates it."
-          : "Laufende Kosten von drei Meldepflichten an die Steuer, jedes Jahr, nach Schätzung der Kommission."}
-        <SourceRefs sources={cite(cited.costs)} language={language} />
-      </p>
-    </li>
-
-    <!-- Nutzen: a sliver of the taxes, and most of it a model -->
-    <li class="balance-card">
-      <p class="balance-kicker">{en ? "Benefit" : "Nutzen"}</p>
-      <h3>
-        {en
-          ? `${percent(benefit.shareOfDirectTaxes)} of direct taxes, mostly estimated.`
-          : `${percent(benefit.shareOfDirectTaxes)} der direkten Steuern, großteils geschätzt.`}
-      </h3>
-      <div class="benefit" aria-hidden="true">
-        <div class="benefit-all">
-          <span
-            >{en ? "All direct taxes in the EU" : "Alle direkten Steuern in der EU"}</span
-          >
-          <span class="benefit-sliver" />
-        </div>
-        <div class="benefit-zoom" />
-        <div class="benefit-part" style={`--data: ${fromDataShare}%`}>
-          <span class="benefit-data" />
-          <span class="benefit-model" />
-        </div>
-        <div class="benefit-labels">
-          <span>
-            <b
-              >{en ? `€${n(benefit.fromData)}bn` : `${n(benefit.fromData)} Mrd. €`}</b
-            >
-            {en ? "from data" : "aus Daten"}
-          </span>
-          <span class="model">
-            <b
-              >{en ? `€${n(benefit.modelled)}bn` : `${n(benefit.modelled)} Mrd. €`}</b
-            >
-            {en ? "modelled without data" : "Modell ohne Daten"}
-          </span>
-        </div>
-      </div>
-      <p class="balance-line">
-        {en
-          ? `What all exchanged tax data bring a year, as the Commission estimates it: €${n(benefit.billions)} billion.`
-          : `So viel bringen alle ausgetauschten Steuerdaten im Jahr, schätzt die Kommission: ${n(benefit.billions)} Milliarden Euro.`}
-        <SourceRefs sources={cite(cited.benefit)} language={language} />
-      </p>
-      <p class="balance-admission">
-        {en
-          ? "In 2026 the Commission itself writes that some duties, such as the one for online platforms, produce “large volumes of information which has limited tax relevance”, at “disproportionate compliance costs”."
-          : "2026 schreibt die Kommission selbst: Manche Meldepflichten, etwa die für Online-Plattformen, liefern große Mengen an Daten mit geringer steuerlicher Bedeutung, zu unverhältnismäßigen Kosten."}
-        <SourceRefs sources={cite(cited.admission)} language={language} />
-      </p>
-    </li>
-
     <!-- Erfasst: two squares, 2017 inside 2024 -->
     <li class="balance-card">
       <p class="balance-kicker">{en ? "Captured" : "Erfasst"}</p>
@@ -353,152 +250,6 @@ const { refused, closed } = germany
     font-weight: 560;
     line-height: 1.4;
     text-wrap: pretty;
-  }
-
-  /* ---------- Kosten ---------------------------------------------------- */
-
-  /* Jede Zeile trägt die Kosten davor grau und die neue Pflicht rot. */
-  .costs {
-    display: grid;
-    gap: var(--space-s);
-    align-self: center;
-    margin: var(--space-2xs) 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .costs li {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.3rem var(--space-s);
-    align-items: baseline;
-  }
-
-  .cost-what {
-    color: var(--ink-2);
-    font-size: var(--type-meta);
-  }
-
-  .cost-what b {
-    margin-inline-end: 0.4em;
-    color: var(--ink);
-  }
-
-  .cost-bar {
-    position: relative;
-    grid-column: 1 / -1;
-    grid-row: 2;
-    block-size: 1.6rem;
-    border-radius: var(--radius-sm);
-    background: color-mix(in oklab, var(--bar) 8%, transparent);
-  }
-
-  .cost-old,
-  .cost-new {
-    position: absolute;
-    inset-block: 0;
-  }
-
-  .cost-old {
-    inset-inline-start: 0;
-    inline-size: var(--before);
-    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-    background: var(--bar);
-  }
-
-  .cost-new {
-    inset-inline-start: var(--before);
-    inline-size: max(3px, var(--add));
-    border-radius: var(--radius-sm);
-    background: var(--red);
-  }
-
-  .cost-value {
-    grid-row: 1;
-    grid-column: 2;
-    font-weight: 600;
-    text-align: end;
-    white-space: nowrap;
-  }
-
-  .cost-note {
-    grid-column: 1 / -1;
-    grid-row: 3;
-    color: var(--ink-3);
-    font-size: var(--type-meta);
-  }
-
-  /* ---------- Nutzen ---------------------------------------------------- */
-
-  /* Oben alle direkten Steuern mit dem roten Splitter, darunter der
-     Splitter aufgezogen: links aus Daten, rechts nur ein Modell. */
-  .benefit {
-    display: grid;
-    align-self: center;
-    margin-block: var(--space-2xs);
-  }
-
-  .benefit-all {
-    position: relative;
-    display: flex;
-    align-items: center;
-    block-size: 2rem;
-    padding-inline: 0.6rem;
-    border-radius: var(--radius-sm);
-    background: color-mix(in oklab, var(--bar) 22%, transparent);
-    color: var(--ink-2);
-    font-size: var(--type-meta);
-  }
-
-  .benefit-sliver {
-    position: absolute;
-    inset-block: -0.2rem;
-    inset-inline-end: 0;
-    inline-size: 3px;
-    background: var(--red);
-  }
-
-  .benefit-zoom {
-    block-size: 2.5rem;
-    background: color-mix(in oklab, var(--red) 10%, transparent);
-    clip-path: polygon(calc(100% - 3px) 0, 100% 0, 100% 100%, 0 100%);
-  }
-
-  .benefit-part {
-    display: flex;
-    block-size: 2rem;
-    overflow: hidden;
-    border-radius: var(--radius-sm);
-    box-shadow: inset 0 0 0 1.5px var(--red);
-  }
-
-  .benefit-data {
-    flex: 0 0 var(--data);
-    background: var(--red);
-  }
-
-  .benefit-model {
-    flex: 1;
-    background: var(--hatch);
-  }
-
-  .benefit-labels {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-s);
-    margin-block-start: 0.4rem;
-    color: var(--ink-2);
-    font-size: var(--type-meta);
-  }
-
-  .benefit-labels b {
-    display: block;
-    color: var(--ink);
-    font-size: var(--step-0);
-  }
-
-  .benefit-labels .model {
-    text-align: end;
   }
 
   /* ---------- Erfasst --------------------------------------------------- */
