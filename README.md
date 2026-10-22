@@ -153,15 +153,19 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   while the year runs with the scroll, red from 2015 and dashed for what is
   coming; a wall of one tile per Official Journal page, six red ones from
   1991 among 488; and a sea of suspicion reports in Austria beside 139
-  convictions and 100 coins of which one is red. Without JavaScript the
+  convictions, then a 100-euro note that crumbles to dust until the red
+  sliver confiscated remains (`src/lib/film-note.ts`). Without JavaScript the
   headlines stand as text. The page frames DAC8 as the latest piece of a
   wider apparatus of anti-money-laundering and tax-reporting rules and
   builds on the film in three steps: what it means for you
   (`src/components/RuleBalance.astro`: accounts reported without
   suspicion, accounts refused or closed without a reason, data leaks from
   `src/data/leaks.ts`); the bill (`src/components/RuleBill.astro`, data in
-  `src/data/history-gap.ts`: rules and reports rising against the share
-  confiscated on a scale of 100 euros, what three tax reporting duties cost
+  `src/data/history-gap.ts`: the scissors, `src/components/RuleScissors.astro`,
+  a panel that stands while the years run with the scroll from 2005 to
+  today, rules and reports rising against the share confiscated on a scale
+  of 100 euros, and in the gap between them, year by year, an institution
+  saying the effect is not or cannot be measured; what three tax reporting duties cost
   a year, how much of the claimed benefit is modelled, and how the
   apparatus grows); and promised, measured
   (`src/components/RulePromises.astro`, data in
