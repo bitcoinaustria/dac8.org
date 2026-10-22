@@ -1,0 +1,453 @@
+---
+import SourceRefs from "@/components/SourceRefs.astro"
+import { ruleChronicle } from "@/data/aml-history"
+import { historyAsOf, isAhead } from "@/data/history"
+import {
+  formatNumber,
+  reportsByYear,
+  reportsByYearSources,
+} from "@/data/history-evidence"
+import {
+  germanReportsByYear,
+  germanReportsSources,
+  recovery,
+} from "@/data/history-gap"
+import { historySources } from "@/data/history-sources"
+import { steps } from "@/data/overregulation"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+
+// The scissors: what rises (the rules in force, suspicion reports in
+// Austria and Germany) against what stays flat (the share of criminal
+// proceeds confiscated in the EU). The rising rows each run on their own
+// scale, start and end written beside them; the flat row runs on a scale
+// of 100 euros, so its flatness is real. Europol's own sentence follows.
+const { language } = Astro.props
+const en = language === "en"
+const n = (value: number) => formatNumber(value, language)
+const { cite } = historySources(language)
+
+const first = 2005
+const last = new Date(historyAsOf).getUTCFullYear()
+const span = last + 1 - first
+const X = (year: number) => ((year + 0.5 - first) / span) * 1000
+
+// Rules in force each year, as on the film's curve.
+const statusOf = new Map(ruleChronicle.entries.map((e) => [e.id, e.status]))
+const rows = ruleChronicle.stack.flatMap((group) => group.rows)
+const inForce = (year: number) =>
+  rows.filter(
+    (row) =>
+      !isAhead(statusOf.get(row.id) ?? "past") &&
+      row.from <= year &&
+      year <= (row.until ?? Number.POSITIVE_INFINITY),
+  ).length
+
+type Point = { year: number; value: number }
+const series = (points: Point[]) => {
+  const top = Math.max(...points.map((p) => p.value))
+  const Y = (value: number) => 96 - (value / top) * 88
+  const line = points
+    .map(
+      (p, k) =>
+        `${k ? "L" : "M"}${X(p.year).toFixed(1)} ${Y(p.value).toFixed(1)}`,
+    )
+    .join(" ")
+  const area = `${line} L${X(points[points.length - 1].year).toFixed(1)} 100 L${X(points[0].year).toFixed(1)} 100 Z`
+  return { line, area, start: points[0], end: points[points.length - 1] }
+}
+
+const yearsTo = (to: number) =>
+  Array.from({ length: to - first + 1 }, (_, k) => first + k)
+const rising = [
+  {
+    id: "rules",
+    label: en ? "Rules in force" : "Geltende Regeln",
+    note: en ? "tax and anti-money-laundering" : "Steuer und Geldwäsche",
+    ...series(yearsTo(last).map((year) => ({ year, value: inForce(year) }))),
+    sources: steps.find((step) => step.id === "regeln-heute")?.sources ?? [],
+  },
+  {
+    id: "reports-at",
+    label: en
+      ? "Suspicion reports, Austria"
+      : "Verdachtsmeldungen in Österreich",
+    note: en
+      ? "counted differently from 2012, 2024 and 2025"
+      : "Zählweise geändert 2012, 2024 und 2025",
+    ...series(
+      reportsByYear.map((row) => ({ year: row.year, value: row.reports })),
+    ),
+    sources: reportsByYearSources,
+  },
+  {
+    id: "reports-de",
+    label: en
+      ? "Suspicion reports, Germany"
+      : "Verdachtsmeldungen in Deutschland",
+    note: en ? "counted differently from 2017" : "Zählweise geändert 2017",
+    ...series(
+      germanReportsByYear.map((row) => ({
+        year: row.year,
+        value: row.reports,
+      })),
+    ),
+    sources: germanReportsSources,
+  },
+]
+
+// Confiscated, on a scale of 100 euros: measured for 2010 to 2014, and
+// "around 2 %" in 2025 with nothing measured between.
+const R = (percent: number) => 100 - percent
+const measured = recovery.measured
+const flat = {
+  measured: `M${X(measured.from).toFixed(1)} ${R(measured.percent)} L${X(measured.to).toFixed(1)} ${R(measured.percent)}`,
+  unknown: `M${X(measured.to).toFixed(1)} ${R(measured.percent)} L${X(recovery.latest.year).toFixed(1)} ${R(recovery.latest.percent)}`,
+  dot: { x: X(recovery.latest.year) / 10, y: R(recovery.latest.percent) },
+  gone: `M${X(measured.from).toFixed(1)} 0 L${X(recovery.latest.year).toFixed(1)} 0 L${X(recovery.latest.year).toFixed(1)} ${R(recovery.latest.percent)} L${X(measured.to).toFixed(1)} ${R(measured.percent)} L${X(measured.from).toFixed(1)} ${R(measured.percent)} Z`,
+}
+const ticks = [2005, 2010, 2015, 2020, 2025].map((year) => ({
+  year,
+  style: `--at: ${(X(year) / 10).toFixed(2)}%`,
+}))
+const euros = (value: number) => (en ? `€${n(value)}` : `${n(value)} €`)
+---
+
+<section id="schere" class="scissors" aria-labelledby="schere-heading">
+  <h2 id="schere-heading">
+    {en ? "The scissors." : "Die Schere."}
+    <span
+      >{en ? "More rules, more reports. As little confiscated." : "Mehr Regeln, mehr Meldungen. Eingezogen wird gleich wenig."}</span
+    >
+  </h2>
+
+  <div class="sc" data-reveal>
+    {rising.map((row) => (
+      <div class="sc-row">
+        <p class="sc-label">
+          {row.label}
+          <span>{row.note}</span>
+        </p>
+        <svg class="sc-plot" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
+          <path class="sc-area" d={row.area} />
+          <path class="sc-line" d={row.line} pathLength="1" />
+        </svg>
+        <p class="sc-values">
+          <span><b>{n(row.start.value)}</b> {row.start.year}</span>
+          <span class="end"><b>{n(row.end.value)}</b> {row.end.year}</span>
+        </p>
+      </div>
+    ))}
+
+    <div class="sc-row flat">
+      <p class="sc-label">
+        {en ? "Of 100 euros from crime, confiscated" : "Von 100 € aus Straftaten eingezogen"}
+        <span
+          >{en ? "EU, as Europol estimates it; on a scale of €100" : "EU, nach Schätzung von Europol; Maßstab 0 bis 100 €"}</span
+        >
+      </p>
+      <div class="sc-flat">
+        <svg
+          class="sc-plot"
+          viewBox="0 0 1000 100"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <line class="sc-top" x1="0" y1="0" x2="1000" y2="0" />
+          <path class="sc-gone" d={flat.gone} />
+          <path class="sc-red" d={flat.measured} pathLength="1" />
+          <path class="sc-red unknown" d={flat.unknown} />
+        </svg>
+        <span class="sc-top-label">100 €</span>
+        <span class="sc-gone-label"
+          >{en ? "not confiscated" : "nicht eingezogen"}</span
+        >
+        <span class="sc-dot" style={`left: ${flat.dot.x}%`} />
+      </div>
+      <p class="sc-values">
+        <span class="red"
+          ><b>{euros(measured.percent)}</b> {measured.from}–{measured.to}</span
+        >
+        <span class="end red"
+          ><b
+            >{en ? `about ${euros(recovery.latest.percent)}` : `rund ${euros(recovery.latest.percent)}`}</b
+          > {recovery.latest.year}</span
+        >
+      </p>
+    </div>
+
+    <div class="sc-axis" aria-hidden="true">
+      {ticks.map((tick) => <span style={tick.style}>{tick.year}</span>)}
+    </div>
+  </div>
+
+  <p class="sc-note">
+    {en
+      ? "The three rising rows each on their own scale, from their first to their last value; the red row on a scale of 100 euros. Dashed: no measurement in between."
+      : "Die drei steigenden Zeilen je auf eigenem Maßstab, vom ersten zum letzten Wert; die rote Zeile auf einem Maßstab von 100 €. Gestrichelt: dazwischen nicht gemessen."}
+    <SourceRefs
+      sources={cite([...rising.flatMap((row) => row.sources), ...recovery.sources])}
+      language={language}
+    />
+  </p>
+
+  <blockquote class="sc-quote" data-reveal>
+    <p>{recovery.quote[language]}</p>
+    <footer>
+      {en ? "Europol, 2025" : "Europol, 2025"}
+      <SourceRefs sources={cite([recovery.sources[1]])} language={language} />
+    </footer>
+  </blockquote>
+</section>
+
+<script>
+  // Lines draw themselves once the chart comes into view.
+  const parts = document.querySelectorAll<HTMLElement>(
+    ".scissors [data-reveal]",
+  )
+  const watch = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries)
+        if (entry.isIntersecting) {
+          entry.target.classList.add("seen")
+          watch.unobserve(entry.target)
+        }
+    },
+    { rootMargin: "0px 0px -20% 0px" },
+  )
+  for (const part of parts) watch.observe(part)
+  document.documentElement.classList.add("scissors-ready")
+</script>
+
+<style>
+  .scissors {
+    --bar: light-dark(#3b4147, #a7afb6);
+    --red: var(--primary);
+    display: grid;
+    gap: var(--space-l);
+  }
+
+  .sc {
+    display: grid;
+    gap: var(--space-m);
+    max-inline-size: 60rem;
+    padding: var(--space-m);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+
+  .sc-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.3rem;
+  }
+
+  .sc-label {
+    color: var(--ink);
+    font-weight: 560;
+    line-height: 1.3;
+  }
+
+  .sc-label span {
+    display: block;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    font-weight: 400;
+  }
+
+  .sc-plot {
+    display: block;
+    inline-size: 100%;
+    block-size: clamp(3.5rem, 8vw, 5rem);
+    overflow: visible;
+  }
+
+  .sc-area {
+    fill: color-mix(in oklab, var(--bar) 16%, transparent);
+  }
+
+  .sc-line {
+    fill: none;
+    stroke: var(--bar);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+
+  .sc-values {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-s);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  .sc-values b {
+    color: var(--ink);
+    font-weight: 650;
+  }
+
+  .sc-values .red,
+  .sc-values .red b {
+    color: var(--accent);
+  }
+
+  /* Die rote Zeile: Maßstab 100 €, die Linie liegt am Boden, darüber das
+     nicht Eingezogene. */
+  .sc-flat {
+    position: relative;
+    margin-block-start: 0.7rem;
+  }
+
+  .sc-top {
+    stroke: var(--ink-3);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .sc-gone {
+    fill: color-mix(in oklab, var(--bar) 7%, transparent);
+  }
+
+  .sc-red {
+    fill: none;
+    stroke: var(--red);
+    stroke-width: 4;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+  }
+
+  .sc-red.unknown {
+    stroke-width: 2.5;
+    stroke-dasharray: 5 5;
+  }
+
+  .sc-top-label,
+  .sc-gone-label {
+    position: absolute;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  .sc-top-label {
+    inset-block-start: -0.6rem;
+    inset-inline-start: 0;
+    padding-inline-end: 0.3rem;
+    background: var(--panel);
+    line-height: 1.2;
+  }
+
+  .sc-gone-label {
+    inset-block-start: 38%;
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    letter-spacing: 0.04em;
+  }
+
+  .sc-dot {
+    position: absolute;
+    inset-block-end: calc(2% - 0.35rem);
+    inline-size: 0.7rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--red);
+    translate: -50% 0;
+  }
+
+  .sc-axis {
+    position: relative;
+    block-size: 1.2rem;
+    border-block-start: 1px solid var(--line);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  .sc-axis span {
+    position: absolute;
+    inset-block-start: 0.2rem;
+    inset-inline-start: var(--at);
+    translate: -50% 0;
+    white-space: nowrap;
+  }
+
+  .sc-note {
+    max-inline-size: 62ch;
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .sc-quote {
+    display: grid;
+    gap: var(--space-2xs);
+    max-inline-size: 52rem;
+    margin: 0;
+    padding-inline-start: var(--space-l);
+    border-inline-start: 6px solid var(--red);
+  }
+
+  .sc-quote p {
+    color: var(--ink);
+    font-size: var(--type-h3);
+    font-weight: var(--weight-heading);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    text-wrap: pretty;
+  }
+
+  .sc-quote footer {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  /* ---------- Auftritt beim Scrollen ----------------------------------- */
+
+  :global(html.scissors-ready)
+    .sc:not(.seen)
+    :is(.sc-line, .sc-red:not(.unknown)) {
+    stroke-dashoffset: 1;
+  }
+
+  :global(html.scissors-ready)
+    .sc:not(.seen)
+    :is(.sc-area, .sc-dot, .sc-red.unknown) {
+    opacity: 0;
+  }
+
+  .sc-line,
+  .sc-red {
+    transition: stroke-dashoffset 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+  }
+
+  .sc-area,
+  .sc-dot,
+  .sc-red.unknown {
+    transition: opacity 0.6s ease 1.4s;
+  }
+
+  :global(html.scissors-ready) [data-reveal].sc-quote:not(.seen) {
+    opacity: 0;
+    translate: 0 1rem;
+  }
+
+  .sc-quote {
+    transition:
+      opacity 0.6s ease,
+      translate 0.6s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sc *,
+    .sc-quote {
+      transition: none !important;
+    }
+  }
+</style>

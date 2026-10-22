@@ -431,3 +431,217 @@ export const reportSources: Source[] = [
     href: "https://www.zoll.de/SharedDocs/Downloads/DE/Links-fuer-Inhaltseiten/Fachthemen/FIU/fiu_jahresbericht_2025.pdf?__blob=publicationFile&v=2",
   },
 ]
+
+// ---------- The scissors: suspicion reports in Germany per year, as the
+// financial intelligence unit counts them (first-time reports until 2016,
+// from 2017 first and follow-up reports together, so 2017 is a break).
+export const germanReportsByYear: { year: number; reports: number }[] = [
+  { year: 2008, reports: 7349 },
+  { year: 2009, reports: 9046 },
+  { year: 2010, reports: 11042 },
+  { year: 2011, reports: 12868 },
+  { year: 2012, reports: 14361 },
+  { year: 2013, reports: 19095 },
+  { year: 2014, reports: 24054 },
+  { year: 2015, reports: 29108 },
+  { year: 2016, reports: 40690 },
+  { year: 2017, reports: 59845 },
+  { year: 2018, reports: 77252 },
+  { year: 2019, reports: 114914 },
+  { year: 2020, reports: 144005 },
+  { year: 2021, reports: 298507 },
+  { year: 2022, reports: 337186 },
+  { year: 2023, reports: 322590 },
+  { year: 2024, reports: 265708 },
+  { year: 2025, reports: 374693 },
+]
+export const germanReportsSources: Source[] = [
+  reportSources[0],
+  {
+    label: {
+      de: "FIU, Jahresberichte 2017 bis 2025",
+      en: "FIU, annual reports 2017 to 2025, in German",
+    },
+    href: "https://www.zoll.de/DE/FIU/Fachliche-Informationen/Jahresberichte/jahresberichte_node.html",
+  },
+]
+
+// The share of criminal proceeds confiscated in the EU, as Europol puts
+// it: 1.1 percent for 2010 to 2014, and in 2025 "stagnated at around an
+// estimated 2 %", without a period or method. Nothing measured between.
+export const recovery = {
+  measured: { from: 2010, to: 2014, percent: 1.1 },
+  latest: { year: 2025, percent: 2 },
+  sources: [
+    {
+      label: {
+        de: "Europol, Criminal asset recovery in the EU, 2016",
+        en: "Europol, Criminal asset recovery in the EU, 2016",
+      },
+      href: "https://www.europol.europa.eu/sites/default/files/documents/criminal_asset_recovery_in_the_eu_web_version_0.pdf",
+    },
+    {
+      label: {
+        de: "Europol, EU-SOCTA 2025, S. 13 und 25",
+        en: "Europol, EU-SOCTA 2025, pp. 13 and 25",
+      },
+      href: "https://www.europol.europa.eu/cms/sites/default/files/documents/EU-SOCTA-2025.pdf",
+    },
+  ] satisfies Source[],
+  quote: {
+    de: "Trotz erheblicher Investitionen in Personal, Mittel und Gesetze stagniere das Einziehen von Erträgen aus Straftaten bei geschätzt rund 2 Prozent.",
+    en: "“Despite substantial investments in resources and legislative frameworks, the confiscation of criminal proceeds has stagnated at around an estimated 2 % of illicit proceeds.”",
+  } satisfies Text,
+}
+
+// ---------- In their own words, for the band of quotations. The phrase
+// between asterisks is set in red. Quotation marks only where the page's
+// language is the original's; otherwise the words are reported.
+export type Voice = {
+  id: string
+  original: Language
+  quote: Text
+  who: Text
+  source: Source
+}
+
+export const voices: Voice[] = [
+  {
+    id: "rh-2008",
+    original: "de",
+    quote: {
+      de: "„*Weder das BMI noch das BMJ wussten* daher, ob sie die Zielvorstellungen des Gesetzgebers erfüllten …“",
+      en: "Neither the interior nor the justice ministry *knew whether they were meeting* the legislator’s aims.",
+    },
+    who: {
+      de: "Rechnungshof über die Geldwäschebekämpfung, 2008",
+      en: "Austria’s Court of Audit on the fight against money laundering, 2008",
+    },
+    source: parliament(
+      "XXIV/III/11/imfname_145493.pdf",
+      "Rechnungshof, Reihe Bund 2008/12, TZ 4.2",
+      "Court of Audit, report 2008/12, para 4.2, in German",
+    ),
+  },
+  {
+    id: "rh-2019",
+    original: "de",
+    quote: {
+      de: "Das Finanzministerium „hatte *keine Kosten–Nutzen–Analyse* angedacht“.",
+      en: "The finance ministry *had not considered a cost–benefit analysis*.",
+    },
+    who: {
+      de: "Rechnungshof über den Informationsaustausch in Steuersachen, 2019",
+      en: "Austria’s Court of Audit on tax information exchange, 2019",
+    },
+    source: {
+      label: {
+        de: "Rechnungshof, Bericht 2019/33, TZ 19",
+        en: "Court of Audit, report 2019/33, para 19, in German",
+      },
+      href: "https://www.rechnungshof.gv.at/rh/home/home/Intern_Info_Austausch_Steuerangelegenheiten.pdf",
+    },
+  },
+  {
+    id: "bmi-2024",
+    original: "de",
+    quote: {
+      de: "„Die gewünschte statistische Auswertung … gegliedert nach Urhebern, Empfängern und Ausgang des Verfahrens ist *technisch nicht möglich*.“",
+      en: "A breakdown of the reports by sender, recipient and outcome of the proceedings is *technically impossible*.",
+    },
+    who: {
+      de: "Innenministerium, gefragt, was aus den Meldungen der Geldwäschemeldestelle wurde, 2024",
+      en: "Austria’s interior ministry, asked what came of its financial intelligence unit’s reports, 2024",
+    },
+    source: admissions.staff.source,
+  },
+  {
+    id: "bmf-2025",
+    original: "de",
+    quote: {
+      de: "„Dazu liegen dem Bundesministerium für Finanzen *keine Daten* vor, da eine solche Rückmeldung *nicht vorgesehen* ist.“",
+      en: "The finance ministry has *no data*, because *no such feedback is provided for*.",
+    },
+    who: {
+      de: "Finanzministerium, gefragt, ob Meldungen des Zolls an die Geldwäschemeldestelle zu Strafverfahren führten, 2025",
+      en: "Austria’s finance ministry, asked whether customs reports to the financial intelligence unit led to prosecutions, 2025",
+    },
+    source: parliament(
+      "XXVIII/AB/639/imfname_1688002.pdf",
+      "Finanzministerium, Anfragebeantwortung 639/AB (XXVIII. GP), S. 12",
+      "Finance ministry, answer 639/AB (28th legislative period), p. 12, in German",
+    ),
+  },
+  {
+    id: "de-dac6-2023",
+    original: "de",
+    quote: {
+      de: "„Der Bundesregierung liegen hierzu keine Erkenntnisse vor, da die finanziellen Auswirkungen … *naturgemäß nicht erfasst* werden können.“",
+      en: "The Federal Government has no knowledge of it, because the financial effects *by their nature cannot be captured*.",
+    },
+    who: {
+      de: "Deutsche Bundesregierung, gefragt, was die DAC6-Meldungen an Steuern brachten, 2023",
+      en: "Germany’s Federal Government, asked what the DAC6 reports brought in tax, 2023",
+    },
+    source: bundestag(
+      "20/067/2006734.pdf",
+      "Bundesregierung, Drucksache 20/6734, S. 4",
+      "Federal Government, Bundestag paper 20/6734, p. 4, in German",
+    ),
+  },
+  {
+    id: "de-crypto-2025",
+    original: "de",
+    quote: {
+      de: "„Angaben zur Höhe der Steuereinnahmen aus der Besteuerung von Geschäften mit Kryptowerten *liegen der Bundesregierung nicht vor*.“",
+      en: "Figures on the tax revenue from crypto transactions *are not available to the Federal Government*.",
+    },
+    who: {
+      de: "Deutsche Bundesregierung, während DAC8 im Bundestag lag, 2025",
+      en: "Germany’s Federal Government, while DAC8 was before parliament, 2025",
+    },
+    source: bundestag(
+      "21/017/2101707.pdf",
+      "Bundesregierung, Drucksache 21/1707, S. 2",
+      "Federal Government, Bundestag paper 21/1707, p. 2, in German",
+    ),
+  },
+  {
+    id: "com-2017",
+    original: "en",
+    quote: {
+      de: "Weil Rückmeldungen nicht regelmäßig kommen, lasse sich die Wirksamkeit der ausgetauschten Informationen *nicht beurteilen*.",
+      en: "“As feedback is not given regularly it is *not possible to assess the effectiveness* of the information exchanged.”",
+    },
+    who: {
+      de: "EU-Kommission über den Austausch von Steuerdaten, 2017",
+      en: "European Commission on the exchange of tax data, 2017",
+    },
+    source: {
+      label: {
+        de: "EU-Kommission, COM(2017) 781",
+        en: "European Commission, COM(2017) 781",
+      },
+      href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52017DC0781",
+    },
+  },
+  {
+    id: "fatf-2016",
+    original: "en",
+    quote: {
+      de: "Ob die im Austausch erhaltenen Informationen zu Steuereinnahmen führten, darüber gebe es *keine Statistik*.",
+      en: "“There are *no statistics on the results*, if information received by mutual assistance has led to any revenue effects.”",
+    },
+    who: {
+      de: "FATF über Österreichs Finanzverwaltung, 2016",
+      en: "FATF on Austria’s tax administration, 2016",
+    },
+    source: {
+      label: {
+        de: "FATF, Länderprüfung Österreich 2016, Rn. 395",
+        en: "FATF, mutual evaluation of Austria, 2016, para 395",
+      },
+      href: "https://www.fatf-gafi.org/media/fatf/documents/reports/mer4/MER-Austria-2016.pdf",
+    },
+  },
+]

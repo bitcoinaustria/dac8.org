@@ -154,7 +154,13 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   coming; a wall of one tile per Official Journal page, six red ones from
   1991 among 488; and a sea of suspicion reports in Austria beside 139
   convictions and 100 coins of which one is red. Without JavaScript the
-  headlines stand as text. After the film comes the gap
+  headlines stand as text. After the film come the scissors
+  (`src/components/RuleScissors.astro`): the rules in force and suspicion
+  reports in Austria and Germany rising, each on its own scale, against
+  the share of criminal proceeds confiscated in the EU on a scale of 100
+  euros, with Europol's own word that it has stagnated; then a dark band
+  of authorities saying in their own words that they do not know what the
+  rules bring (`src/components/RuleVoices.astro`); then the gap
   (`src/components/RuleGap.astro`, data in `src/data/history-gap.ts`):
   what grows (staff and budgets of the financial intelligence units, the
   FMA's supervision and the EU's new authority), what the laws were

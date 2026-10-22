@@ -1,0 +1,117 @@
+---
+import SourceRefs from "@/components/SourceRefs.astro"
+import { voices } from "@/data/history-gap"
+import { historySources } from "@/data/history-sources"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+
+// In their own words: authorities in Austria, Germany and the EU saying
+// they do not know what the rules bring. A dark band, the decisive phrase
+// of each in red. Quotation marks only where the page's language is the
+// original's; otherwise the words are reported (src/data/history-gap.ts).
+const { language } = Astro.props
+const en = language === "en"
+const { cite } = historySources(language)
+const escape = (text: string) =>
+  text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+const marked = (text: string) =>
+  escape(text).replace(/\*(.+?)\*/g, "<mark>$1</mark>")
+const items = voices.map((voice) => ({
+  ...voice,
+  html: marked(voice.quote[language]),
+  reported: voice.original !== language,
+}))
+const count = items.length
+---
+
+<section
+  id="originalton"
+  class="band voices"
+  aria-labelledby="originalton-heading"
+>
+  <h2 id="originalton-heading">
+    {en ? "In their own words." : "Im Originalton."}
+    <span
+      >{en ? "What it brings, they often do not know themselves." : "Was es bringt, wissen sie oft selbst nicht."}</span
+    >
+  </h2>
+  <ul class="voices-wall" data-count={count}>
+    {items.map((item) => (
+      <li class:list={{ reported: item.reported }}>
+        <blockquote set:html={item.html} />
+        <p class="voice-who">
+          {item.who[language]}
+          <SourceRefs sources={cite([item.source])} language={language} />
+        </p>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  /* Ein dunkles Band in beiden Modi, damit die Zitate herausstehen. */
+  :global(.campaign) > section.band.voices {
+    --band-fill: light-dark(#161616, #050505);
+    --foreground: #f2f2f2;
+    --ink: #f2f2f2;
+    --ink-2: #cfcfcf;
+    --ink-3: #9a9a9a;
+    --line: rgb(255 255 255 / 0.14);
+    --accent: #ff4f58;
+    color: var(--foreground);
+  }
+
+  .voices > h2 {
+    color: var(--foreground);
+  }
+
+  .voices-wall {
+    columns: 2 22rem;
+    column-gap: var(--space-2xl);
+    margin: var(--space-xl) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .voices-wall li {
+    display: grid;
+    gap: var(--space-2xs);
+    margin-block-end: var(--space-xl);
+    padding-block-start: var(--space-s);
+    border-block-start: 1px solid var(--line);
+    break-inside: avoid;
+  }
+
+  .voices-wall blockquote {
+    margin: 0;
+    color: var(--ink);
+    font-size: clamp(1.15rem, 0.95rem + 0.7vw, 1.55rem);
+    font-weight: 560;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+  }
+
+  .voices-wall li.reported blockquote {
+    font-style: normal;
+  }
+
+  .voices-wall :global(mark) {
+    background: none;
+    color: var(--accent);
+    font-weight: 750;
+  }
+
+  .voice-who {
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    line-height: 1.4;
+  }
+
+  .voice-who :global(a) {
+    color: var(--ink-3);
+  }
+</style>

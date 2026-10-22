@@ -1,5 +1,6 @@
 import {
   accountsSources,
+  reportsByYearSources,
   unexplained,
   reportingBenefit,
   reportingCostSources,
@@ -11,7 +12,10 @@ import {
   bankPackage,
   corrected,
   estimates,
+  germanReportsSources,
+  recovery,
   reportSources,
+  voices,
 } from "@/data/history-gap"
 import { leaks } from "@/data/leaks"
 import { steps } from "@/data/overregulation"
@@ -91,6 +95,14 @@ export const historySources = (language: Language) => {
     })
   }
   for (const step of steps) step.sources.forEach(add)
+  // The scissors and the quotations after the film.
+  for (const source of [
+    ...reportsByYearSources,
+    ...germanReportsSources,
+    ...recovery.sources,
+    ...voices.map((voice) => voice.source),
+  ])
+    add(source)
   // The gap, in the order of its blocks and quotations.
   for (const source of [
     ...apparatus.flatMap((row) => row.sources),
