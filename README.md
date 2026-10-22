@@ -155,7 +155,7 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   while the year runs with the scroll, red from 2015 and dashed for what is
   coming; a wall of one tile per Official Journal page, six red ones from
   1991 among 488; and a sea of suspicion reports in Austria beside 139
-  convictions, then a fictional 100-euro note with a masked face that
+  convictions, then a fictional 100-euro note with a masked robber that
   crumbles to dust until the red sliver confiscated remains
   (`src/lib/film-note.ts`). Without JavaScript the
   headlines stand as text. The page frames DAC8 as the latest piece of a
