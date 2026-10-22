@@ -337,15 +337,6 @@ const noteKeep = String(kept / 100)
               {item.text?.[language]}
               <SourceRefs sources={cite(item.sources)} language={language} />
             </p>
-            {item.chapter === "papier" && (
-              <button type="button" class="say-voice" data-film-voice aria-pressed="false">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M4 9h4l5-4v14l-5-4H4z" />
-                  <path class="wave" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" />
-                </svg>
-                <span data-voice-label>{en ? "Read it aloud" : "Vorlesen lassen"}</span>
-              </button>
-            )}
           </div>
         ))}
         <!-- Back and forth by click as well as by scroll. -->
@@ -377,6 +368,24 @@ const noteKeep = String(kept / 100)
           </button>
         </nav>
       </div>
+
+      <!-- One loudspeaker, shown in the paper chapter: the law read aloud. -->
+      <button
+        type="button"
+        class="film-voice"
+        data-film-voice
+        aria-pressed="false"
+        aria-label={en ? "Read the law aloud" : "Gesetz vorlesen lassen"}
+        title={en ? "Read the law aloud" : "Gesetz vorlesen lassen"}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 9h4l5-4v14l-5-4H4z" />
+          <path
+            class="wave"
+            d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"
+          />
+        </svg>
+      </button>
 
       <div class="scenes" aria-hidden="true">
         <!-- Ausweis -->
@@ -670,8 +679,8 @@ const noteKeep = String(kept / 100)
     const race = raceRoot ? createRace(raceRoot) : null
     const raceStep = Number(raceRoot?.dataset.only ?? -1)
 
-    // The law read aloud, only when asked for: the button under the paper
-    // chapter's headline turns it on and off. In 1991 one voice reads; today
+    // The law read aloud, only when asked for: the loudspeaker shown in the
+    // paper chapter turns it on and off. In 1991 one voice reads; today
     // voices start one after another and go on until they talk over each
     // other. Each speaking page lights up; the newest passage stands as a
     // caption.
@@ -767,18 +776,8 @@ const noteKeep = String(kept / 100)
     }
     const setVoice = (on: boolean) => {
       voiceOn = on
-      for (const button of voiceButtons) {
+      for (const button of voiceButtons)
         button.setAttribute("aria-pressed", String(on))
-        const label = button.querySelector<HTMLElement>("[data-voice-label]")
-        if (label)
-          label.textContent = on
-            ? document.documentElement.lang.startsWith("en")
-              ? "Stop reading"
-              : "Vorlesen stoppen"
-            : document.documentElement.lang.startsWith("en")
-              ? "Read it aloud"
-              : "Vorlesen lassen"
-      }
       voiceStep = ""
       voiceFor(stepIds[current] ?? "")
     }
@@ -1545,35 +1544,56 @@ const noteKeep = String(kept / 100)
     }
   }
 
-  .say-voice {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    justify-self: start;
-    margin-block-start: var(--space-xs);
-    padding: 0.45rem 0.9rem 0.45rem 0.7rem;
+  /* Der Lautsprecher: oben rechts im Bild, nur im Kapitel Papier. */
+  .film-voice {
+    position: absolute;
+    inset-block-start: var(--space-s);
+    inset-inline-end: var(--space-s);
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    inline-size: 3rem;
+    aspect-ratio: 1;
+    padding: 0;
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: 50%;
     background: var(--panel);
     color: var(--foreground);
-    font: inherit;
-    font-size: var(--type-meta);
-    font-weight: 600;
+    box-shadow: 0 0.4rem 1.2rem rgb(0 0 0 / 0.25);
     cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    scale: 0.8;
+    transition:
+      opacity 0.35s ease,
+      visibility 0.35s,
+      scale 0.35s ease,
+      border-color 0.2s ease,
+      background 0.2s ease;
   }
 
-  .say-voice:hover {
+  .view[data-scene="tower"] .film-voice {
+    opacity: 1;
+    visibility: visible;
+    scale: 1;
+  }
+
+  .film:not([data-ready]) .film-voice {
+    display: none;
+  }
+
+  .film-voice:hover {
     border-color: var(--ink-3);
   }
 
-  .say-voice:focus-visible {
+  .film-voice:focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
   }
 
-  .say-voice svg {
-    inline-size: 1.2rem;
-    block-size: 1.2rem;
+  .film-voice svg {
+    inline-size: 1.4rem;
+    block-size: 1.4rem;
     fill: none;
     stroke: currentColor;
     stroke-width: 2;
@@ -1581,12 +1601,13 @@ const noteKeep = String(kept / 100)
     stroke-linejoin: round;
   }
 
-  .say-voice[aria-pressed="true"] {
+  .film-voice[aria-pressed="true"] {
     border-color: var(--red);
-    background: color-mix(in oklab, var(--red) 15%, var(--panel));
+    background: var(--red);
+    color: #fff;
   }
 
-  .say-voice[aria-pressed="true"] .wave {
+  .film-voice[aria-pressed="true"] .wave {
     animation: voice-wave 0.8s ease-in-out infinite alternate;
   }
 
