@@ -153,11 +153,9 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   Codex): a brick of 339 hundred-euro notes in 1991, 13 and a fifty in
   2017, a single cent today, all three in view; a panopticon at night rendered in Blender
   (`scripts/artwork/render-panopticon.py`), a ring of eight cells, one per
-  way money can take, around a watchtower; red marks appear on the
-  searchlight paths as the year runs with the scroll, and once one applies
-  a light pass of that cell's searchlight is screen-blended over the base
-  picture, a bar for a check at the bank or provider and a dot for an
-  automatic report to the tax office, until every way is covered; a wall
+  way money can take, around a watchtower; as the year runs with the
+  scroll, a light pass of a cell's searchlight is screen-blended over the
+  base picture once a rule on that way applies, until every way is lit; a wall
   of one tile per Official Journal page, six red ones from 1991 among 488,
   which on request reads the law aloud: verbatim passages of the 1991
   directive and the 2024 regulation (`src/data/law-voices.ts`), spoken with
