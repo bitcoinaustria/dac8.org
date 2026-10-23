@@ -44,13 +44,13 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "Warum finanzielle Privatsphäre zählt und was wir fordern",
       description:
-        "Warum finanzielle Privatsphäre zählt und wir die anlasslose Erfassung aller Krypto-Kunden ablehnen: unsere Gründe vom Bargeld bis zur Zielliste, Antworten auf Einwände und unsere Forderungen.",
+        "Warum finanzielle Privatsphäre zählt und wir die anlasslose Erfassung aller Krypto-Kunden ablehnen: unsere Gründe, Antworten auf Einwände und unsere Forderungen.",
       imageLines: ["Warum finanzielle", "Privatsphäre zählt."],
     },
     en: {
       title: "Why financial privacy matters, and what we demand",
       description:
-        "Why financial privacy matters and we oppose collecting data on every crypto customer without suspicion: our reasons from cash to target lists, answers to objections and our demands.",
+        "Why financial privacy matters and we oppose collecting data on every crypto customer without suspicion: our reasons, answers to objections and our demands.",
       imageLines: ["Why financial", "privacy matters."],
     },
   },
@@ -59,13 +59,13 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
       title:
         "Steuern und Geldwäsche: Stück für Stück, zurückgenommen wird nichts",
       description:
-        "Von der Amtshilfe 1977 und dem Ausweis bei der Bank bis zu DAC8 und dem, was schon beschlossen ist: wie die Regeln wachsen, wer hineinschauen darf und was Prüfer über ihre Wirkung fanden, mit Primärquellen.",
+        "Von der Amtshilfe 1977 bis zu DAC8 und dem, was schon beschlossen ist: wie die Regeln wachsen, wer hineinschauen darf und was sie bringen, mit Primärquellen.",
       imageLines: ["Stück für Stück.", "Zurückgenommen", "wird nichts."],
     },
     en: {
       title: "Tax and money laundering: piece by piece, nothing taken back",
       description:
-        "From mutual assistance in 1977 and ID at the bank to DAC8 and what is already decided: how the rules grow, who gets to look and what auditors found about their effect, with primary sources.",
+        "From mutual assistance in 1977 to DAC8 and what is already decided: how the rules grow, who gets to look and what they achieve, with primary sources.",
       imageLines: ["Piece by piece.", "Nothing is", "taken back."],
     },
   },
