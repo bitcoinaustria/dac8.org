@@ -147,7 +147,7 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   ratchet: each step small, none taken back, the next already decided. A
   scroll film (`src/components/RuleFilm.astro`, steps and figures in
   `src/data/overregulation.ts`), built like the home page's data story,
-  leads in five chapters and eleven steps from the reader to the result, each
+  leads in five chapters and ten steps from the reader to the result, each
   step a headline of a few words over one picture as a contrast: from which
   amount a single cash transaction without an account needs ID, rendered at true scale
   in Blender (`scripts/artwork/render-cash.py`, fictional notes generated
@@ -155,13 +155,14 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   money), a banded bundle of 100 from 2027, and for crypto a single cent,
   because every transfer through a provider carries the name; a panopticon
   at night rendered in Blender (`scripts/artwork/render-panopticon.py`), a
-  ring of eight cells, one per way money can take, around a watchtower; as
-  the year runs with the scroll, a light pass of a cell's searchlight is
-  screen-blended over the base picture once a rule on that way applies,
-  until every way is lit; then, in the same picture, one window of the
-  watchtower lights up per kind of authority allowed into the Austrian
-  account register (3 in 2016, 8 in 2021, 9 in 2026), and DAC8 opens all
-  exchanged tax data to anti-money-laundering use; a wall of one tile per
+  ring of eight cells, one per way money can take, around a watchtower,
+  heating up like the water around the frog: over two steps the year runs
+  with the scroll from 1977 to today, a light pass of a cell's searchlight
+  is screen-blended over the base picture once a rule on that way applies,
+  and from 2016 one window of the watchtower lights up per kind of
+  authority allowed into the Austrian account register (3 in 2016, 8 in
+  2021, 9 in 2026); cash stays dark until its 2027 rule, which the next
+  section names; a wall of one tile per
   Official Journal page, six red ones from 1991 among the 488 adopted
   since, which on request reads the law aloud: verbatim passages of the
   1991 directive and the 2024 regulation (`src/data/law-voices.ts`), spoken

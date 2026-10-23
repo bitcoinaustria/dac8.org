@@ -86,8 +86,8 @@ const cashRows = thresholds.map((t, k) => {
     detail:
       t.amount === 0
         ? en
-          ? "Your name on every crypto transfer through a provider"
-          : "Dein Name bei jeder Krypto-Übertragung über einen Anbieter"
+          ? "your name on every transfer through a provider"
+          : "dein Name bei jeder Übertragung über einen Anbieter"
         : t.year >= thisYear
           ? en
             ? `from July ${t.year}; in cash from €3,000`
@@ -200,45 +200,48 @@ const wayRules = JSON.stringify(
 )
 
 // ---------- Zugriff ---------------------------------------------------------
-// Who may look into the account register: the same panopticon, and in its
-// watchtower one lit window per kind of authority (render-panopticon.py,
-// "watch" passes), switched on with the step that adds it. The cells stay
-// lit and dim a little, so the tower draws the eye.
+// Who may look into the account register: the same panopticon and the same
+// running year, and in its watchtower one lit window per kind of authority
+// (render-panopticon.py, "watch" passes), switched on from the year it was
+// admitted. The names stay here, in the order of the windows.
 const watchLights = import.meta.glob<{ default: ImageMetadata }>(
   "../assets/history/panopticon-watch-*.webp",
   { eager: true },
 )
-const watchers: { step: string; who: { de: string; en: string } }[] = [
+const watchers: {
+  from: number
+  who: { de: string; en: string }
+}[] = [
   {
-    step: "zweck-2016",
+    from: 2016,
     who: { de: "Staatsanwaltschaften", en: "prosecutors" },
   },
-  { step: "zweck-2016", who: { de: "Strafgerichte", en: "criminal courts" } },
-  { step: "zweck-2016", who: { de: "Abgabenbehörden", en: "tax authorities" } },
+  { from: 2016, who: { de: "Strafgerichte", en: "criminal courts" } },
+  { from: 2016, who: { de: "Abgabenbehörden", en: "tax authorities" } },
   {
-    step: "zweck-heute",
+    from: 2021,
     who: { de: "Geldwäschemeldestelle", en: "financial intelligence unit" },
   },
-  { step: "zweck-heute", who: { de: "Staatsschutz", en: "state security" } },
+  { from: 2021, who: { de: "Staatsschutz", en: "state security" } },
   {
-    step: "zweck-heute",
+    from: 2021,
     who: { de: "Finanzmarktaufsicht", en: "financial market authority" },
   },
   {
-    step: "zweck-heute",
+    from: 2021,
     who: { de: "Bundeskriminalamt", en: "federal criminal police" },
   },
   {
-    step: "zweck-heute",
+    from: 2021,
     who: { de: "Sanktionsbehörden", en: "sanctions authorities" },
   },
   {
-    step: "zweck-heute",
+    from: 2026,
     who: { de: "Amt für Betrugsbekämpfung", en: "anti-fraud office" },
   },
 ]
 const watch = watchers.map((watcher, k) => ({
-  at: at(watcher.step),
+  from: watcher.from,
   who: watcher.who[language],
   light:
     watchLights[`../assets/history/panopticon-watch-${k}.webp`]?.default.src,
@@ -383,8 +386,8 @@ const noteKeep = String(kept / 100)
           </ol>
           <p class="scene-caption">
             {en
-              ? "At true scale, 1991 in today’s money: how much a single transaction without an account may move without ID. For crypto through a provider there is no such amount."
-              : "Maßstabsgetreu, 1991 in heutigem Geld: so viel darf ein einzelnes Geschäft ohne Konto bewegen, ohne Ausweis. Für Krypto über einen Anbieter gibt es keinen solchen Betrag."}
+              ? "At true scale, 1991 in today’s money: what a single transaction without an account may move without ID."
+              : "Maßstabsgetreu, 1991 in heutigem Geld: so viel darf ein einzelnes Geschäft ohne Konto bewegen, ohne Ausweis."}
           </p>
         </div>
 
@@ -405,7 +408,7 @@ const noteKeep = String(kept / 100)
               ))}
               {watch.map((post) =>
                 post.light ? (
-                  <img class="watch-light" data-at={post.at} src={post.light} alt="" decoding="async" />
+                  <img class="watch-light" data-from={post.from} src={post.light} alt="" decoding="async" />
                 ) : null,
               )}
               {ways.map((way) => (
@@ -417,11 +420,6 @@ const noteKeep = String(kept / 100)
                 <strong data-year>{steps[at("regeln")].years?.[0]}</strong>
               </p>
             </div>
-            <ul class="watchers" aria-hidden="true">
-              {watch.map((post) => (
-                <li data-at={post.at}>{post.who}</li>
-              ))}
-            </ul>
           </div>
         </div>
 
@@ -539,6 +537,7 @@ const noteKeep = String(kept / 100)
       ...(waysRoot?.querySelectorAll<HTMLElement>("[data-way-label]") ?? []),
     ]
     const yearEl = film.querySelector<HTMLElement>("[data-year]")
+    const watchEls = all("[data-from]")
     const parse = (key: string) => JSON.parse(film.dataset[key] ?? "[]")
     const stepScenes: string[] = parse("scenes")
     const stepIds: string[] = parse("ids")
@@ -567,6 +566,9 @@ const noteKeep = String(kept / 100)
         const id = el.dataset.way ?? el.dataset.wayLabel ?? ""
         el.classList.toggle("covered", covered.has(id))
       }
+      // From 2016 the watchtower fills: one window per authority admitted.
+      for (const el of watchEls)
+        el.classList.toggle("on", Number(el.dataset.from) <= year)
     }
 
     // The result chapter's grains, one per report.
@@ -1175,7 +1177,7 @@ const noteKeep = String(kept / 100)
      färben sich rot. */
   .ways-wrap {
     display: grid;
-    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-rows: minmax(0, 1fr);
     justify-items: center;
     gap: var(--space-2xs);
     min-block-size: 0;
@@ -1212,12 +1214,8 @@ const noteKeep = String(kept / 100)
     opacity: 1;
   }
 
-  /* Im Kapitel Zugriff bleiben die Zellen hell, aber gedämpft; im Turm
-     geht je Behörde ein Fenster an. */
-  .view[data-scene="watch"] .way-light.covered {
-    opacity: 0.45;
-  }
-
+  /* Ab 2016 geht im Turm je Behörde, die ins Kontenregister schauen darf,
+     ein Fenster an; dasselbe Bild, dieselbe laufende Jahreszahl. */
   .watch-light {
     position: absolute;
     inset: 0;
@@ -1229,47 +1227,8 @@ const noteKeep = String(kept / 100)
     transition: opacity 0.9s ease;
   }
 
-  .view[data-scene="watch"] .watch-light.on {
+  .watch-light.on {
     opacity: 1;
-  }
-
-  .view[data-scene="watch"] .ways-centre {
-    opacity: 0;
-  }
-
-  /* Wer hineinschaut, unter dem Bild, eine Behörde nach der anderen. */
-  .watchers {
-    display: none;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.15em 0.9em;
-    max-inline-size: 36rem;
-    margin: 0;
-    padding: 0;
-    color: var(--ink-3);
-    font-size: var(--type-meta);
-    list-style: none;
-  }
-
-  .view[data-scene="watch"] .watchers {
-    display: flex;
-  }
-
-  /* Platz für die Liste unter dem Bild. */
-  .view[data-scene="watch"] .ways {
-    inline-size: min(100%, (100cqh - 14rem) * 1.111);
-  }
-
-  .watchers li {
-    opacity: 0.25;
-    transition:
-      opacity 0.5s ease,
-      color 0.5s ease;
-  }
-
-  .watchers li.on {
-    opacity: 1;
-    color: var(--ink);
   }
 
   .ways svg {

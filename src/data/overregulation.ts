@@ -1,7 +1,8 @@
 import type { Language } from "@/lib/i18n"
 
 // The history page's scroll film: how the rules piled up, step by small
-// step, and how little came of it, in five chapters of eleven short steps.
+// step, and how little came of it, in five chapters of ten short steps, the rules and the readers of the
+// register on one running timeline from 1977 to today.
 // It starts with the reader, from which amount you have to show ID, shows
 // the ways money takes filling with rules and the register filling with
 // readers, and ends with the result.
@@ -118,12 +119,12 @@ export const steps: Step[] = [
     id: "ausweis-bar",
     chapter: "ausweis",
     title: {
-      de: "Bar: Ausweis erst ab 10.000 €.",
-      en: "Cash: ID only from 10,000 euros.",
+      de: "Bar: Ausweis ab 10.000 €.",
+      en: "Cash: ID from 10,000 euros.",
     },
     text: {
-      de: "Für ein einzelnes Geschäft ohne Konto, ab 2027. 1991 lag die Grenze bei 33.900 €, in heutigem Geld.",
-      en: "For a single transaction without an account, from 2027. In 1991 the limit was 33,900 euros, in today’s money.",
+      de: "Ab 2027. 1991 lag die Grenze noch bei 33.900 €.",
+      en: "From 2027. In 1991 the limit was still 33,900 euros.",
     },
     sources: [
       eurlex("dir/1991/308", "Richtlinie 91/308/EWG", "Directive 91/308/EEC"),
@@ -143,8 +144,8 @@ export const steps: Step[] = [
       en: "Crypto: from the first cent.",
     },
     text: {
-      de: "Seit 2024 trägt jede Übertragung über einen Anbieter deinen Namen.",
-      en: "Since 2024 every transfer through a provider carries your name.",
+      de: "Jede Übertragung über einen Anbieter trägt deinen Namen.",
+      en: "Every transfer through a provider carries your name.",
     },
     sources: [
       eurlex(
@@ -156,64 +157,52 @@ export const steps: Step[] = [
   },
 
   // ---------- Regeln: every way money takes lights up once a rule applies,
-  // the year running from 1977 with the scroll.
+  // the year running from 1977 with the scroll; the next step runs on from
+  // 2016, so the picture heats up like the water around the frog.
   {
     id: "regeln",
     chapter: "regeln",
-    years: [1977, 2029],
+    years: [1977, 2015],
     // Only the Savings Directive ever ended, repealed by Directive (EU)
     // 2015/2060 because the broader DAC2 superseded it.
     title: {
-      de: "Vom Sparbuch bis zum Bargeld: Es kommt nur dazu.",
-      en: "From savings books to cash: rules only get added.",
+      de: "Ein Weg nach dem anderen.",
+      en: "One way after another.",
     },
     text: {
-      de: "Seit 1977 ist eine einzige Regel weggefallen, für eine umfassendere.",
+      de: "Weggefallen ist seit 1977 eine einzige Regel, für eine umfassendere.",
       en: "Since 1977 a single rule has gone, for a broader one.",
     },
     sources: [allRules],
   },
 
-  // ---------- Zugriff: who may look into the Austrian account register, and
-  // what tax data may be used for. The watchtower gains a lit window per
-  // kind of authority (aml-history.ts, row "kontenregister").
+  // ---------- Zugriff: the same timeline from 2016 to today: the ways go on
+  // lighting up, and the watchtower gains a lit window per kind of authority
+  // allowed into the Austrian account register (aml-history.ts, row
+  // "kontenregister"): three in 2016, five more in 2021, one in 2026.
   {
-    id: "zweck-2016",
+    id: "zweck",
     chapter: "zweck",
+    years: [2016, 2026],
     title: {
-      de: "2016: Drei dürfen ins Kontenregister schauen.",
-      en: "2016: three may look into the account register.",
+      de: "Und immer mehr schauen hinein.",
+      en: "And ever more look in.",
     },
     text: {
-      de: "Staatsanwaltschaften, Strafgerichte und Abgabenbehörden sehen, wer bei welcher Bank ein Konto hat.",
-      en: "Prosecutors, criminal courts and tax authorities see who holds an account at which bank.",
+      de: "Ins Kontenregister 2016 drei Behörden, heute neun.",
+      en: "Into the account register: three authorities in 2016, nine today.",
     },
-    sources: [ris(2015, 116)],
-  },
-  {
-    id: "zweck-heute",
-    chapter: "zweck",
-    title: { de: "Heute: neun.", en: "Today: nine." },
-    text: {
-      de: "Fünf kamen 2021 dazu, das Amt für Betrugsbekämpfung 2026. Und seit DAC8 dienen alle Steuerdaten, die Behörden austauschen, auch gegen Geldwäsche.",
-      en: "Five were added in 2021, the anti-fraud office in 2026. And since DAC8, all tax data authorities exchange also serve against money laundering.",
-    },
-    sources: [
-      ris(2021, 25),
-      ris(2026, 46),
-      eurlex(
-        "dir/2023/2226",
-        "Richtlinie (EU) 2023/2226, Art. 1 Nr. 7",
-        "Directive (EU) 2023/2226, Article 1(7)",
-      ),
-    ],
+    sources: [ris(2015, 116), ris(2021, 25), ris(2026, 46)],
   },
 
   // ---------- Papier: the first directive beside everything since.
   {
     id: "papier-1991",
     chapter: "papier",
-    title: { de: "1991: 6 Seiten.", en: "1991: 6 pages." },
+    title: {
+      de: "1991: 6 Seiten.",
+      en: "1991: 6 pages.",
+    },
     text: {
       de: "Die erste Geldwäsche-Richtlinie der EU.",
       en: "The EU’s first anti-money-laundering directive.",
@@ -232,8 +221,8 @@ export const steps: Step[] = [
       en: "Adopted since: 488 pages.",
     },
     text: {
-      de: "Gut 22 Stunden Lesezeit, nur die Geldwäsche-Gesetze der EU.",
-      en: "Over 22 hours of reading, for the EU’s anti-money-laundering acts alone.",
+      de: "Gut 22 Stunden Lesezeit.",
+      en: "Over 22 hours of reading.",
     },
     sources: [
       eurlex(
@@ -259,12 +248,12 @@ export const steps: Step[] = [
     id: "ergebnis-2025",
     chapter: "ergebnis",
     title: {
-      de: "Österreich 2025: 13.989 Verdachtsmeldungen.",
-      en: "Austria 2025: 13,989 suspicion reports.",
+      de: "13.989 Verdachtsmeldungen.",
+      en: "13,989 suspicion reports.",
     },
     text: {
-      de: "Banken und andere Anbieter melden der Polizei, was ihnen verdächtig vorkommt, samt Kundendaten. Rund dreißigmal so viele wie 2005, zum Teil, weil heute anders gezählt wird.",
-      en: "Banks and other providers report to the police what looks suspicious to them, with the customer’s data. About thirty times as many as in 2005, partly because they are counted differently today.",
+      de: "Österreich 2025: rund dreißigmal so viele wie 2005, zum Teil anders gezählt.",
+      en: "Austria 2025: about thirty times as many as in 2005, partly counted differently.",
     },
     sources: [
       {
@@ -281,12 +270,12 @@ export const steps: Step[] = [
     id: "ergebnis-liegen",
     chapter: "ergebnis",
     title: {
-      de: "9.665 davon bleiben liegen. Gespeichert.",
-      en: "9,665 of them go nowhere. Stored.",
+      de: "9.665 bleiben liegen. Gespeichert.",
+      en: "9,665 go nowhere. Stored.",
     },
     text: {
-      de: "Fast sieben von zehn gibt die Meldestelle nicht weiter, mangels Anfangsverdachts, also eines Anhaltspunkts für eine Straftat, oder weiterer Ansätze. Sie bleiben für spätere Auswertungen gespeichert.",
-      en: "Nearly seven in ten the unit does not pass on, for lack of an initial suspicion, any indication of a crime, or of further leads. They are kept for later analysis.",
+      de: "Nicht weitergegeben, mangels Anhaltspunkt für eine Straftat oder weiterer Ansätze.",
+      en: "Not passed on, for lack of any indication of a crime or of further leads.",
     },
     sources: [fiu2025],
   },
@@ -294,12 +283,12 @@ export const steps: Step[] = [
     id: "ergebnis-urteile",
     chapter: "ergebnis",
     title: {
-      de: "139 Verurteilungen wegen Geldwäsche.",
-      en: "139 convictions for money laundering.",
+      de: "139 Verurteilungen.",
+      en: "139 convictions.",
     },
     text: {
-      de: "In Österreich, im selben Jahr. Ein rotes Korn je Urteil, eines je Meldung in Grau.",
-      en: "In Austria, in the same year. One red grain per conviction, one grey grain per report.",
+      de: "Wegen Geldwäsche, im selben Jahr.",
+      en: "For money laundering, in the same year.",
     },
     sources: [fiu2025],
   },
@@ -307,12 +296,12 @@ export const steps: Step[] = [
     id: "ergebnis-euro",
     chapter: "ergebnis",
     title: {
-      de: "Von 100 € aus Straftaten werden rund 2 € eingezogen.",
-      en: "Of 100 euros from crime, about 2 are confiscated.",
+      de: "Von 100 € aus Straftaten werden 2 € eingezogen.",
+      en: "Of 100 euros from crime, 2 are confiscated.",
     },
     text: {
-      de: "Schätzt Europol für die EU, und spricht trotz aller Investitionen und Gesetze von Stillstand.",
-      en: "Europol’s estimate for the EU; despite all the investment and laws, it speaks of stagnation.",
+      de: "Schätzt Europol für die EU.",
+      en: "Europol’s estimate for the EU.",
     },
     sources: [socta],
   },
