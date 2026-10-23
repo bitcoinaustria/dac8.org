@@ -1,7 +1,7 @@
 ---
 import SourceRefs from "@/components/SourceRefs.astro"
 import { ruleChronicle } from "@/data/aml-history"
-import { historyAsOf, isAhead } from "@/data/history"
+import { historyAsOf } from "@/data/history"
 import {
   germanConvictionsByYear,
   germanReportsByYear,
@@ -96,20 +96,16 @@ const cashRows = thresholds.map((t, k) => {
 })
 
 // ---------- Regeln ----------------------------------------------------------
-// The ways money can take, and the checks set on them year by year: a check
-// at the bank or provider (ID, monitoring, a cap) or an automatic report to
-// the tax office. Each mark is a row of the chronicle; the rules about
-// companies and advisers stay out, they are in the list to check. The year
-// runs with the scroll; a way counts as covered once a mark on it applies.
+// The ways money can take, and the rules set on them year by year: checks
+// at the bank or provider (ID, monitoring, a cap) and automatic reports to
+// the tax office. Each is a row of the chronicle; the rules about companies
+// and advisers stay out, they are in the list to check. The year runs with
+// the scroll; a way is lit once a rule on it applies.
 const rowsById = new Map(
   ruleChronicle.stack.flatMap((group) =>
-    group.rows.map((row) => [
-      row.id,
-      { row, tax: (group.domain?.id ?? "steuern") === "steuern" },
-    ]),
+    group.rows.map((row) => [row.id, { row }]),
   ),
 )
-const statusOf = new Map(ruleChronicle.entries.map((e) => [e.id, e.status]))
 const panLights = import.meta.glob<{ default: ImageMetadata }>(
   "../assets/history/panopticon-light-*.webp",
   { eager: true },
@@ -169,45 +165,25 @@ const wayList: {
 ]
 // The panopticon rendered in Blender (scripts/artwork/render-panopticon.py):
 // a base picture at night and, per cell, a light pass with the searchlight
-// from the tower, added by screen blending once a mark on that way
+// from the tower, added by screen blending once a rule on that way
 // applies. The render also gives, in percent of the picture, where each
-// cell's label stands, where its marks sit along the beam and where the
-// tower's top is.
-const [panW, panH] = panopticon.size
-const px = ([x, y]: number[]) => ({ x: (x / 100) * panW, y: (y / 100) * panH })
+// cell's label stands.
 const ways = wayList.map((way, k) => {
   const cell = panopticon.cells[k]
   const light = panLights[`../assets/history/panopticon-light-${k}.webp`]
   if (!cell || !light) throw new Error(`Film: no render for cell ${k}`)
-  const marks = way.rows
-    .map((id) => {
-      const found = rowsById.get(id)
-      if (!found) throw new Error(`Film: no rule "${id}"`)
-      return found
-    })
-    .sort((a, b) => a.row.from - b.row.from)
-    .map(({ row, tax }, m) => {
-      const place = cell.marks[m]
-      const at = px(place.at)
-      const from = px(place.from)
-      const to = px(place.to)
-      return {
-        tax,
-        from: row.from,
-        until: row.until,
-        ahead: isAhead(statusOf.get(row.id) ?? "past"),
-        x: at.x,
-        y: at.y,
-        bar: `M${from.x.toFixed(1)} ${from.y.toFixed(1)} L${to.x.toFixed(1)} ${to.y.toFixed(1)}`,
-      }
-    })
+  const rules = way.rows.map((id) => {
+    const found = rowsById.get(id)
+    if (!found) throw new Error(`Film: no rule "${id}"`)
+    return found.row
+  })
   // Behind the tower the label stands above its point, in front below.
   const behind = cell.label[1] < panopticon.centre[1]
   return {
     ...way,
     label: way.label[language],
     light: light.default.src,
-    marks,
+    rules,
     style: [
       `--x: ${cell.label[0]}%`,
       `--y: ${cell.label[1]}%`,
@@ -215,18 +191,11 @@ const ways = wayList.map((way, k) => {
     ].join("; "),
   }
 })
-// For the script: every mark with its way, to switch them by year.
+// For the script: every rule with its way, to light the ways by year.
 const wayRules = JSON.stringify(
-  ways
-    .flatMap((way) =>
-      way.marks.map((mark) => ({
-        way: way.id,
-        from: mark.from,
-        until: mark.until,
-        ahead: mark.ahead,
-      })),
-    )
-    .sort((a, b) => a.from - b.from),
+  ways.flatMap((way) =>
+    way.rules.map((row) => ({ way: way.id, from: row.from, until: row.until })),
+  ),
 )
 
 // ---------- Papier ----------------------------------------------------------
@@ -426,29 +395,6 @@ const noteKeep = String(kept / 100)
               {ways.map((way) => (
                 <img class="way-light" data-way={way.id} src={way.light} alt="" decoding="async" />
               ))}
-              <svg viewBox={`0 0 ${panW} ${panH}`}>
-                {ways.flatMap((way) =>
-                  way.marks.map((mark) =>
-                    mark.tax ? (
-                      <circle
-                        class:list={["way-mark", "report", { ahead: mark.ahead }]}
-                        cx={mark.x}
-                        cy={mark.y}
-                        r="15"
-                        data-from={mark.from}
-                        data-until={mark.until}
-                      />
-                    ) : (
-                      <path
-                        class:list={["way-mark", "check", { ahead: mark.ahead }]}
-                        d={mark.bar}
-                        data-from={mark.from}
-                        data-until={mark.until}
-                      />
-                    ),
-                  ),
-                )}
-              </svg>
               {ways.map((way) => (
                 <span class="way-label" data-way-label={way.id} style={way.style}>
                   {way.label}
@@ -458,18 +404,6 @@ const noteKeep = String(kept / 100)
                 <strong data-year>{steps[at("regeln-1977")].years?.[0]}</strong>
               </p>
             </div>
-            <p class="ways-count">
-              <b data-ways-count>0</b>
-              {en ? `of ${ways.length} areas in view` : `von ${ways.length} Bereichen im Blick`}
-            </p>
-            <p class="ways-key">
-              <span class="key-check">
-                {en ? "check at the provider" : "Kontrolle beim Anbieter"}
-              </span>
-              <span class="key-report">
-                {en ? "report to the tax office" : "Meldung ans Finanzamt"}
-              </span>
-            </p>
           </div>
         </div>
 
@@ -590,7 +524,7 @@ const noteKeep = String(kept / 100)
   // The step whose spacer has crossed the middle of the window is current:
   // it picks the scene and the headline and switches on what has appeared
   // so far ([data-at]) or only now ([data-only]). In the rules chapter the
-  // year runs with the scroll and the marks of each year appear.
+  // year runs with the scroll and lights the ways its rules reach.
   for (const film of document.querySelectorAll<HTMLElement>("[data-film]")) {
     const view = film.querySelector<HTMLElement>("[data-view]")
     if (!view) continue
@@ -605,16 +539,9 @@ const noteKeep = String(kept / 100)
     const ats = [...film.querySelectorAll<Element>("[data-at]")]
     const onlys = all("[data-only]")
     const waysRoot = film.querySelector<HTMLElement>("[data-ways]")
-    const counter = film.querySelector<HTMLElement>("[data-ways-count]")
-    const rules: {
-      way: string
-      from: number
-      until?: number
-      ahead: boolean
-    }[] = JSON.parse(waysRoot?.dataset.ways ?? "[]")
-    const marks = [
-      ...(waysRoot?.querySelectorAll<SVGElement>(".way-mark") ?? []),
-    ]
+    const rules: { way: string; from: number; until?: number }[] = JSON.parse(
+      waysRoot?.dataset.ways ?? "[]",
+    )
     const wayEls = [
       ...(waysRoot?.querySelectorAll<SVGElement>("[data-way]") ?? []),
     ]
@@ -627,8 +554,8 @@ const noteKeep = String(kept / 100)
     const stepIds: string[] = parse("ids")
     const stepYears: ([number, number] | null)[] = parse("years")
     const today = Number(film.dataset.today)
-    // The rules chapter: the year runs with the scroll, the marks that apply
-    // by then are set on their ways.
+    // The rules chapter: the year runs with the scroll, and each way with a
+    // rule that applies by then is lit.
     let shownYear = 0
     const scrub = (year: number) => {
       if (year === shownYear) return
@@ -637,27 +564,19 @@ const noteKeep = String(kept / 100)
         yearEl.textContent = String(year)
         yearEl.classList.toggle("future", year > today)
       }
-      const live = rules.filter((rule) => rule.from <= year)
-      const applies = (from: number, until?: number) =>
-        from <= year && year <= (until ?? Number.POSITIVE_INFINITY)
-      for (const mark of marks) {
-        const from = Number(mark.dataset.from)
-        const until = mark.dataset.until
-          ? Number(mark.dataset.until)
-          : undefined
-        mark.classList.toggle("on", from <= year)
-        mark.classList.toggle("ended", until !== undefined && year > until)
-      }
       const covered = new Set(
-        live
-          .filter((rule) => applies(rule.from, rule.until))
+        rules
+          .filter(
+            (rule) =>
+              rule.from <= year &&
+              year <= (rule.until ?? Number.POSITIVE_INFINITY),
+          )
           .map((rule) => rule.way),
       )
       for (const el of [...wayEls, ...wayLabels]) {
         const id = el.dataset.way ?? el.dataset.wayLabel ?? ""
         el.classList.toggle("covered", covered.has(id))
       }
-      if (counter) counter.textContent = String(covered.size)
     }
 
     // The result chapter's grains, one per report.
@@ -1096,7 +1015,7 @@ const noteKeep = String(kept / 100)
     }
 
     .view .ways {
-      inline-size: min(100%, (100cqh - 12rem) * 1.111);
+      inline-size: min(100%, (100cqh - 7rem) * 1.111);
     }
   }
 
@@ -1271,7 +1190,7 @@ const noteKeep = String(kept / 100)
      färben sich rot. */
   .ways-wrap {
     display: grid;
-    grid-template-rows: minmax(0, 1fr) auto auto;
+    grid-template-rows: minmax(0, 1fr);
     justify-items: center;
     gap: var(--space-2xs);
     min-block-size: 0;
@@ -1282,7 +1201,7 @@ const noteKeep = String(kept / 100)
     container-type: inline-size;
     isolation: isolate;
     align-self: center;
-    inline-size: min(100%, (100cqh - 8.5rem) * 1.111);
+    inline-size: min(100%, (100cqh - 3rem) * 1.111);
     aspect-ratio: 1600 / 1440;
   }
 
@@ -1311,61 +1230,6 @@ const noteKeep = String(kept / 100)
   .ways svg {
     position: absolute;
     inset: 0;
-  }
-
-  .way-mark {
-    opacity: 0;
-    scale: 0.2;
-    transform-box: fill-box;
-    transform-origin: center;
-    transition:
-      opacity 0.35s ease,
-      scale 0.45s cubic-bezier(0.3, 1.8, 0.5, 1),
-      fill 0.4s ease,
-      stroke 0.4s ease;
-  }
-
-  .way-mark.on {
-    opacity: 1;
-    scale: 1;
-  }
-
-  .way-mark.check {
-    fill: none;
-    stroke: var(--red);
-    stroke-width: 9;
-    stroke-linecap: round;
-  }
-
-  .way-mark.on:not(.ahead, .ended) {
-    filter: drop-shadow(
-      0 0 6px color-mix(in oklab, var(--red) 60%, transparent)
-    );
-  }
-
-  .way-mark.report {
-    fill: var(--red);
-    stroke: var(--panel);
-    stroke-width: 4;
-  }
-
-  /* Beschlossen oder vorgeschlagen, aber noch nicht in Kraft. */
-  .way-mark.check.ahead {
-    stroke-dasharray: 6 6;
-    stroke-width: 7;
-  }
-
-  .way-mark.report.ahead {
-    fill: var(--panel);
-    stroke: var(--red);
-    stroke-dasharray: 5 4;
-  }
-
-  /* Die Zinsrichtlinie fiel 2015 weg, für den umfassenderen Kontenaustausch. */
-  .way-mark.ended {
-    opacity: 0.35;
-    fill: var(--ink-3);
-    stroke: var(--ink-3);
   }
 
   .way-label {
@@ -1410,54 +1274,6 @@ const noteKeep = String(kept / 100)
 
   .ways-centre strong.future {
     color: #aab0b8;
-  }
-
-  .ways-count {
-    display: flex;
-    align-items: baseline;
-    gap: 0.4rem;
-    color: var(--ink-2);
-    font-size: var(--type-meta);
-  }
-
-  .ways-count b {
-    color: var(--accent);
-    font-size: clamp(1.6rem, 1rem + 2.5cqi, 2.4rem);
-    font-weight: var(--weight-heading);
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-  }
-
-  .ways-key {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.2rem 1.1rem;
-    color: var(--ink-3);
-    font-size: 0.75rem;
-    line-height: 1.3;
-  }
-
-  .ways-key span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-
-  .key-check::before {
-    content: "";
-    inline-size: 0.25rem;
-    block-size: 0.8rem;
-    border-radius: 2px;
-    background: var(--red);
-  }
-
-  .key-report::before {
-    content: "";
-    inline-size: 0.6rem;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: var(--red);
   }
 
   /* ---------- Papier ---------------------------------------------------- */
