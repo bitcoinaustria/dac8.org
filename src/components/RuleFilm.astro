@@ -2,11 +2,7 @@
 import SourceRefs from "@/components/SourceRefs.astro"
 import { ruleChronicle } from "@/data/aml-history"
 import { historyAsOf } from "@/data/history"
-import {
-  germanConvictionsByYear,
-  germanReportsByYear,
-  recovery,
-} from "@/data/history-gap"
+import { recovery } from "@/data/history-gap"
 import { historySources } from "@/data/history-sources"
 import { firstVoice, lawVoices } from "@/data/law-voices"
 import {
@@ -20,7 +16,7 @@ import {
 } from "@/data/overregulation"
 import cashBrick from "@/assets/history/cash-brick.webp"
 import cashCent from "@/assets/history/cash-cent.webp"
-import cashSlim from "@/assets/history/cash-slim.webp"
+import cashBundle from "@/assets/history/cash-bundle.webp"
 import noteCrime from "@/assets/history/note-crime.webp"
 import panopticon from "@/assets/history/panopticon.json"
 import panBase from "@/assets/history/panopticon-base.webp"
@@ -30,8 +26,9 @@ import type { Language } from "@/lib/i18n"
 // page's data story: the stage stands while the steps scroll past. Each
 // step is a headline of a few words and turns one picture into a contrast
 // you see before you read it: the amount from which you must show ID
-// falling to nothing, checks and reports set on every way money can take,
-// six pages beside 488, a sea of reports beside a few convictions, and
+// falling, and nothing at all for crypto; rules set on every way money can
+// take, then ever more authorities in the watchtower; six pages beside 488;
+// a sea of reports, most of them kept on file, beside a few convictions; and
 // a 100-euro note that crumbles to a red sliver. Grey is what is collected, red what
 // comes of it or what is new. Each step cites its sources by number from
 // the list at the end of the page (src/data/history-sources.ts). Without
@@ -62,19 +59,19 @@ const thisYear = new Date(historyAsOf).getUTCFullYear()
 
 // ---------- Ausweis ---------------------------------------------------------
 const real = (t: (typeof thresholds)[number]) => inTodaysMoney(t.amount, t.year)
-// What one transaction without an account could move without showing ID,
-// in today's money, rendered at true scale in Blender from the same
-// camera (scripts/artwork/render-cash.py): 339 notes of 100 euros, then 13
-// of 100 and one of 50, today a single cent. All three stay in view, so
-// the amounts compare.
-const piles = [cashBrick, cashSlim, cashCent]
+// What one transaction without an account may move without showing ID,
+// 1991 in today's money, rendered at true scale in Blender from the same
+// camera (scripts/artwork/render-cash.py): 339 notes of 100 euros, then a
+// banded bundle of 100 notes from 2027, and for crypto a single cent. All
+// three stay in view, so the amounts compare.
+const piles = [cashBrick, cashBundle, cashCent]
 const widest = Math.max(...piles.map((image) => image.width))
 const cashRows = thresholds.map((t, k) => {
   const image = piles[k] ?? cashCent
   const amount = real(t)
   return {
     at: at(t.step),
-    year: t.year,
+    year: t.amount === 0 ? (en ? "Crypto" : "Krypto") : t.year,
     zero: t.amount === 0,
     image,
     style: `--w: ${((image.width / widest) * 100).toFixed(2)}%`,
@@ -89,9 +86,13 @@ const cashRows = thresholds.map((t, k) => {
     detail:
       t.amount === 0
         ? en
-          ? "ID for every crypto transfer through a provider"
-          : "Ausweis bei jeder Krypto-Übertragung über einen Anbieter"
-        : `${en ? "then" : "damals"} ${n(t.amount)} ${t.unit === "ECU" ? "ECU" : "€"}`,
+          ? "Your name on every crypto transfer through a provider"
+          : "Dein Name bei jeder Krypto-Übertragung über einen Anbieter"
+        : t.year >= thisYear
+          ? en
+            ? `from July ${t.year}; in cash from €3,000`
+            : `ab Juli ${t.year}; bar ab 3.000 €`
+          : `${en ? "then" : "damals"} ${n(t.amount)} ${t.unit === "ECU" ? "ECU" : "€"}`,
   }
 })
 
@@ -198,6 +199,51 @@ const wayRules = JSON.stringify(
   ),
 )
 
+// ---------- Zugriff ---------------------------------------------------------
+// Who may look into the account register: the same panopticon, and in its
+// watchtower one lit window per kind of authority (render-panopticon.py,
+// "watch" passes), switched on with the step that adds it. The cells stay
+// lit and dim a little, so the tower draws the eye.
+const watchLights = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/history/panopticon-watch-*.webp",
+  { eager: true },
+)
+const watchers: { step: string; who: { de: string; en: string } }[] = [
+  {
+    step: "zweck-2016",
+    who: { de: "Staatsanwaltschaften", en: "prosecutors" },
+  },
+  { step: "zweck-2016", who: { de: "Strafgerichte", en: "criminal courts" } },
+  { step: "zweck-2016", who: { de: "Abgabenbehörden", en: "tax authorities" } },
+  {
+    step: "zweck-2021",
+    who: { de: "Geldwäschemeldestelle", en: "financial intelligence unit" },
+  },
+  { step: "zweck-2021", who: { de: "Staatsschutz", en: "state security" } },
+  {
+    step: "zweck-2021",
+    who: { de: "Finanzmarktaufsicht", en: "financial market authority" },
+  },
+  {
+    step: "zweck-2021",
+    who: { de: "Bundeskriminalamt", en: "federal criminal police" },
+  },
+  {
+    step: "zweck-2021",
+    who: { de: "Sanktionsbehörden", en: "sanctions authorities" },
+  },
+  {
+    step: "zweck-2026",
+    who: { de: "Amt für Betrugsbekämpfung", en: "anti-fraud office" },
+  },
+]
+const watch = watchers.map((watcher, k) => ({
+  at: at(watcher.step),
+  who: watcher.who[language],
+  light:
+    watchLights[`../assets/history/panopticon-watch-${k}.webp`]?.default.src,
+}))
+
 // ---------- Papier ----------------------------------------------------------
 // Read aloud on request (src/data/law-voices.ts): the 1991 passage alone,
 // then today's passages one after another until they overlap.
@@ -217,53 +263,21 @@ const pages = Array.from({ length: totalPages }, (_, k) => k)
 // ---------- Ergebnis --------------------------------------------------------
 // One grain per report on a canvas (src/lib/film-sand.ts): which state
 // belongs to which step.
-const { first, latest, convictions } = reportField
+const { first, latest, kept: keptReports, convictions } = reportField
 const sandStates = JSON.stringify({
   [at("ergebnis-2005")]: "first",
   [at("ergebnis-2025")]: "all",
+  [at("ergebnis-liegen")]: "kept",
   [at("ergebnis-urteile")]: "heap",
 })
-const fieldSteps = ["ergebnis-2005", "ergebnis-2025", "ergebnis-urteile"]
+const fieldSteps = [
+  "ergebnis-2005",
+  "ergebnis-2025",
+  "ergebnis-liegen",
+  "ergebnis-urteile",
+]
   .map(at)
   .join(",")
-// Germany as a race from the same start (src/lib/film-race.ts): from the
-// first year with both counts, each year's count as a multiple of it.
-const raceStep = at("ergebnis-de")
-const reportsBy = new Map(
-  germanReportsByYear.map((row) => [row.year, row.reports]),
-)
-const convictionsBy = new Map(
-  germanConvictionsByYear.map((row) => [row.year, row.convictions]),
-)
-const raceFirst = Math.max(
-  germanReportsByYear[0].year,
-  germanConvictionsByYear[0].year,
-)
-const raceLast = germanReportsByYear[germanReportsByYear.length - 1].year
-const raceYears = Array.from(
-  { length: raceLast - raceFirst + 1 },
-  (_, k) => raceFirst + k,
-)
-const series = (by: Map<number, number>) => {
-  const start = by.get(raceFirst) ?? 1
-  const values = raceYears.map((year) => by.get(year) ?? null)
-  return {
-    values,
-    times: values.map((value) => (value === null ? null : value / start)),
-  }
-}
-const raceReports = series(reportsBy)
-const raceConvictions = series(convictionsBy)
-const race = JSON.stringify({
-  years: raceYears,
-  reports: raceReports.times,
-  convictions: raceConvictions.times,
-  values: {
-    reports: raceReports.values,
-    convictions: raceConvictions.values,
-  },
-  locale,
-})
 // A 100-euro note crumbles into dust on a canvas (src/lib/film-note.ts)
 // until the share confiscated remains, as Europol last estimated it.
 const noteStep = at("ergebnis-euro")
@@ -375,8 +389,8 @@ const noteKeep = String(kept / 100)
           </ol>
           <p class="scene-caption">
             {en
-              ? "At true scale, in today’s money: as much as a single transaction without an account could move without ID."
-              : "Maßstabsgetreu, in heutigem Geld: so viel durfte ein einzelnes Geschäft ohne Konto bewegen, ohne Ausweis."}
+              ? "At true scale, 1991 in today’s money: how much a single transaction without an account may move without ID. For crypto through a provider there is no such amount."
+              : "Maßstabsgetreu, 1991 in heutigem Geld: so viel darf ein einzelnes Geschäft ohne Konto bewegen, ohne Ausweis. Für Krypto über einen Anbieter gibt es keinen solchen Betrag."}
           </p>
         </div>
 
@@ -395,6 +409,11 @@ const noteKeep = String(kept / 100)
               {ways.map((way) => (
                 <img class="way-light" data-way={way.id} src={way.light} alt="" decoding="async" />
               ))}
+              {watch.map((post) =>
+                post.light ? (
+                  <img class="watch-light" data-at={post.at} src={post.light} alt="" decoding="async" />
+                ) : null,
+              )}
               {ways.map((way) => (
                 <span class="way-label" data-way-label={way.id} style={way.style}>
                   {way.label}
@@ -404,6 +423,11 @@ const noteKeep = String(kept / 100)
                 <strong data-year>{steps[at("regeln-1977")].years?.[0]}</strong>
               </p>
             </div>
+            <ul class="watchers" aria-hidden="true">
+              {watch.map((post) => (
+                <li data-at={post.at}>{post.who}</li>
+              ))}
+            </ul>
           </div>
         </div>
 
@@ -433,7 +457,12 @@ const noteKeep = String(kept / 100)
             <div
               class="sand"
               data-sand={sandStates}
-              data-sand-counts={JSON.stringify({ first, latest, convictions })}
+              data-sand-counts={JSON.stringify({
+                first,
+                latest,
+                kept: keptReports,
+                convictions,
+              })}
               data-only={fieldSteps}
             >
               <canvas />
@@ -443,50 +472,18 @@ const noteKeep = String(kept / 100)
                 <b>{n(latest)}</b>
                 {en ? "reports" : "Meldungen"}
               </span>
+              <span class="sand-label kept" data-sand-label="kept">
+                <b>{n(keptReports)}</b>
+                {en ? "not passed on, kept" : "nicht weitergegeben, gespeichert"}
+              </span>
+              <span class="sand-label passed" data-sand-label="passed">
+                <b>{n(latest - keptReports)}</b>
+                {en ? "passed on" : "weitergegeben"}
+              </span>
               <span class="sand-label red" data-sand-label="convictions">
                 <b>{n(convictions)}</b>
                 {en ? "convictions" : "Verurteilungen"}
               </span>
-            </div>
-            <div class="race" data-race={race} data-only={String(raceStep)}>
-              <p class="race-year">
-                <b data-race-year>{raceFirst}</b>
-              </p>
-              <div class="race-plot">
-                <div class="race-inner">
-                  <span class="race-base" data-race-base>
-                    <span>{raceFirst} = ×1</span>
-                  </span>
-                  <div class="race-col reports" data-race-col="reports">
-                    <span class="race-times" data-race-times>×1</span>
-                    <span class="race-bar" />
-                  </div>
-                  <div class="race-col convictions" data-race-col="convictions">
-                    <span class="race-times" data-race-times>×1</span>
-                    <span class="race-bar" />
-                  </div>
-                </div>
-              </div>
-              <div class="race-labels">
-                <p class="reports">
-                  <b>{en ? "Suspicion reports" : "Verdachtsmeldungen"}</b>
-                  <span
-                    >{n(raceReports.values[0] ?? 0)}
-                    → {n(reportsBy.get(raceLast) ?? 0)}</span
-                  >
-                </p>
-                <p class="convictions">
-                  <b
-                    >{en ? "Convicted of money laundering" : "Verurteilte wegen Geldwäsche"}</b
-                  >
-                  <span
-                    >{n(raceConvictions.values[0] ?? 0)}
-                    →
-                    {n(germanConvictionsByYear[germanConvictionsByYear.length - 1].convictions)}
-                    ({germanConvictionsByYear[germanConvictionsByYear.length - 1].year})</span
-                  >
-                </p>
-              </div>
             </div>
             <div
               class="note"
@@ -518,7 +515,6 @@ const noteKeep = String(kept / 100)
 
 <script>
   import { createNote } from "@/lib/film-note"
-  import { createRace } from "@/lib/film-race"
   import { createSand, type SandState } from "@/lib/film-sand"
 
   // The step whose spacer has crossed the middle of the window is current:
@@ -593,10 +589,6 @@ const noteKeep = String(kept / 100)
       ? createNote(noteRoot, Number(noteRoot.dataset.note))
       : null
     const noteStep = Number(noteRoot?.dataset.noteStep ?? -1)
-    // Germany's race, run each time its step comes up.
-    const raceRoot = film.querySelector<HTMLElement>("[data-race]")
-    const race = raceRoot ? createRace(raceRoot) : null
-    const raceStep = Number(raceRoot?.dataset.only ?? -1)
 
     // The law read aloud, only when asked for: the loudspeaker shown in the
     // paper chapter turns it on and off. In 1991 one voice reads; today up
@@ -719,8 +711,6 @@ const noteKeep = String(kept / 100)
       else sand?.hide()
       if (i === noteStep) note?.go(previous !== -1)
       else note?.hide()
-      if (i === raceStep) race?.go()
-      else race?.hide()
       view.dataset.scene = stepScenes[i]
       view.dataset.stepId = stepIds[i]
       voiceFor(stepIds[i])
@@ -1091,6 +1081,7 @@ const noteKeep = String(kept / 100)
 
   .view[data-scene="threshold"] [data-scene-id="threshold"],
   .view[data-scene="rules"] [data-scene-id="rules"],
+  .view[data-scene="watch"] [data-scene-id="rules"],
   .view[data-scene="tower"] [data-scene-id="tower"],
   .view[data-scene="result"] [data-scene-id="result"] {
     opacity: 1;
@@ -1190,7 +1181,7 @@ const noteKeep = String(kept / 100)
      färben sich rot. */
   .ways-wrap {
     display: grid;
-    grid-template-rows: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
     justify-items: center;
     gap: var(--space-2xs);
     min-block-size: 0;
@@ -1225,6 +1216,66 @@ const noteKeep = String(kept / 100)
 
   .way-light.covered {
     opacity: 1;
+  }
+
+  /* Im Kapitel Zugriff bleiben die Zellen hell, aber gedämpft; im Turm
+     geht je Behörde ein Fenster an. */
+  .view[data-scene="watch"] .way-light.covered {
+    opacity: 0.45;
+  }
+
+  .watch-light {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    border-radius: var(--radius);
+    opacity: 0;
+    mix-blend-mode: screen;
+    transition: opacity 0.9s ease;
+  }
+
+  .view[data-scene="watch"] .watch-light.on {
+    opacity: 1;
+  }
+
+  .view[data-scene="watch"] .ways-centre {
+    opacity: 0;
+  }
+
+  /* Wer hineinschaut, unter dem Bild, eine Behörde nach der anderen. */
+  .watchers {
+    display: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.15em 0.9em;
+    max-inline-size: 36rem;
+    margin: 0;
+    padding: 0;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    list-style: none;
+  }
+
+  .view[data-scene="watch"] .watchers {
+    display: flex;
+  }
+
+  /* Platz für die Liste unter dem Bild. */
+  .view[data-scene="watch"] .ways {
+    inline-size: min(100%, (100cqh - 14rem) * 1.111);
+  }
+
+  .watchers li {
+    opacity: 0.25;
+    transition:
+      opacity 0.5s ease,
+      color 0.5s ease;
+  }
+
+  .watchers li.on {
+    opacity: 1;
+    color: var(--ink);
   }
 
   .ways svg {
@@ -1560,147 +1611,20 @@ const noteKeep = String(kept / 100)
     transition-delay: 3.6s;
   }
 
-  /* Deutschland als Rennen: beide Säulen beginnen 2008 bei ×1, dann laufen
-     die Jahre, und der Maßstab zieht mit den Meldungen davon. */
-  .result > .race {
-    grid-area: 1 / 1;
-    opacity: 0;
-    visibility: hidden;
-    transition:
-      opacity 0.5s ease,
-      visibility 0.5s;
-  }
-
-  .result > .race.on {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .race {
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
-    gap: var(--space-xs);
-    inline-size: min(100%, 36rem);
-    block-size: 100%;
-    container-type: inline-size;
-  }
-
-  .race-year b {
-    color: var(--foreground);
-    font-size: clamp(2rem, 1rem + 6cqi, 3.6rem);
-    font-weight: var(--weight-heading);
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-    letter-spacing: -0.04em;
-  }
-
-  .race-plot {
-    display: grid;
-    min-block-size: 0;
-    padding-block-start: clamp(2.2rem, 1rem + 6cqi, 4rem);
-    padding-inline: 8cqi;
-    border-block-end: 1px solid var(--ink-3);
-  }
-
-  .race-inner {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14cqi;
-    min-block-size: 0;
-  }
-
-  /* Die Linie von 2008: wo beide begannen. */
-  .race-base {
-    position: absolute;
-    inset-inline: -2cqi;
-    inset-block-end: var(--h, 33%);
-    z-index: 1;
-    border-block-start: 1.5px dashed var(--foreground);
-    opacity: 0.7;
-  }
-
-  .race-base span {
-    position: absolute;
-    inset-inline-start: 50%;
-    inset-block-start: 0;
-    padding: 0.05rem 0.4rem;
-    translate: -50% -50%;
+  /* Gespeichert, nicht weitergegeben: mitten im blassen Block. */
+  .sand-label.kept,
+  .sand-label.passed {
+    padding: 0.3em 0.7em;
     border-radius: var(--radius-sm);
     background: var(--panel);
-    color: var(--foreground);
-    font-size: var(--type-meta);
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .race-col {
-    position: relative;
-    display: grid;
-    align-content: end;
-    block-size: 100%;
-  }
-
-  .race-bar {
-    position: absolute;
-    inset-inline: 0;
-    inset-block-end: 0;
-    block-size: var(--h, 33%);
-    border-radius: 4px 4px 0 0;
-    background: linear-gradient(
-      to top,
-      color-mix(in oklab, var(--bar) 70%, transparent),
-      var(--bar)
-    );
-  }
-
-  .race-col.convictions .race-bar {
-    background: linear-gradient(
-      to top,
-      color-mix(in oklab, var(--red) 70%, transparent),
-      var(--red)
-    );
-    box-shadow: 0 0 1.2rem color-mix(in oklab, var(--red) 35%, transparent);
-  }
-
-  .race-times {
-    position: absolute;
-    inset-inline: 0;
-    inset-block-end: calc(var(--h, 33%) + 0.3rem);
-    color: var(--foreground);
-    font-size: clamp(1.6rem, 0.8rem + 6cqi, 3.4rem);
-    font-weight: var(--weight-heading);
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-    letter-spacing: -0.04em;
+    translate: -50% -50%;
     text-align: center;
   }
 
-  .race-col.convictions .race-times {
-    color: var(--accent);
-  }
-
-  .race-labels {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14cqi;
-    padding-inline: 8cqi;
-    color: var(--ink-3);
-    font-size: var(--type-meta);
-    line-height: 1.3;
-    text-align: center;
-    overflow-wrap: normal;
-    hyphens: auto;
-  }
-
-  .race-labels b {
-    display: block;
-    color: var(--ink-2);
-    font-weight: 600;
-  }
-
-  .race-labels .convictions b {
-    color: var(--accent);
+  .sand[data-state="kept"]
+    :is([data-sand-label="kept"], [data-sand-label="passed"]) {
+    opacity: 1;
+    transition-delay: 1.2s;
   }
 
   /* Ein Hunderter zerfällt zu Staub (src/lib/film-note.ts), bis der

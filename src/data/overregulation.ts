@@ -1,12 +1,10 @@
-import {
-  germanConvictionsSources,
-  germanReportsSources,
-} from "@/data/history-gap"
 import type { Language } from "@/lib/i18n"
 
-// The history page's scroll film: how the rules piled up and how little
-// came of it, in five chapters of very short steps. It starts with the
-// reader, from which amount you have to show ID, and ends with the result.
+// The history page's scroll film: how the rules piled up, step by small
+// step, and how little came of it, in five chapters of very short steps.
+// It starts with the reader, from which amount you have to show ID, shows
+// the ways money takes filling with rules and the register filling with
+// readers, and ends with the result.
 // Each step is a headline of a few words, at most one line under it, and
 // changes one picture: a contrast you see before you read. Every figure is verified in
 // dac8-wiki/.wiki/wiki/references/rule-growth-and-effect-evidence.md and
@@ -21,13 +19,14 @@ const eurlex = (path: string, de: string, en: string): Source => ({
   href: `https://eur-lex.europa.eu/eli/${path}/oj`,
 })
 
-export type Scene = "threshold" | "rules" | "tower" | "result"
+export type Scene = "threshold" | "rules" | "watch" | "tower" | "result"
 
-// The story's order: what is asked of you, how many rules ask it, how much
-// paper they fill, and what comes of it.
+// The story's order: what is asked of you, how many rules ask it, who gets
+// to look, how much paper they fill, and what comes of it.
 export const chapters: { id: string; scene: Scene; label: Text }[] = [
   { id: "ausweis", scene: "threshold", label: { de: "Ausweis", en: "ID" } },
   { id: "regeln", scene: "rules", label: { de: "Regeln", en: "Rules" } },
+  { id: "zweck", scene: "watch", label: { de: "Zugriff", en: "Access" } },
   { id: "papier", scene: "tower", label: { de: "Papier", en: "Paper" } },
   { id: "ergebnis", scene: "result", label: { de: "Ergebnis", en: "Result" } },
 ]
@@ -66,7 +65,6 @@ const socta: Source = {
 // Art. 2), so 1991 amounts convert like euro amounts.
 export const priceIndex: Record<number, number> = {
   1991: 113.1,
-  2017: 189.9,
   2025: 255.7,
 }
 export const priceBase = 2025
@@ -102,8 +100,19 @@ const allRules: Source = {
   href: "#regeln-title",
 }
 
+const ris = (year: number, number: number): Source => ({
+  label: {
+    de: `BGBl. I Nr. ${number}/${year}`,
+    en: `Federal Law Gazette I No. ${number}/${year}`,
+  },
+  href: `https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_${year}_I_${number}/BGBLA_${year}_I_${number}.html`,
+})
+
 export const steps: Step[] = [
-  // ---------- Ausweis: from which amount you must show ID, in today's money.
+  // ---------- Ausweis: from which amount a single transaction without an
+  // account needs ID, against crypto, where there is no amount at all. The
+  // general threshold stayed at 15,000 from 1991 until the AMLR lowers it in
+  // 2027 (rule-growth-and-effect-evidence.md, "Thresholds").
   {
     id: "ausweis-1991",
     chapter: "ausweis",
@@ -121,32 +130,31 @@ export const steps: Step[] = [
     ],
   },
   {
-    id: "ausweis-2017",
+    id: "ausweis-2027",
     chapter: "ausweis",
-    title: { de: "2017: ab 1.350 €.", en: "2017: from 1,350 euros." },
+    title: { de: "2027: ab 10.000 €.", en: "2027: from 10,000 euros." },
     text: {
-      de: "Für einen Geldtransfer ohne Konto, in heutigem Geld.",
-      en: "For a money transfer without an account, in today’s money.",
+      de: "Bar schon ab 3.000 €. Zwischen Privatpersonen bleibt Bargeld frei.",
+      en: "In cash from 3,000 euros. Between private people, cash stays free.",
     },
     sources: [
       eurlex(
-        "dir/2015/849",
-        "Richtlinie (EU) 2015/849",
-        "Directive (EU) 2015/849",
+        "reg/2024/1624",
+        "Verordnung (EU) 2024/1624",
+        "Regulation (EU) 2024/1624",
       ),
-      priceSources[0],
     ],
   },
   {
     id: "ausweis-heute",
     chapter: "ausweis",
     title: {
-      de: "Heute gibt es keine Grenze mehr.",
-      en: "Today there is no limit left.",
+      de: "Bei Krypto gibt es keine Grenze.",
+      en: "With crypto there is no limit.",
     },
     text: {
-      de: "Jede Krypto-Übertragung über einen Anbieter trägt deinen Namen.",
-      en: "Every crypto transfer through a provider carries your name.",
+      de: "Seit 2024 trägt jede Übertragung über einen Anbieter deinen Namen, ab dem ersten Cent.",
+      en: "Since 2024 every transfer through a provider carries your name, from the first cent.",
     },
     sources: [
       eurlex(
@@ -157,18 +165,18 @@ export const steps: Step[] = [
     ],
   },
 
-  // ---------- Regeln: every rule as a card, the year running with the scroll.
+  // ---------- Regeln: every way money takes lights up once a rule applies.
   {
     id: "regeln-1977",
     chapter: "regeln",
     years: [1977, 1993],
     title: {
-      de: "Bis 1993: keine dieser Regeln.",
-      en: "Until 1993: none of these rules.",
+      de: "1977: Gefragt wird im Einzelfall.",
+      en: "1977: questions about single cases.",
     },
     text: {
-      de: "Steuerbehörden fragten einander nur im Einzelfall.",
-      en: "Tax authorities asked each other only in single cases.",
+      de: "So helfen einander die Steuerbehörden. In Österreich gilt bis 1993 keine der Regeln, die folgen.",
+      en: "That is how tax authorities help each other. In Austria none of the rules that follow applies until 1993.",
     },
     sources: [allRules],
   },
@@ -189,6 +197,62 @@ export const steps: Step[] = [
     sources: [allRules],
   },
 
+  // ---------- Zugriff: who may look into the Austrian account register, and
+  // what tax data may be used for. The watchtower gains a lit window per
+  // kind of authority (aml-history.ts, row "kontenregister").
+  {
+    id: "zweck-2016",
+    chapter: "zweck",
+    title: {
+      de: "2016: Drei dürfen ins Kontenregister schauen.",
+      en: "2016: three may look into the account register.",
+    },
+    text: {
+      de: "Staatsanwaltschaften, Strafgerichte und Abgabenbehörden sehen, wer bei welcher Bank ein Konto hat.",
+      en: "Prosecutors, criminal courts and tax authorities see who holds an account at which bank.",
+    },
+    sources: [ris(2015, 116)],
+  },
+  {
+    id: "zweck-2021",
+    chapter: "zweck",
+    title: { de: "2021: acht.", en: "2021: eight." },
+    text: {
+      de: "Dazu kommen Geldwäschemeldestelle, Staatsschutz, Finanzmarktaufsicht, Bundeskriminalamt und Sanktionsbehörden.",
+      en: "Added: the financial intelligence unit, state security, the financial market authority, the federal criminal police and sanctions authorities.",
+    },
+    sources: [ris(2021, 25)],
+  },
+  {
+    id: "zweck-2026",
+    chapter: "zweck",
+    title: { de: "2026: neun.", en: "2026: nine." },
+    text: {
+      de: "Seit Juli schaut auch das Amt für Betrugsbekämpfung hinein, etwa gegen Sozialbetrug.",
+      en: "Since July the anti-fraud office looks too, for example against benefit fraud.",
+    },
+    sources: [ris(2026, 46)],
+  },
+  {
+    id: "zweck-dac8",
+    chapter: "zweck",
+    title: {
+      de: "Und die Steuerdaten dienen jetzt auch der Geldwäsche-Bekämpfung.",
+      en: "And tax data now serve the fight against money laundering too.",
+    },
+    text: {
+      de: "Seit DAC8 dürfen die EU-Staaten alles, was ihre Steuerbehörden austauschen, auch dafür verwenden.",
+      en: "Since DAC8, EU countries may use everything their tax authorities exchange for that as well.",
+    },
+    sources: [
+      eurlex(
+        "dir/2023/2226",
+        "Richtlinie (EU) 2023/2226, Art. 1 Nr. 7",
+        "Directive (EU) 2023/2226, Article 1(7)",
+      ),
+    ],
+  },
+
   // ---------- Papier: the first directive beside everything since.
   {
     id: "papier-1991",
@@ -202,13 +266,18 @@ export const steps: Step[] = [
       eurlex("dir/1991/308", "Richtlinie 91/308/EWG", "Directive 91/308/EEC"),
     ],
   },
+  // Every act in the pile below, repealed ones included, whole texts:
+  // about 272,000 words, at 200 words a minute a little over 22 hours.
   {
     id: "papier-heute",
     chapter: "papier",
-    title: { de: "Heute: 488 Seiten.", en: "Today: 488 pages." },
+    title: {
+      de: "Seither beschlossen: 488 Seiten.",
+      en: "Adopted since: 488 pages.",
+    },
     text: {
-      de: "Gut 22 Stunden Lesezeit, nur für das Geldwäsche-Recht der EU.",
-      en: "Over 22 hours of reading, for EU anti-money-laundering law alone.",
+      de: "Gut 22 Stunden Lesezeit, nur die Geldwäsche-Gesetze der EU.",
+      en: "Over 22 hours of reading, for the EU’s anti-money-laundering acts alone.",
     },
     sources: [
       eurlex(
@@ -262,6 +331,19 @@ export const steps: Step[] = [
     sources: [fiu2025],
   },
   {
+    id: "ergebnis-liegen",
+    chapter: "ergebnis",
+    title: {
+      de: "9.665 davon bleiben liegen. Gespeichert.",
+      en: "9,665 of them go nowhere. Stored.",
+    },
+    text: {
+      de: "Fast sieben von zehn gibt die Meldestelle nicht weiter, mangels Anfangsverdachts, also eines Anhaltspunkts für eine Straftat, oder weiterer Ansätze. Sie bleiben für spätere Auswertungen gespeichert.",
+      en: "Nearly seven in ten the unit does not pass on, for lack of an initial suspicion, any indication of a crime, or of further leads. They are kept for later analysis.",
+    },
+    sources: [fiu2025],
+  },
+  {
     id: "ergebnis-urteile",
     chapter: "ergebnis",
     title: { de: "139 Verurteilungen.", en: "139 convictions." },
@@ -270,19 +352,6 @@ export const steps: Step[] = [
       en: "For money laundering, in Austria, in the same year. One red grain per conviction.",
     },
     sources: [fiu2025],
-  },
-  {
-    id: "ergebnis-de",
-    chapter: "ergebnis",
-    title: {
-      de: "Deutschland: 51-mal so viele Meldungen wie 2008.",
-      en: "Germany: 51 times as many reports as in 2008.",
-    },
-    text: {
-      de: "374.693 im Jahr 2025, auch weil seit 2017 anders gezählt wird. Wegen Geldwäsche verurteilt wurden 2024 3.157 Menschen, gut fünfmal so viele wie 2008.",
-      en: "374,693 in 2025, partly because they are counted differently since 2017. 3,157 people were convicted of money laundering in 2024, just over five times as many as in 2008.",
-    },
-    sources: [...germanReportsSources, ...germanConvictionsSources],
   },
   {
     id: "ergebnis-euro",
@@ -322,9 +391,16 @@ export const thresholds: {
   unit: "ECU" | "EUR"
 }[] = [
   { step: "ausweis-1991", year: 1991, amount: 15000, unit: "ECU" },
-  { step: "ausweis-2017", year: 2017, amount: 1000, unit: "EUR" },
+  { step: "ausweis-2027", year: 2027, amount: 10000, unit: "EUR" },
   { step: "ausweis-heute", year: 2024, amount: 0, unit: "EUR" },
 ]
 
 // Suspicion reports in Austria against convictions for money laundering.
-export const reportField = { first: 467, latest: 13989, convictions: 139 }
+// 9,665 of the latest year's reports were not passed on but kept for later
+// analysis (Lagebericht Geldwäsche 2025, pp. 29–34).
+export const reportField = {
+  first: 467,
+  latest: 13989,
+  kept: 9665,
+  convictions: 139,
+}

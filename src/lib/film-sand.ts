@@ -1,12 +1,14 @@
 // The result chapter of the history film (src/components/RuleFilm.astro)
 // drawn on a canvas: one grain per suspicion report. First the reports of
 // the first year fill the picture; then the camera pulls back until all
-// of the latest year stand in a square; then the square falls into a dune
+// of the latest year stand in a square; then the reports the unit kept
+// without passing them on fade to a pale block that stays on file; then
+// the square falls into a dune
 // and, beside it on the same scale, a pinch of red grains settles, one per
 // conviction. The two heaps stand apart on purpose: convictions are not
 // linked to particular reports.
 
-export type SandState = "first" | "all" | "heap"
+export type SandState = "first" | "all" | "kept" | "heap"
 
 type Layout = {
   // Size of the canvas in CSS pixels.
@@ -43,6 +45,8 @@ type Particle = {
   ring: number
   slot: number
   red: boolean
+  // Kept on file without being passed on: the upper rows of the square.
+  kept: boolean
 }
 
 const easeInOut = (t: number) =>
@@ -99,7 +103,7 @@ const outline = (
 
 export const createSand = (
   root: HTMLElement,
-  counts: { first: number; latest: number; convictions: number },
+  counts: { first: number; latest: number; kept: number; convictions: number },
 ) => {
   const canvas = root.querySelector("canvas")
   const context = canvas?.getContext("2d")
@@ -109,6 +113,8 @@ export const createSand = (
     convictions: root.querySelector<HTMLElement>(
       '[data-sand-label="convictions"]',
     ),
+    kept: root.querySelector<HTMLElement>('[data-sand-label="kept"]'),
+    passed: root.querySelector<HTMLElement>('[data-sand-label="passed"]'),
   }
   const motion = matchMedia("(prefers-reduced-motion: reduce)")
   const ink = { grey: "#3b4147", red: "#e3000f" }
@@ -208,6 +214,7 @@ export const createSand = (
         ring: cell.ring,
         slot,
         red: false,
+        kept: k >= cells.length - counts.kept,
       }
     })
     // The red grains come from above the picture.
@@ -228,6 +235,7 @@ export const createSand = (
       ring: 0,
       slot,
       red: true,
+      kept: false,
     }))
     particles = [...grey, ...red]
     return true
@@ -240,6 +248,7 @@ export const createSand = (
     const grain = layout.grain * 0.85
     if (to === "heap") return { x: p.hx, y: p.hy, s: grain, a: 1 }
     if (p.red) return { x: p.gx, y: p.gy, s: grain, a: 0 }
+    if (to === "kept") return { x: p.gx, y: p.gy, s: dot, a: p.kept ? 0.2 : 1 }
     const visible = to === "all" || p.ring === 0
     return { x: p.gx, y: p.gy, s: dot, a: visible ? 1 : 0 }
   }
@@ -253,6 +262,9 @@ export const createSand = (
     if (!layout) return 0
     if (to === "all" && from === "first")
       return 0.25 + (p.ring / layout.cols) * 0.9
+    // The kept rows fade from the top down.
+    if (to === "kept" || from === "kept")
+      return p.kept ? (p.gy / layout.base) * 0.8 : 0
     if (to === "heap") {
       if (p.red) return 1.7 + (p.slot / Math.max(1, counts.convictions)) * 0.6
       return (p.slot / counts.latest) * 1.3
@@ -324,10 +336,21 @@ export const createSand = (
     else frame = 0
   }
 
-  // Labels stand over the two heaps once they have settled.
+  // Labels stand over the two heaps once they have settled; in the kept
+  // state one stands in the pale block and one in the dark rows below it.
   const place = () => {
     if (!layout) return
-    const { dune, pinch, base } = layout
+    const { dune, pinch, base, left, pitch, cols } = layout
+    const side = cols * pitch
+    const passedShare = 1 - counts.kept / counts.latest
+    if (labels.kept) {
+      labels.kept.style.left = `${left + side / 2}px`
+      labels.kept.style.top = `${base - side * (passedShare + (1 - passedShare) / 2)}px`
+    }
+    if (labels.passed) {
+      labels.passed.style.left = `${left + side / 2}px`
+      labels.passed.style.top = `${base - (side * passedShare) / 2}px`
+    }
     if (labels.reports) {
       labels.reports.style.left = `${dune.x}px`
       labels.reports.style.top = `${base - dune.h - 14}px`
