@@ -32,7 +32,7 @@ export const legalRoute = {
       title: "Datenschutzbehörde",
       text: "prüft die Beschwerde gegen den Anbieter",
       detail:
-        "Sie ist an die Gesetze gebunden, wir rechnen deshalb mit einer Abweisung. Sie kann aber ermitteln, ob unsere Befürchtungen begründet sind.",
+        "Die Behörde wendet das geltende Gesetz an. Ob es verfassungs- oder unionsrechtswidrig ist, entscheiden die Höchstgerichte.",
     },
     {
       title: "Bundesverwaltungsgericht",
@@ -44,7 +44,7 @@ export const legalRoute = {
       title: "VfGH / EuGH",
       text: "können das österreichische Gesetz bzw. die EU-Richtlinie prüfen",
       detail:
-        "Danach folgt der Verfassungsgerichtshof. Er kann das Gesetz prüfen und die EU-Richtlinie dem Europäischen Gerichtshof vorlegen. Ob er das tut, entscheidet er.",
+        "Danach folgt der Verfassungsgerichtshof. Er kann das Gesetz prüfen und die EU-Richtlinie dem Europäischen Gerichtshof vorlegen. Einen Anspruch auf eine Prüfung haben wir nicht: Er kann die Behandlung einer Beschwerde etwa ablehnen, wenn er keine hinreichende Aussicht auf Erfolg sieht.",
     },
   ],
   en: [
@@ -58,7 +58,7 @@ export const legalRoute = {
       title: "Data Protection Authority",
       text: "examines the complaint against the provider",
       detail:
-        "It is bound by the law, so we expect it to dismiss the complaint. It can, however, investigate whether our concerns are justified.",
+        "The authority applies the law as it stands. Whether that law breaches the constitution or EU law is for the highest courts to decide.",
     },
     {
       title: "Federal Administrative Court",
@@ -70,7 +70,7 @@ export const legalRoute = {
       title: "Constitutional Court / CJEU",
       text: "can review national law or the EU directive, respectively",
       detail:
-        "Then comes the Constitutional Court. It can review the law and refer the EU directive to the Court of Justice of the EU. Whether it does so is for the court to decide.",
+        "Then comes the Constitutional Court. It can review the law and refer the EU directive to the Court of Justice of the EU. We have no right to a review: the court can, for example, decline to hear a complaint if it sees no reasonable prospect of success.",
     },
   ],
 } as const

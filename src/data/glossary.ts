@@ -45,7 +45,7 @@ export const glossary: Record<Language, Term[]> = {
     {
       id: "wiederherstellungsphrase",
       term: "Wiederherstellungsphrase",
-      text: "Meist 12 oder 24 Wörter, mit denen sich eine Wallet wiederherstellen lässt. Wer sie kennt, kann die Bitcoin übertragen. Seriöse Stellen fragen nie danach.",
+      text: "Meist 12 oder 24 Wörter, mit denen sich eine Wallet wiederherstellen lässt. Wer sie kennt, kann die Bitcoin übertragen. Gib deine Wiederherstellungsphrase niemals weiter.",
     },
     {
       id: "jahresmeldung",
@@ -107,7 +107,7 @@ export const glossary: Record<Language, Term[]> = {
     {
       id: "wiederherstellungsphrase",
       term: "Recovery phrase",
-      text: "Usually 12 or 24 words that restore a wallet. Whoever knows them can move the bitcoin. No legitimate service ever asks for them.",
+      text: "Usually 12 or 24 words that restore a wallet. Whoever knows them can move the bitcoin. Never share your recovery phrase.",
     },
     {
       id: "jahresmeldung",
