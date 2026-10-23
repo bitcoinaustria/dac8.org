@@ -147,9 +147,9 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   ratchet: each step small, none taken back, the next already decided. A
   scroll film (`src/components/RuleFilm.astro`, steps and figures in
   `src/data/overregulation.ts`), built like the home page's data story,
-  leads in five chapters from the reader to the result, each step a
-  headline of a few words over one picture as a contrast: from which amount
-  a single transaction without an account needs ID, rendered at true scale
+  leads in five chapters and ten steps from the reader to the result, each
+  step a headline of a few words over one picture as a contrast: from which
+  amount a single cash transaction without an account needs ID, rendered at true scale
   in Blender (`scripts/artwork/render-cash.py`, fictional notes generated
   with Codex): a brick of 339 hundred-euro notes in 1991 (in today's
   money), a banded bundle of 100 from 2027, and for crypto a single cent,
@@ -169,9 +169,7 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   they drown each other out, each with its caption and reference; a sea of
   suspicion reports in Austria in which the 9,665 the unit kept on file
   without passing them on fade to a pale block, beside 139 convictions
-  (`src/lib/film-sand.ts`); then a fictional 100-euro note with a masked
-  robber that crumbles to dust until the red sliver confiscated remains
-  (`src/lib/film-note.ts`). Without JavaScript the headlines stand as text.
+  (`src/lib/film-sand.ts`). Without JavaScript the headlines stand as text.
   The page frames DAC8 as the latest piece of a wider apparatus of
   anti-money-laundering and tax-reporting rules and builds on the film:
   and it goes on (`src/components/RuleNext.astro`, data in

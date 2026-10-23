@@ -2,7 +2,6 @@
 import SourceRefs from "@/components/SourceRefs.astro"
 import { ruleChronicle } from "@/data/aml-history"
 import { historyAsOf } from "@/data/history"
-import { recovery } from "@/data/history-gap"
 import { historySources } from "@/data/history-sources"
 import { firstVoice, lawVoices } from "@/data/law-voices"
 import {
@@ -17,7 +16,6 @@ import {
 import cashBrick from "@/assets/history/cash-brick.webp"
 import cashCent from "@/assets/history/cash-cent.webp"
 import cashBundle from "@/assets/history/cash-bundle.webp"
-import noteCrime from "@/assets/history/note-crime.webp"
 import panopticon from "@/assets/history/panopticon.json"
 import panBase from "@/assets/history/panopticon-base.webp"
 import type { Language } from "@/lib/i18n"
@@ -25,12 +23,11 @@ import type { Language } from "@/lib/i18n"
 // The story of over-regulation as a scroll film, built like the home
 // page's data story: the stage stands while the steps scroll past. Each
 // step is a headline of a few words and turns one picture into a contrast
-// you see before you read it: the amount from which you must show ID
-// falling, and nothing at all for crypto; rules set on every way money can
+// you see before you read it, in ten steps: the amount from which cash
+// needs ID, and nothing at all for crypto; rules set on every way money can
 // take, then ever more authorities in the watchtower; six pages beside 488;
-// a sea of reports, most of them kept on file, beside a few convictions; and
-// a 100-euro note that crumbles to a red sliver. Grey is what is collected, red what
-// comes of it or what is new. Each step cites its sources by number from
+// a sea of reports, most of them kept on file, beside a few convictions.
+// Grey is what is collected, red what comes of it or what is new. Each step cites its sources by number from
 // the list at the end of the page (src/data/history-sources.ts). Without
 // the script the headlines stand as text one below the other.
 interface Props {
@@ -216,24 +213,24 @@ const watchers: { step: string; who: { de: string; en: string } }[] = [
   { step: "zweck-2016", who: { de: "Strafgerichte", en: "criminal courts" } },
   { step: "zweck-2016", who: { de: "Abgabenbehörden", en: "tax authorities" } },
   {
-    step: "zweck-2021",
+    step: "zweck-heute",
     who: { de: "Geldwäschemeldestelle", en: "financial intelligence unit" },
   },
-  { step: "zweck-2021", who: { de: "Staatsschutz", en: "state security" } },
+  { step: "zweck-heute", who: { de: "Staatsschutz", en: "state security" } },
   {
-    step: "zweck-2021",
+    step: "zweck-heute",
     who: { de: "Finanzmarktaufsicht", en: "financial market authority" },
   },
   {
-    step: "zweck-2021",
+    step: "zweck-heute",
     who: { de: "Bundeskriminalamt", en: "federal criminal police" },
   },
   {
-    step: "zweck-2021",
+    step: "zweck-heute",
     who: { de: "Sanktionsbehörden", en: "sanctions authorities" },
   },
   {
-    step: "zweck-2026",
+    step: "zweck-heute",
     who: { de: "Amt für Betrugsbekämpfung", en: "anti-fraud office" },
   },
 ]
@@ -265,25 +262,13 @@ const pages = Array.from({ length: totalPages }, (_, k) => k)
 // belongs to which step.
 const { first, latest, kept: keptReports, convictions } = reportField
 const sandStates = JSON.stringify({
-  [at("ergebnis-2005")]: "first",
   [at("ergebnis-2025")]: "all",
   [at("ergebnis-liegen")]: "kept",
   [at("ergebnis-urteile")]: "heap",
 })
-const fieldSteps = [
-  "ergebnis-2005",
-  "ergebnis-2025",
-  "ergebnis-liegen",
-  "ergebnis-urteile",
-]
+const fieldSteps = ["ergebnis-2025", "ergebnis-liegen", "ergebnis-urteile"]
   .map(at)
   .join(",")
-// A 100-euro note crumbles into dust on a canvas (src/lib/film-note.ts)
-// until the share confiscated remains, as Europol last estimated it.
-const noteStep = at("ergebnis-euro")
-const kept = recovery.latest.percent
-const euro = (value: number) => (en ? `€${n(value)}` : `${n(value)} €`)
-const noteKeep = String(kept / 100)
 ---
 
 <section
@@ -420,7 +405,7 @@ const noteKeep = String(kept / 100)
                 </span>
               ))}
               <p class="ways-centre">
-                <strong data-year>{steps[at("regeln-1977")].years?.[0]}</strong>
+                <strong data-year>{steps[at("regeln")].years?.[0]}</strong>
               </p>
             </div>
             <ul class="watchers" aria-hidden="true">
@@ -485,27 +470,6 @@ const noteKeep = String(kept / 100)
                 {en ? "convictions" : "Verurteilungen"}
               </span>
             </div>
-            <div
-              class="note"
-              data-note={noteKeep}
-              data-note-image={noteCrime.src}
-              data-note-step={noteStep}
-              data-only={String(noteStep)}
-            >
-              <canvas />
-              <i data-note-paper />
-              <i data-note-edge />
-              <i data-note-line />
-              <i data-note-red />
-              <span class="note-label kept" data-note-label="kept">
-                <b>{euro(kept)}</b>
-                {en ? "confiscated" : "eingezogen"}
-              </span>
-              <span class="note-label gone" data-note-label="gone">
-                <b>{euro(100 - kept)}</b>
-                {en ? "not confiscated" : "nicht eingezogen"}
-              </span>
-            </div>
           </div>
         </div>
       </div>
@@ -514,7 +478,6 @@ const noteKeep = String(kept / 100)
 </section>
 
 <script>
-  import { createNote } from "@/lib/film-note"
   import { createSand, type SandState } from "@/lib/film-sand"
 
   // The step whose spacer has crossed the middle of the window is current:
@@ -583,13 +546,6 @@ const noteKeep = String(kept / 100)
     const sand = sandRoot
       ? createSand(sandRoot, JSON.parse(sandRoot.dataset.sandCounts ?? "{}"))
       : null
-    // The last step's note, which crumbles each time the step comes up.
-    const noteRoot = film.querySelector<HTMLElement>("[data-note]")
-    const note = noteRoot
-      ? createNote(noteRoot, Number(noteRoot.dataset.note))
-      : null
-    const noteStep = Number(noteRoot?.dataset.noteStep ?? -1)
-
     // The law read aloud, only when asked for: the loudspeaker shown in the
     // paper chapter turns it on and off. In 1991 one voice reads; today up
     // to three talk over each other, taking turns through all passages.
@@ -709,8 +665,6 @@ const noteKeep = String(kept / 100)
       const sandState = sandStates[i]
       if (sandState) sand?.go(sandState, previous in sandStates)
       else sand?.hide()
-      if (i === noteStep) note?.go(previous !== -1)
-      else note?.hide()
       view.dataset.scene = stepScenes[i]
       view.dataset.stepId = stepIds[i]
       voiceFor(stepIds[i])
@@ -828,9 +782,6 @@ const noteKeep = String(kept / 100)
     --pace: min(1svh, 0.76rem);
     --bar: light-dark(#3b4147, #a7afb6);
     --red: var(--primary);
-    /* Die Hunderter am Anfang und am Ende des Films. */
-    --note: light-dark(#d2dbcd, #66716a);
-    --note-edge: light-dark(#8f9d8b, #3a413c);
     display: grid;
     grid-template-columns: minmax(0, 1fr);
   }
@@ -846,7 +797,7 @@ const noteKeep = String(kept / 100)
   }
 
   .spacer {
-    block-size: calc(80 * var(--pace));
+    block-size: calc(70 * var(--pace));
     scroll-margin-block-start: calc(var(--header-height) - 30 * var(--pace));
   }
 
@@ -1525,8 +1476,7 @@ const noteKeep = String(kept / 100)
     min-block-size: 0;
   }
 
-  .sand,
-  .note {
+  .sand {
     grid-area: 1 / 1;
     opacity: 0;
     visibility: hidden;
@@ -1535,8 +1485,7 @@ const noteKeep = String(kept / 100)
       visibility 0.5s;
   }
 
-  .sand.on,
-  .note.on {
+  .sand.on {
     opacity: 1;
     visibility: visible;
   }
@@ -1625,84 +1574,6 @@ const noteKeep = String(kept / 100)
     :is([data-sand-label="kept"], [data-sand-label="passed"]) {
     opacity: 1;
     transition-delay: 1.2s;
-  }
-
-  /* Ein Hunderter zerfällt zu Staub (src/lib/film-note.ts), bis der
-     eingezogene Anteil bleibt. Das Feld hat ein festes Seitenverhältnis,
-     damit die Leiste des Browsers beim Scrollen nichts neu zeichnet. */
-  .note {
-    position: relative;
-    inline-size: min(100%, 100cqh * 1.15);
-    aspect-ratio: 1.25;
-  }
-
-  .note canvas {
-    position: absolute;
-    inset: 0;
-    inline-size: 100%;
-    block-size: 100%;
-  }
-
-  .note i {
-    display: none;
-  }
-
-  .note [data-note-paper] {
-    color: var(--note);
-  }
-
-  .note [data-note-edge] {
-    color: var(--note-edge);
-  }
-
-  .note [data-note-line] {
-    color: var(--ink-3);
-  }
-
-  .note [data-note-red] {
-    color: var(--red);
-  }
-
-  .note-label {
-    position: absolute;
-    display: grid;
-    color: var(--ink-2);
-    font-size: var(--type-meta);
-    line-height: 1.2;
-    white-space: nowrap;
-    opacity: 0;
-    translate: 0 0.4rem;
-    transition:
-      opacity 0.5s ease,
-      translate 0.5s ease;
-  }
-
-  .note-label b {
-    color: var(--foreground);
-    font-size: clamp(1.5rem, 1rem + 2.5cqi, 2.6rem);
-    font-weight: var(--weight-heading);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-  }
-
-  .note-label.kept,
-  .note-label.kept b {
-    color: var(--accent);
-  }
-
-  .note-label.gone {
-    justify-items: center;
-    translate: -50% -40%;
-  }
-
-  .note[data-done] .note-label {
-    opacity: 1;
-    translate: 0 0;
-  }
-
-  .note[data-done] .note-label.gone {
-    translate: -50% -50%;
-    transition-delay: 0.35s;
   }
 
   /* ---------- Schmal ---------------------------------------------------- */
