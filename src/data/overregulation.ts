@@ -1,7 +1,7 @@
 import type { Language } from "@/lib/i18n"
 
 // The history page's scroll film: how the rules piled up, step by small
-// step, and how little came of it, in five chapters of ten short steps.
+// step, and how little came of it, in five chapters of eleven short steps.
 // It starts with the reader, from which amount you have to show ID, shows
 // the ways money takes filling with rules and the register filling with
 // readers, and ends with the result.
@@ -49,6 +49,16 @@ const fiu2025: Source = {
   },
   href: "https://www.bundeskriminalamt.at/308/files/374-2026-geldwaeschebericht-2025-a4-v20260915-web-bf.pdf",
 }
+// Europol's latest estimate of the share confiscated, the same source as
+// the bill's scissors chart (src/data/history-gap.ts, recovery).
+const socta: Source = {
+  label: {
+    de: "Europol, EU-SOCTA 2025, S. 13 und 25",
+    en: "Europol, EU-SOCTA 2025, pp. 13 and 25",
+  },
+  href: "https://www.europol.europa.eu/cms/sites/default/files/documents/EU-SOCTA-2025.pdf",
+}
+
 // Austria's consumer price index (VPI 86, 1986 = 100), annual averages, by
 // Statistik Austria, to show past amounts in today's money. 2025 is the
 // last full year. ECU became euro one to one (Regulation (EC) 1103/97,
@@ -292,6 +302,19 @@ export const steps: Step[] = [
       en: "In Austria, in the same year. One red grain per conviction, one grey grain per report.",
     },
     sources: [fiu2025],
+  },
+  {
+    id: "ergebnis-euro",
+    chapter: "ergebnis",
+    title: {
+      de: "Von 100 € aus Straftaten werden rund 2 € eingezogen.",
+      en: "Of 100 euros from crime, about 2 are confiscated.",
+    },
+    text: {
+      de: "Schätzt Europol für die EU, und spricht trotz aller Investitionen und Gesetze von Stillstand.",
+      en: "Europol’s estimate for the EU; despite all the investment and laws, it speaks of stagnation.",
+    },
+    sources: [socta],
   },
 ]
 
