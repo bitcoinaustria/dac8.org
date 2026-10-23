@@ -64,7 +64,7 @@ that follow the navigation labels:
 
 | Page | German | English |
 | --- | --- | --- |
-| Start: the case told as a story in scenes | `/` | `/en/` |
+| Start: from the problem to what we do about it | `/` | `/en/` |
 | Dossier: the checkable reference: what is reported, what the provider keeps and for how long, FAQ, terms and sources | `/dossier/` | `/en/dossier/` |
 | Argumente: our position by topic, with answers to objections and our demands | `/argumente/` | `/en/arguments/` |
 | Angriffe: archive of known physical attacks, map and list | `/angriffe/` | `/en/attacks/` |
@@ -74,23 +74,25 @@ that follow the navigation labels:
 
 A top bar carries the navigation and a permanent donate button that leads to
 `#spenden` on the participation page; on mobile a bottom bar keeps donating and
-sharing within reach. `/spenden` and `/en/donate` are short redirects for print
-and QR codes. The home page tells the case as one story and asks
-for help at its peak: the hero with three key figures, a numbered story of
-five steps from the account to the doorstep (`src/components/Tale.astro`;
-on wide screens the pictures sit on a pinned stage that follows the steps),
-then the three ways to help (donate, ask your provider, write to MPs),
-documented leaks as a table of which kinds of data each exposed
-(`src/components/LeakMatrix.astro`), the guiding statement with two objections
-(the rest are on the arguments page, `src/data/arguments.ts`), what we do with
-the legal route, and who we are. The full case list with sources is on the
-leak page (`/datenlecks/`, `/en/data-leaks/`, data in `src/data/leaks.ts`),
+sharing within reach (`src/components/ActionBar.astro`). `/spenden` and
+`/en/donate` are short redirects for print and QR codes. The home page
+(`src/components/pages/HomePage.astro`) leads from the problem to what we do
+about it: the headline with the campaign status and, beside it, the "Am I
+affected?" check (`src/components/AffectedCheck.astro`), which restates the
+dossier's FAQ; where the data goes, as a full-screen scroll film
+(`src/components/DataWeb.astro`); the danger once it is known who holds how
+much, with the leak and attack figures and a still of the attack map
+(`src/components/AttackMapPreview.astro`); three of the reasons from the
+arguments page, each leading there; how automatic reporting grew and how
+few convictions it brings (`src/components/HistoryStack.astro`,
+`src/components/EffectTeaser.astro`), leading to the history page; and the
+complaint with the legal route, leading to the proceedings page. The full case
+list with sources is on the leak page (`/datenlecks/`, `/en/data-leaks/`, data in `src/data/leaks.ts`),
 after the cases in which such data led criminals to someone's door
 (`#angriffe`). A case belongs there only if lost or misused data made the harm
-possible, and it needs a public source. The "Am I affected?" check
-(`src/components/AffectedCheck.astro`) restates the dossier's FAQ. The footer closes
-every page with the status, the campaign statement and three equal actions on
-a dark band. Share buttons confirm a copied link on the button itself.
+possible, and it needs a public source. The footer closes every page with the
+campaign statement and two equal actions, donating and sharing, on a dark band.
+Share buttons confirm a copied link on the button itself.
 
 ## Map of known physical attacks
 
