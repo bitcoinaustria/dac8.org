@@ -83,6 +83,236 @@ export const pairs: Pair[] = [
     ],
   },
   {
+    id: "dac8-at",
+    token: {
+      promise: { de: "35 Mio. € im Jahr", en: "€35m a year" },
+      record: { de: "ohne Rechnung", en: "no workings" },
+    },
+    topic: { de: "DAC8 in Österreich", en: "DAC8 in Austria" },
+    promise: {
+      who: {
+        de: "Österreichische Bundesregierung in der Folgenabschätzung zur Krypto-Meldepflicht",
+        en: "Austria’s Federal Government in the impact assessment of the crypto reporting duty",
+      },
+      year: 2025,
+      original: "de",
+      quote: {
+        de: "Ab 2027 bringe die Meldepflicht 35 Millionen Euro im Jahr mehr ein, 2026 schon 5 Millionen.",
+        en: "From 2027 the reporting duty would bring in 35 million euros more a year, and 5 million in 2026.",
+      },
+      source: {
+        label: {
+          de: "RV 306 (XXVIII. GP), Vorblatt und Folgenabschätzung",
+          en: "RV 306 (28th legislative period), cover sheet and impact assessment, in German",
+        },
+        href: "https://www.parlament.gv.at/dokument/XXVIII/I/306/imfname_1723218.pdf",
+      },
+    },
+    record: [
+      {
+        who: {
+          de: "Budgetdienst des Parlaments",
+          en: "The Parliament’s budget office",
+        },
+        year: 2025,
+        original: "de",
+        quote: {
+          de: "Die Zahl stütze sich auf die Schätzung der Kommission, wie viel Steuer auf alle Krypto-Gewinne des Jahres 2020 anfiele. „Nähere Informationen zu den Berechnungen und Annahmen des BMF sind in der WFA nicht enthalten.“",
+          en: "The figure rests on the Commission’s estimate of the tax on all crypto gains of 2020; further details of the finance ministry’s calculations and assumptions are not in the impact assessment.",
+        },
+        source: {
+          label: {
+            de: "Budgetdienst, Analyse Betrugsbekämpfungspaket 2025, S. 29",
+            en: "Parliamentary Budget Office, analysis of the 2025 anti-fraud package, p. 29, in German",
+          },
+          href: "https://www.parlament.gv.at/dokument/budgetdienst/analysen-zu-gesetzen/BD-Betrugsbekaempfungspaket-und-Abgabenaenderungsgesetz-2025.pdf",
+        },
+      },
+      {
+        who: {
+          de: "Derselbe Budgetdienst",
+          en: "The same budget office",
+        },
+        year: 2025,
+        original: "de",
+        quote: {
+          de: "„Das in der WFA erwartete Mehraufkommen entspricht also weitgehend dem Kapitalertragsteueraufkommen aus Kryptowährungen im Jahr 2024.“",
+          en: "The extra revenue expected thus largely equals all the capital gains tax collected on crypto in 2024.",
+        },
+        source: {
+          label: {
+            de: "Budgetdienst, Analyse Betrugsbekämpfungspaket 2025, S. 29",
+            en: "Parliamentary Budget Office, analysis of the 2025 anti-fraud package, p. 29, in German",
+          },
+          href: "https://www.parlament.gv.at/dokument/budgetdienst/analysen-zu-gesetzen/BD-Betrugsbekaempfungspaket-und-Abgabenaenderungsgesetz-2025.pdf",
+        },
+      },
+    ],
+  },
+  {
+    id: "dac8-de",
+    token: {
+      promise: { de: "besser verhindern", en: "better prevented" },
+      record: { de: "keine Evaluierung", en: "no evaluation" },
+    },
+    topic: { de: "DAC8 in Deutschland", en: "DAC8 in Germany" },
+    promise: {
+      who: {
+        de: "Jens Behrens (SPD) in der Schlussdebatte im Bundestag",
+        en: "Jens Behrens (SPD) in the Bundestag’s final debate",
+      },
+      year: 2025,
+      original: "de",
+      quote: {
+        de: "„So können wir Steuervermeidung und -hinterziehung im Bereich der Kryptowährung besser verhindern.“",
+        en: "This way, he said, tax avoidance and evasion with crypto can be better prevented.",
+      },
+      source: {
+        label: {
+          de: "Bundestag, Plenarprotokoll 21/37, S. 4202",
+          en: "Bundestag, plenary record 21/37, p. 4202, in German",
+        },
+        href: "https://dserver.bundestag.de/btp/21/21037.pdf",
+      },
+    },
+    record: [
+      {
+        who: {
+          de: "Die Bundesregierung im Gesetzentwurf",
+          en: "The Federal Government in the bill",
+        },
+        year: 2025,
+        original: "de",
+        quote: {
+          de: "„Eine Evaluierung ist nicht vorgesehen, da es sich um die 1:1-Umsetzung der DAC 8 handelt.“",
+          en: "No evaluation is planned, because the law transposes DAC8 one to one.",
+        },
+        source: {
+          label: {
+            de: "Bundesregierung, Drucksache 21/1937, S. 46",
+            en: "Federal Government, Bundestag paper 21/1937, p. 46, in German",
+          },
+          href: "https://dserver.bundestag.de/btd/21/019/2101937.pdf",
+        },
+      },
+      {
+        who: {
+          de: "Und schon zuvor, über die Steuer auf Krypto",
+          en: "And earlier, on the tax on crypto",
+        },
+        year: 2025,
+        original: "de",
+        quote: {
+          de: "„Daher ist ein statistischer Nachweis der Höhe der Einnahmen aus der Besteuerung von Kryptowerten nicht möglich.“",
+          en: "A statistical proof of how much tax crypto brings in is therefore not possible.",
+        },
+        source: {
+          label: {
+            de: "Bundesregierung, Drucksache 21/1707, S. 2",
+            en: "Federal Government, Bundestag paper 21/1707, p. 2, in German",
+          },
+          href: "https://dserver.bundestag.de/btd/21/017/2101707.pdf",
+        },
+      },
+    ],
+  },
+  {
+    id: "dac7",
+    token: {
+      promise: { de: "gute Nachricht", en: "good news" },
+      record: { de: "unverhältnismäßig", en: "disproportionate" },
+    },
+    topic: {
+      de: "DAC7, Meldepflicht für Online-Plattformen",
+      en: "DAC7, reporting by online platforms",
+    },
+    promise: {
+      who: {
+        de: "Paolo Gentiloni, EU-Steuerkommissar",
+        en: "Paolo Gentiloni, EU tax commissioner",
+      },
+      year: 2020,
+      original: "en",
+      quote: {
+        de: "Das seien gute Nachrichten für die Staatskasse und für ehrliche Unternehmer.",
+        en: "“This is good news for the public purse and good news for honest entrepreneurs.”",
+      },
+      source: commission("ip_20_2253", "IP/20/2253"),
+    },
+    record: [
+      {
+        who: {
+          de: "EU-Kommission sechs Jahre später",
+          en: "The Commission six years later",
+        },
+        year: 2026,
+        original: "en",
+        quote: {
+          de: "Die Meldepflicht liefere große Mengen an Daten mit geringer steuerlicher Bedeutung, zu unverhältnismäßigen Kosten: rund 678 Millionen Euro im Jahr.",
+          en: "It generates “large volumes of information which has limited tax relevance”, at “disproportionate compliance costs” of about 678 million euros a year.",
+        },
+        source: {
+          label: {
+            de: "EU-Kommission, SWD(2026) 166, S. 1–2, englisch",
+            en: "European Commission, SWD(2026) 166, pp. 1–2",
+          },
+          href: "https://data.consilium.europa.eu/doc/document/ST-11060-2026-ADD-4/en/pdf",
+        },
+      },
+    ],
+  },
+  {
+    id: "crs-de",
+    token: {
+      promise: { de: "Milliarden", en: "billions" },
+      record: { de: "nicht signifikant", en: "not significant" },
+    },
+    topic: {
+      de: "Kontenaustausch, Deutschland",
+      en: "Account exchange, Germany",
+    },
+    promise: {
+      who: {
+        de: "Wolfgang Schäuble, Finanzminister, in einer Regierungserklärung",
+        en: "Wolfgang Schäuble, finance minister, in a government statement",
+      },
+      year: 2014,
+      original: "de",
+      quote: {
+        de: "„Damit bekämpfen wir das Problem, dass den öffentlichen Haushalten durch Steuerflucht Steuereinnahmen in Milliardenhöhe fehlen.“",
+        en: "With the exchange, he said, Germany was tackling the billions in tax revenue lost to tax flight.",
+      },
+      source: {
+        label: {
+          de: "Bundestag, Plenarprotokoll 18/63, S. 5786–5788",
+          en: "Bundestag, plenary record 18/63, pp. 5786–5788, in German",
+        },
+        href: "https://dserver.bundestag.de/btp/18/18063.pdf",
+      },
+    },
+    record: [
+      {
+        who: {
+          de: "Deutsche Bundesregierung fünf Jahre später",
+          en: "Germany’s Federal Government five years later",
+        },
+        year: 2019,
+        original: "de",
+        quote: {
+          de: "Sie erwartet „keine signifikanten Steuermehreinnahmen“; der Austausch „hat insgesamt auch nicht zum Ziel, steuerliche Mehreinnahmen zu generieren“.",
+          en: "It expects no significant extra revenue, and the exchange is not even meant to raise any.",
+        },
+        source: {
+          label: {
+            de: "Bundesregierung, Drucksache 19/12586, S. 4",
+            en: "Federal Government, Bundestag paper 19/12586, p. 4, in German",
+          },
+          href: "https://dserver.bundestag.de/btd/19/125/1912586.pdf",
+        },
+      },
+    ],
+  },
+  {
     id: "fraud-package-at",
     token: {
       promise: { de: "270 Mio. €", en: "€270m" },
@@ -129,25 +359,6 @@ export const pairs: Pair[] = [
             en: "Nationalrat, 73rd sitting, 26 March 2026, question time, in German",
           },
           href: "https://www.parlament.gv.at/dokument/XXVIII/NRSITZ/73/A_-_10_09_23_00931336.html",
-        },
-      },
-      {
-        who: {
-          de: "Die Folgenabschätzung zur Krypto-Meldepflicht",
-          en: "The impact assessment of the crypto reporting duty",
-        },
-        year: 2025,
-        original: "de",
-        quote: {
-          de: "Aus der Krypto-Meldepflicht erwartet sie für 2026 Mehreinnahmen von 5 Millionen Euro.",
-          en: "From the crypto reporting duty it expects extra revenue of 5 million euros in 2026.",
-        },
-        source: {
-          label: {
-            de: "RV 306 (XXVIII. GP), Vorblatt und Folgenabschätzung",
-            en: "RV 306 (28th legislative period), cover sheet and impact assessment, in German",
-          },
-          href: "https://www.parlament.gv.at/dokument/XXVIII/I/306/imfname_1723218.pdf",
         },
       },
     ],
@@ -215,73 +426,6 @@ export const pairs: Pair[] = [
             en: "Federal Government, report on impact assessments 2020, pp. 229–231, archived copy, in German",
           },
           href: "https://web.archive.org/web/2024/https://wirkungsmonitoring.gv.at/wp-content/uploads/2023/05/WFA_Bericht_2020.pdf",
-        },
-      },
-    ],
-  },
-  {
-    id: "dac8-de",
-    token: {
-      promise: { de: "besser verhindern", en: "better prevented" },
-      record: { de: "kein Nachweis", en: "no proof" },
-    },
-    topic: { de: "DAC8 in Deutschland", en: "DAC8 in Germany" },
-    promise: {
-      who: {
-        de: "Jens Behrens (SPD) in der Schlussdebatte im Bundestag",
-        en: "Jens Behrens (SPD) in the Bundestag’s final debate",
-      },
-      year: 2025,
-      original: "de",
-      quote: {
-        de: "„So können wir Steuervermeidung und -hinterziehung im Bereich der Kryptowährung besser verhindern.“",
-        en: "This way, he said, tax avoidance and evasion with crypto can be better prevented.",
-      },
-      source: {
-        label: {
-          de: "Bundestag, Plenarprotokoll 21/37, S. 4202",
-          en: "Bundestag, plenary record 21/37, p. 4202, in German",
-        },
-        href: "https://dserver.bundestag.de/btp/21/21037.pdf",
-      },
-    },
-    record: [
-      {
-        who: {
-          de: "Deutsche Bundesregierung sieben Wochen davor",
-          en: "Germany’s Federal Government seven weeks earlier",
-        },
-        year: 2025,
-        original: "de",
-        quote: {
-          de: "„Daher ist ein statistischer Nachweis der Höhe der Einnahmen aus der Besteuerung von Kryptowerten nicht möglich.“",
-          en: "A statistical proof of how much tax crypto brings in is therefore not possible.",
-        },
-        source: {
-          label: {
-            de: "Bundesregierung, Drucksache 21/1707, S. 2",
-            en: "Federal Government, Bundestag paper 21/1707, p. 2, in German",
-          },
-          href: "https://dserver.bundestag.de/btd/21/017/2101707.pdf",
-        },
-      },
-      {
-        who: {
-          de: "Und im Gesetz selbst",
-          en: "And in the law itself",
-        },
-        year: 2025,
-        original: "de",
-        quote: {
-          de: "„Eine Evaluierung ist nicht vorgesehen, da es sich um die 1:1-Umsetzung der DAC 8 handelt.“",
-          en: "No evaluation is planned, because the law transposes DAC8 one to one.",
-        },
-        source: {
-          label: {
-            de: "Bundesregierung, Drucksache 21/1937, S. 46",
-            en: "Federal Government, Bundestag paper 21/1937, p. 46, in German",
-          },
-          href: "https://dserver.bundestag.de/btd/21/019/2101937.pdf",
         },
       },
     ],
@@ -459,272 +603,6 @@ export const pairs: Pair[] = [
     ],
   },
   {
-    id: "amla",
-    token: {
-      promise: { de: "ab 2026", en: "from 2026" },
-      record: { de: "ab 2028", en: "from 2028" },
-    },
-    topic: {
-      de: "Neue EU-Geldwäschebehörde AMLA",
-      en: "The new EU anti-money-laundering authority, AMLA",
-    },
-    promise: {
-      who: {
-        de: "Mairead McGuinness, EU-Kommissarin für Finanzmärkte",
-        en: "Mairead McGuinness, EU commissioner for financial services",
-      },
-      year: 2022,
-      original: "en",
-      quote: {
-        de: "AMLA sei ein Wendepunkt im Kampf gegen Geldwäsche, voll besetzt 2025 und mit direkter Aufsicht ab 2026.",
-        en: "“AMLA is a game-changer in the fight against money laundering”, to reach “full staffing in 2025, and to start carrying out direct supervision in 2026”.",
-      },
-      source: commission("speech_22_5593", "SPEECH/22/5593"),
-    },
-    record: [
-      {
-        who: { de: "AMLA im Jahresbericht", en: "AMLA in its annual report" },
-        year: 2025,
-        original: "de",
-        quote: {
-          de: "Ende 2025 arbeiteten dort 119 Menschen.",
-          en: "At the end of 2025 it had 119 staff.",
-        },
-        source: {
-          label: {
-            de: "AMLA, Jahresbericht 2025",
-            en: "AMLA, annual activity report 2025",
-          },
-          href: "https://www.amla.europa.eu/document/download/d126651b-59ba-403a-bc51-a92d14112e08_en?filename=Consolidated_Annual_Activity_Report_2025.pdf",
-        },
-      },
-      {
-        who: { de: "AMLA in ihrer Planung", en: "AMLA in its planning" },
-        year: 2026,
-        original: "de",
-        quote: {
-          de: "Volle Besetzung ist jetzt für 2027 geplant, die direkte Aufsicht über 40 Institute ab 2028.",
-          en: "Full staffing is now planned for 2027, direct supervision of 40 institutions from 2028.",
-        },
-        source: {
-          label: {
-            de: "AMLA, Programmplanung 2026–2028",
-            en: "AMLA, programming document 2026–2028",
-          },
-          href: "https://www.amla.europa.eu/document/download/27549516-d110-4e91-b1ed-d3552b8f9661_en?filename=AMLA%20SPD%202026-2028.pdf",
-        },
-      },
-    ],
-  },
-  {
-    id: "fatf-at",
-    token: {
-      promise: { de: "gut funktionierend", en: "well-functioning" },
-      record: { de: "„Low“", en: "“Low”" },
-    },
-    topic: { de: "FATF-Prüfung, Österreich", en: "FATF evaluation, Austria" },
-    promise: {
-      who: {
-        de: "Alma Zadić, Justizministerin, die zugleich Probleme bei der Strafverfolgung nannte",
-        en: "Alma Zadić, justice minister, who also mentioned problems with prosecution",
-      },
-      year: 2024,
-      original: "de",
-      quote: {
-        de: "„Die Prüfung durch die FATF kam zu dem Ergebnis, dass in Österreich ein umfassendes und gut funktionierendes System … existiert und angewendet wird.“",
-        en: "The FATF evaluation, she wrote, found a comprehensive and well-functioning system in Austria.",
-      },
-      source: {
-        label: {
-          de: "Justizministerium, Anfragebeantwortung 17872/AB (XXVII. GP), S. 4–5",
-          en: "Justice ministry, answer 17872/AB (27th legislative period), pp. 4–5, in German",
-        },
-        href: "https://www.parlament.gv.at/dokument/XXVII/AB/17872/imfname_1639379.pdf",
-      },
-    },
-    record: [
-      {
-        who: {
-          de: "Die FATF in dieser Prüfung",
-          en: "The FATF in that evaluation",
-        },
-        year: 2016,
-        original: "en",
-        quote: {
-          de: "Die Nutzung der Verdachtsmeldungen und die Verfolgung von Geldwäsche bewertete sie mit „Low“, der schlechtesten Stufe; Staatsanwälte sähen in den Meldungen keine wertvolle Informationsquelle.",
-          en: "It rated the use of financial intelligence and the prosecution of money laundering “Low”, its lowest grade; prosecutors “do not see STRs … as a valuable source of information”.",
-        },
-        source: {
-          label: {
-            de: "FATF, Länderprüfung Österreich 2016, S. 11",
-            en: "FATF, mutual evaluation of Austria, 2016, p. 11",
-          },
-          href: "https://www.fatf-gafi.org/media/fatf/documents/reports/mer4/MER-Austria-2016.pdf",
-        },
-      },
-    ],
-  },
-  {
-    id: "crs-de",
-    token: {
-      promise: { de: "Milliarden", en: "billions" },
-      record: { de: "nicht signifikant", en: "not significant" },
-    },
-    topic: {
-      de: "Kontenaustausch, Deutschland",
-      en: "Account exchange, Germany",
-    },
-    promise: {
-      who: {
-        de: "Wolfgang Schäuble, Finanzminister, in einer Regierungserklärung",
-        en: "Wolfgang Schäuble, finance minister, in a government statement",
-      },
-      year: 2014,
-      original: "de",
-      quote: {
-        de: "„Damit bekämpfen wir das Problem, dass den öffentlichen Haushalten durch Steuerflucht Steuereinnahmen in Milliardenhöhe fehlen.“",
-        en: "With the exchange, he said, Germany was tackling the billions in tax revenue lost to tax flight.",
-      },
-      source: {
-        label: {
-          de: "Bundestag, Plenarprotokoll 18/63, S. 5786–5788",
-          en: "Bundestag, plenary record 18/63, pp. 5786–5788, in German",
-        },
-        href: "https://dserver.bundestag.de/btp/18/18063.pdf",
-      },
-    },
-    record: [
-      {
-        who: {
-          de: "Deutsche Bundesregierung fünf Jahre später",
-          en: "Germany’s Federal Government five years later",
-        },
-        year: 2019,
-        original: "de",
-        quote: {
-          de: "Sie erwartet „keine signifikanten Steuermehreinnahmen“; der Austausch „hat insgesamt auch nicht zum Ziel, steuerliche Mehreinnahmen zu generieren“.",
-          en: "It expects no significant extra revenue, and the exchange is not even meant to raise any.",
-        },
-        source: {
-          label: {
-            de: "Bundesregierung, Drucksache 19/12586, S. 4",
-            en: "Federal Government, Bundestag paper 19/12586, p. 4, in German",
-          },
-          href: "https://dserver.bundestag.de/btd/19/125/1912586.pdf",
-        },
-      },
-    ],
-  },
-  {
-    id: "dac6",
-    token: {
-      promise: { de: "ebenso wirksam", en: "just as effective" },
-      record: { de: "kein Zusammenhang", en: "no causal link" },
-    },
-    topic: {
-      de: "DAC6, Meldepflicht für Steuergestaltungen",
-      en: "DAC6, reporting of tax arrangements",
-    },
-    promise: {
-      who: {
-        de: "Pierre Moscovici, EU-Steuerkommissar",
-        en: "Pierre Moscovici, EU tax commissioner",
-      },
-      year: 2017,
-      original: "en",
-      quote: {
-        de: "EU-weite Maßnahmen versprächen, ebenso wirksam dafür zu sorgen, dass alle Bürger und Unternehmen ihren fairen Anteil an Steuern zahlen.",
-        en: "“EU-wide measures promise to be just as effective in ensuring that all citizens and businesses pay their fair share of tax.”",
-      },
-      source: commission("speech_17_1753", "SPEECH/17/1753"),
-    },
-    record: [
-      {
-        who: {
-          de: "EU-Kommission in ihrer Evaluierung",
-          en: "The Commission in its evaluation",
-        },
-        year: 2025,
-        original: "en",
-        quote: {
-          de: "Einen Zusammenhang zwischen den Meldungen und Steuereinnahmen könne man nicht herstellen.",
-          en: "“It is not possible to establish a causal link between the information received and tax revenues.”",
-        },
-        source: {
-          label: {
-            de: "EU-Kommission, SWD(2025) 365, S. 36–43",
-            en: "European Commission, SWD(2025) 365, pp. 36–43",
-          },
-          href: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex:52025SC0365",
-        },
-      },
-      {
-        who: {
-          de: "Deutsche Bundesregierung, gefragt, was die Meldungen an Steuern brachten",
-          en: "Germany’s Federal Government, asked what the reports brought in tax",
-        },
-        year: 2023,
-        original: "de",
-        quote: {
-          de: "„… da die finanziellen Auswirkungen … naturgemäß nicht erfasst werden können.“",
-          en: "The financial effects by their nature cannot be captured.",
-        },
-        source: {
-          label: {
-            de: "Bundesregierung, Drucksache 20/6734, S. 4",
-            en: "Federal Government, Bundestag paper 20/6734, p. 4, in German",
-          },
-          href: "https://dserver.bundestag.de/btd/20/067/2006734.pdf",
-        },
-      },
-    ],
-  },
-  {
-    id: "dac7",
-    token: {
-      promise: { de: "gute Nachricht", en: "good news" },
-      record: { de: "geringe Relevanz", en: "limited relevance" },
-    },
-    topic: {
-      de: "DAC7, Meldepflicht für Online-Plattformen",
-      en: "DAC7, reporting by online platforms",
-    },
-    promise: {
-      who: {
-        de: "Paolo Gentiloni, EU-Steuerkommissar",
-        en: "Paolo Gentiloni, EU tax commissioner",
-      },
-      year: 2020,
-      original: "en",
-      quote: {
-        de: "Das seien gute Nachrichten für die Staatskasse und für ehrliche Unternehmer.",
-        en: "“This is good news for the public purse and good news for honest entrepreneurs.”",
-      },
-      source: commission("ip_20_2253", "IP/20/2253"),
-    },
-    record: [
-      {
-        who: {
-          de: "EU-Kommission sechs Jahre später",
-          en: "The Commission six years later",
-        },
-        year: 2026,
-        original: "en",
-        quote: {
-          de: "Die Meldepflicht liefere große Mengen an Daten mit geringer steuerlicher Bedeutung, zu unverhältnismäßigen Kosten: rund 678 Millionen Euro im Jahr.",
-          en: "It generates “large volumes of information which has limited tax relevance”, at “disproportionate compliance costs” of about 678 million euros a year.",
-        },
-        source: {
-          label: {
-            de: "EU-Kommission, SWD(2026) 166, S. 1–2, englisch",
-            en: "European Commission, SWD(2026) 166, pp. 1–2",
-          },
-          href: "https://data.consilium.europa.eu/doc/document/ST-11060-2026-ADD-4/en/pdf",
-        },
-      },
-    ],
-  },
-  {
     id: "dirty-money",
     token: {
       promise: { de: "kein Platz", en: "no place" },
@@ -769,7 +647,7 @@ export const pairs: Pair[] = [
 ]
 
 // Shown open; the rest fold away under "more".
-export const openPairs = 6
+export const openPairs = 5
 
 export const pairSources = (): Source[] =>
   pairs.flatMap((pair) => [

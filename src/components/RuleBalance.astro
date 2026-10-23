@@ -13,10 +13,10 @@ interface Props {
   language: Language
 }
 
-// What it means for you, right after the film, in three fields of one
-// picture each: everyone with an account abroad is reported without
-// suspicion, collected data get lost, and accounts are refused or closed
-// without a reason. Red marks what the headline beside it names.
+// What it means for you, in three fields of one picture each: everyone
+// with an account abroad is reported without suspicion, and with DAC8
+// every crypto customer; collected data get lost; and accounts are refused
+// or closed without a reason. Red marks what the headline beside it names.
 const { language } = Astro.props
 const en = language === "en"
 const n = (value: number) => formatNumber(value, language)
@@ -84,6 +84,12 @@ const { refused, closed } = germany
           ? "Accounts on which tax authorities worldwide exchange data. What triggers a report is an account abroad, not a suspicion."
           : "Konten, zu denen Steuerbehörden weltweit Daten austauschen. Gemeldet wird, wer ein Konto im Ausland hat, nicht wer verdächtig ist."}
         <SourceRefs sources={cite(cited.captured)} language={language} />
+      </p>
+      <p class="balance-admission">
+        {en
+          ? "DAC8 goes further: every customer of a crypto-asset provider is reported, including those who live in the same country."
+          : "DAC8 geht weiter: Gemeldet wird jeder Kunde eines Krypto-Anbieters, auch wer im selben Land wohnt."}
+        <SourceRefs sources={cite(cited.dac8)} language={language} />
       </p>
     </li>
 

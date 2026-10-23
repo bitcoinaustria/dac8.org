@@ -6,11 +6,14 @@ import LawGrowth from "@/components/LawGrowth.astro"
 import RuleBalance from "@/components/RuleBalance.astro"
 import RuleFilm from "@/components/RuleFilm.astro"
 import RuleBill from "@/components/RuleBill.astro"
+import RuleNext from "@/components/RuleNext.astro"
 import RulePromises from "@/components/RulePromises.astro"
+import SourceRefs from "@/components/SourceRefs.astro"
 import StatTiles from "@/components/StatTiles.astro"
 import YearColumns from "@/components/YearColumns.astro"
 import { ruleChronicle } from "@/data/aml-history"
 import { historyResearchDate } from "@/data/history"
+import { rulings } from "@/data/history-next"
 import { historySources } from "@/data/history-sources"
 import {
   accountsExchanged,
@@ -25,18 +28,18 @@ import {
 import { languageFor, pathFor } from "@/lib/i18n"
 
 // The apparatus of anti-money-laundering and tax-reporting rules, of which
-// DAC8 is the latest piece, told in four steps that build on each other:
-// the scroll film (src/components/RuleFilm.astro) shows how it grew and
-// what comes of it; "what it means for you" (RuleBalance.astro) shows that
-// everyone is captured, accounts are refused without a reason and data get
-// lost; "the bill" (RuleBill.astro) sets rising effort against flat
-// results, costs, a benefit mostly modelled and a growing apparatus;
-// "promised, measured" (RulePromises.astro) pairs what politicians
-// announced with what their own institutions know. The conclusion offers
-// the one step to take; at the end, folded away, everything to check. The
-// page never argues that a rule would be justified if it worked: its
-// conclusion says so. In every chart red marks what comes of the rules or
-// what is new.
+// DAC8 is the latest piece, told as a ratchet: each step small, none taken
+// back, the next already decided. The scroll film (RuleFilm.astro) shows
+// how it grew, who gets to look and what comes of it; "and it goes on"
+// (RuleNext.astro) the steps decided or proposed; "what it means for you"
+// (RuleBalance.astro) that everyone is captured, data get lost and
+// accounts are refused without a reason; "the bill" (RuleBill.astro) and
+// "promised, measured" (RulePromises.astro) that hardly anyone measures
+// what it brings. The conclusion turns that into the legal point: the
+// state must justify an intrusion, and courts have drawn limits before. At
+// the end, folded away, everything to check. The page never argues that a
+// rule would be justified if it worked. In every chart red marks what
+// comes of the rules or what is new.
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
 const n = (value: number) => formatNumber(value, language)
@@ -45,7 +48,7 @@ const label = (source: { label: Record<string, string>; href: string }) => ({
   href: source.href,
 })
 const first = reportsByYear[0]
-const sources = historySources(language).list
+const { list: sources, cite } = historySources(language)
 ---
 
 <Layout>
@@ -54,20 +57,22 @@ const sources = historySources(language).list
     <header class="hero">
       <div class="hero-text">
         <h1>
-          {en ? "More and more rules. " : "Immer mehr Regeln. "}
+          {en ? "Piece by piece. " : "Stück für Stück. "}
           <span
-            >{en ? "Their effect is hardly measured." : "Gemessen wird kaum."}</span
+            >{en ? "Nothing is taken back." : "Zurückgenommen wird nichts."}</span
           >
         </h1>
         <p class="lead">
           {en
-            ? "Since 1991 an apparatus of ID and reporting duties against money laundering and tax evasion has grown. Today it captures everyone and costs billions every year, and hardly anyone measures what it brings. DAC8 is its latest piece."
-            : "Seit 1991 wächst ein Apparat aus Ausweis- und Meldepflichten gegen Geldwäsche und Steuerbetrug. Heute erfasst er alle und kostet jedes Jahr Milliarden, und was er bringt, misst kaum jemand. DAC8 ist sein neuestes Stück."}
+            ? "Since 1991, one ID or reporting duty after another has been added against money laundering and tax evasion. Each looks small; together they capture everyone who uses a bank or a crypto-asset provider, and what is collected for one purpose soon serves more. Hardly anyone measures what it brings. DAC8 is the latest piece, and the next ones are already decided."
+            : "Seit 1991 kommt gegen Geldwäsche und Steuerbetrug eine Ausweis- oder Meldepflicht nach der anderen dazu. Jede wirkt klein; zusammen erfassen sie alle, die eine Bank oder einen Krypto-Anbieter nutzen, und was für einen Zweck gesammelt wurde, dient bald mehreren. Was es bringt, misst kaum jemand. DAC8 ist das neueste Stück, die nächsten sind schon beschlossen."}
         </p>
       </div>
     </header>
 
     <RuleFilm language={language} />
+
+    <RuleNext language={language} />
 
     <RuleBalance language={language} />
 
@@ -77,15 +82,34 @@ const sources = historySources(language).list
 
     <section id="grenzen" class="band" aria-labelledby="grenzen-heading">
       <h2 id="grenzen-heading">
-        {en ? "This cannot go on." : "So kann es nicht weitergehen."}
+        {en ? "Intrusions must be justified." : "Wer eingreift, muss es begründen."}
         <span
           >{en ? "That is why we push back." : "Darum wehren wir uns."}</span
         >
       </h2>
       <p class="section-intro">
         {en
-          ? "Almost every new rule captures everyone who uses a bank or a provider, costs money every year and creates data that can get lost. Hardly anyone measures what it achieves. Even a rule that works needs limits: investigations should start from a concrete suspicion, not with everyone."
-          : "Fast jede neue Regel erfasst alle, die eine Bank oder einen Anbieter nutzen, kostet jedes Jahr und legt Daten an, die verloren gehen können. Was sie bringt, misst kaum jemand. Auch eine Regel, die wirkt, braucht Grenzen: Ermittelt werden soll bei konkretem Verdacht, nicht bei allen."}
+          ? "Almost every new rule captures everyone who uses a bank or a provider and creates data that can get lost or soon be used for more. The state has to justify that: an intrusion into private life must be necessary and go no further than necessary. Whoever does not measure what a rule brings cannot show it. And even a rule that works needs limits: investigations should start from a concrete suspicion, not with everyone."
+          : "Fast jede neue Regel erfasst alle, die eine Bank oder einen Anbieter nutzen, und legt Daten an, die verloren gehen oder bald für mehr verwendet werden können. Begründen muss das der Staat: Ein Eingriff in das Privatleben muss nötig sein und darf nicht weiter gehen als nötig. Wer nicht misst, was eine Regel bringt, kann das nicht zeigen. Und auch eine Regel, die wirkt, braucht Grenzen: Ermittelt werden soll bei konkretem Verdacht, nicht bei allen."}
+      </p>
+      <h3 class="rulings-title">
+        {en ? "Limits so far came from courts." : "Grenzen haben bisher Gerichte gezogen."}
+      </h3>
+      <ol class="rulings">
+        {rulings.map((ruling) => (
+          <li>
+            <b>{ruling.year}</b>
+            <p>
+              {ruling.text[language]}
+              <SourceRefs sources={cite(ruling.sources)} language={language} />
+            </p>
+          </li>
+        ))}
+      </ol>
+      <p class="section-intro">
+        {en
+          ? "Whether DAC8 stays within such limits, only courts can settle. That is why we are preparing proceedings."
+          : "Ob DAC8 solche Grenzen einhält, können nur Gerichte klären. Darum bereiten wir Verfahren vor."}
       </p>
       <a class="button primary" href={pathFor("participate", language)}
         >{en ? "Get involved" : "Mitmachen"}</a
@@ -234,6 +258,31 @@ const sources = historySources(language).list
 </script>
 
 <style>
+  .rulings-title {
+    margin-block-start: var(--space-l);
+    font-size: var(--type-h3);
+  }
+
+  .rulings {
+    display: grid;
+    gap: var(--space-s);
+    max-inline-size: 60ch;
+    margin: var(--space-s) 0 var(--space-l);
+    padding: 0;
+    list-style: none;
+  }
+
+  .rulings li {
+    display: grid;
+    grid-template-columns: 3.2em minmax(0, 1fr);
+    gap: var(--space-s);
+    align-items: baseline;
+  }
+
+  .rulings b {
+    font-variant-numeric: tabular-nums;
+  }
+
   .history-chart {
     margin-block-start: var(--space-xl);
   }
