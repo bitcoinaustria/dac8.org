@@ -7,14 +7,13 @@ import {
   type Source,
 } from "@/data/history-evidence"
 import {
-  admissions as gapAdmissions,
-  apparatus,
   corrected,
   estimates,
   germanConvictionsSources,
   germanReportsSources,
   recovery,
 } from "@/data/history-gap"
+import { chats, nextSteps, rulings } from "@/data/history-next"
 import { pairSources } from "@/data/history-promises"
 import { leaks } from "@/data/leaks"
 import { steps } from "@/data/overregulation"
@@ -22,8 +21,9 @@ import { type Language, pathFor } from "@/lib/i18n"
 
 // The history page cites its sources by number, [3], and lists every
 // source once at the end of the page. The numbers follow the order in
-// which a reader meets the sources: the film, what it means for you, the
-// bill and the pairs of promise and record. A source cited again keeps its number. Where the
+// which a reader meets the sources: the film, what comes next, what it
+// means for you, the bill, the pairs of promise and record, and the
+// rulings in the conclusion. A source cited again keeps its number. Where the
 // story needs the name, such as a quotation, the text names it as well.
 // The charts to check, folded away below, keep their own source lists.
 export type HistorySource = {
@@ -41,6 +41,17 @@ export const balanceSources = (language: Language) => ({
   costs: reportingCostSources,
   benefit: reportingBenefit.sources.slice(0, 1),
   captured: accountsSources,
+  // DAC8 reports every customer of a crypto-asset provider, residents of
+  // the provider's own country included.
+  dac8: [
+    {
+      label: {
+        de: "Richtlinie (EU) 2023/2226",
+        en: "Directive (EU) 2023/2226",
+      },
+      href: "https://eur-lex.europa.eu/eli/dir/2023/2226/oj",
+    },
+  ] satisfies Source[],
   cases: [
     {
       label: {
@@ -104,10 +115,13 @@ export const historySources = (language: Language) => {
   }
   for (const step of steps) step.sources.forEach(add)
   const cited = balanceSources(language)
-  // In the order of the page: what it means for you, the bill, and the
-  // pairs of promise and record.
+  // In the order of the page: what comes next, what it means for you, the
+  // bill, the pairs of promise and record, and the rulings.
   for (const source of [
+    ...nextSteps.flatMap((step) => step.sources),
+    ...chats.sources,
     ...cited.captured,
+    ...cited.dac8,
     ...cited.cases,
     ...cited.bulgaria,
     ...cited.unexplained,
@@ -115,14 +129,14 @@ export const historySources = (language: Language) => {
     ...reportsByYearSources,
     ...germanReportsSources,
     ...germanConvictionsSources,
-    ...recovery.sources,
+    // Only Europol’s 2025 estimate is cited on the page.
+    ...recovery.sources.slice(1),
     ...cited.costs,
     ...estimates.map((tile) => tile.source),
     ...(corrected.find((fix) => fix.id === "dac8")?.sources ?? []),
     ...cited.benefit,
-    ...apparatus.flatMap((row) => row.sources),
-    gapAdmissions.staff.source,
     ...pairSources(),
+    ...rulings.flatMap((ruling) => ruling.sources),
   ])
     add(source)
   // The numbers for a passage, each once, in order.

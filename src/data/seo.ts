@@ -44,38 +44,29 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     de: {
       title: "Warum finanzielle Privatsphäre zählt und was wir fordern",
       description:
-        "Warum finanzielle Privatsphäre zählt und wir die anlasslose Erfassung aller Krypto-Kunden ablehnen: unsere Gründe vom Bargeld bis zur Zielliste, Antworten auf Einwände und unsere Forderungen.",
+        "Warum finanzielle Privatsphäre zählt und wir die anlasslose Erfassung aller Krypto-Kunden ablehnen: unsere Gründe, Antworten auf Einwände und unsere Forderungen.",
       imageLines: ["Warum finanzielle", "Privatsphäre zählt."],
     },
     en: {
       title: "Why financial privacy matters, and what we demand",
       description:
-        "Why financial privacy matters and we oppose collecting data on every crypto customer without suspicion: our reasons from cash to target lists, answers to objections and our demands.",
+        "Why financial privacy matters and we oppose collecting data on every crypto customer without suspicion: our reasons, answers to objections and our demands.",
       imageLines: ["Why financial", "privacy matters."],
     },
   },
   history: {
     de: {
       title:
-        "Steuern und Geldwäsche: immer mehr Regeln, kaum gemessene Wirkung",
+        "Steuern und Geldwäsche: Stück für Stück, zurückgenommen wird nichts",
       description:
-        "Von der Amtshilfe 1977 und dem Ausweis bei der Bank bis zu DAC8 und der Bargeldgrenze: wie die Regeln gewachsen sind und was Prüfer über ihre Wirkung fanden, mit Primärquellen.",
-      imageLines: [
-        "Immer mehr Regeln.",
-        "Wie viel sie bringen,",
-        "misst kaum jemand.",
-      ],
+        "Von der Amtshilfe 1977 bis zu DAC8 und dem, was schon beschlossen ist: wie die Regeln wachsen, wer hineinschauen darf und was sie bringen, mit Primärquellen.",
+      imageLines: ["Stück für Stück.", "Zurückgenommen", "wird nichts."],
     },
     en: {
-      title:
-        "Tax and money laundering: more and more rules, little measured effect",
+      title: "Tax and money laundering: piece by piece, nothing taken back",
       description:
-        "From mutual assistance in 1977 and ID at the bank to DAC8 and the cash cap: how the rules have grown and what auditors found about their effect, with primary sources.",
-      imageLines: [
-        "More and more rules.",
-        "Hardly anyone measures",
-        "what they achieve.",
-      ],
+        "From mutual assistance in 1977 to DAC8 and what is already decided: how the rules grow, who gets to look and what they achieve, with primary sources.",
+      imageLines: ["Piece by piece.", "Nothing is", "taken back."],
     },
   },
   participate: {

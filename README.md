@@ -70,7 +70,7 @@ that follow the navigation labels:
 | Angriffe: archive of known physical attacks, map and list | `/angriffe/` | `/en/attacks/` |
 | Verfahren: status, legal route and updates | `/verfahren/` | `/en/proceedings/` |
 | Mitmachen: donating, share graphics, organisations | `/mitmachen/` | `/en/get-involved/` |
-| Geschichte: how tax reporting and anti-money-laundering rules grew, and what audits found about their effect; linked from dossier and footer | `/geschichte/` | `/en/history/` |
+| Geschichte: how tax reporting and anti-money-laundering rules grew step by step, what is already decided next, and what audits found about their effect; linked from dossier and footer | `/geschichte/` | `/en/history/` |
 
 A top bar carries the navigation and a permanent donate button that leads to
 `#spenden` on the participation page; on mobile a bottom bar keeps donating and
@@ -145,53 +145,65 @@ the participation, proceedings and arguments pages share components; the home pa
 dossier remain explicit Astro documents per language. Source URLs are shared in `src/data/sources.ts`.
 
 - Update `src/data/campaign.ts` when the procedural status changes.
-- The history page (`/geschichte/`, `/en/history/`) tells the story of
-  over-regulation as a scroll film (`src/components/RuleFilm.astro`, steps
-  and figures in `src/data/overregulation.ts`), built like the home page's
-  data story. Four chapters lead from the reader to the result, each step a
-  headline of a few words over one picture as a contrast: the amount from
-  which you must show ID in today's money, rendered at true scale in
-  Blender (`scripts/artwork/render-cash.py`, fictional notes generated with
-  Codex): a brick of 339 hundred-euro notes in 1991, 13 and a fifty in
-  2017, a single cent today, all three in view; a panopticon at night rendered in Blender
-  (`scripts/artwork/render-panopticon.py`), a ring of eight cells, one per
-  way money can take, around a watchtower; as the year runs with the
-  scroll, a light pass of a cell's searchlight is screen-blended over the
-  base picture once a rule on that way applies, until every way is lit; a wall
-  of one tile per Official Journal page, six red ones from 1991 among 488,
-  which on request reads the law aloud: verbatim passages of the 1991
-  directive and the 2024 regulation (`src/data/law-voices.ts`), spoken with
-  Qwen3-TTS (`scripts/artwork/speak-law.py`) and overlapping until they
-  drown each other out, each with its caption and reference;
-  a sea of suspicion reports in Austria beside 139 convictions, then
-  Germany as a race from the same start (`src/lib/film-race.ts`): reports
-  and convictions both at ×1 in 2008, growing year by year while the scale
-  pulls back, to ×51 and ×5.2; then a fictional 100-euro note with a masked robber that
-  crumbles to dust until the red sliver confiscated remains
-  (`src/lib/film-note.ts`). Without JavaScript the
-  headlines stand as text. The page frames DAC8 as the latest piece of a
-  wider apparatus of anti-money-laundering and tax-reporting rules and
-  builds on the film in three steps: what it means for you
+- The history page (`/geschichte/`, `/en/history/`) tells the rules as a
+  ratchet: each step small, none taken back, the next already decided. A
+  scroll film (`src/components/RuleFilm.astro`, steps and figures in
+  `src/data/overregulation.ts`), built like the home page's data story,
+  leads in five chapters and ten steps from the reader to the result, each
+  step a headline of a few words over one picture as a contrast: from which
+  amount a single cash transaction without an account needs ID, rendered at true scale
+  in Blender (`scripts/artwork/render-cash.py`, fictional notes generated
+  with Codex): a brick of 339 hundred-euro notes in 1991 (in today's
+  money), a banded bundle of 100 from 2027, and for crypto a single cent,
+  because every transfer through a provider carries the name; a panopticon
+  at night rendered in Blender (`scripts/artwork/render-panopticon.py`), a
+  ring of eight cells, one per way money can take, around a watchtower,
+  heating up like the water around the frog: over two steps the year runs
+  with the scroll from 1977 to today, a light pass of a cell's searchlight
+  is screen-blended over the base picture once a rule on that way applies,
+  and from 2016 one window of the watchtower lights up per kind of
+  authority allowed into the Austrian account register (3 in 2016, 8 in
+  2021, 9 in 2026); cash stays dark until its 2027 rule, which the next
+  section names; a wall of one tile per
+  Official Journal page, six red ones from 1991 among the 488 adopted
+  since, which on request reads the law aloud: verbatim passages of the
+  1991 directive and the 2024 regulation (`src/data/law-voices.ts`), spoken
+  with Qwen3-TTS (`scripts/artwork/speak-law.py`) and overlapping until
+  they drown each other out, each with its caption and reference; a sea of
+  suspicion reports in Austria in which the 9,665 the unit kept on file
+  without passing them on fade to a pale block, beside 139 convictions
+  (`src/lib/film-sand.ts`); then a fictional 100-euro note with a masked
+  robber that crumbles to dust until the red sliver confiscated remains
+  (`src/lib/film-note.ts`). Without JavaScript the headlines stand as text.
+  The page frames DAC8 as the latest piece of a wider apparatus of
+  anti-money-laundering and tax-reporting rules and builds on the film:
+  and it goes on (`src/components/RuleNext.astro`, data in
+  `src/data/history-next.ts`: the steps decided or proposed, each with its
+  procedural status, and the same pattern in private messages, the chat
+  control proposal, worded as a proposal); what it means for you
   (`src/components/RuleBalance.astro`: accounts reported without
-  suspicion, accounts refused or closed without a reason, data leaks from
-  `src/data/leaks.ts`); the bill (`src/components/RuleBill.astro`, data in
-  `src/data/history-gap.ts`: report landscapes in
-  `src/components/ReportLandscape.astro` and `ReportCompare.astro`, which
-  set suspicion reports against convictions for money laundering in
-  Germany and Austria from a year the reader picks, both as a multiple of
-  that year, with the two growth factors set large and the convictions per
-  100 reports in the first and last year; without JavaScript the first year
-  stands against the last. Counting changes are named in the notes. A
-  separate illustration names the missing link between reports and outcomes
-  in Austria, without plotting it as zero. Then, Europol's assessment of
-  confiscation, what three tax reporting duties cost
-  a year, how much of the claimed benefit is modelled, and how the
-  apparatus grows); and promised, measured
-  (`src/components/RulePromises.astro`, data in
-  `src/data/history-promises.ts`), pairs of what politicians announced and
-  what their own institutions know. Costs and benefit stay on separate
-  scales, because the benefit covers more duties than the costs shown. Then
-  the conclusion with the one step to take, and at the end, folded away,
+  suspicion and, with DAC8, every crypto customer, data leaks from
+  `src/data/leaks.ts`, accounts refused or closed without a reason); the
+  bill (`src/components/RuleBill.astro`, data in `src/data/history-gap.ts`:
+  report landscapes in `src/components/ReportLandscape.astro` and
+  `ReportCompare.astro`, which set suspicion reports against convictions
+  for money laundering in Germany and Austria from a year the reader picks,
+  both as a multiple of that year, with the two growth factors set large
+  and the convictions per 100 reports in the first and last year; without
+  JavaScript the first year stands against the last. Counting changes are
+  named in the notes. A separate illustration names the missing link
+  between reports and outcomes in Austria, without plotting it as zero.
+  Then, Europol's assessment of confiscation, what three tax reporting
+  duties cost a year, and how much of the claimed benefit is measured and
+  how much modelled, said in words so the two cards cannot be read as "it
+  pays"); and promised, measured (`src/components/RulePromises.astro`, data
+  in `src/data/history-promises.ts`), pairs of what politicians announced
+  and what their own institutions know, led by DAC8 in the EU, Austria and
+  Germany. Costs and benefit stay on separate scales, because the benefit
+  covers more duties than the costs shown. The conclusion turns this into
+  the legal point (the state must justify an intrusion; who does not
+  measure cannot) and names where courts drew limits so far, without a
+  forecast for DAC8, then the one step to take. At the end, folded away,
   everything to check: both lines of rules in one chart on one axis, the
   series and texts described next, and the length of the texts
   (`src/components/LawGrowth.astro`); links into the folded part open it.

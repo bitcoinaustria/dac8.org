@@ -6,13 +6,7 @@ import {
   reportingBenefit,
   reportingCosts,
 } from "@/data/history-evidence"
-import {
-  admissions,
-  apparatus,
-  corrected,
-  estimates,
-  recovery,
-} from "@/data/history-gap"
+import { corrected, estimates, recovery } from "@/data/history-gap"
 import { balanceSources, historySources } from "@/data/history-sources"
 import type { Language } from "@/lib/i18n"
 
@@ -21,8 +15,9 @@ interface Props {
 }
 
 // The bill: report volumes on separate, labelled scales, the missing
-// connection to outcomes, then Europol's assessment, reporting costs,
-// estimated benefit and the growing apparatus.
+// connection to outcomes, then Europol's assessment, reporting costs and
+// the estimated benefit, with what of it is measured said in words so the
+// two cards cannot be read as "it pays".
 const { language } = Astro.props
 const en = language === "en"
 const n = (value: number) => formatNumber(value, language)
@@ -48,21 +43,6 @@ const costFloor = n(Math.floor(costTotal / 100) / 10)
 // Nutzen: the share of direct taxes, then that share opened up.
 const benefit = reportingBenefit
 const fromDataShare = ((benefit.fromData / benefit.billions) * 100).toFixed(2)
-
-// The apparatus: each row on its own scale, the plan at full width.
-const growth = apparatus.map((row) => {
-  const top = row.planned?.value ?? row.now.value
-  return {
-    ...row,
-    times: n(Math.round((row.now.value / row.start.value) * 10) / 10),
-    style: [
-      `--start: ${((row.start.value / top) * 100).toFixed(2)}%`,
-      `--now: ${((row.now.value / top) * 100).toFixed(2)}%`,
-    ].join("; "),
-    show: (value: number) =>
-      n(Math.round(value * 10 ** row.digits) / 10 ** row.digits),
-  }
-})
 
 // Laws without a cost figure, and Germany's DAC8 estimate raised.
 const unknownLaws = estimates.filter(
@@ -172,58 +152,13 @@ const dac8Fix = corrected.find((fix) => fix.id === "dac8") ?? corrected[0]
           : `So viel bringen alle ausgetauschten Steuerdaten im Jahr, schätzt die Kommission: ${n(benefit.billions)} Milliarden Euro.`}
         <SourceRefs sources={cite(cited.benefit)} language={language} />
       </p>
+      <p class="balance-admission">
+        {en
+          ? `Measured from data are €${n(benefit.fromData)} billion, about what three of the reporting duties cost every year. The rest comes from a model.`
+          : `Aus Daten belegt sind ${n(benefit.fromData)} Milliarden, etwa so viel, wie drei der Meldepflichten jedes Jahr kosten. Der Rest stammt aus einem Modell.`}
+      </p>
     </li>
   </ol>
-
-  <!-- 1. The apparatus -->
-  <div class="gap-block" data-reveal>
-    <h3>{en ? "More staff, more budget." : "Mehr Personal, mehr Budget."}</h3>
-    <ol class="growth">
-      {growth.map((row) => (
-        <li style={row.style}>
-          <p class="growth-who">
-            {row.who[language]}
-            <span>{row.unit[language]}</span>
-          </p>
-          <p class="growth-times">×{row.times}</p>
-          <div class="growth-track" aria-hidden="true">
-            <span class="growth-now" />
-            <span class="growth-plan" />
-            <span class="growth-start" />
-          </div>
-          <p class="growth-values">
-            <span><b>{row.show(row.start.value)}</b> {row.start.year}</span>
-            <span><b>{row.show(row.now.value)}</b> {row.now.year}</span>
-            {row.planned && (
-              <span class="planned">
-                {en ? "planned" : "geplant"} <b>{row.show(row.planned.value)}</b>
-                {row.planned.year && ` ${row.planned.year}`}
-              </span>
-            )}
-          </p>
-        </li>
-      ))}
-    </ol>
-    <p class="gap-line">
-      {en
-        ? "Each row on its own scale; the dashed part is planned."
-        : "Jede Zeile auf ihrem eigenen Maßstab; gestrichelt, was geplant ist."}
-      <SourceRefs
-        sources={cite(apparatus.flatMap((row) => row.sources))}
-        language={language}
-      />
-    </p>
-  </div>
-  <blockquote class="gap-quote" data-reveal>
-    <p>{admissions.staff.quote[language]}</p>
-    <footer>
-      {admissions.staff.who[language]}
-      <SourceRefs
-        sources={cite([admissions.staff.source])}
-        language={language}
-      />
-    </footer>
-  </blockquote>
 </section>
 
 <script>
@@ -482,135 +417,6 @@ const dac8Fix = corrected.find((fix) => fix.id === "dac8") ?? corrected[0]
 
   .benefit-labels .model {
     text-align: end;
-  }
-
-  .gap-block {
-    display: grid;
-    gap: var(--space-m);
-    max-inline-size: 60rem;
-    padding: var(--space-m);
-    border-radius: var(--radius);
-    background: var(--panel);
-  }
-
-  .gap-line {
-    max-inline-size: 62ch;
-    color: var(--ink-2);
-    font-size: var(--type-meta);
-    line-height: 1.45;
-    text-wrap: pretty;
-  }
-
-  /* ---------- Personal ------------------------------------------------- */
-
-  .growth {
-    display: grid;
-    gap: var(--space-m);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .growth li {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.35rem var(--space-s);
-    align-items: end;
-  }
-
-  .growth-who {
-    color: var(--ink);
-    font-weight: 560;
-    line-height: 1.3;
-  }
-
-  .growth-who span {
-    display: block;
-    color: var(--ink-3);
-    font-size: var(--type-meta);
-    font-weight: 400;
-  }
-
-  .growth-times {
-    color: var(--accent);
-    font-size: var(--step-3);
-    font-weight: var(--weight-heading);
-    line-height: 1;
-    letter-spacing: -0.03em;
-  }
-
-  .growth-track {
-    position: relative;
-    grid-column: 1 / -1;
-    block-size: 1.1rem;
-  }
-
-  .growth-now,
-  .growth-plan,
-  .growth-start {
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: 0;
-    border-radius: var(--radius-sm);
-  }
-
-  .growth-plan {
-    inline-size: 100%;
-    border: 1.5px dashed var(--ink-3);
-  }
-
-  .growth-now {
-    z-index: 1;
-    inline-size: var(--now);
-    background: var(--bar);
-    transform-origin: left;
-  }
-
-  .growth-start {
-    z-index: 2;
-    inline-size: max(3px, var(--start));
-    background: var(--red);
-  }
-
-  .growth-values {
-    grid-column: 1 / -1;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 var(--space-m);
-    color: var(--ink-3);
-    font-size: var(--type-meta);
-  }
-
-  .growth-values b {
-    color: var(--ink);
-    font-weight: 600;
-  }
-
-  .growth-values span:first-child b {
-    color: var(--accent);
-  }
-
-  .gap-quote {
-    display: grid;
-    gap: var(--space-2xs);
-    max-inline-size: 46rem;
-    margin: 0;
-    margin-inline-start: clamp(0rem, 8vw, 6rem);
-    padding-inline-start: var(--space-m);
-    border-inline-start: 3px solid var(--red);
-  }
-
-  .gap-quote p {
-    color: var(--ink);
-    font-size: var(--type-lead);
-    font-weight: 560;
-    line-height: 1.35;
-    text-wrap: pretty;
-  }
-
-  .gap-quote footer {
-    color: var(--ink-3);
-    font-size: var(--type-meta);
   }
 
   /* ---------- Auftritt beim Scrollen ----------------------------------- */

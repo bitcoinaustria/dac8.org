@@ -1,14 +1,21 @@
 # Renders the film's opening: what one could move in cash without ID, in
-# 100-euro notes, at true scale. Three objects, each rendered alone with
+# 100-euro notes, at true scale. Four objects, each rendered alone with
 # the same orthographic camera, so their sizes compare:
 #   brick: 339 notes of 100 euros (33,900 euros), three banded bundles of
 #          100 and 39 loose notes on top
+#   bundle: 100 notes of 100 euros (10,000 euros), one banded bundle
 #   slim:  13 notes of 100 and one of 50 on top (1,350 euros)
 #   cent:  a one-cent coin
-# Usage: blender -b -P scripts/artwork/render-cash.py -- <object> <out.png> <note100.png> <note50.png>
+# Usage: blender -b -P scripts/artwork/render-cash.py -- <object> <out.png> [note100.png] [note50.png]
 # The note pictures are fictional notes generated with Codex (no serial
 # numbers or security features, DAC8.ORG where the issuer would be); the
 # renders are cropped to a shared scale into src/assets/history/cash-*.webp.
+# At PCT=100 the raw picture has 2400/22 pixels per cm. Export at half
+# size (54.54545 px/cm), then crop; never resize individual cutouts to fit.
+# The bundle export uses a 1200x750 PNG, then x=126, y=199, w=1013, h=444;
+# clear alpha below 32/255 (shadow-catcher noise), WebP quality 82.
+# SAMPLES and PCT lower the cost of previews without changing the camera.
+# Add -noaudio to the Blender command on machines without an audio server.
 import math
 import random
 import sys
@@ -195,15 +202,15 @@ def material_band(name):
 band_mat = material_band("band")
 
 objects = []
-if which == "brick":
+if which in ("brick", "bundle"):
     z = 0.0
-    for b in range(3):
+    for b in range(3 if which == "brick" else 1):
         d = 100 * NOTE
         jx, jy = rnd.uniform(-0.08, 0.08), rnd.uniform(-0.06, 0.06)
         objects.append(box(f"bundle{b}", W100, H100, d, note100, edge100, (jx, jy, z), rnd.uniform(-0.006, 0.006)))
         objects.append(band(f"band{b}", W100, H100, d, (jx, jy, z), band_mat))
         z += d
-    for k in range(39):
+    for k in range(39 if which == "brick" else 0):
         jx, jy = rnd.uniform(-0.25, 0.25), rnd.uniform(-0.18, 0.18)
         objects.append(box(f"loose{k}", W100, H100, NOTE, note100, edge100, (jx, jy, z), rnd.uniform(-0.02, 0.02)))
         z += NOTE
@@ -240,6 +247,8 @@ elif which == "cent":
         a = k / 12 * math.tau
         bpy.ops.mesh.primitive_uv_sphere_add(radius=0.028, location=(0.58 * math.cos(a), 0.58 * math.sin(a), 0.167))
         bpy.context.active_object.data.materials.append(copper)
+else:
+    raise ValueError(f"Unknown cash object: {which}")
 
 # Shadow catcher on the floor.
 bpy.ops.mesh.primitive_plane_add(size=200, location=(0, 0, 0))
@@ -277,7 +286,7 @@ light("key", KEY, 26, (-38, -42, 58), (1.0, 0.95, 0.88))
 light("rim", RIM, 30, (30, 55, 26), (0.82, 0.9, 1.0))
 light("fill", FILL, 60, (55, -35, 18), (0.9, 0.94, 1.0))
 
-# The same orthographic camera for all three: from the front right, about
+# The same orthographic camera for every object: from the front right, about
 # 30 degrees above the table.
 cam = bpy.data.cameras.new("cam")
 cam.type = "ORTHO"

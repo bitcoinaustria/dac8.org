@@ -1,0 +1,159 @@
+---
+import SourceRefs from "@/components/SourceRefs.astro"
+import { chats, nextSteps, statusLabel } from "@/data/history-next"
+import { historySources } from "@/data/history-sources"
+import type { Language } from "@/lib/i18n"
+
+interface Props {
+  language: Language
+}
+
+// It goes on: no single step looks big, and each builds on the last. The
+// steps already decided or proposed, as a timeline from today, each with
+// its procedural status; a solid dot is law, a hollow one is not yet.
+// Then the same pattern in private messages, set apart because it is not
+// about money.
+const { language } = Astro.props
+const en = language === "en"
+const { cite } = historySources(language)
+---
+
+<section id="weiter" class="next" aria-labelledby="weiter-heading">
+  <h2 id="weiter-heading">
+    {en ? "And it goes on." : "Und es geht weiter."}
+    <span
+      >{en ? "What comes next is already decided." : "Das Nächste ist schon beschlossen."}</span
+    >
+  </h2>
+  <p class="section-intro">
+    {en
+      ? "No single step looks big, and each builds on the one before: an exception becomes the rule, data collected for one purpose soon serve several. That is why hardly anyone notices how far it has come."
+      : "Kein einzelner Schritt wirkt groß, und jeder baut auf dem vorigen auf: Aus der Ausnahme wird die Regel, Daten für einen Zweck dienen bald mehreren. Darum fällt kaum auf, wie weit es schon gekommen ist."}
+  </p>
+
+  <ol class="next-steps">
+    {nextSteps.map((step) => (
+      <li class:list={["next-step", step.status]}>
+        <p class="next-when">
+          <b>{step.when[language]}</b>
+          <span class="next-status">{statusLabel[step.status][language]}</span>
+        </p>
+        <h3>{step.title[language]}</h3>
+        <p class="next-text">
+          {step.text[language]}
+          <SourceRefs sources={cite(step.sources)} language={language} />
+        </p>
+      </li>
+    ))}
+  </ol>
+
+  <aside class="next-chats" aria-labelledby="chats-heading">
+    <p class="next-when">
+      <b>{chats.when[language]}</b>
+      <span class="next-status">{statusLabel[chats.status][language]}</span>
+    </p>
+    <h3 id="chats-heading">{chats.title[language]}</h3>
+    <p class="next-text">
+      {chats.text[language]}
+      <SourceRefs sources={cite(chats.sources)} language={language} />
+    </p>
+  </aside>
+</section>
+
+<style>
+  .next-steps {
+    position: relative;
+    display: grid;
+    gap: var(--space-l);
+    max-inline-size: 46rem;
+    margin: var(--space-xl) 0 0;
+    padding: 0 0 0 var(--space-l);
+    list-style: none;
+  }
+
+  /* Die Zeitleiste: eine Linie von heute nach vorne, ein Punkt je Schritt,
+     voll, was Gesetz ist, hohl, was erst vorgeschlagen ist. */
+  .next-steps::before {
+    content: "";
+    position: absolute;
+    inset-block: 0.4em 0;
+    inset-inline-start: 0.35rem;
+    inline-size: 2px;
+    background: linear-gradient(var(--primary), var(--line));
+  }
+
+  .next-step {
+    position: relative;
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .next-step::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 0.35em;
+    inset-inline-start: calc(-1 * var(--space-l) + 0.35rem - 0.4rem + 1px);
+    inline-size: 0.8rem;
+    aspect-ratio: 1;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    background: var(--primary);
+  }
+
+  .next-step:is(.proposed, .standard)::before {
+    background: var(--background);
+  }
+
+  .next-when {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.6em;
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+  }
+
+  .next-when b {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .next-status {
+    padding: 0.05em 0.55em;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-full);
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .decided .next-status {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .next-step h3,
+  .next-chats h3 {
+    max-inline-size: 34ch;
+    font-size: var(--type-h3);
+    text-wrap: balance;
+  }
+
+  .next-text {
+    max-inline-size: 60ch;
+    color: var(--ink-2);
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  /* Abgesetzt: kein Geld, aber dasselbe Muster. */
+  .next-chats {
+    display: grid;
+    gap: var(--space-2xs);
+    max-inline-size: 46rem;
+    margin-block-start: var(--space-2xl);
+    padding: var(--space-m);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+</style>
