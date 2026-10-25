@@ -296,12 +296,12 @@ export const steps: Step[] = [
     id: "ergebnis-euro",
     chapter: "ergebnis",
     title: {
-      de: "Von 100 € aus Straftaten werden 2 € eingezogen.",
-      en: "Of 100 euros from crime, 2 are confiscated.",
+      de: "Von 100 €, die Kriminelle einnehmen, zieht der Staat rund 2 € ein.",
+      en: "Of 100 euros criminals make, the state confiscates about 2.",
     },
     text: {
-      de: "Schätzt Europol für die EU.",
-      en: "Europol’s estimate for the EU.",
+      de: "Den Rest behalten sie. Schätzt Europol für die EU.",
+      en: "They keep the rest. Europol’s estimate for the EU.",
     },
     sources: [socta],
   },
