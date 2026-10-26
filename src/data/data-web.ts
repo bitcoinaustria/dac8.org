@@ -116,8 +116,8 @@ export const scenes: Scene[] = [
       en: "Your data ends up in more and more places.",
     },
     text: {
-      de: "Börse: Ausweis und Geschäfte. Wallet-Hersteller: Lieferanschrift beim Gerätekauf. Steuertool: Daten mehrerer Börsen und Wallets. **Nicht jeden Empfänger wählst du selbst.**",
-      en: "Exchange: ID and trades. Wallet maker: delivery address when you order a device. Tax tool: data from multiple exchanges and wallets. **You do not choose every recipient.**",
+      de: "Börse: Ausweis und Geschäfte. Wallet-Hersteller: Lieferanschrift beim Gerätekauf. Steuertool: Daten mehrerer Börsen und Wallets. **Und sie geben Daten weiter, an Stellen, die du nie ausgesucht hast.**",
+      en: "Exchange: ID and trades. Wallet maker: delivery address when you order a device. Tax tool: data from multiple exchanges and wallets. **And they pass data on, to places you never chose.**",
     },
   },
   {
@@ -144,12 +144,12 @@ export const scenes: Scene[] = [
       en: "Stored, hacked and sold.",
     },
     text: {
-      de: "Börsen, Steuertools, Wallet-Hersteller und Finanzverwaltungen haben solche Daten schon verloren. **Ein Datenleck nimmt nichts weg, es kopiert.**",
-      en: "Exchanges, tax tools, wallet makers and tax administrations have lost such data before. **A data leak takes nothing away; it copies.**",
+      de: "Börsen, Steuertools, Wallet-Hersteller und Finanzverwaltungen haben solche Daten schon verloren. **Nach einem Datenleck fehlt nichts, aber deine Daten liegen in fremden Händen, für immer.**",
+      en: "Exchanges, tax tools, wallet makers and tax administrations have lost such data before. **After a data leak nothing is missing, but your data is in strangers’ hands for good.**",
     },
     brief: {
-      de: "**Ein Datenleck nimmt nichts weg, es kopiert.**",
-      en: "**A data leak takes nothing away; it copies.**",
+      de: "**Nach einem Datenleck liegen deine Daten in fremden Händen, für immer.**",
+      en: "**After a data leak your data is in strangers’ hands for good.**",
     },
   },
   {
@@ -172,8 +172,8 @@ export const scenes: Scene[] = [
       en: "Your profile becomes a target.",
     },
     text: {
-      de: "Bitcoin in der eigenen Wallet ist wie Bargeld daheim: deine Sache. **Gefährlich wird es, wenn eine Liste verrät, wer wie viel hat.**",
-      en: "Bitcoin in your own wallet is like cash at home: your business. **The danger is a list that shows who holds how much.**",
+      de: "Bitcoin in der eigenen Wallet ist wie Bargeld daheim: deine Sache.",
+      en: "Bitcoin in your own wallet is like cash at home: your business.",
     },
     brief: {
       de: "Wie Bargeld daheim: **Niemand sollte wissen, wer wie viel hat.**",
