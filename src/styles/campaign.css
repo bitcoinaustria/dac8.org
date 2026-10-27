@@ -1273,10 +1273,6 @@
 
 /* ---------- Rechtstexte ------------------------------------------------ */
 
-.legal-page {
-  max-inline-size: var(--measure);
-}
-
 .legal-page h1 {
   margin-block: 0 var(--space-m);
   font-size: clamp(2rem, 1.4rem + 2.6vw, 3rem);
