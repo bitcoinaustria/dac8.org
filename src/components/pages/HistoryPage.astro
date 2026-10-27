@@ -182,6 +182,7 @@ const { list: sources, cite } = historySources(language)
           <LawGrowth language={language} />
         </div>
 
+        <h3>{en ? "In figures" : "In Zahlen"}</h3>
         <div class="history-tiles">
           <StatTiles
             tiles={effectTiles.map((tile) => ({
@@ -300,12 +301,31 @@ const { list: sources, cite } = historySources(language)
     margin-block-start: var(--space-2xl);
   }
 
-  .history-law {
-    max-inline-size: 52rem;
+  .history-check > h3 {
+    max-inline-size: none;
+    margin-block-start: var(--space-2xl);
   }
 
+  /* Jedes weitere Unterthema beginnt mit einer Linie über die ganze
+     Breite, damit man sieht, wo ein neues anfängt. */
+  .history-figures,
+  .history-law,
   .history-check > h3 {
-    margin-block-start: var(--space-2xl);
+    padding-block-start: var(--space-xl);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .history-check > h3 + .history-tiles {
+    margin-block-start: var(--space-l);
+  }
+
+  /* Die Kennzahlen drei je Zeile, wie die Aussagen von Kommission und
+     Rechnungshöfen darunter. */
+  @container campaign (width >= 56rem) {
+    .history-tiles :global(.stat-tiles) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: var(--space-2xl);
+    }
   }
 
   /* Die Grafiken eines Abschnitts in zwei Spalten, schmal untereinander. */
@@ -400,6 +420,17 @@ const { list: sources, cite } = historySources(language)
 
   .history-check[open] > summary::after {
     rotate: 45deg;
+  }
+
+  /* Aufgeklappt läuft die graue Fläche der Überschrift als schmaler Balken
+     links am Inhalt entlang, damit man sieht, was dazugehört. */
+  .history-check[open] {
+    padding-inline-start: var(--space-l);
+    border-inline-start: 6px solid var(--panel);
+  }
+
+  .history-check[open] > summary {
+    margin-inline-start: calc(-6px - var(--space-l));
   }
 
   .history-check h2 {
