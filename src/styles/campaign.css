@@ -52,6 +52,12 @@
   border-image: linear-gradient(var(--band-fill) 0 0) fill 0 / / 0 100vw;
 }
 
+/* Folgen zwei Bänder aufeinander, stoßen ihre Flächen ohne hellen Streifen
+   aneinander. */
+.campaign > section.band + section.band {
+  margin-block-start: calc(var(--band-gap) * -0.6);
+}
+
 .campaign > section.band > * {
   --panel: var(--paper);
 }
