@@ -4,18 +4,14 @@ import type { Language, Page } from "@/lib/i18n"
 import { createOgImage } from "@/lib/og-image"
 
 // The page's lead illustration; English renders where the object has labels.
-// Pages without one in their hero (home, arguments, legal pages) stay
-// text-only, so no picture appears on two pages' cards.
+// Pages without one in their hero (home, arguments, participation, legal
+// pages) stay text-only, so no picture appears on two pages' cards.
 const artwork: Partial<Record<Page, Record<Language, string>>> = {
   dossier: { de: "report-assets.webp", en: "report-assets-en.webp" },
   attacks: { de: "target-at-home.webp", en: "target-at-home-en.webp" },
   proceedings: {
     de: "collection-review.webp",
     en: "collection-review-en.webp",
-  },
-  participate: {
-    de: "finance-the-case.webp",
-    en: "finance-the-case-en.webp",
   },
 }
 
