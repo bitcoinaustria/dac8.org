@@ -13,6 +13,7 @@ import "@/styles/shape.css"
 import "@/styles/campaign.css"
 
 import ActionBar from "@/components/ActionBar.astro"
+import EmbargoBanner from "@/components/EmbargoBanner.astro"
 import Footer from "@/components/Footer.astro"
 import MetaHead from "@/components/MetaHead.astro"
 import SiteHeader from "@/components/SiteHeader.astro"
@@ -36,6 +37,7 @@ const { sections = [], fullBleed = false } = Astro.props
     <a class="skip-link" href="#main-content"
       >{language === "en" ? "Skip to content" : "Zum Inhalt springen"}</a
     >
+    <EmbargoBanner />
     <SiteHeader sections={sections} />
     <main
       id="main-content"
