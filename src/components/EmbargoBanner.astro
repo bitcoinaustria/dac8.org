@@ -1,0 +1,38 @@
+---
+import { languageFor } from "@/lib/i18n"
+
+// Media embargo for the preview release. Remove this component and its use
+// in the layout once the embargo ends.
+const en = languageFor(Astro.url.pathname) === "en"
+---
+
+<aside class="embargo" role="note" aria-label="Embargo">
+  {en ? (
+      <p>
+        <strong>Embargoed until 2 November 2026, 12:00 CET.</strong> This is a
+        preview: please do not share the site or its content until this notice
+        is removed.
+      </p>
+    ) : (
+      <p>
+        <strong>Embargo bis 2. November 2026, 12:00 Uhr.</strong> Das ist
+        eine Vorschau: Bitte die Seite und ihre Inhalte nicht teilen, solange
+        dieser Hinweis sichtbar ist.
+      </p>
+    )}
+</aside>
+
+<style>
+  .embargo {
+    padding: var(--space-xs) var(--grid-gutter);
+    color: var(--primary-foreground);
+    background: var(--primary);
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  p {
+    max-inline-size: var(--page-max);
+    margin-inline: auto;
+  }
+</style>
