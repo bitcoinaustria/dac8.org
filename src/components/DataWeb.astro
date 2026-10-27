@@ -309,6 +309,36 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
           ))}
       </div>
 
+      <!-- Back and forth by click as well as by scroll, as in the history
+           page's film. -->
+      <nav
+        class="web-nav"
+        aria-label={en ? "Steps of the story" : "Schritte der Geschichte"}
+      >
+        <button
+          type="button"
+          data-web-prev
+          aria-label={en ? "Previous scene" : "Vorherige Szene"}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 5l-7 7 7 7" />
+          </svg>
+        </button>
+        <span class="web-count" aria-live="polite">
+          <b data-web-at>1</b>
+          / {scenes.length}
+        </span>
+        <button
+          type="button"
+          data-web-next
+          aria-label={en ? "Next scene" : "Nächste Szene"}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </nav>
+
       <svg
         aria-hidden="true"
         class="net"
@@ -822,6 +852,93 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
      im Netz an. */
   .view > .map {
     pointer-events: none;
+  }
+
+  /* Zurück und vor: unten rechts im Bild, wie im Film der Geschichte. */
+  .web-nav {
+    position: absolute;
+    inset-block-end: var(--space-s);
+    inset-inline-end: var(--space-s);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @container campaign (width >= 60rem) {
+    .web-nav {
+      inset-block-end: var(--space-m);
+      inset-inline-end: var(--space-m);
+    }
+  }
+
+  /* Am Handy bräuchte das Netz die Ecke: Die Knöpfe stehen in einer
+     eigenen Zeile unter dem Bild. */
+  @container campaign (width < 40rem) {
+    .view {
+      grid-template-rows: auto minmax(0, 1fr) auto;
+    }
+
+    .web-nav {
+      position: static;
+      grid-area: 3 / 1;
+      justify-self: end;
+      padding: 0 var(--space-xs) var(--space-xs);
+    }
+  }
+
+  .web:not([data-ready]) .web-nav {
+    display: none;
+  }
+
+  .web-nav button {
+    display: grid;
+    place-items: center;
+    inline-size: 2.5rem;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--panel);
+    color: var(--foreground);
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  .web-nav button:hover {
+    border-color: var(--ink-3);
+    background: var(--paper);
+  }
+
+  .web-nav button:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .web-nav button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .web-nav svg {
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .web-count b {
+    color: var(--foreground);
+    font-weight: 700;
   }
 
   .net {
@@ -1521,6 +1638,9 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     const nodeEls = all("[data-node]")
     const edgeEls = [...root.querySelectorAll<SVGGElement>("[data-edge]")]
     const links = [...root.querySelectorAll<HTMLAnchorElement>("[data-goto]")]
+    const prev = root.querySelector<HTMLButtonElement>("[data-web-prev]")
+    const next = root.querySelector<HTMLButtonElement>("[data-web-next]")
+    const stepAt = one("[data-web-at]")
     const net = root.querySelector<SVGSVGElement>("[data-net]")
     const stage = one(".stage")
     const track = one(".track")
@@ -2081,6 +2201,8 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
       // The timeline marks the scene and keeps it in view in the pill.
       if (scene !== current) {
         current = scene
+        if (stepAt) stepAt.textContent = String(scene + 1)
+        if (prev) prev.disabled = scene === 0
         if (scene !== leakScene) closeCase()
         links.forEach((link, index) => {
           if (index === scene) link.setAttribute("aria-current", "step")
@@ -2223,6 +2345,29 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
       fit()
       queue()
     })
+
+    // The buttons scroll to the scene before or after, well into it, so it
+    // plays as it does when scrolling. After the last scene they scroll on
+    // past the story.
+    const goTo = (scene: number) => {
+      const behavior = motion.matches ? "auto" : "smooth"
+      if (scene >= spacers.length) {
+        const after = root.getBoundingClientRect().bottom + window.scrollY
+        window.scrollTo({ top: after - 80, behavior })
+        return
+      }
+      const box = spacers[Math.max(0, scene)].getBoundingClientRect()
+      window.scrollTo({
+        top:
+          window.scrollY +
+          box.top -
+          window.innerHeight * 0.5 +
+          box.height * 0.6,
+        behavior,
+      })
+    }
+    prev?.addEventListener("click", () => goTo(current - 1))
+    next?.addEventListener("click", () => goTo(current + 1))
 
     root.toggleAttribute("data-ready", true)
     render()
