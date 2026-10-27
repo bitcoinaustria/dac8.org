@@ -258,7 +258,16 @@ const { list: sources, cite } = historySources(language)
 </script>
 
 <style>
+  /* Ohne Bild daneben laufen Vorspann, Bandüberschriften und ihr Vorspann
+     über die ganze Breite; die rote Zeile bricht nicht um. */
+  .hero .lead,
+  .history :global(h2),
+  .history :global(.section-intro) {
+    max-inline-size: none;
+  }
+
   .rulings-title {
+    max-inline-size: none;
     margin-block-start: var(--space-l);
     font-size: var(--type-h3);
   }
@@ -266,7 +275,6 @@ const { list: sources, cite } = historySources(language)
   .rulings {
     display: grid;
     gap: var(--space-s);
-    max-inline-size: 60ch;
     margin: var(--space-s) 0 var(--space-l);
     padding: 0;
     list-style: none;
