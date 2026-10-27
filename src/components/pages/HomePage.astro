@@ -392,8 +392,10 @@ const reasons = [
     padding-block: calc(var(--band-gap) * 0.95);
   }
 
-  .complaint-text {
-    max-inline-size: 48rem;
+  /* Ohne Bild daneben laufen diese Vorspanne über die ganze Breite. */
+  #stufen > .section-intro,
+  .complaint-text > .section-intro {
+    max-inline-size: none;
   }
 
   .complaint :global(.route) {

@@ -932,6 +932,42 @@ const noteKeep = String(kept / 100)
     }
   }
 
+  /* Auf hohen Desktop-Fenstern, etwa einer Seite im A4-Format, steht die
+     Schlagzeile über dem Bild statt daneben: Das Bild bekommt die ganze
+     Breite, und die Bühne füllt das Fenster ohne leere Fläche. */
+  @media (max-aspect-ratio: 10 / 9) {
+    @container campaign (width >= 60rem) {
+      .view {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr);
+      }
+
+      .scenes {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .says {
+        grid-column: 1;
+        grid-row: 1;
+        align-content: start;
+        padding: var(--space-xl) var(--space-xl) 0;
+      }
+
+      .view .say h3 {
+        max-inline-size: 24ch;
+      }
+
+      .view .say-text {
+        max-inline-size: 60ch;
+      }
+
+      .view .cash {
+        justify-content: center;
+      }
+    }
+  }
+
   .say {
     grid-area: 1 / 1;
     display: grid;
