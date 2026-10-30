@@ -93,6 +93,44 @@ export const inTodaysMoney = (amount: number, year: number) => {
   return Math.round(value / step) * step
 }
 
+// The same thresholds in gold, which no index has to translate: price per
+// troy ounce in ECU on 10 June 1991, the day the first directive was
+// adopted (Frankfurt fixing of 21,040 DM per kilogram, 32.1507 ounces to the
+// kilogram, 2.05858 DM to the ECU), and in euros at the Eurosystem's latest
+// quarter-end revaluation. Later thresholds are priced at the latest.
+export const goldPrice = {
+  1991: 21040 / 32.1507 / 2.05858,
+  latest: 3688.86,
+}
+export const goldSources: Source[] = [
+  {
+    label: {
+      de: "Bundesbank, Goldpreis Frankfurt, 10. Juni 1991",
+      en: "Bundesbank, Frankfurt gold price, 10 June 1991",
+    },
+    href: "https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/723452/723452?tsId=BBEX3.D.XAU.DEM.EA.AC.C01",
+  },
+  {
+    label: {
+      de: "Eurostat, ECU-Kurs der D-Mark, 10. Juni 1991",
+      en: "Eurostat, ECU rate of the Deutsche Mark, 10 June 1991",
+    },
+    href: "https://doi.org/10.2908/ERT_H_EUR_D",
+  },
+  {
+    label: {
+      de: "EZB, Goldpreis zum Quartalsende, Ausweis vom 2. Oktober 2026",
+      en: "ECB, quarter-end gold price, statement as at 2 October 2026",
+    },
+    href: "https://www.ecb.europa.eu/press/annual-reports-financial-statements/wfs/2026/html/ecb.fs261007.en.html",
+  },
+]
+// Troy ounces of gold an amount bought in its year, whole ounces from ten.
+export const inGold = (amount: number, year: number) => {
+  const ounces = amount / (year === 1991 ? goldPrice[1991] : goldPrice.latest)
+  return ounces >= 10 ? Math.round(ounces) : Math.round(ounces * 10) / 10
+}
+
 const allRules: Source = {
   label: {
     de: "Alle Regeln mit Datum, Inhalt und Primärquellen, im Abschnitt zum Nachprüfen",
@@ -129,6 +167,7 @@ export const steps: Step[] = [
     sources: [
       eurlex("dir/1991/308", "Richtlinie 91/308/EWG", "Directive 91/308/EEC"),
       ...priceSources,
+      ...goldSources,
       eurlex(
         "reg/2024/1624",
         "Verordnung (EU) 2024/1624",

@@ -7,6 +7,7 @@ import { historySources } from "@/data/history-sources"
 import { firstVoice, lawVoices } from "@/data/law-voices"
 import {
   chapters,
+  inGold,
   inTodaysMoney,
   pile,
   reportField,
@@ -93,6 +94,12 @@ const cashRows = thresholds.map((t, k) => {
             ? `from July ${t.year}; in cash from €3,000`
             : `ab Juli ${t.year}; bar ab 3.000 €`
           : `${en ? "then" : "damals"} ${n(t.amount)} ${t.unit === "ECU" ? "ECU" : "€"}`,
+    gold:
+      t.amount === 0
+        ? undefined
+        : en
+          ? `about ${n(inGold(t.amount, t.year))} ounces of gold`
+          : `rund ${n(inGold(t.amount, t.year))} Unzen Gold`,
   }
 })
 
@@ -380,14 +387,15 @@ const noteKeep = String(kept / 100)
                   <span class="cash-year">{row.year}</span>
                   <b>{row.value}</b>
                   <span>{row.detail}</span>
+                  {row.gold && <span class="cash-gold">{row.gold}</span>}
                 </p>
               </li>
             ))}
           </ol>
           <p class="scene-caption">
             {en
-              ? "At true scale, 1991 in today’s money: what a single transaction without an account may move without ID."
-              : "Maßstabsgetreu, 1991 in heutigem Geld: so viel darf ein einzelnes Geschäft ohne Konto bewegen, ohne Ausweis."}
+              ? "At true scale, 1991 in today’s money: what a single transaction without an account may move without ID. Gold at the price of 1991 and of the end of September 2026."
+              : "Maßstabsgetreu, 1991 in heutigem Geld: so viel darf ein einzelnes Geschäft ohne Konto bewegen, ohne Ausweis. Gold zum Preis von 1991 und von Ende September 2026."}
           </p>
         </div>
 
@@ -1198,6 +1206,11 @@ const noteKeep = String(kept / 100)
     font-weight: var(--weight-heading);
     line-height: 1.05;
     letter-spacing: -0.03em;
+  }
+
+  .cash-gold {
+    color: var(--foreground);
+    font-weight: 600;
   }
 
   .cash-row.zero b,
