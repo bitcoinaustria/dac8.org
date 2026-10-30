@@ -1,7 +1,7 @@
 import type { Language } from "@/lib/i18n"
 
 // The history page's scroll film: how the rules piled up, step by small
-// step, and how little came of it, in five chapters of ten short steps, the rules and the readers of the
+// step, and how little came of it, in five chapters of eleven short steps, the rules and the readers of the
 // register on one running timeline from 1977 to today.
 // It starts with the reader, from which amount you have to show ID, shows
 // the ways money takes filling with rules and the register filling with
@@ -101,6 +101,7 @@ export const inTodaysMoney = (amount: number, year: number) => {
 export const goldPrice = {
   1991: 21040 / 32.1507 / 2.05858,
   latest: 3688.86,
+  asOf: { de: "Ende September 2026", en: "the end of September 2026" },
 }
 export const goldSources: Source[] = [
   {
@@ -134,6 +135,28 @@ export const inGold = (amount: number, year: number) => {
   return ounces >= 10 ? Math.round(ounces) : Math.round(ounces * 10) / 10
 }
 
+// From which amount ID is needed, shown in today's money; 1991 in ECU.
+export const thresholds: {
+  step: string
+  year: number
+  amount: number
+  unit: "ECU" | "EUR"
+}[] = [
+  { step: "ausweis-bar", year: 1991, amount: 15000, unit: "ECU" },
+  { step: "ausweis-bar", year: 2027, amount: 10000, unit: "EUR" },
+  { step: "ausweis-krypto", year: 2024, amount: 0, unit: "EUR" },
+]
+
+// The two cash limits in gold, as the film's headline writes them.
+const ounces = (language: Language) =>
+  thresholds
+    .filter((t) => t.amount > 0)
+    .map((t) =>
+      new Intl.NumberFormat(language === "en" ? "en-GB" : "de-DE").format(
+        inGold(t.amount, t.year),
+      ),
+    )
+
 const allRules: Source = {
   label: {
     de: "Alle Regeln mit Datum, Inhalt und Primärquellen, im Abschnitt zum Nachprüfen",
@@ -155,28 +178,43 @@ export const steps: Step[] = [
   // an account needs ID, against crypto, where there is no amount at all.
   // The general threshold stayed at 15,000 from 1991 until the AMLR lowers
   // it in 2027 (rule-growth-and-effect-evidence.md, "Thresholds"); the
-  // first step shows 1991 and 2027 together.
+  // first step shows 1991 and 2027 together, in today's money, the second
+  // the same two in gold.
   {
     id: "ausweis-bar",
     chapter: "ausweis",
     title: {
-      de: "Bar: Ausweis ab 10.000 €.",
-      en: "Cash: ID from 10,000 euros.",
+      de: "Die Ausweisgrenze sinkt: von 33.900\u00a0€ auf 10.000\u00a0€.",
+      en: "The ID limit falls: from €33,900 to €10,000.",
     },
     text: {
-      de: "Ab 2027. 1991 lag die Grenze noch bei 33.900 €.",
-      en: "From 2027. In 1991 the limit was still 33,900 euros.",
+      de: "Ab diesem Betrag musst du dich bei einem einzelnen Geschäft ohne Konto ausweisen. 1991 in heutigem Geld, die neue Grenze ab Juli 2027.",
+      en: "From this amount you must show ID for a single transaction without an account. 1991 in today’s money; the new limit from July 2027.",
     },
     sources: [
       eurlex("dir/1991/308", "Richtlinie 91/308/EWG", "Directive 91/308/EEC"),
       ...priceSources,
-      ...goldSources,
       eurlex(
         "reg/2024/1624",
         "Verordnung (EU) 2024/1624",
         "Regulation (EU) 2024/1624",
       ),
     ],
+  },
+  // The same two limits in gold, which needs no price index: the coins lie
+  // down in front of the notes.
+  {
+    id: "ausweis-gold",
+    chapter: "ausweis",
+    title: {
+      de: `In Gold: von ${ounces("de")[0]} auf ${ounces("de")[1]} Unzen.`,
+      en: `In gold: from ${ounces("en")[0]} to ${ounces("en")[1]} ounces.`,
+    },
+    text: {
+      de: "In Gold gemessen sinkt die Grenze noch viel stärker als in heutigem Geld.",
+      en: "Measured in gold, the limit falls far more than in today’s money.",
+    },
+    sources: goldSources,
   },
   {
     id: "ausweis-krypto",
@@ -362,18 +400,6 @@ export const pile: { year: number; pages: number; acts: string }[] = [
   { year: 2018, pages: 41, acts: "2018/843, 2018/1673" },
   { year: 2023, pages: 39, acts: "2023/1113" },
   { year: 2024, pages: 295, acts: "2024/1624, 2024/1640, 2024/1620" },
-]
-
-// From which amount ID is needed, shown in today's money; 1991 in ECU.
-export const thresholds: {
-  step: string
-  year: number
-  amount: number
-  unit: "ECU" | "EUR"
-}[] = [
-  { step: "ausweis-bar", year: 1991, amount: 15000, unit: "ECU" },
-  { step: "ausweis-bar", year: 2027, amount: 10000, unit: "EUR" },
-  { step: "ausweis-krypto", year: 2024, amount: 0, unit: "EUR" },
 ]
 
 // Suspicion reports in Austria against convictions for money laundering.

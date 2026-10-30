@@ -5,13 +5,16 @@
 // cropped from. Nothing is resized but the render itself, from full to
 // half size, so the shared scale of 54.54545 px per cm holds.
 //
-// Usage: node scripts/artwork/composite-gold.mjs <gold.png> <notes.webp> <x> <y> <out.webp>
+// Usage: node scripts/artwork/composite-gold.mjs <gold.png> <notes.webp> <x> <y> <out.webp> [<bare.webp>]
 //   gold.png   blender -b -P scripts/artwork/render-cash.py -- gold-brick gold.png
+//              (at full size, PCT=100)
 //   x, y       where the notes picture sits in the half-size frame:
 //              brick 112 69, bundle 126 199
+//   bare.webp  the notes alone, cropped like out.webp, so the film can lay
+//              the coins over them by fading one picture into the other
 import sharp from "sharp"
 
-const [goldPath, notesPath, x, y, out] = process.argv.slice(2)
+const [goldPath, notesPath, x, y, out, bare] = process.argv.slice(2)
 if (!out) {
   console.error(
     "Usage: composite-gold.mjs <gold.png> <notes.webp> <x> <y> <out.webp>",
@@ -87,10 +90,30 @@ const top = Math.max(0, y0 - MARGIN)
 const right = Math.min(WIDTH, x1 + 1 + MARGIN)
 const bottom = Math.min(HEIGHT, y1 + 1 + MARGIN)
 
+const crop = { left, top, width: right - left, height: bottom - top }
 await sharp(data, { raw: { width: WIDTH, height: HEIGHT, channels: 4 } })
-  .extract({ left, top, width: right - left, height: bottom - top })
+  .extract(crop)
   .webp({ quality: 82, alphaQuality: 100 })
   .toFile(out)
+if (bare) {
+  await sharp({
+    create: {
+      width: WIDTH,
+      height: HEIGHT,
+      channels: 4,
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    },
+  })
+    .composite([{ input: notesPath, left: Number(x), top: Number(y) }])
+    .raw()
+    .toBuffer()
+    .then((notes) =>
+      sharp(notes, { raw: { width: WIDTH, height: HEIGHT, channels: 4 } })
+        .extract(crop)
+        .webp({ quality: 82, alphaQuality: 100 })
+        .toFile(bare),
+    )
+}
 console.log(
   `${out}: ${right - left}x${bottom - top}, crop ${left} ${top} of the frame`,
 )
