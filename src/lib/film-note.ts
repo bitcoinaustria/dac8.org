@@ -1,36 +1,27 @@
 // The last step of the history film (src/components/RuleFilm.astro) drawn
-// on a canvas: a 100-euro note, like the ones the film opens with, crumbles
-// from the right into dust that blows away, slower and slower, until only
-// the share that is confiscated remains at its left edge and turns red.
-// The note's outline stays as a dashed line, like the earlier heights of
-// the tower at the start.
+// on a canvas: a 100-euro note with a criminal on it, like the ones the
+// film opens with. The camera moves in on its left edge, where a red
+// dashed line marks the share the state confiscates; the note tears along
+// it from the top, and as the camera pulls back the strip falls away and
+// turns red, while the rest, everything but two euros, stays with the
+// criminal.
 
-type Grain = {
-  // Centre of the grain's cell on the note, in CSS pixels.
-  x: number
-  y: number
-  colour: number
-  // Seconds after the start when it comes loose; kept grains never do.
-  at: number
-  vx: number
-  vy: number
-  life: number
-  phase: number
-}
+// In seconds: the note appears, the camera moves in, the line is drawn,
+// the tear runs down it, the two pieces part as the camera pulls back.
+const appear = 0.5
+const push = { at: 0.45, span: 0.8 }
+const mark = { at: 1.05, span: 0.5 }
+const tear = { at: 1.6, span: 0.75 }
+const part = { at: 2.4, span: 0.9 }
+const pull = { at: 2.35, span: 1 }
+const end = Math.max(part.at + part.span, pull.at + pull.span)
 
-// The note appears, then the edge of the crumbling runs from the right to
-// the kept strip, then the strip turns red.
-const appear = 0.45
-const begin = 1.3
-const run = 2.4
-const red = begin + run + 0.35
-const maxLife = 1.6
-const end = red + maxLife
-
-const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2)
 const clamp = (t: number) => Math.min(1, Math.max(0, t))
+const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2)
+const easeOut = (t: number) => 1 - (1 - t) ** 3
+const overshoot = (t: number) => 1 + 2.2 * (t - 1) ** 3 + 1.2 * (t - 1) ** 2
 
-// A seeded random number, so the dust blows the same way on every visit.
+// A seeded random number, so the note tears the same way on every visit.
 const random = (seed: number) => () => {
   seed = (seed * 1664525 + 1013904223) % 4294967296
   return seed / 4294967296
@@ -43,7 +34,7 @@ export const createNote = (root: HTMLElement, keep: number) => {
   const motion = matchMedia("(prefers-reduced-motion: reduce)")
   // The colours come from hidden swatches, so light and dark mode and the
   // theme switch apply without the canvas knowing the palette.
-  const ink = { paper: "", edge: "", line: "", red: "" }
+  const ink = { paper: "", edge: "", red: "", shadow: "" }
   const readInk = () => {
     for (const name of Object.keys(ink) as (keyof typeof ink)[]) {
       const swatch = root.querySelector<HTMLElement>(`[data-note-${name}]`)
@@ -52,110 +43,154 @@ export const createNote = (root: HTMLElement, keep: number) => {
   }
   const labels = [...root.querySelectorAll<HTMLElement>("[data-note-label]")]
 
-  const paper = document.createElement("canvas")
-  const intact = document.createElement("canvas")
+  // The note whole, its two pieces with their torn edges, the strip in
+  // red, and the shadows the pieces cast, each drawn once per size.
+  const canvases = () => document.createElement("canvas")
+  const whole = canvases()
+  const strip = canvases()
+  const rest = canvases()
+  const stripRed = canvases()
+  const restShadow = canvases()
+  const stripShadow = canvases()
   let size = { width: 0, height: 0, dpr: 1 }
+  // How far the camera moves in, and the pixels per CSS pixel the pieces
+  // are drawn with, so they stay sharp close up.
+  let close = 1
+  let res = 1
   let note = { x: 0, y: 0, w: 0, h: 0, r: 0 }
-  let cell = 3
-  let strip = 0
-  let grains: Grain[] = []
-  let palette: string[] = []
+  // Where the tear runs, per row of `row` pixels, and the widths of the
+  // strip as cut and as drawn with its ragged edge.
+  const row = 2
+  let edge: number[] = []
+  let cut = 0
+  let stripWidth = 0
+  let pad = 0
   let on = false
   let animated = false
   let start = 0
   let frame = 0
-  let loose = 0
-  let alive = 0
-  let swept = false
 
   // The note: a picture of one (data-note-image) once it has loaded, a
   // plain drawn one until then.
   const picture = new Image()
   let ready = false
   const paint = (c: CanvasRenderingContext2D) => {
-    const { x, y, w, h, r } = note
+    const { w, h, r } = note
     const family = getComputedStyle(root).fontFamily
     c.save()
     c.beginPath()
-    c.roundRect(x, y, w, h, r)
+    c.roundRect(0, 0, w, h, r)
     c.clip()
     if (ready) {
-      c.drawImage(picture, x, y, w, h)
+      c.drawImage(picture, 0, 0, w, h)
       c.restore()
       return
     }
     c.fillStyle = ink.paper
-    c.fillRect(x, y, w, h)
-    const light = c.createLinearGradient(x, y, x + w, y + h)
+    c.fillRect(0, 0, w, h)
+    const light = c.createLinearGradient(0, 0, w, h)
     light.addColorStop(0, "rgb(255 255 255 / 0.28)")
     light.addColorStop(0.55, "rgb(255 255 255 / 0)")
     light.addColorStop(1, "rgb(0 0 0 / 0.14)")
     c.fillStyle = light
-    c.fillRect(x, y, w, h)
+    c.fillRect(0, 0, w, h)
     c.strokeStyle = ink.edge
-    c.lineWidth = 1
-    c.globalAlpha = 0.5
-    for (let k = 0; k < 9; k++) {
-      c.beginPath()
-      for (let s = 0; s <= 80; s++) {
-        const px = x + w * 0.3 + (w * 0.62 * s) / 80
-        const py =
-          y +
-          h * (0.22 + k * 0.065) +
-          Math.sin((s / 80) * Math.PI * 3 + k * 0.6) * h * 0.06
-        if (s) c.lineTo(px, py)
-        else c.moveTo(px, py)
-      }
-      c.stroke()
-    }
-    c.globalAlpha = 1
     c.lineWidth = Math.max(1, h * 0.012)
     c.beginPath()
-    c.roundRect(x + h * 0.07, y + h * 0.07, w - h * 0.14, h - h * 0.14, r * 0.5)
+    c.roundRect(h * 0.07, h * 0.07, w - h * 0.14, h - h * 0.14, r * 0.5)
     c.stroke()
     c.fillStyle = ink.edge
     c.textBaseline = "top"
     c.font = `800 ${h * 0.34}px ${family}`
-    c.fillText("100", x + h * 0.14, y + h * 0.13)
+    c.fillText("100", h * 0.14, h * 0.13)
     c.font = `700 ${h * 0.085}px ${family}`
-    c.fillText("EURO", x + h * 0.16, y + h * 0.5)
+    c.fillText("EURO", h * 0.16, h * 0.5)
     c.textAlign = "right"
     c.textBaseline = "alphabetic"
     c.font = `800 ${h * 0.17}px ${family}`
-    c.fillText("100", x + w - h * 0.14, y + h - h * 0.14)
-    const cx = x + w * 0.62
-    const cy = y + h * 0.45
-    for (let k = 0; k < 12; k++) {
-      const a = (k / 12) * Math.PI * 2
-      c.beginPath()
-      c.arc(
-        cx + Math.cos(a) * h * 0.17,
-        cy + Math.sin(a) * h * 0.17,
-        h * 0.02,
-        0,
-        Math.PI * 2,
-      )
-      c.fill()
-    }
+    c.fillText("100", w - h * 0.14, h - h * 0.14)
     c.restore()
+  }
+
+  // The outlines of the two pieces, in the note's own coordinates.
+  const stripPath = (c: CanvasRenderingContext2D) => {
+    c.beginPath()
+    c.moveTo(0, 0)
+    edge.forEach((x, k) => c.lineTo(x, Math.min(note.h, k * row)))
+    c.lineTo(0, note.h)
+    c.closePath()
+  }
+  const restPath = (c: CanvasRenderingContext2D) => {
+    c.beginPath()
+    c.moveTo(note.w, 0)
+    c.lineTo(note.w, note.h)
+    for (let k = edge.length - 1; k >= 0; k--)
+      c.lineTo(edge[k], Math.min(note.h, k * row))
+    c.closePath()
+  }
+  // Torn paper shows its pale core along the edge, with a few fibres.
+  const fringe = (c: CanvasRenderingContext2D, side: number) => {
+    const next = random(side > 0 ? 7 : 11)
+    c.strokeStyle = "rgb(250 248 236 / 0.92)"
+    c.lineWidth = 1.3
+    c.beginPath()
+    edge.forEach((x, k) => {
+      const y = Math.min(note.h, k * row)
+      if (k) c.lineTo(x + side * 0.5, y)
+      else c.moveTo(x + side * 0.5, y)
+    })
+    c.stroke()
+    c.lineWidth = 0.7
+    c.beginPath()
+    edge.forEach((x, k) => {
+      if (next() > 0.35) return
+      const y = Math.min(note.h, k * row)
+      c.moveTo(x, y)
+      c.lineTo(x - side * (0.6 + next() * 1.6), y + (next() - 0.5) * 2)
+    })
+    c.stroke()
+  }
+  const sized = (target: HTMLCanvasElement, w: number, h: number) => {
+    target.width = Math.ceil(w * res)
+    target.height = Math.ceil(h * res)
+    const c = target.getContext("2d")
+    c?.setTransform(res, 0, 0, res, 0, 0)
+    return c
+  }
+  // A soft shadow alone: the shape is drawn far off the canvas and only
+  // its shadow falls on it.
+  const shade = (
+    target: HTMLCanvasElement,
+    width: number,
+    path: (c: CanvasRenderingContext2D) => void,
+  ) => {
+    const c = sized(target, width + pad * 2, note.h + pad * 2)
+    if (!c) return
+    const far = (width + pad * 2) * 2
+    c.translate(pad - far, pad)
+    c.shadowColor = ink.shadow
+    c.shadowBlur = note.h * 0.06 * res
+    c.shadowOffsetX = far * res
+    c.fillStyle = "#000"
+    path(c)
+    c.fill()
   }
 
   const build = () => {
     const box = root.getBoundingClientRect()
     if (!box.width || !box.height) return false
+    readInk()
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     size = { width: box.width, height: box.height, dpr }
-    for (const c of [canvas, paper, intact]) {
-      c.width = Math.round(box.width * dpr)
-      c.height = Math.round(box.height * dpr)
-    }
+    canvas.width = Math.round(box.width * dpr)
+    canvas.height = Math.round(box.height * dpr)
     context.setTransform(dpr, 0, 0, dpr, 0, 0)
     // A euro note is about 1.9 times as wide as it is high; a picture
-    // keeps its own proportions.
+    // keeps its own proportions. Room is left for the pieces to part.
     const ratio = ready ? picture.naturalWidth / picture.naturalHeight : 1.9
-    const w = Math.round(Math.min(box.width * 0.86, box.height * 1.05, 560))
+    const w = Math.round(Math.min(box.width * 0.82, box.height * 1.05, 560))
     const h = Math.round(w / ratio)
-    // The note and the label beneath it stand in the middle together.
+    // The note and the labels beneath it stand in the middle together.
     note = {
       x: Math.round((box.width - w) / 2),
       y: Math.round((box.height - h - 64) / 2),
@@ -163,96 +198,76 @@ export const createNote = (root: HTMLElement, keep: number) => {
       h,
       r: Math.round(h * 0.025),
     }
-    readInk()
-    const pc = paper.getContext("2d")
-    if (!pc) return false
-    pc.setTransform(dpr, 0, 0, dpr, 0, 0)
-    pc.clearRect(0, 0, box.width, box.height)
-    paint(pc)
+    pad = Math.ceil(h * 0.15)
+    // Close up, the note nearly fills the height.
+    close = Math.max(1, Math.min(1.9, (box.height * 0.92) / h))
+    res = dpr * close
 
-    // One grain per cell, coloured like the note beneath it; the cells of
-    // the kept strip at the left edge never come loose.
-    cell = Math.max(2, Math.round(w / 170))
-    const keptCols = Math.max(1, Math.round((w * keep) / cell))
-    strip = keptCols * cell
-    const pixels = pc.getImageData(0, 0, paper.width, paper.height).data
-    // The dust is a shade darker than the note, so it shows on the panel.
-    pc.fillStyle = ink.edge
-    pc.fillRect(0, 0, 1, 1)
-    const edge = pc.getImageData(0, 0, 1, 1).data
-    pc.clearRect(0, 0, 1, 1)
+    // The tear: ragged, a little to either side of the cut.
+    cut = Math.max(2, w * keep)
+    const amp = Math.max(0.7, cut * 0.16)
     const next = random(2025)
-    const index = new Map<string, number>()
-    palette = []
-    grains = []
-    const cols = Math.ceil(w / cell)
-    const rows = Math.ceil(h / cell)
-    const speed = w / 460
-    for (let r = 0; r < rows; r++) {
-      // The edge is ragged: each row a little ahead or behind.
-      const wave = Math.sin(r * 0.23) * 0.6 + Math.sin(r * 0.071 + 1.3) * 0.4
-      for (let c = 0; c < cols; c++) {
-        const gx = note.x + (c + 0.5) * cell
-        const gy = note.y + (r + 0.5) * cell
-        // Cells along the bottom and right edges are cut off; they take
-        // their colour from inside the note.
-        const sx = Math.min(gx, note.x + w - 1)
-        const sy = Math.min(gy, note.y + h - 1)
-        const px = Math.min(paper.width - 1, Math.round(sx * dpr))
-        const py = Math.min(paper.height - 1, Math.round(sy * dpr))
-        const i = (py * paper.width + px) * 4
-        if (pixels[i + 3] < 40) continue
-        const key = [0, 1, 2]
-          .map((k) => {
-            const value = pixels[i + k] * 0.7 + edge[k] * 0.3
-            return (Math.round(value) >> 4) * 16 + 8
-          })
-          .join()
-        let colour = index.get(key)
-        if (colour === undefined) {
-          colour = palette.length
-          index.set(key, colour)
-          palette.push(`rgb(${key})`)
-        }
-        // The edge slows down as it nears the kept strip.
-        const v = clamp((cols - 1 - c) / Math.max(1, cols - keptCols))
-        const s = 1 - Math.sqrt(1 - v)
-        grains.push({
-          x: gx,
-          y: gy,
-          colour,
-          at:
-            c < keptCols
-              ? Number.POSITIVE_INFINITY
-              : begin + s * run + wave * 0.1 * (1 - s) + next() * 0.06,
-          vx: (20 + next() * 70) * speed,
-          vy: -(8 + next() * 46) * speed,
-          life: 0.9 + next() * (maxLife - 0.9),
-          phase: next() * Math.PI * 2,
-        })
-      }
+    // Paper tears in irregular swings with a fine fray on top: a random
+    // value every few rows, eased from one to the next, plus a little
+    // noise per row.
+    const knots = Array.from(
+      { length: Math.ceil(h / row / 4) + 2 },
+      () => next() * 2 - 1,
+    )
+    edge = []
+    for (let k = 0; k * row < h + row; k++) {
+      const i = Math.floor(k / 4)
+      const f = (1 - Math.cos(((k % 4) / 4) * Math.PI)) / 2
+      const swing = knots[i] + (knots[i + 1] - knots[i]) * f
+      edge.push(cut + amp * (swing * 0.75 + (next() * 2 - 1) * 0.25))
     }
-    grains.sort((a, b) => a.at - b.at)
+    stripWidth = Math.ceil(cut + amp + 2)
+
+    const wc = sized(whole, w, h)
+    if (!wc) return false
+    paint(wc)
+    const piece = (
+      target: HTMLCanvasElement,
+      width: number,
+      path: (c: CanvasRenderingContext2D) => void,
+      side: number,
+    ) => {
+      const c = sized(target, width, h)
+      if (!c) return
+      c.save()
+      path(c)
+      c.clip()
+      c.drawImage(whole, 0, 0, w, h)
+      fringe(c, side)
+      c.restore()
+    }
+    piece(strip, stripWidth, stripPath, -1)
+    piece(rest, w, restPath, 1)
+    const rc = sized(stripRed, stripWidth, h)
+    if (rc) {
+      rc.fillStyle = ink.red
+      stripPath(rc)
+      rc.fill()
+    }
+    shade(restShadow, w, restPath)
+    shade(stripShadow, stripWidth, stripPath)
     return true
   }
 
-  const reset = () => {
-    const ic = intact.getContext("2d")
-    if (!ic) return
-    ic.setTransform(1, 0, 0, 1, 0, 0)
-    ic.clearRect(0, 0, intact.width, intact.height)
-    ic.drawImage(paper, 0, 0)
-    ic.setTransform(size.dpr, 0, 0, size.dpr, 0, 0)
-    loose = 0
-    alive = 0
-    swept = false
-  }
+  // Where the pieces end up: the strip down and to the left, tilted, the
+  // rest a little to the right.
+  const finalStrip = () => ({
+    x: -note.w * 0.035,
+    y: note.h * 0.06,
+    angle: -0.12,
+  })
+  const finalRest = () => note.w * 0.03
 
   const place = () => {
     for (const label of labels) {
       const kept = label.dataset.noteLabel === "kept"
-      label.style.left = `${kept ? note.x : note.x + (note.w + strip) / 2}px`
-      label.style.top = `${kept ? note.y + note.h + 12 : note.y + note.h / 2}px`
+      label.style.left = `${kept ? note.x + finalStrip().x : note.x + note.w + finalRest()}px`
+      label.style.top = `${note.y + note.h + note.h * 0.06 + 14}px`
     }
   }
 
@@ -260,85 +275,163 @@ export const createNote = (root: HTMLElement, keep: number) => {
     frame = 0
     const t = animated ? (performance.now() - start) / 1000 : end
     const { width, height } = size
+    const { x, w, h } = note
+    const { dpr } = size
+    context.setTransform(dpr, 0, 0, dpr, 0, 0)
     context.clearRect(0, 0, width, height)
-    // Cells that came loose leave the intact note.
-    const ic = intact.getContext("2d")
-    while (ic && loose < grains.length && grains[loose].at <= t) {
-      const g = grains[loose]
-      ic.clearRect(
-        g.x - cell / 2 - 0.5,
-        g.y - cell / 2 - 0.5,
-        cell + 1,
-        cell + 1,
-      )
-      loose++
+    // Close up, the cut stands a fifth into the picture and the note in
+    // the middle of its height. The camera zooms about the one point that
+    // keeps its place on screen between the two shots.
+    const zoom =
+      1 +
+      (close - 1) *
+        (ease(clamp((t - push.at) / push.span)) -
+          ease(clamp((t - pull.at) / pull.span)))
+    const fixed = (now: number, then: number) =>
+      close > 1 ? (then - now * close) / (1 - close) : 0
+    const focus = {
+      x: fixed(x + cut, width * 0.2),
+      y: fixed(note.y + h / 2, height / 2),
     }
-    while (alive < loose && grains[alive].at + maxLife < t) alive++
-    // Once the edge has run its course, nothing of the note is left
-    // beside the strip, not even the antialiased rim of its corners.
-    if (ic && t >= red && !swept) {
-      ic.clearRect(note.x + strip, 0, size.width, size.height)
-      swept = true
-    }
+    context.setTransform(
+      dpr * zoom,
+      0,
+      0,
+      dpr * zoom,
+      dpr * focus.x * (1 - zoom),
+      dpr * focus.y * (1 - zoom),
+    )
     const shown = ease(clamp(t / appear))
+    const y = note.y + (1 - shown) * 10
+    const torn = clamp((t - tear.at) / tear.span)
+    const tip = h * ease(torn)
+    const parted = clamp((t - part.at) / part.span)
+    const peel = 0.08
     context.globalAlpha = shown
-    context.drawImage(intact, 0, 0, width, height)
 
-    // The dust, one path per colour and fade, so it draws in few calls.
-    const paths = new Map<number, Path2D>()
-    for (let k = alive; k < loose; k++) {
-      const g = grains[k]
-      const age = t - g.at
-      if (age >= g.life) continue
-      const f = age / g.life
-      const x =
-        g.x +
-        g.vx * age +
-        40 * age * age +
-        Math.sin(g.phase + age * 4) * 5 * age
-      const y =
-        g.y +
-        g.vy * age -
-        14 * age * age +
-        Math.cos(g.phase + age * 3) * 4 * age
-      const s = cell * (1 - f * 0.65)
-      const fade = Math.min(3, Math.floor(f * 4))
-      const key = g.colour * 4 + fade
-      let path = paths.get(key)
-      if (!path) {
-        path = new Path2D()
-        paths.set(key, path)
+    // The rest: still while the tear runs, then a little to the right.
+    const restX = x + finalRest() * overshoot(parted)
+    context.drawImage(
+      restShadow,
+      restX - pad,
+      y - pad + h * 0.03,
+      w + pad * 2,
+      h + pad * 2,
+    )
+    if (torn <= 0) {
+      context.drawImage(whole, x, y, w, h)
+    } else if (parted <= 0) {
+      // Above the tip of the tear the pieces are apart, below it whole.
+      context.save()
+      context.beginPath()
+      context.rect(x, y + tip, w, h - tip + 1)
+      context.clip()
+      context.drawImage(whole, x, y, w, h)
+      context.restore()
+      context.save()
+      context.beginPath()
+      context.rect(x, y, w, tip)
+      context.clip()
+      context.drawImage(rest, x, y, w, h)
+      context.restore()
+      // The strip peels away from the tip, row by row.
+      for (let top = 0; top < tip; top += row) {
+        const rows = Math.min(row, tip - top)
+        context.drawImage(
+          strip,
+          0,
+          top * res,
+          strip.width,
+          rows * res,
+          x - peel * (tip - top),
+          y + top,
+          stripWidth,
+          rows,
+        )
       }
-      path.rect(x - s / 2, y - s / 2, s, s)
-    }
-    for (const [key, path] of paths) {
-      context.globalAlpha = [0.95, 0.7, 0.45, 0.2][key % 4]
-      context.fillStyle = palette[Math.floor(key / 4)]
-      context.fill(path)
+      // A red glow where the paper gives.
+      const at = edge[Math.min(edge.length - 1, Math.round(tip / row))] ?? cut
+      const glow = context.createRadialGradient(
+        x + at,
+        y + tip,
+        0,
+        x + at,
+        y + tip,
+        cut * 0.6 + 6,
+      )
+      glow.addColorStop(0, ink.red)
+      glow.addColorStop(1, "transparent")
+      context.globalAlpha = shown * Math.sin(Math.PI * torn)
+      context.fillStyle = glow
+      context.fillRect(
+        x + at - cut - 8,
+        y + tip - cut - 8,
+        cut * 2 + 16,
+        cut * 2 + 16,
+      )
+      context.globalAlpha = shown
+    } else {
+      context.drawImage(rest, restX, y, w, h)
     }
 
-    // What is left: the dashed outline of the note and the red strip.
-    const done = ease(clamp((t - red) / 0.5))
-    if (done > 0) {
-      const { x, y, w, h, r } = note
-      context.globalAlpha = done
-      context.setLineDash([6, 5])
-      context.lineWidth = 1.5
-      context.strokeStyle = ink.line
+    // The red dashed line along the cut: drawn down before the tear, gone
+    // where the paper has torn.
+    const drawn = ease(clamp((t - mark.at) / mark.span))
+    if (drawn > 0 && parted <= 0) {
+      context.save()
+      // Red dashes on a pale line, so they show on any part of the note.
       context.beginPath()
-      context.roundRect(x + 0.75, y + 0.75, w - 1.5, h - 1.5, r)
+      context.moveTo(x + cut, y + tip)
+      context.lineTo(x + cut, y + Math.max(tip, h * drawn))
+      context.lineWidth = 3.2
+      context.strokeStyle = "rgb(255 255 255 / 0.8)"
       context.stroke()
-      context.setLineDash([])
+      context.setLineDash([5, 4])
+      context.lineWidth = 1.8
+      context.strokeStyle = ink.red
+      context.stroke()
+      context.restore()
+    }
+
+    // The strip, once free: it falls away, tilts, straightens out of its
+    // peel and turns red.
+    if (parted > 0) {
+      const k = easeOut(parted)
+      const goal = finalStrip()
+      const shear = peel * (1 - k)
+      const pivot = { x: x + stripWidth / 2, y: y + h }
+      const turn = goal.angle * k
+      const dx = goal.x * k
+      const dy = goal.y * overshoot(parted)
+      const red = clamp((t - part.at) / 0.5)
+      const set = () => {
+        context.translate(pivot.x + dx, pivot.y + dy)
+        context.rotate(turn)
+        // Leaning from the bottom: above the pivot, y is negative, so the
+        // top moves left by the shear times its height.
+        context.transform(1, 0, shear, 1, 0, 0)
+        context.translate(-stripWidth / 2, -h)
+      }
+      context.save()
+      set()
+      context.globalAlpha = shown * k
+      context.drawImage(
+        stripShadow,
+        -pad,
+        -pad + h * 0.03,
+        stripWidth + pad * 2,
+        h + pad * 2,
+      )
+      context.globalAlpha = shown
+      context.drawImage(strip, 0, 0, stripWidth, h)
+      context.globalAlpha = shown * ease(red) * 0.85
       context.shadowColor = ink.red
-      context.shadowBlur = 16 * done
-      context.fillStyle = ink.red
-      context.beginPath()
-      context.roundRect(x, y, strip, h, [r, 0, 0, r])
-      context.fill()
-      context.shadowBlur = 0
+      context.shadowBlur = 14 * ease(red)
+      context.drawImage(stripRed, 0, 0, stripWidth, h)
+      context.restore()
     }
     context.globalAlpha = 1
-    root.toggleAttribute("data-done", done > 0)
+    root.toggleAttribute("data-done", t >= end - 0.3)
     if (on && animated && t < end) frame = requestAnimationFrame(draw)
   }
 
@@ -347,17 +440,15 @@ export const createNote = (root: HTMLElement, keep: number) => {
     on = true
     animated = animate && !motion.matches
     start = performance.now()
-    reset()
     place()
     cancelAnimationFrame(frame)
     frame = requestAnimationFrame(draw)
   }
 
   // A new size or colour scheme: drawn again from the note, at the same
-  // moment of the crumbling.
+  // moment of the tear.
   const redraw = () => {
     if (!on || !build()) return
-    reset()
     place()
     cancelAnimationFrame(frame)
     frame = requestAnimationFrame(draw)
