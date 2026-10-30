@@ -21,7 +21,8 @@ if (!out) {
 
 // The gold renders reach further down than the notes' frame, for the
 // shadows; their top-left corner is the frame's.
-const { width: fullWidth, height: fullHeight } = await sharp(goldPath).metadata()
+const { width: fullWidth, height: fullHeight } =
+  await sharp(goldPath).metadata()
 const WIDTH = fullWidth / 2
 const HEIGHT = fullHeight / 2
 // In the gold layer, alpha below NOISE is shadow-catcher noise and fades
