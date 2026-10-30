@@ -7,6 +7,9 @@ import { historySources } from "@/data/history-sources"
 import { firstVoice, lawVoices } from "@/data/law-voices"
 import {
   chapters,
+  goldPrice,
+  goldShown,
+  inGold,
   inTodaysMoney,
   pile,
   reportField,
@@ -14,9 +17,11 @@ import {
   steps,
   thresholds,
 } from "@/data/overregulation"
-import cashBrick from "@/assets/history/cash-brick.webp"
+import cashBrick from "@/assets/history/cash-brick-bare.webp"
+import cashBrickGold from "@/assets/history/cash-brick-gold.webp"
 import cashCent from "@/assets/history/cash-cent.webp"
-import cashBundle from "@/assets/history/cash-bundle.webp"
+import cashBundle from "@/assets/history/cash-bundle-bare.webp"
+import cashBundleGold from "@/assets/history/cash-bundle-gold.webp"
 import noteCrime from "@/assets/history/note-crime.webp"
 import panopticon from "@/assets/history/panopticon.json"
 import panBase from "@/assets/history/panopticon-base.webp"
@@ -62,18 +67,41 @@ const real = (t: (typeof thresholds)[number]) => inTodaysMoney(t.amount, t.year)
 // What one transaction without an account may move without showing ID,
 // 1991 in today's money, rendered at true scale in Blender from the same
 // camera (scripts/artwork/render-cash.py): 339 notes of 100 euros, then a
-// banded bundle of 100 notes from 2027, and for crypto a single cent. All
-// three stay in view, so the amounts compare.
-const piles = [cashBrick, cashBundle, cashCent]
-const widest = Math.max(...piles.map((image) => image.width))
+// banded bundle of 100 notes from 2027, and for crypto a single cent. In
+// the gold step the same amounts in gold coins of an ounce and less, at
+// their price then and now, lie down in front of the notes: a second
+// picture of each pile, cropped alike, fades in over the first
+// (scripts/artwork/composite-gold.mjs). All three stay in view, so the
+// amounts compare. Each step shows one measure, so the rows stay short.
+const piles = [
+  { notes: cashBrick, gold: cashBrickGold },
+  { notes: cashBundle, gold: cashBundleGold },
+]
+const widest = Math.max(
+  cashCent.width,
+  ...piles.flatMap((pile) => [pile.notes.width, pile.gold.width]),
+)
+const barStep = at("ausweis-bar")
+const goldStep = at("ausweis-gold")
+const cryptoStep = at("ausweis-krypto")
 const cashRows = thresholds.map((t, k) => {
-  const image = piles[k] ?? cashCent
+  const pile = piles[k]
+  const image = pile?.notes ?? cashCent
   const amount = real(t)
+  // The coins are drawn for a fixed amount; once the gold price moves the
+  // figure a tenth away from it, they need rendering again.
+  const shown = goldShown[t.year]
+  if (shown && Math.abs(inGold(t.amount, t.year) / shown - 1) > 0.1) {
+    throw new Error(
+      `Film: the picture shows ${shown} oz of gold for ${t.year}, the price now gives ${inGold(t.amount, t.year)}; render the coins again`,
+    )
+  }
   return {
     at: at(t.step),
     year: t.amount === 0 ? (en ? "Crypto" : "Krypto") : t.year,
     zero: t.amount === 0,
     image,
+    gold: pile?.gold,
     style: `--w: ${((image.width / widest) * 100).toFixed(2)}%`,
     value:
       t.amount === 0
@@ -90,9 +118,23 @@ const cashRows = thresholds.map((t, k) => {
           : "dein Name bei jeder Übertragung über einen Anbieter"
         : t.year >= thisYear
           ? en
-            ? `from July ${t.year}; in cash from €3,000`
-            : `ab Juli ${t.year}; bar ab 3.000 €`
+            ? "in cash from €3,000"
+            : "bar schon ab 3.000 €"
           : `${en ? "then" : "damals"} ${n(t.amount)} ${t.unit === "ECU" ? "ECU" : "€"}`,
+    ounces:
+      t.amount === 0
+        ? undefined
+        : en
+          ? `${n(inGold(t.amount, t.year))} oz`
+          : `${n(inGold(t.amount, t.year))} Unzen`,
+    goldDetail:
+      t.year >= thisYear
+        ? en
+          ? "of gold at today’s price"
+          : "Gold zum heutigen Preis"
+        : en
+          ? `of gold at the price of ${t.year}`
+          : `Gold zum Preis von ${t.year}`,
   }
 })
 
@@ -375,19 +417,42 @@ const noteKeep = String(kept / 100)
               <li class:list={["cash-row", { zero: row.zero }]} data-at={row.at} style={row.style}>
                 <span class="cash-pile">
                   <img src={row.image.src} width={row.image.width} height={row.image.height} alt="" decoding="async" />
+                  {row.gold && (
+                    <img class="cash-coins" src={row.gold.src} width={row.gold.width} height={row.gold.height} alt="" decoding="async" data-at={goldStep} />
+                  )}
                 </span>
                 <p class="cash-label">
                   <span class="cash-year">{row.year}</span>
-                  <b>{row.value}</b>
-                  <span>{row.detail}</span>
+                  {row.zero ? (
+                    <span class="cash-measure">
+                      <b>{row.value}</b>
+                      <span class="cash-detail">{row.detail}</span>
+                    </span>
+                  ) : (
+                    <span class="cash-measures">
+                      <span class="cash-measure" data-only={`${barStep},${cryptoStep}`}>
+                        <b>{row.value}</b>
+                        <span class="cash-detail" data-only={String(barStep)}>{row.detail}</span>
+                      </span>
+                      <span class="cash-measure" data-only={String(goldStep)}>
+                        <b>{row.ounces}</b>
+                        <span class="cash-detail">{row.goldDetail}</span>
+                      </span>
+                    </span>
+                  )}
                 </p>
               </li>
             ))}
           </ol>
-          <p class="scene-caption">
-            {en
-              ? "At true scale, 1991 in today’s money: what a single transaction without an account may move without ID."
-              : "Maßstabsgetreu, 1991 in heutigem Geld: so viel darf ein einzelnes Geschäft ohne Konto bewegen, ohne Ausweis."}
+          <p class="scene-caption cash-captions">
+            <span data-only={`${barStep},${cryptoStep}`}>
+              {en ? "At true scale, 1991 in today’s money." : "Maßstabsgetreu, 1991 in heutigem Geld."}
+            </span>
+            <span data-only={String(goldStep)}>
+              {en
+                ? `At true scale, gold at the price of 1991 and of ${goldPrice.asOf.en}.`
+                : `Maßstabsgetreu, Gold zum Preis von 1991 und von ${goldPrice.asOf.de}.`}
+            </span>
           </p>
         </div>
 
@@ -1162,22 +1227,64 @@ const noteKeep = String(kept / 100)
     translate: 0 0;
   }
 
-  /* Was vorher galt, tritt zurück, bleibt aber lesbar. */
-  .view[data-step-id="ausweis-2017"] .cash-row:not(.zero):first-child,
-  .view[data-step-id="ausweis-heute"] .cash-row:not(.zero) {
+  /* Mit dem Cent treten die Stapel zurück, bleiben aber lesbar. */
+  .view[data-step-id="ausweis-krypto"] .cash-row:not(.zero) {
     opacity: 0.5;
     filter: saturate(0.4);
   }
 
+  /* Je Stapel zwei gleich zugeschnittene Bilder übereinander: die Scheine
+     allein und mit dem Gold davor, das im Gold-Schritt einblendet. */
   .cash-pile {
     display: grid;
     justify-items: center;
   }
 
   .cash-pile img {
+    grid-area: 1 / 1;
     display: block;
     inline-size: var(--w);
     block-size: auto;
+  }
+
+  .cash-coins {
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+
+  .cash-coins.on {
+    opacity: 1;
+  }
+
+  /* Je Schritt eine Messgröße, Euro oder Gold; beide liegen übereinander,
+     damit die Zeile beim Wechsel nicht springt. */
+  .cash-measures,
+  .cash-captions {
+    display: grid;
+  }
+
+  .cash-measures > *,
+  .cash-captions > * {
+    grid-area: 1 / 1;
+  }
+
+  .cash-measure {
+    display: grid;
+    align-content: start;
+    gap: 0.1rem;
+  }
+
+  .cash-label [data-only],
+  .cash-captions [data-only] {
+    transition:
+      opacity 0.4s ease,
+      visibility 0.4s;
+  }
+
+  .cash-label [data-only]:not(.on),
+  .cash-captions [data-only]:not(.on) {
+    opacity: 0;
+    visibility: hidden;
   }
 
   .cash-label {
@@ -1703,6 +1810,11 @@ const noteKeep = String(kept / 100)
 
     .cash-label b {
       font-size: clamp(1.2rem, 0.8rem + 2.4cqi, 1.8rem);
+    }
+
+    /* Was der Cent bedeutet, sagt die Schlagzeile darunter schon. */
+    .cash-row.zero .cash-detail {
+      display: none;
     }
 
     .scene {

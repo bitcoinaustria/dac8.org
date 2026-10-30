@@ -6,6 +6,11 @@
 #   bundle: 100 notes of 100 euros (10,000 euros), one banded bundle
 #   slim:  13 notes of 100 and one of 50 on top (1,350 euros)
 #   cent:  a one-cent coin
+#   gold-brick: 47 one-ounce gold coins in four stacks in front of the brick
+#   gold-bundle: 2.7 ounces of gold (two coins of one ounce, one of half an
+#          ounce, two of a tenth) in front of the bundle
+#   plain-brick, plain-bundle: the notes in plain paper, only to line the
+#          gold up with the existing note pictures
 # Usage: blender -b -P scripts/artwork/render-cash.py -- <object> <out.png> [note100.png] [note50.png]
 # The note pictures are fictional notes generated with Codex (no serial
 # numbers or security features, DAC8.ORG where the issuer would be); the
@@ -14,6 +19,9 @@
 # size (54.54545 px/cm), then crop; never resize individual cutouts to fit.
 # The bundle export uses a 1200x750 PNG, then x=126, y=199, w=1013, h=444;
 # clear alpha below 32/255 (shadow-catcher noise), WebP quality 82.
+# The gold renders keep the notes in the scene as an invisible shadow
+# catcher, so coins in front hide them and cast their shadows onto them;
+# scripts/artwork/composite-gold.mjs lays them over the note pictures.
 # SAMPLES and PCT lower the cost of previews without changing the camera.
 # Add -noaudio to the Blender command on machines without an audio server.
 import math
@@ -160,8 +168,10 @@ def band(name, w, h, d, at, mat, width=3.0):
     return obj
 
 
-note100 = material_note(TEX100, "note100")
-note50 = material_note(TEX50, "note50")
+# The note pictures are only needed where the notes themselves show.
+TEXTURED = which in ("brick", "bundle", "slim")
+note100 = material_note(TEX100, "note100") if TEXTURED else None
+note50 = material_note(TEX50, "note50") if TEXTURED else None
 edge100 = material_edge("edge100", (0.93, 0.95, 0.88), (0.62, 0.68, 0.58))
 edge50 = material_edge("edge50", (0.97, 0.88, 0.77), (0.76, 0.6, 0.46))
 
@@ -201,19 +211,203 @@ def material_band(name):
 
 band_mat = material_band("band")
 
-objects = []
-if which in ("brick", "bundle"):
+
+
+def notes(kind, top, side):
+    # The brick or the bundle, the same notes in the same places every time.
+    made = []
     z = 0.0
-    for b in range(3 if which == "brick" else 1):
+    for b in range(3 if kind == "brick" else 1):
         d = 100 * NOTE
         jx, jy = rnd.uniform(-0.08, 0.08), rnd.uniform(-0.06, 0.06)
-        objects.append(box(f"bundle{b}", W100, H100, d, note100, edge100, (jx, jy, z), rnd.uniform(-0.006, 0.006)))
-        objects.append(band(f"band{b}", W100, H100, d, (jx, jy, z), band_mat))
+        made.append(box(f"bundle{b}", W100, H100, d, top, side, (jx, jy, z), rnd.uniform(-0.006, 0.006)))
+        made.append(band(f"band{b}", W100, H100, d, (jx, jy, z), band_mat))
         z += d
-    for k in range(39 if which == "brick" else 0):
+    for k in range(39 if kind == "brick" else 0):
         jx, jy = rnd.uniform(-0.25, 0.25), rnd.uniform(-0.18, 0.18)
-        objects.append(box(f"loose{k}", W100, H100, NOTE, note100, edge100, (jx, jy, z), rnd.uniform(-0.02, 0.02)))
+        made.append(box(f"loose{k}", W100, H100, NOTE, top, side, (jx, jy, z), rnd.uniform(-0.02, 0.02)))
         z += NOTE
+    return made
+
+
+# Gold, polished: the field nearly a mirror, the raised design frosted so it
+# reads, the edge reeded.
+GOLD = (1.0, 0.66, 0.22)
+
+
+def material_reeded(name):
+    mat = material_plain(name, GOLD, 0.2, 1.0)
+    nt = mat.node_tree
+    bsdf = nt.nodes["Principled BSDF"]
+    coord = nt.nodes.new("ShaderNodeTexCoord")
+    angle = nt.nodes.new("ShaderNodeTexGradient")
+    angle.gradient_type = "RADIAL"
+    ridges = nt.nodes.new("ShaderNodeMath")
+    ridges.operation = "MULTIPLY"
+    ridges.inputs[1].default_value = 150 * math.tau
+    wave = nt.nodes.new("ShaderNodeMath")
+    wave.operation = "SINE"
+    bump = nt.nodes.new("ShaderNodeBump")
+    bump.inputs["Strength"].default_value = 0.6
+    bump.inputs["Distance"].default_value = 0.004
+    nt.links.new(coord.outputs["Object"], angle.inputs["Vector"])
+    nt.links.new(angle.outputs["Fac"], ridges.inputs[0])
+    nt.links.new(ridges.outputs[0], wave.inputs[0])
+    nt.links.new(wave.outputs[0], bump.inputs["Height"])
+    nt.links.new(bump.outputs["Normal"], bsdf.inputs["Normal"])
+    return mat
+
+
+def coin(name, diameter, thickness, at, rot, face):
+    # One gold coin lying flat, its centre at `at` on the floor or on the
+    # coin below. Only coins whose face shows get the raised design: a rim,
+    # organ pipes in the middle, and the legend around them.
+    x, y, z = at
+    bpy.ops.mesh.primitive_cylinder_add(vertices=192, radius=diameter / 2, depth=thickness, location=(x, y, z + thickness / 2))
+    body = bpy.context.active_object
+    body.name = name
+    body.rotation_euler[2] = rot
+    body.data.materials.append(gold_field)
+    body.data.materials.append(gold_edge)
+    for poly in body.data.polygons:
+        poly.material_index = 0 if abs(poly.normal.z) > 0.5 else 1
+    bevel = body.modifiers.new("bevel", "BEVEL")
+    bevel.width = thickness * 0.12
+    bevel.segments = 3
+    bpy.ops.object.shade_smooth_by_angle(angle=math.radians(40))
+    made = [body]
+    if not face:
+        return made
+    top = z + thickness
+    r = diameter / 2
+    relief = thickness * 0.06
+    bpy.ops.mesh.primitive_torus_add(major_radius=r * 0.93, minor_radius=r * 0.045, location=(x, y, top))
+    rim = bpy.context.active_object
+    rim.scale[2] = 0.5
+    rim.data.materials.append(gold_frost)
+    made.append(rim)
+    pipes = bpy.data.objects.new(f"{name}-pipes", bpy.data.meshes.new(f"{name}-pipes"))
+    scene.collection.objects.link(pipes)
+    verts, faces = [], []
+
+    def prism(outline):
+        # A flat outline raised off the face, with its walls.
+        base = len(verts)
+        n = len(outline)
+        for vx, vy in outline:
+            verts.extend([(vx, vy, 0), (vx, vy, relief)])
+        faces.append(tuple(base + 2 * k + 1 for k in range(n)))
+        for k in range(n):
+            a, b = base + 2 * k, base + 2 * ((k + 1) % n)
+            faces.append((a, b, b + 1, a + 1))
+
+    # Organ pipes: slim, with a pointed foot, the tallest at the middle and
+    # at both ends, as in the front of a concert-hall organ.
+    count = 13
+    for k in range(count):
+        u = (k - (count - 1) / 2) / ((count - 1) / 2)
+        w = r * 0.052
+        cx = u * r * 0.5
+        foot = r * 0.1
+        y0 = -r * 0.26
+        y1 = y0 + r * (0.42 + 0.3 * (1 - abs(u)) ** 2 + 0.2 * abs(u) ** 6)
+        prism([(cx, y0 - foot), (cx + w / 2, y0), (cx + w / 2, y1), (cx - w / 2, y1), (cx - w / 2, y0)])
+    # The ledge under the feet.
+    prism([(-r * 0.58, -r * 0.41), (r * 0.58, -r * 0.41), (r * 0.58, -r * 0.36), (-r * 0.58, -r * 0.36)])
+    pipes.data.from_pydata(verts, [], faces)
+    pipes.data.materials.append(gold_frost)
+    pipes.location = (x, y, top)
+    pipes.rotation_euler[2] = rot
+    made.append(pipes)
+    # The legend along a circle, built at the origin and then moved, since
+    # text follows its curve in the curve's own space.
+    bpy.ops.curve.primitive_bezier_circle_add(radius=r * 0.72, location=(0, 0, 0))
+    circle = bpy.context.active_object
+    circle.scale[0] = -1
+    bpy.ops.object.text_add(location=(0, 0, 0))
+    legend = bpy.context.active_object
+    legend.data.body = "DAC8.ORG \u00b7 1 UNZE GOLD 999,9"
+    legend.data.size = r * 0.17
+    legend.data.extrude = relief / 2
+    legend.data.space_character = 1.05
+    legend.data.follow_curve = circle
+    legend.data.materials.append(gold_frost)
+    bpy.ops.object.convert(target="MESH")
+    legend = bpy.context.active_object
+    bpy.data.objects.remove(circle)
+    legend.location = (x, y, top + relief / 2)
+    # Over the top, so it reads upright.
+    legend.rotation_euler[2] = rot + math.radians(262)
+    made.append(legend)
+    return made
+
+
+coins = random.Random(47)
+# Coins of one ounce, half and a tenth: diameter and thickness in cm.
+OUNCE = (3.7, 0.2)
+HALF = (2.8, 0.16)
+TENTH = (1.6, 0.12)
+# Turned so the pipes stand upright as the camera sees them.
+UPRIGHT = math.radians(22)
+
+
+def coin_stack(name, size, count, at):
+    made = []
+    z = 0.0
+    for k in range(count):
+        jx, jy = coins.uniform(-0.035, 0.035), coins.uniform(-0.035, 0.035)
+        last = k == count - 1
+        rot = UPRIGHT + coins.uniform(-0.12, 0.12) if last else coins.uniform(0, math.tau)
+        made += coin(f"{name}{k}", *size, (at[0] + jx, at[1] + jy, z), rot, last)
+        z += size[1]
+    return made
+
+
+objects = []
+if which in ("brick", "bundle"):
+    objects += notes(which, note100, edge100)
+elif which.split("-")[0] in ("gold", "plain"):
+    kind = which.split("-")[1]
+    # Matte, so the stand-in catches the coins' shadows but no change in
+    # what it would mirror.
+    paper = material_plain("paper", (0.78, 0.84, 0.72), 1.0)
+    paper.node_tree.nodes["Principled BSDF"].inputs["Specular IOR Level"].default_value = 0.0
+    gold_field = material_plain("gold-field", GOLD, 0.1, 1.0)
+    # A flat field under a camera without perspective mirrors one colour
+    # all over; a faint, broad waviness lets the sheen run across it.
+    nt = gold_field.node_tree
+    wavy = nt.nodes.new("ShaderNodeTexNoise")
+    wavy.inputs["Scale"].default_value = 0.35
+    wavy.inputs["Detail"].default_value = 1.0
+    wavy_bump = nt.nodes.new("ShaderNodeBump")
+    wavy_bump.inputs["Strength"].default_value = 0.8
+    nt.links.new(wavy.outputs["Fac"], wavy_bump.inputs["Height"])
+    nt.links.new(wavy_bump.outputs["Normal"], nt.nodes["Principled BSDF"].inputs["Normal"])
+    gold_frost = material_plain("gold-frost", GOLD, 0.55, 1.0)
+    gold_edge = material_reeded("gold-edge")
+    stand_in = notes(kind, paper, paper)
+    if which.startswith("gold"):
+        # The notes stay where they are but only take the coins' shadows.
+        for obj in stand_in:
+            obj.is_shadow_catcher = True
+            obj.visible_shadow = False
+        if kind == "brick":
+            # 47 ounces in four stacks of 12, 12, 12 and 11, in a row in
+            # front of the brick, low enough that its band still shows.
+            for name, count, at in (("a", 12, (-4.4, -5.9)), ("b", 12, (-0.5, -6.05)), ("c", 12, (3.4, -5.85)), ("d", 11, (7.2, -6.0))):
+                objects += coin_stack(name, OUNCE, count, at)
+        else:
+            # 2.7 ounces: two tenths, two ounces and a half, in front.
+            objects += coin("tenth0", *TENTH, (-5.5, -4.9, 0), UPRIGHT - 0.15, True)
+            objects += coin("tenth1", *TENTH, (-3.7, -5.4, 0), UPRIGHT + 0.2, True)
+            objects += coin_stack("a", OUNCE, 2, (-0.6, -5.95))
+            objects += coin("half", *HALF, (3.2, -5.5, 0), UPRIGHT + 0.1, True)
+        # The notes were rendered without the gold, so it may not brighten
+        # them with its glow; it still casts its shadow.
+        for obj in objects:
+            obj.visible_diffuse = False
+    else:
+        objects += stand_in
 elif which == "slim":
     z = 0.0
     for k in range(13):
@@ -262,6 +456,79 @@ scene.world = world
 world.use_nodes = True
 world.node_tree.nodes["Background"].inputs["Color"].default_value = (0.42, 0.44, 0.48, 1)
 world.node_tree.nodes["Background"].inputs["Strength"].default_value = 0.22
+if which.startswith("gold"):
+    # Polished gold mirrors its surroundings: reflections see bright studio
+    # strips above and a dark floor, everything else the same dim grey.
+    nt = world.node_tree
+    grey = nt.nodes["Background"]
+    world_out = nt.nodes["World Output"]
+    studio = nt.nodes.new("ShaderNodeBackground")
+    coord = nt.nodes.new("ShaderNodeTexCoord")
+    sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+    ramp = nt.nodes.new("ShaderNodeValToRGB")
+    els = ramp.color_ramp.elements
+    els[0].position = 0.0
+    els[0].color = (0.03, 0.03, 0.035, 1)
+    els[1].position = 1.0
+    els[1].color = (0.9, 0.88, 0.85, 1)
+    for pos, value in ((0.12, 0.08), (0.22, 1.2), (0.32, 0.15), (0.45, 0.3), (0.6, 0.15), (0.72, 1.6), (0.85, 0.3)):
+        e = els.new(pos)
+        e.color = (value, value * 0.98, value * 0.95, 1)
+    path = nt.nodes.new("ShaderNodeLightPath")
+    mix = nt.nodes.new("ShaderNodeMixShader")
+    nt.links.new(coord.outputs["Generated"], sep.inputs["Vector"])
+    nt.links.new(sep.outputs["Z"], ramp.inputs["Fac"])
+    nt.links.new(ramp.outputs["Color"], studio.inputs["Color"])
+    nt.links.new(path.outputs["Is Glossy Ray"], mix.inputs["Fac"])
+    nt.links.new(grey.outputs["Background"], mix.inputs[1])
+    nt.links.new(studio.outputs["Background"], mix.inputs[2])
+    nt.links.new(mix.outputs["Shader"], world_out.inputs["Surface"])
+    # A softbox where the coins' faces point the camera's eye: a camera
+    # without perspective sees every face mirror the same spot, so that spot
+    # is a broad light that fades to its edges. Only mirrors see it.
+    away = (-math.sin(math.radians(22)), math.cos(math.radians(22)))
+    elev = math.radians(30)
+    bpy.ops.mesh.primitive_plane_add(size=1, location=(away[0] * math.cos(elev) * 60, away[1] * math.cos(elev) * 60, math.sin(elev) * 60))
+    box = bpy.context.active_object
+    box.scale = (46, 30, 1)
+    from mathutils import Vector as V
+
+    box.rotation_euler = (V((0, 0, 0)) - box.location).to_track_quat("Z", "Y").to_euler()
+    for ray in ("camera", "diffuse", "shadow", "transmission", "volume_scatter"):
+        setattr(box, f"visible_{ray}", False)
+    glow = bpy.data.materials.new("softbox")
+    glow.use_nodes = True
+    gnt = glow.node_tree
+    gnt.nodes.remove(gnt.nodes["Principled BSDF"])
+    emit = gnt.nodes.new("ShaderNodeEmission")
+    gcoord = gnt.nodes.new("ShaderNodeTexCoord")
+    falloff = gnt.nodes.new("ShaderNodeTexGradient")
+    falloff.gradient_type = "SPHERICAL"
+    # Strips across the box, so a face that tilts a little runs from
+    # bright to dark.
+    strips = gnt.nodes.new("ShaderNodeTexWave")
+    strips.wave_type = "BANDS"
+    strips.bands_direction = "Y"
+    strips.inputs["Scale"].default_value = 2.5
+    sharpen = gnt.nodes.new("ShaderNodeMath")
+    sharpen.operation = "POWER"
+    sharpen.inputs[1].default_value = 3.0
+    lift = gnt.nodes.new("ShaderNodeMath")
+    lift.operation = "MULTIPLY_ADD"
+    lift.inputs[1].default_value = 1.8
+    lift.inputs[2].default_value = 0.25
+    strength = gnt.nodes.new("ShaderNodeMath")
+    strength.operation = "MULTIPLY"
+    gnt.links.new(gcoord.outputs["Object"], falloff.inputs["Vector"])
+    gnt.links.new(gcoord.outputs["Object"], strips.inputs["Vector"])
+    gnt.links.new(strips.outputs["Fac"], sharpen.inputs[0])
+    gnt.links.new(sharpen.outputs[0], lift.inputs[0])
+    gnt.links.new(falloff.outputs["Fac"], strength.inputs[0])
+    gnt.links.new(lift.outputs[0], strength.inputs[1])
+    gnt.links.new(strength.outputs[0], emit.inputs["Strength"])
+    emit.inputs["Color"].default_value = (1.0, 0.97, 0.92, 1)
+    gnt.links.new(emit.outputs["Emission"], gnt.nodes["Material Output"].inputs["Surface"])
+    box.data.materials.append(glow)
 
 
 def light(name, energy, size, at, color, target=(0, 0, 1.5)):
@@ -306,5 +573,17 @@ from mathutils import Vector
 
 cam_obj.rotation_euler = Vector(direction).to_track_quat("-Z", "Y").to_euler()
 
+if which.startswith("gold"):
+    # Room below the frame for the coins' soft shadows: the picture grows
+    # downwards and the camera shifts with it, so the top-left corner, the
+    # scale and every place in the old frame stay where they were.
+    extend = 400
+    scene.render.resolution_y = 1500 + extend
+    cam.shift_y = -(extend / 2) / 2400
+if os.environ.get("CLOSE"):
+    # A close look at one place, e.g. CLOSE=5.3,-10.3,4 (x, y, width in cm).
+    cx, cy, size = (float(v) for v in os.environ["CLOSE"].split(","))
+    cam.ortho_scale = size
+    cam_obj.location = (cam_obj.location[0] + cx, cam_obj.location[1] + cy, cam_obj.location[2] - 1.5 + 2.4)
 scene.render.filepath = out
 bpy.ops.render.render(write_still=True)
