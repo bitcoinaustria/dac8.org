@@ -753,15 +753,19 @@ const noteKeep = String(kept / 100)
     let queued = false
     const render = () => {
       queued = false
+      // Every position is read before anything changes, so the page need
+      // not be laid out again within the frame.
       const middle = window.innerHeight * 0.55
+      const boxes = spacers.map((spacer) => spacer.getBoundingClientRect())
+      const filmBox = film.getBoundingClientRect()
       let i = 0
-      spacers.forEach((spacer, k) => {
-        if (spacer.getBoundingClientRect().top <= middle) i = k
+      boxes.forEach((box, k) => {
+        if (box.top <= middle) i = k
       })
       if (i !== current) show(i)
       const span = stepYears[i]
       if (span) {
-        const box = spacers[i].getBoundingClientRect()
+        const box = boxes[i]
         // The span is run through by four fifths of the step.
         const p = Math.min(
           1,
@@ -772,10 +776,10 @@ const noteKeep = String(kept / 100)
         const last = stepYears.slice(0, i).filter(Boolean).at(-1)
         if (last) scrub(last[1])
       }
-      const box = film.getBoundingClientRect()
       document.documentElement.toggleAttribute(
         "data-immersive",
-        box.top <= window.innerHeight * 0.2 && box.bottom >= window.innerHeight,
+        filmBox.top <= window.innerHeight * 0.2 &&
+          filmBox.bottom >= window.innerHeight,
       )
     }
     const queue = () => {
@@ -853,7 +857,10 @@ const noteKeep = String(kept / 100)
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr);
-    block-size: calc(100dvh - var(--header-height));
+    /* Die kleinste Fensterhöhe, nicht die wechselnde: Auf dem Handy fährt
+       die Adressleiste beim Scrollen ein und aus, und mit ihr würde die
+       ganze Bühne mitten im Film neu gesetzt. */
+    block-size: calc(100svh - var(--header-height));
     padding-block: var(--space-xs) var(--space-s);
   }
 
