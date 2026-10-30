@@ -11,6 +11,10 @@
 #          ounce, two of a tenth) in front of the bundle
 #   plain-brick, plain-bundle: the notes in plain paper, only to line the
 #          gold up with the existing note pictures
+#   seized-stack, -band, -pair, -landed, -tag, -all: the film's last
+#          picture, a bundle of 100 from which the state pulls two, in
+#          layers for scripts/artwork/composite-seized.mjs; its own camera
+#          (TURN=-46 SIZE=30 ELEV=22), not to the opening's scale
 # Usage: blender -b -P scripts/artwork/render-cash.py -- <object> <out.png> [note100.png] [note50.png]
 # The note pictures are fictional notes generated with Codex (no serial
 # numbers or security features, DAC8.ORG where the issuer would be); the
@@ -169,7 +173,7 @@ def band(name, w, h, d, at, mat, width=3.0):
 
 
 # The note pictures are only needed where the notes themselves show.
-TEXTURED = which in ("brick", "bundle", "slim")
+TEXTURED = which in ("brick", "bundle", "slim") or which.startswith("seized")
 note100 = material_note(TEX100, "note100") if TEXTURED else None
 note50 = material_note(TEX50, "note50") if TEXTURED else None
 edge100 = material_edge("edge100", (0.93, 0.95, 0.88), (0.62, 0.68, 0.58))
@@ -364,7 +368,48 @@ def coin_stack(name, size, count, at):
 
 
 objects = []
-if which in ("brick", "bundle"):
+# The film's last picture: a bundle of 100 again, from which the state
+# pulls the top two notes. One camera renders it in layers, which the film
+# moves in two dimensions: the 98 notes left, the band around them, the
+# pair alone where it starts, on top under the band, the pair where it
+# lands, on the table beside the bundle with its shadow, and the red band
+# the state puts around it there. The whole set is turned so that the pair
+# slides out towards the front right.
+SEIZED_TURN = math.radians(float(os.environ.get("TURN", -32)))
+SEIZED_TRAVEL = W100 + 2.6
+seized_pair = []
+if which.startswith("seized"):
+    from mathutils import Matrix
+
+    layer = which.split("-")[1]
+    rig = bpy.data.objects.new("rig", None)
+    scene.collection.objects.link(rig)
+    rig.rotation_euler[2] = SEIZED_TURN
+    made = {}
+    if layer in ("stack", "band", "all"):
+        made["stack"] = box("stack", W100, H100, 98 * NOTE, note100, edge100)
+    if layer in ("band", "all"):
+        made["band"] = band("band", W100, H100, 100 * NOTE, (0, 0, 0), band_mat)
+    landed = layer in ("landed", "tag", "all")
+    if layer in ("pair", "landed", "tag", "all"):
+        # Two notes out of line, so both show.
+        shift = (SEIZED_TRAVEL, 0, -98 * NOTE) if landed else (0, 0, 0)
+        for k, (jx, jy, rot) in enumerate(((0.0, 0.0, 0.0), (0.55, -0.4, 0.06))):
+            at = (jx + shift[0], jy + shift[1], (98 + k) * NOTE + shift[2])
+            seized_pair.append(box(f"pair{k}", W100, H100, NOTE, note100, edge100, at, rot))
+    if layer in ("tag", "all"):
+        red = material_plain("red", (0.62, 0.015, 0.03), 0.55)
+        made["tag"] = band("tag", W100, H100 + 0.6, 2 * NOTE, (SEIZED_TRAVEL + 0.3, -0.2, 0), red, 2.4)
+    for obj in [*made.values(), *seized_pair]:
+        obj.parent = rig
+        objects.append(obj)
+    if layer == "band":
+        # The band alone, hidden where the stack is in front of it.
+        made["stack"].is_holdout = True
+    if layer == "tag":
+        for obj in seized_pair:
+            obj.is_holdout = True
+elif which in ("brick", "bundle"):
     objects += notes(which, note100, edge100)
 elif which.split("-")[0] in ("gold", "plain"):
     kind = which.split("-")[1]
@@ -444,10 +489,13 @@ elif which == "cent":
 else:
     raise ValueError(f"Unknown cash object: {which}")
 
-# Shadow catcher on the floor.
+# Shadow catcher on the floor. The band and the pair on top of the stack
+# leave it out: their shadows fall on the notes beneath, not the table.
 bpy.ops.mesh.primitive_plane_add(size=200, location=(0, 0, 0))
 floor = bpy.context.active_object
 floor.is_shadow_catcher = True
+if which in ("seized-band", "seized-pair", "seized-tag"):
+    floor.hide_render = True
 
 # Light: a large soft key from the top left, a fill from the right, and a
 # dim grey world.
@@ -561,7 +609,7 @@ cam.ortho_scale = 22.0
 cam_obj = bpy.data.objects.new("cam", cam)
 scene.collection.objects.link(cam_obj)
 scene.camera = cam_obj
-elev, yaw, dist = math.radians(30), math.radians(-22), 60
+elev, yaw, dist = math.radians(float(os.environ.get("ELEV", 30))), math.radians(-22), 60
 cam_obj.location = (
     dist * math.cos(elev) * math.sin(-yaw),
     -dist * math.cos(elev) * math.cos(yaw),
@@ -580,6 +628,37 @@ if which.startswith("gold"):
     extend = 400
     scene.render.resolution_y = 1500 + extend
     cam.shift_y = -(extend / 2) / 2400
+if which.startswith("seized"):
+    # Framed on the middle between the bundle and where the pair lands; a
+    # little taller than the opening's pictures.
+    mid = Vector((SEIZED_TRAVEL / 2, 0, 0))
+    mid.rotate(Matrix.Rotation(SEIZED_TURN, 3, "Z"))
+    cam_obj.location.x += mid.x
+    cam_obj.location.y += mid.y
+    cam_obj.location.z -= 1.0
+    cam.ortho_scale = float(os.environ.get("SIZE", 33))
+    scene.render.resolution_y = 1800
+    # Where the pair's corner is, in pixels of the full frame, at the start,
+    # at the stack's edge and on the table: the film moves the pair layer
+    # along these.
+    from bpy_extras.object_utils import world_to_camera_view
+
+    bpy.context.view_layer.update()
+
+    def pixel(local):
+        p = rig.matrix_world @ Vector(local)
+        v = world_to_camera_view(scene, cam_obj, p)
+        return [round(v.x * 2400, 1), round((1 - v.y) * 1800, 1)]
+
+    top = 99 * NOTE
+    print(
+        "SEIZED",
+        {
+            "start": pixel((0, 0, top)),
+            "slid": pixel((SEIZED_TRAVEL, 0, top)),
+            "landed": pixel((SEIZED_TRAVEL, 0, top - 98 * NOTE)),
+        },
+    )
 if os.environ.get("CLOSE"):
     # A close look at one place, e.g. CLOSE=5.3,-10.3,4 (x, y, width in cm).
     cx, cy, size = (float(v) for v in os.environ["CLOSE"].split(","))
