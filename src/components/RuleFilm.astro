@@ -23,11 +23,15 @@ import cashCent from "@/assets/history/cash-cent.webp"
 import cashBundle from "@/assets/history/cash-bundle-bare.webp"
 import cashBundleGold from "@/assets/history/cash-bundle-gold.webp"
 import seized from "@/assets/history/seized.json"
-import seizedBand from "@/assets/history/seized-band.webp"
+import seizedCoin0 from "@/assets/history/seized-coin-0.webp"
+import seizedCoin1 from "@/assets/history/seized-coin-1.webp"
+import seizedCoin2 from "@/assets/history/seized-coin-2.webp"
+import seizedCoin3 from "@/assets/history/seized-coin-3.webp"
+import seizedCoin4 from "@/assets/history/seized-coin-4.webp"
 import seizedLanded from "@/assets/history/seized-landed.webp"
-import seizedPair from "@/assets/history/seized-pair.webp"
-import seizedStack from "@/assets/history/seized-stack.webp"
-import seizedTag from "@/assets/history/seized-tag.webp"
+import seizedLift0 from "@/assets/history/seized-lift-0.webp"
+import seizedLift1 from "@/assets/history/seized-lift-1.webp"
+import seizedTray from "@/assets/history/seized-tray.webp"
 import panopticon from "@/assets/history/panopticon.json"
 import panBase from "@/assets/history/panopticon-base.webp"
 import type { Language } from "@/lib/i18n"
@@ -39,8 +43,8 @@ import type { Language } from "@/lib/i18n"
 // needs ID, and nothing at all for crypto; rules set on every way money can
 // take, then ever more authorities in the watchtower; six pages beside 488;
 // a sea of reports, most of them kept on file, beside a few convictions;
-// and a bundle of 100 notes from which the state pulls two. Grey is what is collected, red what
-// comes of it or what is new. Each step cites its sources by number from
+// and a hundred one-euro coins of which the state takes two. Grey is what
+// is collected, red what comes of it or what is new. Each step cites its sources by number from
 // the list at the end of the page (src/data/history-sources.ts). Without
 // the script the headlines stand as text one below the other.
 interface Props {
@@ -322,23 +326,45 @@ const sandStates = JSON.stringify({
 const fieldSteps = ["ergebnis-2025", "ergebnis-liegen", "ergebnis-urteile"]
   .map(at)
   .join(",")
-// A bundle of 100 notes like the one at the start, from which the state
-// pulls the share Europol last estimated: the top two slide out from
-// under the band, drop onto the table and get a red band. Rendered in layers
-// from one camera (render-cash.py, seized-*; composite-seized.mjs), laid
-// over one another in the frame they share; CSS moves the pair.
+// A hundred one-euro coins in ten rows of ten, from which the state takes
+// the share Europol last estimated: two rise from the middle, glide
+// forward over the others into a red tray and leave their gap. Rendered
+// from one camera (render-seized.py; composite-seized.mjs): five lone
+// coins with their shadows, from which the grid is laid out, the two that
+// rise, and the tray with and without them. CSS moves the two and draws
+// their shadows, which grow and soften as they rise.
 const seizedStep = at("ergebnis-euro")
 const kept = recovery.latest.percent
-if (kept !== 2)
+if (kept !== seized.holes.length)
   throw new Error(
-    `Film: the bundle shows 2 notes taken, Europol's share is now ${kept}; render the pair again`,
+    `Film: the coins show ${seized.holes.length} of 100 taken, Europol's share is now ${kept}; render them again`,
   )
-const seizedRects = Object.values(seized.layers)
+const coinPictures = [
+  seizedCoin0,
+  seizedCoin1,
+  seizedCoin2,
+  seizedCoin3,
+  seizedCoin4,
+]
+const liftPictures = [seizedLift0, seizedLift1]
+const { coin, lift, origin, column, row, holes } = seized
+// Where a coin touches the table, by row (0 in front) and column.
+const touch = (r: number, c: number) => [
+  origin[0] + c * column[0] + r * row[0],
+  origin[1] + c * column[1] + r * row[1],
+]
+const corners = [0, 9].flatMap((r) => [0, 9].map((c) => touch(r, c)))
 const view = {
-  x: Math.min(...seizedRects.map((r) => r.x)),
-  y: Math.min(...seizedRects.map((r) => r.y)),
-  right: Math.max(...seizedRects.map((r) => r.x + r.w)),
-  bottom: Math.max(...seizedRects.map((r) => r.y + r.h)),
+  x: Math.min(...corners.map(([x]) => x - coin.x), seized.tray.x),
+  y: Math.min(...corners.map(([, y]) => y - coin.y), seized.tray.y),
+  right: Math.max(
+    ...corners.map(([x]) => x - coin.x + coin.w),
+    seized.tray.x + seized.tray.w,
+  ),
+  bottom: Math.max(
+    ...corners.map(([, y]) => y - coin.y + coin.h),
+    seized.tray.y + seized.tray.h,
+  ),
 }
 const viewW = view.right - view.x
 const viewH = view.bottom - view.y
@@ -347,27 +373,52 @@ const spot = (x: number, y: number) =>
   `left: ${pct(x - view.x, viewW)}; top: ${pct(y - view.y, viewH)}`
 const place = (r: { x: number; y: number; w: number }) =>
   `${spot(r.x, r.y)}; width: ${pct(r.w, viewW)}`
-// The pair's way, in percent of its own size, as CSS translates it.
-const { start, slid, landed } = seized.path
-const pair = seized.layers.pair
-const way = (to: number[]) =>
-  `${pct(to[0] - start[0], pair.w)} ${pct(to[1] - start[1], pair.h)}`
-const pairDown = {
-  x: pair.x + landed[0] - start[0],
-  y: pair.y + landed[1] - start[1],
-}
+// Lengths CSS cannot give in percent, such as shadows, in hundredths of
+// the picture's width.
+const cqi = (value: number) => `${((value / viewW) * 100).toFixed(3)}cqi`
+const taken = (r: number, c: number) =>
+  holes.some(([hr, hc]) => hr === r && hc === c)
+// The grid from the back row forwards, so that each coin covers the
+// shadow of the one behind it; --k orders the wave in which they land.
+const seizedGrid = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0].flatMap((r) =>
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    .filter((c) => !taken(r, c))
+    .map((c) => {
+      const [x, y] = touch(r, c)
+      return {
+        src: coinPictures[Number(seized.kinds[r][c])].src,
+        style: `${spot(x - coin.x, y - coin.y)}; --k: ${9 - r + c}`,
+      }
+    }),
+)
+// The two that rise: their way in percent of their own size, as CSS
+// translates it, and the wave's order where they lie.
+const way = (to: number[]) => `${pct(to[0], lift.w)} ${pct(to[1], lift.h)}`
+const seizedLift = holes.map(([r, c], i) => {
+  const [x, y] = touch(r, c)
+  return {
+    src: liftPictures[i].src,
+    style: `${spot(x - lift.x, y - lift.y)}; --k: ${9 - r + c}`,
+  }
+})
+const trayMiddle = seized.tray.y + seized.tray.h / 2
+const seizedStyle = [
+  `aspect-ratio: ${viewW} / ${viewH}`,
+  `--ratio: ${(viewW / viewH).toFixed(4)}`,
+  `--coin: ${pct(coin.w, viewW)}`,
+  `--lift: ${pct(lift.w, viewW)}`,
+  `--up: ${way(seized.up)}`,
+  `--over: ${way(seized.over)}`,
+  `--down: ${way(seized.down)}`,
+  `--fall: ${cqi(seized.shadow[0])} ${cqi(seized.shadow[1])}`,
+].join("; ")
 const seizedLayers = {
-  stack: place(seized.layers.stack),
-  band: place(seized.layers.band),
-  landed: place(seized.layers.landed),
-  pair: `${place(pair)}; --slid: ${way(slid)}; --landed: ${way(landed)}`,
-  tag: place(seized.layers.tag),
-  // The labels in the empty corners: beside the bundle and before the pair.
-  rest: spot(
-    seized.layers.stack.x + seized.layers.stack.w * 0.96,
-    seized.layers.stack.y + seized.layers.stack.h * 0.2,
-  ),
-  kept: spot(pairDown.x + pair.w * 0.12, pairDown.y + pair.h * 0.62),
+  tray: place(seized.tray),
+  landed: place(seized.landed),
+  // The labels level with the tray: what stays under the grid's left
+  // edge, what the state takes beside the tray.
+  rest: spot(origin[0] - column[0] * 0.44, trayMiddle),
+  kept: spot(seized.tray.x + seized.tray.w + column[0] * 0.1, trayMiddle),
 }
 ---
 
@@ -592,12 +643,12 @@ const seizedLayers = {
             <div
               class="seized"
               data-only={String(seizedStep)}
-              style={`aspect-ratio: ${viewW} / ${viewH}; --ratio: ${(viewW / viewH).toFixed(4)}`}
+              style={seizedStyle}
             >
               <img
-                class="seized-stack"
-                src={seizedStack.src}
-                style={seizedLayers.stack}
+                class="seized-tray"
+                src={seizedTray.src}
+                style={seizedLayers.tray}
                 alt=""
                 decoding="async"
               >
@@ -608,33 +659,30 @@ const seizedLayers = {
                 alt=""
                 decoding="async"
               >
-              <img
-                class="seized-pair"
-                src={seizedPair.src}
-                style={seizedLayers.pair}
-                alt=""
-                decoding="async"
-              >
-              <img
-                class="seized-band"
-                src={seizedBand.src}
-                style={seizedLayers.band}
-                alt=""
-                decoding="async"
-              >
-              <img
-                class="seized-tag"
-                src={seizedTag.src}
-                style={seizedLayers.tag}
-                alt=""
-                decoding="async"
-              >
+              {seizedGrid.map((c) => (
+                  <img
+                    class="seized-coin"
+                    src={c.src}
+                    style={c.style}
+                    alt=""
+                    decoding="async"
+                  />
+                ))}
+              {seizedLift.map((c) => (
+                  <img
+                    class="seized-lift"
+                    src={c.src}
+                    style={c.style}
+                    alt=""
+                    decoding="async"
+                  />
+                ))}
               <span class="seized-label rest" style={seizedLayers.rest}>
-                <b>{n(100 - kept)}</b>
+                <b>{en ? `€${n(100 - kept)}` : `${n(100 - kept)} €`}</b>
                 {en ? "stay with criminals" : "bleiben bei Kriminellen"}
               </span>
               <span class="seized-label kept" style={seizedLayers.kept}>
-                <b>{n(kept)}</b>
+                <b>{en ? `€${n(kept)}` : `${n(kept)} €`}</b>
                 {en ? "taken by the state" : "zieht der Staat ein"}
               </span>
             </div>
@@ -1778,14 +1826,20 @@ const seizedLayers = {
     transition-delay: 1.2s;
   }
 
-  /* Ein Bündel aus 100 Scheinen wie am Anfang: Der Staat zieht die
-     obersten zwei unter der Banderole heraus, sie fallen auf den Tisch und
-     werden rot. Vier Ebenen aus derselben Kamera liegen übereinander. Ihre
+  /* Hundert Ein-Euro-Münzen in zehn Reihen zu zehn. Sie landen in einer
+     Welle auf dem Tisch, dann heben sich zwei aus der Mitte, gleiten über
+     die anderen nach vorn und setzen in der roten Schale auf; ihre Lücke
+     bleibt. Die Schatten der beiden zeichnet CSS: Sie bleiben am Boden,
+     rücken ab und werden weicher, solange die Münzen in der Luft sind. Die
      Grundstellung ist das Ende, damit beim Ausblenden nichts springt; die
      Animation läuft jedes Mal, wenn der Schritt kommt. */
   .seized {
+    --rest: drop-shadow(0.3cqi 0.55cqi 0.35cqi rgb(0 0 0 / 0.3));
+    --high: drop-shadow(var(--fall) 1.1cqi rgb(0 0 0 / 0.16));
+
     position: relative;
     isolation: isolate;
+    container-type: inline-size;
     inline-size: min(100%, 88cqh * var(--ratio));
   }
 
@@ -1795,15 +1849,22 @@ const seizedLayers = {
     block-size: auto;
   }
 
-  .seized-pair {
+  .seized-coin {
+    inline-size: var(--coin);
+  }
+
+  .seized-lift {
+    inline-size: var(--lift);
     opacity: 0;
-    translate: var(--landed);
+    translate: var(--down);
+    filter: var(--rest);
   }
 
   .seized-label {
     position: absolute;
     display: grid;
     max-inline-size: 9em;
+    translate: 0 -50%;
     color: var(--ink-2);
     font-size: var(--type-meta);
     line-height: 1.2;
@@ -1818,56 +1879,85 @@ const seizedLayers = {
     letter-spacing: -0.03em;
   }
 
-  /* Vor dem Paar, an seiner linken Kante ausgerichtet. */
-  .seized-label.kept {
-    justify-items: end;
-    translate: -100% 0;
-    text-align: end;
-  }
-
   .seized-label.kept,
   .seized-label.kept b {
     color: var(--accent);
   }
 
-  .seized.on .seized-pair {
+  .seized.on .seized-coin {
+    animation: seized-drop 0.4s calc(var(--k) * 24ms) backwards;
+  }
+
+  .seized.on .seized-lift {
     animation:
-      seized-pull 1.5s 0.7s both,
-      seized-out 0.2s 2.15s both;
+      seized-drop 0.4s calc(var(--k) * 24ms) both,
+      seized-rise 1.5s 1.1s both,
+      seized-out 0.15s 2.68s forwards;
+  }
+
+  /* Die zweite folgt einen Wimpernschlag später. */
+  .seized.on .seized-lift + .seized-lift {
+    animation-delay: calc(var(--k) * 24ms), 1.18s, 2.68s;
   }
 
   .seized.on .seized-landed {
-    animation: seized-in 0.2s 2.15s both;
-  }
-
-  /* Die rote Banderole des Staats legt sich um das Paar. */
-  .seized.on .seized-tag {
-    animation: seized-tag 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2) 2.3s both;
+    animation: seized-in 0.15s 2.68s both;
   }
 
   .seized.on .seized-label {
-    animation: seized-label 0.5s 2.45s both;
+    animation: seized-label 0.5s 2.8s both;
   }
 
   .seized.on .seized-label.kept {
-    animation-delay: 2.6s;
+    animation-delay: 2.95s;
   }
 
-  /* Langsam an, unter der Banderole hervor, dann fallen sie die Höhe des
-     Stapels hinab auf den Tisch. */
-  @keyframes seized-pull {
+  /* Jede Münze fällt das letzte Stück auf den Tisch. */
+  @keyframes seized-drop {
     from {
-      translate: 0 0;
-      animation-timing-function: cubic-bezier(0.5, 0, 0.25, 1);
+      opacity: 0;
+      transform: translateY(-35%);
+      animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.6);
     }
 
-    80% {
-      translate: var(--slid);
-      animation-timing-function: cubic-bezier(0.55, 0, 1, 1);
+    40% {
+      opacity: 1;
     }
 
     to {
-      translate: var(--landed);
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Erst hoch, dann über die anderen nach vorn, dann hinab in die Schale;
+     in der Luft ein wenig größer, als kämen sie näher. */
+  @keyframes seized-rise {
+    from {
+      translate: 0 0;
+      scale: 1;
+      filter: var(--rest);
+      animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1);
+    }
+
+    22% {
+      translate: var(--up);
+      scale: 1.06;
+      filter: var(--high);
+      animation-timing-function: cubic-bezier(0.45, 0, 0.35, 1);
+    }
+
+    82% {
+      translate: var(--over);
+      scale: 1.06;
+      filter: var(--high);
+      animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.6);
+    }
+
+    to {
+      translate: var(--down);
+      scale: 1;
+      filter: var(--rest);
     }
   }
 
@@ -1884,13 +1974,6 @@ const seizedLayers = {
   @keyframes seized-in {
     from {
       opacity: 0;
-    }
-  }
-
-  @keyframes seized-tag {
-    from {
-      opacity: 0;
-      transform: scale(1.12);
     }
   }
 
