@@ -125,6 +125,9 @@ export const goldSources: Source[] = [
     href: "https://www.ecb.europa.eu/press/annual-reports-financial-statements/wfs/2026/html/ecb.fs261007.en.html",
   },
 ]
+// The ounces the coins in the film's pictures add up to, by year of the
+// threshold (scripts/artwork/render-cash.py, gold-brick and gold-bundle).
+export const goldShown: Record<number, number> = { 1991: 47, 2027: 2.7 }
 // Troy ounces of gold an amount bought in its year, whole ounces from ten.
 export const inGold = (amount: number, year: number) => {
   const ounces = amount / (year === 1991 ? goldPrice[1991] : goldPrice.latest)

@@ -7,6 +7,7 @@ import { historySources } from "@/data/history-sources"
 import { firstVoice, lawVoices } from "@/data/law-voices"
 import {
   chapters,
+  goldShown,
   inGold,
   inTodaysMoney,
   pile,
@@ -15,9 +16,9 @@ import {
   steps,
   thresholds,
 } from "@/data/overregulation"
-import cashBrick from "@/assets/history/cash-brick.webp"
+import cashBrick from "@/assets/history/cash-brick-gold.webp"
 import cashCent from "@/assets/history/cash-cent.webp"
-import cashBundle from "@/assets/history/cash-bundle.webp"
+import cashBundle from "@/assets/history/cash-bundle-gold.webp"
 import noteCrime from "@/assets/history/note-crime.webp"
 import panopticon from "@/assets/history/panopticon.json"
 import panBase from "@/assets/history/panopticon-base.webp"
@@ -63,13 +64,23 @@ const real = (t: (typeof thresholds)[number]) => inTodaysMoney(t.amount, t.year)
 // What one transaction without an account may move without showing ID,
 // 1991 in today's money, rendered at true scale in Blender from the same
 // camera (scripts/artwork/render-cash.py): 339 notes of 100 euros, then a
-// banded bundle of 100 notes from 2027, and for crypto a single cent. All
+// banded bundle of 100 notes from 2027, and for crypto a single cent. In
+// front of the notes lies the same amount in gold coins of an ounce and
+// less, at its price then and now (scripts/artwork/composite-gold.mjs). All
 // three stay in view, so the amounts compare.
 const piles = [cashBrick, cashBundle, cashCent]
 const widest = Math.max(...piles.map((image) => image.width))
 const cashRows = thresholds.map((t, k) => {
   const image = piles[k] ?? cashCent
   const amount = real(t)
+  // The coins are drawn for a fixed amount; once the gold price moves the
+  // figure a tenth away from it, they need rendering again.
+  const shown = goldShown[t.year]
+  if (shown && Math.abs(inGold(t.amount, t.year) / shown - 1) > 0.1) {
+    throw new Error(
+      `Film: the picture shows ${shown} oz of gold for ${t.year}, the price now gives ${inGold(t.amount, t.year)}; render the coins again`,
+    )
+  }
   return {
     at: at(t.step),
     year: t.amount === 0 ? (en ? "Crypto" : "Krypto") : t.year,
