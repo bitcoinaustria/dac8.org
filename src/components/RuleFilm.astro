@@ -22,11 +22,7 @@ import cashBrickGold from "@/assets/history/cash-brick-gold.webp"
 import cashCent from "@/assets/history/cash-cent.webp"
 import cashBundle from "@/assets/history/cash-bundle-bare.webp"
 import cashBundleGold from "@/assets/history/cash-bundle-gold.webp"
-import seized from "@/assets/history/seized.json"
-import seizedCoin from "@/assets/history/seized-coin.webp"
-import seizedLanded from "@/assets/history/seized-landed.webp"
-import seizedShadow from "@/assets/history/seized-shadow.webp"
-import seizedTray from "@/assets/history/seized-tray.webp"
+import noteCrime from "@/assets/history/note-crime.webp"
 import panopticon from "@/assets/history/panopticon.json"
 import panBase from "@/assets/history/panopticon-base.webp"
 import type { Language } from "@/lib/i18n"
@@ -38,8 +34,8 @@ import type { Language } from "@/lib/i18n"
 // needs ID, and nothing at all for crypto; rules set on every way money can
 // take, then ever more authorities in the watchtower; six pages beside 488;
 // a sea of reports, most of them kept on file, beside a few convictions;
-// and 100 euros in a stack of coins, of which the state takes one. Grey is what
-// is collected, red what comes of it or what is new. Each step cites its sources by number from
+// and a 100-euro note from which the state tears a red sliver. Grey is what is collected, red what
+// comes of it or what is new. Each step cites its sources by number from
 // the list at the end of the page (src/data/history-sources.ts). Without
 // the script the headlines stand as text one below the other.
 interface Props {
@@ -321,76 +317,12 @@ const sandStates = JSON.stringify({
 const fieldSteps = ["ergebnis-2025", "ergebnis-liegen", "ergebnis-urteile"]
   .map(at)
   .join(",")
-// 100 euros as a stack of fifty two-euro coins, of which the state takes
-// the share Europol last estimated: the stack builds up coin by coin, then
-// the top coin rises and moves over into a red tray. Rendered from one
-// camera (render-seized.py; composite-seized.mjs): one coin, which the film
-// stacks fifty times, the stack's shadow, and the tray with and without the
-// coin. CSS moves the coin and draws its shadow, which runs along the table
-// with it and sharpens as it comes down.
-const seizedStep = at("ergebnis-euro")
+// A 100-euro note tears on a canvas (src/lib/film-note.ts): the state
+// takes the share Europol last estimated, the rest stays with criminals.
+const noteStep = at("ergebnis-euro")
 const kept = recovery.latest.percent
-const { coin, foot, step, drift, tray, way, shadows } = seized
-const stackEuros = drift.length * seized.value
-const takenEuros = seized.taken * seized.value
-if (stackEuros !== 100 || takenEuros !== kept)
-  throw new Error(
-    `Film: the coins show ${takenEuros} of ${stackEuros} euros taken, Europol's share is now ${kept}; render them again`,
-  )
-const euros = (value: number) => (en ? `€${n(value)}` : `${n(value)} €`)
-// Where each coin sits, from the bottom up.
-const sits = drift.map(([dx, dy], k) => [
-  foot[0] + dx + k * step[0],
-  foot[1] + dy + k * step[1],
-])
-const top = sits[sits.length - 1]
-// The picture takes in the stack with the coin raised above it, the tray,
-// the shadow's far end and, right of the tray, room for its label.
-const view = {
-  x: Math.min(...sits.map(([x]) => x - coin.x)),
-  y: top[1] + way[1][1] - coin.y,
-  right: Math.max(seized.shadow.x + seized.shadow.w, tray.x + tray.w + coin.w),
-  bottom: Math.max(foot[1] - coin.y + coin.h, tray.y + tray.h),
-}
-const viewW = view.right - view.x
-const viewH = view.bottom - view.y
-const pct = (value: number, of: number) => `${((value / of) * 100).toFixed(3)}%`
-const spot = (x: number, y: number) =>
-  `left: ${pct(x - view.x, viewW)}; top: ${pct(y - view.y, viewH)}`
-const place = (r: { x: number; y: number; w: number }) =>
-  `${spot(r.x, r.y)}; width: ${pct(r.w, viewW)}`
-// Lengths CSS cannot give in percent, such as shadows, in hundredths of
-// the picture's width.
-const cqi = (value: number) => `${((value / viewW) * 100).toFixed(3)}cqi`
-// The stack from the bottom up, so that each coin covers the one below;
-// --k orders their fall.
-const seizedStack = sits.map(
-  ([x, y], k) => `${spot(x - coin.x, y - coin.y)}; --k: ${k}`,
-)
-// The top coin's way in percent of its own size, as CSS translates it, and
-// its shadow at each point: along the table, softer and fainter the higher
-// it is. At first there is none, as the stack's shadow already has it.
-const move = ([x, y]: number[]) => `${pct(x, coin.w)} ${pct(y, coin.h)}`
-const face = coin.w - 24
-const fallen = ([x, y, soft]: number[], k: number) => {
-  const dark = k === 0 ? 0 : 0.32 * (face / (face + soft)) ** 3
-  return `drop-shadow(${cqi(x)} ${cqi(y)} ${cqi(soft / 2 + 4)} rgb(0 0 0 / ${dark.toFixed(3)}))`
-}
-const seizedStyle = [
-  `aspect-ratio: ${viewW} / ${viewH}`,
-  `--ratio: ${(viewW / viewH).toFixed(4)}`,
-  `--coin: ${pct(coin.w, viewW)}`,
-  ...way.map((p, k) => `--way-${k}: ${move(p)}`),
-  ...shadows.map((p, k) => `--shadow-${k}: ${fallen(p, k)}`),
-].join("; ")
-const seizedLayers = {
-  shadow: place(seized.shadow),
-  tray: place(tray),
-  // The labels, their figures level with what they name: what stays
-  // beside the top of the stack, what the state takes beside the tray.
-  rest: spot(top[0] - coin.x + coin.w, top[1] + step[1]),
-  kept: spot(tray.x + tray.w, tray.y + tray.h / 2),
-}
+const euro = (value: number) => (en ? `€${n(value)}` : `${n(value)} €`)
+const noteKeep = String(kept / 100)
 ---
 
 <section
@@ -612,57 +544,24 @@ const seizedLayers = {
               </span>
             </div>
             <div
-              class="seized"
-              data-only={String(seizedStep)}
-              style={seizedStyle}
+              class="note"
+              data-note={noteKeep}
+              data-note-image={noteCrime.src}
+              data-note-step={noteStep}
+              data-only={String(noteStep)}
             >
-              <img
-                class="seized-shadow"
-                src={seizedShadow.src}
-                style={seizedLayers.shadow}
-                alt=""
-                decoding="async"
-              >
-              <img
-                class="seized-tray"
-                src={seizedTray.src}
-                style={seizedLayers.tray}
-                alt=""
-                decoding="async"
-              >
-              <img
-                class="seized-landed"
-                src={seizedLanded.src}
-                style={seizedLayers.tray}
-                alt=""
-                decoding="async"
-              >
-              {seizedStack.map((style, k) => (
-                  <img
-                    class:list={[
-                      "seized-coin",
-                      { "seized-top": k === seizedStack.length - 1 },
-                    ]}
-                    src={seizedCoin.src}
-                    style={style}
-                    alt=""
-                    decoding="async"
-                  />
-                ))}
-              <span
-                class="seized-label was"
-                style={seizedLayers.rest}
-                aria-hidden="true"
-              >
-                <b>{euros(stackEuros)}</b>
-              </span>
-              <span class="seized-label rest" style={seizedLayers.rest}>
-                <b>{euros(stackEuros - takenEuros)}</b>
-                {en ? "stay with criminals" : "bleiben bei Kriminellen"}
-              </span>
-              <span class="seized-label kept" style={seizedLayers.kept}>
-                <b>{euros(takenEuros)}</b>
+              <canvas />
+              <i data-note-paper />
+              <i data-note-edge />
+              <i data-note-red />
+              <i data-note-shadow />
+              <span class="note-label kept" data-note-label="kept">
+                <b>{euro(kept)}</b>
                 {en ? "taken by the state" : "zieht der Staat ein"}
+              </span>
+              <span class="note-label rest" data-note-label="rest">
+                <b>{euro(100 - kept)}</b>
+                {en ? "stay with criminals" : "bleiben bei Kriminellen"}
               </span>
             </div>
           </div>
@@ -673,6 +572,7 @@ const seizedLayers = {
 </section>
 
 <script>
+  import { createNote } from "@/lib/film-note"
   import { createSand, type SandState } from "@/lib/film-sand"
 
   // The step whose spacer has crossed the middle of the window is current:
@@ -745,6 +645,12 @@ const seizedLayers = {
     const sand = sandRoot
       ? createSand(sandRoot, JSON.parse(sandRoot.dataset.sandCounts ?? "{}"))
       : null
+    // The last step's note, which tears each time the step comes up.
+    const noteRoot = film.querySelector<HTMLElement>("[data-note]")
+    const note = noteRoot
+      ? createNote(noteRoot, Number(noteRoot.dataset.note))
+      : null
+    const noteStep = Number(noteRoot?.dataset.noteStep ?? -1)
 
     // The law read aloud, only when asked for: the loudspeaker shown in the
     // paper chapter turns it on and off. In 1991 one voice reads; today up
@@ -863,12 +769,13 @@ const seizedLayers = {
       const previous = current
       current = i
       // The dots move from step to step, and fill in when the chapter
-      // begins; a jump, or a way back from the last step, shows the end at
-      // once.
+      // begins; a jump, or a way back from the note, shows the end at once.
       const sandState = sandStates[i]
       if (sandState)
         sand?.go(sandState, previous in sandStates || previous === i - 1)
       else sand?.hide()
+      if (i === noteStep) note?.go(previous !== -1)
+      else note?.hide()
       view.dataset.scene = stepScenes[i]
       view.dataset.stepId = stepIds[i]
       voiceFor(stepIds[i])
@@ -986,6 +893,9 @@ const seizedLayers = {
     --pace: min(1svh, 0.76rem);
     --bar: light-dark(#3b4147, #a7afb6);
     --red: var(--primary);
+    /* Die Hunderter am Anfang und am Ende des Films. */
+    --note: light-dark(#d2dbcd, #66716a);
+    --note-edge: light-dark(#8f9d8b, #3a413c);
     display: grid;
     grid-template-columns: minmax(0, 1fr);
   }
@@ -1716,7 +1626,7 @@ const seizedLayers = {
   }
 
   .sand,
-  .seized {
+  .note {
     grid-area: 1 / 1;
     opacity: 0;
     visibility: hidden;
@@ -1726,7 +1636,7 @@ const seizedLayers = {
   }
 
   .sand.on,
-  .seized.on {
+  .note.on {
     opacity: 1;
     visibility: visible;
   }
@@ -1805,191 +1715,84 @@ const seizedLayers = {
     transition-delay: 1.2s;
   }
 
-  /* 100 Euro als Stapel aus fünfzig Zwei-Euro-Münzen. Er wächst Münze um
-     Münze, dann hebt sich die oberste, gleitet hinüber und setzt in der
-     roten Schale auf. Ihren Schatten zeichnet CSS: Er läuft mit ihr über
-     den Tisch und wird schärfer, je tiefer sie kommt. Die Grundstellung
-     ist das Ende, damit beim Ausblenden nichts springt; die Animation läuft
-     jedes Mal, wenn der Schritt kommt. */
-  .seized {
+  /* Ein Hunderter reißt (src/lib/film-note.ts): Der Staat bekommt einen
+     schmalen Streifen, den Rest behalten die Kriminellen. Das Feld hat ein
+     festes Seitenverhältnis, damit die Leiste des Browsers beim Scrollen
+     nichts neu zeichnet. */
+  .note {
     position: relative;
-    isolation: isolate;
-    container-type: inline-size;
-    inline-size: min(100%, 88cqh * var(--ratio));
+    inline-size: min(100%, 100cqh * 1.15);
+    aspect-ratio: 1.25;
   }
 
-  .seized img {
+  .note canvas {
     position: absolute;
-    display: block;
-    block-size: auto;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
   }
 
-  .seized-coin {
-    inline-size: var(--coin);
+  .note i {
+    display: none;
   }
 
-  .seized-top {
-    opacity: 0;
-    translate: var(--way-3);
+  .note [data-note-paper] {
+    color: var(--note);
   }
 
-  /* Die Zahl steht auf der Höhe dessen, was sie benennt, der Rest darunter. */
-  .seized-label {
-    --figure: clamp(1.5rem, 1rem + 2.5cqi, 2.6rem);
+  .note [data-note-edge] {
+    color: var(--note-edge);
+  }
 
+  .note [data-note-red] {
+    color: var(--red);
+  }
+
+  .note [data-note-shadow] {
+    color: light-dark(rgb(0 0 0 / 0.3), rgb(0 0 0 / 0.7));
+  }
+
+  .note-label {
     position: absolute;
     display: grid;
-    max-inline-size: 9em;
-    padding-inline-start: 0.4rem;
-    translate: 0 calc(var(--figure) * -0.525);
     color: var(--ink-2);
     font-size: var(--type-meta);
     line-height: 1.2;
-    text-wrap: balance;
+    white-space: nowrap;
+    opacity: 0;
+    translate: 0 0.4rem;
+    transition:
+      opacity 0.5s ease,
+      translate 0.5s ease;
   }
 
-  .seized-label b {
+  .note-label b {
     color: var(--foreground);
-    font-size: var(--figure);
+    font-size: clamp(1.5rem, 1rem + 2.5cqi, 2.6rem);
     font-weight: var(--weight-heading);
     line-height: 1.05;
     letter-spacing: -0.03em;
   }
 
-  .seized-label.was {
-    opacity: 0;
-  }
-
-  .seized-label.kept,
-  .seized-label.kept b {
+  .note-label.kept,
+  .note-label.kept b {
     color: var(--accent);
   }
 
-  .seized.on .seized-coin {
-    animation: seized-drop 0.3s calc(var(--k) * 18ms) backwards;
+  /* Unter dem Rest des Scheins, an seiner rechten Kante. */
+  .note-label.rest {
+    justify-items: end;
+    translate: -100% 0.4rem;
   }
 
-  .seized.on .seized-shadow {
-    animation: seized-in 1.1s linear both;
+  .note[data-done] .note-label {
+    opacity: 1;
+    translate: 0 0;
   }
 
-  .seized.on .seized-top {
-    animation:
-      seized-drop 0.3s calc(var(--k) * 18ms) both,
-      seized-take 1.7s 1.95s both,
-      seized-out 0.15s 3.65s forwards;
-  }
-
-  .seized.on .seized-landed {
-    animation: seized-in 0.15s 3.65s both;
-  }
-
-  .seized.on .seized-label.was {
-    animation: seized-was 1.35s 1s both;
-  }
-
-  .seized.on .seized-label.rest {
-    animation: seized-label 0.5s 3.7s both;
-  }
-
-  .seized.on .seized-label.kept {
-    animation: seized-label 0.5s 3.85s both;
-  }
-
-  /* Jede Münze fällt das letzte Stück auf den Stapel. */
-  @keyframes seized-drop {
-    from {
-      opacity: 0;
-      transform: translateY(-60%);
-      animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.6);
-    }
-
-    40% {
-      opacity: 1;
-    }
-
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  /* Hoch, hinüber und in die Schale hinab, wie von einer Hand gesetzt; in
-     der Luft ein wenig größer, als käme sie näher. */
-  @keyframes seized-take {
-    from {
-      translate: var(--way-0);
-      scale: 1;
-      filter: var(--shadow-0);
-      animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1);
-    }
-
-    16% {
-      translate: var(--way-1);
-      scale: 1.05;
-      filter: var(--shadow-1);
-      animation-timing-function: cubic-bezier(0.45, 0, 0.35, 1);
-    }
-
-    46% {
-      translate: var(--way-2);
-      scale: 1.05;
-      filter: var(--shadow-2);
-      animation-timing-function: cubic-bezier(0.45, 0, 0.3, 1);
-    }
-
-    to {
-      translate: var(--way-3);
-      scale: 1;
-      filter: var(--shadow-3);
-    }
-  }
-
-  @keyframes seized-out {
-    from {
-      opacity: 1;
-    }
-
-    to {
-      opacity: 0;
-    }
-  }
-
-  @keyframes seized-in {
-    from {
-      opacity: 0;
-    }
-  }
-
-  /* 100 €, solange der Stapel ganz ist. */
-  @keyframes seized-was {
-    from {
-      opacity: 0;
-      transform: translateY(0.4rem);
-    }
-
-    30%,
-    75% {
-      opacity: 1;
-      transform: none;
-    }
-
-    to {
-      opacity: 0;
-    }
-  }
-
-  @keyframes seized-label {
-    from {
-      opacity: 0;
-      transform: translateY(0.4rem);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .seized.on * {
-      animation: none !important;
-    }
+  .note[data-done] .note-label.rest {
+    translate: -100% 0;
+    transition-delay: 0.25s;
   }
 
   /* ---------- Schmal ---------------------------------------------------- */
