@@ -1,13 +1,12 @@
 # Renders the film's last picture (RuleFilm.astro, ergebnis-euro): 100
-# one-euro coins in ten rows of ten, from which the state takes two onto a
-# red tray in front. Rendered in layers from one orthographic camera, for
-# scripts/artwork/composite-seized.mjs:
-#   coins:  one coin in each of five turns, apart, with its shadow; the
-#           film lays out the grid from these
-#   lift:   the two that the state takes, apart and without shadows; the
-#           film draws their shadows as they rise
+# euros as one stack of fifty two-euro coins, from which the state takes the
+# top coin onto a red tray beside it. Rendered in layers from one
+# orthographic camera, for scripts/artwork/composite-seized.mjs:
+#   coin:   one coin alone, without shadow; the film stacks it fifty
+#           times and moves the top one, drawing its shadow as it goes
+#   shadow: the stack's shadow alone, the coins themselves left out
 #   tray:   the empty tray
-#   landed: the tray with the two on it
+#   landed: the tray with the coin on it
 #   start, end: the whole picture before and after, to look at
 # Usage: blender -b -noaudio -P scripts/artwork/render-seized.py -- <layer> <out.png>
 # It prints SEIZED and, as JSON, where everything lies in pixels of the full
@@ -29,19 +28,19 @@ args = sys.argv[sys.argv.index("--") + 1 :]
 layer, out = args[0], args[1]
 PCT = int(os.environ.get("PCT", 100))
 SAMPLES = int(os.environ.get("SAMPLES", 256))
-ELEV = math.radians(float(os.environ.get("ELEV", 55)))
+ELEV = math.radians(float(os.environ.get("ELEV", 30)))
 FONT = os.environ.get("FONT", "/usr/share/fonts/liberation/LiberationSans-Bold.ttf")
 
-# Scene units: 1 = 1 cm. A one-euro coin is 23.25 mm across and 2.33 mm
-# thick, its silver core 16.25 mm across.
-D, T, CORE = 2.325, 0.233, 1.625
-PITCH = 2.65
-# The two taken, by row (0 in front) and column; how high they rise before
-# they move; where the tray stands and how deep its floor sits.
-HOLES = [(4, 4), (4, 5)]
-LIFT = 1.6
-TRAY_Y = -4.5 * PITCH - D / 2 - 3.4
+# Scene units: 1 = 1 cm. A two-euro coin is 25.75 mm across and 2.2 mm
+# thick, its golden core 18.75 mm across.
+D, T, CORE = 2.575, 0.22, 1.875
+# Fifty of them make 100 euros; the state takes the top one.
+COUNT, VALUE, TAKEN = 50, 2, 1
+# Where the tray stands, right of the stack and in front, and how
+# deep its floor sits; how high the coin rises before it moves.
+TRAY_AT = (float(os.environ.get("TRAY_X", 4.6)), float(os.environ.get("TRAY_Y", -1.6)))
 TRAY_FLOOR = 0.12
+LIFT = 1.0
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
@@ -55,8 +54,6 @@ scene.cycles.diffuse_bounces = 0
 scene.cycles.caustics_reflective = False
 scene.cycles.caustics_refractive = False
 scene.render.film_transparent = True
-scene.render.resolution_x = 2400
-scene.render.resolution_y = 2280
 scene.render.resolution_percentage = PCT
 scene.render.image_settings.file_format = "PNG"
 scene.render.image_settings.color_mode = "RGBA"
@@ -80,6 +77,35 @@ brass = metal("brass", (0.84, 0.56, 0.18), 0.32)
 brass_bright = metal("brass-bright", (0.98, 0.76, 0.36), 0.12)
 nickel = metal("nickel", (0.55, 0.56, 0.56), 0.34)
 nickel_bright = metal("nickel-bright", (0.9, 0.9, 0.89), 0.1)
+
+
+def reeded(name, color, rough, reeds):
+    # The edge, finely milled: a ripple around the coin, as bump.
+    mat = metal(name, color, rough)
+    nt = mat.node_tree
+    coord = nt.nodes.new("ShaderNodeTexCoord")
+    xyz = nt.nodes.new("ShaderNodeSeparateXYZ")
+    angle = nt.nodes.new("ShaderNodeMath")
+    angle.operation = "ARCTAN2"
+    times = nt.nodes.new("ShaderNodeMath")
+    times.operation = "MULTIPLY"
+    times.inputs[1].default_value = reeds
+    wave = nt.nodes.new("ShaderNodeMath")
+    wave.operation = "SINE"
+    bump = nt.nodes.new("ShaderNodeBump")
+    bump.inputs["Strength"].default_value = float(os.environ.get("REED", 0.35))
+    bump.inputs["Distance"].default_value = 0.004
+    nt.links.new(coord.outputs["Object"], xyz.inputs[0])
+    nt.links.new(xyz.outputs["Y"], angle.inputs[0])
+    nt.links.new(xyz.outputs["X"], angle.inputs[1])
+    nt.links.new(angle.outputs[0], times.inputs[0])
+    nt.links.new(times.outputs[0], wave.inputs[0])
+    nt.links.new(wave.outputs[0], bump.inputs["Height"])
+    nt.links.new(bump.outputs["Normal"], nt.nodes["Principled BSDF"].inputs["Normal"])
+    return mat
+
+
+edge = reeded("edge", (0.68, 0.69, 0.69), 0.36, 120)
 
 
 def lathe(name, strips, segs=192):
@@ -136,9 +162,10 @@ def star_mesh(name, outer, inner, height):
     return mesh
 
 
-# One coin, built once and placed a hundred times.
+# One coin, built once and placed fifty times: a silver ring around a
+# golden core, the core standing a little proud.
 euro = bpy.data.collections.new("euro")
-CORE_TOP, RING_TOP = 0.2, 0.19
+CORE_TOP, RING_TOP = 0.19, 0.18
 
 
 def part(name, data, mats):
@@ -149,7 +176,7 @@ def part(name, data, mats):
     return obj
 
 
-part(
+body = part(
     "body",
     lathe(
         "body",
@@ -159,11 +186,11 @@ part(
             (2, [(CORE / 2, RING_TOP - 0.012), (CORE / 2 + 0.02, RING_TOP)]),
             (2, [(CORE / 2 + 0.02, RING_TOP), (D / 2 - 0.1, RING_TOP)]),
             (3, [(D / 2 - 0.1, RING_TOP), (D / 2 - 0.07, T - 0.006), (D / 2 - 0.04, T), (D / 2 - 0.012, T - 0.008), (D / 2, T - 0.03)]),
-            (2, [(D / 2, T - 0.03), (D / 2, 0.03)]),
-            (2, [(D / 2, 0.03), (D / 2 - 0.03, 0), (0, 0)]),
+            (4, [(D / 2, T - 0.03), (D / 2, 0.03)]),
+            (3, [(D / 2, 0.03), (D / 2 - 0.03, 0), (0, 0)]),
         ],
     ),
-    [nickel, nickel_bright, brass, brass_bright],
+    [brass, brass_bright, nickel, nickel_bright, edge],
 )
 
 font = bpy.data.fonts.load(FONT) if os.path.exists(FONT) else None
@@ -185,15 +212,15 @@ def relief_text(name, body, size, at, mat):
     return obj
 
 
-# The common side as since 2007: a large 1 on the left of the core, EURO
+# The common side as since 2007: a large 2 on the left of the core, EURO
 # beside it lower down, twelve stars along the ring on the right.
-relief_text("one", "1", 1.42, (-0.3, 0.02), nickel_bright)
-relief_text("word", "EURO", 0.24, (0.32, -0.36), nickel_bright)
-star = star_mesh("star", 0.07, 0.03, RING_TOP + 0.022)
+relief_text("two", "2", 1.62, (-0.34, 0.02), brass_bright)
+relief_text("word", "EURO", 0.27, (0.37, -0.41), brass_bright)
+star = star_mesh("star", 0.075, 0.032, RING_TOP + 0.022)
 for k in range(12):
     a = math.radians(-66 + k * 132 / 11)
     r = (CORE / 2 + D / 2 - 0.1) / 2 + 0.01
-    obj = part(f"star{k}", star, [brass_bright])
+    obj = part(f"star{k}", star, [nickel_bright])
     obj.location = (r * math.cos(a), r * math.sin(a), 0)
     obj.rotation_euler[2] = a - math.pi / 2
 
@@ -209,10 +236,10 @@ def place(name, at, turn):
 
 
 def tray():
-    # A shallow tray with a rounded rim, a little wider than the two coins
-    # side by side; lacquered red.
-    inner_w, inner_d = PITCH + D + 0.7, D + 0.7
-    wall, height, radius = 0.38, 0.42, 0.55
+    # A shallow tray with a rounded rim, a little wider than one coin;
+    # lacquered red.
+    inner_w, inner_d = D + 1.1, D + 0.8
+    wall, height, radius = 0.36, 0.4, 0.6
     mesh = bpy.data.meshes.new("tray")
     bm = bmesh.new()
 
@@ -253,47 +280,60 @@ def tray():
     bsdf.inputs["Coat Weight"].default_value = 0.6
     bsdf.inputs["Coat Roughness"].default_value = 0.12
     mesh.materials.append(lacquer)
-    obj.location = (tray_x, TRAY_Y, 0)
+    obj.location = (*TRAY_AT, 0)
+    # The coins do not mirror it, or the stack would blush on one side.
+    obj.visible_glossy = False
     scene.collection.objects.link(obj)
     return obj
 
 
-rnd = random.Random(100)
-spots = {(r, c): ((c - 4.5) * PITCH, (r - 4.5) * PITCH) for r in range(10) for c in range(10)}
-# Laid by hand: each coin a little turned, the numerals still upright. Five
-# turns, rendered once each and placed by the film, one per place.
-TURNS = [-0.16, -0.08, 0.0, 0.08, 0.16]
-kinds = {key: rnd.randrange(len(TURNS)) for key in spots}
-alone = [((k - 2) * 5.0, 0.0) for k in range(len(TURNS))]
-tray_x = sum(spots[key][0] for key in HOLES) / len(HOLES)
+# Stacked by hand: each coin a hair off the one below. The film places one
+# picture of the coin at every height, so they all share one turn, the top
+# one's numeral a little tilted.
+TURN = 0.14
+rnd = random.Random(50)
+drift = [(0.0, 0.0)] + [(max(-0.05, min(0.05, rnd.gauss(0, 0.02))), max(-0.05, min(0.05, rnd.gauss(0, 0.02)))) for _ in range(COUNT - 1)]
+stack = [(x, y, k * T) for k, (x, y) in enumerate(drift)]
+top = stack[-1]
+landed = (*TRAY_AT, TRAY_FLOOR)
 
-if layer == "coins":
-    for k, at in enumerate(alone):
-        place(f"c{k}", (*at, 0), TURNS[k])
-if layer == "lift":
-    for k, key in enumerate(HOLES):
-        place(f"c{k}", (*alone[k], 0), TURNS[kinds[key]])
-if layer in ("start", "end", "close"):
-    for key, (x, y) in spots.items():
-        if key not in HOLES or layer != "end":
-            place(f"e{key[0]}-{key[1]}", (x, y, 0), TURNS[kinds[key]])
+# The film's coin, alone without shadow. A neighbour the camera does not
+# see lies under it, so its rim mirrors a coin as in the stack, not the
+# table far below.
+if layer in ("coin", "close"):
+    place("coin", top, TURN)
+    under = bpy.data.objects.new("under", body.data)
+    under.location = (top[0], top[1], top[2] - T)
+    under.visible_camera = False
+    scene.collection.objects.link(under)
+if layer in ("shadow", "start"):
+    for k, at in enumerate(stack):
+        place(f"s{k}", at, TURN)
+if layer == "end":
+    for k, at in enumerate(stack[: COUNT - TAKEN]):
+        place(f"s{k}", at, TURN)
 if layer in ("tray", "landed", "start", "end"):
     tray()
 if layer in ("landed", "end"):
-    for key in HOLES:
-        place(f"l{key[1]}", (spots[key][0], TRAY_Y, TRAY_FLOOR), TURNS[kinds[key]])
+    place("landed", landed, TURN)
+# The stack's shadow alone: the coins still cast it, but the camera does not
+# see them.
+if layer == "shadow":
+    for obj in euro.objects:
+        obj.visible_camera = False
 
-# Shadow catcher on the table. Under the two that rise it stays for what
-# their rims mirror, but leaves out their shadows: the film draws those.
+# Shadow catcher on the table. Under the lone coin it stays for what its
+# rim mirrors, but leaves out its shadow: the film draws the moving one's.
 bpy.ops.mesh.primitive_plane_add(size=200, location=(0, 0, 0))
 floor = bpy.context.active_object
 floor.is_shadow_catcher = True
-if layer == "lift":
+if layer == "coin":
     floor.visible_camera = False
 
 # Light: a studio picture for what the metal mirrors, a broad softbox
-# where the coins' faces mirror the camera, and a soft key from behind on
-# the left that throws the shadows forward and right.
+# where the top coin's face mirrors the camera, and a key from the front
+# left that throws the stack's shadow back and to the right, past the
+# tray.
 world = bpy.data.worlds.new("world")
 scene.world = world
 world.use_nodes = True
@@ -309,11 +349,24 @@ nt.links.new(mapping.outputs["Vector"], env.inputs["Vector"])
 studio_light = nt.nodes.new("ShaderNodeBackground")
 studio_light.inputs["Strength"].default_value = float(os.environ.get("WORLD", 0.5))
 nt.links.new(env.outputs["Color"], studio_light.inputs["Color"])
-# What is not a mirror sees an even grey, so the table only gets the key's
-# shadow and a soft one all around, none from the studio's lamps.
+# What is not a mirror sees a grey sky, so the table only gets the key's
+# shadow and a soft one around the foot, none from the studio's lamps. The
+# sky fades towards the horizon: a tall stack would otherwise shade the
+# table far around it.
 grey = nt.nodes["Background"]
 grey.inputs["Color"].default_value = (0.5, 0.5, 0.5, 1)
-grey.inputs["Strength"].default_value = 0.5
+sky_dir = nt.nodes.new("ShaderNodeSeparateXYZ")
+nt.links.new(coord.outputs["Generated"], sky_dir.inputs[0])
+sky = nt.nodes.new("ShaderNodeMath")
+sky.operation = "POWER"
+sky.use_clamp = True
+sky.inputs[1].default_value = float(os.environ.get("SKY", 1.5))
+nt.links.new(sky_dir.outputs["Z"], sky.inputs[0])
+sky_strength = nt.nodes.new("ShaderNodeMath")
+sky_strength.operation = "MULTIPLY"
+sky_strength.inputs[1].default_value = 0.5 * (1 + float(os.environ.get("SKY", 1.5)))
+nt.links.new(sky.outputs[0], sky_strength.inputs[0])
+nt.links.new(sky_strength.outputs[0], grey.inputs["Strength"])
 path = nt.nodes.new("ShaderNodeLightPath")
 mix = nt.nodes.new("ShaderNodeMixShader")
 nt.links.new(path.outputs["Is Glossy Ray"], mix.inputs["Fac"])
@@ -346,71 +399,107 @@ emit.inputs["Color"].default_value = (1.0, 0.97, 0.92, 1)
 gnt.links.new(emit.outputs["Emission"], gnt.nodes["Material Output"].inputs["Surface"])
 box.data.materials.append(glow)
 
-key_dir = Vector((-0.42, 0.5, 1.0)).normalized()
+key_dir = Vector((-0.5, -0.4, 1.0)).normalized()
+KEY_SIZE = float(os.environ.get("KEY_SIZE", 10))
 key_data = bpy.data.lights.new("key", "AREA")
 key_data.energy = float(os.environ.get("KEY", 60000))
-key_data.size = 22
+key_data.size = KEY_SIZE
 key_data.color = (1.0, 0.96, 0.9)
 key = bpy.data.objects.new("key", key_data)
 key.location = key_dir * 80
 key.rotation_euler = (-key.location).to_track_quat("-Z", "Y").to_euler()
-# The coins mirror the softbox alone, alike across the grid.
+# The metal mirrors the softbox alone.
 key.visible_glossy = False
 scene.collection.objects.link(key)
 
-# The camera looks from the front, ELEV above the table, onto the middle
-# between the grid and the tray.
+# The camera looks from the front, ELEV above the table. On screen, x runs
+# right and v up: v = y sin(ELEV) + z cos(ELEV). The frame takes in the
+# stack with the coin's way above it, the tray and the stack's shadow.
+sin_e, cos_e = math.sin(ELEV), math.cos(ELEV)
+screen_up = Vector((0, sin_e, cos_e))
+toward = Vector((0, math.cos(ELEV), -math.sin(ELEV)))
+fall = Vector((-key_dir.x / key_dir.z, -key_dir.y / key_dir.z, 0))
+height = COUNT * T
+tray_w, tray_d = D + 1.1 + 0.72, D + 0.8 + 0.72
+reach = [
+    (-D / 2, -D / 2 * sin_e),
+    (D / 2, (height + LIFT) * cos_e + D / 2 * sin_e),
+    (TRAY_AT[0] - tray_w / 2, (TRAY_AT[1] - tray_d / 2) * sin_e),
+    (TRAY_AT[0] + tray_w / 2, (TRAY_AT[1] + tray_d / 2) * sin_e + 0.4 * cos_e),
+    (fall.x * height + D / 2 + height * KEY_SIZE / 80, (fall.y * height + D / 2) * sin_e),
+]
+MARGIN = float(os.environ.get("MARGIN", 0.9))
+left = min(u for u, _ in reach) - MARGIN
+right = max(u for u, _ in reach) + MARGIN
+low = min(v for _, v in reach) - MARGIN
+high = max(v for _, v in reach) + MARGIN
 cam = bpy.data.cameras.new("cam")
 cam.type = "ORTHO"
-cam.ortho_scale = float(os.environ.get("SIZE", 30))
+cam.sensor_fit = "HORIZONTAL"
+cam.ortho_scale = right - left
 cam_obj = bpy.data.objects.new("cam", cam)
 scene.collection.objects.link(cam_obj)
 scene.camera = cam_obj
-aim = Vector((0, (4.5 * PITCH + D / 2 + TRAY_Y - 1.9) / 2, 0))
-cam_obj.location = aim + Vector((0, -math.cos(ELEV), math.sin(ELEV))) * 60
-cam_obj.rotation_euler = (aim - cam_obj.location).to_track_quat("-Z", "Y").to_euler()
+middle = Vector(((left + right) / 2, 0, 0)) + screen_up * ((low + high) / 2)
+cam_obj.location = middle - toward * 60
+cam_obj.rotation_euler = toward.to_track_quat("-Z", "Y").to_euler()
+scene.render.resolution_x = 2400
+scene.render.resolution_y = round(2400 * (high - low) / (right - left))
 if os.environ.get("CLOSE"):
     cx, cy, size = (float(v) for v in os.environ["CLOSE"].split(","))
     cam.ortho_scale = size
-    cam_obj.location += Vector((cx, cy - aim.y, 0))
+    cam_obj.location = Vector((cx, 0, 0)) + screen_up * cy - toward * 60
     scene.render.resolution_y = 2400
 
 bpy.context.view_layer.update()
-width, height = scene.render.resolution_x, scene.render.resolution_y
+width, height_px = scene.render.resolution_x, scene.render.resolution_y
 
 
 def pixel(p):
     v = world_to_camera_view(scene, cam_obj, Vector(p))
-    return [round(v.x * width, 1), round((1 - v.y) * height, 1)]
+    return [round(v.x * width, 1), round((1 - v.y) * height_px, 1)]
 
 
 def minus(a, b):
     return [round(p - q, 1) for p, q in zip(a, b)]
 
 
-# Where things are, in pixels of the full frame: each coin alone, where it
-# touches the table; the grid's front left coin and the step to the next column and row; the
-# way of the first of the two from its place, lifted, over the tray and
-# into it (the second moves alike); and how far the shadow of a lifted
-# coin falls from it, along the key light.
-x0, y0 = spots[HOLES[0]]
-up = Vector((x0, y0, LIFT))
-fall = up - key_dir * (LIFT / key_dir.z)
-start = pixel((x0, y0, 0))
+# Where things are, in pixels of the full frame: the lone coin, where it
+# sits; the stack's foot, the step from one coin up to the next and how far
+# each lies off true; the top coin's way from the stack: lifted, carried
+# over the tray and set down in it; and at each of those four points where the coin's
+# shadow falls, along the key light onto what lies under it, and how wide
+# its soft edge is.
+foot = pixel((0, 0, 0))
+start = pixel(top)
+way = [
+    (top, 0),
+    ((top[0], top[1], top[2] + LIFT), 0),
+    ((*TRAY_AT, top[2] + LIFT), TRAY_FLOOR),
+    (landed, TRAY_FLOOR),
+]
+per_cm = width / (right - left)
+
+
+def shadow(at, under):
+    rise = at[2] - under
+    falls = minus(pixel((at[0] + fall.x * rise, at[1] + fall.y * rise, under)), pixel(at))
+    return [*falls, round(rise * KEY_SIZE / 80 * per_cm, 1)]
+
+
 print(
     "SEIZED",
     json.dumps(
         {
-            "alone": [pixel((*at, 0)) for at in alone],
-            "origin": pixel((*spots[(0, 0)], 0)),
-            "column": minus(pixel((PITCH, 0, 0)), pixel((0, 0, 0))),
-            "row": minus(pixel((0, PITCH, 0)), pixel((0, 0, 0))),
-            "kinds": [[kinds[(r, c)] for c in range(10)] for r in range(10)],
-            "holes": HOLES,
-            "up": minus(pixel(up), start),
-            "over": minus(pixel((x0, TRAY_Y, TRAY_FLOOR + LIFT)), start),
-            "landed": minus(pixel((x0, TRAY_Y, TRAY_FLOOR)), start),
-            "shadow": minus(pixel(fall), pixel(up)),
+            "width": width,
+            "coin": start,
+            "foot": foot,
+            "step": minus(pixel((0, 0, T)), foot),
+            "drift": [minus(pixel((x, y, 0)), foot) for x, y in drift],
+            "value": VALUE,
+            "taken": TAKEN,
+            "way": [minus(pixel(at), start) for at, _ in way],
+            "shadows": [shadow(at, under) for at, under in way],
         }
     ),
 )

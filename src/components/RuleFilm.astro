@@ -23,14 +23,9 @@ import cashCent from "@/assets/history/cash-cent.webp"
 import cashBundle from "@/assets/history/cash-bundle-bare.webp"
 import cashBundleGold from "@/assets/history/cash-bundle-gold.webp"
 import seized from "@/assets/history/seized.json"
-import seizedCoin0 from "@/assets/history/seized-coin-0.webp"
-import seizedCoin1 from "@/assets/history/seized-coin-1.webp"
-import seizedCoin2 from "@/assets/history/seized-coin-2.webp"
-import seizedCoin3 from "@/assets/history/seized-coin-3.webp"
-import seizedCoin4 from "@/assets/history/seized-coin-4.webp"
+import seizedCoin from "@/assets/history/seized-coin.webp"
 import seizedLanded from "@/assets/history/seized-landed.webp"
-import seizedLift0 from "@/assets/history/seized-lift-0.webp"
-import seizedLift1 from "@/assets/history/seized-lift-1.webp"
+import seizedShadow from "@/assets/history/seized-shadow.webp"
 import seizedTray from "@/assets/history/seized-tray.webp"
 import panopticon from "@/assets/history/panopticon.json"
 import panBase from "@/assets/history/panopticon-base.webp"
@@ -43,7 +38,7 @@ import type { Language } from "@/lib/i18n"
 // needs ID, and nothing at all for crypto; rules set on every way money can
 // take, then ever more authorities in the watchtower; six pages beside 488;
 // a sea of reports, most of them kept on file, beside a few convictions;
-// and a hundred one-euro coins of which the state takes two. Grey is what
+// and 100 euros in a stack of coins, of which the state takes one. Grey is what
 // is collected, red what comes of it or what is new. Each step cites its sources by number from
 // the list at the end of the page (src/data/history-sources.ts). Without
 // the script the headlines stand as text one below the other.
@@ -326,45 +321,36 @@ const sandStates = JSON.stringify({
 const fieldSteps = ["ergebnis-2025", "ergebnis-liegen", "ergebnis-urteile"]
   .map(at)
   .join(",")
-// A hundred one-euro coins in ten rows of ten, from which the state takes
-// the share Europol last estimated: two rise from the middle, glide
-// forward over the others into a red tray and leave their gap. Rendered
-// from one camera (render-seized.py; composite-seized.mjs): five lone
-// coins with their shadows, from which the grid is laid out, the two that
-// rise, and the tray with and without them. CSS moves the two and draws
-// their shadows, which grow and soften as they rise.
+// 100 euros as a stack of fifty two-euro coins, of which the state takes
+// the share Europol last estimated: the stack builds up coin by coin, then
+// the top coin rises and moves over into a red tray. Rendered from one
+// camera (render-seized.py; composite-seized.mjs): one coin, which the film
+// stacks fifty times, the stack's shadow, and the tray with and without the
+// coin. CSS moves the coin and draws its shadow, which runs along the table
+// with it and sharpens as it comes down.
 const seizedStep = at("ergebnis-euro")
 const kept = recovery.latest.percent
-if (kept !== seized.holes.length)
+const { coin, foot, step, drift, tray, way, shadows } = seized
+const stackEuros = drift.length * seized.value
+const takenEuros = seized.taken * seized.value
+if (stackEuros !== 100 || takenEuros !== kept)
   throw new Error(
-    `Film: the coins show ${seized.holes.length} of 100 taken, Europol's share is now ${kept}; render them again`,
+    `Film: the coins show ${takenEuros} of ${stackEuros} euros taken, Europol's share is now ${kept}; render them again`,
   )
-const coinPictures = [
-  seizedCoin0,
-  seizedCoin1,
-  seizedCoin2,
-  seizedCoin3,
-  seizedCoin4,
-]
-const liftPictures = [seizedLift0, seizedLift1]
-const { coin, lift, origin, column, row, holes } = seized
-// Where a coin touches the table, by row (0 in front) and column.
-const touch = (r: number, c: number) => [
-  origin[0] + c * column[0] + r * row[0],
-  origin[1] + c * column[1] + r * row[1],
-]
-const corners = [0, 9].flatMap((r) => [0, 9].map((c) => touch(r, c)))
+const euros = (value: number) => (en ? `€${n(value)}` : `${n(value)} €`)
+// Where each coin sits, from the bottom up.
+const sits = drift.map(([dx, dy], k) => [
+  foot[0] + dx + k * step[0],
+  foot[1] + dy + k * step[1],
+])
+const top = sits[sits.length - 1]
+// The picture takes in the stack with the coin raised above it, the tray,
+// the shadow's far end and, right of the tray, room for its label.
 const view = {
-  x: Math.min(...corners.map(([x]) => x - coin.x), seized.tray.x),
-  y: Math.min(...corners.map(([, y]) => y - coin.y), seized.tray.y),
-  right: Math.max(
-    ...corners.map(([x]) => x - coin.x + coin.w),
-    seized.tray.x + seized.tray.w,
-  ),
-  bottom: Math.max(
-    ...corners.map(([, y]) => y - coin.y + coin.h),
-    seized.tray.y + seized.tray.h,
-  ),
+  x: Math.min(...sits.map(([x]) => x - coin.x)),
+  y: top[1] + way[1][1] - coin.y,
+  right: Math.max(seized.shadow.x + seized.shadow.w, tray.x + tray.w + coin.w),
+  bottom: Math.max(foot[1] - coin.y + coin.h, tray.y + tray.h),
 }
 const viewW = view.right - view.x
 const viewH = view.bottom - view.y
@@ -376,49 +362,34 @@ const place = (r: { x: number; y: number; w: number }) =>
 // Lengths CSS cannot give in percent, such as shadows, in hundredths of
 // the picture's width.
 const cqi = (value: number) => `${((value / viewW) * 100).toFixed(3)}cqi`
-const taken = (r: number, c: number) =>
-  holes.some(([hr, hc]) => hr === r && hc === c)
-// The grid from the back row forwards, so that each coin covers the
-// shadow of the one behind it; --k orders the wave in which they land.
-const seizedGrid = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0].flatMap((r) =>
-  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    .filter((c) => !taken(r, c))
-    .map((c) => {
-      const [x, y] = touch(r, c)
-      return {
-        src: coinPictures[Number(seized.kinds[r][c])].src,
-        style: `${spot(x - coin.x, y - coin.y)}; --k: ${9 - r + c}`,
-      }
-    }),
+// The stack from the bottom up, so that each coin covers the one below;
+// --k orders their fall.
+const seizedStack = sits.map(
+  ([x, y], k) => `${spot(x - coin.x, y - coin.y)}; --k: ${k}`,
 )
-// The two that rise: their way in percent of their own size, as CSS
-// translates it, and the wave's order where they lie.
-const way = (to: number[]) => `${pct(to[0], lift.w)} ${pct(to[1], lift.h)}`
-const seizedLift = holes.map(([r, c], i) => {
-  const [x, y] = touch(r, c)
-  return {
-    src: liftPictures[i].src,
-    style: `${spot(x - lift.x, y - lift.y)}; --k: ${9 - r + c}`,
-  }
-})
-const trayMiddle = seized.tray.y + seized.tray.h / 2
+// The top coin's way in percent of its own size, as CSS translates it, and
+// its shadow at each point: along the table, softer and fainter the higher
+// it is. At first there is none, as the stack's shadow already has it.
+const move = ([x, y]: number[]) => `${pct(x, coin.w)} ${pct(y, coin.h)}`
+const face = coin.w - 24
+const fallen = ([x, y, soft]: number[], k: number) => {
+  const dark = k === 0 ? 0 : 0.32 * (face / (face + soft)) ** 3
+  return `drop-shadow(${cqi(x)} ${cqi(y)} ${cqi(soft / 2 + 4)} rgb(0 0 0 / ${dark.toFixed(3)}))`
+}
 const seizedStyle = [
   `aspect-ratio: ${viewW} / ${viewH}`,
   `--ratio: ${(viewW / viewH).toFixed(4)}`,
   `--coin: ${pct(coin.w, viewW)}`,
-  `--lift: ${pct(lift.w, viewW)}`,
-  `--up: ${way(seized.up)}`,
-  `--over: ${way(seized.over)}`,
-  `--down: ${way(seized.down)}`,
-  `--fall: ${cqi(seized.shadow[0])} ${cqi(seized.shadow[1])}`,
+  ...way.map((p, k) => `--way-${k}: ${move(p)}`),
+  ...shadows.map((p, k) => `--shadow-${k}: ${fallen(p, k)}`),
 ].join("; ")
 const seizedLayers = {
-  tray: place(seized.tray),
-  landed: place(seized.landed),
-  // The labels level with the tray: what stays under the grid's left
-  // edge, what the state takes beside the tray.
-  rest: spot(origin[0] - column[0] * 0.44, trayMiddle),
-  kept: spot(seized.tray.x + seized.tray.w + column[0] * 0.1, trayMiddle),
+  shadow: place(seized.shadow),
+  tray: place(tray),
+  // The labels, their figures level with what they name: what stays
+  // beside the top of the stack, what the state takes beside the tray.
+  rest: spot(top[0] - coin.x + coin.w, top[1] + step[1]),
+  kept: spot(tray.x + tray.w, tray.y + tray.h / 2),
 }
 ---
 
@@ -646,6 +617,13 @@ const seizedLayers = {
               style={seizedStyle}
             >
               <img
+                class="seized-shadow"
+                src={seizedShadow.src}
+                style={seizedLayers.shadow}
+                alt=""
+                decoding="async"
+              >
+              <img
                 class="seized-tray"
                 src={seizedTray.src}
                 style={seizedLayers.tray}
@@ -655,34 +633,35 @@ const seizedLayers = {
               <img
                 class="seized-landed"
                 src={seizedLanded.src}
-                style={seizedLayers.landed}
+                style={seizedLayers.tray}
                 alt=""
                 decoding="async"
               >
-              {seizedGrid.map((c) => (
+              {seizedStack.map((style, k) => (
                   <img
-                    class="seized-coin"
-                    src={c.src}
-                    style={c.style}
+                    class:list={[
+                      "seized-coin",
+                      { "seized-top": k === seizedStack.length - 1 },
+                    ]}
+                    src={seizedCoin.src}
+                    style={style}
                     alt=""
                     decoding="async"
                   />
                 ))}
-              {seizedLift.map((c) => (
-                  <img
-                    class="seized-lift"
-                    src={c.src}
-                    style={c.style}
-                    alt=""
-                    decoding="async"
-                  />
-                ))}
+              <span
+                class="seized-label was"
+                style={seizedLayers.rest}
+                aria-hidden="true"
+              >
+                <b>{euros(stackEuros)}</b>
+              </span>
               <span class="seized-label rest" style={seizedLayers.rest}>
-                <b>{en ? `€${n(100 - kept)}` : `${n(100 - kept)} €`}</b>
+                <b>{euros(stackEuros - takenEuros)}</b>
                 {en ? "stay with criminals" : "bleiben bei Kriminellen"}
               </span>
               <span class="seized-label kept" style={seizedLayers.kept}>
-                <b>{en ? `€${n(kept)}` : `${n(kept)} €`}</b>
+                <b>{euros(takenEuros)}</b>
                 {en ? "taken by the state" : "zieht der Staat ein"}
               </span>
             </div>
@@ -1826,17 +1805,13 @@ const seizedLayers = {
     transition-delay: 1.2s;
   }
 
-  /* Hundert Ein-Euro-Münzen in zehn Reihen zu zehn. Sie landen in einer
-     Welle auf dem Tisch, dann heben sich zwei aus der Mitte, gleiten über
-     die anderen nach vorn und setzen in der roten Schale auf; ihre Lücke
-     bleibt. Die Schatten der beiden zeichnet CSS: Sie bleiben am Boden,
-     rücken ab und werden weicher, solange die Münzen in der Luft sind. Die
-     Grundstellung ist das Ende, damit beim Ausblenden nichts springt; die
-     Animation läuft jedes Mal, wenn der Schritt kommt. */
+  /* 100 Euro als Stapel aus fünfzig Zwei-Euro-Münzen. Er wächst Münze um
+     Münze, dann hebt sich die oberste, gleitet hinüber und setzt in der
+     roten Schale auf. Ihren Schatten zeichnet CSS: Er läuft mit ihr über
+     den Tisch und wird schärfer, je tiefer sie kommt. Die Grundstellung
+     ist das Ende, damit beim Ausblenden nichts springt; die Animation läuft
+     jedes Mal, wenn der Schritt kommt. */
   .seized {
-    --rest: drop-shadow(0.3cqi 0.55cqi 0.35cqi rgb(0 0 0 / 0.3));
-    --high: drop-shadow(var(--fall) 1.1cqi rgb(0 0 0 / 0.16));
-
     position: relative;
     isolation: isolate;
     container-type: inline-size;
@@ -1853,18 +1828,20 @@ const seizedLayers = {
     inline-size: var(--coin);
   }
 
-  .seized-lift {
-    inline-size: var(--lift);
+  .seized-top {
     opacity: 0;
-    translate: var(--down);
-    filter: var(--rest);
+    translate: var(--way-3);
   }
 
+  /* Die Zahl steht auf der Höhe dessen, was sie benennt, der Rest darunter. */
   .seized-label {
+    --figure: clamp(1.5rem, 1rem + 2.5cqi, 2.6rem);
+
     position: absolute;
     display: grid;
     max-inline-size: 9em;
-    translate: 0 -50%;
+    padding-inline-start: 0.4rem;
+    translate: 0 calc(var(--figure) * -0.525);
     color: var(--ink-2);
     font-size: var(--type-meta);
     line-height: 1.2;
@@ -1873,10 +1850,14 @@ const seizedLayers = {
 
   .seized-label b {
     color: var(--foreground);
-    font-size: clamp(1.5rem, 1rem + 2.5cqi, 2.6rem);
+    font-size: var(--figure);
     font-weight: var(--weight-heading);
     line-height: 1.05;
     letter-spacing: -0.03em;
+  }
+
+  .seized-label.was {
+    opacity: 0;
   }
 
   .seized-label.kept,
@@ -1885,38 +1866,41 @@ const seizedLayers = {
   }
 
   .seized.on .seized-coin {
-    animation: seized-drop 0.4s calc(var(--k) * 24ms) backwards;
+    animation: seized-drop 0.3s calc(var(--k) * 18ms) backwards;
   }
 
-  .seized.on .seized-lift {
+  .seized.on .seized-shadow {
+    animation: seized-in 1.1s linear both;
+  }
+
+  .seized.on .seized-top {
     animation:
-      seized-drop 0.4s calc(var(--k) * 24ms) both,
-      seized-rise 1.5s 1.1s both,
-      seized-out 0.15s 2.68s forwards;
-  }
-
-  /* Die zweite folgt einen Wimpernschlag später. */
-  .seized.on .seized-lift + .seized-lift {
-    animation-delay: calc(var(--k) * 24ms), 1.18s, 2.68s;
+      seized-drop 0.3s calc(var(--k) * 18ms) both,
+      seized-take 1.7s 1.95s both,
+      seized-out 0.15s 3.65s forwards;
   }
 
   .seized.on .seized-landed {
-    animation: seized-in 0.15s 2.68s both;
+    animation: seized-in 0.15s 3.65s both;
   }
 
-  .seized.on .seized-label {
-    animation: seized-label 0.5s 2.8s both;
+  .seized.on .seized-label.was {
+    animation: seized-was 1.35s 1s both;
+  }
+
+  .seized.on .seized-label.rest {
+    animation: seized-label 0.5s 3.7s both;
   }
 
   .seized.on .seized-label.kept {
-    animation-delay: 2.95s;
+    animation: seized-label 0.5s 3.85s both;
   }
 
-  /* Jede Münze fällt das letzte Stück auf den Tisch. */
+  /* Jede Münze fällt das letzte Stück auf den Stapel. */
   @keyframes seized-drop {
     from {
       opacity: 0;
-      transform: translateY(-35%);
+      transform: translateY(-60%);
       animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.6);
     }
 
@@ -1930,34 +1914,34 @@ const seizedLayers = {
     }
   }
 
-  /* Erst hoch, dann über die anderen nach vorn, dann hinab in die Schale;
-     in der Luft ein wenig größer, als kämen sie näher. */
-  @keyframes seized-rise {
+  /* Hoch, hinüber und in die Schale hinab, wie von einer Hand gesetzt; in
+     der Luft ein wenig größer, als käme sie näher. */
+  @keyframes seized-take {
     from {
-      translate: 0 0;
+      translate: var(--way-0);
       scale: 1;
-      filter: var(--rest);
+      filter: var(--shadow-0);
       animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1);
     }
 
-    22% {
-      translate: var(--up);
-      scale: 1.06;
-      filter: var(--high);
+    16% {
+      translate: var(--way-1);
+      scale: 1.05;
+      filter: var(--shadow-1);
       animation-timing-function: cubic-bezier(0.45, 0, 0.35, 1);
     }
 
-    82% {
-      translate: var(--over);
-      scale: 1.06;
-      filter: var(--high);
-      animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.6);
+    46% {
+      translate: var(--way-2);
+      scale: 1.05;
+      filter: var(--shadow-2);
+      animation-timing-function: cubic-bezier(0.45, 0, 0.3, 1);
     }
 
     to {
-      translate: var(--down);
+      translate: var(--way-3);
       scale: 1;
-      filter: var(--rest);
+      filter: var(--shadow-3);
     }
   }
 
@@ -1973,6 +1957,24 @@ const seizedLayers = {
 
   @keyframes seized-in {
     from {
+      opacity: 0;
+    }
+  }
+
+  /* 100 €, solange der Stapel ganz ist. */
+  @keyframes seized-was {
+    from {
+      opacity: 0;
+      transform: translateY(0.4rem);
+    }
+
+    30%,
+    75% {
+      opacity: 1;
+      transform: none;
+    }
+
+    to {
       opacity: 0;
     }
   }

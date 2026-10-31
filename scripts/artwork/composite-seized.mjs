@@ -1,15 +1,14 @@
 // Cuts the pictures of the film's last scene and writes where everything
-// lies, so the film can lay out the hundred coins and move two of them
-// (RuleFilm.astro). The pictures come from one camera (render-seized.py,
-// at full size) and keep that shared frame, scaled down alike: five lone
-// coins with their shadows and the two that rise without, each in the
-// same box around the point where it touches the table, and the tray,
-// empty and with the two, cut to what it shows.
+// lies, so the film can stack the coins and move the top one
+// (RuleFilm.astro). The pictures come from one camera (render-seized.py)
+// and keep that shared frame, scaled alike: the coin alone, in a box around
+// the point where it sits; the stack's shadow; and the tray, empty and with
+// the coin, in one box.
 //
 // Usage: node scripts/artwork/composite-seized.mjs <dir> '<json>' <out dir>
-//   dir   seized-coins.png, seized-lift.png, seized-tray.png and
+//   dir   seized-coin.png, seized-shadow.png, seized-tray.png and
 //         seized-landed.png, e.g.
-//         blender -b -P scripts/artwork/render-seized.py -- coins seized-coins.png
+//         blender -b -P scripts/artwork/render-seized.py -- coin seized-coin.png
 //   json  what render-seized.py prints after SEIZED
 import { writeFileSync } from "node:fs"
 import sharp from "sharp"
@@ -21,8 +20,9 @@ if (!outDir) {
 }
 const at = JSON.parse(json)
 
-// The full frame is 2400 pixels wide; the pictures keep two thirds.
-const SCALE = 2 / 3
+// The pictures are 1600 pixels wide in the full frame.
+const WIDTH = 1600
+const SCALE = WIDTH / at.width
 // Shadow-catcher noise below NOISE fades out, down to nothing at FLOOR;
 // a picture reaches as far as pixels from EDGE up, plus MARGIN.
 const NOISE = 40
@@ -31,12 +31,11 @@ const EDGE = 6
 const MARGIN = 12
 
 const scaled = (v) => Math.round(v * SCALE * 10) / 10
+const point = (p) => p.map(scaled)
 
 async function load(name) {
-  const file = `${dir}/seized-${name}.png`
-  const { width } = await sharp(file).metadata()
-  const { data, info } = await sharp(file)
-    .resize(Math.round(width * SCALE), null, { kernel: "lanczos3" })
+  const { data, info } = await sharp(`${dir}/seized-${name}.png`)
+    .resize(WIDTH, null, { kernel: "lanczos3" })
     .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true })
@@ -64,93 +63,59 @@ function bounds({ data, info }) {
   return { x: left, y: top, w: right - left, h: bottom - top }
 }
 
-async function save(name, { data, info }, rect) {
+function union(a, b) {
+  const x = Math.min(a.x, b.x)
+  const y = Math.min(a.y, b.y)
+  return {
+    x,
+    y,
+    w: Math.max(a.x + a.w, b.x + b.w) - x,
+    h: Math.max(a.y + a.h, b.y + b.h) - y,
+  }
+}
+
+// A picture with nothing sharp in it may keep fewer pixels; the film
+// stretches it back over its place.
+async function save(name, { data, info }, rect, keep = 1) {
   await sharp(data, {
     raw: { width: info.width, height: info.height, channels: 4 },
   })
     .extract({ left: rect.x, top: rect.y, width: rect.w, height: rect.h })
+    .resize(Math.round(rect.w * keep), null, { kernel: "lanczos3" })
     .webp({ quality: 82, alphaQuality: 100 })
     .toFile(`${outDir}/seized-${name}.webp`)
   console.log(name, rect)
-  return rect
 }
 
-// Every coin in the same box around the point where it touches the
-// table, so one place in the grid fits any of them: wide enough for the
-// shadows, which reach right and forward. The two that rise come without
-// shadow and need only the coin's own reach.
-function around(layer, x, y, reach) {
-  const { data, info } = layer
-  let left = x
-  let top = y
-  let right = x
-  let bottom = y
-  for (
-    let v = Math.max(0, y - reach);
-    v < Math.min(info.height, y + reach);
-    v++
-  )
-    for (
-      let u = Math.max(0, x - reach);
-      u < Math.min(info.width, x + reach);
-      u++
-    )
-      if (data[(v * info.width + u) * 4 + 3] >= EDGE) {
-        left = Math.min(left, u)
-        top = Math.min(top, v)
-        right = Math.max(right, u + 1)
-        bottom = Math.max(bottom, v + 1)
-      }
-  return { left: x - left, top: y - top, right: right - x, bottom: bottom - y }
-}
+// The film places the coin by where it sits.
+const [x, y] = point(at.coin).map(Math.round)
+const coin = await load("coin")
+const box = bounds(coin)
+await save("coin", coin, box)
 
-async function sprites(name, file, points) {
-  const layer = await load(file)
-  const spots = points.map((p) => p.map((v) => Math.round(scaled(v))))
-  // Half the distance between two coins alone.
-  const reach = Math.floor((spots[1][0] - spots[0][0]) / 2)
-  const sides = spots.map(([x, y]) => around(layer, x, y, reach))
-  const most = (side) => Math.max(...sides.map((s) => s[side])) + MARGIN
-  const box = { x: most("left"), y: most("top") }
-  box.w = box.x + most("right")
-  box.h = box.y + most("bottom")
-  for (const [k, [x, y]] of spots.entries())
-    await save(`${name}-${k}`, layer, {
-      x: x - box.x,
-      y: y - box.y,
-      w: box.w,
-      h: box.h,
-    })
-  return box
-}
+const shadow = await load("shadow")
+const shadowRect = bounds(shadow)
+await save("shadow", shadow, shadowRect, 0.4)
 
-const coin = await sprites("coin", "coins", at.alone)
-const lift = await sprites("lift", "lift", at.alone.slice(0, at.holes.length))
+const trays = await Promise.all(["tray", "landed"].map(load))
+const trayRect = trays.map(bounds).reduce(union)
+for (const [k, name] of ["tray", "landed"].entries())
+  await save(name, trays[k], trayRect)
 
-const rects = {}
-for (const name of ["tray", "landed"]) {
-  const layer = await load(name)
-  rects[name] = await save(name, layer, bounds(layer))
-}
-
-const point = (p) => p.map(scaled)
 writeFileSync(
   `${outDir}/seized.json`,
   `${JSON.stringify(
     {
-      coin,
-      lift,
-      tray: rects.tray,
-      landed: rects.landed,
-      origin: point(at.origin),
-      column: point(at.column),
-      row: point(at.row),
-      kinds: at.kinds.map((row) => row.join("")),
-      holes: at.holes,
-      up: point(at.up),
-      over: point(at.over),
-      down: point(at.landed),
-      shadow: point(at.shadow),
+      coin: { x: x - box.x, y: y - box.y, w: box.w, h: box.h },
+      shadow: shadowRect,
+      tray: trayRect,
+      foot: point(at.foot),
+      step: point(at.step),
+      drift: at.drift.map(point),
+      value: at.value,
+      taken: at.taken,
+      way: at.way.map(point),
+      shadows: at.shadows.map(point),
     },
     null,
     2,
