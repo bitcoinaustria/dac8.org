@@ -377,7 +377,7 @@ export const steps: Step[] = [
     chapter: "ergebnis",
     title: {
       de: "Von 100 €, die Kriminelle einnehmen, zieht der Staat rund 2 € ein.",
-      en: "Of 100 euros criminals make, the state confiscates about 2.",
+      en: "Of €100 criminals make, the state confiscates about €2.",
     },
     text: {
       de: "Den Rest behalten sie. Schätzt Europol für die EU.",
@@ -402,10 +402,12 @@ export const pile: { year: number; pages: number; acts: string }[] = [
   { year: 2024, pages: 295, acts: "2024/1624, 2024/1640, 2024/1620" },
 ]
 
-// Suspicion reports in Austria against convictions for money laundering.
-// 9,665 of the latest year's reports were not passed on but kept for later
-// analysis (Lagebericht Geldwäsche 2025, pp. 29–34).
+// Suspicion reports in Austria against convictions for money laundering:
+// the first year with a count, 2005, and the latest. 9,665 of the latest
+// year's reports were not passed on but kept for later analysis
+// (Lagebericht Geldwäsche 2025, pp. 29–34).
 export const reportField = {
+  firstYear: 2005,
   first: 467,
   latest: 13989,
   kept: 9665,

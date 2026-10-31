@@ -34,7 +34,7 @@ import type { Language } from "@/lib/i18n"
 // needs ID, and nothing at all for crypto; rules set on every way money can
 // take, then ever more authorities in the watchtower; six pages beside 488;
 // a sea of reports, most of them kept on file, beside a few convictions;
-// and a 100-euro note that crumbles to a red sliver. Grey is what is collected, red what
+// and a 100-euro note from which the state tears a red sliver. Grey is what is collected, red what
 // comes of it or what is new. Each step cites its sources by number from
 // the list at the end of the page (src/data/history-sources.ts). Without
 // the script the headlines stand as text one below the other.
@@ -306,19 +306,19 @@ const firstPages = pile[0].pages
 const pages = Array.from({ length: totalPages }, (_, k) => k)
 
 // ---------- Ergebnis --------------------------------------------------------
-// One grain per report on a canvas (src/lib/film-sand.ts): which state
+// One dot per report on a canvas (src/lib/film-sand.ts): which state
 // belongs to which step.
-const { first, latest, kept: keptReports, convictions } = reportField
+const { firstYear, first, latest, kept: keptReports, convictions } = reportField
 const sandStates = JSON.stringify({
   [at("ergebnis-2025")]: "all",
   [at("ergebnis-liegen")]: "kept",
-  [at("ergebnis-urteile")]: "heap",
+  [at("ergebnis-urteile")]: "convictions",
 })
 const fieldSteps = ["ergebnis-2025", "ergebnis-liegen", "ergebnis-urteile"]
   .map(at)
   .join(",")
-// A 100-euro note crumbles into dust on a canvas (src/lib/film-note.ts)
-// until the share confiscated remains, as Europol last estimated it.
+// A 100-euro note tears on a canvas (src/lib/film-note.ts): the state
+// takes the share Europol last estimated, the rest stays with criminals.
 const noteStep = at("ergebnis-euro")
 const kept = recovery.latest.percent
 const euro = (value: number) => (en ? `€${n(value)}` : `${n(value)} €`)
@@ -515,31 +515,32 @@ const noteKeep = String(kept / 100)
               class="sand"
               data-sand={sandStates}
               data-sand-counts={JSON.stringify({
+                firstYear,
                 first,
                 latest,
                 kept: keptReports,
                 convictions,
+              })}
+              data-sand-locale={locale}
+              data-sand-words={JSON.stringify({
+                reports: en ? "reports" : "Meldungen",
+                convictions: en ? "convictions" : "Verurteilungen",
               })}
               data-only={fieldSteps}
             >
               <canvas />
               <i data-sand-grey />
               <i data-sand-red />
-              <span class="sand-label" data-sand-label="reports">
-                <b>{n(latest)}</b>
-                {en ? "reports" : "Meldungen"}
-              </span>
-              <span class="sand-label kept" data-sand-label="kept">
+              <i data-sand-text />
+              <i data-sand-muted />
+              <i data-sand-panel />
+              <span class="sand-label" data-sand-label="kept">
                 <b>{n(keptReports)}</b>
                 {en ? "not passed on, kept" : "nicht weitergegeben, gespeichert"}
               </span>
-              <span class="sand-label passed" data-sand-label="passed">
+              <span class="sand-label" data-sand-label="passed">
                 <b>{n(latest - keptReports)}</b>
                 {en ? "passed on" : "weitergegeben"}
-              </span>
-              <span class="sand-label red" data-sand-label="convictions">
-                <b>{n(convictions)}</b>
-                {en ? "convictions" : "Verurteilungen"}
               </span>
             </div>
             <div
@@ -552,13 +553,13 @@ const noteKeep = String(kept / 100)
               <canvas />
               <i data-note-paper />
               <i data-note-edge />
-              <i data-note-line />
               <i data-note-red />
+              <i data-note-shadow />
               <span class="note-label kept" data-note-label="kept">
                 <b>{euro(kept)}</b>
                 {en ? "taken by the state" : "zieht der Staat ein"}
               </span>
-              <span class="note-label gone" data-note-label="gone">
+              <span class="note-label rest" data-note-label="rest">
                 <b>{euro(100 - kept)}</b>
                 {en ? "stay with criminals" : "bleiben bei Kriminellen"}
               </span>
@@ -636,7 +637,7 @@ const noteKeep = String(kept / 100)
         el.classList.toggle("on", Number(el.dataset.from) <= year)
     }
 
-    // The result chapter's grains, one per report.
+    // The result chapter's dots, one per report.
     const sandRoot = film.querySelector<HTMLElement>("[data-sand]")
     const sandStates: Record<string, SandState> = JSON.parse(
       sandRoot?.dataset.sand ?? "{}",
@@ -644,7 +645,7 @@ const noteKeep = String(kept / 100)
     const sand = sandRoot
       ? createSand(sandRoot, JSON.parse(sandRoot.dataset.sandCounts ?? "{}"))
       : null
-    // The last step's note, which crumbles each time the step comes up.
+    // The last step's note, which tears each time the step comes up.
     const noteRoot = film.querySelector<HTMLElement>("[data-note]")
     const note = noteRoot
       ? createNote(noteRoot, Number(noteRoot.dataset.note))
@@ -767,8 +768,11 @@ const noteKeep = String(kept / 100)
     const show = (i: number) => {
       const previous = current
       current = i
+      // The dots move from step to step, and fill in when the chapter
+      // begins; a jump, or a way back from the note, shows the end at once.
       const sandState = sandStates[i]
-      if (sandState) sand?.go(sandState, previous in sandStates)
+      if (sandState)
+        sand?.go(sandState, previous in sandStates || previous === i - 1)
       else sand?.hide()
       if (i === noteStep) note?.go(previous !== -1)
       else note?.hide()
@@ -1637,8 +1641,10 @@ const noteKeep = String(kept / 100)
     visibility: visible;
   }
 
-  /* Ein Korn je Meldung, auf einer Leinwand (src/lib/film-sand.ts). Die
-     beiden Farbproben liest das Skript, damit Hell und Dunkel stimmen. */
+  /* Ein Punkt je Meldung, auf einer Leinwand (src/lib/film-sand.ts). Die
+     Farb- und Schriftproben liest das Skript, damit Hell und Dunkel
+     stimmen; die Zahlen der Verurteilungen und Meldungen zeichnet es
+     selbst, damit sie mit der Kamera wachsen und schrumpfen. */
   .sand {
     position: relative;
     inline-size: 100%;
@@ -1652,25 +1658,46 @@ const noteKeep = String(kept / 100)
     block-size: 100%;
   }
 
-  .sand [data-sand-grey] {
+  .sand i {
     display: none;
+  }
+
+  .sand [data-sand-grey] {
     color: var(--bar);
   }
 
   .sand [data-sand-red] {
-    display: none;
     color: var(--red);
   }
 
-  /* Über den Haufen, sobald sie liegen. */
+  .sand [data-sand-text] {
+    color: var(--foreground);
+    font-size: var(--step-2);
+    font-weight: var(--weight-heading);
+  }
+
+  .sand [data-sand-muted] {
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+  }
+
+  .sand [data-sand-panel] {
+    color: var(--panel);
+  }
+
+  /* Gespeichert, nicht weitergegeben: mitten im blassen Block. */
   .sand-label {
     position: absolute;
     display: grid;
     justify-items: center;
-    translate: -50% -100%;
+    padding: 0.3em 0.7em;
+    border-radius: var(--radius-sm);
+    background: var(--panel);
+    translate: -50% -50%;
     color: var(--ink-2);
     font-size: var(--type-meta);
     line-height: 1.2;
+    text-align: center;
     white-space: nowrap;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -1683,49 +1710,15 @@ const noteKeep = String(kept / 100)
     letter-spacing: -0.02em;
   }
 
-  .sand-label.red {
-    justify-items: end;
-    translate: -100% -100%;
-    color: var(--accent);
-  }
-
-  .sand-label.red b {
-    color: var(--accent);
-  }
-
-  .sand-label.red.below {
-    translate: -100% 0;
-  }
-
-  .sand[data-state="heap"]
-    :is([data-sand-label="reports"], [data-sand-label="convictions"]) {
-    opacity: 1;
-    transition-delay: 2.5s;
-  }
-
-  .sand[data-state="heap"] [data-sand-label="convictions"] {
-    transition-delay: 3.6s;
-  }
-
-  /* Gespeichert, nicht weitergegeben: mitten im blassen Block. */
-  .sand-label.kept,
-  .sand-label.passed {
-    padding: 0.3em 0.7em;
-    border-radius: var(--radius-sm);
-    background: var(--panel);
-    translate: -50% -50%;
-    text-align: center;
-  }
-
-  .sand[data-state="kept"]
-    :is([data-sand-label="kept"], [data-sand-label="passed"]) {
+  .sand[data-state="kept"] .sand-label {
     opacity: 1;
     transition-delay: 1.2s;
   }
 
-  /* Ein Hunderter zerfällt zu Staub (src/lib/film-note.ts), bis der
-     eingezogene Anteil bleibt. Das Feld hat ein festes Seitenverhältnis,
-     damit die Leiste des Browsers beim Scrollen nichts neu zeichnet. */
+  /* Ein Hunderter reißt (src/lib/film-note.ts): Der Staat bekommt einen
+     schmalen Streifen, den Rest behalten die Kriminellen. Das Feld hat ein
+     festes Seitenverhältnis, damit die Leiste des Browsers beim Scrollen
+     nichts neu zeichnet. */
   .note {
     position: relative;
     inline-size: min(100%, 100cqh * 1.15);
@@ -1751,12 +1744,12 @@ const noteKeep = String(kept / 100)
     color: var(--note-edge);
   }
 
-  .note [data-note-line] {
-    color: var(--ink-3);
-  }
-
   .note [data-note-red] {
     color: var(--red);
+  }
+
+  .note [data-note-shadow] {
+    color: light-dark(rgb(0 0 0 / 0.3), rgb(0 0 0 / 0.7));
   }
 
   .note-label {
@@ -1786,9 +1779,10 @@ const noteKeep = String(kept / 100)
     color: var(--accent);
   }
 
-  .note-label.gone {
-    justify-items: center;
-    translate: -50% -40%;
+  /* Unter dem Rest des Scheins, an seiner rechten Kante. */
+  .note-label.rest {
+    justify-items: end;
+    translate: -100% 0.4rem;
   }
 
   .note[data-done] .note-label {
@@ -1796,9 +1790,9 @@ const noteKeep = String(kept / 100)
     translate: 0 0;
   }
 
-  .note[data-done] .note-label.gone {
-    translate: -50% -50%;
-    transition-delay: 0.35s;
+  .note[data-done] .note-label.rest {
+    translate: -100% 0;
+    transition-delay: 0.25s;
   }
 
   /* ---------- Schmal ---------------------------------------------------- */
