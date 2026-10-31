@@ -659,7 +659,10 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr) auto;
     gap: var(--space-xs);
-    block-size: calc(100dvh - var(--header-height));
+    /* Die kleinste Fensterhöhe, nicht die wechselnde: Auf dem Handy fährt
+       die Adressleiste beim Scrollen ein und aus, und mit ihr würde die
+       ganze Bühne mitten in der Geschichte neu gesetzt. */
+    block-size: calc(100svh - var(--header-height));
     padding-block: var(--space-xs) var(--space-s);
   }
 
