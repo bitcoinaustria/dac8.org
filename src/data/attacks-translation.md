@@ -23,6 +23,13 @@ the English says: no more, no less, no sharper, no softer.
   (Krypto-Händler, Krypto-Unternehmer), as on the rest of the site.
 - Keep who did what to whom. Do not merge or split victims or attackers, and
   keep their number and, where the English states it, their gender.
+- Leave victims' names out, the one deliberate departure from the English: the
+  site keeps victims anonymous, while Lopp's descriptions sometimes name them.
+  Replace a victim's name with what the English says about them (_Mr. Guo,
+  31_ becomes ein 31-jähriger Mann, _trader Jan Sher Khan_ der Händler) or,
+  if it says nothing, with das Opfer; drop honorifics with the name. This
+  covers relatives and companions harmed alongside the victim. Names of
+  suspects, convicts, police officers and public figures stay as written.
 - Keep the tense of the English: headline-style present stays present, past
   stays past.
 - Numbers use German notation: 12.000, 0,5 BTC, 1,5 Millionen. Write out
