@@ -83,9 +83,8 @@ dossier's FAQ; where the data goes, as a full-screen scroll film
 (`src/components/DataWeb.astro`); the danger once it is known who holds how
 much, with the leak and attack figures and a still of the attack map
 (`src/components/AttackMapPreview.astro`); three of the reasons from the
-arguments page, each leading there; how automatic reporting grew and how
-few convictions it brings (`src/components/HistoryStack.astro`,
-`src/components/EffectTeaser.astro`), leading to the history page; and the
+arguments page, each leading there; how automatic reporting grew
+(`src/components/HistoryStack.astro`), leading to the history page; and the
 complaint with the legal route, leading to the proceedings page. The full case
 list with sources is on the leak page (`/datenlecks/`, `/en/data-leaks/`, data in `src/data/leaks.ts`),
 after the cases in which such data led criminals to someone's door
@@ -224,8 +223,7 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   (the report and conviction series, accounts exchanged, single figures and
   the institutions' own words), drawn by `YearColumns` and `StatTiles`. In
   the film and the charts grey is what is collected and red what comes of
-  it or what is new; each figure says what it measures and no more. The home page repeats the reports against
-  convictions as two bars (`src/components/EffectTeaser.astro`), and the
+  it or what is new; each figure says what it measures and no more. The
   arguments page's reason on growing surveillance cites the same figures. The AML and
   evidence claims are verified in the wiki references
   `aml-kyc-history-austria` and `rule-growth-and-effect-evidence`. Update

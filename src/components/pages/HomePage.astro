@@ -3,7 +3,6 @@ import AffectedCheck from "@/components/AffectedCheck.astro"
 import AttackMapPreview from "@/components/AttackMapPreview.astro"
 import CampaignStatus from "@/components/CampaignStatus.astro"
 import DataWeb from "@/components/DataWeb.astro"
-import EffectTeaser from "@/components/EffectTeaser.astro"
 import HistoryStack from "@/components/HistoryStack.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MetaPage from "@/components/MetaPage.astro"
@@ -15,8 +14,7 @@ import { languageFor, pathFor } from "@/lib/i18n"
 // The home page tells one story in six bands: the claim and "Am I
 // affected?" on the first screen, the data story, the proof that such data
 // gets lost and that holders get attacked, three of our reasons, how each
-// step of EU tax reporting has added more and how little the reports
-// against money laundering yield, and who filed the complaint. The
+// step of EU tax reporting has added more, and who filed the complaint. The
 // footer's sign-off carries the one ask, as on every page. Every fact appears
 // here once and in full on its own page: the dossier (what is reported),
 // /angriffe/ and /datenlecks/ (cases), /argumente/ (reasons), /geschichte/
@@ -180,10 +178,6 @@ const reasons = [
           : "Was das Finanzamt automatisch über Privatpersonen erfährt, wird seit 2005 immer mehr. Krypto-Anbieter melden jetzt auch Kunden im Inland, und die nächste Erweiterung ist schon vorgeschlagen."}
       </p>
       <HistoryStack language={language} compact />
-      <h3>
-        {en ? "Many reports, few convictions." : "Viele Meldungen, wenige Urteile."}
-      </h3>
-      <EffectTeaser language={language} />
       <a class="text-link" href={pathFor("history", language)}
         >{en ? "How it grew and what it brings" : "Wie es wuchs und was es bringt"}</a
       >
