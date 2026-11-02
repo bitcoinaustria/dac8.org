@@ -1324,7 +1324,7 @@ const strings = en
   }
 
   .atlas .atlas-popup .atlas-headline {
-    --lines: 6;
+    --lines: 7;
     color: var(--ink);
     font-size: 0.9375rem;
   }
@@ -1337,12 +1337,12 @@ const strings = en
     display: -webkit-box;
     overflow: hidden;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: var(--lines, 3);
-    line-clamp: var(--lines, 3);
+    -webkit-line-clamp: var(--lines, 5);
+    line-clamp: var(--lines, 5);
     cursor: pointer;
     mask-image: linear-gradient(
       to bottom,
-      #000 calc(100% - 2.9em),
+      #000 calc(100% - 2lh),
       rgb(0 0 0 / 0.2)
     );
   }
