@@ -4,14 +4,16 @@ import type { Language } from "@/lib/i18n"
 // Letter to members of the Austrian National Council. The letter is drafted
 // in the browser and sent by the reader; nothing is transmitted to dac8.org.
 //
-// It measures the report against cash and gold: nobody reports them when
-// they are taken home, and ID is needed only above a limit, where crypto
-// carries a name from the first cent (the film on the history page). It asks
-// for three of the demands on the arguments page (#forderungen,
+// It speaks for someone who saves in bitcoin and measures the report against
+// cash and gold, the other savings people keep themselves: nobody reports
+// them when they are taken home, and ID is needed only above a limit, where
+// crypto carries a name from the first cent (the film on the history page).
+// It asks for three of the demands on the arguments page (#forderungen,
 // src/data/arguments.ts): the two the National Council can change in § 20
 // Krypto-MPfG first, then the one only the EU can meet. It closes with a
 // question the MP has to answer, about the comparison rather than about
-// suspicion: the report follows the route, so it accuses nobody. Keep it
+// suspicion: the report follows the route, so it accuses nobody. It asks
+// for no tax change, since the campaign takes no side on tax policy. Keep it
 // short; the reader's own sentences should carry the most weight.
 //
 // The facts restate sourced text on the site: report contents (glossary),
@@ -52,7 +54,7 @@ const text = {
     senderPlaceholder: "[Dein Name]",
     intro:
       "seit Jänner 2026 setzt Österreich mit dem Krypto-Meldepflichtgesetz (Krypto-MPfG) die EU-Richtlinie DAC8 um. Krypto-Anbieter müssen dem Finanzamt nun jedes Jahr Name, Anschrift und Steuernummer ihrer Kunden melden, dazu Jahressummen ihrer Käufe, Verkäufe und Übertragungen.",
-    comparison: `Bei Bargeld und Gold wäre das undenkbar. Hebe ich Geld vom Konto ab oder kaufe ich Goldmünzen und verwahre sie daheim, meldet das niemand dem Finanzamt. Ausweisen muss ich mich bei einem Geschäft ohne Konto erst ab einer Grenze; in Gold gemessen sinkt sie von ${gold.de[0]} Unzen im Jahr 1991 auf ${gold.de[1]} Unzen ab Juli 2027. Bei Krypto trägt jede Übertragung über einen Anbieter meinen Namen, ab dem ersten Cent. Übertrage ich Bitcoin in meine eigene Wallet, steht zusätzlich die Jahressumme in der Meldung ans Finanzamt, ohne Wallet-Adresse, obwohl das für sich genommen keine Steuer auslöst.`,
+    comparison: `Ich spare in Bitcoin, wie andere in Gold oder mit Bargeld daheim. Dort wäre so eine Meldung undenkbar: Hebe ich Geld vom Konto ab oder kaufe ich Goldmünzen und verwahre sie daheim, meldet das niemand dem Finanzamt. Ausweisen muss ich mich bei einem Geschäft ohne Konto erst ab einer Grenze; in Gold gemessen sinkt sie von ${gold.de[0]} Unzen im Jahr 1991 auf ${gold.de[1]} Unzen ab Juli 2027. Bei Krypto trägt jede Übertragung über einen Anbieter meinen Namen, ab dem ersten Cent. Übertrage ich Bitcoin in meine eigene Wallet, steht zusätzlich die Jahressumme in der Meldung ans Finanzamt, ohne Wallet-Adresse, obwohl das für sich genommen keine Steuer auslöst.`,
     danger:
       "Gelangt so eine Meldung in falsche Hände, zeigt sie, wer vermutlich wie viel Bitcoin daheim hat. Datenlecks gibt es bei Krypto-Börsen ebenso wie bei Steuerbehörden, und in Frankreich wählen Täter laut Polizei mit offenbar gehackten Daten Opfer für Überfälle in der eigenen Wohnung aus.",
     austria:
@@ -77,7 +79,7 @@ const text = {
     senderPlaceholder: "[Your name]",
     intro:
       "Since January 2026, Austria has implemented the EU directive DAC8 through the Krypto-Meldepflichtgesetz (Krypto-MPfG). Crypto-asset providers must now report their customers’ name, home address and tax number to the tax office every year, together with annual totals of their purchases, sales and transfers.",
-    comparison: `With cash or gold, this would be unthinkable. If I withdraw money from my account, or buy gold coins and keep them at home, nobody reports it to the tax office. I only have to show ID for a transaction without an account above a limit; measured in gold, it falls from ${gold.en[0]} ounces in 1991 to ${gold.en[1]} ounces from July 2027. With crypto, every transfer through a provider carries my name, from the first cent. If I transfer bitcoin to my own wallet, the annual total also appears in the report to the tax office, without the wallet address, even though the transfer by itself triggers no tax.`,
+    comparison: `I save in bitcoin, as others save in gold or keep cash at home. There, such a report would be unthinkable: if I withdraw money from my account, or buy gold coins and keep them at home, nobody reports it to the tax office. I only have to show ID for a transaction without an account above a limit; measured in gold, it falls from ${gold.en[0]} ounces in 1991 to ${gold.en[1]} ounces from July 2027. With crypto, every transfer through a provider carries my name, from the first cent. If I transfer bitcoin to my own wallet, the annual total also appears in the report to the tax office, without the wallet address, even though the transfer by itself triggers no tax.`,
     danger:
       "If such a report falls into the wrong hands, it shows who probably keeps how much bitcoin at home. Data breaches happen at crypto exchanges as well as at tax authorities, and in France, according to the police, criminals use apparently hacked data to pick victims for attacks in their own homes.",
     austria:
