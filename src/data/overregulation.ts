@@ -147,8 +147,9 @@ export const thresholds: {
   { step: "ausweis-krypto", year: 2024, amount: 0, unit: "EUR" },
 ]
 
-// The two cash limits in gold, as the film's headline writes them.
-const ounces = (language: Language) =>
+// The two cash limits in gold, as the film's headline and the letter to
+// members of the National Council write them.
+export const limitsInGold = (language: Language) =>
   thresholds
     .filter((t) => t.amount > 0)
     .map((t) =>
@@ -207,8 +208,8 @@ export const steps: Step[] = [
     id: "ausweis-gold",
     chapter: "ausweis",
     title: {
-      de: `In Gold: von ${ounces("de")[0]} auf ${ounces("de")[1]} Unzen.`,
-      en: `In gold: from ${ounces("en")[0]} to ${ounces("en")[1]} ounces.`,
+      de: `In Gold: von ${limitsInGold("de")[0]} auf ${limitsInGold("de")[1]} Unzen.`,
+      en: `In gold: from ${limitsInGold("en")[0]} to ${limitsInGold("en")[1]} ounces.`,
     },
     text: {
       de: "In Gold gemessen sinkt die Grenze noch viel stärker als in heutigem Geld.",
