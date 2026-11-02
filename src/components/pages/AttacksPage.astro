@@ -328,6 +328,8 @@ const strings = en
       for (const text of container.querySelectorAll<HTMLElement>(
         ".atlas-headline.clamped",
       )) {
+        if (text.nextElementSibling?.classList.contains("atlas-toggle"))
+          continue
         if (text.scrollHeight <= text.clientHeight + 1) {
           text.classList.remove("clamped")
           continue
@@ -443,9 +445,13 @@ const strings = en
         alt: `${place(attack)}, ${dateOf(attack)}`,
         title: `${place(attack)}, ${attack.year}`,
       })
+      // Leaflet asks for the content again on every popup update, so the
+      // case is built once and keeps its folded or unfolded state.
+      let box: HTMLElement | undefined
       marker.bindPopup(
         () => {
-          const box = element("div", "atlas-case")
+          if (box) return box
+          box = element("div", "atlas-case")
           box.append(
             ...caseBody(
               attack,
@@ -465,7 +471,11 @@ const strings = en
     })
     map.on("popupopen", ({ popup }) => {
       const content = popup.getElement()
-      if (content) fold(content, () => popup.update())
+      // The popup fits itself to the unfolded text only after the click:
+      // updating it during the click would briefly detach the button, and
+      // Leaflet would take the click for one on the map and close the popup.
+      if (content)
+        fold(content, () => requestAnimationFrame(() => popup.update()))
     })
     const recentMarkers = new Set(
       entries.filter((entry) => entry.recent).map((entry) => entry.marker),
