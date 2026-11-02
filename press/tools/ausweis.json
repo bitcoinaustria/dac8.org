@@ -1,0 +1,85 @@
+{
+  "path": "/geschichte/",
+  "spacer": ".film .spacer",
+  "track": ".film .track",
+  "stuck": ".film",
+  "line": 0.55,
+  "view": 720,
+  "scale": 1.5,
+  "fps": 60,
+  "css": "ausweis.css",
+  "watermark": "dac8<span>.org</span>",
+  "out": "/tmp/pr-film/ausweis",
+  "captions": [
+    {
+      "p": 0,
+      "html": "Die Ausweisgrenze sinkt: von 33.900 € auf 10.000 €."
+    },
+    {
+      "p": 1,
+      "html": "In Gold: von 47 auf 2,7 Unzen."
+    },
+    {
+      "p": 2,
+      "html": "Krypto: ab dem <em>ersten Cent</em>."
+    },
+    {
+      "p": 3,
+      "html": "Seit 1977 wird ein Weg nach dem anderen erfasst."
+    },
+    {
+      "p": 4,
+      "html": "Und immer mehr schauen hinein."
+    }
+  ],
+  "timeline": [
+    {
+      "to": [
+        0,
+        0.3
+      ],
+      "settle": 800,
+      "hold": 2600
+    },
+    {
+      "to": [
+        1,
+        0.3
+      ],
+      "dur": 500,
+      "hold": 3000
+    },
+    {
+      "to": [
+        2,
+        0.3
+      ],
+      "dur": 500,
+      "hold": 2600
+    },
+    {
+      "to": [
+        3,
+        0.0
+      ],
+      "dur": 500,
+      "hold": 400
+    },
+    {
+      "to": [
+        3,
+        0.8
+      ],
+      "dur": 4000,
+      "hold": 200
+    },
+    {
+      "to": [
+        4,
+        0.8
+      ],
+      "dur": 2800,
+      "hold": 2600
+    }
+  ]
+}

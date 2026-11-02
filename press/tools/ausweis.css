@@ -1,0 +1,26 @@
+/* The ID film without the site around it: no header, no step buttons, the
+   stage fills the square, the big caption stands above the picture. */
+:root { --header-height: 0px !important; }
+header, .embargo, .bar-actions, .menu-toggle, [data-action-bar], .skip-link,
+.film-nav, .film-voice { display: none !important; }
+html { scroll-behavior: auto !important; }
+html, body, main, section, .film { background: var(--panel) !important; }
+.film .stage { block-size: 100dvh !important; padding: 0 0 14px !important; }
+.film .view { border-radius: 0 !important; grid-template-rows: 118px minmax(0, 1fr) !important; }
+.film .stage { inline-size: 100vw !important; margin-inline: calc(50% - 50vw) !important; }
+/* The site's headlines give way to big lines that read on a phone. */
+.film .says { grid-row: 1 !important; visibility: hidden !important; min-block-size: 0 !important; overflow: hidden !important; padding: 0 !important; border: 0 !important; }
+.film .say { visibility: hidden !important; }
+.film .scenes { grid-row: 2 !important; }
+.film-caption {
+  position: fixed; left: 24px; top: 20px; z-index: 50; max-inline-size: 660px;
+  font: 640 40px/1.1 var(--font-sans, "IBM Plex Sans"), sans-serif; letter-spacing: -0.022em;
+  color: #202020; text-wrap: balance;
+}
+.film-caption em { font-style: normal; color: #e3000f; }
+.film-watermark {
+  position: fixed; right: 18px; bottom: 14px; z-index: 50;
+  font: 600 17px/1 var(--font-sans, "IBM Plex Sans"), sans-serif; letter-spacing: -0.01em;
+  color: #202020; opacity: 0.85;
+}
+.film-watermark span { color: #e3000f; }

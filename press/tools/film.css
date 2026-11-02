@@ -1,0 +1,32 @@
+/* The film without the site around it: no header, no scene tabs, no pager,
+   the stage fills the square. */
+:root { --header-height: 0px !important; }
+header, .web-nav, .embargo, .bar-actions, .menu-toggle, [data-action-bar], .rail,
+.say-cases, .skip-link { display: none !important; }
+html { scroll-behavior: auto !important; }
+#problem .stage {
+  padding-block: 0 14px !important; gap: 0 !important; block-size: 100dvh !important;
+  /* Without the scene tabs the stage has two rows: the picture and the note. */
+  grid-template-rows: minmax(0, 1fr) auto !important;
+}
+/* Edge to edge: the page takes the stage's colour, so no frame shows. */
+html, body, main, section, #problem { background: var(--panel) !important; }
+#problem .view { border-radius: 0 !important; }
+#problem .web { inline-size: 100vw !important; margin-inline: calc(50% - 50vw) !important; }
+#problem .stage > .note { padding-inline: 20px; }
+/* The site's captions give way to big lines that read on a phone; their
+   room at the top of the stage stays. */
+#problem .says { visibility: hidden !important; block-size: 118px !important; overflow: hidden !important; padding: 0 !important; }
+#problem .say { visibility: hidden !important; }
+.film-caption {
+  position: fixed; left: 24px; top: 20px; z-index: 50; max-inline-size: 660px;
+  font: 640 40px/1.1 var(--font-sans, "IBM Plex Sans"), sans-serif; letter-spacing: -0.022em;
+  color: #202020; text-wrap: balance;
+}
+.film-caption em { font-style: normal; color: #e3000f; }
+.film-watermark {
+  position: fixed; right: 18px; bottom: 14px; z-index: 50;
+  font: 600 17px/1 var(--font-sans, "IBM Plex Sans"), sans-serif; letter-spacing: -0.01em;
+  color: #202020; opacity: 0.85;
+}
+.film-watermark span { color: #e3000f; }
