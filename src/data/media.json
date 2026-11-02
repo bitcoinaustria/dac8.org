@@ -1,1 +1,43 @@
-[]
+[
+  {
+    "date": "2026-11-02",
+    "kind": "article",
+    "outlet": "Trending Topics",
+    "title": "Bitcoin Austria zieht gegen die Krypto-Meldepflicht DAC8 vor Gericht",
+    "url": "https://www.trendingtopics.eu/dac8-bitcoin-austria-beschwerde/",
+    "language": "de",
+    "image": "2026-11-02-trendingtopics-eu-dac8-bitcoin-austria-beschwerde.webp",
+    "pin": 2
+  },
+  {
+    "date": "2026-11-02",
+    "kind": "article",
+    "outlet": "BTC-ECHO",
+    "title": "Krypto-Meldepflicht vor Gericht: \"Selbstverwahrung ist kein Verdachtsmoment\"",
+    "url": "https://www.btc-echo.de/news/krypto-meldepflicht-in-oesterreich-unter-druck-selbstverwahrung-ist-kein-verdachtsmoment-240238/",
+    "language": "de",
+    "image": "2026-11-02-btc-echo-de-news-krypto-meldepflicht-in-oesterreich-unter-druck-selbstverwahrun.webp"
+  },
+  {
+    "date": "2026-11-02",
+    "kind": "video",
+    "outlet": "Blocktrainer",
+    "title": "ANWALT KLAGT gegen EU-BITCOIN-ÜBERWACHUNG! 💥 Wird DAC8 jetzt gekippt?",
+    "url": "https://www.youtube.com/watch?v=CM9PueCkGxQ",
+    "language": "de",
+    "guest": "Dr. Oliver Völkel",
+    "minutes": 27,
+    "image": "2026-11-02-youtube-com-cm9pueckgxq.webp",
+    "pin": 1
+  },
+  {
+    "date": "2026-11-02",
+    "kind": "article",
+    "outlet": "Blocktrainer",
+    "title": "Weitere Klage gegen DAC8: Jetzt geht auch Österreich gegen die EU-Datensammlung vor!",
+    "url": "https://www.blocktrainer.de/blog/weitere-klage-gegen-dac8-jetzt-geht-auch-oesterreich-gegen-die-eu-datensammlung-vor",
+    "language": "de",
+    "image": "2026-11-02-blocktrainer-de-blog-weitere-klage-gegen-dac8-jetzt-geht-auch-oesterreich-gegen.webp",
+    "pin": 3
+  }
+]

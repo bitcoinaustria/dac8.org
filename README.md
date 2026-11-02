@@ -85,7 +85,8 @@ much, with the leak and attack figures and a still of the attack map
 (`src/components/AttackMapPreview.astro`); three of the reasons from the
 arguments page, each leading there; how automatic reporting grew
 (`src/components/HistoryStack.astro`), leading to the history page; and the
-complaint with the legal route, leading to the proceedings page. The full case
+complaint with the legal route and the first three pieces of media coverage
+(`src/components/MediaCard.astro`), leading to the proceedings page. The full case
 list with sources is on the leak page (`/datenlecks/`, `/en/data-leaks/`, data in `src/data/leaks.ts`),
 after the cases in which such data led criminals to someone's door
 (`#angriffe`). A case belongs there only if lost or misused data made the harm
@@ -240,11 +241,19 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   original. `pnpm add:media <url>` reads title, outlet, date and language
   from the page (oEmbed for YouTube, Vimeo and Spotify) and writes the entry
   to `src/data/media.json`; flags such as `--kind podcast`, `--date`,
-  `--guest` fill in or override what the page does not say. Check the result
-  against the page before committing. Entries can also be added by hand;
+  `--guest` fill in or override what the page does not say. It also stores
+  the preview picture (`og:image`, or the YouTube thumbnail) in
+  `src/assets/media/` and the length of videos and podcasts, so the cards show
+  at a glance whether a piece is read, watched or heard, and the page loads
+  nothing from the outlet or YouTube. Check the result against the page
+  before committing. Entries can also be added by hand;
   `src/data/media.ts` defines the fields and fails the build on a malformed
-  entry. Titles stay in the language of the piece. The newest six are shown,
-  the rest behind "Alle anzeigen"; the kind filter works without JavaScript.
+  entry. Titles stay in the language of the piece. Pieces with a `pin`
+  (`--pin 1`, 2, …) come first in that order, the rest follow newest first;
+  the first three also appear on the home page. Remove the pins once those
+  pieces are no longer the most important. Six are
+  shown, the rest behind "Alle anzeigen"; the kind filter works without
+  JavaScript.
 - The newsletter link points to Bitcoin Austria's existing newsletter form.
 - The letter to members of the National Council is on the participation page
   (`src/components/LetterGenerator.astro`, texts in `src/data/letter.ts`). It
