@@ -5,12 +5,7 @@ import BroadcastIcon from "@/assets/icons/broadcast.svg"
 import ExternalIcon from "@/assets/icons/external.svg"
 import PlayIcon from "@/assets/icons/play.svg"
 import PodcastIcon from "@/assets/icons/podcast.svg"
-import {
-  type MediaItem,
-  type MediaKind,
-  mediaKindLabels,
-  pictureFor,
-} from "@/data/media"
+import { type MediaItem, type MediaKind, mediaKindLabels } from "@/data/media"
 import type { Language } from "@/lib/i18n"
 
 // One piece of coverage as a card: the preview picture says at a glance
@@ -48,7 +43,15 @@ const KindIcon = {
   video: PlayIcon,
   broadcast: BroadcastIcon,
 }[item.kind]
-const picture = pictureFor(item)
+const pictures = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/media/*",
+  { eager: true },
+)
+const picture = item.image
+  ? pictures[`../assets/media/${item.image}`]?.default
+  : undefined
+if (item.image && !picture)
+  throw new Error(`media.json: ${item.image} is not in src/assets/media/`)
 const formatDate = new Intl.DateTimeFormat(en ? "en-GB" : "de-AT", {
   dateStyle: "long",
   timeZone: "UTC",

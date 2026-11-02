@@ -105,6 +105,9 @@ for (const broken of [
   { ...piece("2026-01-01"), url: "example.org" },
   { ...piece("2026-01-01"), title: " " },
   { ...piece("2026-01-01"), language: "Deutsch" },
+  { ...piece("2026-01-01"), minutes: 0 },
+  { ...piece("2026-01-01"), pin: 1.5 },
+  { ...piece("2026-01-01"), image: "../secret.webp" },
 ])
   assert.throws(() => checkMedia([broken]))
 media.push(piece("2020-05-01"), piece("2999-01-01"), piece("2021-03-01"))
@@ -113,6 +116,17 @@ assert.equal(
     .map((item) => item.date)
     .join(","),
   "2021-03-01,2020-05-01",
+)
+// Pinned pieces lead in their order, however old; the rest follow newest first.
+media.push(
+  { ...piece("2020-01-01"), pin: 2 },
+  { ...piece("2019-01-01"), pin: 1 },
+)
+assert.equal(
+  publishedMedia(new Date("2022-01-01"))
+    .map((item) => item.date)
+    .join(","),
+  "2019-01-01,2020-01-01,2021-03-01,2020-05-01",
 )
 
 // Pages link to single terms at #begriff-<id>, so both languages must carry
@@ -124,5 +138,5 @@ assert.equal(new Set(termIds("de")).size, termIds("de").length)
 for (const id of termIds("de")) assert.match(id, /^[a-z0-9]+(-[a-z0-9]+)*$/)
 
 console.log(
-  "Passed: locale routing, unknown routes, empty feeds, language-specific URLs, publication dates, ordering, stable GUIDs, XML escaping, media entry and glossary anchor checks.",
+  "Passed: locale routing, unknown routes, empty feeds, language-specific URLs, publication dates, ordering, stable GUIDs, XML escaping, media entry checks, pin order and glossary anchor checks.",
 )

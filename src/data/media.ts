@@ -36,13 +36,6 @@ export type MediaItem = {
   pin?: number // Shown first, in this order; unpinned pieces follow by date.
 }
 
-const pictures = import.meta.glob<{ default: ImageMetadata }>(
-  "../assets/media/*",
-  { eager: true },
-)
-export const pictureFor = (item: MediaItem) =>
-  item.image ? pictures[`../assets/media/${item.image}`]?.default : undefined
-
 // A malformed entry fails the build instead of rendering a broken link.
 export const checkMedia = (raw: unknown[]): MediaItem[] =>
   raw.map((entry, index) => {
@@ -62,7 +55,12 @@ export const checkMedia = (raw: unknown[]): MediaItem[] =>
       !(Number.isInteger(item.minutes) && item.minutes > 0)
     )
       throw problem("minutes")
-    if (item.image !== undefined && !pictureFor(item)) throw problem("image")
+    // MediaCard fails the build if the file is missing.
+    if (
+      item.image !== undefined &&
+      !/^[\w.-]+\.(webp|jpe?g|png)$/.test(item.image)
+    )
+      throw problem("image")
     if (item.pin !== undefined && !(Number.isInteger(item.pin) && item.pin > 0))
       throw problem("pin")
     return item
