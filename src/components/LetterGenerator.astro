@@ -1,5 +1,6 @@
 ---
-import { buildLetter, letterSubject } from "@/data/letter"
+import { buildLetter, type LetterFacts, letterSubject } from "@/data/letter"
+import { attacks, countIn, euCountries, latestYear } from "@/lib/attacks"
 import type { Language } from "@/lib/i18n"
 
 interface Props {
@@ -8,18 +9,34 @@ interface Props {
 
 const { language } = Astro.props
 const en = language === "en"
-const initial = buildLetter("de", {
-  salutation: "neutral",
-  recipient: "",
-  sender: "",
-  location: "",
-  personal: "",
-})
+// Counted here because the attack archive is too large for the script.
+const facts: LetterFacts = {
+  attacks: attacks.length,
+  year: latestYear,
+  inYear: countIn(latestYear),
+  inYearEu: countIn(latestYear, euCountries),
+}
+const initial = buildLetter(
+  "de",
+  {
+    salutation: "neutral",
+    recipient: "",
+    sender: "",
+    location: "",
+    personal: "",
+  },
+  facts,
+)
 const directory =
   "https://www.parlament.gv.at/recherchieren/personen/nationalrat"
 ---
 
-<div class="letter" data-letter data-copy-scope>
+<div
+  class="letter"
+  data-letter
+  data-letter-facts={JSON.stringify(facts)}
+  data-copy-scope
+>
   <form class="letter-form" data-letter-form>
     <fieldset class="letter-language">
       <legend>{en ? "Letter language" : "Sprache des Briefs"}</legend>
@@ -254,7 +271,12 @@ const directory =
 </style>
 
 <script>
-  import { buildLetter, type LetterFields, letterSubject } from "@/data/letter"
+  import {
+    buildLetter,
+    type LetterFacts,
+    type LetterFields,
+    letterSubject,
+  } from "@/data/letter"
   import type { Language } from "@/lib/i18n"
   import { copyText } from "@/lib/share"
 
@@ -272,6 +294,7 @@ const directory =
     if (!form || !output || !subject || !mail || !copy || !notice || !reset)
       continue
 
+    const facts = JSON.parse(root.dataset.letterFacts ?? "{}") as LetterFacts
     const en = document.documentElement.lang.startsWith("en")
     let edited = false
     const setEdited = (value: boolean) => {
@@ -292,13 +315,17 @@ const directory =
     const render = () => {
       subject.value = letterSubject[language()]
       if (!edited) {
-        output.value = buildLetter(language(), {
-          salutation: value("salutation") as LetterFields["salutation"],
-          recipient: value("recipient"),
-          sender: value("sender"),
-          location: value("location"),
-          personal: value("personal"),
-        })
+        output.value = buildLetter(
+          language(),
+          {
+            salutation: value("salutation") as LetterFields["salutation"],
+            recipient: value("recipient"),
+            sender: value("sender"),
+            location: value("location"),
+            personal: value("personal"),
+          },
+          facts,
+        )
       }
       updateMail()
     }
