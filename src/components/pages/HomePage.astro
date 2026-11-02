@@ -27,6 +27,10 @@ const language = languageFor(Astro.url.pathname)
 const en = language === "en"
 
 // The proof band counts from the same data as the leak page and the map.
+// Lopp's archive only holds cases that were reported, so the band adds
+// France's official count, which alone exceeds the archive's EU figure; it
+// is shown in full with its source among the leak page's doorstep cases
+// (src/data/leaks.ts).
 const people = roundPeople(peopleAffected, language)
 const euNow = countIn(latestYear, euCountries)
 const euBefore = countIn(latestYear - 1, euCountries)
@@ -101,16 +105,23 @@ const reasons = [
             Exchanges, tax tools and authorities have already lost such data,
             on about <strong>{people}</strong> people across the documented
             cases. In the EU, <strong>{euNow}</strong> attacks on crypto
-            holders have become known so far in {latestYear}, against{" "}
-            <strong>{euBefore}</strong> in all of {latestYear - 1}.
+            holders have become public so far in {latestYear}, against{" "}
+            <strong>{euBefore}</strong> in all of {latestYear - 1}. The real
+            number is higher: in France alone, the Interior Ministry counted{" "}
+            <strong>77</strong> abductions, sequestrations and extortions or
+            attempts in the first half of 2026.
           </>
         ) : (
           <>
             Anbieter, Steuertools und Behörden haben solche Daten schon
             verloren, zusammengezählt über rund <strong>{people}</strong>{" "}
             Menschen. In der EU wurden {latestYear} bisher{" "}
-            <strong>{euNow}</strong> Angriffe auf Krypto-Besitzer bekannt, im
-            ganzen Jahr {latestYear - 1} waren es <strong>{euBefore}</strong>.
+            <strong>{euNow}</strong> Angriffe auf Krypto-Besitzer öffentlich
+            bekannt, im ganzen Jahr {latestYear - 1} waren es{" "}
+            <strong>{euBefore}</strong>. Die wirkliche Zahl ist höher: Allein in
+            Frankreich zählte das Innenministerium im ersten Halbjahr 2026 schon{" "}
+            <strong>77</strong> Entführungen, Freiheitsberaubungen und
+            Erpressungen oder Versuche.
           </>
         )}
       </p>
