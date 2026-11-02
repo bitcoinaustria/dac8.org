@@ -44,11 +44,13 @@ const directory =
         </select>
       </label>
       <label class="field">
-        <span>{en ? "Name of the MP" : "Name des Abgeordneten"}</span>
+        <span>{en ? "Name of the MP" : "Name der oder des Abgeordneten"}</span>
         <input name="recipient" autocomplete="off">
       </label>
       <label class="field wide">
-        <span>{en ? "Email of the MP" : "E-Mail des Abgeordneten"}</span>
+        <span
+          >{en ? "Email of the MP" : "E-Mail der oder des Abgeordneten"}</span
+        >
         <input name="recipientEmail" type="email" autocomplete="off">
       </label>
       <label class="field">
@@ -59,7 +61,7 @@ const directory =
         <span
           >{en ? "Your town or federal state" : "Dein Ort oder Bundesland"}</span
         >
-        <input name="location" autocomplete="address-level1">
+        <input name="location" autocomplete="address-level2">
       </label>
       <label class="field wide">
         <span
@@ -83,6 +85,14 @@ const directory =
       <span>{en ? "Letter, editable" : "Brief, bearbeitbar"}</span>
       <textarea data-letter-text rows="22">{initial}</textarea>
     </label>
+    <p class="letter-edited" data-letter-edited hidden>
+      <span
+        >{en ? "You have edited the letter, so changes in the form no longer reach it." : "Du hast den Brief bearbeitet, darum fließen Änderungen im Formular nicht mehr ein."}</span
+      >
+      <button class="text-link" type="button" data-letter-reset>
+        {en ? "Rebuild letter" : "Brief neu erstellen"}
+      </button>
+    </p>
     <div class="output-actions">
       <a
         class="button primary"
@@ -100,7 +110,7 @@ const directory =
     </div>
     <p class="copy-status" data-copy-status aria-live="polite"></p>
     <p class="letter-note">
-      {en ? "Everything stays in your browser. Nothing is sent to or stored by dac8.org. Read the letter before you send it; you send it yourself." : "Alles bleibt in deinem Browser. Nichts wird an dac8.org gesendet oder gespeichert. Lies den Brief, bevor du ihn abschickst; du sendest ihn selbst."}
+      {en ? "Everything stays in your browser. Nothing is sent to or stored by dac8.org. Read the letter before you send it; you send it yourself. If the email opens empty, copy the text instead." : "Alles bleibt in deinem Browser. Nichts wird an dac8.org gesendet oder gespeichert. Lies den Brief, bevor du ihn abschickst; du sendest ihn selbst. Öffnet sich die E-Mail leer, kopiere stattdessen den Text."}
     </p>
   </div>
 </div>
@@ -201,6 +211,23 @@ const directory =
     margin-block-start: 0;
   }
 
+  .letter-edited {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3xs) var(--space-xs);
+    color: var(--ink-2);
+    font-size: var(--step--1);
+  }
+
+  .letter-edited[hidden] {
+    display: none;
+  }
+
+  .letter-edited .text-link {
+    margin-block-start: 0;
+  }
+
   .copy-status {
     min-block-size: 1.5em;
     color: var(--accent);
@@ -240,10 +267,17 @@ const directory =
     const mail = root.querySelector<HTMLAnchorElement>("[data-letter-mail]")
     const copy = root.querySelector<HTMLButtonElement>("[data-letter-copy]")
     const status = root.querySelector<HTMLElement>("[data-copy-status]")
-    if (!form || !output || !subject || !mail || !copy) continue
+    const notice = root.querySelector<HTMLElement>("[data-letter-edited]")
+    const reset = root.querySelector<HTMLButtonElement>("[data-letter-reset]")
+    if (!form || !output || !subject || !mail || !copy || !notice || !reset)
+      continue
 
     const en = document.documentElement.lang.startsWith("en")
     let edited = false
+    const setEdited = (value: boolean) => {
+      edited = value
+      notice.hidden = !value
+    }
     const value = (name: string) =>
       String(new FormData(form).get(name) ?? "").trim()
     const language = () =>
@@ -269,16 +303,38 @@ const directory =
       updateMail()
     }
 
+    let current = language()
     form.addEventListener("input", (event) => {
-      // Switching the language rebuilds the letter even after manual edits.
-      if ((event.target as HTMLInputElement).name === "letterLanguage")
-        edited = false
+      // Switching the language rebuilds the letter, so ask before manual
+      // edits are lost.
+      if ((event.target as HTMLInputElement).name === "letterLanguage") {
+        if (
+          edited &&
+          !confirm(
+            en
+              ? "Switching the language replaces your edits. Continue?"
+              : "Der Sprachwechsel ersetzt deine Änderungen. Fortfahren?",
+          )
+        ) {
+          const previous = form.querySelector<HTMLInputElement>(
+            `input[name="letterLanguage"][value="${current}"]`,
+          )
+          if (previous) previous.checked = true
+          return
+        }
+        current = language()
+        setEdited(false)
+      }
       render()
     })
     form.addEventListener("submit", (event) => event.preventDefault())
     output.addEventListener("input", () => {
-      edited = true
+      setEdited(true)
       updateMail()
+    })
+    reset.addEventListener("click", () => {
+      setEdited(false)
+      render()
     })
     copy.addEventListener("click", async () => {
       const copied = await copyText(`${subject.value}\n\n${output.value}`)

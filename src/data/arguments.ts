@@ -14,7 +14,7 @@ import type { Language } from "@/lib/i18n"
 // The press material must say the same, so change a reason there too. The
 // arguments page shows each reason as a headline and one sentence; the
 // evidence sits behind a disclosure with its sources. The letter to members
-// of the National Council takes its demands from here.
+// of the National Council asks for three of the demands in its own words.
 //
 // This page owns the why. What is reported, what stays with the provider and
 // for how long is set out in the dossier; restate a fact here only where a
@@ -621,11 +621,10 @@ export const objections: Record<Language, Point[]> = {
   ],
 }
 
-// The page shows title and text; the letter uses `letter` where the page
-// wording addresses the reader or leans on the page around it, and title and
-// text joined otherwise. The letter goes to Austrian MPs, so a demand that
-// only EU law can meet says what Austria can do about it.
-export type Demand = { title: string; text: string; letter?: string }
+// The page shows title and text. The letter to members of the National
+// Council (src/data/letter.ts) asks for three of these in its own words, so
+// change a demand there too.
+export type Demand = { title: string; text: string }
 
 export const demands: Record<Language, Demand[]> = {
   de: [
@@ -640,8 +639,6 @@ export const demands: Record<Language, Demand[]> = {
     {
       title: "Übertragungen auf die eigene Wallet nicht melden.",
       text: "Sie lösen für sich genommen keine Steuer aus, verraten nach einem Datenleck aber, wer vermutlich wie viel Bitcoin daheim hat. Die Meldung schreibt die EU vor; Österreich soll sich für ihre Streichung einsetzen.",
-      letter:
-        "Übertragungen auf die eigene Wallet nicht melden. Sie lösen für sich genommen keine Steuer aus. Sie trotzdem zu melden ist, als würde die Bank dem Finanzamt sagen, wie viel Bargeld jemand nach Hause getragen hat. Nach einem Datenleck steht dann auf einer Liste, wer vermutlich wie viel Bitcoin daheim hat. Da die EU diese Meldung vorschreibt, soll sich Österreich in Brüssel für ihre Streichung einsetzen, auch bei der geplanten Neufassung der Richtlinie, die nur einstimmig beschlossen werden kann.",
     },
     {
       title: "Nur erheben, was nachweislich nötig ist.",
@@ -650,14 +647,10 @@ export const demands: Record<Language, Demand[]> = {
     {
       title: "Kürzer speichern.",
       text: "Für Meldungen über Bankkonten gelten fünf Jahre, Irland sieht bei Krypto-Anbietern grundsätzlich sechs vor. Zehn Jahre „aus Vereinfachungsgründen“ sind keine Begründung. Kopien, die niemand mehr braucht, müssen auch bei Dienstleistern nachweislich gelöscht werden.",
-      letter:
-        "Kürzer speichern. Für Meldungen über Bankkonten gelten fünf Jahre, Irland sieht bei Krypto-Anbietern grundsätzlich sechs vor; zehn Jahre „aus Vereinfachungsgründen“ sind keine Begründung. Nicht mehr benötigte Kopien müssen auch bei Dienstleistern nachweislich gelöscht werden.",
     },
     {
       title: "Zugriff begrenzen, Rechte sichern.",
       text: "Für jeden Zweck eine klare Grenze, neue Zwecke und Empfänger nur durch ein eigenes Gesetz, Zugriffe nachvollziehbar und unabhängig kontrolliert. Du musst deine Daten vor der Meldung sehen, Fehler berichtigen und unrechtmäßig gespeicherte Daten löschen lassen können, bei allen Empfängern. Entscheidungen, die auf diesen Daten beruhen, müssen sich überprüfen lassen. Nutzen und Risiken gehören regelmäßig und öffentlich auf den Prüfstand.",
-      letter:
-        "Zweck, Zugriff und Weitergabe eng begrenzen und unabhängig kontrollieren; neue Zwecke und Empfänger nur durch ein eigenes Gesetz. Die Rechte der Betroffenen müssen praktisch funktionieren: Einsicht in die eigenen Daten vor der Meldung, Berichtigung von Fehlern und Löschung unrechtmäßig gespeicherter Daten bei allen Empfängern sowie die Überprüfung darauf gestützter Entscheidungen. Nutzen und Risiken regelmäßig und öffentlich überprüfen, damit unnötige Eingriffe beendet werden.",
     },
   ],
   en: [
@@ -672,8 +665,6 @@ export const demands: Record<Language, Demand[]> = {
     {
       title: "Do not report transfers to your own wallet.",
       text: "They trigger no tax by themselves, yet after a breach they reveal who probably keeps how much bitcoin at home. EU law requires this report; Austria should push for its removal.",
-      letter:
-        "Do not report transfers to your own wallet. They trigger no tax by themselves. Reporting their total is like a bank telling the tax authority how much cash someone has carried home. After a breach, it becomes a list of who probably keeps how much bitcoin at home. Since EU law requires this report, Austria should push in Brussels for its removal, including in the planned recast of the directive, which needs unanimity.",
     },
     {
       title: "Collect only what is shown to be necessary.",
@@ -682,19 +673,10 @@ export const demands: Record<Language, Demand[]> = {
     {
       title: "Keep data for less time.",
       text: "For reports on bank accounts, the period is five years, and Ireland generally sets six for crypto-asset providers. Ten years “for reasons of simplicity” is no justification. Copies nobody needs any more must be verifiably deleted, including at service providers.",
-      letter:
-        "Keep data for less time. For reports on bank accounts, the period is five years, and Ireland generally sets six for crypto-asset providers; ten years “for reasons of simplicity” is no justification. Copies no longer needed must be verifiably deleted, including at service providers.",
     },
     {
       title: "Limit access, secure rights.",
       text: "A clear limit for each purpose, new purposes and recipients only by a law of their own, with traceable access and independent oversight. You must be able to see your data before it is reported, correct errors and have unlawfully stored data deleted, by every recipient. Decisions based on the data must be open to review. Benefits and risks need regular, public review.",
-      letter:
-        "Strictly limit purpose, access and onward disclosure, with independent oversight; new purposes and recipients only by a law of their own. The rights of those affected must work in practice: seeing one’s own data before it is reported, correction of errors and deletion of unlawfully stored data by every recipient, and review of decisions based on the data. Independently review benefits and risks, regularly and publicly, so unnecessary intrusions can be ended.",
     },
   ],
 }
-
-export const letterDemands = (language: Language) =>
-  demands[language].map(
-    (demand) => demand.letter ?? `${demand.title} ${demand.text}`,
-  )
