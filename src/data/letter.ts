@@ -68,7 +68,7 @@ const text = {
       "Übertragungen auf die eigene Wallet nicht melden. Das schreibt die EU vor; Österreich soll sich in Brüssel für die Streichung einsetzen, auch bei der Neufassung der Richtlinie, die alle Mitgliedstaaten einstimmig beschließen müssen.",
     ],
     question:
-      "Privatsphäre braucht keine Rechtfertigung, eine Erfassung ohne jeden Verdacht schon. Darum frage ich Sie direkt: Warum steht, wer Bitcoin beim Anbieter kauft und selbst verwahrt, in einer Meldung ans Finanzamt, wer Gold bei der Bank kauft und daheim verwahrt, aber nicht? Und welche der drei Änderungen werden Sie unterstützen? Über Ihre Antwort würde ich mich freuen.",
+      "Was ich mit meinem Geld mache, geht niemanden etwas an. Rechtfertigen muss sich nicht, wer spart, sondern ein Gesetz, das ohne jeden Verdacht Daten über alle Kunden sammeln lässt. Darum frage ich Sie direkt: Warum wird gemeldet, wer Bitcoin beim Anbieter kauft und selbst verwahrt, aber nicht, wer Gold bei der Bank kauft und daheim verwahrt? Und welche der drei Änderungen werden Sie unterstützen? Über Ihre Antwort würde ich mich freuen.",
     closing: "Mit freundlichen Grüßen",
   },
   en: {
@@ -93,7 +93,7 @@ const text = {
       "Do not report transfers to one’s own wallet. EU law requires this report; Austria should push in Brussels for its removal, including in the recast of the directive, which all member states must adopt unanimously.",
     ],
     question:
-      "Privacy needs no justification; collecting data without any suspicion does. So I ask you directly: why does someone who buys bitcoin from a provider and keeps it themselves appear in a report to the tax office, while someone who buys gold at a bank and keeps it at home does not? And which of the three changes will you support? I look forward to your reply.",
+      "What I do with my money is nobody else’s business. It is not savers who owe a justification, but a law that has data on every customer collected without any suspicion. So I ask you directly: why does buying bitcoin from a provider and keeping it yourself get reported, while buying gold at a bank and keeping it at home does not? And which of the three changes will you support? I look forward to your reply.",
     closing: "Kind regards",
   },
 }
