@@ -1,5 +1,11 @@
 ---
-import { mediaKinds, publishedMedia, type MediaKind } from "@/data/media"
+import MediaCard from "@/components/MediaCard.astro"
+import {
+  mediaKindLabels,
+  mediaKinds,
+  publishedMedia,
+  type MediaKind,
+} from "@/data/media"
 import type { Language } from "@/lib/i18n"
 
 interface Props {
@@ -14,30 +20,11 @@ const items = publishedMedia()
 // Six fills whole rows in one, two and three columns.
 const visible = 6
 
-const kindLabels: Record<Language, Record<MediaKind, string>> = {
-  de: {
-    article: "Artikel",
-    podcast: "Podcast",
-    video: "Video",
-    broadcast: "TV & Radio",
-  },
-  en: {
-    article: "Article",
-    podcast: "Podcast",
-    video: "Video",
-    broadcast: "TV & radio",
-  },
-}
 const kinds = mediaKinds.filter((kind) =>
   items.some((item) => item.kind === kind),
 )
 const count = (kind: MediaKind) =>
   items.filter((item) => item.kind === kind).length
-const formatDate = new Intl.DateTimeFormat(en ? "en-GB" : "de-AT", {
-  dateStyle: "long",
-  timeZone: "UTC",
-})
-const languageNames = new Intl.DisplayNames([language], { type: "language" })
 ---
 
 <section class:list={["media", { band }]} aria-labelledby="media-heading">
@@ -62,7 +49,7 @@ const languageNames = new Intl.DisplayNames([language], { type: "language" })
       {kinds.map((kind) => (
         <label>
           <input type="radio" name="media-kind" value={kind} />
-          {kindLabels[language][kind]} <span>{count(kind)}</span>
+          {mediaKindLabels[language][kind]} <span>{count(kind)}</span>
         </label>
       ))}
     </fieldset>
@@ -70,28 +57,11 @@ const languageNames = new Intl.DisplayNames([language], { type: "language" })
   {items.length > 0 && (
     <ol class="media-list">
       {items.map((item, index) => (
-        <li
-          class="media-item"
-          data-kind={item.kind}
-          data-older={index >= visible ? "" : undefined}
-        >
-          <p class="media-meta">
-            <span class="media-kind">{kindLabels[language][item.kind]}</span>
-            <span>{item.outlet}</span>
-          </p>
-          <h3 lang={item.language}>
-            <a href={item.url} hreflang={item.language}>{item.title}</a>
-          </h3>
-          {item.guest && (
-            <p class="media-guest">{en ? "With " : "Mit "}{item.guest}</p>
-          )}
-          <p class="media-date">
-            <time datetime={item.date}>{formatDate.format(new Date(item.date))}</time>
-            {item.language.split("-")[0] !== language && (
-              <span>{languageNames.of(item.language)}</span>
-            )}
-          </p>
-        </li>
+        <MediaCard
+          item={item}
+          language={language}
+          older={index >= visible}
+        />
       ))}
     </ol>
   )}
@@ -170,67 +140,6 @@ const languageNames = new Intl.DisplayNames([language], { type: "language" })
   .media-filter + .media-list {
     margin-block-start: var(--space-m);
   }
-  .media-item {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2xs);
-    padding: var(--space-m);
-    border-radius: var(--radius);
-    background: var(--panel);
-    transition: background 160ms ease;
-  }
-  .media-item:hover {
-    background: var(--panel-strong);
-  }
-  .media-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 0.6em;
-    color: var(--ink-3);
-    font-size: var(--step--1);
-  }
-  .media-kind {
-    color: var(--accent);
-    font-weight: 560;
-  }
-  .media-item h3 {
-    font-size: var(--step-1);
-    font-weight: 560;
-    line-height: 1.3;
-    text-wrap: pretty;
-  }
-  .media-item h3 a {
-    color: var(--ink);
-    text-decoration: none;
-  }
-  /* Die ganze Karte ist der Link. */
-  .media-item h3 a::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-  }
-  .media-item h3 a:focus-visible {
-    outline: none;
-  }
-  .media-item:has(h3 a:focus-visible) {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-  .media-guest {
-    color: var(--ink-2);
-  }
-  .media-date {
-    margin-block-start: auto;
-    padding-block-start: var(--space-2xs);
-    color: var(--ink-3);
-    font-size: var(--step--1);
-  }
-  .media-date span::before {
-    content: "·";
-    margin-inline: 0.5em;
-  }
   .media-contact {
     margin-block-start: var(--space-l);
     color: var(--ink-2);
@@ -239,15 +148,18 @@ const languageNames = new Intl.DisplayNames([language], { type: "language" })
   /* Filter und „Alle anzeigen“ ohne JavaScript: Die Auswahl steckt in den
      Formularfeldern, :has() blendet die übrigen Karten aus. Ein Filter zeigt
      immer alle passenden Beiträge. */
-  .media:has([value="article"]:checked) .media-item:not([data-kind="article"]),
-  .media:has([value="podcast"]:checked) .media-item:not([data-kind="podcast"]),
-  .media:has([value="video"]:checked) .media-item:not([data-kind="video"]),
+  .media:has([value="article"]:checked)
+  :global(.media-item:not([data-kind="article"])),
+  .media:has([value="podcast"]:checked)
+    :global(.media-item:not([data-kind="podcast"])),
+  .media:has([value="video"]:checked)
+    :global(.media-item:not([data-kind="video"])),
   .media:has([value="broadcast"]:checked)
-    .media-item:not([data-kind="broadcast"]),
+    :global(.media-item:not([data-kind="broadcast"])),
   .media:not(
       :has(.media-more :checked, .media-filter :checked:not([value="all"]))
     )
-    .media-item[data-older],
+    :global(.media-item[data-older]),
   .media:has(.media-more :checked, .media-filter :checked:not([value="all"]))
     .media-more {
     display: none;

@@ -1,0 +1,269 @@
+---
+import { Picture } from "astro:assets"
+import ArticleIcon from "@/assets/icons/article.svg"
+import BroadcastIcon from "@/assets/icons/broadcast.svg"
+import ExternalIcon from "@/assets/icons/external.svg"
+import PlayIcon from "@/assets/icons/play.svg"
+import PodcastIcon from "@/assets/icons/podcast.svg"
+import { type MediaItem, type MediaKind, mediaKindLabels } from "@/data/media"
+import type { Language } from "@/lib/i18n"
+
+// One piece of coverage as a card: the preview picture says at a glance
+// whether it is read, watched or heard, the whole card links to the original.
+// Used by the full list on the proceedings page and the home page's selection.
+interface Props {
+  item: MediaItem
+  language: Language
+  // Behind "Show all" in the full list: hidden at first, loaded lazily.
+  older?: boolean
+  heading?: "h3" | "h4"
+}
+const { item, language, older = false, heading: Heading = "h3" } = Astro.props
+const en = language === "en"
+
+// What a click does, so readers see at a glance whether they read, watch or
+// listen.
+const actions: Record<Language, Record<MediaKind, string>> = {
+  de: {
+    article: "Artikel lesen",
+    podcast: "Folge anhören",
+    video: "Video ansehen",
+    broadcast: "Sendung öffnen",
+  },
+  en: {
+    article: "Read article",
+    podcast: "Listen to episode",
+    video: "Watch video",
+    broadcast: "Open broadcast",
+  },
+}
+const KindIcon = {
+  article: ArticleIcon,
+  podcast: PodcastIcon,
+  video: PlayIcon,
+  broadcast: BroadcastIcon,
+}[item.kind]
+const pictures = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/media/*",
+  { eager: true },
+)
+const picture = item.image
+  ? pictures[`../assets/media/${item.image}`]?.default
+  : undefined
+if (item.image && !picture)
+  throw new Error(`media.json: ${item.image} is not in src/assets/media/`)
+const formatDate = new Intl.DateTimeFormat(en ? "en-GB" : "de-AT", {
+  dateStyle: "long",
+  timeZone: "UTC",
+})
+const languageNames = new Intl.DisplayNames([language], { type: "language" })
+---
+
+<li
+  class="media-item"
+  data-kind={item.kind}
+  data-older={older ? "" : undefined}
+>
+  <div class="media-picture">
+    {picture ? (
+      <Picture
+        src={picture}
+        alt=""
+        formats={["avif", "webp"]}
+        fallbackFormat="webp"
+        widths={[400, 640, 960].filter((width) => width < picture.width).concat(picture.width)}
+        sizes="(min-width: 64rem) 24rem, (min-width: 42rem) 46vw, 92vw"
+        loading={older ? "lazy" : undefined}
+      />
+    ) : (
+      <KindIcon class="media-placeholder" />
+    )}
+    {item.kind !== "article" && (
+      <span class="media-play" aria-hidden="true">
+        <PlayIcon />
+      </span>
+    )}
+    <span class="media-badge">
+      <KindIcon />
+      {mediaKindLabels[language][item.kind]}
+      {item.minutes && ` · ${item.minutes} ${en ? "min" : "Min."}`}
+    </span>
+  </div>
+  <div class="media-body">
+    <p class="media-outlet">{item.outlet}</p>
+    <Heading class="media-title" lang={item.language}>
+      <a href={item.url} hreflang={item.language}>{item.title}</a>
+    </Heading>
+    {item.guest && (
+      <p class="media-guest">{en ? "With " : "Mit "}{item.guest}</p>
+    )}
+    <p class="media-footer">
+      <span class="media-action" aria-hidden="true">
+        {actions[language][item.kind]}
+        <ExternalIcon />
+      </span>
+      <span class="media-date">
+        <time datetime={item.date}
+          >{formatDate.format(new Date(item.date))}</time
+        >
+        {item.language.split("-")[0] !== language && (
+          <span>{languageNames.of(item.language)}</span>
+        )}
+      </span>
+    </p>
+  </div>
+</li>
+
+<style>
+  .media-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--panel);
+    transition: background 160ms ease;
+  }
+  .media-item:hover {
+    background: var(--panel-strong);
+  }
+  .media-picture {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    color: var(--ink-3);
+    background: var(--panel-strong);
+  }
+  .media-picture picture {
+    position: absolute;
+    inset: 0;
+  }
+  .media-picture :global(img) {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    transition: scale 300ms ease;
+  }
+  .media-item:hover .media-picture :global(img) {
+    scale: 1.03;
+  }
+  .media-placeholder {
+    inline-size: 3rem;
+    block-size: 3rem;
+  }
+  .media-play {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    inline-size: 3.5rem;
+    block-size: 3.5rem;
+    border-radius: 50%;
+    color: #fff;
+    background: var(--accent);
+    box-shadow: 0 4px 18px rgb(0 0 0 / 0.3);
+    transition: scale 160ms ease;
+  }
+  .media-play svg {
+    inline-size: 1.6rem;
+    block-size: 1.6rem;
+    translate: 2px 0;
+  }
+  .media-item:hover .media-play {
+    scale: 1.08;
+  }
+  .media-badge {
+    position: absolute;
+    inset-block-end: var(--space-2xs);
+    inset-inline-start: var(--space-2xs);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.2em 0.65em 0.2em 0.5em;
+    border-radius: 999px;
+    color: #fff;
+    background: rgb(0 0 0 / 0.72);
+    font-size: var(--step--1);
+    font-weight: 560;
+    backdrop-filter: blur(6px);
+  }
+  .media-badge svg {
+    inline-size: 1.05em;
+    block-size: 1.05em;
+  }
+  .media-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    padding: var(--space-s) var(--space-m) var(--space-m);
+  }
+  .media-outlet {
+    color: var(--ink-2);
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .media-title {
+    font-size: var(--step-1);
+    font-weight: 560;
+    line-height: 1.3;
+    text-wrap: pretty;
+  }
+  .media-title a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  /* Die ganze Karte ist der Link. */
+  .media-title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .media-title a:focus-visible {
+    outline: none;
+  }
+  .media-item:has(.media-title a:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .media-guest {
+    color: var(--ink-2);
+  }
+  .media-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3xs) var(--space-s);
+    margin-block-start: auto;
+    padding-block-start: var(--space-xs);
+    font-size: var(--step--1);
+  }
+  .media-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .media-action svg {
+    inline-size: 1em;
+    block-size: 1em;
+    transition: translate 160ms ease;
+  }
+  .media-item:hover .media-action svg {
+    translate: 2px -2px;
+  }
+  .media-date {
+    color: var(--ink-3);
+  }
+  .media-date span::before {
+    content: "·";
+    margin-inline: 0.5em;
+  }
+</style>

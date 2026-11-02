@@ -4,11 +4,17 @@
 //
 //   pnpm add:media <url> [--kind article|podcast|video|broadcast]
 //     [--date YYYY-MM-DD] [--title "…"] [--outlet "…"] [--language de]
-//     [--guest "Name"] [--dry-run]
-import { readFile, writeFile } from "node:fs/promises"
+//     [--guest "Name"] [--pin 1] [--minutes 27] [--image <url> | --no-image] [--dry-run]
+//
+// The preview picture (og:image, or the video's thumbnail) is downloaded once
+// into src/assets/media/, so readers' browsers never contact the outlet or
+// YouTube to show the card.
+import { mkdir, readFile, writeFile } from "node:fs/promises"
 import { parseArgs } from "node:util"
+import sharp from "sharp"
 
 const target = new URL("../src/data/media.json", import.meta.url)
+const imageDirectory = new URL("../src/assets/media/", import.meta.url)
 const kinds = ["article", "podcast", "video", "broadcast"]
 
 const { values: flags, positionals } = parseArgs({
@@ -20,6 +26,10 @@ const { values: flags, positionals } = parseArgs({
     outlet: { type: "string" },
     language: { type: "string" },
     guest: { type: "string" },
+    minutes: { type: "string" },
+    pin: { type: "string" },
+    image: { type: "string" },
+    "no-image": { type: "boolean" },
     "dry-run": { type: "boolean" },
   },
 })
@@ -157,6 +167,39 @@ const item = {
     .toLowerCase(),
 }
 if (flags.guest) item.guest = flags.guest
+if (flags.pin) item.pin = Number(flags.pin)
+
+// Length of a video, podcast or broadcast, rounded to whole minutes.
+const isoSeconds = (raw) => {
+  const match = raw?.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/)
+  if (match)
+    return (
+      Number(match[1] ?? 0) * 3600 +
+      Number(match[2] ?? 0) * 60 +
+      Number(match[3] ?? 0)
+    )
+  return /^\d+$/.test(raw ?? "") ? Number(raw) : undefined
+}
+if (item.kind !== "article") {
+  const seconds = isoSeconds(
+    html.match(/"lengthSeconds"\s*:\s*"(\d+)"/)?.[1] ??
+      meta("duration", "video:duration", "music:duration") ??
+      jsonLd("duration"),
+  )
+  const minutes = flags.minutes
+    ? Number(flags.minutes)
+    : seconds && Math.max(1, Math.round(seconds / 60))
+  if (minutes) item.minutes = minutes
+}
+// Page titles often end in the outlet's name ("… | Trending Topics"); the card
+// shows the outlet separately.
+if (!flags.title && item.title && item.outlet) {
+  const suffix = new RegExp(
+    `\\s+[|–—·-]\\s+${item.outlet.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+    "i",
+  )
+  item.title = item.title.replace(suffix, "")
+}
 
 const missing = []
 if (!item.date || !/^\d{4}-\d{2}-\d{2}$/.test(item.date)) missing.push("--date")
@@ -178,11 +221,54 @@ if (entries.some((entry) => normalise(entry.url) === normalise(url))) {
   process.exit(1)
 }
 
+const youTubeId = /(^|\.)youtube\.com$/.test(host)
+  ? new URL(url).searchParams.get("v")
+  : host === "youtu.be"
+    ? new URL(url).pathname.slice(1)
+    : undefined
+const imageSources = flags["no-image"]
+  ? []
+  : [
+      flags.image,
+      youTubeId && `https://i.ytimg.com/vi/${youTubeId}/maxresdefault.jpg`,
+      oEmbed.thumbnail_url,
+      meta("og:image", "og:image:url", "twitter:image"),
+    ].filter(Boolean)
+let picture
+for (const source of imageSources) {
+  try {
+    const response = await fetch(new URL(source, url), {
+      headers: { "User-Agent": "Mozilla/5.0 (dac8.org media list)" },
+    })
+    if (!response.ok) continue
+    picture = await sharp(Buffer.from(await response.arrayBuffer()))
+      .resize({ width: 1200, withoutEnlargement: true })
+      .webp({ quality: 82 })
+      .toBuffer()
+    break
+  } catch {}
+}
+if (picture) {
+  const slug = `${item.date}-${host}-${youTubeId ?? new URL(url).pathname}`
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 90)
+    .replace(/-$/, "")
+  item.image = `${slug}.webp`
+} else if (!flags["no-image"]) {
+  console.warn("No preview picture found; pass --image <url> to add one.")
+}
+
 console.log(item)
 if (flags["dry-run"]) process.exit(0)
+if (picture) {
+  await mkdir(imageDirectory, { recursive: true })
+  await writeFile(new URL(item.image, imageDirectory), picture)
+}
 entries.push(item)
 entries.sort((a, b) => b.date.localeCompare(a.date))
 await writeFile(target, `${JSON.stringify(entries, null, 2)}\n`)
 console.log(
-  "Added to src/data/media.json. Check title, outlet and date against the page before committing.",
+  "Added to src/data/media.json. Check title, outlet, date and picture against the page before committing.",
 )

@@ -5,9 +5,11 @@ import CampaignStatus from "@/components/CampaignStatus.astro"
 import DataWeb from "@/components/DataWeb.astro"
 import HistoryStack from "@/components/HistoryStack.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
+import MediaCard from "@/components/MediaCard.astro"
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
 import { peopleAffected, roundPeople } from "@/data/leaks"
+import { publishedMedia } from "@/data/media"
 import { countIn, euCountries, latestYear } from "@/lib/attacks"
 import { languageFor, pathFor } from "@/lib/i18n"
 
@@ -18,11 +20,15 @@ import { languageFor, pathFor } from "@/lib/i18n"
 // footer's sign-off carries the one ask, as on every page. Every fact appears
 // here once and in full on its own page: the dossier (what is reported),
 // /angriffe/ and /datenlecks/ (cases), /argumente/ (reasons), /geschichte/
-// (the steps), /verfahren/ (the case).
+// (the steps), /verfahren/ (the case and all coverage).
 // The German headline keeps "Krypto-Kunde" on one line: a word joiner
 // (U+2060) after the hyphen stops the break that balancing would pick.
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
+
+// The complaint band shows the first three pieces of coverage: the pinned
+// ones, otherwise the newest.
+const coverage = publishedMedia().slice(0, 3)
 
 // The proof band counts from the same data as the leak page and the map.
 const people = roundPeople(peopleAffected, language)
@@ -201,6 +207,16 @@ const reasons = [
         compact
         goalNote={en ? "This is where data retention fell in 2014." : "Hier fiel 2014 die Vorratsdatenspeicherung."}
       />
+      {coverage.length > 0 && (
+        <div class="complaint-media">
+          <h3>{en ? "In the media" : "In den Medien"}</h3>
+          <ol>
+            {coverage.map((item) => (
+              <MediaCard item={item} language={language} heading="h4" />
+            ))}
+          </ol>
+        </div>
+      )}
       <p class="complaint-foot">
         <span>
           {en ? "An initiative by Bitcoin Austria, a nonprofit association from Vienna" : "Eine Initiative von Bitcoin Austria, gemeinnütziger Verein aus Wien"}
@@ -395,6 +411,16 @@ const reasons = [
   .complaint :global(.route) {
     margin-block-start: 0;
     padding-block-start: var(--space-s);
+  }
+
+  /* Die ersten drei Beiträge über das Verfahren, alle auf /verfahren/. */
+  .complaint-media ol {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: var(--space-s);
+    margin-block-start: var(--space-s);
+    padding: 0;
+    list-style: none;
   }
 
   .complaint-foot {
