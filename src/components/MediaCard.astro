@@ -5,6 +5,7 @@ import BroadcastIcon from "@/assets/icons/broadcast.svg"
 import ExternalIcon from "@/assets/icons/external.svg"
 import PlayIcon from "@/assets/icons/play.svg"
 import PodcastIcon from "@/assets/icons/podcast.svg"
+import XLogo from "@/assets/icons/x.svg"
 import { type MediaItem, type MediaKind, mediaKindLabels } from "@/data/media"
 import type { Language } from "@/lib/i18n"
 
@@ -52,6 +53,10 @@ const picture = item.image
   : undefined
 if (item.image && !picture)
   throw new Error(`media.json: ${item.image} is not in src/assets/media/`)
+// Posts on a platform rarely carry a preview picture; its logo, served from
+// here, tells readers where the link leads.
+const host = new URL(item.url).hostname.replace(/^www\./, "")
+const platform = /^(x|twitter)\.com$/.test(host) ? "x" : undefined
 const formatDate = new Intl.DateTimeFormat(en ? "en-GB" : "de-AT", {
   dateStyle: "long",
   timeZone: "UTC",
@@ -64,7 +69,7 @@ const languageNames = new Intl.DisplayNames([language], { type: "language" })
   data-kind={item.kind}
   data-older={older ? "" : undefined}
 >
-  <div class="media-picture">
+  <div class="media-picture" data-platform={picture ? undefined : platform}>
     {picture ? (
       <Picture
         src={picture}
@@ -75,6 +80,8 @@ const languageNames = new Intl.DisplayNames([language], { type: "language" })
         sizes="(min-width: 64rem) 24rem, (min-width: 42rem) 46vw, 92vw"
         loading={older ? "lazy" : undefined}
       />
+    ) : platform === "x" ? (
+      <XLogo class="media-placeholder media-logo" />
     ) : (
       <KindIcon class="media-placeholder" />
     )}
@@ -153,6 +160,18 @@ const languageNames = new Intl.DisplayNames([language], { type: "language" })
   .media-placeholder {
     inline-size: 3rem;
     block-size: 3rem;
+  }
+  .media-picture[data-platform="x"] {
+    color: #fff;
+    background: #000;
+  }
+  .media-logo {
+    inline-size: 4rem;
+    block-size: 4rem;
+    transition: scale 300ms ease;
+  }
+  .media-item:hover .media-logo {
+    scale: 1.06;
   }
   .media-play {
     position: absolute;
