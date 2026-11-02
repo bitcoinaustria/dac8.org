@@ -41,6 +41,8 @@ const strings = en
       none: "No known cases in this view. The archive is incomplete.",
       report: "Report",
       archive: "Archive copy",
+      expand: "Show more",
+      collapse: "Show less",
     }
   : {
       newest: "die neuesten zuerst",
@@ -48,6 +50,8 @@ const strings = en
       none: "Keine bekannten Fälle in diesem Ausschnitt. Das Archiv ist unvollständig.",
       report: "Bericht",
       archive: "Archivkopie",
+      expand: "Mehr anzeigen",
+      collapse: "Weniger anzeigen",
     }
 ---
 
@@ -303,7 +307,7 @@ const strings = en
       const meta = element("p", "atlas-meta")
       meta.append(element("span", "atlas-date", dateOf(attack)), placeElement)
       const { text, lang } = headlineOf(attack, language)
-      const headline = element("p", "atlas-headline", text)
+      const headline = element("p", "atlas-headline clamped", text)
       headline.lang = lang
       const links = element("p", "atlas-links")
       for (const report of attack.reports) {
@@ -314,6 +318,30 @@ const strings = en
         if (report.archive) links.append(link(report.archive, strings.archive))
       }
       return [meta, headline, links]
+    }
+
+    // Many descriptions run to a paragraph, so a case shows its first lines
+    // and a button reveals the rest. Only texts that overflow get one; call
+    // this once the case is in the page, where its lines can be measured.
+    const fold = (container: ParentNode, onToggle?: () => void) => {
+      for (const text of container.querySelectorAll<HTMLElement>(
+        ".atlas-headline.clamped",
+      )) {
+        if (text.scrollHeight <= text.clientHeight + 1) {
+          text.classList.remove("clamped")
+          continue
+        }
+        const toggle = element("button", "atlas-toggle", strings.expand)
+        toggle.type = "button"
+        toggle.setAttribute("aria-expanded", "false")
+        toggle.addEventListener("click", () => {
+          const open = !text.classList.toggle("clamped")
+          toggle.setAttribute("aria-expanded", String(open))
+          toggle.textContent = open ? strings.collapse : strings.expand
+          onToggle?.()
+        })
+        text.after(toggle)
+      }
     }
 
     const map = L.map(mapElement, {
@@ -431,6 +459,10 @@ const strings = en
       )
       return { attack, marker, recent }
     })
+    map.on("popupopen", ({ popup }) => {
+      const content = popup.getElement()
+      if (content) fold(content, () => popup.update())
+    })
     const recentMarkers = new Set(
       entries.filter((entry) => entry.recent).map((entry) => entry.marker),
     )
@@ -537,6 +569,7 @@ const strings = en
           return item
         }),
       )
+      fold(list)
       more.hidden = visible.length > 0 && visible.length <= listLimit
       more.textContent = visible.length === 0 ? strings.none : strings.more
     }
@@ -1287,8 +1320,38 @@ const strings = en
   }
 
   .atlas .atlas-popup .atlas-headline {
+    --lines: 6;
     color: var(--ink);
     font-size: 0.9375rem;
+  }
+
+  /* Lange Beschreibungen zeigen zuerst nur ihre ersten Zeilen, im Popup
+     etwas mehr als in der Liste; der Knopf darunter klappt den Rest auf. */
+  .atlas .atlas-headline.clamped {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--lines, 3);
+    line-clamp: var(--lines, 3);
+  }
+
+  .atlas .atlas-toggle {
+    justify-self: start;
+    padding: 0;
+    border: 0;
+    color: var(--ink-3);
+    background: none;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 560;
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  .atlas .atlas-toggle:hover {
+    color: var(--accent);
   }
 
   .atlas .atlas-links {
