@@ -1,0 +1,30 @@
+{
+  "path": "/",
+  "spacer": "#problem .spacer",
+  "track": "#problem .track",
+  "stuck": "#problem .web",
+  "line": 0.5,
+  "view": 720,
+  "scale": 1.5,
+  "fps": 60,
+  "css": "film.css",
+  "watermark": "dac8<span>.org</span>",
+  "out": "/tmp/pr-film/datenweg",
+  "captions": [
+    { "p": 0, "html": "Du kaufst Bitcoin über eine Börse." },
+    { "p": 0.42, "html": "Deine Daten liegen an immer mehr Stellen." },
+    { "p": 1.12, "html": "Ab 2027 meldet dich die Börse jedes Jahr ans Finanzamt." },
+    { "p": 2.0, "html": "Gespeichert, gehackt und verkauft." },
+    { "p": 3.0, "html": "Aus den Daten wird eine <em>Zielliste</em>." },
+    { "p": 3.97, "html": "Dein Zuhause wird zum <em>Ziel</em>." },
+    { "t": 18300, "html": "Niemand sollte wissen, wer wie viel hat." }
+  ],
+  "timeline": [
+    { "to": [0, 0.24], "settle": 400, "hold": 400 },
+    { "to": [0, 0.88], "dur": 3400, "hold": 300 },
+    { "to": [1, 0.82], "dur": 3000, "hold": 700 },
+    { "to": [2, 0.82], "dur": 4200, "hold": 700 },
+    { "to": [3, 0.3], "dur": 1300, "hold": 1100 },
+    { "to": [4, 0.5], "dur": 2200, "hold": 3000 }
+  ]
+}
