@@ -11,7 +11,7 @@ import Layout from "@/layouts/Layout.astro"
 import { peopleAffected, roundPeople } from "@/data/leaks"
 import { publishedMedia } from "@/data/media"
 import { countIn, euCountries, latestYear } from "@/lib/attacks"
-import { languageFor, pathFor } from "@/lib/i18n"
+import { languageFor, mediaFor, pathFor } from "@/lib/i18n"
 
 // The home page tells one story in six bands: the claim and "Am I
 // affected?" on the first screen, the data story, the proof that such data
@@ -28,7 +28,8 @@ const en = language === "en"
 
 // The complaint band shows the first three pieces of coverage: the pinned
 // ones, otherwise the newest.
-const coverage = publishedMedia().slice(0, 3)
+const media = publishedMedia()
+const coverage = media.slice(0, 3)
 
 // The proof band counts from the same data as the leak page and the map.
 const people = roundPeople(peopleAffected, language)
@@ -209,7 +210,14 @@ const reasons = [
       />
       {coverage.length > 0 && (
         <div class="complaint-media">
-          <h3>{en ? "In the media" : "In den Medien"}</h3>
+          <div class="complaint-media-head">
+            <h3>{en ? "In the media" : "In den Medien"}</h3>
+            {media.length > coverage.length && (
+              <a class="text-link" href={mediaFor(language)}
+                >{en ? `All ${media.length} pieces` : `Alle ${media.length} Beiträge`}</a
+              >
+            )}
+          </div>
           <ol>
             {coverage.map((item) => (
               <MediaCard item={item} language={language} heading="h4" />
@@ -414,6 +422,13 @@ const reasons = [
   }
 
   /* Die ersten drei Beiträge über das Verfahren, alle auf /verfahren/. */
+  .complaint-media-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3xs) var(--space-s);
+  }
   .complaint-media ol {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));

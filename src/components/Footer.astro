@@ -7,6 +7,7 @@ import {
   donateFor,
   feedFor,
   languageFor,
+  mediaFor,
   pathFor,
   shareKitFor,
 } from "@/lib/i18n"
@@ -55,6 +56,10 @@ const sections = [
     title: en ? "Stay informed" : "Dranbleiben",
     links: [
       { label: en ? "Contact" : "Kontakt", href: "mailto:kontakt@dac8.org" },
+      {
+        label: en ? "In the media" : "In den Medien",
+        href: mediaFor(language),
+      },
       {
         label: en ? "Press release (PDF)" : "Pressemitteilung (PDF)",
         href: en

@@ -27,7 +27,11 @@ const count = (kind: MediaKind) =>
   items.filter((item) => item.kind === kind).length
 ---
 
-<section class:list={["media", { band }]} aria-labelledby="media-heading">
+<section
+  id="medien"
+  class:list={["media", { band }]}
+  aria-labelledby="media-heading"
+>
   <h2 id="media-heading">{en ? "In the media" : "In den Medien"}</h2>
   {items.length === 0 ? (
     <p class="empty-state">
