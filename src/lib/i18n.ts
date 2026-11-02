@@ -37,6 +37,8 @@ export const donateFor = (language: Language) =>
   `${pathFor("participate", language)}#spenden`
 export const shareKitFor = (language: Language) =>
   `${pathFor("participate", language)}#teilen`
+export const mediaFor = (language: Language) =>
+  `${pathFor("proceedings", language)}#medien`
 export const feedFor = (language: Language) =>
   language === "en" ? "/en/feed.xml" : "/feed.xml"
 // Main navigation. The logo leads home, and donating is a separate, always

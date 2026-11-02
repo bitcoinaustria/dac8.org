@@ -236,16 +236,18 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
 - `/verfahren/` and `/en/proceedings/` render the updates; `/feed.xml` and
   `/en/feed.xml` expose RSS 2.0 feeds from the same data. Empty feeds are valid;
   do not create placeholder milestones or imply a filing has happened.
-- The proceedings pages also list media coverage: articles, podcasts, videos
-  and broadcasts, by the campaign or by other outlets, each linking to the
-  original. `pnpm add:media <url>` reads title, outlet, date and language
+- The proceedings pages also list media coverage at `#medien`: articles,
+  podcasts, videos and broadcasts, by the campaign or by other outlets, each
+  linking to the original. The chapter bar, the footer and the home page's
+  selection lead there (`mediaFor()` in `src/lib/i18n.ts`). `pnpm add:media <url>` reads title, outlet, date and language
   from the page (oEmbed for YouTube, Vimeo and Spotify) and writes the entry
   to `src/data/media.json`; flags such as `--kind podcast`, `--date`,
   `--guest` fill in or override what the page does not say. It also stores
   the preview picture (`og:image`, or the YouTube thumbnail) in
   `src/assets/media/` and the length of videos and podcasts, so the cards show
   at a glance whether a piece is read, watched or heard, and the page loads
-  nothing from the outlet or YouTube. Check the result against the page
+  nothing from the outlet or YouTube. Posts on X without a picture show the
+  X logo instead. Check the result against the page
   before committing. Entries can also be added by hand;
   `src/data/media.ts` defines the fields and fails the build on a malformed
   entry. Titles stay in the language of the piece. Pieces with a `pin`
