@@ -320,9 +320,10 @@ const strings = en
       return [meta, headline, links]
     }
 
-    // Many descriptions run to a paragraph, so a case shows its first lines
-    // and a button reveals the rest. Only texts that overflow get one; call
-    // this once the case is in the page, where its lines can be measured.
+    // Many descriptions run to a paragraph, so a case shows its first lines,
+    // fading out, and a button reveals the rest; a click on the faded text
+    // does the same. Only texts that overflow get one; call this once the
+    // case is in the page, where its lines can be measured.
     const fold = (container: ParentNode, onToggle?: () => void) => {
       for (const text of container.querySelectorAll<HTMLElement>(
         ".atlas-headline.clamped",
@@ -339,6 +340,9 @@ const strings = en
           toggle.setAttribute("aria-expanded", String(open))
           toggle.textContent = open ? strings.collapse : strings.expand
           onToggle?.()
+        })
+        text.addEventListener("click", () => {
+          if (text.classList.contains("clamped")) toggle.click()
         })
         text.after(toggle)
       }
@@ -1326,32 +1330,63 @@ const strings = en
   }
 
   /* Lange Beschreibungen zeigen zuerst nur ihre ersten Zeilen, im Popup
-     etwas mehr als in der Liste; der Knopf darunter klappt den Rest auf. */
+     etwas mehr als in der Liste. Die letzten Zeilen blenden aus, damit
+     sichtbar ist, dass der Text weitergeht; der Knopf darunter, in der
+     Textfarbe statt im Rot der Quellenlinks, klappt den Rest auf. */
   .atlas .atlas-headline.clamped {
     display: -webkit-box;
     overflow: hidden;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: var(--lines, 3);
     line-clamp: var(--lines, 3);
+    cursor: pointer;
+    mask-image: linear-gradient(
+      to bottom,
+      #000 calc(100% - 2.9em),
+      rgb(0 0 0 / 0.2)
+    );
   }
 
   .atlas .atlas-toggle {
+    display: inline-flex;
+    align-items: center;
     justify-self: start;
+    gap: 0.4em;
+    margin-block: -0.1rem 0.15rem;
     padding: 0;
     border: 0;
-    color: var(--ink-3);
+    color: var(--ink);
     background: none;
     font: inherit;
-    font-size: 0.75rem;
-    font-weight: 560;
-    text-decoration: underline;
-    text-decoration-color: var(--line);
-    text-underline-offset: 0.2em;
+    font-size: 0.8125rem;
+    font-weight: 600;
     cursor: pointer;
+  }
+
+  .atlas .atlas-toggle::after {
+    content: "";
+    inline-size: 0.4em;
+    block-size: 0.4em;
+    border-block-end: 1.5px solid currentColor;
+    border-inline-end: 1.5px solid currentColor;
+    translate: 0 -0.15em;
+    rotate: 45deg;
+    transition: rotate 0.2s ease;
+  }
+
+  .atlas .atlas-toggle[aria-expanded="true"]::after {
+    translate: 0 0.1em;
+    rotate: -135deg;
   }
 
   .atlas .atlas-toggle:hover {
     color: var(--accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .atlas .atlas-toggle::after {
+      transition: none;
+    }
   }
 
   .atlas .atlas-links {
