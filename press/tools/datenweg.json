@@ -13,7 +13,10 @@
   "captions": [
     { "p": 0, "html": "Du kaufst Bitcoin über eine Börse." },
     { "p": 0.42, "html": "Deine Daten liegen an immer mehr Stellen." },
-    { "p": 1.12, "html": "Ab 2027 meldet dich die Börse jedes Jahr ans Finanzamt." },
+    {
+      "p": 1.12,
+      "html": "Ab 2027 meldet dich die Börse jedes Jahr ans Finanzamt."
+    },
     { "p": 2.0, "html": "Gespeichert, gehackt und verkauft." },
     { "p": 3.0, "html": "Aus den Daten wird eine <em>Zielliste</em>." },
     { "p": 3.97, "html": "Dein Zuhause wird zum <em>Ziel</em>." },

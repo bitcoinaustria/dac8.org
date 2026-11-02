@@ -30,7 +30,9 @@ const page = await browser.newPage({
 await page.clock.install({ time: new Date("2026-11-02T09:00:00Z") })
 await page.goto(`http://127.0.0.1:4329${config.path}`, { waitUntil: "load" })
 await page.clock.runFor(2000)
-await page.addStyleTag({ content: readFileSync(resolve(dirname(configPath), config.css), "utf8") })
+await page.addStyleTag({
+  content: readFileSync(resolve(dirname(configPath), config.css), "utf8"),
+})
 await page.evaluate((mark) => {
   const el = document.createElement("div")
   el.className = "film-watermark"
@@ -73,14 +75,21 @@ for (const move of moves) {
 // stage shimmer by half a pixel at each one. The film learns of the change
 // through a scroll event in the same frame.
 const base = await page.evaluate(
-  (selector) => Math.ceil(document.querySelector(selector).getBoundingClientRect().top + scrollY) + 1,
+  (selector) =>
+    Math.ceil(
+      document.querySelector(selector).getBoundingClientRect().top + scrollY,
+    ) + 1,
   config.stuck,
 )
-await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), base)
+await page.evaluate(
+  (y) => window.scrollTo({ top: y, behavior: "instant" }),
+  base,
+)
 const scrollTo = (y) =>
   page.evaluate(
     ({ y, trackSelector }) => {
-      document.querySelector(trackSelector).style.translate = `0 ${scrollY - y}px`
+      document.querySelector(trackSelector).style.translate =
+        `0 ${scrollY - y}px`
       window.dispatchEvent(new Event("scroll"))
     },
     { y, trackSelector: config.track },
@@ -116,10 +125,19 @@ const captionState = (index, t) => {
     shownCaption = index
   }
   const since = t - captionSince
-  if (since < fadeOut) return { html: null, opacity: 1 - since / fadeOut, lift: -(since / fadeOut) * 6 }
+  if (since < fadeOut)
+    return {
+      html: null,
+      opacity: 1 - since / fadeOut,
+      lift: -(since / fadeOut) * 6,
+    }
   const k = Math.min(1, (since - fadeOut) / fadeIn)
   const eased = 1 - (1 - k) ** 3
-  return { html: captions[index]?.html ?? "", opacity: eased, lift: (1 - eased) * 12 }
+  return {
+    html: captions[index]?.html ?? "",
+    opacity: eased,
+    lift: (1 - eased) * 12,
+  }
 }
 const setCaption = ({ html, opacity, lift }) =>
   page.evaluate(
@@ -171,7 +189,11 @@ if (stills) {
     const index = captionAt(progressAt(stop), 0)
     await setCaption({ html: captions[index]?.html ?? "", opacity: 1, lift: 0 })
     for (let n = 0; n < fps * 2; n++) await advance()
-    await page.screenshot({ path: `${work}/s${k}.jpg`, type: "jpeg", quality: 90 })
+    await page.screenshot({
+      path: `${work}/s${k}.jpg`,
+      type: "jpeg",
+      quality: 90,
+    })
   }
 } else {
   for (const [n, y] of track.entries()) {
@@ -179,8 +201,17 @@ if (stills) {
     await scrollTo(y)
     await setCaption(captionState(captionAt(progressAt(y), t), t))
     await advance()
-    await page.screenshot({ path: `${work}/f${String(n).padStart(5, "0")}.jpg`, type: "jpeg", quality: 92 })
+    await page.screenshot({
+      path: `${work}/f${String(n).padStart(5, "0")}.jpg`,
+      type: "jpeg",
+      quality: 92,
+    })
   }
 }
 await browser.close()
-console.log(stills ? "stills" : `${track.length} frames, ${(track.length / fps).toFixed(1)} s`, work)
+console.log(
+  stills
+    ? "stills"
+    : `${track.length} frames, ${(track.length / fps).toFixed(1)} s`,
+  work,
+)
