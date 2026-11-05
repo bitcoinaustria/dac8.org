@@ -4,14 +4,12 @@ import type { Language } from "@/lib/i18n"
 
 interface Props {
   language: Language
-  // The proceedings page also says at each station what we expect there.
-  detailed?: boolean
   // The home page shows only the stations, and a note under the last one.
   compact?: boolean
   goalNote?: string
 }
 
-const { language, detailed = false, compact = false, goalNote } = Astro.props
+const { language, compact = false, goalNote } = Astro.props
 const en = language === "en"
 const stations = legalRoute[language]
 const stateOf = (index: number) =>
@@ -46,7 +44,7 @@ const timing = (index: number) =>
             <span class="tag live">{en ? "Now" : "Jetzt"}</span>
           )}
         </strong>
-        {!compact && <span>{detailed ? station.detail : station.text}</span>}
+        {!compact && <span>{station.text}</span>}
         {goalNote && index === stations.length - 1 && (
           <span class="route-note">{goalNote}</span>
         )}

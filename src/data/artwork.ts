@@ -13,6 +13,8 @@ import linkedIdentity from "@/assets/artwork/linked-identity.webp"
 import linkedIdentityEn from "@/assets/artwork/linked-identity-en.webp"
 import reportAssets from "@/assets/artwork/report-assets.webp"
 import reportAssetsEn from "@/assets/artwork/report-assets-en.webp"
+import retentionStruck from "@/assets/artwork/retention-struck.webp"
+import retentionStruckEn from "@/assets/artwork/retention-struck-en.webp"
 import targetAtHome from "@/assets/artwork/target-at-home.webp"
 import targetAtHomeEn from "@/assets/artwork/target-at-home-en.webp"
 import yearsOnFile from "@/assets/artwork/years-on-file.webp"
@@ -119,6 +121,17 @@ export const artwork = {
       alt: "Illustration: a magnifying glass over a card index labelled data collection, full of personal record cards. In front, a complaint by Max Mustermann against the blanket collection of annual totals.",
       caption:
         "Our complaint starts from one provider’s processing of a customer’s data. It asks whether the legal requirements are compatible with fundamental rights.",
+    },
+  },
+  // The 2014 precedent: stored connections (who, when, with whom, no
+  // content) under the seal the CJEU set on the data retention directive.
+  retentionStruck: {
+    image: { de: retentionStruck, en: retentionStruckEn },
+    de: {
+      alt: "Illustration: Ein Ablagefach mit der Aufschrift Vorratsdaten voller Karten, auf denen je zwei Personen verbunden sind, mit Uhrzeit. Quer darüber ein rotes Siegel: Ungültig, EuGH 2014. Daneben ein Stempel.",
+    },
+    en: {
+      alt: "Illustration: a tray labelled data retention full of cards, each linking two people with a time. Across it a red seal: invalid, CJEU 2014. A rubber stamp beside it.",
     },
   },
   financeTheCase: {
