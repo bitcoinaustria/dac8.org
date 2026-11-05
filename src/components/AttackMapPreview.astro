@@ -1,9 +1,7 @@
 ---
-import { feature, mesh } from "topojson-client"
-import type { GeometryCollection, Topology } from "topojson-specification"
-import countries from "world-atlas/countries-50m.json"
 import { attacks } from "@/lib/attacks"
 import { type Language, pathFor } from "@/lib/i18n"
+import { svgMap } from "@/lib/svg-map"
 
 // A still of the attack map's Europe view for the home page: land and
 // borders from Natural Earth, the known attacks from Jameson Lopp's list
@@ -23,119 +21,10 @@ const en = language === "en"
 
 // The map's Europe view, in Web Mercator like the map itself.
 const bounds = { west: -11, east: 32, south: 35, north: 62 }
-const width = 600
-const radians = (degrees: number) => (degrees * Math.PI) / 180
-const mercator = (latitude: number) =>
-  Math.log(Math.tan(Math.PI / 4 + radians(latitude) / 2))
-const scale = width / radians(bounds.east - bounds.west)
-const height = Math.round(
-  scale * (mercator(bounds.north) - mercator(bounds.south)),
-)
-type Point = [number, number]
-const project = ([longitude, latitude]: number[]): Point => [
-  scale * radians(longitude - bounds.west),
-  scale *
-    (mercator(bounds.north) - mercator(Math.max(-80, Math.min(80, latitude)))),
-]
-
-// Shapes are cut to the frame plus a margin, so the page carries only what
-// is visible, and rounded to whole units with short steps dropped: at this
-// size a unit is about a pixel.
-const margin = 6
-const frame = {
-  left: -margin,
-  top: -margin,
-  right: width + margin,
-  bottom: height + margin,
-}
-const inside = ([x, y]: Point) =>
-  x >= frame.left && x <= frame.right && y >= frame.top && y <= frame.bottom
-const clip = (ring: Point[]) => {
-  const sides: [(point: Point) => boolean, (a: Point, b: Point) => Point][] = [
-    [
-      ([x]) => x >= frame.left,
-      (a, b) => [
-        frame.left,
-        a[1] + ((frame.left - a[0]) / (b[0] - a[0])) * (b[1] - a[1]),
-      ],
-    ],
-    [
-      ([x]) => x <= frame.right,
-      (a, b) => [
-        frame.right,
-        a[1] + ((frame.right - a[0]) / (b[0] - a[0])) * (b[1] - a[1]),
-      ],
-    ],
-    [
-      ([, y]) => y >= frame.top,
-      (a, b) => [
-        a[0] + ((frame.top - a[1]) / (b[1] - a[1])) * (b[0] - a[0]),
-        frame.top,
-      ],
-    ],
-    [
-      ([, y]) => y <= frame.bottom,
-      (a, b) => [
-        a[0] + ((frame.bottom - a[1]) / (b[1] - a[1])) * (b[0] - a[0]),
-        frame.bottom,
-      ],
-    ],
-  ]
-  let points = ring
-  for (const [keep, cut] of sides) {
-    const input = points
-    points = []
-    input.forEach((current, index) => {
-      const previous = input.at(index - 1) ?? current
-      if (keep(current)) {
-        if (!keep(previous)) points.push(cut(previous, current))
-        points.push(current)
-      } else if (keep(previous)) points.push(cut(previous, current))
-    })
-    if (points.length === 0) break
-  }
-  return points
-}
-const step = 1.5
-const path = (points: Point[], closed: boolean) => {
-  let d = ""
-  let last: Point | undefined
-  for (const point of points) {
-    const rounded: Point = [Math.round(point[0]), Math.round(point[1])]
-    if (last && Math.hypot(rounded[0] - last[0], rounded[1] - last[1]) < step)
-      continue
-    d += last
-      ? `l${rounded[0] - last[0]} ${rounded[1] - last[1]}`
-      : `M${rounded[0]} ${rounded[1]}`
-    last = rounded
-  }
-  return closed && d.includes("l") ? `${d}z` : closed ? "" : d
-}
-
-const topology = countries as unknown as Topology
-const shapes = topology.objects.countries as GeometryCollection
-const land = feature(topology, topology.objects.land) as unknown as {
-  features?: GeoJSON.Feature[]
-  geometry?: GeoJSON.Geometry
-}
-const landGeometries = (land.features ?? []).map((item) => item.geometry)
-if (land.geometry) landGeometries.push(land.geometry)
-const landPath = landGeometries
-  .flatMap((geometry) =>
-    geometry.type === "Polygon"
-      ? [geometry.coordinates]
-      : geometry.type === "MultiPolygon"
-        ? geometry.coordinates
-        : [],
-  )
-  .flat()
-  .map((ring) => path(clip(ring.map(project)), true))
-  .join("")
-const borderPath = mesh(topology, shapes, (a, b) => a !== b)
-  .coordinates.map((line) => line.map(project))
-  .filter((line) => line.some(inside))
-  .map((line) => path(line, false))
-  .join("")
+const map = svgMap(bounds, 600)
+const { width, height, project } = map
+const landPath = map.land()
+const borderPath = map.borders()
 
 const firstYear = Math.min(...attacks.map((attack) => attack.year))
 const points = attacks

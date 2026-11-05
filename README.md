@@ -233,9 +233,24 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
 - Add confirmed public milestones to `src/data/updates.ts`, with a stable ID,
   publication timestamp including timezone, both translations and an optional
   source URL. Future-dated entries stay hidden until a build after that date.
-- `/verfahren/` and `/en/proceedings/` render the updates; `/feed.xml` and
+- `/verfahren/` and `/en/proceedings/` render the updates in their own
+  section once there are any (until then the status line links the feed); `/feed.xml` and
   `/en/feed.xml` expose RSS 2.0 feeds from the same data. Empty feeds are valid;
   do not create placeholder milestones or imply a filing has happened.
+- The proceedings pages show the European front at `#europa`
+  (`src/components/EuropeanFront.astro`, linked from the footer): a wide
+  map of the member states in the style of the attack map, with the
+  countries that have a case lifted off it in red, drawn at build time in
+  the EU's own equal-area projection, so the north does not swell
+  (`src/lib/svg-map.ts`, shared with the home page's attack map, which stays
+  in Web Mercator), over a grid of tiles, one per pending case, ending in an
+  open tile that invites the next country. It is built to grow: each country
+  gets a pulsing pin and its name on the map (`side` moves the name where
+  pins crowd), pointing at a country or its tile lights up both, a click on
+  the map jumps to the tile, and the subtitle counts the countries once
+  there are more than three. Add a country to `src/data/front.ts` only once
+  a case has been filed and is publicly sourced, and keep the list in step with
+  Bull Bitcoin's map at dac8.com.
 - The proceedings pages also list media coverage at `#medien`: articles,
   podcasts, videos and broadcasts, by the campaign or by other outlets, each
   linking to the original. The chapter bar, the footer and the home page's
