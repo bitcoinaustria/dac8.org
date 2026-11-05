@@ -1,5 +1,4 @@
 ---
-import Artwork from "@/components/Artwork.astro"
 import EuropeanFront from "@/components/EuropeanFront.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MediaCoverage from "@/components/MediaCoverage.astro"
@@ -167,7 +166,6 @@ const lawyerProfile = en
         <p class="precedent-kicker">
           {en ? "Will it make a difference?" : "Bringt das etwas?"}
         </p>
-        <Artwork id="retentionStruck" language={language} caption={false} />
         <h3 id="praezedenzfall-heading">
           {en ? "A surveillance law has fallen before." : "Schon einmal fiel ein Überwachungsgesetz."}
         </h3>
@@ -176,13 +174,15 @@ const lawyerProfile = en
         </p>
         <ol class="precedent-rulings">
           <li>
-            <a href={retentionCjeu} hreflang={language}>April</a>
+            <a href={retentionCjeu} hreflang={language}>April 2014</a>
             <span
               >{en ? "The CJEU declares the EU directive invalid." : "Der EuGH erklärt die EU-Richtlinie für ungültig."}</span
             >
           </li>
           <li>
-            <a href={retentionVfgh} hreflang="de">{en ? "June" : "Juni"}</a>
+            <a href={retentionVfgh} hreflang="de"
+              >{en ? "June 2014" : "Juni 2014"}</a
+            >
             <span
               >{en ? "The Constitutional Court strikes down the Austrian rules." : "Der Verfassungsgerichtshof hebt die österreichischen Regeln auf."}</span
             >
@@ -431,12 +431,6 @@ const lawyerProfile = en
     font-size: var(--type-meta);
   }
 
-  /* Das Bild zeigt, was gefallen ist: Vorratsdaten unter dem Siegel. */
-  .precedent-card :global(.artwork) {
-    --art-height: 30rem;
-    margin-block: var(--space-2xs) var(--space-m);
-  }
-
   .precedent-card h3 {
     margin-block-end: var(--space-xs);
   }
@@ -454,16 +448,23 @@ const lawyerProfile = en
     list-style: none;
   }
 
+  /* Datum neben dem Urteil, schmal darüber, damit lange Wörter wie
+     Verfassungsgerichtshof nicht zerbrechen. */
   .precedent-rulings li {
-    display: grid;
-    grid-template-columns: 4.5rem minmax(0, 1fr);
-    gap: var(--space-s);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs) var(--space-s);
     padding-block-start: var(--space-2xs);
     border-block-start: 1px solid var(--line);
   }
 
   .precedent-rulings a {
+    flex: 0 0 6.5rem;
     font-weight: 600;
+  }
+
+  .precedent-rulings span {
+    flex: 1 1 15rem;
   }
 
   .precedent-card .precedent-credit {
