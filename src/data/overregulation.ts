@@ -1,11 +1,27 @@
-import type { Language } from "@/lib/i18n"
+import { historyAsOf } from "@/data/history"
+import {
+  accountsExchanged,
+  accountsSources,
+  formatNumber,
+  reportingBenefit,
+  reportingCosts,
+  reportingCostSources,
+  unexplained,
+} from "@/data/history-evidence"
+import { nextSteps, type Status } from "@/data/history-next"
+import { pairs } from "@/data/history-promises"
+import { leaks, peopleAffected, roundPeople } from "@/data/leaks"
+import { type Language, pathFor } from "@/lib/i18n"
 
 // The history page's scroll film: how the rules piled up, step by small
 // step, and how little came of it, in five chapters of eleven short steps, the rules and the readers of the
 // register on one running timeline from 1977 to today.
 // It starts with the reader, from which amount you have to show ID, shows
 // the ways money takes filling with rules and the register filling with
-// readers, and ends with the result.
+// readers, and ends with the result. Four more chapters of twelve steps
+// stay in the picture of the rules chapter, the panopticon, and move the
+// camera through it: what is decided next, what it means for you, the
+// bill, and what was promised.
 // Each step is a headline of a few words, at most one line under it, and
 // changes one picture: a contrast you see before you read. Every figure is verified in
 // dac8-wiki/.wiki/wiki/references/rule-growth-and-effect-evidence.md and
@@ -20,7 +36,26 @@ const eurlex = (path: string, de: string, en: string): Source => ({
   href: `https://eur-lex.europa.eu/eli/${path}/oj`,
 })
 
-export type Scene = "threshold" | "rules" | "watch" | "tower" | "result"
+export type Scene =
+  | "threshold"
+  | "rules"
+  | "watch"
+  | "tower"
+  | "result"
+  | "world"
+
+// The stills of the later chapters, rendered in the panopticon's world
+// (scripts/artwork/render-panopticon.py): the EU's 27 account registers,
+// the view from the crypto cell, the breach in the tower, the notice on
+// the cell's table, the pallets in the yard and the loudspeakers.
+export type Shot =
+  | "wide"
+  | "cell"
+  | "leak"
+  | "letter"
+  | "yard-cost"
+  | "yard-benefit"
+  | "horn"
 
 // The story's order: what is asked of you, how many rules ask it, who gets
 // to look, how much paper they fill, and what comes of it.
@@ -30,6 +65,14 @@ export const chapters: { id: string; scene: Scene; label: Text }[] = [
   { id: "zweck", scene: "watch", label: { de: "Zugriff", en: "Access" } },
   { id: "papier", scene: "tower", label: { de: "Papier", en: "Paper" } },
   { id: "ergebnis", scene: "result", label: { de: "Ergebnis", en: "Result" } },
+  { id: "weiter", scene: "rules", label: { de: "Weiter", en: "Next" } },
+  { id: "du", scene: "world", label: { de: "Für dich", en: "For you" } },
+  { id: "rechnung", scene: "world", label: { de: "Rechnung", en: "Bill" } },
+  {
+    id: "versprochen",
+    scene: "world",
+    label: { de: "Versprochen", en: "Promised" },
+  },
 ]
 
 export type Step = {
@@ -41,7 +84,27 @@ export type Step = {
   // One short line at most; the picture says the rest.
   text?: Text
   sources: Source[]
+  // Sources whose address depends on the language, such as another page.
+  more?: (language: Language) => Source[]
+  // A date and its procedural status, above the headline.
+  when?: Text
+  status?: Status
+  // The step's own scene where it differs from its chapter's.
+  scene?: Scene
+  // The still this step shows, and the flight that leads the camera to it
+  // (public/film/flight<n>/), run through with the scroll.
+  shot?: Shot
+  flight?: number
+  // What the picture names in a few words: what was promised and what is
+  // on record, or what a part of it stands for.
+  marks?: { id: string; text: Text }[]
+  caption?: Text
 }
+
+export const sourcesOf = (step: Step, language: Language) => [
+  ...step.sources,
+  ...(step.more?.(language) ?? []),
+]
 
 const fiu2025: Source = {
   label: {
@@ -172,6 +235,70 @@ const ris = (year: number, number: number): Source => ({
   },
   href: `https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_${year}_I_${number}/BGBLA_${year}_I_${number}.html`,
 })
+
+// ---------- What the later chapters draw on --------------------------------
+const thisYear = new Date(historyAsOf).getUTCFullYear()
+const lastAccounts = accountsExchanged[accountsExchanged.length - 1]
+const { germany } = unexplained
+// One sheet per documented data leak lies in the leak's picture, red where
+// it happened at an authority.
+export const leakCount = {
+  all: leaks.length,
+  authority: leaks.filter((leak) => leak.holders.includes("authority")).length,
+}
+const bulgariaSources: Source[] = (
+  leaks.find((leak) => leak.id === "bulgaria")?.sources.slice(0, 1) ?? []
+).map((source) => ({
+  href: source.href,
+  label: {
+    de: "OECD Global Forum, Erklärung zum Datenleck bei Bulgariens Steuerbehörde, 2019",
+    en: "OECD Global Forum, statement on the data breach at Bulgaria’s tax authority, 2019",
+  },
+}))
+// The yearly cost of the reporting duties in million euros, and the
+// pallets the pictures show: one per 100 million euros, costs beside the
+// benefit measured and the benefit modelled.
+const costMillions = reportingCosts.reduce((sum, c) => sum + c.millions, 0)
+// "über 1,2 Milliarden": rounded down to a tenth of a billion.
+const costFloor = (language: Language) =>
+  formatNumber(Math.floor(costMillions / 100) / 10, language)
+export const pallets = {
+  cost: Math.round(costMillions / 50) / 2,
+  measured: reportingBenefit.fromData * 10,
+  modelled: reportingBenefit.modelled * 10,
+}
+// A step decided or proposed, with its date, status, wording and sources.
+const next = (id: string) => {
+  const step = nextSteps.find((item) => item.id === id)
+  if (!step) throw new Error(`Film: no next step "${id}"`)
+  return {
+    when: step.when,
+    status: step.status,
+    title: step.title,
+    text: step.text,
+    sources: step.sources,
+  }
+}
+// The pairs shown in the film, by their own short wording.
+const promised: Step[] = pairs.flatMap((pair, k) =>
+  pair.film
+    ? [
+        {
+          id: `versprochen-${pair.id}`,
+          chapter: "versprochen",
+          shot: "horn" as const,
+          flight: k === 0 ? 6 : undefined,
+          title: pair.film.title,
+          text: pair.film.text,
+          marks: [
+            { id: "promise", text: pair.token.promise },
+            { id: "record", text: pair.token.record },
+          ],
+          sources: [pair.promise.source, pair.record[pair.film.record].source],
+        },
+      ]
+    : [],
+)
 
 export const steps: Step[] = [
   // ---------- Ausweis: from which amount a single cash transaction without
@@ -385,6 +512,208 @@ export const steps: Step[] = [
     },
     sources: [socta],
   },
+
+  // ---------- Weiter: the same picture, the year running on past today.
+  // Cash, the last dark cell, lights up in 2027; a proposal shows as
+  // windows that are not yet open; then the camera pulls back to the EU's
+  // 27 account registers, which are to be connected. Titles, dates and
+  // status come from history-next.ts; never word a proposal as law.
+  {
+    id: "weiter-bargeld",
+    chapter: "weiter",
+    years: [thisYear, 2027],
+    ...next("amlr"),
+    title: {
+      de: "Und es geht weiter: Bargeld bis 10.000 €.",
+      en: "And it goes on: cash up to 10,000 euros.",
+    },
+    text: {
+      de: "Mehr dürfen Händler dann nicht bar annehmen, und Anbieter dürfen keine anonymen Krypto-Konten führen. Die eigene Wallet betrifft das nicht.",
+      en: "Traders may accept no more in cash, and providers may not keep anonymous crypto accounts. Your own wallet is not affected.",
+    },
+  },
+  {
+    id: "weiter-finanzamt",
+    chapter: "weiter",
+    years: [2027, 2028],
+    ...next("dac10"),
+    text: {
+      de: "Ein Vorschlag der Kommission; zustimmen müssen alle EU-Staaten. Der Datenschutzbeauftragte der EU verlangt engere Grenzen.",
+      en: "A Commission proposal; every EU country must agree. The EU’s data protection supervisor calls for tighter limits.",
+    },
+  },
+  {
+    id: "weiter-register",
+    chapter: "weiter",
+    scene: "world",
+    shot: "wide",
+    flight: 1,
+    years: [2028, 2029],
+    ...next("register-eu"),
+  },
+  {
+    id: "weiter-zahlungen",
+    chapter: "weiter",
+    scene: "world",
+    shot: "wide",
+    years: [2029, 2030],
+    ...next("r16"),
+    marks: [
+      {
+        id: "tag",
+        text: {
+          de: "Name, Anschrift, Geburtsdatum",
+          en: "name, postal address, date of birth",
+        },
+      },
+    ],
+  },
+
+  // ---------- Für dich: the camera goes into one cell, the crypto cell.
+  // The figures are those of the balance (history-evidence.ts, leaks.ts).
+  {
+    id: "du-erfasst",
+    chapter: "du",
+    shot: "cell",
+    flight: 2,
+    title: {
+      de: "Und du? Gemeldet wirst du ohne Verdacht.",
+      en: "And you? You are reported without suspicion.",
+    },
+    text: {
+      de: `Es reicht ein Konto im Ausland: ${lastAccounts.year} tauschten Steuerbehörden weltweit Daten zu ${lastAccounts.millions} Millionen Konten aus. Mit DAC8 wird jeder Kunde eines Krypto-Anbieters gemeldet, auch wer im selben Land wohnt.`,
+      en: `An account abroad is enough: in ${lastAccounts.year} tax authorities worldwide exchanged data on ${lastAccounts.millions} million accounts. With DAC8 every customer of a crypto-asset provider is reported, including those who live in the same country.`,
+    },
+    sources: [
+      ...accountsSources,
+      eurlex(
+        "dir/2023/2226",
+        "Richtlinie (EU) 2023/2226",
+        "Directive (EU) 2023/2226",
+      ),
+    ],
+  },
+  {
+    id: "du-datenleck",
+    chapter: "du",
+    shot: "leak",
+    flight: 3,
+    title: {
+      de: "Gesammelte Daten gehen verloren, auch bei Behörden.",
+      en: "Collected data get lost, at authorities too.",
+    },
+    text: {
+      de: `${leakCount.all} belegte Fälle, ${leakCount.authority} davon bei Behörden, rund ${roundPeople(peopleAffected, "de")} Betroffene. Bulgariens Steuerbehörde verlor 2019 auch Kontodaten aus dem Austausch, über den künftig DAC8 läuft.`,
+      en: `${leakCount.all} documented cases, ${leakCount.authority} of them at authorities, about ${roundPeople(peopleAffected, "en")} people affected. In 2019 Bulgaria’s tax authority also lost account data from the very exchange DAC8 reports will travel through.`,
+    },
+    caption: {
+      de: "Ein Blatt je belegtem Fall, rot bei Behörden.",
+      en: "One sheet per documented case, red at authorities.",
+    },
+    sources: bulgariaSources,
+    more: (language) => [
+      {
+        label: {
+          de: "Alle belegten Fälle von Datenlecks mit Primärquellen",
+          en: "Every documented data leak with its primary sources",
+        },
+        href: pathFor("leaks", language),
+      },
+    ],
+  },
+  {
+    id: "du-grund",
+    chapter: "du",
+    shot: "letter",
+    flight: 4,
+    title: {
+      de: "Abgelehnt oder gekündigt, ohne zu erfahren, warum.",
+      en: "Refused or closed, without being told why.",
+    },
+    text: {
+      de: `Deutschland, Mitte ${germany.from} bis Mitte ${germany.to}: rund ${formatNumber(germany.refused, "de")} Basiskonten wegen der Geldwäsche-Prüfung abgelehnt, rund ${formatNumber(germany.closed, "de")} gekündigt, ohne dass die Bank den Grund nennen durfte. Österreichs Finanzmarktaufsicht hat dazu keine Zahlen.`,
+      en: `Germany, mid-${germany.from} to mid-${germany.to}: about ${formatNumber(germany.refused, "en")} basic accounts refused on anti-money-laundering grounds, about ${formatNumber(germany.closed, "en")} closed without the bank being allowed to give the reason. Austria’s financial market authority has no figures on this.`,
+    },
+    sources: [
+      unexplained.sources.germany,
+      unexplained.sources.austria,
+      ...unexplained.sources.law,
+    ],
+  },
+
+  // ---------- Rechnung: the yard, with pallets of 100-euro notes at true
+  // scale, one per 100 million euros: what three reporting duties cost a
+  // year, then beside it the benefit of all exchanged tax data, measured
+  // and modelled. The benefit covers more duties than the costs; the
+  // picture names both, so the piles cannot be read as "it pays".
+  {
+    id: "rechnung-kosten",
+    chapter: "rechnung",
+    shot: "yard-cost",
+    flight: 5,
+    title: {
+      de: `Die Rechnung: über ${costFloor("de")} Milliarden Euro im Jahr.`,
+      en: `The bill: over ${costFloor("en")} billion euros a year.`,
+    },
+    text: {
+      de: "So viel kosten allein drei Meldepflichten an die Steuer, Jahr für Jahr, schätzt die Kommission.",
+      en: "That is what three duties to report to the tax office alone cost, year after year, as the Commission estimates it.",
+    },
+    marks: [
+      {
+        id: "cost",
+        text: {
+          de: "Kosten von drei Meldepflichten",
+          en: "cost of three reporting duties",
+        },
+      },
+    ],
+    caption: {
+      de: "Maßstabsgetreu: Eine Palette trägt eine Million Hunderter, 100 Mio. €.",
+      en: "At true scale: a pallet carries a million 100-euro notes, €100m.",
+    },
+    sources: reportingCostSources,
+  },
+  {
+    id: "rechnung-nutzen",
+    chapter: "rechnung",
+    shot: "yard-benefit",
+    title: {
+      de: `Belegt ist ein Nutzen von ${formatNumber(reportingBenefit.fromData, "de")} Milliarden.`,
+      en: `The benefit on record is ${formatNumber(reportingBenefit.fromData, "en")} billion.`,
+    },
+    text: {
+      de: `Aus Daten, für alle ausgetauschten Steuerdaten zusammen. Die Kommission schätzt ${formatNumber(reportingBenefit.billions, "de")} Milliarden im Jahr; die übrigen ${formatNumber(reportingBenefit.modelled, "de")} stammen aus einem Modell.`,
+      en: `From data, for all exchanged tax data together. The Commission estimates ${formatNumber(reportingBenefit.billions, "en")} billion a year; the other ${formatNumber(reportingBenefit.modelled, "en")} come from a model.`,
+    },
+    marks: [
+      {
+        id: "cost",
+        text: {
+          de: "Kosten von drei Meldepflichten",
+          en: "cost of three reporting duties",
+        },
+      },
+      {
+        id: "measured",
+        text: { de: "Nutzen aus Daten", en: "benefit from data" },
+      },
+      {
+        id: "modelled",
+        text: { de: "Nutzen aus dem Modell", en: "benefit from the model" },
+      },
+    ],
+    caption: {
+      de: "Maßstabsgetreu: Eine Palette trägt eine Million Hunderter, 100 Mio. €.",
+      en: "At true scale: a pallet carries a million 100-euro notes, €100m.",
+    },
+    sources: reportingBenefit.sources.slice(0, 1),
+  },
+
+  // ---------- Versprochen: the loudspeakers on the tower. The first three
+  // pairs of history-promises.ts, DAC8 in the EU, Austria and Germany:
+  // what was announced, and what their own institutions have on record.
+  ...promised,
 ]
 
 // The pile: every EU anti-money-laundering act since 1991 by year, in pages

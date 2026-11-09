@@ -1,8 +1,10 @@
 ---
+import { readdirSync } from "node:fs"
 import SourceRefs from "@/components/SourceRefs.astro"
 import { ruleChronicle } from "@/data/aml-history"
 import { historyAsOf } from "@/data/history"
 import { recovery } from "@/data/history-gap"
+import { statusLabel } from "@/data/history-next"
 import { historySources } from "@/data/history-sources"
 import { firstVoice, lawVoices } from "@/data/law-voices"
 import {
@@ -11,9 +13,13 @@ import {
   goldShown,
   inGold,
   inTodaysMoney,
+  leakCount,
+  pallets,
   pile,
   reportField,
   type Scene,
+  type Shot,
+  sourcesOf,
   steps,
   thresholds,
 } from "@/data/overregulation"
@@ -25,6 +31,10 @@ import cashBundleGold from "@/assets/history/cash-bundle-gold.webp"
 import noteCrime from "@/assets/history/note-crime.webp"
 import panopticon from "@/assets/history/panopticon.json"
 import panBase from "@/assets/history/panopticon-base.webp"
+import panProposal from "@/assets/history/panopticon-proposal.webp"
+import world from "@/assets/history/world.json"
+import wideLinks from "@/assets/history/world-wide-links.webp"
+import wideTags from "@/assets/history/world-wide-tags.webp"
 import type { Language } from "@/lib/i18n"
 
 // The story of over-regulation as a scroll film, built like the home
@@ -34,7 +44,12 @@ import type { Language } from "@/lib/i18n"
 // needs ID, and nothing at all for crypto; rules set on every way money can
 // take, then ever more authorities in the watchtower; six pages beside 488;
 // a sea of reports, most of them kept on file, beside a few convictions;
-// and a 100-euro note from which the state tears a red sliver. Grey is what is collected, red what
+// and a 100-euro note from which the state tears a red sliver. Then the
+// film returns to the panopticon and stays in it for twelve more steps:
+// the year runs on to what is decided next, and the camera flies, with the
+// scroll, to the EU's 27 registers, into the crypto cell, over a breach in
+// the tower, down to a notice on the cell's table, up to pallets of notes
+// in the yard and to the loudspeakers on the tower. Grey is what is collected, red what
 // comes of it or what is new. Each step cites its sources by number from
 // the list at the end of the page (src/data/history-sources.ts). Without
 // the script the headlines stand as text one below the other.
@@ -54,11 +69,12 @@ const at = (id: string) => {
   if (i === undefined) throw new Error(`Film: no step "${id}"`)
   return i
 }
-const sceneOf = new Map(chapters.map((chapter) => [chapter.id, chapter.scene]))
+const chapterOf = new Map(chapters.map((chapter) => [chapter.id, chapter]))
 const items = steps.map((step, i) => ({
   ...step,
   i,
-  scene: sceneOf.get(step.chapter) as Scene,
+  scene: (step.scene ?? chapterOf.get(step.chapter)?.scene) as Scene,
+  chapterLabel: chapterOf.get(step.chapter)?.label[language] ?? "",
 }))
 const thisYear = new Date(historyAsOf).getUTCFullYear()
 
@@ -289,6 +305,88 @@ const watch = watchers.map((watcher, k) => ({
     watchLights[`../assets/history/panopticon-watch-${k}.webp`]?.default.src,
 }))
 
+// ---------- Die Welt ---------------------------------------------------------
+// The later chapters stay in the panopticon. Each of their steps shows a
+// still rendered in the same world (render-panopticon.py), and where a
+// step has a flight, the camera's way to that still runs with the scroll
+// (src/lib/film-flight.ts, frames in public/film/). Words in the picture
+// stand where the render says, in percent of the picture.
+const stillFiles = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/history/world-*.webp",
+  { eager: true },
+)
+const stillOf = (shot: Shot) => {
+  const localised = shot === "letter" ? `letter-${language}` : shot
+  const file = stillFiles[`../assets/history/world-${localised}.webp`]
+  if (!file) throw new Error(`Film: no still "${localised}"`)
+  return file.default.src
+}
+const shots = [...new Set(items.flatMap((item) => item.shot ?? []))].map(
+  (shot) => ({ id: shot, src: stillOf(shot) }),
+)
+// The pictures show a fixed number of sheets and pallets; once the data
+// move away from them, they need rendering again.
+const baked = {
+  leaks: 38,
+  authority: 20,
+  cost: 12.5,
+  measured: 12,
+  modelled: 56,
+}
+if (
+  leakCount.all !== baked.leaks ||
+  leakCount.authority !== baked.authority ||
+  pallets.cost !== baked.cost ||
+  pallets.measured !== baked.measured ||
+  pallets.modelled !== baked.modelled
+) {
+  throw new Error(
+    `Film: the stills show ${JSON.stringify(baked)}, the data give ${JSON.stringify({ ...leakCount, ...pallets })}; set the counts in render-panopticon.py and render leak and yard again`,
+  )
+}
+const flightFrames = Object.fromEntries(
+  [...new Set(items.flatMap((item) => item.flight ?? []))].map((flight) => [
+    flight,
+    readdirSync(`public/film/flight${flight}`).filter((name) =>
+      name.endsWith(".webp"),
+    ).length,
+  ]),
+)
+// Where a step's words stand in its still.
+const points: Record<string, [number, number]> = {
+  tag: world.wide.tag as [number, number],
+  cost: world.yard.cost as [number, number],
+  measured: world.yard.measured as [number, number],
+  modelled: world.yard.modelled as [number, number],
+  promise: world.horn.left as [number, number],
+  record: world.horn.right as [number, number],
+}
+const marks = items.flatMap((item) =>
+  (item.marks ?? []).map((mark) => ({
+    step: item.i,
+    id: mark.id,
+    text: mark.text[language],
+    // What was promised and what is on record say which is which.
+    label:
+      mark.id === "promise"
+        ? en
+          ? "Promised"
+          : "Versprochen"
+        : mark.id === "record"
+          ? en
+            ? "Measured"
+            : "Gemessen"
+          : undefined,
+    style: `--x: ${points[mark.id][0]}%; --y: ${points[mark.id][1]}%`,
+  })),
+)
+const stepsOf = (shot: Shot) =>
+  items
+    .filter((item) => item.shot === shot)
+    .map((item) => item.i)
+    .join(",")
+const tagStep = String(at("weiter-zahlungen"))
+
 // ---------- Papier ----------------------------------------------------------
 // Read aloud on request (src/data/law-voices.ts): the 1991 passage alone,
 // then today's passages one after another until they overlap.
@@ -333,15 +431,51 @@ const noteKeep = String(kept / 100)
   data-scenes={JSON.stringify(items.map((item) => item.scene))}
   data-ids={JSON.stringify(items.map((item) => item.id))}
   data-years={JSON.stringify(items.map((item) => item.years ?? null))}
+  data-chapters={JSON.stringify(items.map((item) => item.chapter))}
+  data-chapter-labels={JSON.stringify(items.map((item) => item.chapterLabel))}
+  data-shots={JSON.stringify(items.map((item) => item.shot ?? null))}
+  data-flights={JSON.stringify(items.map((item) => item.flight ?? null))}
+  data-flight-frames={JSON.stringify(flightFrames)}
   data-voices={voices}
 >
   <h2 id="film-title" class="visually-hidden">
     {en ? "The story of over-regulation" : "Die Geschichte der Überregulierung"}
   </h2>
 
+  <!-- One question before the film: the rules chapter then starts in the reader's year. -->
+  <div class="born" data-born hidden>
+    <label class="born-ask" for="born-year">
+      {en ? "What has piled up in your lifetime? Your year of birth:" : "Was kam dazu, seit es dich gibt? Dein Geburtsjahr:"}
+    </label>
+    <div class="born-pick">
+      <input
+        id="born-year"
+        type="range"
+        min="1940"
+        max="2010"
+        step="1"
+        value="1985"
+        data-born-year
+      >
+      <output for="born-year" data-born-out>?</output>
+    </div>
+    <p class="born-says" data-born-says aria-live="polite">
+      {en
+        ? "Move the slider. The year stays in your browser."
+        : "Schieb den Regler. Das Jahr bleibt in deinem Browser."}
+    </p>
+    <button type="button" class="born-share" data-born-share hidden>
+      {en ? "Save as a picture" : "Als Bild speichern"}
+    </button>
+  </div>
+
   <div class="track" aria-hidden="true">
     {items.map((item) => (
-      <div class="spacer" id={`film-${item.id}`} data-spacer={item.i} />
+      <div
+        class:list={["spacer", { long: item.flight }]}
+        id={`film-${item.id}`}
+        data-spacer={item.i}
+      />
     ))}
   </div>
 
@@ -354,10 +488,18 @@ const noteKeep = String(kept / 100)
             data-say={item.i}
             data-current={item.i === 0 ? "" : undefined}
           >
+            {item.when && item.status && (
+              <p class="say-when">
+                <b>{item.when[language]}</b>
+                <span class:list={["say-status", item.status]}>
+                  {statusLabel[item.status][language]}
+                </span>
+              </p>
+            )}
             <h3>{item.title[language]}</h3>
             <p class="say-text">
               {item.text?.[language]}
-              <SourceRefs sources={cite(item.sources)} language={language} />
+              <SourceRefs sources={cite(sourcesOf(item, language))} language={language} />
             </p>
           </div>
         ))}
@@ -376,6 +518,9 @@ const noteKeep = String(kept / 100)
             </svg>
           </button>
           <span class="film-count" aria-live="polite">
+            <span class="film-chapter" data-film-chapter
+              >{items[0].chapterLabel}</span
+            >
             <b data-film-at>1</b>
             / {items.length}
           </span>
@@ -476,13 +621,55 @@ const noteKeep = String(kept / 100)
                   <img class="watch-light" data-from={post.from} src={post.light} alt="" decoding="async" />
                 ) : null,
               )}
+              <img
+                class="watch-light proposed"
+                data-from="2028"
+                src={panProposal.src}
+                alt=""
+                decoding="async"
+              >
               {ways.map((way) => (
                 <span class="way-label" data-way-label={way.id} style={way.style}>
                   {way.label}
                 </span>
               ))}
+              <!-- The later chapters: flights on the canvas, a still on top once the camera has arrived. -->
+              <canvas class="flight" data-flight width="1000" height="900" />
+              {shots.map((shot) => (
+                <img class="shot" data-shot={shot.id} data-src={shot.src} alt="" decoding="async" />
+              ))}
+              <img
+                class="shot-pass"
+                data-only={stepsOf("wide")}
+                data-src={wideLinks.src}
+                alt=""
+                decoding="async"
+              >
+              <img
+                class="shot-pass"
+                data-only={tagStep}
+                data-src={wideTags.src}
+                alt=""
+                decoding="async"
+              >
+              {marks.map((mark) => (
+                <span class:list={["mark", `mark-${mark.id}`]} data-only={String(mark.step)} data-label={mark.label} style={mark.style}>
+                  {mark.text}
+                </span>
+              ))}
+              {items.map((item) =>
+                item.caption ? (
+                  <span class="world-caption" data-only={String(item.i)}>
+                    {item.caption[language]}
+                  </span>
+                ) : null,
+              )}
               <p class="ways-centre">
                 <strong data-year>{steps[at("regeln")].years?.[0]}</strong>
+                <span
+                  class="born-tag"
+                  data-born-tag={en ? "since {year}, your year of birth" : "seit {year}, deinem Geburtsjahr"}
+                />
               </p>
             </div>
           </div>
@@ -572,6 +759,8 @@ const noteKeep = String(kept / 100)
 </section>
 
 <script>
+  import { createBorn } from "@/lib/film-born"
+  import { createFlights } from "@/lib/film-flight"
   import { createNote } from "@/lib/film-note"
   import { createSand, type SandState } from "@/lib/film-sand"
 
@@ -608,7 +797,71 @@ const noteKeep = String(kept / 100)
     const stepScenes: string[] = parse("scenes")
     const stepIds: string[] = parse("ids")
     const stepYears: ([number, number] | null)[] = parse("years")
+    const stepChapters: string[] = parse("chapters")
+    const chapterLabels: string[] = parse("chapterLabels")
+    const stepShots: (string | null)[] = parse("shots")
+    const stepFlights: (number | null)[] = parse("flights")
+    const chapterAt = film.querySelector<HTMLElement>("[data-film-chapter]")
     const today = Number(film.dataset.today)
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)")
+    // The later chapters: a still per step, and on the canvas the flight
+    // that leads to it. Stills and frames load when the film comes near.
+    const waysBox = film.querySelector<HTMLElement>(".ways")
+    const stills = all("[data-shot]") as HTMLImageElement[]
+    const lazy = all("[data-src]") as HTMLImageElement[]
+    const canvas = film.querySelector<HTMLCanvasElement>("[data-flight]")
+    const flights = canvas
+      ? createFlights(
+          canvas,
+          JSON.parse(film.dataset.flightFrames ?? "{}"),
+          () => queue(),
+        )
+      : null
+    let worldLoaded = false
+    const near = (i: number) => {
+      if (!worldLoaded && stepShots.slice(i, i + 3).some(Boolean)) {
+        worldLoaded = true
+        for (const image of lazy) image.src = image.dataset.src ?? ""
+      }
+      // No flights for readers who prefer reduced motion or save data.
+      const saving = (
+        navigator as Navigator & { connection?: { saveData?: boolean } }
+      ).connection?.saveData
+      if (reduce.matches || saving) return
+      for (const j of [i - 1, i, i + 1, i + 2]) {
+        const flight = stepFlights[j]
+        if (flight) flights?.load(flight)
+      }
+    }
+    // Whether the camera has arrived at the step's still: at once where no
+    // flight leads there, otherwise at the end of the flight.
+    const arrive = (i: number, p: number) => {
+      const shot = stepShots[i]
+      const flight = stepFlights[i]
+      const flying = Boolean(
+        flight && !reduce.matches && flights?.draw(flight, p / 0.96),
+      )
+      const arrived = !flying || p >= 0.96
+      waysBox?.toggleAttribute("data-shot", Boolean(shot))
+      waysBox?.toggleAttribute("data-flying", flying)
+      waysBox?.toggleAttribute("data-arrived", Boolean(shot) && arrived)
+      for (const still of stills)
+        still.classList.toggle("on", arrived && still.dataset.shot === shot)
+    }
+    // The reader's year of birth, if given: the first span of years then
+    // starts there, and the picture says so while it shows that year.
+    const born = createBorn(film, rules, today, () => {
+      shownYear = 0
+      queue()
+    })
+    const bornTag = film.querySelector<HTMLElement>("[data-born-tag]")
+    const firstSpan = stepYears.findIndex(Boolean)
+    const spanOf = (i: number) => {
+      const span = stepYears[i]
+      const year = born.year()
+      if (!span || year === null || i !== firstSpan) return span
+      return [Math.min(Math.max(span[0], year), span[1]), span[1]]
+    }
     // The rules chapter: the year runs with the scroll, and each way with a
     // rule that applies by then is lit.
     let shownYear = 0
@@ -619,6 +872,18 @@ const noteKeep = String(kept / 100)
         yearEl.textContent = String(year)
         yearEl.classList.toggle("future", year > today)
       }
+      // While the first span runs, the picture says where it started.
+      const from = born.year()
+      const started =
+        from !== null &&
+        current === firstSpan &&
+        from >= (stepYears[firstSpan]?.[0] ?? 0)
+      if (bornTag && started)
+        bornTag.textContent = (bornTag.dataset.bornTag ?? "").replace(
+          "{year}",
+          String(spanOf(firstSpan)?.[0] ?? from),
+        )
+      bornTag?.classList.toggle("on", started)
       const covered = new Set(
         rules
           .filter(
@@ -778,6 +1043,9 @@ const noteKeep = String(kept / 100)
       else note?.hide()
       view.dataset.scene = stepScenes[i]
       view.dataset.stepId = stepIds[i]
+      view.dataset.chapter = stepChapters[i]
+      if (chapterAt) chapterAt.textContent = chapterLabels[i]
+      near(i)
       voiceFor(stepIds[i])
       if (stepAt) stepAt.textContent = String(i + 1)
       if (prev) prev.disabled = i === 0
@@ -832,14 +1100,14 @@ const noteKeep = String(kept / 100)
         if (box.top <= middle) i = k
       })
       if (i !== current) show(i)
-      const span = stepYears[i]
+      const span = spanOf(i)
+      // A year's span or a flight is run through by four fifths of the step.
+      const p = Math.min(
+        1,
+        Math.max(0, (middle - boxes[i].top) / (boxes[i].height * 0.8)),
+      )
+      arrive(i, p)
       if (span) {
-        const box = boxes[i]
-        // The span is run through by four fifths of the step.
-        const p = Math.min(
-          1,
-          Math.max(0, (middle - box.top) / (box.height * 0.8)),
-        )
         scrub(Math.round(span[0] + (span[1] - span[0]) * p))
       } else {
         const last = stepYears.slice(0, i).filter(Boolean).at(-1)
@@ -863,8 +1131,8 @@ const noteKeep = String(kept / 100)
     })
     if (wallWrap) new ResizeObserver(fit).observe(wallWrap)
     // The buttons scroll to the step before or after: a little way into
-    // it, or, where the year runs, to its end, so the year runs through.
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)")
+    // it, or, where the year or a flight runs, to its end, so it runs
+    // through.
     const goTo = (j: number) => {
       const behavior = reduce.matches ? "auto" : "smooth"
       if (j >= spacers.length) {
@@ -873,7 +1141,8 @@ const noteKeep = String(kept / 100)
         return
       }
       const box = spacers[Math.max(0, j)].getBoundingClientRect()
-      const into = stepYears[Math.max(0, j)] ? 0.86 : 0.3
+      const k = Math.max(0, j)
+      const into = stepYears[k] || stepFlights[k] ? 0.86 : 0.3
       window.scrollTo({
         top:
           window.scrollY +
@@ -906,7 +1175,121 @@ const noteKeep = String(kept / 100)
 
   .track,
   .stage {
+    grid-area: 2 / 1;
+  }
+
+  /* ---------- Geburtsjahr ----------------------------------------------- */
+
+  /* Eine Frage vor dem Film: eine Zeile mit Regler, darunter die Antwort
+     als Satz. Ohne Skript bleibt sie weg. */
+  .born {
     grid-area: 1 / 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-xs) var(--space-l);
+    margin-block-end: var(--space-m);
+    padding: var(--space-m);
+    border-radius: var(--radius-xl);
+    background: var(--panel);
+  }
+
+  .born[hidden] {
+    display: none;
+  }
+
+  .born-ask {
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  .born-pick {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+  }
+
+  .born-pick input {
+    flex: 1;
+    min-inline-size: 0;
+    max-inline-size: 24rem;
+    block-size: 2.75rem;
+    accent-color: var(--primary);
+  }
+
+  .born-pick output {
+    min-inline-size: 4ch;
+    color: var(--foreground);
+    font-size: var(--type-h3);
+    font-weight: var(--weight-heading);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .born-says {
+    max-inline-size: 60ch;
+    color: var(--ink-2);
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  .born[data-chosen] .born-says {
+    color: var(--foreground);
+    font-size: var(--type-lead);
+  }
+
+  .born-share {
+    justify-self: start;
+    padding: 0.55em 1.1em;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--paper);
+    color: var(--foreground);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .born-share:hover {
+    border-color: var(--ink-3);
+  }
+
+  .born-share:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  @container campaign (width >= 60rem) {
+    .born {
+      grid-template-columns: auto minmax(12rem, 24rem) minmax(0, 1fr);
+    }
+
+    .born-says {
+      grid-column: 1 / 3;
+    }
+
+    .born-share {
+      grid-column: 3;
+      grid-row: 1 / 3;
+      justify-self: end;
+      align-self: center;
+    }
+  }
+
+  /* Im Bild, unter der Jahreszahl, solange sie das Geburtsjahr zeigt. */
+  .born-tag {
+    display: block;
+    margin-block-start: 0.3em;
+    color: #ff5a55;
+    text-shadow: 0 1px 6px rgb(0 0 0 / 0.9);
+    font-size: clamp(0.7rem, 0.5rem + 1.6cqi, 0.95rem);
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .born-tag.on {
+    opacity: 1;
   }
 
   .track {
@@ -917,6 +1300,11 @@ const noteKeep = String(kept / 100)
   .spacer {
     block-size: calc(70 * var(--pace));
     scroll-margin-block-start: calc(var(--header-height) - 30 * var(--pace));
+  }
+
+  /* Ein Schritt mit Kamerafahrt ist länger, damit die Fahrt Raum hat. */
+  .spacer.long {
+    block-size: calc(110 * var(--pace));
   }
 
   .stage {
@@ -1085,6 +1473,42 @@ const noteKeep = String(kept / 100)
     overflow-wrap: normal;
   }
 
+  /* Über der Aussage: wann ein Schritt kommt und wie weit er ist. Was
+     Gesetz ist, steht rot, was erst vorgeschlagen ist, grau. */
+  .say-when {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.6em;
+    color: var(--ink-2);
+    font-size: var(--type-meta);
+  }
+
+  .say-when b {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .say-status {
+    padding: 0.05em 0.55em;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-full);
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .say-status.decided {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .film-chapter {
+    margin-inline-end: 0.5em;
+    color: var(--ink-2);
+    font-weight: 600;
+  }
+
   /* Zurück und vor: schmal rechts unter der Aussage, breit unten rechts
      im Bild. */
   .film-nav {
@@ -1190,6 +1614,7 @@ const noteKeep = String(kept / 100)
   .view[data-scene="threshold"] [data-scene-id="threshold"],
   .view[data-scene="rules"] [data-scene-id="rules"],
   .view[data-scene="watch"] [data-scene-id="rules"],
+  .view[data-scene="world"] [data-scene-id="rules"],
   .view[data-scene="tower"] [data-scene-id="tower"],
   .view[data-scene="result"] [data-scene-id="result"] {
     opacity: 1;
@@ -1383,6 +1808,211 @@ const noteKeep = String(kept / 100)
 
   .watch-light.on {
     opacity: 1;
+  }
+
+  /* Ein Zugriff, der erst vorgeschlagen ist: Fenster, die noch nicht
+     offen sind, glimmen auf und ab. */
+  .watch-light.proposed.on {
+    animation: proposed 2.4s ease-in-out infinite alternate;
+  }
+
+  @keyframes proposed {
+    from {
+      opacity: 0.25;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* ---------- Die Welt -------------------------------------------------- */
+
+  /* Die späteren Kapitel bleiben im Panoptikum. Über dem Bild der Regeln
+     liegt die Leinwand der Kamerafahrt und darüber, sobald die Kamera
+     angekommen ist, das Standbild in voller Schärfe mit dem, was dazukommt. */
+  .flight,
+  .shot,
+  .shot-pass {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    border-radius: var(--radius);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+
+  .ways[data-flying] .flight,
+  .shot.on {
+    opacity: 1;
+  }
+
+  .shot-pass {
+    mix-blend-mode: screen;
+    transition: opacity 0.9s ease;
+  }
+
+  .ways[data-arrived] .shot-pass.on {
+    opacity: 1;
+  }
+
+  /* Im Standbild gelten die Namen der Zellen nicht mehr. */
+  .ways[data-shot] .way-label {
+    opacity: 0;
+  }
+
+  .way-label {
+    transition:
+      color 0.5s ease,
+      opacity 0.4s ease;
+  }
+
+  /* Worte im Bild: was ein Teil davon bedeutet, auf einem dunklen
+     Schild, damit sie auch auf hellen Stellen des Bildes lesbar sind. */
+  .mark,
+  .world-caption {
+    position: absolute;
+    z-index: 1;
+    padding: 0.25em 0.55em;
+    border-radius: var(--radius-sm);
+    background: rgb(9 12 19 / 0.8);
+    color: #e8ebef;
+    font-weight: 600;
+    line-height: 1.15;
+    opacity: 0;
+    transition:
+      opacity 0.5s ease,
+      translate 0.5s ease;
+    pointer-events: none;
+  }
+
+  .mark {
+    inset-inline-start: var(--x);
+    inset-block-start: var(--y);
+    max-inline-size: 9.5em;
+    translate: -50% calc(-50% + 0.5rem);
+    font-size: clamp(0.72rem, 0.5rem + 1.7cqi, 1rem);
+    text-align: center;
+    text-wrap: balance;
+    overflow-wrap: normal;
+  }
+
+  .ways[data-arrived] .mark.on {
+    opacity: 1;
+    translate: -50% -50%;
+  }
+
+  .ways[data-arrived] .world-caption.on {
+    opacity: 1;
+  }
+
+  .world-caption {
+    inset-inline-start: 2.5%;
+    inset-block-end: 2.5%;
+    max-inline-size: 95%;
+    color: #c5cad2;
+    font-size: clamp(0.68rem, 0.5rem + 1.2cqi, 0.85rem);
+    font-weight: 500;
+  }
+
+  .mark-measured {
+    color: #ff6a64;
+  }
+
+  /* Kosten und belegter Nutzen liegen nebeneinander: das eine Schild
+     steht links von seinem Stapel, das andere rechts. */
+  .mark-cost {
+    max-inline-size: 8em;
+    translate: -88% calc(-50% + 0.5rem);
+    text-align: end;
+  }
+
+  .mark-measured {
+    max-inline-size: 6em;
+    translate: -12% calc(-50% + 0.5rem);
+    text-align: start;
+  }
+
+  .ways[data-arrived] .mark-cost.on {
+    translate: -88% -50%;
+  }
+
+  .ways[data-arrived] .mark-measured.on {
+    translate: -12% -50%;
+  }
+
+  /* Das Schild zu einer Zahlung steht über ihr, nicht auf ihr. */
+  .mark-tag {
+    translate: -50% calc(-150% + 0.5rem);
+  }
+
+  .ways[data-arrived] .mark-tag.on {
+    translate: -50% -150%;
+  }
+
+  .mark-modelled {
+    color: #cfd9f2;
+  }
+
+  /* Versprochen und gemessen: zwei Worte am Himmel neben den
+     Lautsprechern, das Versprechen hell, was belegt ist, rot. */
+  .mark-promise,
+  .mark-record {
+    max-inline-size: 6.2em;
+    padding: 0;
+    background: none;
+    text-shadow:
+      0 1px 2px rgb(0 0 0 / 0.9),
+      0 0 12px rgb(0 0 0 / 0.8);
+    font-size: clamp(1.05rem, 0.5rem + 4.2cqi, 2.3rem);
+    font-weight: var(--weight-heading);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+  }
+
+  .mark-promise {
+    translate: -78% calc(-135% + 0.5rem);
+  }
+
+  .mark-record {
+    color: #ff5a55;
+    translate: -22% calc(-135% + 0.5rem);
+    transition-delay: 0.5s;
+  }
+
+  .ways[data-arrived] .mark-promise.on {
+    translate: -78% -135%;
+  }
+
+  .ways[data-arrived] .mark-record.on {
+    translate: -22% -135%;
+  }
+
+  .mark-promise::before,
+  .mark-record::before {
+    content: attr(data-label);
+    display: block;
+    margin-block-end: 0.25em;
+    color: #aab0b8;
+    font-size: clamp(0.62rem, 0.45rem + 1.1cqi, 0.8rem);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Das Jahr steht nur, solange es läuft. */
+  .view:is(
+    [data-chapter="du"],
+    [data-chapter="rechnung"],
+    [data-chapter="versprochen"]
+  ) .ways-centre {
+    opacity: 0;
+  }
+
+  .ways-centre {
+    z-index: 1;
+    transition: opacity 0.4s ease;
   }
 
   .ways svg {
@@ -1850,6 +2480,10 @@ const noteKeep = String(kept / 100)
     .film *,
     .film *::before {
       transition: none !important;
+    }
+
+    .watch-light.proposed.on {
+      animation: none;
     }
   }
 </style>
