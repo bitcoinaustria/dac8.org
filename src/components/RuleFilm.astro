@@ -496,24 +496,24 @@ const tagStep = String(at("weiter-zahlungen"))
 
       <div class="picture" aria-hidden="true">
         <div class="picture-box">
-        <div class="ways" data-ways={wayRules}>
-          <!-- Everything rendered, its edges fading into the night around it. -->
-          <div class="frame">
-            <img
-              class="ways-base"
-              src={panBase.src}
-              width={panBase.width}
-              height={panBase.height}
-              alt=""
-              decoding="async"
-            >
-            <img
-              class="ways-base late"
-              data-src={panBaseLate.src}
-              alt=""
-              decoding="async"
-            >
-            {ways.map((way) => (
+          <div class="ways" data-ways={wayRules}>
+            <!-- Everything rendered, its edges fading into the night around it. -->
+            <div class="frame">
+              <img
+                class="ways-base"
+                src={panBase.src}
+                width={panBase.width}
+                height={panBase.height}
+                alt=""
+                decoding="async"
+              >
+              <img
+                class="ways-base late"
+                data-src={panBaseLate.src}
+                alt=""
+                decoding="async"
+              >
+              {ways.map((way) => (
               <>
                 <img class:list={["way-light", { early: way.lateLight }]} data-way={way.id} src={way.light} alt="" decoding="async" />
                 {way.lateLight && (
@@ -521,19 +521,19 @@ const tagStep = String(at("weiter-zahlungen"))
                 )}
               </>
             ))}
-            {watch.map((post) =>
+              {watch.map((post) =>
               post.light ? (
                 <img class="watch-light" data-from={post.from} src={post.light} alt="" decoding="async" />
               ) : null,
             )}
-            <img
-              class="watch-light proposed"
-              data-from="2028"
-              data-src={panProposal.src}
-              alt=""
-              decoding="async"
-            >
-            {shots.map((shot, k) => (
+              <img
+                class="watch-light proposed"
+                data-from="2028"
+                data-src={panProposal.src}
+                alt=""
+                decoding="async"
+              >
+              {shots.map((shot, k) => (
               <img
                 class:list={["shot", { on: k === 0 && items[0].shot === shot.id }]}
                 data-shot={shot.id}
@@ -543,37 +543,37 @@ const tagStep = String(at("weiter-zahlungen"))
                 decoding="async"
               />
             ))}
-            <img
-              class="shot-pass"
-              data-only={stepsOf("wide")}
-              data-src={wideLinks.src}
-              alt=""
-              decoding="async"
-            >
-            <img
-              class="shot-pass"
-              data-only={tagStep}
-              data-src={wideTags.src}
-              alt=""
-              decoding="async"
-            >
-            {clips.map((clip) => (
+              <img
+                class="shot-pass"
+                data-only={stepsOf("wide")}
+                data-src={wideLinks.src}
+                alt=""
+                decoding="async"
+              >
+              <img
+                class="shot-pass"
+                data-only={tagStep}
+                data-src={wideTags.src}
+                alt=""
+                decoding="async"
+              >
+              {clips.map((clip) => (
               <video class="clip" data-clip={clip} data-src={`/film/${clip}.mp4`} muted playsinline preload="none" />
             ))}
-          </div>
-          {ways.map((way) => (
+            </div>
+            {ways.map((way) => (
             <span class="way-label" data-way-label={way.id} style={way.style}>
               {way.label}
             </span>
           ))}
-          <p class="ways-centre">
-            <strong data-year>{steps[at("regeln")].years?.[0]}</strong>
-          </p>
-          <p class="wall-voice" data-voice-caption>
-            <small data-voice-ref />
-            <span data-voice-text />
-          </p>
-        </div>
+            <p class="ways-centre">
+              <strong data-year>{steps[at("regeln")].years?.[0]}</strong>
+            </p>
+            <p class="wall-voice" data-voice-caption>
+              <small data-voice-ref />
+              <span data-voice-text />
+            </p>
+          </div>
         </div>
         <div class="legends">
           {legends.map((legend) => (
