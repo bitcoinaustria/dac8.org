@@ -1383,7 +1383,7 @@
     "countryCode": "IN",
     "lat": 26.91,
     "lng": 75.79,
-    "headline": "Criminal Gang Abducts &amp; Tortures Cryptocurrency Traders, Demands 80 BTC Ransom",
+    "headline": "Criminal Gang Abducts & Tortures Cryptocurrency Traders, Demands 80 BTC Ransom",
     "reports": [
       {
         "url": "https://www.newsweek.com/cryptocurrency-traders-abducted-tortured-india-criminal-gang-arrested-bitcoin-ransom-1449274",
@@ -6846,15 +6846,15 @@
   {
     "date": "2024-06-17",
     "year": 2024,
-    "city": "London",
+    "city": "Hoxton",
     "country": "United Kingdom",
     "countryCode": "GB",
-    "lat": 51.51,
-    "lng": -0.13,
-    "headline": "3 men armed with machetes invade home, force owner to transfer 1,000+ ETH.",
+    "lat": 51.53,
+    "lng": -0.08,
+    "headline": "Three teenagers travelled from Sheffield, posed as delivery drivers to get into the victim's flat, and threatened him with large knives until he transferred ~1,112 ETH (~$4.3M) and handed over his car keys; the crypto was recovered within 72 hours and the gang was caught hours later after posting the getaway on Snapchat, receiving 16 years of youth detention between them in November 2025.",
     "reports": [
       {
-        "url": null,
+        "url": "https://www.standard.co.uk/news/crime/met-police-teenagers-amazon-drivers-hoxton-london-cryptocurrency-b1269685.html",
         "archive": "https://archive.is/u3sUN"
       }
     ]
@@ -10183,7 +10183,7 @@
     "countryCode": "US",
     "lat": 37.77,
     "lng": -122.42,
-    "headline": "Armed robber posing as a delivery worker invaded home, tied up the homeowner, took $11 million worth of cryptocurrency.",
+    "headline": "Armed robber posing as a delivery worker invaded a home near Dolores Park, tied up the homeowner with duct tape and forced him at gunpoint to surrender wallet access, taking ~$13 million in crypto ($3M in ETH and $10M in BTC) while receiving instructions by phone.",
     "reports": [
       {
         "url": "https://www.sfchronicle.com/crime/article/sf-cryptocurrency-robbery-21203804.php",
@@ -11734,7 +11734,7 @@
     "country": "France",
     "countryCode": "FR",
     "lat": 48.61,
-    "lng": 4.67,
+    "lng": -4.67,
     "headline": "Two men held three adults and two children hostage at their home, and managed to extort €700,000 in cryptocurrency from them.",
     "reports": [
       {
@@ -12876,6 +12876,22 @@
       {
         "url": "https://www.yna.co.kr/view/AKR20261028143300063",
         "archive": null
+      }
+    ]
+  },
+  {
+    "date": "2026-10-31",
+    "year": 2026,
+    "city": "La Roche-sur-Yon",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 46.67,
+    "lng": -1.43,
+    "headline": "Victim who had been kidnapped before in 2022 and also arrested the year before for kidnapping, fired a gun at hooded men who had tried to break into his house. The victim was arrested and sentenced to 2.5 years for endangering the public by firing into the street.",
+    "reports": [
+      {
+        "url": "https://cryptoast.fr/tentative-enlevement-vendee-prison-ferme-pour-victime-passif-complique/",
+        "archive": "https://archive.is/A4WL9"
       }
     ]
   }
