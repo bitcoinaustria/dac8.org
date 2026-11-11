@@ -43,7 +43,6 @@ const presets = [
   { id: "short", label: en ? "Short" : "Kurz" },
   { id: "standard", label: "Standard" },
   { id: "long", label: en ? "Detailed" : "Ausführlich" },
-  { id: "custom", label: en ? "My own choice" : "Eigene Auswahl" },
 ]
 const groups = [
   {
@@ -86,9 +85,7 @@ const groups = [
         {en ? "What should the letter say?" : "Was soll im Brief stehen?"}
       </h3>
       <fieldset class="letter-pills">
-        <legend class="visually-hidden">
-          {en ? "Length of the letter" : "Länge des Briefs"}
-        </legend>
+        <legend>{en ? "Quick choice" : "Schnellauswahl"}</legend>
         {presets.map((preset) => (
             <label>
               <input
@@ -101,32 +98,28 @@ const groups = [
             </label>
           ))}
       </fieldset>
-      <p class="letter-length" data-letter-length aria-live="polite"></p>
-      <details class="letter-custom" data-letter-custom>
-        <summary>
-          {en ? "Choose arguments and demands" : "Argumente und Forderungen auswählen"}
-        </summary>
-        {groups.map((group) => (
-            <fieldset class="letter-parts">
-              <legend>{group.legend}</legend>
-              {group.parts.map((part) => (
-                <label>
-                  <input
-                    type="checkbox"
-                    name="chosen"
-                    value={part.id}
-                    checked={part.on}
-                  />
-                  <span>{part.label[language]}</span>
-                </label>
-              ))}
-            </fieldset>
-          ))}
-      </details>
+      {groups.map((group) => (
+          <fieldset class="letter-parts" data-letter-custom>
+            <legend>{group.legend}</legend>
+            {group.parts.map((part) => (
+              <label>
+                <input
+                  type="checkbox"
+                  name="chosen"
+                  value={part.id}
+                  checked={part.on}
+                />
+                <strong>{part.label[language]}</strong>
+                <span>{part.hint[language]}</span>
+              </label>
+            ))}
+          </fieldset>
+        ))}
       <div class="letter-nav">
         <button class="button primary" type="button" data-letter-go="1">
           {en ? "Next" : "Weiter"}
         </button>
+        <p class="letter-length" data-letter-length aria-live="polite"></p>
       </div>
     </section>
 
@@ -166,12 +159,10 @@ const groups = [
         {letterParts.about.map((part) => (
             <label>
               <input type="checkbox" name="chosen" value={part.id} />
-              <span>{part.label[language]}</span>
+              <strong>{part.label[language]}</strong>
+              <span>{part.hint[language]}</span>
             </label>
           ))}
-        <p class="letter-note">
-          {en ? "The last two tell the MP’s office that you hold bitcoin." : "Die letzten beiden sagen dem Büro, dass du Bitcoin besitzt."}
-        </p>
       </fieldset>
       <div class="letter-nav">
         <button class="button" type="button" data-letter-go="0">
@@ -363,63 +354,77 @@ const groups = [
     outline-offset: 0.2rem;
   }
 
-  .visually-hidden {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+  .letter-pills legend,
+  .letter-parts legend {
+    float: left;
+    inline-size: 100%;
+    margin-block-end: var(--space-2xs);
+    padding: 0;
+    color: var(--ink-2);
+    font-size: var(--step--1);
+    font-weight: 560;
   }
 
   .letter-length {
-    min-block-size: 1.5em;
     color: var(--ink-2);
     font-size: var(--step--1);
   }
 
-  .letter-custom {
-    font-size: var(--step--1);
-  }
-
-  .letter-custom summary {
-    min-block-size: 2.75rem;
-    align-content: center;
-    font-weight: 560;
-    cursor: pointer;
-  }
-
-  .letter-custom .letter-parts {
-    margin-block-start: var(--space-s);
-  }
-
+  /* Each part is a card to tap: the title, and one line on what it adds. */
   .letter-parts {
     display: grid;
-    gap: var(--space-3xs);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: var(--space-2xs);
     margin: 0;
     padding: 0;
     border: 0;
-    font-size: var(--step--1);
   }
 
   .letter-parts legend {
-    margin-block-end: var(--space-3xs);
-    padding: 0;
-    color: var(--ink-2);
-    font-weight: 560;
+    grid-column: 1 / -1;
   }
 
   .letter-parts label {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-2xs);
-    min-block-size: 2rem;
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--space-3xs);
+    padding: var(--space-xs) var(--space-s);
+    padding-inline-end: var(--space-l);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--paper);
+    font-size: var(--step--1);
     cursor: pointer;
   }
 
+  .letter-parts label:hover {
+    border-color: var(--gray-8);
+  }
+
   .letter-parts input {
-    flex: none;
+    position: absolute;
+    inset-block-start: var(--space-xs);
+    inset-inline-end: var(--space-xs);
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+    margin: 0;
     accent-color: var(--ink);
+  }
+
+  .letter-parts label > span {
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  .letter-parts label:has(input:checked) {
+    border-color: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--ink);
+  }
+
+  .letter-parts label:has(input:focus-visible) {
+    outline: 2px solid var(--primary);
+    outline-offset: 0.2rem;
   }
 
   [data-letter-text] {
@@ -488,9 +493,6 @@ const groups = [
     const notice = root.querySelector<HTMLElement>("[data-letter-edited]")
     const reset = root.querySelector<HTMLButtonElement>("[data-letter-reset]")
     const length = root.querySelector<HTMLElement>("[data-letter-length]")
-    const custom = root.querySelector<HTMLDetailsElement>(
-      "[data-letter-custom]",
-    )
     const switcher = root.querySelector<HTMLButtonElement>(
       "[data-letter-switch]",
     )
@@ -503,7 +505,6 @@ const groups = [
       !notice ||
       !reset ||
       !length ||
-      !custom ||
       !switcher
     )
       continue
@@ -594,20 +595,20 @@ const groups = [
     form.addEventListener("input", (event) => {
       const target = event.target as HTMLInputElement
       if (target.name === "preset") {
-        const ids = presets[target.value]
-        if (ids) {
-          // A preset sets arguments and demands, never the sentences about
-          // the reader.
-          for (const box of custom.querySelectorAll<HTMLInputElement>(
-            'input[name="chosen"]',
-          ))
-            box.checked = ids.includes(box.value)
-        } else custom.open = true
-      } else if (target.name === "chosen" && custom.contains(target)) {
-        const own = form.querySelector<HTMLInputElement>(
-          'input[name="preset"][value="custom"]',
-        )
-        if (own) own.checked = true
+        // A preset sets arguments and demands, never the sentences about
+        // the reader.
+        for (const box of form.querySelectorAll<HTMLInputElement>(
+          '[data-letter-custom] input[name="chosen"]',
+        ))
+          box.checked = presets[target.value]?.includes(box.value) ?? false
+      } else if (
+        target.name === "chosen" &&
+        target.closest("[data-letter-custom]")
+      ) {
+        for (const preset of form.querySelectorAll<HTMLInputElement>(
+          'input[name="preset"]',
+        ))
+          preset.checked = false
       }
       render()
     })

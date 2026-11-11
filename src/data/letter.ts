@@ -75,6 +75,8 @@ type Part = {
   id: string
   // Shown beside the checkbox, in the language of the page.
   label: Record<Language, string>
+  // One line under the label on what the part adds.
+  hint: Record<Language, string>
   // Chosen when the page loads.
   on?: boolean
   // In the language of the letter.
@@ -85,13 +87,17 @@ type Part = {
 }
 
 // Sentences about the sender, joined into one paragraph with their own
-// words. The last two reveal holdings; the generator says so above them.
+// words. The last two reveal holdings and say so in their hint.
 const about: Part[] = [
   {
     id: "voter",
     label: {
       de: "Ich bin in Österreich wahlberechtigt",
       en: "I am entitled to vote in Austria",
+    },
+    hint: {
+      de: "Zeigt dem Büro, dass du mitentscheidest.",
+      en: "Shows the office that you have a vote.",
     },
     text: {
       de: "Ich bin in Österreich wahlberechtigt, und dieses Thema entscheidet mit, wen ich wähle.",
@@ -104,6 +110,10 @@ const about: Part[] = [
       de: "Ich spare in Bitcoin",
       en: "I save in bitcoin",
     },
+    hint: {
+      de: "Sagt dem Büro, dass du Bitcoin besitzt.",
+      en: "Tells the office that you hold bitcoin.",
+    },
     text: {
       de: "Ich spare selbst in Bitcoin, so wie andere in Gold oder auf dem Sparbuch.",
       en: "I save in bitcoin myself, as others do in gold or a savings account.",
@@ -114,6 +124,10 @@ const about: Part[] = [
     label: {
       de: "Bitcoin ist Teil meiner Pensionsvorsorge",
       en: "Bitcoin is part of my retirement savings",
+    },
+    hint: {
+      de: "Sagt dem Büro, dass du Bitcoin besitzt.",
+      en: "Tells the office that you hold bitcoin.",
     },
     text: {
       de: "Bitcoin ist Teil meiner Vorsorge für die Pension.",
@@ -129,6 +143,10 @@ const reasons: Part[] = [
       de: "Bargeld und Gold werden nicht gemeldet",
       en: "Cash and gold are not reported",
     },
+    hint: {
+      de: "Wer Gold bei der Bank kauft, steht in keiner Meldung. Wer Bitcoin kauft, schon.",
+      en: "Buying gold at a bank appears in no report. Buying bitcoin does.",
+    },
     on: true,
     text: {
       de: "Wer Bargeld abhebt oder bei der Bank Goldmünzen kauft und daheim verwahrt, steht in keiner Meldung ans Finanzamt. Wer Bitcoin beim Anbieter kauft und in die eigene Wallet überträgt, schon, obwohl das für sich genommen keine Steuer auslöst.",
@@ -141,6 +159,10 @@ const reasons: Part[] = [
       de: "Die Ausweisgrenze sinkt seit 1991",
       en: "The ID limit has been falling since 1991",
     },
+    hint: {
+      de: "In Gold gemessen von 47 auf 2,7 Unzen. Bei Krypto gilt sie ab dem ersten Cent.",
+      en: "Measured in gold, from 47 to 2.7 ounces. With crypto it applies from the first cent.",
+    },
     text: {
       de: `Ausweisen muss man sich bei einem Geschäft ohne Konto erst ab einer Grenze; in Gold gemessen sinkt sie von ${gold.de[0]} Unzen im Jahr 1991 auf ${gold.de[1]} Unzen ab Juli 2027. Bei Krypto trägt jede Übertragung über einen Anbieter den Namen des Kunden, ab dem ersten Cent.`,
       en: `ID is needed for a transaction without an account only above a limit; measured in gold, it falls from ${gold.en[0]} ounces in 1991 to ${gold.en[1]} ounces from July 2027. With crypto, every transfer through a provider carries the customer’s name, from the first cent.`,
@@ -151,6 +173,10 @@ const reasons: Part[] = [
     label: {
       de: "Solche Daten gehen verloren",
       en: "Such data gets lost",
+    },
+    hint: {
+      de: "Ein Krypto-Steuerdienst, das französische Kontenregister, ein Finanzbeamter in Österreich.",
+      en: "A crypto tax service, the French account register, a tax official in Austria.",
     },
     on: true,
     text: {
@@ -163,6 +189,10 @@ const reasons: Part[] = [
     label: {
       de: "Menschen werden überfallen",
       en: "People are attacked",
+    },
+    hint: {
+      de: "Bitcoin funktioniert wie Bargeld. Mit den Zahlen aus dem Archiv und dem Link zur Karte.",
+      en: "Bitcoin works like cash. With the counts from the archive and the link to the map.",
     },
     on: true,
     text: {
@@ -178,6 +208,10 @@ const reasons: Part[] = [
       de: "Gegen Kriminalität hilft es kaum",
       en: "It does little against crime",
     },
+    hint: {
+      de: "Gefälschte Pässe, und weniger als 0,1 Prozent der kriminellen Gelder werden getroffen.",
+      en: "Forged passports, and less than 0.1 percent of criminal finances are touched.",
+    },
     on: true,
     text: {
       de: "Gegen Kriminalität hilft die Sammlung kaum. Laut Geldwäschemeldestelle eröffnen Kriminelle Konten mit gefälschten österreichischen Pässen, auf die Namen echter, unbeteiligter Menschen. Der Geldwäscheforscher Ronald Pol schätzt, dass die weltweiten Regeln gegen Geldwäsche weniger als 0,1 Prozent der kriminellen Gelder treffen.",
@@ -189,6 +223,10 @@ const reasons: Part[] = [
     label: {
       de: "Mein Geld geht niemanden etwas an",
       en: "My money is nobody else’s business",
+    },
+    hint: {
+      de: "Rechtfertigen muss sich das Gesetz, nicht wer spart.",
+      en: "It is the law that owes a justification, not savers.",
     },
     text: {
       de: "Was ich mit meinem Geld mache, geht niemanden etwas an. Rechtfertigen muss sich nicht, wer spart, sondern ein Gesetz, das ohne jeden Verdacht Daten über alle Kunden sammeln lässt.",
@@ -204,6 +242,10 @@ const demands: Part[] = [
       de: "Keine Finanzakte ohne Verdacht",
       en: "No financial file without suspicion",
     },
+    hint: {
+      de: "Ermitteln bei konkretem Verdacht, statt Daten über alle zu sammeln.",
+      en: "Investigate on specific suspicion instead of collecting data on everyone.",
+    },
     on: true,
     text: {
       de: "Keine Finanzakte ohne Verdacht. Ermittelt wird bei konkretem Verdacht, statt Daten über alle zu sammeln.",
@@ -215,6 +257,10 @@ const demands: Part[] = [
     label: {
       de: "Keine Daten auf Vorrat (§ 20)",
       en: "No stockpiling of data (Section 20)",
+    },
+    hint: {
+      de: "Meldedaten nur für Kunden, die wirklich gemeldet werden, wie in Deutschland.",
+      en: "Reporting data only for customers who are actually reported, as in Germany.",
     },
     on: true,
     text: {
@@ -228,6 +274,10 @@ const demands: Part[] = [
       de: "Fünf statt zehn Jahre speichern",
       en: "Keep data five years, not ten",
     },
+    hint: {
+      de: "So lange wie bei Meldungen über Bankkonten.",
+      en: "As long as for reports on bank accounts.",
+    },
     on: true,
     text: {
       de: "Kürzer speichern. § 20 Krypto-MPfG verlangt zehn Jahre, „aus Vereinfachungsgründen“; für Meldungen über Bankkonten reichen fünf.",
@@ -239,6 +289,10 @@ const demands: Part[] = [
     label: {
       de: "Übertragungen auf die eigene Wallet nicht melden",
       en: "Do not report transfers to one’s own wallet",
+    },
+    hint: {
+      de: "Österreich soll der neuen Richtlinie nur zustimmen, wenn diese Meldung wegfällt.",
+      en: "Austria should agree to the new directive only if this report goes.",
     },
     on: true,
     text: {
@@ -252,6 +306,10 @@ const demands: Part[] = [
       de: "Nur erheben, was nachweislich nötig ist",
       en: "Collect only what is demonstrably necessary",
     },
+    hint: {
+      de: "Wozu braucht das Finanzamt Stückzahl und Anzahl der Transaktionen?",
+      en: "Why does the tax office need quantities and the number of transactions?",
+    },
     text: {
       de: "Nur erheben, was nachweislich nötig ist. Wozu das Finanzamt neben den Beträgen auch wissen muss, wie viele Bitcoin jemand bewegt hat und in wie vielen Transaktionen, muss der Staat begründen.",
       en: "Collect only what is demonstrably necessary. Why the tax office needs to know, besides the amounts, how many bitcoin someone moved and in how many transactions is for the state to justify.",
@@ -260,8 +318,12 @@ const demands: Part[] = [
   {
     id: "holding",
     label: {
-      de: "Haltefrist wieder einführen (Steuerpolitik, deine eigene Forderung)",
-      en: "Bring back the holding period (tax policy, your own demand)",
+      de: "Haltefrist wieder einführen",
+      en: "Bring back the holding period",
+    },
+    hint: {
+      de: "Gewinne nach einem Jahr steuerfrei, wie bei Gold. Deine eigene Forderung, nicht die der Kampagne.",
+      en: "Gains tax-free after a year, as with gold. Your own demand, not the campaign’s.",
     },
     text: {
       de: "Die Haltefrist für Bitcoin wieder einführen. Bis zur Steuerreform 2022 waren Gewinne nach einem Jahr steuerfrei, wie bis heute bei Goldmünzen und in Deutschland auch bei Bitcoin. Sie abzuschaffen war ein Fehler: Es trifft, wer langfristig spart.",
