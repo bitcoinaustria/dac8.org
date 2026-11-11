@@ -26,6 +26,10 @@ export type Pair = {
   token: { promise: Text; record: Text }
   promise: Said
   record: Said[]
+  // The pair as a step of the film: a headline for what was announced,
+  // one line for who said it and what is on record, in words that stay
+  // within the quotations above, and which record the line reports.
+  film?: { title: Text; text: Text; record: number }
 }
 
 const commission = (path: string, ref: string): Source => ({
@@ -41,6 +45,17 @@ export const pairs: Pair[] = [
       record: { de: "keine Informationen", en: "no information" },
     },
     topic: { de: "DAC8", en: "DAC8" },
+    film: {
+      record: 0,
+      title: {
+        de: "Die Kommission stellt 2,4 Milliarden Euro in Aussicht.",
+        en: "The Commission holds out 2.4 billion euros.",
+      },
+      text: {
+        de: "Zusätzliche Steuereinnahmen durch DAC8, geschätzt 2022. Ihre eigene Folgenabschätzung: Wie viel der Krypto-Gewinne schon versteuert wird, darüber gebe es keine Informationen.",
+        en: "Additional tax revenue from DAC8, estimated in 2022. Its own impact assessment: there is no information on how much of the crypto gains is already taxed.",
+      },
+    },
     promise: {
       who: {
         de: "EU-Kommission im Vorschlag für DAC8",
@@ -89,6 +104,17 @@ export const pairs: Pair[] = [
       record: { de: "ohne Rechnung", en: "no workings" },
     },
     topic: { de: "DAC8 in Österreich", en: "DAC8 in Austria" },
+    film: {
+      record: 0,
+      title: {
+        de: "Österreich rechnet mit 35 Millionen Euro im Jahr.",
+        en: "Austria counts on 35 million euros a year.",
+      },
+      text: {
+        de: "So die Regierung 2025 zur Krypto-Meldepflicht. Der Budgetdienst des Parlaments: Wie das Finanzministerium gerechnet hat, steht in der Folgenabschätzung nicht.",
+        en: "Says the government in 2025 about the crypto reporting duty. The Parliament’s budget office: how the finance ministry calculated is not in the impact assessment.",
+      },
+    },
     promise: {
       who: {
         de: "Österreichische Bundesregierung in der Folgenabschätzung zur Krypto-Meldepflicht",
@@ -156,6 +182,17 @@ export const pairs: Pair[] = [
       record: { de: "keine Evaluierung", en: "no evaluation" },
     },
     topic: { de: "DAC8 in Deutschland", en: "DAC8 in Germany" },
+    film: {
+      record: 0,
+      title: {
+        de: "Deutschland will Hinterziehung „besser verhindern“.",
+        en: "Germany wants evasion better prevented.",
+      },
+      text: {
+        de: "Jens Behrens (SPD) im Bundestag, 2025. Die Bundesregierung im Gesetzentwurf: „Eine Evaluierung ist nicht vorgesehen“.",
+        en: "Jens Behrens (SPD) in the Bundestag, 2025. The Federal Government in the bill: no evaluation is planned.",
+      },
+    },
     promise: {
       who: {
         de: "Jens Behrens (SPD) in der Schlussdebatte im Bundestag",
@@ -645,9 +682,6 @@ export const pairs: Pair[] = [
     ],
   },
 ]
-
-// Shown open; the rest fold away under "more".
-export const openPairs = 5
 
 export const pairSources = (): Source[] =>
   pairs.flatMap((pair) => [

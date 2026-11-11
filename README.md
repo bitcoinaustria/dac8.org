@@ -146,37 +146,79 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
 
 - Update `src/data/campaign.ts` when the procedural status changes.
 - The history page (`/geschichte/`, `/en/history/`) tells the rules as a
-  ratchet: each step small, none taken back, the next already decided. A
-  scroll film (`src/components/RuleFilm.astro`, steps and figures in
-  `src/data/overregulation.ts`), built like the home page's data story,
-  leads in five chapters and ten steps from the reader to the result, each
-  step a headline of a few words over one picture as a contrast: from which
-  amount a single cash transaction without an account needs ID, rendered at true scale
-  in Blender (`scripts/artwork/render-cash.py`, fictional notes generated
-  with Codex): a brick of 339 hundred-euro notes in 1991 (in today's
-  money), a banded bundle of 100 from 2027, and for crypto a single cent,
-  because every transfer through a provider carries the name; a panopticon
-  at night rendered in Blender (`scripts/artwork/render-panopticon.py`), a
-  ring of eight cells, one per way money can take, around a watchtower,
-  heating up like the water around the frog: over two steps the year runs
-  with the scroll from 1977 to today, a light pass of a cell's searchlight
-  is screen-blended over the base picture once a rule on that way applies,
-  and from 2016 one window of the watchtower lights up per kind of
-  authority allowed into the Austrian account register (3 in 2016, 8 in
-  2021, 9 in 2026); cash stays dark until its 2027 rule, which the next
-  section names; a wall of one tile per
-  Official Journal page, six red ones from 1991 among the 488 adopted
-  since, which on request reads the law aloud: verbatim passages of the
-  1991 directive and the 2024 regulation (`src/data/law-voices.ts`), spoken
-  with Qwen3-TTS (`scripts/artwork/speak-law.py`) and overlapping until
-  they drown each other out, each with its caption and reference; a sea of
-  suspicion reports in Austria in which the 9,665 the unit kept on file
-  without passing them on fade to a pale block, beside 139 convictions
-  (`src/lib/film-sand.ts`); then a fictional 100-euro note with a masked
-  robber that crumbles to dust until the red sliver confiscated remains
-  (`src/lib/film-note.ts`). Without JavaScript the headlines stand as text.
+  ratchet: each step small, none taken back, the next already decided. It
+  is one scroll film (`src/components/RuleFilm.astro`, steps and figures in
+  `src/data/overregulation.ts`), built like the home page's data story:
+  nine chapters and 23 steps, each a headline of a few words over one
+  picture. The whole film plays in one world rendered in Blender
+  (`scripts/artwork/render-panopticon.py`): a panopticon at night, a ring
+  of eight stone cells, one per way money can take, around a watchtower
+  that carries a searchlight for every cell and Austria's flag. Nothing is
+  written on the pictures: what a part stands for is modelled (the two
+  years stand on cards on the table, the 27 registers carry their states'
+  flags) or said in a legend under the picture, with the colour the part
+  has in it. Every
+  step shows a still (`src/assets/history/world-*.webp`) on a stage that is
+  dark in both colour schemes; where a step has a clip
+  (`public/film/<name>.mp4`, rendered with motion blur), the camera's way
+  to its still plays once when the reader scrolls forward into the step,
+  and things happen on the way. Clips load a few steps ahead; readers who
+  prefer reduced motion or save data, and anyone scrolling back, see the
+  stills fade into each other. The story: at a table in the crypto cell
+  lie, at true scale, the amounts from which a single cash transaction
+  without an account needs ID: 339 hundred-euro notes for 1991 (in today's
+  money) beside a banded bundle of 100 from 2027 (fictional notes generated
+  with Codex, `scripts/artwork/note100.webp`), then the same limits in gold
+  coins, then a single cent for crypto, because every transfer through a
+  provider carries the name. The camera rises over the dark ring, and the
+  panopticon heats up like the water around the frog: over two steps the
+  year runs with the scroll from 1977 to today, a light pass of a cell's
+  searchlight is screen-blended over the base picture once a rule on that
+  way applies, and from 2016 one window of the watchtower lights up per
+  kind of authority allowed into the Austrian account register (3 in 2016,
+  8 in 2021, 9 in 2026); cash stays dark until its 2027 rule. Back in the
+  cell, six red sheets hang on the wall, the first directive of 1991, and
+  then one sheet per Official Journal page adopted since flies on to the
+  walls until all 488 hang there; on request the film reads the law aloud:
+  verbatim passages of the 1991 directive and the 2024 regulation
+  (`src/data/law-voices.ts`), spoken with Qwen3-TTS
+  (`scripts/artwork/speak-law.py`) and overlapping until they drown each
+  other out, each with its caption and reference. Over the yard, one slip
+  per suspicion report in Austria rains down, 13,989 of them; the 9,665 the
+  unit kept on file without passing them on go pale, and the 139
+  convictions lie as a red patch of the same slips. On the table, a
+  100-euro note loses a red strip of two per cent, what the state
+  confiscates. And it goes on (wording and status from
+  `src/data/history-next.ts`): the year runs past today, cash lights up in
+  2027, a proposed access shows as windows that only glimmer, then the
+  camera pulls back to 27 panopticons, the EU's account registers, set
+  out as a rough map with each state's flag on its tower, joined by red
+  lines in 2029 and carrying tags of personal data on payments from
+  2030. For you: the camera flies into the crypto cell and looks at the
+  tower through the bars (reported without suspicion), up over a breach in
+  the tower from which one sheet per documented data leak flies, red at
+  authorities (`src/data/leaks.ts`), and down to a notice on the cell's
+  table whose reason is blacked out (accounts refused or closed without a
+  reason). The bill: pallets of 100-euro notes drop into the yard at true
+  scale, one per 100 million euros: what three tax reporting duties cost a
+  year, then beside them the benefit of all exchanged tax data, measured
+  in red and modelled as empty frames; the legend names the costs as
+  those of three duties, so the piles cannot be read as "it pays".
+  Promised: the lantern with its loudspeakers, and under it a few words of
+  what was announced and of what the announcer's own institutions have on
+  record, for DAC8 in the EU, Austria and Germany (the `film` wording of
+  the first three pairs in `src/data/history-promises.ts`). The film
+  checks every count baked into the pictures (notes, ounces, pages,
+  reports, leaks, pallets) against the data and fails the build when they
+  drift; the render script's header says how to render and export stills
+  and clips. Without JavaScript the headlines stand as text.
   The page frames DAC8 as the latest piece of a wider apparatus of
-  anti-money-laundering and tax-reporting rules and builds on the film:
+  anti-money-laundering and tax-reporting rules. After the film the
+  conclusion turns it into
+  the legal point (the state must justify an intrusion; who does not
+  measure cannot) and names where courts drew limits so far, without a
+  forecast for DAC8, then the one step to take. Below it, folded away, the
+  film's later chapters in detail, each a component of its own:
   and it goes on (`src/components/RuleNext.astro`, data in
   `src/data/history-next.ts`: the steps decided or proposed, each with its
   procedural status, and the same pattern in private messages, the chat
@@ -189,24 +231,21 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   `ReportCompare.astro`, which set suspicion reports against convictions
   for money laundering in Germany and Austria from a year the reader picks,
   both as a multiple of that year, with the two growth factors set large
-  and the convictions per 100 reports in the first and last year; without
+  and the convictions per 100 reports in the first and last year, which is
+  what the heading states; without
   JavaScript the first year stands against the last. Counting changes are
   named in the notes. A separate illustration names the missing link
   between reports and outcomes in Austria, without plotting it as zero.
-  Then, Europol's assessment of confiscation, what three tax reporting
+  Then what three tax reporting
   duties cost a year, and how much of the claimed benefit is measured and
   how much modelled, said in words so the two cards cannot be read as "it
   pays"); and promised, measured (`src/components/RulePromises.astro`, data
-  in `src/data/history-promises.ts`), pairs of what politicians announced
-  and what their own institutions know, led by DAC8 in the EU, Austria and
-  Germany. Costs and benefit stay on separate scales, because the benefit
-  covers more duties than the costs shown. The conclusion turns this into
-  the legal point (the state must justify an intrusion; who does not
-  measure cannot) and names where courts drew limits so far, without a
-  forecast for DAC8, then the one step to take. At the end, folded away,
+  in `src/data/history-promises.ts`), every pair of what politicians
+  announced and what their own institutions know, led by DAC8 in the EU,
+  Austria and Germany. At the very end, also folded away,
   everything to check: both lines of rules in one chart on one axis, the
   series and texts described next, and the length of the texts
-  (`src/components/LawGrowth.astro`); links into the folded part open it.
+  (`src/components/LawGrowth.astro`); links into the folded parts open them.
   The film and the balance cite their sources as numbers in brackets
   (`src/components/SourceRefs.astro`); `src/data/history-sources.ts`
   numbers them in the order a reader meets them, and the page lists them

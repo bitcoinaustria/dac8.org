@@ -16,14 +16,15 @@ import {
 import { chats, nextSteps, rulings } from "@/data/history-next"
 import { pairSources } from "@/data/history-promises"
 import { leaks } from "@/data/leaks"
-import { steps } from "@/data/overregulation"
+import { sourcesOf, steps } from "@/data/overregulation"
 import { type Language, pathFor } from "@/lib/i18n"
 
 // The history page cites its sources by number, [3], and lists every
 // source once at the end of the page. The numbers follow the order in
-// which a reader meets the sources: the film, what comes next, what it
-// means for you, the bill, the pairs of promise and record, and the
-// rulings in the conclusion. A source cited again keeps its number. Where the
+// which a reader meets the sources: the film, the rulings in the
+// conclusion, then the details folded away below it: what comes next,
+// what it means for you, the bill and the pairs of promise and record. A
+// source cited again keeps its number. Where the
 // story needs the name, such as a quotation, the text names it as well.
 // The charts to check, folded away below, keep their own source lists.
 export type HistorySource = {
@@ -113,11 +114,12 @@ export const historySources = (language: Language) => {
         : undefined,
     })
   }
-  for (const step of steps) step.sources.forEach(add)
+  for (const step of steps) sourcesOf(step, language).forEach(add)
   const cited = balanceSources(language)
-  // In the order of the page: what comes next, what it means for you, the
-  // bill, the pairs of promise and record, and the rulings.
+  // In the order of the page: the rulings, then the details: what comes
+  // next, what it means for you, the bill and the pairs.
   for (const source of [
+    ...rulings.flatMap((ruling) => ruling.sources),
     ...nextSteps.flatMap((step) => step.sources),
     ...chats.sources,
     ...cited.captured,
@@ -136,7 +138,6 @@ export const historySources = (language: Language) => {
     ...(corrected.find((fix) => fix.id === "dac8")?.sources ?? []),
     ...cited.benefit,
     ...pairSources(),
-    ...rulings.flatMap((ruling) => ruling.sources),
   ])
     add(source)
   // The numbers for a passage, each once, in order.
