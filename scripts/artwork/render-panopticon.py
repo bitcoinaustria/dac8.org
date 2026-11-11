@@ -1,7 +1,13 @@
 # Renders the history film: one world, a panopticon at night. A ring of
-# eight cells with barred windows onto a courtyard, a watchtower in the
-# middle, two loudspeakers on its roof, and in the crypto cell a table
-# under a lamp. Scene units are metres.
+# eight stone cells, each with a barred window and a shut door onto a
+# paved yard, a bunk and a toilet; a watchtower in the middle with one
+# searchlight per cell under its lantern, a loudspeaker to either side,
+# and Austria's flag on its mast and its roof; in the crypto cell a table
+# under a lamp with a chair, the reader's seat. Scene units are metres.
+# What is modelled is there to be read: nothing is written on the
+# pictures by the page, so the years of the two limits stand on cards on
+# the table and the 27 registers are told apart by their flags
+# (flags.webp, 27 tiles from the MIT-licensed flag-icons).
 #
 # The overview, on one orthographic camera, is layered by the page:
 #   base        the ring at night, every searchlight off
@@ -16,21 +22,22 @@
 #               percent of the picture (panopticon.json)
 #
 # The stills, on a perspective camera in the same world (STILLS):
-#   cash, gold, cent   the table: 339 and 100 hundred-euro notes, the same
-#               limits in gold coins, and a cent
+#   cash, gold, cent   the table: 339 and 100 hundred-euro notes behind a
+#               card with their year, the same limits in gold coins, and
+#               a cent
 #   wall6, wall the cell's walls with one sheet per Official Journal page
 #   reports, kept, convictions   the yard with one slip per suspicion
 #               report, those kept on file pale, the convictions red
 #   note        a 100-euro note with the state's share torn off
-#   wide        the EU's 27 account registers as 27 panopticons, with the
+#   wide        the EU's 27 account registers as 27 panopticons, set out
+#               as a rough map, each under its state's flag, with the
 #               passes wide-links and wide-tags on black for the links
 #               between them and the data riding on payments
 #   cell        the view from inside the crypto cell through the bars
 #   leak        a breach in the tower and one sheet per documented data leak
 #   letter-de, letter-en   a notice on the table, its reason blacked out
 #   yard-cost, yard-benefit   pallets of 100-euro notes at true scale
-#   horn        the loudspeakers on the tower
-#   world       where the page sets words into the stills (world.json)
+#   horn        the lantern with its loudspeakers and the flag
 #
 # The clips (CLIPS), clip-<name>: the camera's way from one still to the
 # next as frames with motion blur, and what happens on the way: pages fly
@@ -71,7 +78,10 @@ OUT = args[0]
 ONLY = args[1] if len(args) > 1 else None
 if ONLY == "all":
     ONLY = None
-NOTE_PICTURE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "note100.webp")
+HERE = os.path.dirname(os.path.abspath(__file__))
+NOTE_PICTURE = os.path.join(HERE, "note100.webp")
+FLAG_PICTURE = os.path.join(HERE, "flags.webp")
+FONT = os.environ.get("FONT", "/usr/share/fonts/liberation/LiberationSans-Bold.ttf")
 DEVICE = os.environ.get("DEVICE", "CPU")
 SAMPLES = int(os.environ.get("SAMPLES", 160))
 PCT = int(os.environ.get("PCT", 100))
@@ -88,8 +98,8 @@ R_LANTERN = 2.65
 WATCH_SLOTS = [1, 4, 7, 0, 8, 2, 6, 3, 5]
 WATCH_ANGLES = [math.radians(-146 + slot * 14) for slot in WATCH_SLOTS]
 WATCH_Z = 5.48
-HORN_Z = 8.35
-HORN_ANGLES = [math.radians(a) for a in (0, 180)]
+HORN_Z = 6.2
+HORN_ANGLES = [math.radians(a) for a in (-14, -166)]
 # Marks sit along the searchlight's path, from near the tower to the
 # window, so none hides behind the tower.
 MARK_T = [0.2 + k * 0.14 for k in range(6)]
@@ -181,55 +191,278 @@ def box(name, size, at, rot_z, mat):
     return obj
 
 
-def build(scene):
-    wall = concrete("wall", (0.62, 0.61, 0.58))
+def stone(name, color, block=(0.9, 0.42), around=None, size=None, spokes=None):
+    # Dressed stone in courses, so a wall reads as built and a cell as a
+    # cell. The courses follow the wall: along the arc of a round one at
+    # radius `around`, along a straight one of `size`, or as slabs between
+    # `spokes` joints on a round floor.
+    mat = material(name, color, 0.92)
+    nt = mat.node_tree
+    bsdf = nt.nodes["Principled BSDF"]
+    coords = nt.nodes.new("ShaderNodeTexCoord")
+    sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+    comb = nt.nodes.new("ShaderNodeCombineXYZ")
+    if size:
+        scale = nt.nodes.new("ShaderNodeVectorMath")
+        scale.operation = "MULTIPLY"
+        scale.inputs[1].default_value = size
+        nt.links.new(coords.outputs["Object"], scale.inputs[0])
+        nt.links.new(scale.outputs["Vector"], sep.inputs["Vector"])
+        nt.links.new(sep.outputs["X"], comb.inputs["X"])
+        nt.links.new(sep.outputs["Z"], comb.inputs["Y"])
+    else:
+        nt.links.new(coords.outputs["Object"], sep.inputs["Vector"])
+        turn = nt.nodes.new("ShaderNodeMath")
+        turn.operation = "ARCTAN2"
+        nt.links.new(sep.outputs["Y"], turn.inputs[0])
+        nt.links.new(sep.outputs["X"], turn.inputs[1])
+        arc = nt.nodes.new("ShaderNodeMath")
+        arc.operation = "MULTIPLY"
+        arc.inputs[1].default_value = spokes / (2 * math.pi) if spokes else around
+        nt.links.new(turn.outputs["Value"], arc.inputs[0])
+        nt.links.new(arc.outputs["Value"], comb.inputs["X"])
+        if spokes:
+            far = nt.nodes.new("ShaderNodeVectorMath")
+            far.operation = "LENGTH"
+            flat = nt.nodes.new("ShaderNodeCombineXYZ")
+            nt.links.new(sep.outputs["X"], flat.inputs["X"])
+            nt.links.new(sep.outputs["Y"], flat.inputs["Y"])
+            nt.links.new(flat.outputs["Vector"], far.inputs[0])
+            nt.links.new(far.outputs["Value"], comb.inputs["Y"])
+        else:
+            nt.links.new(sep.outputs["Z"], comb.inputs["Y"])
+    brick = nt.nodes.new("ShaderNodeTexBrick")
+    brick.inputs["Color1"].default_value = (*color, 1)
+    brick.inputs["Color2"].default_value = (*[c * 0.84 for c in color], 1)
+    brick.inputs["Mortar"].default_value = (*[c * 0.52 for c in color], 1)
+    brick.inputs["Scale"].default_value = 1.0
+    brick.inputs["Mortar Size"].default_value = 0.01
+    brick.inputs["Mortar Smooth"].default_value = 0.3
+    brick.inputs["Brick Width"].default_value = block[0]
+    brick.inputs["Row Height"].default_value = block[1]
+    nt.links.new(comb.outputs["Vector"], brick.inputs["Vector"])
+    # Weather: broad, soft stains over the courses.
+    stain = nt.nodes.new("ShaderNodeTexNoise")
+    stain.inputs["Scale"].default_value = 0.9
+    stain.inputs["Detail"].default_value = 6.0
+    nt.links.new(coords.outputs["Object"], stain.inputs["Vector"])
+    ramp = nt.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.elements[0].position = 0.3
+    ramp.color_ramp.elements[0].color = (0.7, 0.7, 0.7, 1)
+    ramp.color_ramp.elements[1].position = 0.7
+    ramp.color_ramp.elements[1].color = (1, 1, 1, 1)
+    nt.links.new(stain.outputs["Fac"], ramp.inputs["Fac"])
+    mix = nt.nodes.new("ShaderNodeMix")
+    mix.data_type = "RGBA"
+    mix.blend_type = "MULTIPLY"
+    mix.inputs["Factor"].default_value = 1.0
+    nt.links.new(brick.outputs["Color"], mix.inputs["A"])
+    nt.links.new(ramp.outputs["Color"], mix.inputs["B"])
+    nt.links.new(mix.outputs["Result"], bsdf.inputs["Base Color"])
+    grain = nt.nodes.new("ShaderNodeTexNoise")
+    grain.inputs["Scale"].default_value = 14.0
+    grain.inputs["Detail"].default_value = 8.0
+    nt.links.new(coords.outputs["Object"], grain.inputs["Vector"])
+    height = nt.nodes.new("ShaderNodeMath")
+    height.operation = "MULTIPLY_ADD"
+    height.inputs[1].default_value = -4.0
+    nt.links.new(brick.outputs["Fac"], height.inputs[0])
+    nt.links.new(grain.outputs["Fac"], height.inputs[2])
+    bump = nt.nodes.new("ShaderNodeBump")
+    bump.inputs["Strength"].default_value = 0.35
+    bump.inputs["Distance"].default_value = 0.02
+    nt.links.new(height.outputs["Value"], bump.inputs["Height"])
+    nt.links.new(bump.outputs["Normal"], bsdf.inputs["Normal"])
+    return mat
+
+
+def cyl(name, radius, depth, at, mat, vertices=64, turn=None):
+    bpy.ops.mesh.primitive_cylinder_add(vertices=vertices, radius=radius, depth=depth, location=at)
+    obj = bpy.context.active_object
+    obj.name = name
+    if turn is not None:
+        obj.rotation_euler = Vector(turn).to_track_quat("Z", "Y").to_euler()
+    for face in obj.data.polygons:
+        face.use_smooth = len(face.vertices) == 4
+    obj.data.materials.append(mat)
+    return obj
+
+
+def search_start(a):
+    # Where a cell's searchlight leaves its lamp under the lantern's rim,
+    # and the window it is aimed at.
+    original = polar(a, R_TOWER + 0.05, 5.05)
+    window = polar(a, R_IN, 1.55)
+    return original.lerp(window, (R_LANTERN + 0.2 - R_TOWER - 0.05) / (R_IN - R_TOWER - 0.05)), window
+
+
+FLAGS = "at be bg hr cy cz dk ee fi fr de gr hu ie it lv lt lu mt nl pl pt ro sk si es se".split()
+FLAG_AT = Vector((0.06, 0, 8.6))
+FLAG_SIZE = (1.9, 1.42)
+
+
+def flag(scene, code, site=(0.0, 0.0), glow=True):
+    # A member state's flag on the tower's mast, flying to the right as
+    # the overview sees it. The 27 flags are tiles of one picture.
+    key = f"flag-{code}"
+    mat = bpy.data.materials.get(key)
+    if not mat:
+        image = bpy.data.images.get("flags.webp") or bpy.data.images.load(FLAG_PICTURE)
+        mat = textured(key, image, glow=0.35 if glow else 0.0, rough=0.85)
+    nx, ny = 28, 14
+    n = FLAGS.index(code)
+    col, row = n % 9, n // 9
+    rng = random.Random(n)
+    phase = rng.uniform(0, 6.28)
+    verts, faces, uvs = [], [], []
+    for j in range(ny + 1):
+        for i in range(nx + 1):
+            s, t = i / nx, j / ny
+            wave = 0.17 * s**0.7 * math.sin(2 * math.pi * 1.45 * s + phase + 0.7 * t)
+            verts.append((s * FLAG_SIZE[0] * 0.94, wave, t * FLAG_SIZE[1] - 0.16 * s * s))
+    for j in range(ny):
+        for i in range(nx):
+            k = j * (nx + 1) + i
+            faces.append((k, k + 1, k + nx + 2, k + nx + 1))
+    mesh = bpy.data.meshes.new(key)
+    mesh.from_pydata(verts, [], faces)
+    layer = mesh.uv_layers.new(name="uv")
+    for poly in mesh.polygons:
+        poly.use_smooth = True
+        for loop in poly.loop_indices:
+            v = mesh.loops[loop].vertex_index
+            s, t = (v % (nx + 1)) / nx, (v // (nx + 1)) / ny
+            layer.data[loop].uv = ((col + 0.01 + 0.98 * s) / 9, (2 - row + 0.01 + 0.98 * t) / 3)
+    mesh.materials.append(mat)
+    obj = bpy.data.objects.new(key, mesh)
+    obj.location = FLAG_AT + Vector((*site, 0))
+    scene.collection.objects.link(obj)
+    return obj
+
+
+def roof(scene, code, site=(0.0, 0.0), glow=True):
+    # The lantern's roof in the state's colours: seen from far above, the
+    # one thing that tells 27 towers apart.
+    key = f"flag-roof-{code}"
+    radius = R_LANTERN + 0.15
+    image = bpy.data.images.get("flags.webp") or bpy.data.images.load(FLAG_PICTURE)
+    mat = textured(key, image, (0.62, 0.62, 0.62), 0.06 if glow else 0.0, 0.7)
+    nt = mat.node_tree
+    n = FLAGS.index(code)
+    coords = nt.nodes.new("ShaderNodeTexCoord")
+    place = nt.nodes.new("ShaderNodeMapping")
+    place.inputs["Scale"].default_value = (0.72 / (2 * radius) / 9, 0.96 / (2 * radius) / 3, 1)
+    place.inputs["Location"].default_value = ((n % 9 + 0.5) / 9, (2 - n // 9 + 0.5) / 3, 0)
+    nt.links.new(coords.outputs["Object"], place.inputs["Vector"])
+    nt.links.new(place.outputs["Vector"], next(node for node in nt.nodes if node.type == "TEX_IMAGE").inputs["Vector"])
+    bpy.ops.mesh.primitive_cone_add(vertices=128, radius1=radius, depth=0.86, location=(*site, 6.87))
+    obj = bpy.context.active_object
+    obj.name = key
+    obj.data.materials.append(mat)
+    return obj
+
+
+def build(scene, glow=True):
+    tint = (0.62, 0.61, 0.58)
+    wall = stone("wall", tint, around=R_OUT)
+    inner_wall = stone("innerwall", tint, around=R_IN)
+    between = stone("between", tint, size=(R_OUT - R_IN, 1.0, WALL_H))
+    shaft_wall = stone("shaftwall", tint, block=(0.62, 0.36), around=R_TOWER)
+    cap = concrete("cap", (0.66, 0.65, 0.62))
     floor = concrete("floor", (0.32, 0.31, 0.3))
-    yard = concrete("yard", (0.2, 0.2, 0.21))
-    ground = material("ground", (0.035, 0.038, 0.045), 0.95)
+    yard = stone("yard", (0.21, 0.21, 0.22), block=(1.0, 1.32), spokes=24)
+    ground = concrete("ground", (0.035, 0.038, 0.045))
     steel = material("steel", (0.08, 0.08, 0.09), 0.35, 0.9)
-    cot = material("cot", (0.25, 0.24, 0.23), 0.8)
+    door = material("door", (0.13, 0.16, 0.17), 0.5, 0.6)
+    plate = material("plate", (0.3, 0.31, 0.32), 0.4, 0.8)
+    mattress = material("mattress", (0.4, 0.42, 0.46), 0.9)
+    blanket = material("blanket", (0.2, 0.17, 0.15), 0.95)
+    pillow = material("pillow", (0.62, 0.62, 0.6), 0.9)
+    china = material("china", (0.5, 0.52, 0.54), 0.25, 0.9)
+    horn = material("horn", (0.5, 0.51, 0.53), 0.4, 0.7)
 
     bpy.ops.mesh.primitive_plane_add(size=200, location=(0, 0, 0))
     bpy.context.active_object.data.materials.append(ground)
     ring("yard", R_TOWER, R_IN, 0.0, 0.04, yard)
     ring("cellfloor", R_IN, R_OUT, 0.0, 0.08, floor)
     ring("outer", R_OUT, R_OUT + 0.45, 0.0, WALL_H, wall)
-    inner = ring("inner", R_IN - 0.22, R_IN, 0.0, WALL_H, wall)
+    ring("outerfoot", R_OUT + 0.4, R_OUT + 0.56, 0.0, 0.5, cap)
+    ring("outercap", R_OUT - 0.05, R_OUT + 0.52, WALL_H, WALL_H + 0.12, cap)
+    inner = ring("inner", R_IN - 0.22, R_IN, 0.0, WALL_H, inner_wall)
+    ring("innercap", R_IN - 0.27, R_IN + 0.05, WALL_H, WALL_H + 0.1, cap)
 
-    # A window in each cell's inner wall, with bars; walls between cells.
     for k, a in enumerate(ANGLES):
+        tangent = Vector((-math.sin(a), math.cos(a), 0))
+        # A barred window onto the yard, where the tower looks in.
         cut = box(f"cut{k}", (0.8, 1.9, 1.9), polar(a, R_IN - 0.1, 1.55), a, None)
         mod = inner.modifiers.new(f"win{k}", "BOOLEAN")
         mod.operation = "DIFFERENCE"
         mod.object = cut
         cut.hide_render = True
         cut.hide_viewport = True
-        tangent = Vector((-math.sin(a), math.cos(a), 0))
         for b in range(7):
-            off = (b - 3) * 0.26
-            p = polar(a, R_IN - 0.11, 1.55) + tangent * off
-            bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=0.035, depth=1.9, location=p)
-            bpy.context.active_object.data.materials.append(steel)
-        # A cot along the outer wall.
-        box(f"cot{k}", (0.85, 2.0, 0.45), polar(a, R_OUT - 0.75, 0.3), a, cot)
+            p = polar(a, R_IN - 0.11, 1.55) + tangent * ((b - 3) * 0.26)
+            cyl(f"bar{k}", 0.035, 1.9, p, steel, 12)
+        for z in (1.05, 2.05):
+            box(f"rail{k}", (0.03, 1.9, 0.06), polar(a, R_IN - 0.11, z), a, steel)
+        box(f"sill{k}", (0.34, 2.1, 0.07), polar(a, R_IN - 0.11, 0.585), a, cap)
+        # A steel door beside it, with a hatch, shut from outside.
+        d = a - 1.85 / R_IN
+        for r in (R_IN - 0.235, R_IN + 0.015):
+            box(f"door{k}", (0.05, 0.92, 2.05), polar(d, r, 1.025), d, door)
+        box(f"doorhead{k}", (0.32, 1.1, 0.1), polar(d, R_IN - 0.11, 2.1), d, cap)
+        box(f"hatch{k}", (0.03, 0.34, 0.13), polar(d, R_IN - 0.262, 1.38), d, plate)
+        box(f"bolt{k}", (0.04, 0.26, 0.05), polar(d - 0.05, R_IN - 0.262, 1.05), d, plate)
+        # A bunk along the outer wall, a toilet in the corner.
+        at = polar(a, R_OUT - 0.75)
+        for sr in (-1, 1):
+            for st in (-1, 1):
+                box(f"bunkleg{k}", (0.05, 0.05, 0.26), at + polar(a, 0.38 * sr) + tangent * (0.95 * st) + Vector((0, 0, 0.21)), a, steel)
+        box(f"bunk{k}", (0.85, 2.0, 0.05), at + Vector((0, 0, 0.3)), a, steel)
+        box(f"mattress{k}", (0.8, 1.94, 0.13), at + Vector((0, 0, 0.385)), a, mattress)
+        box(f"pillow{k}", (0.5, 0.36, 0.08), at + tangent * 0.74 + Vector((0, 0, 0.49)), a, pillow)
+        box(f"blanket{k}", (0.6, 0.5, 0.07), at - tangent * 0.66 + Vector((0, 0, 0.485)), a, blanket)
+        t = a + math.radians(18)
+        cyl(f"toilet{k}", 0.19, 0.4, polar(t, R_IN + 0.52, 0.28), china, 32)
+        box(f"cistern{k}", (0.16, 0.42, 0.8), polar(t, R_IN + 0.1, 0.48), t, china)
     for k in range(CELLS):
         a = ANGLES[k] + math.radians(22.5)
         mid = (R_IN + R_OUT) / 2
-        box(f"divider{k}", (R_OUT - R_IN, 0.24, WALL_H), polar(a, mid, WALL_H / 2), a, wall)
+        box(f"divider{k}", (R_OUT - R_IN, 0.24, WALL_H), polar(a, mid, WALL_H / 2), a, between)
+        box(f"dividercap{k}", (R_OUT - R_IN, 0.32, 0.1), polar(a, mid, WALL_H + 0.05), a, cap)
+    for k in range(CELLS * 2):
+        a = ANGLES[0] + math.radians(22.5 * k)
+        box(f"pier{k}", (0.24, 0.6, WALL_H), polar(a, R_OUT + 0.5, WALL_H / 2), a, cap)
 
-    # The shaft stays in place; the lantern's wider, low roof leaves all
-    # nine panes visible from the existing high camera, even on a phone.
-    bpy.ops.mesh.primitive_cylinder_add(vertices=128, radius=R_TOWER, depth=4.6, location=(0, 0, 2.3))
-    bpy.context.active_object.data.materials.append(wall)
-    bpy.ops.mesh.primitive_cylinder_add(vertices=128, radius=R_LANTERN + 0.08, depth=0.18, location=(0, 0, 4.61))
-    bpy.context.active_object.data.materials.append(wall)
-    bpy.ops.mesh.primitive_cylinder_add(vertices=128, radius=R_LANTERN - 0.07, depth=1.6, location=(0, 0, WATCH_Z))
-    bpy.context.active_object.data.materials.append(steel)
+    # The tower: a stone shaft on a foot, a door, brackets under the
+    # lantern, and under its rim one searchlight for every cell.
+    cyl("foot", R_TOWER + 0.22, 0.18, (0, 0, 0.09), cap, 128)
+    cyl("shaft", R_TOWER, 4.6, (0, 0, 2.3), shaft_wall, 128)
+    ring("course", R_TOWER - 0.05, R_TOWER + 0.07, 3.3, 3.42, cap, 128)
+    d = math.radians(-20)
+    box("towerdoor", (0.08, 0.86, 1.95), polar(d, R_TOWER - 0.01, 1.1), d, door)
+    box("towerdoorhead", (0.16, 1.06, 0.12), polar(d, R_TOWER, 2.14), d, cap)
+    for k in range(18):
+        a = math.radians(10 + k * 20)
+        box(f"bracket{k}", (0.95, 0.16, 0.3), polar(a, R_TOWER + 0.44, 4.37), a, cap)
+    for k, a in enumerate(ANGLES):
+        start, window = search_start(a)
+        aim = (window - start).normalized()
+        cyl(f"lamp{k}", 0.14, 0.34, start - aim * 0.25, steel, 32, aim)
+        cyl(f"lamprim{k}", 0.165, 0.05, start - aim * 0.1, plate, 32, aim)
+        box(f"lamparm{k}", (0.06, 0.06, 0.34), polar(a, R_LANTERN - 0.02, 4.45), a, steel)
+    cyl("gallery", R_LANTERN + 0.08, 0.18, (0, 0, 4.61), cap, 128)
+    cyl("drum", R_LANTERN - 0.07, 1.6, (0, 0, WATCH_Z), steel, 128)
     windows = []
+    dark = material("blind", (0.03, 0.035, 0.045), 0.3)
+    for k in range(9, 25):
+        a = math.radians(-146 + k * 14)
+        box(f"frame{k}", (0.12, 0.65, 1.66), polar(a, R_LANTERN, WATCH_Z), a, cap)
+        box(f"pane{k}", (0.04, 0.53, 1.43), polar(a, R_LANTERN + 0.07, WATCH_Z), a, dark)
     for k, a in enumerate(WATCH_ANGLES):
         pane = material(f"watch{k}", (0.075, 0.09, 0.115), 0.42, emit=(1.0, 0.11, 0.035), strength=0.0)
         # A shallow frame and an inset pane, each tangent to the ring.
-        box(f"frame{k}", (0.12, 0.65, 1.66), polar(a, R_LANTERN, WATCH_Z), a, wall)
+        box(f"frame{k}", (0.12, 0.65, 1.66), polar(a, R_LANTERN, WATCH_Z), a, cap)
         box(f"pane{k}", (0.04, 0.53, 1.43), polar(a, R_LANTERN + 0.07, WATCH_Z), a, pane)
         # Small dark heads and shoulders make a lit post read as occupied.
         watcher = material(f"watcher{k}", (0.018, 0.012, 0.014), 0.8)
@@ -238,26 +471,35 @@ def build(scene):
         bpy.context.active_object.data.materials.append(watcher)
         box(f"shoulders{k}", (0.055, 0.28, 0.34), polar(a, R_LANTERN + 0.105, WATCH_Z - 0.17), a, watcher)
         windows.append(pane)
-    bpy.ops.mesh.primitive_cylinder_add(vertices=128, radius=R_LANTERN + 0.1, depth=0.16, location=(0, 0, 6.36))
-    bpy.context.active_object.data.materials.append(wall)
-    bpy.ops.mesh.primitive_cone_add(vertices=128, radius1=R_LANTERN + 0.15, depth=0.86, location=(0, 0, 6.87))
-    bpy.context.active_object.data.materials.append(wall)
-    # A mast with two horn loudspeakers on the roof, one to each side:
-    # what is announced comes from the tower too.
-    bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=0.07, depth=1.5, location=(0, 0, 7.95))
-    bpy.context.active_object.data.materials.append(steel)
+    cyl("eave", R_LANTERN + 0.1, 0.16, (0, 0, 6.36), cap, 128)
+    roof(scene, "at", glow=glow)
+    pitch = math.atan2(0.86, R_LANTERN + 0.15)
+    for k in range(16):
+        a = math.radians(k * 22.5)
+        rib = box(f"rib{k}", (2.86, 0.04, 0.04), polar(a, (R_LANTERN + 0.15) / 2, 6.885), a, cap)
+        rib.rotation_euler = (0, pitch, a)
+    # On the roof the state's flag; under its eave, to either side, a horn
+    # loudspeaker: what is announced comes from the tower too.
+    cyl("mastfoot", 0.11, 0.3, (0, 0, 7.3), steel, 24)
+    cyl("mast", 0.035, 3.0, (0, 0, 8.7), plate, 16)
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=16, ring_count=8, radius=0.07, location=(0, 0, 10.22))
+    bpy.context.active_object.data.materials.append(plate)
+    flag(scene, "at", glow=glow)
     for a in HORN_ANGLES:
-        out = Vector((math.cos(a), math.sin(a), 0.12)).normalized()
-        bpy.ops.mesh.primitive_cone_add(
-            vertices=48, radius1=0.42, radius2=0.07, depth=0.8, end_fill_type="NOTHING", location=Vector((0, 0, HORN_Z)) + out * 0.5
-        )
-        horn = bpy.context.active_object
-        horn.rotation_euler = (-out).to_track_quat("Z", "Y").to_euler()
-        horn.data.materials.append(steel)
-        bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=0.12, depth=0.3, location=Vector((0, 0, HORN_Z)) + out * 0.05)
-        driver = bpy.context.active_object
-        driver.rotation_euler = out.to_track_quat("Z", "Y").to_euler()
-        driver.data.materials.append(steel)
+        out = Vector((math.cos(a), math.sin(a), -0.16)).normalized()
+        base = polar(a, R_LANTERN + 0.2, HORN_Z)
+        bpy.ops.mesh.primitive_cone_add(vertices=48, radius1=0.36, radius2=0.07, depth=0.56, end_fill_type="NOTHING", location=base + out * 0.42)
+        bell = bpy.context.active_object
+        bell.rotation_euler = (-out).to_track_quat("Z", "Y").to_euler()
+        bell.data.materials.append(horn)
+        thick = bell.modifiers.new("wall", "SOLIDIFY")
+        thick.thickness = 0.015
+        bpy.ops.mesh.primitive_cone_add(vertices=32, radius1=0.02, radius2=0.11, depth=0.3, location=base + out * 0.36)
+        plug = bpy.context.active_object
+        plug.rotation_euler = (-out).to_track_quat("Z", "Y").to_euler()
+        plug.data.materials.append(steel)
+        cyl("horndriver", 0.1, 0.2, base + out * 0.06, steel, 24, out)
+        box("hornarm", (0.36, 0.05, 0.05), polar(a, R_LANTERN + 0.05, HORN_Z + 0.1), a, steel)
     return windows
 
 
@@ -330,12 +572,9 @@ def light_pass(k, path, late=False):
     world(scene, 0.0, (0, 0, 0))
     a = ANGLES[k]
     red = (1.0, 0.07, 0.05)
-    # Keep the original sightline; the lamp begins just outside the wider
-    # lantern so its body does not block the beam toward the cell.
-    original = polar(a, R_TOWER + 0.05, 5.05)
-    window = polar(a, R_IN, 1.55)
-    start = original.lerp(window, (R_LANTERN + 0.2 - R_TOWER - 0.05) / (R_IN - R_TOWER - 0.05))
+    start, window = search_start(a)
     beam_dir = (window - start).normalized()
+    cyl("lens", 0.125, 0.02, start - beam_dir * 0.07, material("lens", (0, 0, 0), emit=red, strength=40.0), 32, beam_dir)
     # The searchlight from the tower's window through the bars, and a glow
     # inside the cell.
     light(scene, "SPOT", "search", 12000, start, red, target=window, size=0.05, spot=math.radians(16))
@@ -368,7 +607,7 @@ def light_pass(k, path, late=False):
 
 def watch_pass(k, path):
     scene = reset()
-    windows = overview_world(scene, False, lamp=False)
+    windows = overview_world(scene, False, lamp=False, glow=False)
     camera(scene)
     world(scene, 0.0, (0, 0, 0))
     # Only one pane emits; its reflected spill stays local to that post.
@@ -391,8 +630,7 @@ def points(path):
     centre = project(Vector((0, 0, WALL_H / 2)))
     for a in ANGLES:
         tangent = Vector((-math.sin(a), math.cos(a), 0))
-        start = polar(a, R_TOWER + 0.05, 5.05)
-        window = polar(a, R_IN, 1.55)
+        start, window = polar(a, R_TOWER + 0.05, 5.05), polar(a, R_IN, 1.55)
         marks = []
         for t in MARK_T:
             p = start.lerp(window, t)
@@ -421,15 +659,21 @@ def points(path):
 # ---------- One world for the whole film --------------------------------------
 # Scene units are metres: a cell is three metres deep, a cot two long.
 
-# The EU's 27 member states, each with its own account register: ours at
-# the origin, the others on a staggered grid around it.
+# The EU's 27 member states, each with its own account register, set out
+# as a rough map: north at the top, Austria at the origin.
 SITE_X, SITE_Y = 30.0, 26.0
-SITES = [
-    (((i - 2) if j % 2 == 0 else (i - 1.5)) * SITE_X, j * SITE_Y)
-    for j in range(-3, 3)
-    for i in range(5 if j % 2 == 0 else 4)
-]
-assert len(SITES) == 27 and (0.0, 0.0) in SITES
+MAP = {
+    3: {3: "se", 4: "fi"},
+    2: {2: "dk", 4: "ee", 5: "lv"},
+    1: {0: "ie", 1: "nl", 2: "de", 3: "pl", 4: "lt"},
+    0: {0: "be", 1: "lu", 2: "at", 3: "cz", 4: "sk"},
+    -1: {0: "fr", 1: "it", 2: "si", 3: "hu", 4: "ro"},
+    -2: {0: "pt", 1: "es", 2: "hr", 4: "bg"},
+    -3: {2: "mt", 4: "gr", 5: "cy"},
+}
+STATES = [(code, ((col - 2) * SITE_X, row * SITE_Y)) for row, cols in MAP.items() for col, code in cols.items()]
+SITES = [at for _, at in STATES]
+assert sorted(code for code, _ in STATES) == sorted(FLAGS) and (0.0, 0.0) in SITES
 YOU = 6  # the crypto cell
 CASH = 7  # the cash cell, dark until 2027
 A_YOU = ANGLES[YOU]
@@ -471,6 +715,7 @@ assert sum(PAGE_BLOCKS) == PAGES and PAGE_BLOCKS[0] == PAGES_1991
 NOTE_W, NOTE_H, NOTE_T = 0.147, 0.077, 0.000108
 PILE_U, PILE_V = 0.15, -0.05
 CENT_AT = (0.0, 0.12)
+CARD_V = 0.2
 PATCH_AT = polar(math.radians(-90), 4.75)
 
 # Cameras: where they look, from which side and height, how far away, how
@@ -480,7 +725,7 @@ PATCH_AT = polar(math.radians(-90), 4.75)
 WALL_AT = polar(A_YOU, R_OUT - 0.01, 1.6)
 KEYS = {
     "overview": dict(target=(0, 0, 1.2), az=-90, el=52, d=3000, w=27.0),
-    "wide": dict(target=(0, -13, 0), az=-90, el=42, d=700, w=172.0),
+    "wide": dict(target=(15, -2, 0), az=-90, el=42, d=700, w=204.0),
     # The table: the two limits side by side, then the cent between them.
     "cash": dict(target=tuple(on_table(0, 0.02, 0.035)), az=TABLE_DEG, el=17, d=0.8, w=0.56, ap=0.0022),
     "cent": dict(target=tuple(on_table(*CENT_AT, 0.004)), az=TABLE_DEG, el=15, d=0.3, w=0.24, ap=0.006),
@@ -503,7 +748,7 @@ KEYS = {
     # Above the cell on the way to the yard's side, clear of both walls.
     "lift": dict(target=tuple(polar(A_YOU, 2.0, 2.0)), az=DEG_YOU - 12, el=31, d=8.0, w=11.5),
     "leak": dict(target=tuple(polar(A_YOU, 3.5, 0.3)), az=DEG_YOU - 26, el=58, d=8.6, w=9.6),
-    "horn": dict(target=(0, 0, 8.1), az=-90, el=3, d=14, w=10.5),
+    "horn": dict(target=(0.3, 0, 7.5), az=-90, el=4, d=14, w=9.6),
 }
 
 
@@ -640,26 +885,22 @@ def sheet(name, size, at, x_axis, y_axis, mat):
 
 
 def lit(scene, windows, haze=True, inside=False, skip=()):
-    # A searchlight into every cell and every window of the lantern
-    # occupied. Where the camera goes into the crypto cell, the haze of its
-    # beam ends at the window, its glow is dimmer and every searchlight
-    # shows its lens, so the view from inside stays clear.
+    # A searchlight into every cell, its lamp's lens glowing, and every
+    # window of the lantern occupied. Where the camera goes into the crypto
+    # cell, the haze of its beam ends at the window and its glow is dimmer,
+    # so the view from inside stays clear.
     red = (1.0, 0.07, 0.05)
     made = []
-    lens = material("lens", (0, 0, 0), emit=red, strength=40.0) if inside else None
+    lens = material("lens", (0, 0, 0), emit=red, strength=40.0)
     for k, a in enumerate(ANGLES):
         if k in skip:
             continue
-        original = polar(a, R_TOWER + 0.05, 5.05)
-        window = polar(a, R_IN, 1.55)
-        start = original.lerp(window, (R_LANTERN + 0.2 - R_TOWER - 0.05) / (R_IN - R_TOWER - 0.05))
+        start, window = search_start(a)
         yours = inside and k == YOU
         made.append(light(scene, "SPOT", f"search{k}", 5000 if yours else 12000, start, red, target=window, size=0.05, spot=math.radians(16)))
         made.append(light(scene, "POINT", f"cell{k}", 50 if yours else 420, polar(a, (R_IN + R_OUT) / 2 + 0.3, 2.4), red, size=0.8))
-        if lens:
-            bpy.ops.mesh.primitive_uv_sphere_add(segments=16, ring_count=8, radius=0.1, location=start - (window - start).normalized() * 0.12)
-            bpy.context.active_object.name = f"haze-lens{k}"
-            bpy.context.active_object.data.materials.append(lens)
+        aim = (window - start).normalized()
+        cyl(f"haze-lens{k}", 0.125, 0.02, start - aim * 0.07, lens, 32, aim)
         if haze:
             beam_dir = (window - start).normalized()
             length = (window - start).length + (-0.3 if yours else 3.5)
@@ -711,16 +952,18 @@ def field(scene):
     coll = bpy.data.collections.new("register")
     scene.collection.children.link(coll)
     for obj in list(scene.collection.objects):
-        if obj.name.startswith(("haze", "flycam", "cam", "moon")) or obj.type == "CAMERA":
+        if obj.name.startswith(("haze", "flycam", "cam", "moon", "flag-")) or obj.type == "CAMERA":
             continue
         if obj.type == "MESH" and obj.dimensions.x > 150:
             obj.scale = (12, 12, 1)  # the ground reaches under every site
             continue
         scene.collection.objects.unlink(obj)
         coll.objects.link(obj)
-    for n, (x, y) in enumerate(SITES):
+    for n, (code, (x, y)) in enumerate(STATES):
         if (x, y) == (0.0, 0.0):
             continue
+        flag(scene, code, (x, y))
+        roof(scene, code, (x, y))
         inst = bpy.data.objects.new(f"site{n}", None)
         inst.instance_type = "COLLECTION"
         inst.instance_collection = coll
@@ -780,6 +1023,16 @@ def furniture(scene, lamp=9):
         for st in (-1, 1):
             at = TABLE_AT + RADIAL * (0.27 * sr) + TANGENT * (0.43 * st) + Vector((0, 0, (TABLE_Z - 0.04) / 2))
             box("leg", (0.04, 0.04, TABLE_Z - 0.04), at, a, wood)
+    # A chair pushed back from it: the reader's seat.
+    seat = on_table(-0.34, 0.74, 0.0) - Vector((0, 0, TABLE_Z))
+    c = a + math.radians(14)
+    out, side = polar(c, 1), Vector((-math.sin(c), math.cos(c), 0))
+    box("seat", (0.4, 0.42, 0.035), seat + Vector((0, 0, 0.45)), c, wood)
+    box("back", (0.03, 0.42, 0.4), seat + out * 0.2 + Vector((0, 0, 0.72)), c, wood)
+    for sr in (-1, 1):
+        for st in (-1, 1):
+            tall = 0.92 if sr > 0 else 0.44
+            box("chairleg", (0.035, 0.035, tall), seat + out * (0.18 * sr) + side * (0.19 * st) + Vector((0, 0, tall / 2)), c, wood)
     if lamp:
         bulb = light(scene, "POINT", "lamp", lamp, TABLE_AT + Vector((0, 0, TABLE_Z + 0.85)), (1.0, 0.93, 0.82), size=0.12)
         bulb.visible_camera = False
@@ -812,6 +1065,38 @@ def coin(u, v, z, radius, thick, mat, rng=None):
     return z + thick
 
 
+def card(u, year):
+    # A folded card in front of a pile says which year's limit it is, so
+    # the page need not write on the picture.
+    stock = bpy.data.materials.get("card") or paper("card", (0.84, 0.83, 0.79))
+    ink = bpy.data.materials.get("cardink") or material("cardink", (0.03, 0.03, 0.035), 0.6)
+    lean = math.radians(24)
+    up = Vector((0, 0, 1))
+    wide, tall = 0.05, 0.027
+    foot = on_table(u, CARD_V)
+    for sign in (1, -1):
+        rise = up * math.cos(lean) - RADIAL * (sign * math.sin(lean))
+        at = foot - RADIAL * ((1 - sign) * tall * math.sin(lean)) + rise * (tall / 2)
+        sheet("card", (wide, tall), at, TANGENT * sign, rise, stock)
+        if sign > 0:
+            bpy.ops.object.text_add(location=at + (RADIAL * math.cos(lean) + up * math.sin(lean)) * 0.0003)
+            word = bpy.context.active_object
+            word.data.body = year
+            # Blender's own font draws a 1 as a bare stroke; FONT names a
+            # file with clearer figures.
+            if os.path.exists(FONT):
+                word.data.font = bpy.data.fonts.load(FONT, check_existing=True)
+            word.data.size = 0.017
+            word.data.align_x = "CENTER"
+            word.data.align_y = "CENTER"
+            word.data.extrude = 0.0001
+            word.rotation_mode = "QUATERNION"
+            from mathutils import Matrix
+
+            word.rotation_quaternion = Matrix((TANGENT, rise, TANGENT.cross(rise))).transposed().to_quaternion()
+            word.data.materials.append(ink)
+
+
 def cash(scene, gold):
     # What one transaction without an account could move without ID: 339
     # notes of 100 euros in 1991, in today's money, and 100 from 2027; in
@@ -826,6 +1111,8 @@ def cash(scene, gold):
         z = notes(-PILE_U + rng.uniform(-0.002, 0.002), PILE_V + rng.uniform(-0.002, 0.002), z, 100, rng.uniform(-0.03, 0.03), face, edge, band)
     notes(-PILE_U + 0.003, PILE_V - 0.002, z, NOTES_1991 % 100, 0.07, face, edge)
     notes(PILE_U, PILE_V, 0.0, NOTES_2027, -0.03, face, edge, band)
+    card(-PILE_U, "1991")
+    card(PILE_U, "2027")
     copper = material("copper", (0.72, 0.33, 0.2), 0.32, 1.0)
     coin(*CENT_AT, 0.0, 0.008125, 0.00167, copper)
     if not gold:
@@ -1239,7 +1526,7 @@ def stage(scene, name, lang=None, fall=False, tear=1.0):
     if spec["slips"]:
         made.update(reports(scene, spec["slips"], fall))
     if spec["leak"]:
-        shaft = next(o for o in scene.objects if o.type == "MESH" and abs(o.dimensions.z - 4.6) < 0.01)
+        shaft = bpy.data.objects["shaft"]
         made["flash"] = breach(scene, shaft)
         made["sheets"] = spill(scene)
     if spec["stacks"]:
@@ -1303,7 +1590,7 @@ def still(name, path):
 def overview_world(scene, late, lamp, glow=True):
     # What stands in the overview's passes: the table with the money on
     # it, and later the note and the pages on the cell's walls.
-    windows = build(scene)
+    windows = build(scene, glow)
     furniture(scene, (9 if late else 20) if lamp else 0)
     if late:
         banknote(scene)
@@ -1316,8 +1603,10 @@ def overview_world(scene, late, lamp, glow=True):
 def wide_pass(which, path):
     # Only the links, or only the tags, glowing over a black world.
     scene = reset()
-    build(scene)
+    build(scene, False)
     field(scene)
+    for obj in [o for o in scene.objects if o.name.startswith("flag-")]:
+        obj.data.materials[0] = material("unlit", (0, 0, 0))
     world(scene, 0.0, (0, 0, 0))
     (links if which == "links" else tags)(scene)
     camera_key(scene, KEYS["wide"])
@@ -1329,7 +1618,7 @@ def proposal(path):
     # enough to show below the lantern, lit on black, for an access that is
     # proposed and not yet law.
     scene = reset()
-    build(scene)
+    build(scene, False)
     camera(scene)
     world(scene, 0.0, (0, 0, 0))
     glow = material("proposal", (0.02, 0.02, 0.02), emit=(1.0, 0.42, 0.2), strength=7.0)
@@ -1489,11 +1778,15 @@ def blocked(p):
         return "ground"
     if r < R_TOWER + 0.15 and z < 4.75:
         return "tower"
-    if r < R_LANTERN + 0.3 and 4.45 < z < 7.4:
+    if r < R_LANTERN + 0.45 and 4.1 < z < 7.5:
         return "lantern"
-    if z < WALL_H + 0.08 and (R_IN - 0.3 < r < R_IN + 0.08 or R_OUT - 0.04 < r < R_OUT + 0.53):
+    if any((p - polar(a, R_LANTERN + 0.5, HORN_Z)).length < 0.6 for a in HORN_ANGLES):
+        return "loudspeaker"
+    if r < 0.3 and z < 10.4 or 0 < p.x < 2.1 and abs(p.y) < 0.3 and 8.3 < z < 10.2:
+        return "flag"
+    if z < WALL_H + 0.2 and (R_IN - 0.35 < r < R_IN + 0.1 or R_OUT - 0.08 < r < R_OUT + 0.8):
         return "ring wall"
-    if z < WALL_H + 0.08 and R_IN < r < R_OUT:
+    if z < WALL_H + 0.2 and R_IN < r < R_OUT:
         a = math.atan2(p.y, p.x)
         for k in range(CELLS):
             d = (a - ANGLES[k] - math.radians(22.5) + math.pi) % (2 * math.pi) - math.pi
@@ -1546,61 +1839,8 @@ def clip(name, out):
     bpy.ops.render.render(animation=True)
 
 
-def world_points(path):
-    # Where the page sets words into the stills, in percent of the picture.
-    scene = reset()
-    build(scene)
-
-    def project(name, p):
-        cam = camera_key(scene, KEYS[name])
-        bpy.context.view_layer.update()
-        co = world_to_camera_view(scene, cam, Vector(p))
-        bpy.data.objects.remove(cam)
-        return [round(co.x * 100, 2), round((1 - co.y) * 100, 2)]
-
-    def centre(slots, z):
-        x = sum(math.cos(a) * r for r, a in slots) / len(slots)
-        y = sum(math.sin(a) * r for r, a in slots) / len(slots)
-        return (x, y, z)
-
-    cost, measured, modelled = pallet_groups()
-    back = [s for s in modelled if s[1] > 0]
-    tag = min(tag_points(), key=lambda p: abs(p.x - 20) + abs(p.y + 40))
-    data = {
-        "size": [W, H],
-        "cash": {
-            "then": project("cash", on_table(-PILE_U, PILE_V, 0.04)),
-            "now": project("cash", on_table(PILE_U, PILE_V, 0.012)),
-            "cent": project("cent", on_table(*CENT_AT, 0.002)),
-        },
-        "wide": {"home": project("wide", (0, 0, 12)), "tag": project("wide", tag)},
-        "reports": {
-            "kept": project("yard", polar(math.radians(168), 4.4, 0.1)),
-            "passed": project("yard", polar(math.radians(-90), 3.6, 0.1)),
-            "convictions": project("yard", PATCH_AT + Vector((0, 0, 0.1))),
-            "all": project("yard", polar(math.radians(168), 4.4, 0.1)),
-        },
-        "note": {
-            "state": project("note", on_table(-NOTE_W / 2 - 0.016, 0.003)),
-            "rest": project("note", on_table(0.0, 0.0)),
-        },
-        "yard": {
-            "cost": project("yard", centre(cost, 2.6)),
-            "measured": project("yard", centre(measured, 2.6)),
-            "modelled": project("yard", centre(back, 3.0)),
-        },
-        "horn": {
-            "left": project("horn", (-1.6, 0, HORN_Z + 0.1)),
-            "right": project("horn", (1.6, 0, HORN_Z + 0.1)),
-            "lantern": project("horn", (0, 0, WATCH_Z)),
-        },
-    }
-    with open(path, "w") as f:
-        json.dump(data, f, indent=1)
-
-
 PASSES = (
-    "points", "base", "base-late", "light6-late", "proposal", "wide-links", "wide-tags", "world", "check",
+    "points", "base", "base-late", "light6-late", "proposal", "wide-links", "wide-tags", "check",
     *[f"light{k}" for k in range(CELLS)], *[f"watch{k}" for k in range(len(WATCH_ANGLES))],
     *STILLS, *[f"clip-{name}" for name in CLIPS],
 )
@@ -1629,8 +1869,6 @@ if ONLY in ("wide-links", "wide-tags"):
     wide_pass(ONLY[5:], os.path.join(OUT, f"{ONLY}.png"))
 if ONLY in STILLS:
     still(ONLY, os.path.join(OUT, f"{ONLY}.png"))
-if ONLY == "world":
-    world_points(os.path.join(OUT, "world.json"))
 if ONLY == "check":
     check()
 if ONLY and ONLY.startswith("clip-"):

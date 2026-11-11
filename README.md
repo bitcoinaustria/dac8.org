@@ -152,7 +152,12 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   nine chapters and 23 steps, each a headline of a few words over one
   picture. The whole film plays in one world rendered in Blender
   (`scripts/artwork/render-panopticon.py`): a panopticon at night, a ring
-  of eight cells, one per way money can take, around a watchtower. Every
+  of eight stone cells, one per way money can take, around a watchtower
+  that carries a searchlight for every cell and Austria's flag. Nothing is
+  written on the pictures: what a part stands for is modelled (the two
+  years stand on cards on the table, the 27 registers carry their states'
+  flags) or said in a legend under the picture, with the colour the part
+  has in it. Every
   step shows a still (`src/assets/history/world-*.webp`) on a stage that is
   dark in both colour schemes; where a step has a clip
   (`public/film/<name>.mp4`, rendered with motion blur), the camera's way
@@ -186,8 +191,9 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   confiscates. And it goes on (wording and status from
   `src/data/history-next.ts`): the year runs past today, cash lights up in
   2027, a proposed access shows as windows that only glimmer, then the
-  camera pulls back to 27 panopticons, the EU's account registers, joined
-  by red lines in 2029 and carrying tags of personal data on payments from
+  camera pulls back to 27 panopticons, the EU's account registers, set
+  out as a rough map with each state's flag on its tower, joined by red
+  lines in 2029 and carrying tags of personal data on payments from
   2030. For you: the camera flies into the crypto cell and looks at the
   tower through the bars (reported without suspicion), up over a breach in
   the tower from which one sheet per documented data leak flies, red at
@@ -196,9 +202,9 @@ dossier remain explicit Astro documents per language. Source URLs are shared in 
   reason). The bill: pallets of 100-euro notes drop into the yard at true
   scale, one per 100 million euros: what three tax reporting duties cost a
   year, then beside them the benefit of all exchanged tax data, measured
-  in red and modelled as empty frames; the picture labels the costs as
+  in red and modelled as empty frames; the legend names the costs as
   those of three duties, so the piles cannot be read as "it pays".
-  Promised: the loudspeakers on the tower, and beside them a few words of
+  Promised: the lantern with its loudspeakers, and under it a few words of
   what was announced and of what the announcer's own institutions have on
   record, for DAC8 in the EU, Austria and Germany (the `film` wording of
   the first three pairs in `src/data/history-promises.ts`). The film

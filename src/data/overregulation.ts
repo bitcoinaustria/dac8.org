@@ -113,8 +113,8 @@ export type Step = {
   clip?: Clip
   // In the overview from the paper chapter on, the pages hang in the cell.
   late?: boolean
-  // What the picture names in a few words: what was promised and what is
-  // on record, or what a part of it stands for.
+  // What the legend under the picture names in a few words: what was
+  // promised and what is on record, or what a part of it stands for.
   marks?: { id: string; text: Text }[]
   caption?: Text
 }

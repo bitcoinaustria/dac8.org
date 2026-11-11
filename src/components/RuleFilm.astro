@@ -24,7 +24,6 @@ import panopticon from "@/assets/history/panopticon.json"
 import panBase from "@/assets/history/panopticon-base.webp"
 import panBaseLate from "@/assets/history/panopticon-base-late.webp"
 import panProposal from "@/assets/history/panopticon-proposal.webp"
-import world from "@/assets/history/world.json"
 import wideLinks from "@/assets/history/world-wide-links.webp"
 import wideTags from "@/assets/history/world-wide-tags.webp"
 import type { Language } from "@/lib/i18n"
@@ -242,8 +241,7 @@ const voices = JSON.stringify(
 )
 
 // ---------- Die Standbilder --------------------------------------------------
-// Every step outside the overview shows a still, and words stand in it
-// where the render says, in percent of the picture (world.json).
+// Every step outside the overview shows a still.
 const stillFiles = import.meta.glob<{ default: ImageMetadata }>(
   "../assets/history/world-*.webp",
   { eager: true },
@@ -299,96 +297,68 @@ if (
   )
 }
 
-// Words in the stills: a figure, and what it is.
-type Point = [number, number]
-type Mark = {
+// Under the picture, a legend says what its parts are: a figure, what it
+// counts, and the colour it has in the picture. Nothing is written on the
+// picture itself; the two years stand on cards on the table.
+type Key = {
   step: number
   id: string
-  at: Point
   label?: string
   value?: string
   text?: string
 }
-const cashMarks = (step: string, gold: boolean): Mark[] =>
+const cashKeys = (step: string, gold: boolean): Key[] =>
   [then, now].map((t, k) => ({
     step: at(step),
     id: k === 0 ? "then" : "now",
-    at: (k === 0 ? world.cash.then : world.cash.now) as Point,
     label: String(t.year),
     value: gold
       ? `${n(inGold(t.amount, t.year))} ${en ? "oz" : "Unzen"}`
       : euro(inTodaysMoney(t.amount, t.year)),
     text: gold
-      ? t.year >= thisYear
-        ? en
-          ? "of gold at today’s price"
-          : "Gold zum heutigen Preis"
-        : en
-          ? `of gold at the price of ${t.year}`
-          : `Gold zum Preis von ${t.year}`
+      ? undefined
       : t.year >= thisYear
         ? en
           ? "in cash from €3,000"
           : "bar schon ab 3.000 €"
         : `${en ? "then" : "damals"} ${n(t.amount)} ${t.unit === "ECU" ? "ECU" : "€"}`,
   }))
-const points: Record<string, Point> = {
-  tag: world.wide.tag as Point,
-  cost: world.yard.cost as Point,
-  measured: world.yard.measured as Point,
-  modelled: world.yard.modelled as Point,
-  promise: world.horn.left as Point,
-  record: world.horn.right as Point,
-}
-const marks: Mark[] = [
-  ...cashMarks("ausweis-bar", false),
-  ...cashMarks("ausweis-gold", true),
-  {
-    step: at("ausweis-krypto"),
-    id: "cent",
-    at: world.cash.cent as Point,
-    label: en ? "Crypto" : "Krypto",
-    value: en ? "From the first cent" : "Ab dem ersten Cent",
-  },
+const keys: Key[] = [
+  ...cashKeys("ausweis-bar", false),
+  ...cashKeys("ausweis-gold", true),
   {
     step: at("ergebnis-liegen"),
     id: "kept",
-    at: world.reports.kept as Point,
     value: n(keptReports),
     text: en ? "not passed on, kept" : "nicht weitergegeben, gespeichert",
   },
   {
     step: at("ergebnis-liegen"),
     id: "passed",
-    at: world.reports.passed as Point,
     value: n(latest - keptReports),
     text: en ? "passed on" : "weitergegeben",
   },
   {
     step: at("ergebnis-urteile"),
     id: "all",
-    at: world.reports.all as Point,
     value: n(latest),
     text: en ? "reports" : "Meldungen",
   },
   {
     step: at("ergebnis-urteile"),
     id: "convictions",
-    at: world.reports.convictions as Point,
     value: n(convictions),
     text: en ? "convictions" : "Verurteilungen",
   },
   {
     step: at("ergebnis-euro"),
     id: "state",
-    at: world.note.state as Point,
     value: euro(kept),
     text: en ? "taken by the state" : "zieht der Staat ein",
   },
   {
     step: at("ergebnis-euro"),
     id: "rest",
-    at: world.note.rest as Point,
     value: euro(100 - kept),
     text: en ? "stay with criminals" : "bleiben bei Kriminellen",
   },
@@ -396,7 +366,6 @@ const marks: Mark[] = [
     (item.marks ?? []).map((mark) => ({
       step: item.i,
       id: mark.id,
-      at: points[mark.id],
       // What was promised and what is on record say which is which.
       label:
         mark.id === "promise"
@@ -412,6 +381,12 @@ const marks: Mark[] = [
     })),
   ),
 ]
+const legends = items.flatMap((item) => {
+  const own = keys.filter((key) => key.step === item.i)
+  return own.length || item.caption
+    ? [{ step: item.i, keys: own, note: item.caption?.[language] }]
+    : []
+})
 const stepsOf = (shot: Shot) =>
   items
     .filter((item) => item.shot === shot)
@@ -520,6 +495,7 @@ const tagStep = String(at("weiter-zahlungen"))
       </button>
 
       <div class="picture" aria-hidden="true">
+        <div class="picture-box">
         <div class="ways" data-ways={wayRules}>
           <!-- Everything rendered, its edges fading into the night around it. -->
           <div class="frame">
@@ -590,24 +566,6 @@ const tagStep = String(at("weiter-zahlungen"))
               {way.label}
             </span>
           ))}
-          {marks.map((mark) => (
-            <span
-              class:list={["mark", `mark-${mark.id}`]}
-              data-only={String(mark.step)}
-              style={`--x: ${mark.at[0]}%; --y: ${mark.at[1]}%`}
-            >
-              {mark.label && <small>{mark.label}</small>}
-              {mark.value && <b>{mark.value}</b>}
-              {mark.text && <span>{mark.text}</span>}
-            </span>
-          ))}
-          {items.map((item) =>
-            item.caption ? (
-              <span class="world-caption" data-only={String(item.i)}>
-                {item.caption[language]}
-              </span>
-            ) : null,
-          )}
           <p class="ways-centre">
             <strong data-year>{steps[at("regeln")].years?.[0]}</strong>
           </p>
@@ -615,6 +573,22 @@ const tagStep = String(at("weiter-zahlungen"))
             <small data-voice-ref />
             <span data-voice-text />
           </p>
+        </div>
+        </div>
+        <div class="legends">
+          {legends.map((legend) => (
+            <p class="legend" data-only={String(legend.step)}>
+              {legend.keys.map((key) => (
+                <span class:list={["key", `key-${key.id}`]}>
+                  <i />
+                  {key.label && <small>{key.label}</small>}
+                  {key.value && <b>{key.value}</b>}
+                  {key.text && <span>{key.text}</span>}
+                </span>
+              ))}
+              {legend.note && <span class="legend-note">{legend.note}</span>}
+            </p>
+          ))}
         </div>
       </div>
     </div>
@@ -1083,6 +1057,12 @@ const tagStep = String(at("weiter-zahlungen"))
     position: relative;
     grid-row: 1;
     display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    min-block-size: 0;
+  }
+
+  .picture-box {
+    display: grid;
     place-items: center;
     min-block-size: 0;
     container-type: size;
@@ -1303,7 +1283,7 @@ const tagStep = String(at("weiter-zahlungen"))
 
   /* Eine Welt, ein Bildformat: das Panoptikum bei Nacht. Was gerendert
      ist, liegt im Rahmen übereinander und läuft an den Rändern in die
-     Nacht der Bühne aus; Worte stehen darüber. */
+     Nacht der Bühne aus; darüber stehen nur die Namen der Zellen und das Jahr. */
   .ways {
     position: relative;
     container-type: inline-size;
@@ -1419,7 +1399,7 @@ const tagStep = String(at("weiter-zahlungen"))
     transition-duration: 0.2s;
   }
 
-  /* ---------- Worte im Bild --------------------------------------------- */
+  /* ---------- Zellennamen und Jahr --------------------------------------------- */
 
   .way-label {
     position: absolute;
@@ -1427,7 +1407,6 @@ const tagStep = String(at("weiter-zahlungen"))
     inset-block-start: var(--y);
     max-inline-size: 7.5em;
     translate: -50% var(--dy);
-    text-shadow: 0 1px 6px rgb(0 0 0 / 0.9);
     color: #d9dde3;
     font-size: clamp(0.7rem, 0.5rem + 1.6cqi, 0.95rem);
     font-weight: 600;
@@ -1466,7 +1445,6 @@ const tagStep = String(at("weiter-zahlungen"))
 
   .ways-centre strong {
     color: #fff;
-    text-shadow: 0 2px 10px rgb(0 0 0 / 0.8);
     font-size: clamp(1.15rem, 0.2rem + 6cqi, 3.2rem);
     font-weight: var(--weight-heading);
     font-variant-numeric: tabular-nums;
@@ -1478,175 +1456,138 @@ const tagStep = String(at("weiter-zahlungen"))
     color: #aab0b8;
   }
 
-  /* Eine Zahl im Bild und was sie ist, auf einem dunklen Schild, damit
-     sie auch auf hellen Stellen lesbar ist. */
-  .mark,
-  .world-caption {
-    position: absolute;
-    z-index: 1;
-    border-radius: var(--radius-sm);
-    background: rgb(9 12 19 / 0.8);
-    color: #e8ebef;
-    line-height: 1.15;
-    opacity: 0;
-    transition:
-      opacity 0.5s ease,
-      translate 0.5s ease;
-    pointer-events: none;
-  }
+  /* ---------- Legende --------------------------------------------------- */
 
-  .mark {
-    --tx: -50%;
-    --ty: -50%;
-    inset-inline-start: var(--x);
-    inset-block-start: var(--y);
+  /* Unter dem Bild, nicht darauf: was seine Teile sind, je mit der Farbe,
+     die sie im Bild haben. Die Zeile hat immer dieselbe Höhe, damit das
+     Bild beim Wechsel nicht springt. */
+  .legends {
     display: grid;
-    gap: 0.1em;
-    max-inline-size: 10.5em;
-    padding: 0.3em 0.6em;
-    translate: var(--tx) calc(var(--ty) + 0.5rem);
-    font-size: clamp(0.72rem, 0.5rem + 1.7cqi, 1rem);
-    font-weight: 600;
-    text-align: center;
-    text-wrap: balance;
-    overflow-wrap: normal;
+    min-block-size: 3.4em;
+    padding: 0 var(--space-m) var(--space-xs);
+    font-size: clamp(0.72rem, 0.62rem + 0.4vw, 0.86rem);
+    line-height: 1.25;
   }
 
-  .mark small {
+  .legend {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    gap: 0.3em 1.6em;
+    margin: 0;
     color: #aab0b8;
-    font-size: 0.8em;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .legend.on {
+    opacity: 1;
+    transition-delay: 0.3s;
+  }
+
+  .key {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45em;
+  }
+
+  .key small {
+    color: #aab0b8;
+    font-size: 0.86em;
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
 
-  .mark b {
+  .key b {
     color: #fff;
-    font-size: clamp(1.05rem, 0.6rem + 3.4cqi, 2rem);
+    font-size: 1.15em;
     font-weight: var(--weight-heading);
     font-variant-numeric: tabular-nums;
-    line-height: 1.02;
-    letter-spacing: -0.025em;
     white-space: nowrap;
   }
 
-  .mark b + span {
+  .key span {
     color: #c5cad2;
-    font-size: 0.9em;
-    font-weight: 500;
   }
 
-  .ways:not([data-playing]) .mark.on {
-    opacity: 1;
-    translate: var(--tx) var(--ty);
-    transition-delay: 0.35s;
+  /* Die Farbe im Bild: ein kleines Feld vor der Zahl. */
+  .key i {
+    display: none;
+    flex: none;
+    align-self: center;
+    inline-size: 0.8em;
+    block-size: 0.8em;
+    border-radius: 2px;
+    background: #e8ebef;
   }
 
-  .ways:not([data-playing]) .world-caption.on {
-    opacity: 1;
-    transition-delay: 0.35s;
+  .key:is(
+      .key-kept,
+      .key-passed,
+      .key-all,
+      .key-convictions,
+      .key-state,
+      .key-rest,
+      .key-cost,
+      .key-measured,
+      .key-modelled,
+      .key-tag
+    )
+    i {
+    display: block;
   }
 
-  .world-caption {
-    inset-inline-start: 4.5%;
-    inset-block-end: 4%;
-    max-inline-size: 91%;
-    padding: 0.25em 0.55em;
-    color: #c5cad2;
-    font-size: clamp(0.68rem, 0.5rem + 1.2cqi, 0.85rem);
-    font-weight: 500;
+  .key-kept i {
+    background: #6f7480;
   }
 
-  /* Die beiden Grenzen stehen über ihren Stapeln, der Cent über sich. */
-  .mark-then,
-  .mark-now,
-  .mark-cent {
-    --ty: -125%;
+  .key:is(.key-convictions, .key-state, .key-measured) i {
+    background: #ff5a55;
   }
 
-  .mark-cent b,
-  .mark-cent small,
-  .mark-convictions b,
-  .mark-state b,
-  .mark-measured {
+  .key-rest i {
+    background: #a9c08a;
+  }
+
+  .key-modelled i {
+    border: 1px solid #cfd9f2;
+    background: none;
+  }
+
+  .key-record :is(small, span) {
     color: #ff6a64;
   }
 
-  /* Was liegen bleibt, steht links im Hof, was weitergeht, vorn. */
-  .mark-convictions {
-    --tx: -115%;
-    --ty: -60%;
+  .key:is(.key-promise, .key-record) span {
+    font-size: 1.15em;
+    font-weight: 600;
   }
 
-  /* Der Streifen des Staates links unter sich, der Rest unter dem Schein. */
-  .mark-state {
-    --tx: -12%;
-    --ty: 150%;
-    text-align: start;
+  .legend-note {
+    flex-basis: 100%;
+    color: #8d949e;
+    font-size: 0.92em;
+    text-align: center;
   }
 
-  .mark-rest {
-    --tx: -5%;
-    --ty: 170%;
-  }
+  /* Breit steht die Legende links unter dem Bild, neben den Pfeilen. */
+  @container campaign (width >= 60rem) {
+    .legends {
+      min-block-size: 4.6em;
+      padding: 0 17rem var(--space-m) var(--space-l);
+      font-size: 0.9rem;
+    }
 
-  /* Kosten und belegter Nutzen liegen nebeneinander: das eine Schild
-     steht links von seinem Stapel, das andere rechts. */
-  .mark-cost {
-    --tx: -88%;
-    max-inline-size: 8em;
-    text-align: end;
-  }
+    .legend {
+      justify-content: flex-start;
+    }
 
-  .mark-measured {
-    --tx: -12%;
-    max-inline-size: 6em;
-    text-align: start;
-  }
-
-  .mark-modelled {
-    color: #cfd9f2;
-  }
-
-  /* Das Schild zu einer Zahlung steht über ihr, nicht auf ihr. */
-  .mark-tag {
-    --ty: -150%;
-  }
-
-  /* Versprochen und gemessen: zwei Worte am Himmel neben den
-     Lautsprechern, das Versprechen hell, was belegt ist, rot. */
-  .mark-promise,
-  .mark-record {
-    --ty: -135%;
-    max-inline-size: 6.2em;
-    padding: 0;
-    background: none;
-    text-shadow:
-      0 1px 2px rgb(0 0 0 / 0.9),
-      0 0 12px rgb(0 0 0 / 0.8);
-    font-size: clamp(1.05rem, 0.5rem + 4.2cqi, 2.3rem);
-    font-weight: var(--weight-heading);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-  }
-
-  .mark-promise small,
-  .mark-record small {
-    margin-block-end: 0.25em;
-    font-size: clamp(0.62rem, 0.45rem + 1.1cqi, 0.8rem);
-  }
-
-  .mark-promise {
-    --tx: -78%;
-  }
-
-  .mark-record {
-    --tx: -22%;
-    color: #ff5a55;
-  }
-
-  .ways:not([data-playing]) .mark-record.on {
-    transition-delay: 0.85s;
+    .legend-note {
+      text-align: start;
+    }
   }
 
   /* ---------- Vorlesen -------------------------------------------------- */
