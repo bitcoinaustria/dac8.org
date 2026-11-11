@@ -1,5 +1,11 @@
 ---
-import { buildLetter, letterSubject } from "@/data/letter"
+import {
+  buildLetter,
+  type LetterFacts,
+  letterOptions,
+  letterSubject,
+} from "@/data/letter"
+import { attacks, countIn, euCountries, latestYear } from "@/lib/attacks"
 import type { Language } from "@/lib/i18n"
 
 interface Props {
@@ -8,173 +14,301 @@ interface Props {
 
 const { language } = Astro.props
 const en = language === "en"
-const initial = buildLetter("de", {
-  salutation: "neutral",
-  recipient: "",
-  sender: "",
-  location: "",
-  personal: "",
-})
+// Counted here because the attack archive is too large for the script.
+const facts: LetterFacts = {
+  attacks: attacks.length,
+  year: latestYear,
+  inYearEu: countIn(latestYear, euCountries),
+}
+const initial = buildLetter(
+  language,
+  {
+    recipient: "",
+    sender: "",
+    location: "",
+    personal: "",
+    chosen: [],
+  },
+  facts,
+)
 const directory =
   "https://www.parlament.gv.at/recherchieren/personen/nationalrat"
+const steps = en
+  ? ["Your part", "Read and send"]
+  : ["Dein Teil", "Lesen und senden"]
 ---
 
-<div class="letter" data-letter data-copy-scope>
-  <form class="letter-form" data-letter-form>
-    <fieldset class="letter-language">
-      <legend>{en ? "Letter language" : "Sprache des Briefs"}</legend>
-      <label>
-        <input type="radio" name="letterLanguage" value="de" checked>
-        <span>Deutsch</span>
-      </label>
-      <label>
-        <input type="radio" name="letterLanguage" value="en">
-        <span>English</span>
-      </label>
-    </fieldset>
-    <div class="form-grid">
-      <label class="field">
-        <span>{en ? "Salutation" : "Anrede"}</span>
-        <select name="salutation">
-          <option value="female">{en ? "Ms" : "Frau"}</option>
-          <option value="male">{en ? "Mr" : "Herr"}</option>
-          <option value="neutral" selected>
-            {en ? "Name only" : "Nur Name"}
-          </option>
-        </select>
-      </label>
-      <label class="field">
-        <span>{en ? "Name of the MP" : "Name des Abgeordneten"}</span>
-        <input name="recipient" autocomplete="off">
-      </label>
-      <label class="field wide">
-        <span>{en ? "Email of the MP" : "E-Mail des Abgeordneten"}</span>
-        <input name="recipientEmail" type="email" autocomplete="off">
-      </label>
-      <label class="field">
-        <span>{en ? "Your name" : "Dein Name"}</span>
-        <input name="sender" autocomplete="name">
-      </label>
-      <label class="field">
-        <span
-          >{en ? "Your town or federal state" : "Dein Ort oder Bundesland"}</span
-        >
-        <input name="location" autocomplete="address-level1">
-      </label>
-      <label class="field wide">
-        <span
-          >{en ? "Why does this matter to you? (optional)" : "Warum ist dir das wichtig? (optional)"}</span
-        >
-        <textarea
-          name="personal"
-          rows="3"
-          placeholder={en ? "One or two sentences in your own words carry more weight than any template." : "Ein, zwei Sätze in deinen eigenen Worten wiegen mehr als jede Vorlage."}
-        ></textarea>
-      </label>
-    </div>
-  </form>
+<div
+  class="letter"
+  data-letter
+  data-letter-facts={JSON.stringify(facts)}
+  data-letter-language={language}
+  data-copy-scope
+>
+  <ol class="letter-steps">
+    {steps.map((step, index) => (
+        <li>
+          <button
+            type="button"
+            data-letter-go={index}
+            aria-current={index === 0 ? "step" : undefined}
+          >
+            <span>{index + 1}</span>
+            {step}
+          </button>
+        </li>
+      ))}
+  </ol>
 
-  <div class="letter-output">
-    <label class="field">
-      <span>{en ? "Subject" : "Betreff"}</span>
-      <input data-letter-subject readonly value={letterSubject.de}>
-    </label>
-    <label class="field">
-      <span>{en ? "Letter, editable" : "Brief, bearbeitbar"}</span>
-      <textarea data-letter-text rows="22">{initial}</textarea>
-    </label>
-    <div class="output-actions">
-      <a
-        class="button primary"
-        data-letter-mail
-        href={`mailto:?subject=${encodeURIComponent(letterSubject.de)}`}
-      >
-        {en ? "Open in email" : "In E-Mail öffnen"}
-      </a>
-      <button class="button" type="button" data-letter-copy>
-        {en ? "Copy text" : "Text kopieren"}
-      </button>
-      <a class="text-link" href={directory}>
-        {en ? "Find your MPs" : "Abgeordnete finden"}
-      </a>
-    </div>
-    <p class="copy-status" data-copy-status aria-live="polite"></p>
-    <p class="letter-note">
-      {en ? "Everything stays in your browser. Nothing is sent to or stored by dac8.org. Read the letter before you send it; you send it yourself." : "Alles bleibt in deinem Browser. Nichts wird an dac8.org gesendet oder gespeichert. Lies den Brief, bevor du ihn abschickst; du sendest ihn selbst."}
-    </p>
-  </div>
+  <form class="letter-form" data-letter-form>
+    <section data-letter-step>
+      <h3 tabindex="-1">
+        {en ? "What would you like to add?" : "Was möchtest du ergänzen?"}
+      </h3>
+      <p class="letter-lead">
+        {en ? "The letter explains the law, the data breaches and the attacks, and makes the campaign’s demands. Add what comes from you, or leave it empty and add it in your email program. Everything stays in your browser." : "Der Brief erklärt das Gesetz, die Datenlecks und die Überfälle und stellt die Forderungen der Kampagne. Ergänze, was von dir kommt, oder lass es leer und ergänze es im Mailprogramm. Alles bleibt in deinem Browser."}
+      </p>
+      <div class="form-grid">
+        <label class="field">
+          <span>{en ? "Your name" : "Dein Name"}</span>
+          <input name="sender" autocomplete="name">
+        </label>
+        <label class="field">
+          <span
+            >{en ? "Your town or federal state" : "Dein Ort oder Bundesland"}</span
+          >
+          <input name="location" autocomplete="address-level2">
+        </label>
+        <label class="field wide">
+          <span
+            >{en ? "Why does this matter to you?" : "Warum ist dir das wichtig?"}</span
+          >
+          <textarea
+            name="personal"
+            rows="3"
+            placeholder={en ? "One or two sentences in your own words carry more weight than any template." : "Ein, zwei Sätze in deinen eigenen Worten wiegen mehr als jede Vorlage."}
+          ></textarea>
+        </label>
+      </div>
+      <fieldset class="letter-parts">
+        <legend>
+          {en ? "What else you want to say" : "Was du noch sagen willst"}
+        </legend>
+        {letterOptions.map((part) => (
+            <label>
+              <input type="checkbox" name="chosen" value={part.id} />
+              <strong>{part.label[language]}</strong>
+              {part.hint && <span>{part.hint[language]}</span>}
+            </label>
+          ))}
+      </fieldset>
+      <div class="letter-nav">
+        <button class="button primary" type="button" data-letter-go="1">
+          {en ? "Next" : "Weiter"}
+        </button>
+      </div>
+    </section>
+
+    <section data-letter-step>
+      <h3 tabindex="-1">{en ? "Read and send" : "Lesen und senden"}</h3>
+      <div class="form-grid">
+        <label class="field">
+          <span
+            >{en ? "Name of the MP" : "Name der oder des Abgeordneten"}</span
+          >
+          <input name="recipient" autocomplete="off">
+        </label>
+        <label class="field">
+          <span
+            >{en ? "Email of the MP" : "E-Mail der oder des Abgeordneten"}</span
+          >
+          <input name="recipientEmail" type="email" autocomplete="off">
+        </label>
+      </div>
+      <p class="letter-note">
+        {en ? "You can also enter both in your email program. " : "Beides kannst du auch erst im Mailprogramm eintragen. "}
+        <a href={directory}>{en ? "Find your MPs" : "Abgeordnete finden"}</a>
+      </p>
+      <label class="field">
+        <span>{en ? "Subject" : "Betreff"}</span>
+        <input data-letter-subject readonly value={letterSubject[language]}>
+      </label>
+      <label class="field">
+        <span>{en ? "Letter, editable" : "Brief, bearbeitbar"}</span>
+        <textarea data-letter-text rows="22">{initial}</textarea>
+      </label>
+      <p class="letter-edited" data-letter-edited hidden>
+        <span
+          >{en ? "You have edited the letter, so changes in the step before no longer reach it." : "Du hast den Brief bearbeitet, darum fließen Änderungen aus dem Schritt davor nicht mehr ein."}</span
+        >
+        <button class="text-link" type="button" data-letter-reset>
+          {en ? "Rebuild letter" : "Brief neu erstellen"}
+        </button>
+      </p>
+      <div class="letter-nav">
+        <a
+          class="button primary"
+          data-letter-mail
+          href={`mailto:?subject=${encodeURIComponent(letterSubject[language])}`}
+        >
+          {en ? "Open in email" : "In E-Mail öffnen"}
+        </a>
+        <button class="button" type="button" data-letter-copy>
+          {en ? "Copy text" : "Text kopieren"}
+        </button>
+        <button class="button" type="button" data-letter-go="0">
+          {en ? "Back" : "Zurück"}
+        </button>
+      </div>
+      <p class="copy-status" data-copy-status aria-live="polite"></p>
+      <p class="letter-note">
+        {en ? "You send the letter yourself; dac8.org receives and stores nothing. If the email opens empty, copy the text instead. " : "Du sendest den Brief selbst; dac8.org bekommt und speichert nichts. Öffnet sich die E-Mail leer, kopiere stattdessen den Text. "}
+        <button class="text-link" type="button" data-letter-switch></button>
+      </p>
+    </section>
+  </form>
 </div>
 
 <style>
-  /* Formular und Brief nebeneinander, ohne Kasten: Die Felder tragen ihre
-     eigenen Kanten. */
+  /* Two steps, one at a time, without a box: the fields carry their own
+     edges. */
   .letter {
     display: grid;
-    align-items: start;
-    gap: var(--space-l) var(--space-xl);
+    gap: var(--space-m);
+    max-inline-size: 48rem;
     margin-block-start: var(--space-l);
+    scroll-margin-block-start: calc(var(--header-height) + var(--space-s));
   }
 
-  .letter-form,
-  .letter-output {
+  .letter-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-m);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .letter-steps button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    min-block-size: 2.75rem;
+    padding: 0;
+    border: 0;
+    color: var(--ink-3);
+    background: none;
+    font: inherit;
+    font-size: var(--step--1);
+    font-weight: 560;
+    cursor: pointer;
+  }
+
+  .letter-steps span {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-full);
+  }
+
+  .letter-steps [aria-current] {
+    color: var(--ink);
+  }
+
+  .letter-steps [aria-current] span {
+    border-color: var(--ink);
+    color: var(--background);
+    background: var(--ink);
+  }
+
+  .letter-steps button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 0.2rem;
+  }
+
+  .letter-form section {
     display: grid;
     gap: var(--space-s);
     min-inline-size: 0;
   }
 
-  .letter-form .form-grid {
-    align-items: end;
+  .letter-form section[hidden] {
+    display: none;
   }
 
-  .letter-language {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2xs);
+  .letter-form h3 {
     margin: 0;
-    padding: 0;
-    border: 0;
   }
 
-  .letter-language legend {
+  .letter-form h3:focus {
+    outline: none;
+  }
+
+  .letter-parts legend {
     float: left;
-    margin-inline-end: var(--space-xs);
+    inline-size: 100%;
+    margin-block-end: var(--space-2xs);
     padding: 0;
     color: var(--ink-2);
     font-size: var(--step--1);
     font-weight: 560;
   }
 
-  .letter-language label {
+  /* Each part is a card to tap: the title, and one line on what it adds. */
+  .letter-parts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: var(--space-2xs);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .letter-parts legend {
+    grid-column: 1 / -1;
+  }
+
+  .letter-parts label {
     position: relative;
-    display: inline-flex;
+    display: grid;
+    align-content: start;
+    gap: var(--space-3xs);
+    padding: var(--space-xs) var(--space-s);
+    padding-inline-end: var(--space-l);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--paper);
+    font-size: var(--step--1);
     cursor: pointer;
   }
 
-  .letter-language input {
+  .letter-parts label:hover {
+    border-color: var(--gray-8);
+  }
+
+  .letter-parts input {
     position: absolute;
-    opacity: 0;
-    pointer-events: none;
+    inset-block-start: var(--space-xs);
+    inset-inline-end: var(--space-xs);
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+    margin: 0;
+    accent-color: var(--ink);
   }
 
-  .letter-language span {
-    display: inline-flex;
-    align-items: center;
-    min-block-size: 2.75rem;
-    padding: 0.45em 1em;
-    border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
-    border-radius: var(--radius-full);
-    font-size: var(--step--1);
-    font-weight: 560;
+  .letter-parts label > span {
+    color: var(--ink-2);
+    text-wrap: pretty;
   }
 
-  .letter-language input:checked + span {
+  .letter-parts label:has(input:checked) {
     border-color: var(--ink);
-    color: var(--background);
-    background: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--ink);
   }
 
-  .letter-language input:focus-visible + span {
+  .letter-parts label:has(input:focus-visible) {
     outline: 2px solid var(--primary);
     outline-offset: 0.2rem;
   }
@@ -190,14 +324,27 @@ const directory =
     font-weight: 560;
   }
 
-  .output-actions {
+  .letter-nav {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-xs) var(--space-s);
   }
 
-  .output-actions .text-link {
+  .letter-edited {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3xs) var(--space-xs);
+    color: var(--ink-2);
+    font-size: var(--step--1);
+  }
+
+  .letter-edited[hidden] {
+    display: none;
+  }
+
+  .letter .text-link {
     margin-block-start: 0;
   }
 
@@ -207,27 +354,22 @@ const directory =
     font-size: var(--step--1);
   }
 
+  .letter-lead {
+    max-inline-size: 60ch;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
   .letter-note {
     max-inline-size: 60ch;
     color: var(--ink-3);
     font-size: var(--step--1);
     text-wrap: pretty;
   }
-
-  @container campaign (width >= 56rem) {
-    .letter {
-      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-    }
-
-    .letter-output {
-      position: sticky;
-      inset-block-start: calc(var(--header-height) + var(--space-s));
-    }
-  }
 </style>
 
 <script>
-  import { buildLetter, type LetterFields, letterSubject } from "@/data/letter"
+  import { buildLetter, type LetterFacts, letterSubject } from "@/data/letter"
   import type { Language } from "@/lib/i18n"
   import { copyText } from "@/lib/share"
 
@@ -240,14 +382,37 @@ const directory =
     const mail = root.querySelector<HTMLAnchorElement>("[data-letter-mail]")
     const copy = root.querySelector<HTMLButtonElement>("[data-letter-copy]")
     const status = root.querySelector<HTMLElement>("[data-copy-status]")
-    if (!form || !output || !subject || !mail || !copy) continue
+    const notice = root.querySelector<HTMLElement>("[data-letter-edited]")
+    const reset = root.querySelector<HTMLButtonElement>("[data-letter-reset]")
+    const switcher = root.querySelector<HTMLButtonElement>(
+      "[data-letter-switch]",
+    )
+    if (
+      !form ||
+      !output ||
+      !subject ||
+      !mail ||
+      !copy ||
+      !notice ||
+      !reset ||
+      !switcher
+    )
+      continue
 
+    const facts = JSON.parse(root.dataset.letterFacts ?? "{}") as LetterFacts
     const en = document.documentElement.lang.startsWith("en")
+    // The letter starts in the language of the page; the last step can
+    // switch it.
+    let language = (
+      root.dataset.letterLanguage === "en" ? "en" : "de"
+    ) as Language
     let edited = false
+    const setEdited = (value: boolean) => {
+      edited = value
+      notice.hidden = !value
+    }
     const value = (name: string) =>
       String(new FormData(form).get(name) ?? "").trim()
-    const language = () =>
-      (value("letterLanguage") === "en" ? "en" : "de") as Language
 
     const updateMail = () => {
       const to = value("recipientEmail")
@@ -256,29 +421,81 @@ const directory =
     }
 
     const render = () => {
-      subject.value = letterSubject[language()]
-      if (!edited) {
-        output.value = buildLetter(language(), {
-          salutation: value("salutation") as LetterFields["salutation"],
+      subject.value = letterSubject[language]
+      const letter = buildLetter(
+        language,
+        {
           recipient: value("recipient"),
           sender: value("sender"),
           location: value("location"),
           personal: value("personal"),
-        })
-      }
+          chosen: new FormData(form).getAll("chosen").map(String),
+        },
+        facts,
+      )
+      if (!edited) output.value = letter
+      switcher.textContent =
+        language === "de"
+          ? en
+            ? "Switch the letter to English"
+            : "Brief auf Englisch umstellen"
+          : en
+            ? "Switch the letter to German"
+            : "Brief auf Deutsch umstellen"
       updateMail()
     }
 
-    form.addEventListener("input", (event) => {
-      // Switching the language rebuilds the letter even after manual edits.
-      if ((event.target as HTMLInputElement).name === "letterLanguage")
-        edited = false
-      render()
+    const sections = [
+      ...root.querySelectorAll<HTMLElement>("[data-letter-step]"),
+    ]
+    const show = (step: number, focus: boolean) => {
+      sections.forEach((section, index) => {
+        section.hidden = index !== step
+      })
+      for (const button of root.querySelectorAll<HTMLElement>(
+        ".letter-steps [data-letter-go]",
+      )) {
+        if (Number(button.dataset.letterGo) === step)
+          button.setAttribute("aria-current", "step")
+        else button.removeAttribute("aria-current")
+      }
+      if (!focus) return
+      if (root.getBoundingClientRect().top < 0)
+        root.scrollIntoView({ block: "start" })
+      sections[step]?.querySelector("h3")?.focus({ preventScroll: true })
+    }
+    root.addEventListener("click", (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLElement>(
+        "[data-letter-go]",
+      )
+      if (button) show(Number(button.dataset.letterGo), true)
     })
+
+    form.addEventListener("input", render)
     form.addEventListener("submit", (event) => event.preventDefault())
     output.addEventListener("input", () => {
-      edited = true
+      setEdited(true)
       updateMail()
+    })
+    reset.addEventListener("click", () => {
+      setEdited(false)
+      render()
+    })
+    switcher.addEventListener("click", () => {
+      // Switching the language rebuilds the letter, so ask before manual
+      // edits are lost.
+      if (
+        edited &&
+        !confirm(
+          en
+            ? "Switching the language replaces your edits. Continue?"
+            : "Der Sprachwechsel ersetzt deine Änderungen. Fortfahren?",
+        )
+      )
+        return
+      language = language === "de" ? "en" : "de"
+      setEdited(false)
+      render()
     })
     copy.addEventListener("click", async () => {
       const copied = await copyText(`${subject.value}\n\n${output.value}`)
@@ -291,6 +508,7 @@ const directory =
             ? "Could not copy. Please select the text."
             : "Kopieren nicht möglich. Bitte den Text markieren."
     })
+    show(0, false)
     render()
   }
 </script>
