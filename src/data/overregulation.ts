@@ -149,7 +149,7 @@ export const thresholds: {
 
 // The two cash limits in gold, as the film's headline and the letter to
 // members of the National Council write them.
-export const limitsInGold = (language: Language) =>
+const limitsInGold = (language: Language) =>
   thresholds
     .filter((t) => t.amount > 0)
     .map((t) =>

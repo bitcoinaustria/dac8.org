@@ -2,9 +2,7 @@
 import {
   buildLetter,
   type LetterFacts,
-  letterDefaults,
-  letterParts,
-  letterPresets,
+  letterOptions,
   letterSubject,
 } from "@/data/letter"
 import { attacks, countIn, euCountries, latestYear } from "@/lib/attacks"
@@ -30,37 +28,21 @@ const initial = buildLetter(
     sender: "",
     location: "",
     personal: "",
-    chosen: letterDefaults,
+    chosen: [],
   },
   facts,
 )
 const directory =
   "https://www.parlament.gv.at/recherchieren/personen/nationalrat"
 const steps = en
-  ? ["Content", "About you", "Read and send"]
-  : ["Inhalt", "Von dir", "Lesen und senden"]
-const presets = [
-  { id: "short", label: en ? "Short" : "Kurz" },
-  { id: "standard", label: "Standard" },
-  { id: "long", label: en ? "Detailed" : "Ausführlich" },
-]
-const groups = [
-  {
-    legend: en ? "Arguments" : "Argumente",
-    parts: letterParts.reasons,
-  },
-  {
-    legend: en ? "Demands" : "Forderungen",
-    parts: letterParts.demands,
-  },
-]
+  ? ["Your part", "Read and send"]
+  : ["Dein Teil", "Lesen und senden"]
 ---
 
 <div
   class="letter"
   data-letter
   data-letter-facts={JSON.stringify(facts)}
-  data-letter-presets={JSON.stringify(letterPresets)}
   data-letter-language={language}
   data-copy-scope
 >
@@ -82,53 +64,10 @@ const groups = [
   <form class="letter-form" data-letter-form>
     <section data-letter-step>
       <h3 tabindex="-1">
-        {en ? "What should the letter say?" : "Was soll im Brief stehen?"}
+        {en ? "What would you like to add?" : "Was möchtest du ergänzen?"}
       </h3>
-      <fieldset class="letter-pills">
-        <legend>{en ? "Quick choice" : "Schnellauswahl"}</legend>
-        {presets.map((preset) => (
-            <label>
-              <input
-                type="radio"
-                name="preset"
-                value={preset.id}
-                checked={preset.id === "standard"}
-              />
-              <span>{preset.label}</span>
-            </label>
-          ))}
-      </fieldset>
-      {groups.map((group) => (
-          <fieldset class="letter-parts" data-letter-custom>
-            <legend>{group.legend}</legend>
-            {group.parts.map((part) => (
-              <label>
-                <input
-                  type="checkbox"
-                  name="chosen"
-                  value={part.id}
-                  checked={part.on}
-                />
-                <strong>{part.label[language]}</strong>
-                {part.hint && <span>{part.hint[language]}</span>}
-              </label>
-            ))}
-          </fieldset>
-        ))}
-      <div class="letter-nav">
-        <button class="button primary" type="button" data-letter-go="1">
-          {en ? "Next" : "Weiter"}
-        </button>
-        <p class="letter-length" data-letter-length aria-live="polite"></p>
-      </div>
-    </section>
-
-    <section data-letter-step>
-      <h3 tabindex="-1">
-        {en ? "About you, if you like" : "Von dir, wenn du magst"}
-      </h3>
-      <p class="letter-note">
-        {en ? "You can leave this empty and add it in your email program. Everything stays in your browser." : "Du kannst es leer lassen und im Mailprogramm ergänzen. Alles bleibt in deinem Browser."}
+      <p class="letter-lead">
+        {en ? "The letter explains the law, the data breaches and the attacks, and makes the campaign’s demands. Add what comes from you, or leave it empty and add it in your email program. Everything stays in your browser." : "Der Brief erklärt das Gesetz, die Datenlecks und die Überfälle und stellt die Forderungen der Kampagne. Ergänze, was von dir kommt, oder lass es leer und ergänze es im Mailprogramm. Alles bleibt in deinem Browser."}
       </p>
       <div class="form-grid">
         <label class="field">
@@ -156,7 +95,7 @@ const groups = [
         <legend>
           {en ? "Sentences you can add" : "Sätze, die du dazunehmen kannst"}
         </legend>
-        {letterParts.about.map((part) => (
+        {letterOptions.map((part) => (
             <label>
               <input type="checkbox" name="chosen" value={part.id} />
               <strong>{part.label[language]}</strong>
@@ -165,10 +104,7 @@ const groups = [
           ))}
       </fieldset>
       <div class="letter-nav">
-        <button class="button" type="button" data-letter-go="0">
-          {en ? "Back" : "Zurück"}
-        </button>
-        <button class="button primary" type="button" data-letter-go="2">
+        <button class="button primary" type="button" data-letter-go="1">
           {en ? "Next" : "Weiter"}
         </button>
       </div>
@@ -204,7 +140,7 @@ const groups = [
       </label>
       <p class="letter-edited" data-letter-edited hidden>
         <span
-          >{en ? "You have edited the letter, so your choices in the steps before no longer reach it." : "Du hast den Brief bearbeitet, darum fließt deine Auswahl aus den Schritten davor nicht mehr ein."}</span
+          >{en ? "You have edited the letter, so changes in the step before no longer reach it." : "Du hast den Brief bearbeitet, darum fließen Änderungen aus dem Schritt davor nicht mehr ein."}</span
         >
         <button class="text-link" type="button" data-letter-reset>
           {en ? "Rebuild letter" : "Brief neu erstellen"}
@@ -221,7 +157,7 @@ const groups = [
         <button class="button" type="button" data-letter-copy>
           {en ? "Copy text" : "Text kopieren"}
         </button>
-        <button class="button" type="button" data-letter-go="1">
+        <button class="button" type="button" data-letter-go="0">
           {en ? "Back" : "Zurück"}
         </button>
       </div>
@@ -235,7 +171,7 @@ const groups = [
 </div>
 
 <style>
-  /* Three steps, one at a time, without a box: the fields carry their own
+  /* Two steps, one at a time, without a box: the fields carry their own
      edges. */
   .letter {
     display: grid;
@@ -311,50 +247,6 @@ const groups = [
     outline: none;
   }
 
-  .letter-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs);
-    margin: 0;
-    padding: 0;
-    border: 0;
-  }
-
-  .letter-pills label {
-    position: relative;
-    display: inline-flex;
-    cursor: pointer;
-  }
-
-  .letter-pills input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .letter-pills span {
-    display: inline-flex;
-    align-items: center;
-    min-block-size: 2.75rem;
-    padding: 0.45em 1em;
-    border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
-    border-radius: var(--radius-full);
-    font-size: var(--step--1);
-    font-weight: 560;
-  }
-
-  .letter-pills input:checked + span {
-    border-color: var(--ink);
-    color: var(--background);
-    background: var(--ink);
-  }
-
-  .letter-pills input:focus-visible + span {
-    outline: 2px solid var(--primary);
-    outline-offset: 0.2rem;
-  }
-
-  .letter-pills legend,
   .letter-parts legend {
     float: left;
     inline-size: 100%;
@@ -363,11 +255,6 @@ const groups = [
     color: var(--ink-2);
     font-size: var(--step--1);
     font-weight: 560;
-  }
-
-  .letter-length {
-    color: var(--ink-2);
-    font-size: var(--step--1);
   }
 
   /* Each part is a card to tap: the title, and one line on what it adds. */
@@ -468,6 +355,12 @@ const groups = [
     font-size: var(--step--1);
   }
 
+  .letter-lead {
+    max-inline-size: 60ch;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
   .letter-note {
     max-inline-size: 60ch;
     color: var(--ink-3);
@@ -492,7 +385,6 @@ const groups = [
     const status = root.querySelector<HTMLElement>("[data-copy-status]")
     const notice = root.querySelector<HTMLElement>("[data-letter-edited]")
     const reset = root.querySelector<HTMLButtonElement>("[data-letter-reset]")
-    const length = root.querySelector<HTMLElement>("[data-letter-length]")
     const switcher = root.querySelector<HTMLButtonElement>(
       "[data-letter-switch]",
     )
@@ -504,16 +396,11 @@ const groups = [
       !copy ||
       !notice ||
       !reset ||
-      !length ||
       !switcher
     )
       continue
 
     const facts = JSON.parse(root.dataset.letterFacts ?? "{}") as LetterFacts
-    const presets = JSON.parse(root.dataset.letterPresets ?? "{}") as Record<
-      string,
-      string[]
-    >
     const en = document.documentElement.lang.startsWith("en")
     // The letter starts in the language of the page; the last step can
     // switch it.
@@ -548,13 +435,6 @@ const groups = [
         facts,
       )
       if (!edited) output.value = letter
-      const words = Math.round(letter.split(/\s+/).length / 10) * 10
-      // English runs longer than German for the same parts.
-      const [medium, long] = language === "en" ? [400, 520] : [350, 450]
-      const size = words < medium ? 0 : words < long ? 1 : 2
-      length.textContent = en
-        ? `About ${words} words, ${["short", "medium", "long"][size]}.`
-        : `Rund ${words} Wörter, ${["kurz", "mittel", "lang"][size]}.`
       switcher.textContent =
         language === "de"
           ? en
@@ -592,26 +472,7 @@ const groups = [
       if (button) show(Number(button.dataset.letterGo), true)
     })
 
-    form.addEventListener("input", (event) => {
-      const target = event.target as HTMLInputElement
-      if (target.name === "preset") {
-        // A preset sets arguments and demands, never the sentences about
-        // the reader.
-        for (const box of form.querySelectorAll<HTMLInputElement>(
-          '[data-letter-custom] input[name="chosen"]',
-        ))
-          box.checked = presets[target.value]?.includes(box.value) ?? false
-      } else if (
-        target.name === "chosen" &&
-        target.closest("[data-letter-custom]")
-      ) {
-        for (const preset of form.querySelectorAll<HTMLInputElement>(
-          'input[name="preset"]',
-        ))
-          preset.checked = false
-      }
-      render()
-    })
+    form.addEventListener("input", render)
     form.addEventListener("submit", (event) => event.preventDefault())
     output.addEventListener("input", () => {
       setEdited(true)
