@@ -1,5 +1,11 @@
 ---
-import { buildLetter, type LetterFacts, letterSubject } from "@/data/letter"
+import {
+  buildLetter,
+  type LetterFacts,
+  letterDefaults,
+  letterParts,
+  letterSubject,
+} from "@/data/letter"
 import { attacks, countIn, euCountries, latestYear } from "@/lib/attacks"
 import type { Language } from "@/lib/i18n"
 
@@ -24,9 +30,26 @@ const initial = buildLetter(
     sender: "",
     location: "",
     personal: "",
+    chosen: letterDefaults,
   },
   facts,
 )
+const groups = [
+  {
+    legend: en ? "Arguments in the letter" : "Argumente im Brief",
+    parts: letterParts.reasons,
+  },
+  {
+    legend: en ? "What you demand" : "Was du forderst",
+    parts: letterParts.demands,
+  },
+  {
+    legend: en
+      ? "About you, only if you want"
+      : "Über dich, nur wenn du willst",
+    parts: letterParts.about,
+  },
+]
 const directory =
   "https://www.parlament.gv.at/recherchieren/personen/nationalrat"
 ---
@@ -80,6 +103,24 @@ const directory =
         >
         <input name="location" autocomplete="address-level2">
       </label>
+    </div>
+    {groups.map((group) => (
+        <fieldset class="letter-parts">
+          <legend>{group.legend}</legend>
+          {group.parts.map((part) => (
+            <label>
+              <input
+                type="checkbox"
+                name="chosen"
+                value={part.id}
+                checked={part.on}
+              />
+              <span>{part.label[language]}</span>
+            </label>
+          ))}
+        </fieldset>
+      ))}
+    <div class="form-grid">
       <label class="field wide">
         <span
           >{en ? "Why does this matter to you? (optional)" : "Warum ist dir das wichtig? (optional)"}</span
@@ -206,6 +247,35 @@ const directory =
     outline-offset: 0.2rem;
   }
 
+  .letter-parts {
+    display: grid;
+    gap: var(--space-3xs);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: var(--step--1);
+  }
+
+  .letter-parts legend {
+    margin-block-end: var(--space-3xs);
+    padding: 0;
+    color: var(--ink-2);
+    font-weight: 560;
+  }
+
+  .letter-parts label {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2xs);
+    min-block-size: 2rem;
+    cursor: pointer;
+  }
+
+  .letter-parts input {
+    flex: none;
+    accent-color: var(--ink);
+  }
+
   [data-letter-text] {
     min-block-size: 28rem;
     line-height: 1.55;
@@ -323,6 +393,7 @@ const directory =
             sender: value("sender"),
             location: value("location"),
             personal: value("personal"),
+            chosen: new FormData(form).getAll("chosen").map(String),
           },
           facts,
         )

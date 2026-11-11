@@ -4,37 +4,40 @@ import { type Language, pathFor } from "@/lib/i18n"
 // Letter to members of the Austrian National Council. The letter is drafted
 // in the browser and sent by the reader; nothing is transmitted to dac8.org.
 //
-// It never makes the sender reveal whether or how much bitcoin they hold: a
-// letter for privacy must not cost the sender theirs, so it speaks of
-// bitcoin as savings in general. It measures the report against cash and
-// gold, the other savings people keep themselves: nobody reports them when
-// they are taken home, and ID is needed only above a limit, where crypto
-// carries a name from the first cent (the film on the history page). It
-// names the danger plainly, through bitcoin moving like cash and the cases
-// and counts of attacks. It asks for three of the demands on the arguments
-// page (#forderungen, src/data/arguments.ts): the two the National Council
-// can change in § 20 Krypto-MPfG first, then the one only the EU can meet.
-// It closes with questions the MP has to answer, aimed at those who wrote the
-// rules, the federal government (the act was a government bill) and the EU,
-// rather than at the MP in person, who may have voted against it, and never
-// in the first person ("mich"), which would tell the office the sender is
-// reported. It asks for no tax change, since the
-// campaign takes no side on tax policy. Keep it short; the reader's own
-// sentences should carry the most weight.
+// The letter is built from parts the reader picks, so that no two offices
+// receive the same text and everyone sends the points they stand behind. The
+// opening and the close are fixed: financial surveillance protects no one,
+// what the act has providers record, and that whoever keeps the collection
+// running accepts where such data ends up. Between them the reader chooses
+// arguments, demands and, only if they want to, sentences about themselves.
+// The defaults give a short letter; the stronger or longer parts are opt-in.
+//
+// By default the letter never makes the sender reveal whether they hold
+// bitcoin: a letter for privacy must not cost the sender theirs. The parts
+// that do reveal it say so in their label and are off until chosen. The
+// holding-period demand is tax policy, on which the campaign takes no side
+// (VISION.md); it is the sender's own view, labelled as such and off by
+// default. The close blames no one for a crime and addresses whoever keeps
+// the collection running rather than the MP in person, who may have voted
+// against the act.
 //
 // The facts restate sourced text on the site: report contents (glossary),
-// domestic bank accounts outside the annual exchange and the own-wallet sum
-// (reason #bargeld), the ID limits in gold and the transfer regulation
+// cash, gold and the own-wallet sum (reason #bargeld), the ID limits in gold
 // (src/data/overregulation.ts), bitcoin as cash and the attack archive (the
-// attacks page), leaks at exchanges and tax authorities, the gang that
-// hacked databases and the armed attacks in France (leaks.ts), forged
-// passports (reason #anlasslos), the violence in the archive's reports (in
-// the EU, for example torture in the Netherlands in 2019, a killing in France
-// in 2021 and a severed finger in Romania in 2024), § 20, Germany and the
-// Netherlands, five years for bank-account reports and the unanimous recast
-// (history.ts). Gold kept at home rests on the absence of any reporting duty:
-// the ID check is an anti-money-laundering record, no report to the tax
-// office, so never widen it to "anonymous".
+// attacks page), Waltio, the French account register and the Austrian tax
+// official (leaks.ts), forged passports (reason #anlasslos), § 20, Germany
+// and the Netherlands, five years for bank-account reports, the demands
+// (#forderungen, src/data/arguments.ts) and the recast, which needs every
+// member state (history.ts). Gold kept at home rests on the absence of any
+// reporting duty: the ID check is an anti-money-laundering record, no report
+// to the tax office, so never widen it to "anonymous". Two facts are sourced
+// here only. Less than 0.1 percent of criminal finances: Pol, Anti-money
+// laundering: The world's least effective policy experiment?, Policy Design
+// and Practice 3(1), 2020, https://doi.org/10.1080/25741292.2020.1725366.
+// The holding period: BGBl. I Nr. 10/2022 taxes crypto-assets bought after
+// February 2021 whatever the holding time (§ 27b EStG), while gold coins
+// stay tax-free after a year (§ 31 EStG), as crypto-assets do in Germany
+// (§ 23 dEStG).
 
 // Counts from the attack archive, passed in by the page because the archive
 // is too large for the browser script. The archive keeps every known attack,
@@ -53,11 +56,13 @@ export type LetterFields = {
   sender: string
   location: string
   personal: string
+  // Ids of the chosen parts, from letterParts below.
+  chosen: string[]
 }
 
 export const letterSubject: Record<Language, string> = {
-  de: "Krypto-Meldepflichtgesetz: Bitcoin-Ersparnisse wie Bargeld und Gold schützen",
-  en: "Krypto-Meldepflichtgesetz: protect bitcoin savings like cash and gold",
+  de: "Krypto-Meldepflichtgesetz: Finanzielle Überwachung schützt niemanden",
+  en: "Krypto-Meldepflichtgesetz: financial surveillance protects no one",
 }
 
 // The ID limit for a single transaction without an account, in ounces of
@@ -66,6 +71,213 @@ const gold = { de: limitsInGold("de"), en: limitsInGold("en") }
 
 const count = (language: Language, value: number) =>
   value.toLocaleString(language === "en" ? "en-GB" : "de-AT")
+
+type Part = {
+  id: string
+  // Shown beside the checkbox, in the language of the page.
+  label: Record<Language, string>
+  // Chosen when the page loads.
+  on?: boolean
+  // In the language of the letter.
+  text: Record<
+    Language,
+    string | ((facts: LetterFacts, link: string) => string)
+  >
+}
+
+// Sentences about the sender, joined into one paragraph with their own
+// words. The first two reveal holdings and say so.
+const about: Part[] = [
+  {
+    id: "voter",
+    label: {
+      de: "Ich bin in Österreich wahlberechtigt",
+      en: "I am entitled to vote in Austria",
+    },
+    text: {
+      de: "Ich bin in Österreich wahlberechtigt, und dieses Thema entscheidet mit, wen ich wähle.",
+      en: "I am entitled to vote in Austria, and this issue helps decide whom I vote for.",
+    },
+  },
+  {
+    id: "savings",
+    label: {
+      de: "Ich spare in Bitcoin (verrät, dass du Bitcoin besitzt)",
+      en: "I save in bitcoin (reveals that you hold bitcoin)",
+    },
+    text: {
+      de: "Ich spare selbst in Bitcoin, so wie andere in Gold oder auf dem Sparbuch.",
+      en: "I save in bitcoin myself, as others do in gold or a savings account.",
+    },
+  },
+  {
+    id: "pension",
+    label: {
+      de: "Bitcoin ist Teil meiner Pensionsvorsorge (verrät, dass du Bitcoin besitzt)",
+      en: "Bitcoin is part of my retirement savings (reveals that you hold bitcoin)",
+    },
+    text: {
+      de: "Bitcoin ist Teil meiner Vorsorge für die Pension.",
+      en: "Bitcoin is part of my savings for retirement.",
+    },
+  },
+]
+
+const reasons: Part[] = [
+  {
+    id: "cash",
+    label: {
+      de: "Bargeld und Gold werden nicht gemeldet",
+      en: "Cash and gold are not reported",
+    },
+    on: true,
+    text: {
+      de: "Wer Bargeld abhebt oder bei der Bank Goldmünzen kauft und daheim verwahrt, steht in keiner Meldung ans Finanzamt. Wer Bitcoin beim Anbieter kauft und in die eigene Wallet überträgt, schon, obwohl das für sich genommen keine Steuer auslöst.",
+      en: "Someone who withdraws cash, or buys gold coins at a bank and keeps them at home, appears in no report to the tax office. Someone who buys bitcoin from a provider and transfers it to their own wallet does, even though the transfer by itself triggers no tax.",
+    },
+  },
+  {
+    id: "limits",
+    label: {
+      de: "Die Ausweisgrenze sinkt seit 1991",
+      en: "The ID limit has been falling since 1991",
+    },
+    text: {
+      de: `Ausweisen muss man sich bei einem Geschäft ohne Konto erst ab einer Grenze; in Gold gemessen sinkt sie von ${gold.de[0]} Unzen im Jahr 1991 auf ${gold.de[1]} Unzen ab Juli 2027. Bei Krypto trägt jede Übertragung über einen Anbieter den Namen des Kunden, ab dem ersten Cent.`,
+      en: `ID is needed for a transaction without an account only above a limit; measured in gold, it falls from ${gold.en[0]} ounces in 1991 to ${gold.en[1]} ounces from July 2027. With crypto, every transfer through a provider carries the customer’s name, from the first cent.`,
+    },
+  },
+  {
+    id: "leaks",
+    label: {
+      de: "Solche Daten gehen verloren",
+      en: "Such data gets lost",
+    },
+    on: true,
+    text: {
+      de: "Wohin solche Daten gelangen, zeigt Frankreich. Beim Krypto-Steuerdienst Waltio gerieten 2026 Gewinne und Bestände der Kunden in fremde Hände; laut Polizei wählen Täter damit Opfer für Gewalttaten aus. Aus dem nationalen Kontenregister zogen Angreifer mit gestohlenen Zugangsdaten von Beamten 1,2 Millionen Datensätze. In Österreich fragte ein Finanzbeamter sechs Jahre lang ohne dienstlichen Grund tausende Male Steuerdaten ab.",
+      en: "France shows where such data ends up. At the crypto tax service Waltio, customers’ gains and holdings fell into the wrong hands in 2026; according to the police, criminals use them to select victims of violent crime. From the national bank-account register, attackers using officials’ stolen credentials extracted 1.2 million records. In Austria, a tax official accessed tax records thousands of times over six years without any official reason.",
+    },
+  },
+  {
+    id: "attacks",
+    label: {
+      de: "Menschen werden überfallen",
+      en: "People are attacked",
+    },
+    on: true,
+    text: {
+      de: (facts, link) =>
+        `Bitcoin funktioniert wie Bargeld: Wer die Schlüssel hat, kann ihn übertragen, auch unter Zwang. Eine Liste, wer vermutlich wie viel davon daheim hat, ist darum gefährlich. Weltweit sind ${count("de", facts.attacks)} körperliche Angriffe auf Menschen öffentlich bekannt, die Kryptowerte besitzen oder besitzen sollen, ${facts.year} bisher ${count("de", facts.inYear)}, davon ${count("de", facts.inYearEu)} in der EU: ${link}`,
+      en: (facts, link) =>
+        `Bitcoin works like cash: whoever holds the keys can move it, under duress too. A list of who probably keeps how much of it at home is therefore dangerous. Worldwide, ${count("en", facts.attacks)} physical attacks on people who hold crypto-assets, or are believed to, are publicly known, ${count("en", facts.inYear)} so far in ${facts.year}, ${count("en", facts.inYearEu)} of them in the EU: ${link}`,
+    },
+  },
+  {
+    id: "crime",
+    label: {
+      de: "Gegen Kriminalität hilft es kaum",
+      en: "It does little against crime",
+    },
+    on: true,
+    text: {
+      de: "Gegen Kriminalität hilft die Sammlung kaum. Laut Geldwäschemeldestelle eröffnen Kriminelle Konten mit gefälschten österreichischen Pässen, auf die Namen echter, unbeteiligter Menschen. Der Geldwäscheforscher Ronald Pol schätzt, dass die weltweiten Regeln gegen Geldwäsche weniger als 0,1 Prozent der kriminellen Gelder treffen.",
+      en: "Against crime, the collection does little. According to Austria’s financial intelligence unit, criminals open accounts with forged Austrian passports in the names of real, uninvolved people. The money-laundering researcher Ronald Pol estimates that the worldwide rules against money laundering touch less than 0.1 percent of criminal finances.",
+    },
+  },
+  {
+    id: "privacy",
+    label: {
+      de: "Mein Geld geht niemanden etwas an",
+      en: "My money is nobody else’s business",
+    },
+    text: {
+      de: "Was ich mit meinem Geld mache, geht niemanden etwas an. Rechtfertigen muss sich nicht, wer spart, sondern ein Gesetz, das ohne jeden Verdacht Daten über alle Kunden sammeln lässt.",
+      en: "What I do with my money is nobody else’s business. It is not savers who owe a justification, but a law that has data on every customer collected without any suspicion.",
+    },
+  },
+]
+
+const demands: Part[] = [
+  {
+    id: "suspicion",
+    label: {
+      de: "Keine Finanzakte ohne Verdacht",
+      en: "No financial file without suspicion",
+    },
+    on: true,
+    text: {
+      de: "Keine Finanzakte ohne Verdacht. Ermittelt wird bei konkretem Verdacht, statt Daten über alle zu sammeln.",
+      en: "No financial file without suspicion. Investigate on specific suspicion instead of collecting data on everyone.",
+    },
+  },
+  {
+    id: "stockpile",
+    label: {
+      de: "Keine Daten auf Vorrat (§ 20)",
+      en: "No stockpiling of data (Section 20)",
+    },
+    on: true,
+    text: {
+      de: "Keine Daten auf Vorrat. Österreich geht über die Richtlinie hinaus: Nach § 20 Krypto-MPfG müssen Anbieter die Meldedaten für alle Kunden aufbereiten, auch für jene, die nie gemeldet werden. Deutschland und die Niederlande verlangen das nur für gemeldete Kunden.",
+      en: "No stockpiling of data. Austria goes beyond the directive: under Section 20 Krypto-MPfG, providers must prepare the reporting data for all customers, including those who are never reported. Germany and the Netherlands require it only for reported customers.",
+    },
+  },
+  {
+    id: "retention",
+    label: {
+      de: "Fünf statt zehn Jahre speichern",
+      en: "Keep data five years, not ten",
+    },
+    on: true,
+    text: {
+      de: "Kürzer speichern. § 20 Krypto-MPfG verlangt zehn Jahre, „aus Vereinfachungsgründen“; für Meldungen über Bankkonten reichen fünf.",
+      en: "Keep data for less time. Section 20 Krypto-MPfG demands ten years, “for reasons of simplicity”; five are enough for reports on bank accounts.",
+    },
+  },
+  {
+    id: "ownWallet",
+    label: {
+      de: "Übertragungen auf die eigene Wallet nicht melden",
+      en: "Do not report transfers to one’s own wallet",
+    },
+    on: true,
+    text: {
+      de: "Übertragungen auf die eigene Wallet nicht melden. Die Meldung schreibt die EU vor. Der Neufassung der Richtlinie müssen alle Mitgliedstaaten zustimmen; Österreich soll das nur tun, wenn diese Meldung gestrichen wird.",
+      en: "Do not report transfers to one’s own wallet. EU law requires this report. The recast of the directive needs the agreement of every member state; Austria should give it only if this report is removed.",
+    },
+  },
+  {
+    id: "necessary",
+    label: {
+      de: "Nur erheben, was nachweislich nötig ist",
+      en: "Collect only what is demonstrably necessary",
+    },
+    text: {
+      de: "Nur erheben, was nachweislich nötig ist. Wozu das Finanzamt neben den Beträgen auch wissen muss, wie viele Bitcoin jemand bewegt hat und in wie vielen Transaktionen, muss der Staat begründen.",
+      en: "Collect only what is demonstrably necessary. Why the tax office needs to know, besides the amounts, how many bitcoin someone moved and in how many transactions is for the state to justify.",
+    },
+  },
+  {
+    id: "holding",
+    label: {
+      de: "Haltefrist wieder einführen (Steuerpolitik, deine eigene Forderung)",
+      en: "Bring back the holding period (tax policy, your own demand)",
+    },
+    text: {
+      de: "Die Haltefrist für Bitcoin wieder einführen. Bis zur Steuerreform 2022 waren Gewinne nach einem Jahr steuerfrei, wie bis heute bei Goldmünzen und in Deutschland auch bei Bitcoin. Sie abzuschaffen war ein Fehler: Es trifft, wer langfristig spart.",
+      en: "Bring back the holding period for bitcoin. Until the 2022 tax reform, gains were tax-free after one year, as they still are for gold coins and, in Germany, for bitcoin too. Abolishing it was a mistake: it hits those who save for the long term.",
+    },
+  },
+]
+
+// The groups in the order of the letter; the generator lists them the same
+// way.
+export const letterParts = { about, reasons, demands }
+
+export const letterDefaults = [...about, ...reasons, ...demands]
+  .filter((part) => part.on)
+  .map((part) => part.id)
 
 const text = {
   de: {
@@ -76,21 +288,15 @@ const text = {
     },
     generic: "Sehr geehrte Damen und Herren,",
     senderPlaceholder: "[Dein Name]",
-    intro:
-      "seit Jänner 2026 müssen Krypto-Anbieter nach dem Krypto-Meldepflichtgesetz (Krypto-MPfG), das die EU-Richtlinie DAC8 umsetzt, dem Finanzamt jedes Jahr Name, Anschrift und Steuernummer ihrer Kunden melden, dazu Jahressummen ihrer Käufe, Verkäufe und Übertragungen.",
-    comparison: `Bitcoin ist für viele Menschen Erspartes, wie Gold oder Bargeld daheim. Wer Geld abhebt oder bei der Bank Goldmünzen kauft und daheim verwahrt, steht in keiner Meldung ans Finanzamt. Wer Bitcoin beim Anbieter kauft und in die eigene Wallet überträgt, schon: Die Jahressumme steht in der Meldung, ohne Wallet-Adresse, obwohl das für sich genommen keine Steuer auslöst. Ausweisen muss man sich bei einem Geschäft ohne Konto erst ab einer Grenze; in Gold gemessen sinkt sie von ${gold.de[0]} Unzen im Jahr 1991 auf ${gold.de[1]} Unzen ab Juli 2027. Bei Krypto trägt jede Übertragung über einen Anbieter den Namen des Kunden, ab dem ersten Cent.`,
-    danger: (facts: LetterFacts, link: string) =>
-      `Gelangt so eine Meldung in falsche Hände, zeigt sie, wer vermutlich wie viel Bitcoin daheim hat. Bitcoin funktioniert wie Bargeld: Wer die Schlüssel hat, kann ihn übertragen, auch unter Zwang. Datenlecks gibt es bei Krypto-Börsen ebenso wie bei Steuerbehörden, und organisierte Banden nutzen sie: In den USA hackte eine Bande Datenbanken, um Menschen mit viel Krypto auszuwählen, und brach bei ihnen ein; in Frankreich überfallen bewaffnete Täter laut Polizei Menschen in ihrer Wohnung, deren Daten offenbar gehackt wurden. Weltweit sind ${count("de", facts.attacks)} körperliche Angriffe auf Menschen öffentlich bekannt, die Kryptowerte besitzen oder besitzen sollen, ${facts.year} bisher ${count("de", facts.inYear)}, davon ${count("de", facts.inYearEu)} in der EU. Die Berichte schildern Entführungen, Folter, abgetrennte Finger und Morde, auch in der EU: ${link}`,
-    austria:
-      "Österreich geht sogar über die Richtlinie hinaus. Nach § 20 Krypto-MPfG müssen Anbieter die Meldedaten für alle Kunden aufbereiten, auch für jene, die nie gemeldet werden, und jede Meldung zehn Jahre aufbewahren.",
-    ask: "Ich ersuche Sie, sich für drei Änderungen einzusetzen:",
-    demands: [
-      "Daten nur für gemeldete Kunden. Anbieter sollen Meldedaten nur für jene aufbereiten, deren Daten tatsächlich ans Finanzamt gehen, wie in Deutschland und den Niederlanden.",
-      "Kürzer speichern. Für Meldungen über Bankkonten reichen fünf Jahre; „Vereinfachungsgründe“ rechtfertigen keine zehn.",
-      "Übertragungen auf die eigene Wallet nicht melden. Das schreibt die EU vor; Österreich soll sich in Brüssel für die Streichung einsetzen, auch bei der Neufassung der Richtlinie, die alle Mitgliedstaaten einstimmig beschließen müssen.",
-    ],
+    thesis:
+      "finanzielle Überwachung schützt niemanden. Sie zeigt Kriminellen, bei wem etwas zu holen ist.",
+    law: "Seit Jänner 2026 müssen Krypto-Anbieter nach dem Krypto-Meldepflichtgesetz (Krypto-MPfG), das die EU-Richtlinie DAC8 umsetzt, zu Name, Anschrift und Steuernummer ihrer Kunden festhalten, wie viel diese im Jahr kaufen, verkaufen und auf die eigene Wallet übertragen. Ab 2027 melden sie das jedes Jahr dem Finanzamt, als Jahressummen ohne Wallet-Adressen.",
+    accept:
+      "Die Datenlecks und die Überfälle sind bekannt. Wer diese Daten trotzdem weiter sammeln lässt, nimmt in Kauf, dass sie bei Kriminellen landen.",
+    ask: "Ich fordere Sie auf, sich für Folgendes einzusetzen:",
     question:
-      "Was ich mit meinem Geld mache, geht niemanden etwas an. Rechtfertigen muss sich nicht, wer spart, sondern ein Gesetz, das ohne jeden Verdacht Daten über alle Kunden sammeln lässt, während Kriminelle laut Geldwäschemeldestelle mit gefälschten österreichischen Pässen Konten eröffnen, auf die Namen echter, unbeteiligter Menschen. Darum frage ich Sie direkt: Warum wird gemeldet, wer Bitcoin beim Anbieter kauft, aber nicht, wer Gold bei der Bank kauft? Warum nehmen Bundesregierung und EU in Kauf, diese Menschen einer solchen Gefahr auszusetzen? Und welche der drei Änderungen werden Sie unterstützen? Über Ihre Antwort würde ich mich freuen.",
+      "Welche dieser Forderungen unterstützen Sie, und was werden Sie dafür tun? Ich bitte um Ihre Antwort.",
+    questionAlone: "Was werden Sie dagegen tun? Ich bitte um Ihre Antwort.",
     closing: "Mit freundlichen Grüßen",
   },
   en: {
@@ -101,21 +307,15 @@ const text = {
     },
     generic: "Dear Sir or Madam,",
     senderPlaceholder: "[Your name]",
-    intro:
-      "Since January 2026, the Krypto-Meldepflichtgesetz (Krypto-MPfG), which implements the EU directive DAC8, has required crypto-asset providers to report their customers’ name, home address and tax number to the tax office every year, together with annual totals of their purchases, sales and transfers.",
-    comparison: `For many people, bitcoin is savings, like gold or cash at home. Someone who withdraws cash, or buys gold coins at a bank and keeps them at home, appears in no report to the tax office. Someone who buys bitcoin from a provider and transfers it to their own wallet does: the annual total is in the report, without the wallet address, even though the transfer by itself triggers no tax. ID is needed for a transaction without an account only above a limit; measured in gold, it falls from ${gold.en[0]} ounces in 1991 to ${gold.en[1]} ounces from July 2027. With crypto, every transfer through a provider carries the customer’s name, from the first cent.`,
-    danger: (facts: LetterFacts, link: string) =>
-      `If such a report falls into the wrong hands, it shows who probably keeps how much bitcoin at home. Bitcoin works like cash: whoever holds the keys can move it, under duress too. Data breaches happen at crypto exchanges as well as at tax authorities, and organised gangs exploit them: in the USA, a gang hacked databases to pick out people with large crypto holdings and burgled them; in France, according to the police, armed criminals attack people in their homes whose data had apparently been hacked. Worldwide, ${count("en", facts.attacks)} physical attacks on people who hold crypto-assets, or are believed to, are publicly known, ${count("en", facts.inYear)} so far in ${facts.year}, ${count("en", facts.inYearEu)} of them in the EU. The reports describe kidnappings, torture, severed fingers and murders, in the EU too: ${link}`,
-    austria:
-      "Austria even goes beyond the directive. Under Section 20 Krypto-MPfG, providers must prepare the reporting data for all customers, including those who are never reported, and keep every report for ten years.",
-    ask: "I ask you to support three changes:",
-    demands: [
-      "Data only for reported customers. Providers should prepare reporting data only for those whose data actually goes to the tax office, as in Germany and the Netherlands.",
-      "Keep data for less time. Five years are enough for reports on bank accounts; “reasons of simplicity” do not justify ten.",
-      "Do not report transfers to one’s own wallet. EU law requires this report; Austria should push in Brussels for its removal, including in the recast of the directive, which all member states must adopt unanimously.",
-    ],
+    thesis:
+      "Financial surveillance protects no one. It shows criminals where there is something to take.",
+    law: "Since January 2026, the Krypto-Meldepflichtgesetz (Krypto-MPfG), which implements the EU directive DAC8, has required crypto-asset providers to record, next to their customers’ name, home address and tax number, how much they buy, sell and transfer to their own wallet in a year. From 2027 they report this to the tax office every year, as annual totals without wallet addresses.",
+    accept:
+      "The data breaches and the attacks are known. Whoever keeps this data being collected regardless accepts that it ends up with criminals.",
+    ask: "I call on you to work for the following:",
     question:
-      "What I do with my money is nobody else’s business. It is not savers who owe a justification, but a law that has data on every customer collected without any suspicion, while, according to Austria’s financial intelligence unit, criminals open accounts with forged Austrian passports in the names of real, uninvolved people. So I ask you directly: why is buying bitcoin from a provider reported, but buying gold at a bank is not? Why do the Austrian government and the EU accept exposing these people to such danger? And which of the three changes will you support? I look forward to your reply.",
+      "Which of these demands do you support, and what will you do for them? I ask for your reply.",
+    questionAlone: "What will you do about it? I ask for your reply.",
     closing: "Kind regards",
   },
 }
@@ -126,22 +326,35 @@ export const buildLetter = (
   facts: LetterFacts,
 ) => {
   const t = text[language]
+  const link = `https://dac8.org${pathFor("attacks", language)}`
+  const chosen = (parts: Part[]) =>
+    parts
+      .filter((part) => fields.chosen.includes(part.id))
+      .map((part) => {
+        const value = part.text[language]
+        return typeof value === "string" ? value : value(facts, link)
+      })
   const salutation = fields.recipient
     ? `${t.salutation[fields.salutation]} ${fields.recipient},`
     : t.generic
   const signature = [fields.sender || t.senderPlaceholder, fields.location]
     .filter(Boolean)
     .join("\n")
+  const personal = [...chosen(about), fields.personal].filter(Boolean).join(" ")
+  const asked = chosen(demands)
   return [
     salutation,
-    t.intro,
-    ...(fields.personal ? [fields.personal] : []),
-    t.comparison,
-    t.danger(facts, `https://dac8.org${pathFor("attacks", language)}`),
-    t.austria,
-    t.ask,
-    t.demands.map((demand) => `- ${demand}`).join("\n"),
-    t.question,
+    t.thesis,
+    t.law,
+    ...(personal ? [personal] : []),
+    ...chosen(reasons),
+    ...(asked.length
+      ? [
+          `${t.accept} ${t.ask}`,
+          asked.map((demand) => `- ${demand}`).join("\n"),
+          t.question,
+        ]
+      : [`${t.accept} ${t.questionAlone}`]),
     `${t.closing}\n${signature}`,
   ].join("\n\n")
 }
