@@ -82,13 +82,7 @@ const other = en ? "de" : "en"
       <p class="section-intro">
         {en ? "The rule that covers all customers is in Austrian law, and the National Council can change it. A personal letter shows members of parliament that people care. The letter is in German by default, the working language of the Austrian parliament." : "Die Regel, die alle Kunden erfasst, steht im österreichischen Gesetz. Der Nationalrat kann sie ändern. Ein persönlicher Brief zeigt Abgeordneten, dass das Thema Menschen bewegt."}
       </p>
-      <!-- Hidden until the letter generator launches. -->
-      <div class="coming-soon">
-        <div inert>
-          <LetterGenerator language={language} />
-        </div>
-        <p>{en ? "Coming soon" : "Bald verfügbar"}</p>
-      </div>
+      <LetterGenerator language={language} />
     </section>
     <section id="teilen" aria-labelledby="share-heading">
       <h2 id="share-heading">
@@ -144,27 +138,3 @@ const other = en ? "de" : "en"
     </section>
   </article>
 </Layout>
-
-<style>
-  .coming-soon {
-    position: relative;
-
-    > div {
-      filter: blur(6px);
-      user-select: none;
-    }
-
-    > p {
-      position: absolute;
-      inset-block-start: var(--space-xl);
-      inset-inline: 0;
-      inline-size: fit-content;
-      margin-inline: auto;
-      padding: var(--space-xs) var(--space-m);
-      border-radius: var(--radius-full);
-      color: var(--primary-foreground);
-      background: var(--primary);
-      font-weight: var(--font-weight-medium);
-    }
-  }
-</style>
