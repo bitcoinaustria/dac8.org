@@ -1,5 +1,4 @@
 ---
-import { readdirSync } from "node:fs"
 import SourceRefs from "@/components/SourceRefs.astro"
 import { ruleChronicle } from "@/data/aml-history"
 import { historyAsOf } from "@/data/history"
@@ -9,7 +8,6 @@ import { historySources } from "@/data/history-sources"
 import { firstVoice, lawVoices } from "@/data/law-voices"
 import {
   chapters,
-  goldPrice,
   goldShown,
   inGold,
   inTodaysMoney,
@@ -17,42 +15,39 @@ import {
   pallets,
   pile,
   reportField,
-  type Scene,
   type Shot,
   sourcesOf,
   steps,
   thresholds,
 } from "@/data/overregulation"
-import cashBrick from "@/assets/history/cash-brick-bare.webp"
-import cashBrickGold from "@/assets/history/cash-brick-gold.webp"
-import cashCent from "@/assets/history/cash-cent.webp"
-import cashBundle from "@/assets/history/cash-bundle-bare.webp"
-import cashBundleGold from "@/assets/history/cash-bundle-gold.webp"
-import noteCrime from "@/assets/history/note-crime.webp"
 import panopticon from "@/assets/history/panopticon.json"
 import panBase from "@/assets/history/panopticon-base.webp"
+import panBaseLate from "@/assets/history/panopticon-base-late.webp"
 import panProposal from "@/assets/history/panopticon-proposal.webp"
 import world from "@/assets/history/world.json"
 import wideLinks from "@/assets/history/world-wide-links.webp"
 import wideTags from "@/assets/history/world-wide-tags.webp"
 import type { Language } from "@/lib/i18n"
 
-// The story of over-regulation as a scroll film, built like the home
-// page's data story: the stage stands while the steps scroll past. Each
-// step is a headline of a few words and turns one picture into a contrast
-// you see before you read it, in eleven steps: the amount from which cash
-// needs ID, and nothing at all for crypto; rules set on every way money can
-// take, then ever more authorities in the watchtower; six pages beside 488;
-// a sea of reports, most of them kept on file, beside a few convictions;
-// and a 100-euro note from which the state tears a red sliver. Then the
-// film returns to the panopticon and stays in it for twelve more steps:
-// the year runs on to what is decided next, and the camera flies, with the
-// scroll, to the EU's 27 registers, into the crypto cell, over a breach in
-// the tower, down to a notice on the cell's table, up to pallets of notes
-// in the yard and to the loudspeakers on the tower. Grey is what is collected, red what
-// comes of it or what is new. Each step cites its sources by number from
-// the list at the end of the page (src/data/history-sources.ts). Without
-// the script the headlines stand as text one below the other.
+// The story of over-regulation as a scroll film in one rendered world, a
+// panopticon at night (scripts/artwork/render-panopticon.py): the stage
+// stands while the steps scroll past. Each step is a headline of a few
+// words and one still. It starts at a table in one cell, with the amount
+// from which cash needs ID in notes and in gold, and a cent for crypto;
+// rises over the ring, where the year runs with the scroll and a
+// searchlight comes on for every way money takes once a rule applies, and
+// a window in the watchtower for every authority let into the account
+// register; goes back into the cell, whose walls fill with one sheet per
+// page of law, and over the yard, where one slip per suspicion report
+// rains down; then to what is decided next, the EU's 27 registers, the
+// view from the cell, a breach in the tower, a notice on the table,
+// pallets of notes in the yard and the loudspeakers on the tower. Where a
+// step has a clip (public/film/), the camera's way to its still plays
+// once when the step comes up by scrolling forward; otherwise, and for
+// readers who prefer reduced motion or save data, the stills fade into
+// each other. Each step cites its sources by number from the list at the
+// end of the page (src/data/history-sources.ts). Without the script the
+// headlines stand as text one below the other.
 interface Props {
   language: Language
 }
@@ -61,6 +56,7 @@ const { language } = Astro.props
 const en = language === "en"
 const locale = en ? "en-GB" : "de-DE"
 const n = (value: number) => new Intl.NumberFormat(locale).format(value)
+const euro = (value: number) => (en ? `€${n(value)}` : `${n(value)} €`)
 const { cite } = historySources(language)
 
 const index = new Map(steps.map((step, i) => [step.id, i]))
@@ -73,86 +69,9 @@ const chapterOf = new Map(chapters.map((chapter) => [chapter.id, chapter]))
 const items = steps.map((step, i) => ({
   ...step,
   i,
-  scene: (step.scene ?? chapterOf.get(step.chapter)?.scene) as Scene,
   chapterLabel: chapterOf.get(step.chapter)?.label[language] ?? "",
 }))
 const thisYear = new Date(historyAsOf).getUTCFullYear()
-
-// ---------- Ausweis ---------------------------------------------------------
-const real = (t: (typeof thresholds)[number]) => inTodaysMoney(t.amount, t.year)
-// What one transaction without an account may move without showing ID,
-// 1991 in today's money, rendered at true scale in Blender from the same
-// camera (scripts/artwork/render-cash.py): 339 notes of 100 euros, then a
-// banded bundle of 100 notes from 2027, and for crypto a single cent. In
-// the gold step the same amounts in gold coins of an ounce and less, at
-// their price then and now, lie down in front of the notes: a second
-// picture of each pile, cropped alike, fades in over the first
-// (scripts/artwork/composite-gold.mjs). All three stay in view, so the
-// amounts compare. Each step shows one measure, so the rows stay short.
-const piles = [
-  { notes: cashBrick, gold: cashBrickGold },
-  { notes: cashBundle, gold: cashBundleGold },
-]
-const widest = Math.max(
-  cashCent.width,
-  ...piles.flatMap((pile) => [pile.notes.width, pile.gold.width]),
-)
-const barStep = at("ausweis-bar")
-const goldStep = at("ausweis-gold")
-const cryptoStep = at("ausweis-krypto")
-const cashRows = thresholds.map((t, k) => {
-  const pile = piles[k]
-  const image = pile?.notes ?? cashCent
-  const amount = real(t)
-  // The coins are drawn for a fixed amount; once the gold price moves the
-  // figure a tenth away from it, they need rendering again.
-  const shown = goldShown[t.year]
-  if (shown && Math.abs(inGold(t.amount, t.year) / shown - 1) > 0.1) {
-    throw new Error(
-      `Film: the picture shows ${shown} oz of gold for ${t.year}, the price now gives ${inGold(t.amount, t.year)}; render the coins again`,
-    )
-  }
-  return {
-    at: at(t.step),
-    year: t.amount === 0 ? (en ? "Crypto" : "Krypto") : t.year,
-    zero: t.amount === 0,
-    image,
-    gold: pile?.gold,
-    style: `--w: ${((image.width / widest) * 100).toFixed(2)}%`,
-    value:
-      t.amount === 0
-        ? en
-          ? "From the first cent"
-          : "Ab dem ersten Cent"
-        : en
-          ? `€${n(amount)}`
-          : `${n(amount)} €`,
-    detail:
-      t.amount === 0
-        ? en
-          ? "your name on every transfer through a provider"
-          : "dein Name bei jeder Übertragung über einen Anbieter"
-        : t.year >= thisYear
-          ? en
-            ? "in cash from €3,000"
-            : "bar schon ab 3.000 €"
-          : `${en ? "then" : "damals"} ${n(t.amount)} ${t.unit === "ECU" ? "ECU" : "€"}`,
-    ounces:
-      t.amount === 0
-        ? undefined
-        : en
-          ? `${n(inGold(t.amount, t.year))} oz`
-          : `${n(inGold(t.amount, t.year))} Unzen`,
-    goldDetail:
-      t.year >= thisYear
-        ? en
-          ? "of gold at today’s price"
-          : "Gold zum heutigen Preis"
-        : en
-          ? `of gold at the price of ${t.year}`
-          : `Gold zum Preis von ${t.year}`,
-  }
-})
 
 // ---------- Regeln ----------------------------------------------------------
 // The ways money can take, and the rules set on them year by year: checks
@@ -242,6 +161,10 @@ const ways = wayList.map((way, k) => {
     ...way,
     label: way.label[language],
     light: light.default.src,
+    // The crypto cell's light once more, with the pages on its walls.
+    lateLight:
+      panLights[`../assets/history/panopticon-light-${k}-late.webp`]?.default
+        .src,
     rules,
     style: [
       `--x: ${cell.label[0]}%`,
@@ -305,12 +228,22 @@ const watch = watchers.map((watcher, k) => ({
     watchLights[`../assets/history/panopticon-watch-${k}.webp`]?.default.src,
 }))
 
-// ---------- Die Welt ---------------------------------------------------------
-// The later chapters stay in the panopticon. Each of their steps shows a
-// still rendered in the same world (render-panopticon.py), and where a
-// step has a flight, the camera's way to that still runs with the scroll
-// (src/lib/film-flight.ts, frames in public/film/). Words in the picture
-// stand where the render says, in percent of the picture.
+// ---------- Papier ----------------------------------------------------------
+// Read aloud on request (src/data/law-voices.ts): the 1991 passage alone,
+// then today's passages one after another until they overlap.
+const voices = JSON.stringify(
+  lawVoices.map((voice) => ({
+    id: voice.id,
+    first: voice.id === firstVoice,
+    ref: voice.ref[language],
+    text: voice.text[language],
+    src: `/audio/law/${voice.id}-${language}.mp3`,
+  })),
+)
+
+// ---------- Die Standbilder --------------------------------------------------
+// Every step outside the overview shows a still, and words stand in it
+// where the render says, in percent of the picture (world.json).
 const stillFiles = import.meta.glob<{ default: ImageMetadata }>(
   "../assets/history/world-*.webp",
   { eager: true },
@@ -324,103 +257,167 @@ const stillOf = (shot: Shot) => {
 const shots = [...new Set(items.flatMap((item) => item.shot ?? []))].map(
   (shot) => ({ id: shot, src: stillOf(shot) }),
 )
-// The pictures show a fixed number of sheets and pallets; once the data
-// move away from them, they need rendering again.
-const baked = {
-  leaks: 38,
-  authority: 20,
-  cost: 12.5,
-  measured: 12,
-  modelled: 56,
+const clips = [...new Set(items.flatMap((item) => item.clip ?? []))]
+
+// The pictures show fixed numbers of notes, coins, pages, slips, sheets
+// and pallets; once the data move away from them, they need rendering
+// again with the counts at the top of the render script.
+const [then, now] = thresholds.filter((t) => t.amount > 0)
+const { latest, kept: keptReports, convictions } = reportField
+const totalPages = pile.reduce((sum, block) => sum + block.pages, 0)
+const kept = recovery.latest.percent
+const shown = {
+  notes: [inTodaysMoney(then.amount, then.year) / 100, now.amount / 100],
+  ounces: [inGold(then.amount, then.year), inGold(now.amount, now.year)],
+  pages: [pile[0].pages, totalPages],
+  reports: [latest, keptReports, convictions],
+  state: kept,
+  leaks: [leakCount.all, leakCount.authority],
+  pallets: [pallets.cost, pallets.measured, pallets.modelled],
 }
+const baked = {
+  notes: [339, 100],
+  ounces: [goldShown[then.year], goldShown[now.year]],
+  pages: [6, 488],
+  reports: [13989, 9665, 139],
+  state: 2,
+  leaks: [38, 20],
+  pallets: [12.5, 12, 56],
+}
+// The coins are drawn for a fixed weight; a tenth of drift in the gold
+// price is allowed before they need rendering again.
+const drift = shown.ounces.some(
+  (value, k) => Math.abs(value / baked.ounces[k] - 1) > 0.1,
+)
 if (
-  leakCount.all !== baked.leaks ||
-  leakCount.authority !== baked.authority ||
-  pallets.cost !== baked.cost ||
-  pallets.measured !== baked.measured ||
-  pallets.modelled !== baked.modelled
+  drift ||
+  JSON.stringify({ ...shown, ounces: 0 }) !==
+    JSON.stringify({ ...baked, ounces: 0 })
 ) {
   throw new Error(
-    `Film: the stills show ${JSON.stringify(baked)}, the data give ${JSON.stringify({ ...leakCount, ...pallets })}; set the counts in render-panopticon.py and render leak and yard again`,
+    `Film: the pictures show ${JSON.stringify(baked)}, the data give ${JSON.stringify(shown)}; set the counts in render-panopticon.py and render again`,
   )
 }
-const flightFrames = Object.fromEntries(
-  [...new Set(items.flatMap((item) => item.flight ?? []))].map((flight) => [
-    flight,
-    readdirSync(`public/film/flight${flight}`).filter((name) =>
-      name.endsWith(".webp"),
-    ).length,
-  ]),
-)
-// Where a step's words stand in its still.
-const points: Record<string, [number, number]> = {
-  tag: world.wide.tag as [number, number],
-  cost: world.yard.cost as [number, number],
-  measured: world.yard.measured as [number, number],
-  modelled: world.yard.modelled as [number, number],
-  promise: world.horn.left as [number, number],
-  record: world.horn.right as [number, number],
+
+// Words in the stills: a figure, and what it is.
+type Point = [number, number]
+type Mark = {
+  step: number
+  id: string
+  at: Point
+  label?: string
+  value?: string
+  text?: string
 }
-const marks = items.flatMap((item) =>
-  (item.marks ?? []).map((mark) => ({
-    step: item.i,
-    id: mark.id,
-    text: mark.text[language],
-    // What was promised and what is on record say which is which.
-    label:
-      mark.id === "promise"
+const cashMarks = (step: string, gold: boolean): Mark[] =>
+  [then, now].map((t, k) => ({
+    step: at(step),
+    id: k === 0 ? "then" : "now",
+    at: (k === 0 ? world.cash.then : world.cash.now) as Point,
+    label: String(t.year),
+    value: gold
+      ? `${n(inGold(t.amount, t.year))} ${en ? "oz" : "Unzen"}`
+      : euro(inTodaysMoney(t.amount, t.year)),
+    text: gold
+      ? t.year >= thisYear
         ? en
-          ? "Promised"
-          : "Versprochen"
-        : mark.id === "record"
+          ? "of gold at today’s price"
+          : "Gold zum heutigen Preis"
+        : en
+          ? `of gold at the price of ${t.year}`
+          : `Gold zum Preis von ${t.year}`
+      : t.year >= thisYear
+        ? en
+          ? "in cash from €3,000"
+          : "bar schon ab 3.000 €"
+        : `${en ? "then" : "damals"} ${n(t.amount)} ${t.unit === "ECU" ? "ECU" : "€"}`,
+  }))
+const points: Record<string, Point> = {
+  tag: world.wide.tag as Point,
+  cost: world.yard.cost as Point,
+  measured: world.yard.measured as Point,
+  modelled: world.yard.modelled as Point,
+  promise: world.horn.left as Point,
+  record: world.horn.right as Point,
+}
+const marks: Mark[] = [
+  ...cashMarks("ausweis-bar", false),
+  ...cashMarks("ausweis-gold", true),
+  {
+    step: at("ausweis-krypto"),
+    id: "cent",
+    at: world.cash.cent as Point,
+    label: en ? "Crypto" : "Krypto",
+    value: en ? "From the first cent" : "Ab dem ersten Cent",
+  },
+  {
+    step: at("ergebnis-liegen"),
+    id: "kept",
+    at: world.reports.kept as Point,
+    value: n(keptReports),
+    text: en ? "not passed on, kept" : "nicht weitergegeben, gespeichert",
+  },
+  {
+    step: at("ergebnis-liegen"),
+    id: "passed",
+    at: world.reports.passed as Point,
+    value: n(latest - keptReports),
+    text: en ? "passed on" : "weitergegeben",
+  },
+  {
+    step: at("ergebnis-urteile"),
+    id: "all",
+    at: world.reports.all as Point,
+    value: n(latest),
+    text: en ? "reports" : "Meldungen",
+  },
+  {
+    step: at("ergebnis-urteile"),
+    id: "convictions",
+    at: world.reports.convictions as Point,
+    value: n(convictions),
+    text: en ? "convictions" : "Verurteilungen",
+  },
+  {
+    step: at("ergebnis-euro"),
+    id: "state",
+    at: world.note.state as Point,
+    value: euro(kept),
+    text: en ? "taken by the state" : "zieht der Staat ein",
+  },
+  {
+    step: at("ergebnis-euro"),
+    id: "rest",
+    at: world.note.rest as Point,
+    value: euro(100 - kept),
+    text: en ? "stay with criminals" : "bleiben bei Kriminellen",
+  },
+  ...items.flatMap((item) =>
+    (item.marks ?? []).map((mark) => ({
+      step: item.i,
+      id: mark.id,
+      at: points[mark.id],
+      // What was promised and what is on record say which is which.
+      label:
+        mark.id === "promise"
           ? en
-            ? "Measured"
-            : "Gemessen"
-          : undefined,
-    style: `--x: ${points[mark.id][0]}%; --y: ${points[mark.id][1]}%`,
-  })),
-)
+            ? "Promised"
+            : "Versprochen"
+          : mark.id === "record"
+            ? en
+              ? "Measured"
+              : "Gemessen"
+            : undefined,
+      text: mark.text[language],
+    })),
+  ),
+]
 const stepsOf = (shot: Shot) =>
   items
     .filter((item) => item.shot === shot)
     .map((item) => item.i)
     .join(",")
 const tagStep = String(at("weiter-zahlungen"))
-
-// ---------- Papier ----------------------------------------------------------
-// Read aloud on request (src/data/law-voices.ts): the 1991 passage alone,
-// then today's passages one after another until they overlap.
-const voices = JSON.stringify(
-  lawVoices.map((voice) => ({
-    id: voice.id,
-    first: voice.id === firstVoice,
-    ref: voice.ref[language],
-    text: voice.text[language],
-    src: `/audio/law/${voice.id}-${language}.mp3`,
-  })),
-)
-const totalPages = pile.reduce((sum, block) => sum + block.pages, 0)
-const firstPages = pile[0].pages
-const pages = Array.from({ length: totalPages }, (_, k) => k)
-
-// ---------- Ergebnis --------------------------------------------------------
-// One dot per report on a canvas (src/lib/film-sand.ts): which state
-// belongs to which step.
-const { firstYear, first, latest, kept: keptReports, convictions } = reportField
-const sandStates = JSON.stringify({
-  [at("ergebnis-2025")]: "all",
-  [at("ergebnis-liegen")]: "kept",
-  [at("ergebnis-urteile")]: "convictions",
-})
-const fieldSteps = ["ergebnis-2025", "ergebnis-liegen", "ergebnis-urteile"]
-  .map(at)
-  .join(",")
-// A 100-euro note tears on a canvas (src/lib/film-note.ts): the state
-// takes the share Europol last estimated, the rest stays with criminals.
-const noteStep = at("ergebnis-euro")
-const kept = recovery.latest.percent
-const euro = (value: number) => (en ? `€${n(value)}` : `${n(value)} €`)
-const noteKeep = String(kept / 100)
 ---
 
 <section
@@ -428,59 +425,27 @@ const noteKeep = String(kept / 100)
   aria-labelledby="film-title"
   data-film
   data-today={thisYear}
-  data-scenes={JSON.stringify(items.map((item) => item.scene))}
   data-ids={JSON.stringify(items.map((item) => item.id))}
   data-years={JSON.stringify(items.map((item) => item.years ?? null))}
   data-chapters={JSON.stringify(items.map((item) => item.chapter))}
   data-chapter-labels={JSON.stringify(items.map((item) => item.chapterLabel))}
   data-shots={JSON.stringify(items.map((item) => item.shot ?? null))}
-  data-flights={JSON.stringify(items.map((item) => item.flight ?? null))}
-  data-flight-frames={JSON.stringify(flightFrames)}
+  data-clips={JSON.stringify(items.map((item) => item.clip ?? null))}
+  data-late={JSON.stringify(items.map((item) => Boolean(item.late)))}
   data-voices={voices}
 >
   <h2 id="film-title" class="visually-hidden">
     {en ? "The story of over-regulation" : "Die Geschichte der Überregulierung"}
   </h2>
 
-  <!-- One question before the film: the rules chapter then starts in the reader's year. -->
-  <div class="born" data-born hidden>
-    <label class="born-ask" for="born-year">
-      {en ? "What has piled up in your lifetime? Your year of birth:" : "Was kam dazu, seit es dich gibt? Dein Geburtsjahr:"}
-    </label>
-    <div class="born-pick">
-      <input
-        id="born-year"
-        type="range"
-        min="1940"
-        max="2010"
-        step="1"
-        value="1985"
-        data-born-year
-      >
-      <output for="born-year" data-born-out>?</output>
-    </div>
-    <p class="born-says" data-born-says aria-live="polite">
-      {en
-        ? "Move the slider. The year stays in your browser."
-        : "Schieb den Regler. Das Jahr bleibt in deinem Browser."}
-    </p>
-    <button type="button" class="born-share" data-born-share hidden>
-      {en ? "Save as a picture" : "Als Bild speichern"}
-    </button>
-  </div>
-
   <div class="track" aria-hidden="true">
     {items.map((item) => (
-      <div
-        class:list={["spacer", { long: item.flight }]}
-        id={`film-${item.id}`}
-        data-spacer={item.i}
-      />
+      <div class="spacer" id={`film-${item.id}`} data-spacer={item.i} />
     ))}
   </div>
 
   <div class="stage">
-    <div class="view" data-view data-scene={items[0].scene}>
+    <div class="view" data-view>
       <div class="says">
         {items.map((item) => (
           <div
@@ -554,204 +519,102 @@ const noteKeep = String(kept / 100)
         </svg>
       </button>
 
-      <div class="scenes" aria-hidden="true">
-        <!-- Ausweis -->
-        <div class="scene" data-scene-id="threshold">
-          <ol class="cash">
-            {cashRows.map((row) => (
-              <li class:list={["cash-row", { zero: row.zero }]} data-at={row.at} style={row.style}>
-                <span class="cash-pile">
-                  <img src={row.image.src} width={row.image.width} height={row.image.height} alt="" decoding="async" />
-                  {row.gold && (
-                    <img class="cash-coins" src={row.gold.src} width={row.gold.width} height={row.gold.height} alt="" decoding="async" data-at={goldStep} />
-                  )}
-                </span>
-                <p class="cash-label">
-                  <span class="cash-year">{row.year}</span>
-                  {row.zero ? (
-                    <span class="cash-measure">
-                      <b>{row.value}</b>
-                      <span class="cash-detail">{row.detail}</span>
-                    </span>
-                  ) : (
-                    <span class="cash-measures">
-                      <span class="cash-measure" data-only={`${barStep},${cryptoStep}`}>
-                        <b>{row.value}</b>
-                        <span class="cash-detail" data-only={String(barStep)}>{row.detail}</span>
-                      </span>
-                      <span class="cash-measure" data-only={String(goldStep)}>
-                        <b>{row.ounces}</b>
-                        <span class="cash-detail">{row.goldDetail}</span>
-                      </span>
-                    </span>
-                  )}
-                </p>
-              </li>
+      <div class="picture" aria-hidden="true">
+        <div class="ways" data-ways={wayRules}>
+          <!-- Everything rendered, its edges fading into the night around it. -->
+          <div class="frame">
+            <img
+              class="ways-base"
+              src={panBase.src}
+              width={panBase.width}
+              height={panBase.height}
+              alt=""
+              decoding="async"
+            >
+            <img
+              class="ways-base late"
+              data-src={panBaseLate.src}
+              alt=""
+              decoding="async"
+            >
+            {ways.map((way) => (
+              <>
+                <img class:list={["way-light", { early: way.lateLight }]} data-way={way.id} src={way.light} alt="" decoding="async" />
+                {way.lateLight && (
+                  <img class="way-light late" data-way={way.id} data-src={way.lateLight} alt="" decoding="async" />
+                )}
+              </>
             ))}
-          </ol>
-          <p class="scene-caption cash-captions">
-            <span data-only={`${barStep},${cryptoStep}`}>
-              {en ? "At true scale, 1991 in today’s money." : "Maßstabsgetreu, 1991 in heutigem Geld."}
-            </span>
-            <span data-only={String(goldStep)}>
-              {en
-                ? `At true scale, gold at the price of 1991 and of ${goldPrice.asOf.en}.`
-                : `Maßstabsgetreu, Gold zum Preis von 1991 und von ${goldPrice.asOf.de}.`}
-            </span>
-          </p>
-        </div>
-
-        <!-- Regeln -->
-        <div class="scene" data-scene-id="rules">
-          <div class="ways-wrap" data-ways={wayRules}>
-            <div class="ways">
-              <img
-                class="ways-base"
-                src={panBase.src}
-                width={panBase.width}
-                height={panBase.height}
-                alt=""
-                decoding="async"
-              >
-              {ways.map((way) => (
-                <img class="way-light" data-way={way.id} src={way.light} alt="" decoding="async" />
-              ))}
-              {watch.map((post) =>
-                post.light ? (
-                  <img class="watch-light" data-from={post.from} src={post.light} alt="" decoding="async" />
-                ) : null,
-              )}
-              <img
-                class="watch-light proposed"
-                data-from="2028"
-                src={panProposal.src}
-                alt=""
-                decoding="async"
-              >
-              {ways.map((way) => (
-                <span class="way-label" data-way-label={way.id} style={way.style}>
-                  {way.label}
-                </span>
-              ))}
-              <!-- The later chapters: flights on the canvas, a still on top once the camera has arrived. -->
-              <canvas class="flight" data-flight width="1000" height="900" />
-              {shots.map((shot) => (
-                <img class="shot" data-shot={shot.id} data-src={shot.src} alt="" decoding="async" />
-              ))}
-              <img
-                class="shot-pass"
-                data-only={stepsOf("wide")}
-                data-src={wideLinks.src}
-                alt=""
-                decoding="async"
-              >
-              <img
-                class="shot-pass"
-                data-only={tagStep}
-                data-src={wideTags.src}
-                alt=""
-                decoding="async"
-              >
-              {marks.map((mark) => (
-                <span class:list={["mark", `mark-${mark.id}`]} data-only={String(mark.step)} data-label={mark.label} style={mark.style}>
-                  {mark.text}
-                </span>
-              ))}
-              {items.map((item) =>
-                item.caption ? (
-                  <span class="world-caption" data-only={String(item.i)}>
-                    {item.caption[language]}
-                  </span>
-                ) : null,
-              )}
-              <p class="ways-centre">
-                <strong data-year>{steps[at("regeln")].years?.[0]}</strong>
-                <span
-                  class="born-tag"
-                  data-born-tag={en ? "since {year}, your year of birth" : "seit {year}, deinem Geburtsjahr"}
-                />
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Papier: one tile per page, the first six red -->
-        <div class="scene" data-scene-id="tower">
-          <div class="wall-wrap" data-wall>
-            <div class="wall" data-at={at("papier-heute")}>
-              {pages.map((k) => (
-                <span class:list={["page", { first: k < firstPages }]} style={`--k: ${k}`} />
-              ))}
-            </div>
-            <p class="wall-voice" data-voice-caption>
-              <small data-voice-ref />
-              <span data-voice-text />
-            </p>
-          </div>
-          <p class="scene-caption">
-            {en
-              ? "One square per page in the EU Official Journal; red, the first directive of 1991."
-              : "Ein Kästchen je Seite im Amtsblatt der EU, rot die erste Richtlinie von 1991."}
-          </p>
-        </div>
-
-        <!-- Ergebnis -->
-        <div class="scene" data-scene-id="result">
-          <div class="result">
-            <div
-              class="sand"
-              data-sand={sandStates}
-              data-sand-counts={JSON.stringify({
-                firstYear,
-                first,
-                latest,
-                kept: keptReports,
-                convictions,
-              })}
-              data-sand-locale={locale}
-              data-sand-words={JSON.stringify({
-                reports: en ? "reports" : "Meldungen",
-                convictions: en ? "convictions" : "Verurteilungen",
-              })}
-              data-only={fieldSteps}
+            {watch.map((post) =>
+              post.light ? (
+                <img class="watch-light" data-from={post.from} src={post.light} alt="" decoding="async" />
+              ) : null,
+            )}
+            <img
+              class="watch-light proposed"
+              data-from="2028"
+              data-src={panProposal.src}
+              alt=""
+              decoding="async"
             >
-              <canvas />
-              <i data-sand-grey />
-              <i data-sand-red />
-              <i data-sand-text />
-              <i data-sand-muted />
-              <i data-sand-panel />
-              <span class="sand-label" data-sand-label="kept">
-                <b>{n(keptReports)}</b>
-                {en ? "not passed on, kept" : "nicht weitergegeben, gespeichert"}
-              </span>
-              <span class="sand-label" data-sand-label="passed">
-                <b>{n(latest - keptReports)}</b>
-                {en ? "passed on" : "weitergegeben"}
-              </span>
-            </div>
-            <div
-              class="note"
-              data-note={noteKeep}
-              data-note-image={noteCrime.src}
-              data-note-step={noteStep}
-              data-only={String(noteStep)}
+            {shots.map((shot, k) => (
+              <img
+                class:list={["shot", { on: k === 0 && items[0].shot === shot.id }]}
+                data-shot={shot.id}
+                src={k === 0 ? shot.src : undefined}
+                data-src={shot.src}
+                alt=""
+                decoding="async"
+              />
+            ))}
+            <img
+              class="shot-pass"
+              data-only={stepsOf("wide")}
+              data-src={wideLinks.src}
+              alt=""
+              decoding="async"
             >
-              <canvas />
-              <i data-note-paper />
-              <i data-note-edge />
-              <i data-note-red />
-              <i data-note-shadow />
-              <span class="note-label kept" data-note-label="kept">
-                <b>{euro(kept)}</b>
-                {en ? "taken by the state" : "zieht der Staat ein"}
-              </span>
-              <span class="note-label rest" data-note-label="rest">
-                <b>{euro(100 - kept)}</b>
-                {en ? "stay with criminals" : "bleiben bei Kriminellen"}
-              </span>
-            </div>
+            <img
+              class="shot-pass"
+              data-only={tagStep}
+              data-src={wideTags.src}
+              alt=""
+              decoding="async"
+            >
+            {clips.map((clip) => (
+              <video class="clip" data-clip={clip} data-src={`/film/${clip}.mp4`} muted playsinline preload="none" />
+            ))}
           </div>
+          {ways.map((way) => (
+            <span class="way-label" data-way-label={way.id} style={way.style}>
+              {way.label}
+            </span>
+          ))}
+          {marks.map((mark) => (
+            <span
+              class:list={["mark", `mark-${mark.id}`]}
+              data-only={String(mark.step)}
+              style={`--x: ${mark.at[0]}%; --y: ${mark.at[1]}%`}
+            >
+              {mark.label && <small>{mark.label}</small>}
+              {mark.value && <b>{mark.value}</b>}
+              {mark.text && <span>{mark.text}</span>}
+            </span>
+          ))}
+          {items.map((item) =>
+            item.caption ? (
+              <span class="world-caption" data-only={String(item.i)}>
+                {item.caption[language]}
+              </span>
+            ) : null,
+          )}
+          <p class="ways-centre">
+            <strong data-year>{steps[at("regeln")].years?.[0]}</strong>
+          </p>
+          <p class="wall-voice" data-voice-caption>
+            <small data-voice-ref />
+            <span data-voice-text />
+          </p>
         </div>
       </div>
     </div>
@@ -759,131 +622,170 @@ const noteKeep = String(kept / 100)
 </section>
 
 <script>
-  import { createBorn } from "@/lib/film-born"
-  import { createFlights } from "@/lib/film-flight"
-  import { createNote } from "@/lib/film-note"
-  import { createSand, type SandState } from "@/lib/film-sand"
-
   // The step whose spacer has crossed the middle of the window is current:
-  // it picks the scene and the headline and switches on what has appeared
-  // so far ([data-at]) or only now ([data-only]). In the rules chapter the
-  // year runs with the scroll and lights the ways its rules reach.
+  // it picks the headline and the still and switches on what belongs to it
+  // ([data-only]). Where the step has a clip and was reached by scrolling
+  // forward, the clip plays once and ends in the still. In the overview
+  // the year runs with the scroll and lights the ways its rules reach.
   for (const film of document.querySelectorAll<HTMLElement>("[data-film]")) {
     const view = film.querySelector<HTMLElement>("[data-view]")
-    if (!view) continue
-    const all = (selector: string) => [
-      ...film.querySelectorAll<HTMLElement>(selector),
+    const box = film.querySelector<HTMLElement>(".ways")
+    if (!view || !box) continue
+    const all = <T extends HTMLElement = HTMLElement>(selector: string) => [
+      ...film.querySelectorAll<T>(selector),
     ]
     const spacers = all("[data-spacer]")
     const prev = film.querySelector<HTMLButtonElement>("[data-film-prev]")
     const next = film.querySelector<HTMLButtonElement>("[data-film-next]")
     const stepAt = film.querySelector<HTMLElement>("[data-film-at]")
     const says = all("[data-say]")
-    const ats = [...film.querySelectorAll<Element>("[data-at]")]
     const onlys = all("[data-only]")
-    const waysRoot = film.querySelector<HTMLElement>("[data-ways]")
     const rules: { way: string; from: number; until?: number }[] = JSON.parse(
-      waysRoot?.dataset.ways ?? "[]",
+      box.dataset.ways ?? "[]",
     )
-    const wayEls = [
-      ...(waysRoot?.querySelectorAll<SVGElement>("[data-way]") ?? []),
-    ]
-    const wayLabels = [
-      ...(waysRoot?.querySelectorAll<HTMLElement>("[data-way-label]") ?? []),
-    ]
+    const wayEls = all("[data-way]")
+    const wayLabels = all("[data-way-label]")
     const yearEl = film.querySelector<HTMLElement>("[data-year]")
     const watchEls = all("[data-from]")
     const parse = (key: string) => JSON.parse(film.dataset[key] ?? "[]")
-    const stepScenes: string[] = parse("scenes")
     const stepIds: string[] = parse("ids")
     const stepYears: ([number, number] | null)[] = parse("years")
     const stepChapters: string[] = parse("chapters")
     const chapterLabels: string[] = parse("chapterLabels")
     const stepShots: (string | null)[] = parse("shots")
-    const stepFlights: (number | null)[] = parse("flights")
+    const stepClips: (string | null)[] = parse("clips")
+    const stepLate: boolean[] = parse("late")
     const chapterAt = film.querySelector<HTMLElement>("[data-film-chapter]")
     const today = Number(film.dataset.today)
     const reduce = matchMedia("(prefers-reduced-motion: reduce)")
-    // The later chapters: a still per step, and on the canvas the flight
-    // that leads to it. Stills and frames load when the film comes near.
-    const waysBox = film.querySelector<HTMLElement>(".ways")
-    const stills = all("[data-shot]") as HTMLImageElement[]
-    const lazy = all("[data-src]") as HTMLImageElement[]
-    const canvas = film.querySelector<HTMLCanvasElement>("[data-flight]")
-    const flights = canvas
-      ? createFlights(
-          canvas,
-          JSON.parse(film.dataset.flightFrames ?? "{}"),
-          () => queue(),
-        )
-      : null
-    let worldLoaded = false
+    const saving = () =>
+      (navigator as Navigator & { connection?: { saveData?: boolean } })
+        .connection?.saveData
+    const stills = all<HTMLImageElement>("[data-shot]")
+    const videos = new Map(
+      all<HTMLVideoElement>("[data-clip]").map((video) => [
+        video.dataset.clip ?? "",
+        video,
+      ]),
+    )
+
+    // Pictures and clips load a few steps ahead of where the reader is.
+    const fetched = new Set<Element>()
+    const fetch = (el: HTMLImageElement | HTMLVideoElement | undefined) => {
+      if (!el || fetched.has(el) || !el.dataset.src) return
+      fetched.add(el)
+      el.src = el.dataset.src
+      if (el instanceof HTMLVideoElement) {
+        el.preload = "auto"
+        el.load()
+      }
+    }
     const near = (i: number) => {
-      if (!worldLoaded && stepShots.slice(i, i + 3).some(Boolean)) {
-        worldLoaded = true
-        for (const image of lazy) image.src = image.dataset.src ?? ""
+      const ahead = [i - 1, i, i + 1, i + 2]
+      for (const j of ahead) {
+        const shot = stepShots[j]
+        fetch(stills.find((still) => still.dataset.shot === shot))
+        if (stepLate[j] || (j >= 0 && j < stepIds.length && !shot))
+          for (const image of all<HTMLImageElement>(".frame > img[data-src]"))
+            if (!image.dataset.shot && !image.dataset.only) fetch(image)
+        for (const pass of all<HTMLImageElement>(".shot-pass"))
+          if ((pass.dataset.only ?? "").split(",").map(Number).includes(j))
+            fetch(pass)
       }
-      // No flights for readers who prefer reduced motion or save data.
-      const saving = (
-        navigator as Navigator & { connection?: { saveData?: boolean } }
-      ).connection?.saveData
-      if (reduce.matches || saving) return
-      for (const j of [i - 1, i, i + 1, i + 2]) {
-        const flight = stepFlights[j]
-        if (flight) flights?.load(flight)
-      }
+      // No clips for readers who prefer reduced motion or save data.
+      if (reduce.matches || saving()) return
+      for (const j of [i, i + 1, i + 2]) fetch(videos.get(stepClips[j] ?? ""))
     }
-    // Whether the camera has arrived at the step's still: at once where no
-    // flight leads there, otherwise at the end of the flight.
-    const arrive = (i: number, p: number) => {
+
+    // The step's still over the overview; the one before stays under it
+    // until the new one has faded in.
+    let under = 0
+    const layers = (i: number) => {
       const shot = stepShots[i]
-      const flight = stepFlights[i]
-      const flying = Boolean(
-        flight && !reduce.matches && flights?.draw(flight, p / 0.96),
-      )
-      const arrived = !flying || p >= 0.96
-      waysBox?.toggleAttribute("data-shot", Boolean(shot))
-      waysBox?.toggleAttribute("data-flying", flying)
-      waysBox?.toggleAttribute("data-arrived", Boolean(shot) && arrived)
-      for (const still of stills)
-        still.classList.toggle("on", arrived && still.dataset.shot === shot)
+      window.clearTimeout(under)
+      for (const still of stills) {
+        const on = still.dataset.shot === shot
+        still.classList.toggle(
+          "under",
+          Boolean(shot) && !on && still.classList.contains("on"),
+        )
+        still.classList.toggle("on", on)
+      }
+      under = window.setTimeout(() => {
+        for (const still of stills) still.classList.remove("under")
+      }, 700)
+      box.toggleAttribute("data-shot", Boolean(shot))
+      box.toggleAttribute("data-late", stepLate[i])
+      box.toggleAttribute("data-years", Boolean(stepYears[i]))
     }
-    // The reader's year of birth, if given: the first span of years then
-    // starts there, and the picture says so while it shows that year.
-    const born = createBorn(film, rules, today, () => {
-      shownYear = 0
-      queue()
-    })
-    const bornTag = film.querySelector<HTMLElement>("[data-born-tag]")
-    const firstSpan = stepYears.findIndex(Boolean)
-    const spanOf = (i: number) => {
-      const span = stepYears[i]
-      const year = born.year()
-      if (!span || year === null || i !== firstSpan) return span
-      return [Math.min(Math.max(span[0], year), span[1]), span[1]]
+    // A clip covers the picture while it plays; under it the layers
+    // change to the step's, and when it ends it fades away over them.
+    let playing: HTMLVideoElement | null = null
+    const stop = () => {
+      if (!playing) return
+      playing.pause()
+      playing.classList.remove("on")
+      playing = null
+      box.removeAttribute("data-playing")
     }
-    // The rules chapter: the year runs with the scroll, and each way with a
+    const play = (i: number) => {
+      const video = videos.get(stepClips[i] ?? "")
+      if (!video || video.readyState < 3 || reduce.matches) return false
+      stop()
+      playing = video
+      video.currentTime = 0
+      box.setAttribute("data-playing", "")
+      video.classList.add("on")
+      const done = () => {
+        if (playing !== video) return
+        playing = null
+        video.classList.remove("on")
+        box.removeAttribute("data-playing")
+      }
+      video.onended = done
+      video
+        .play()
+        .then(() =>
+          window.setTimeout(() => {
+            if (playing === video || current === i) layers(i)
+          }, 300),
+        )
+        .catch(() => {
+          layers(i)
+          done()
+        })
+      return true
+    }
+
+    // The overview: the year runs with the scroll, and each way with a
     // rule that applies by then is lit.
     let shownYear = 0
+    let wantedYear = 0
+    let ticking = 0
+    // The year the scroll asks for is reached a year at a time, and only
+    // once a clip has ended, so the lights come on in view.
     const scrub = (year: number) => {
-      if (year === shownYear) return
+      wantedYear = year
+      if (ticking || year === shownYear) return
+      const tick = () => {
+        ticking = 0
+        if (!playing && wantedYear !== shownYear) {
+          const jump = !shownYear || reduce.matches
+          light(
+            jump ? wantedYear : shownYear + Math.sign(wantedYear - shownYear),
+          )
+        }
+        if (playing || wantedYear !== shownYear)
+          ticking = window.setTimeout(tick, 70)
+      }
+      tick()
+    }
+    const light = (year: number) => {
       shownYear = year
       if (yearEl) {
         yearEl.textContent = String(year)
         yearEl.classList.toggle("future", year > today)
       }
-      // While the first span runs, the picture says where it started.
-      const from = born.year()
-      const started =
-        from !== null &&
-        current === firstSpan &&
-        from >= (stepYears[firstSpan]?.[0] ?? 0)
-      if (bornTag && started)
-        bornTag.textContent = (bornTag.dataset.bornTag ?? "").replace(
-          "{year}",
-          String(spanOf(firstSpan)?.[0] ?? from),
-        )
-      bornTag?.classList.toggle("on", started)
       const covered = new Set(
         rules
           .filter(
@@ -902,25 +804,10 @@ const noteKeep = String(kept / 100)
         el.classList.toggle("on", Number(el.dataset.from) <= year)
     }
 
-    // The result chapter's dots, one per report.
-    const sandRoot = film.querySelector<HTMLElement>("[data-sand]")
-    const sandStates: Record<string, SandState> = JSON.parse(
-      sandRoot?.dataset.sand ?? "{}",
-    )
-    const sand = sandRoot
-      ? createSand(sandRoot, JSON.parse(sandRoot.dataset.sandCounts ?? "{}"))
-      : null
-    // The last step's note, which tears each time the step comes up.
-    const noteRoot = film.querySelector<HTMLElement>("[data-note]")
-    const note = noteRoot
-      ? createNote(noteRoot, Number(noteRoot.dataset.note))
-      : null
-    const noteStep = Number(noteRoot?.dataset.noteStep ?? -1)
-
     // The law read aloud, only when asked for: the loudspeaker shown in the
     // paper chapter turns it on and off. In 1991 one voice reads; today up
     // to three talk over each other, taking turns through all passages.
-    // Each speaking page lights up; the newest passage stands as a caption.
+    // The newest passage stands as a caption.
     type Voice = {
       id: string
       first: boolean
@@ -929,11 +816,10 @@ const noteKeep = String(kept / 100)
       src: string
     }
     const voiceList: Voice[] = parse("voices")
-    const voiceButtons = all("[data-film-voice]") as HTMLButtonElement[]
+    const voiceButtons = all<HTMLButtonElement>("[data-film-voice]")
     const caption = film.querySelector<HTMLElement>("[data-voice-caption]")
     const captionText = film.querySelector<HTMLElement>("[data-voice-text]")
     const captionRef = film.querySelector<HTMLElement>("[data-voice-ref]")
-    const pagesEls = all(".page")
     const players = new Map<string, HTMLAudioElement>()
     const timers: number[] = []
     let voiceOn = false
@@ -964,39 +850,32 @@ const noteKeep = String(kept / 100)
         audio.onended = null
         if (!audio.paused) fade(audio, 0, 500)
       }
-      for (const page of pagesEls) page.classList.remove("speaking")
       caption?.classList.remove("on")
     }
-    const speak = (voice: Voice, pages: HTMLElement[], then?: () => void) => {
+    const speak = (voice: Voice, then?: () => void) => {
       const audio = player(voice)
       audio.currentTime = 0
       audio.volume = 0
       audio.play().catch(() => {})
       fade(audio, voice.first ? 0.9 : 0.6, 300)
-      for (const page of pages) page.classList.add("speaking")
       if (captionText) captionText.textContent = voice.text
       if (captionRef) captionRef.textContent = voice.ref
       caption?.classList.add("on")
-      audio.onended = () => {
-        for (const page of pages) page.classList.remove("speaking")
-        then?.()
-      }
+      audio.onended = () => then?.()
     }
     // Today: at most three voices at once. When one ends, the next passage
     // in line follows after a short pause, so all of them come round.
     const together = 3
     let nextVoice = 0
     const chorus = () => {
-      const today = voiceList.filter((voice) => !voice.first)
-      if (!today.length) return
-      const voice = today[nextVoice % today.length]
+      const list = voiceList.filter((voice) => !voice.first)
+      if (!list.length) return
+      const voice = list[nextVoice % list.length]
       nextVoice++
-      speak(voice, [randomPage()], () =>
+      speak(voice, () =>
         timers.push(window.setTimeout(chorus, 600 + Math.random() * 1400)),
       )
     }
-    const randomPage = () =>
-      pagesEls[6 + Math.floor(Math.random() * Math.max(1, pagesEls.length - 6))]
     const voiceFor = (stepId: string) => {
       if (stepId === voiceStep) return
       voiceStep = stepId
@@ -1004,7 +883,7 @@ const noteKeep = String(kept / 100)
       if (!voiceOn) return
       if (stepId === "papier-1991") {
         const first = voiceList.find((voice) => voice.first)
-        if (first) speak(first, pagesEls.slice(0, 6))
+        if (first) speak(first)
       } else if (stepId === "papier-heute") {
         nextVoice = 0
         for (let k = 0; k < together; k++)
@@ -1033,58 +912,24 @@ const noteKeep = String(kept / 100)
     const show = (i: number) => {
       const previous = current
       current = i
-      // The dots move from step to step, and fill in when the chapter
-      // begins; a jump, or a way back from the note, shows the end at once.
-      const sandState = sandStates[i]
-      if (sandState)
-        sand?.go(sandState, previous in sandStates || previous === i - 1)
-      else sand?.hide()
-      if (i === noteStep) note?.go(previous !== -1)
-      else note?.hide()
-      view.dataset.scene = stepScenes[i]
       view.dataset.stepId = stepIds[i]
       view.dataset.chapter = stepChapters[i]
       if (chapterAt) chapterAt.textContent = chapterLabels[i]
       near(i)
+      if (!(previous === i - 1 && play(i))) {
+        stop()
+        layers(i)
+      }
       voiceFor(stepIds[i])
       if (stepAt) stepAt.textContent = String(i + 1)
       if (prev) prev.disabled = i === 0
       for (const say of says)
         say.toggleAttribute("data-current", Number(say.dataset.say) === i)
-      for (const el of ats)
-        el.classList.toggle(
-          "on",
-          Number(
-            (el as HTMLElement).dataset?.at ?? el.getAttribute("data-at"),
-          ) <= i,
-        )
       for (const el of onlys)
         el.classList.toggle(
           "on",
           (el.dataset.only ?? "").split(",").map(Number).includes(i),
         )
-    }
-
-    // The wall of pages: the column count at which all tiles are largest.
-    const wallWrap = film.querySelector<HTMLElement>("[data-wall]")
-    const wall = wallWrap?.firstElementChild as HTMLElement | null
-    const fit = () => {
-      if (!wallWrap || !wall) return
-      const count = wall.children.length
-      const { width, height } = wallWrap.getBoundingClientRect()
-      if (!width || !height) return
-      const gap = 2
-      let best = { cols: 1, tile: 0 }
-      for (let cols = 6; cols <= 60; cols++) {
-        const rows = Math.ceil(count / cols)
-        const tile = Math.min(
-          (width - gap * (cols - 1)) / cols,
-          ((height - gap * (rows - 1)) / rows) * (5 / 6),
-        )
-        if (tile > best.tile) best = { cols, tile }
-      }
-      wall.style.setProperty("--cols", String(best.cols))
-      wall.style.setProperty("--tile", `${Math.floor(best.tile * 10) / 10}px`)
     }
 
     let queued = false
@@ -1096,22 +941,26 @@ const noteKeep = String(kept / 100)
       const boxes = spacers.map((spacer) => spacer.getBoundingClientRect())
       const filmBox = film.getBoundingClientRect()
       let i = 0
-      boxes.forEach((box, k) => {
-        if (box.top <= middle) i = k
+      boxes.forEach((spacer, k) => {
+        if (spacer.top <= middle) i = k
       })
       if (i !== current) show(i)
-      const span = spanOf(i)
-      // A year's span or a flight is run through by four fifths of the step.
+      const span = stepYears[i]
+      // A year's span is run through by four fifths of the step, after
+      // the clip that leads to the overview has had its time.
+      const hold = stepClips[i] ? 0.3 : 0
       const p = Math.min(
         1,
-        Math.max(0, (middle - boxes[i].top) / (boxes[i].height * 0.8)),
+        Math.max(
+          0,
+          ((middle - boxes[i].top) / boxes[i].height - hold) / (0.8 - hold),
+        ),
       )
-      arrive(i, p)
       if (span) {
         scrub(Math.round(span[0] + (span[1] - span[0]) * p))
       } else {
         const last = stepYears.slice(0, i).filter(Boolean).at(-1)
-        if (last) scrub(last[1])
+        scrub(last ? last[1] : (stepYears.find(Boolean)?.[0] ?? today))
       }
       document.documentElement.toggleAttribute(
         "data-immersive",
@@ -1125,14 +974,9 @@ const noteKeep = String(kept / 100)
       requestAnimationFrame(render)
     }
     window.addEventListener("scroll", queue, { passive: true })
-    window.addEventListener("resize", () => {
-      fit()
-      queue()
-    })
-    if (wallWrap) new ResizeObserver(fit).observe(wallWrap)
+    window.addEventListener("resize", queue)
     // The buttons scroll to the step before or after: a little way into
-    // it, or, where the year or a flight runs, to its end, so it runs
-    // through.
+    // it, or, where the year runs, to its end, so it runs through.
     const goTo = (j: number) => {
       const behavior = reduce.matches ? "auto" : "smooth"
       if (j >= spacers.length) {
@@ -1140,15 +984,15 @@ const noteKeep = String(kept / 100)
         window.scrollTo({ top: after - 80, behavior })
         return
       }
-      const box = spacers[Math.max(0, j)].getBoundingClientRect()
       const k = Math.max(0, j)
-      const into = stepYears[k] || stepFlights[k] ? 0.86 : 0.3
+      const spacer = spacers[k].getBoundingClientRect()
+      const into = stepYears[k] ? 0.86 : 0.3
       window.scrollTo({
         top:
           window.scrollY +
-          box.top -
+          spacer.top -
           window.innerHeight * 0.55 +
-          box.height * into,
+          spacer.height * into,
         behavior,
       })
     }
@@ -1161,135 +1005,18 @@ const noteKeep = String(kept / 100)
 
 <style>
   /* Wie die Datengeschichte der Startseite: die Bühne füllt das Fenster und
-     steht, während die Schritte vorbeiziehen. */
+     steht, während die Schritte vorbeiziehen. Der Film spielt bei Nacht:
+     die Bühne ist in beiden Farbschemata dunkel. */
   .film {
     --pace: min(1svh, 0.76rem);
-    --bar: light-dark(#3b4147, #a7afb6);
-    --red: var(--primary);
-    /* Die Hunderter am Anfang und am Ende des Films. */
-    --note: light-dark(#d2dbcd, #66716a);
-    --note-edge: light-dark(#8f9d8b, #3a413c);
+    --night: #0b0e17;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
   }
 
   .track,
   .stage {
-    grid-area: 2 / 1;
-  }
-
-  /* ---------- Geburtsjahr ----------------------------------------------- */
-
-  /* Eine Frage vor dem Film: eine Zeile mit Regler, darunter die Antwort
-     als Satz. Ohne Skript bleibt sie weg. */
-  .born {
     grid-area: 1 / 1;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    align-items: center;
-    gap: var(--space-xs) var(--space-l);
-    margin-block-end: var(--space-m);
-    padding: var(--space-m);
-    border-radius: var(--radius-xl);
-    background: var(--panel);
-  }
-
-  .born[hidden] {
-    display: none;
-  }
-
-  .born-ask {
-    font-weight: 600;
-    text-wrap: balance;
-  }
-
-  .born-pick {
-    display: flex;
-    align-items: center;
-    gap: var(--space-s);
-  }
-
-  .born-pick input {
-    flex: 1;
-    min-inline-size: 0;
-    max-inline-size: 24rem;
-    block-size: 2.75rem;
-    accent-color: var(--primary);
-  }
-
-  .born-pick output {
-    min-inline-size: 4ch;
-    color: var(--foreground);
-    font-size: var(--type-h3);
-    font-weight: var(--weight-heading);
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-  }
-
-  .born-says {
-    max-inline-size: 60ch;
-    color: var(--ink-2);
-    line-height: 1.4;
-    text-wrap: pretty;
-  }
-
-  .born[data-chosen] .born-says {
-    color: var(--foreground);
-    font-size: var(--type-lead);
-  }
-
-  .born-share {
-    justify-self: start;
-    padding: 0.55em 1.1em;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-    background: var(--paper);
-    color: var(--foreground);
-    font: inherit;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .born-share:hover {
-    border-color: var(--ink-3);
-  }
-
-  .born-share:focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 2px;
-  }
-
-  @container campaign (width >= 60rem) {
-    .born {
-      grid-template-columns: auto minmax(12rem, 24rem) minmax(0, 1fr);
-    }
-
-    .born-says {
-      grid-column: 1 / 3;
-    }
-
-    .born-share {
-      grid-column: 3;
-      grid-row: 1 / 3;
-      justify-self: end;
-      align-self: center;
-    }
-  }
-
-  /* Im Bild, unter der Jahreszahl, solange sie das Geburtsjahr zeigt. */
-  .born-tag {
-    display: block;
-    margin-block-start: 0.3em;
-    color: #ff5a55;
-    text-shadow: 0 1px 6px rgb(0 0 0 / 0.9);
-    font-size: clamp(0.7rem, 0.5rem + 1.6cqi, 0.95rem);
-    font-weight: 600;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-  }
-
-  .born-tag.on {
-    opacity: 1;
   }
 
   .track {
@@ -1298,13 +1025,8 @@ const noteKeep = String(kept / 100)
   }
 
   .spacer {
-    block-size: calc(70 * var(--pace));
+    block-size: calc(80 * var(--pace));
     scroll-margin-block-start: calc(var(--header-height) - 30 * var(--pace));
-  }
-
-  /* Ein Schritt mit Kamerafahrt ist länger, damit die Fahrt Raum hat. */
-  .spacer.long {
-    block-size: calc(110 * var(--pace));
   }
 
   .stage {
@@ -1322,7 +1044,7 @@ const noteKeep = String(kept / 100)
   }
 
   /* Ohne Skript stehen die Schlagzeilen untereinander. */
-  .film:not([data-ready]) :is(.track, .scenes) {
+  .film:not([data-ready]) :is(.track, .picture) {
     display: none;
   }
 
@@ -1333,6 +1055,7 @@ const noteKeep = String(kept / 100)
 
   .film:not([data-ready]) .says {
     gap: var(--space-l);
+    padding: var(--space-l);
   }
 
   .film:not([data-ready]) .say {
@@ -1344,22 +1067,23 @@ const noteKeep = String(kept / 100)
   /* Schmal: das Bild oben, die Schlagzeile in einer Leiste darunter.
      Breit: links die Schlagzeile, rechts das Bild. */
   .view {
+    color-scheme: dark;
     position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr) auto;
     min-block-size: 0;
     border-radius: var(--radius-xl);
-    background: var(--panel);
+    background: var(--night);
+    color: var(--foreground);
     overflow: clip;
   }
 
-  .scenes {
+  .picture {
     position: relative;
     grid-row: 1;
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr);
+    place-items: center;
     min-block-size: 0;
     container-type: size;
   }
@@ -1368,10 +1092,8 @@ const noteKeep = String(kept / 100)
     grid-row: 2;
     display: grid;
     align-content: start;
-    min-block-size: clamp(7.5rem, 22svh, 9.5rem);
-    padding: var(--space-s) var(--space-m) var(--space-m);
-    border-block-start: 1px solid var(--line);
-    background: var(--paper);
+    min-block-size: clamp(8.5rem, 26svh, 11rem);
+    padding: var(--space-xs) var(--space-m) var(--space-m);
   }
 
   @container campaign (width >= 60rem) {
@@ -1380,7 +1102,7 @@ const noteKeep = String(kept / 100)
       grid-template-rows: minmax(0, 1fr);
     }
 
-    .scenes {
+    .picture {
       grid-column: 2;
       grid-row: 1;
     }
@@ -1391,8 +1113,6 @@ const noteKeep = String(kept / 100)
       align-content: center;
       min-block-size: 0;
       padding: var(--space-xl);
-      border: 0;
-      background: none;
     }
   }
 
@@ -1406,7 +1126,7 @@ const noteKeep = String(kept / 100)
         grid-template-rows: auto minmax(0, 1fr);
       }
 
-      .scenes {
+      .picture {
         grid-column: 1;
         grid-row: 2;
       }
@@ -1424,10 +1144,6 @@ const noteKeep = String(kept / 100)
 
       .view .say-text {
         max-inline-size: 60ch;
-      }
-
-      .view .cash {
-        justify-content: center;
       }
     }
   }
@@ -1499,8 +1215,8 @@ const noteKeep = String(kept / 100)
   }
 
   .say-status.decided {
-    border-color: var(--primary);
-    color: var(--primary);
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .film-chapter {
@@ -1528,16 +1244,8 @@ const noteKeep = String(kept / 100)
       position: absolute;
       inset-block-end: var(--space-m);
       inset-inline-end: var(--space-m);
-      z-index: 2;
+      z-index: 4;
       margin: 0;
-    }
-
-    .view .scene {
-      padding-block-end: calc(var(--space-m) + 3.25rem);
-    }
-
-    .view .ways {
-      inline-size: min(100%, (100cqh - 7rem) * 1.111);
     }
   }
 
@@ -1553,7 +1261,7 @@ const noteKeep = String(kept / 100)
     padding: 0;
     border: 1px solid var(--line);
     border-radius: 50%;
-    background: var(--panel);
+    background: rgb(11 14 23 / 0.7);
     color: var(--foreground);
     cursor: pointer;
     transition:
@@ -1564,7 +1272,6 @@ const noteKeep = String(kept / 100)
 
   .film-nav button:hover {
     border-color: var(--ink-3);
-    background: var(--paper);
   }
 
   .film-nav button:focus-visible {
@@ -1592,222 +1299,66 @@ const noteKeep = String(kept / 100)
     font-weight: 700;
   }
 
-  /* ---------- Szenen ---------------------------------------------------- */
+  /* ---------- Das Bild -------------------------------------------------- */
 
-  .scene {
-    grid-area: 1 / 1;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) auto;
-    gap: var(--space-s);
-    min-block-size: 0;
-    padding: var(--space-m);
-    opacity: 0;
-    visibility: hidden;
-    scale: 0.97;
-    transition:
-      opacity 0.5s ease,
-      scale 0.5s ease,
-      visibility 0.5s;
-  }
-
-  .view[data-scene="threshold"] [data-scene-id="threshold"],
-  .view[data-scene="rules"] [data-scene-id="rules"],
-  .view[data-scene="watch"] [data-scene-id="rules"],
-  .view[data-scene="world"] [data-scene-id="rules"],
-  .view[data-scene="tower"] [data-scene-id="tower"],
-  .view[data-scene="result"] [data-scene-id="result"] {
-    opacity: 1;
-    visibility: visible;
-    scale: 1;
-  }
-
-  /* Die Szenen zeigen ihre Zahl im Bild, nicht als zweite Überschrift:
-     links steht die Aussage, rechts der Beleg. */
-  .scene-caption {
-    color: var(--ink-3);
-    font-size: var(--type-meta);
-  }
-
-  /* ---------- Ausweis --------------------------------------------------- */
-
-  /* Drei Haufen untereinander, im selben Maßstab: der Ziegel von 1991, der
-     dünne Stapel von 2017, heute ein Cent. Jeder bleibt stehen, wenn der
-     nächste kommt; der aktuelle ist hell, die früheren treten zurück. */
-  .cash {
-    --pile: min(58cqi, (100cqh - 9rem) * 0.86, 30rem);
-    display: grid;
-    align-content: center;
-    gap: clamp(0.4rem, 2.5cqh, 1.4rem);
-    min-block-size: 0;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .cash-row {
-    display: grid;
-    grid-template-columns: var(--pile) minmax(0, 1fr);
-    align-items: center;
-    gap: clamp(0.8rem, 3cqi, 2rem);
-    opacity: 0;
-    translate: 0 -1.2rem;
-    transition:
-      opacity 0.6s ease,
-      translate 0.7s cubic-bezier(0.3, 1.4, 0.5, 1),
-      filter 0.6s ease;
-  }
-
-  .cash-row.on {
-    opacity: 1;
-    translate: 0 0;
-  }
-
-  /* Mit dem Cent treten die Stapel zurück, bleiben aber lesbar. */
-  .view[data-step-id="ausweis-krypto"] .cash-row:not(.zero) {
-    opacity: 0.5;
-    filter: saturate(0.4);
-  }
-
-  /* Je Stapel zwei gleich zugeschnittene Bilder übereinander: die Scheine
-     allein und mit dem Gold davor, das im Gold-Schritt einblendet. */
-  .cash-pile {
-    display: grid;
-    justify-items: center;
-  }
-
-  .cash-pile img {
-    grid-area: 1 / 1;
-    display: block;
-    inline-size: var(--w);
-    block-size: auto;
-  }
-
-  .cash-coins {
-    opacity: 0;
-    transition: opacity 0.8s ease;
-  }
-
-  .cash-coins.on {
-    opacity: 1;
-  }
-
-  /* Je Schritt eine Messgröße, Euro oder Gold; beide liegen übereinander,
-     damit die Zeile beim Wechsel nicht springt. */
-  .cash-measures,
-  .cash-captions {
-    display: grid;
-  }
-
-  .cash-measures > *,
-  .cash-captions > * {
-    grid-area: 1 / 1;
-  }
-
-  .cash-measure {
-    display: grid;
-    align-content: start;
-    gap: 0.1rem;
-  }
-
-  .cash-label [data-only],
-  .cash-captions [data-only] {
-    transition:
-      opacity 0.4s ease,
-      visibility 0.4s;
-  }
-
-  .cash-label [data-only]:not(.on),
-  .cash-captions [data-only]:not(.on) {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  .cash-label {
-    display: grid;
-    gap: 0.1rem;
-    color: var(--ink-3);
-    font-size: var(--type-meta);
-    line-height: 1.3;
-  }
-
-  .cash-year {
-    font-weight: 600;
-  }
-
-  .cash-label b {
-    color: var(--foreground);
-    font-size: clamp(1.4rem, 0.9rem + 2.6cqi, 2.6rem);
-    font-weight: var(--weight-heading);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-  }
-
-  .cash-row.zero b,
-  .cash-row.zero .cash-year {
-    color: var(--accent);
-  }
-
-  /* ---------- Regeln ---------------------------------------------------- */
-
-  /* Dein Geld in der Mitte, acht Wege hinaus. Mit jedem Jahr kommen rote
-     Marken dazu: ein Balken quer über den Weg für eine Kontrolle bei Bank
-     oder Anbieter, ein Punkt für eine Meldung ans Finanzamt. Erfasste Wege
-     färben sich rot. */
-  .ways-wrap {
-    display: grid;
-    grid-template-rows: minmax(0, 1fr);
-    justify-items: center;
-    gap: var(--space-2xs);
-    min-block-size: 0;
-  }
-
+  /* Eine Welt, ein Bildformat: das Panoptikum bei Nacht. Was gerendert
+     ist, liegt im Rahmen übereinander und läuft an den Rändern in die
+     Nacht der Bühne aus; Worte stehen darüber. */
   .ways {
     position: relative;
     container-type: inline-size;
-    isolation: isolate;
-    align-self: center;
-    inline-size: min(100%, (100cqh - 3rem) * 1.111);
+    inline-size: min(100cqi, 100cqb * 1.111);
     aspect-ratio: 1600 / 1440;
   }
 
-  /* Das Panoptikum bei Nacht, darüber je Zelle ihr Licht: ein roter
-     Scheinwerfer vom Turm durch das Gitter, aufgehellt durch Bildschirm-
-     Mischung, sobald eine Regel auf diesem Weg gilt. */
-  .ways-base,
-  .way-light {
+  .frame {
+    position: absolute;
+    inset: 0;
+    isolation: isolate;
+    mask-image:
+      linear-gradient(to right, transparent, #000 7%, #000 93%, transparent),
+      linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
+    mask-composite: intersect;
+  }
+
+  .frame > * {
     position: absolute;
     inset: 0;
     inline-size: 100%;
     block-size: 100%;
-    border-radius: var(--radius);
+    pointer-events: none;
   }
 
-  .way-light {
-    opacity: 0;
-    mix-blend-mode: screen;
-    transition: opacity 0.9s ease;
-  }
-
-  .way-light.covered {
-    opacity: 1;
-  }
-
-  /* Ab 2016 geht im Turm je Behörde, die ins Kontenregister schauen darf,
-     ein Fenster an; dasselbe Bild, dieselbe laufende Jahreszahl. */
+  /* Über dem Grundbild je Zelle ihr Licht: ein roter Scheinwerfer vom Turm
+     durch das Gitter, aufgehellt durch Bildschirm-Mischung, sobald eine
+     Regel auf diesem Weg gilt; und je Behörde, die ins Kontenregister
+     schauen darf, ein Fenster im Turm. */
+  .way-light,
   .watch-light {
-    position: absolute;
-    inset: 0;
-    inline-size: 100%;
-    block-size: 100%;
-    border-radius: var(--radius);
     opacity: 0;
     mix-blend-mode: screen;
     transition: opacity 0.9s ease;
   }
 
+  .way-light.covered,
   .watch-light.on {
     opacity: 1;
+  }
+
+  /* Ab dem Kapitel Papier hängen die Seiten in der Zelle: ein zweites
+     Grundbild und ein zweites Licht für diese Zelle. */
+  .ways-base.late {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .ways[data-late] .ways-base.late {
+    opacity: 1;
+  }
+
+  .ways[data-late] .way-light.early,
+  .ways:not([data-late]) .way-light.late {
+    opacity: 0;
   }
 
   /* Ein Zugriff, der erst vorgeschlagen ist: Fenster, die noch nicht
@@ -1825,200 +1376,50 @@ const noteKeep = String(kept / 100)
     }
   }
 
-  /* ---------- Die Welt -------------------------------------------------- */
-
-  /* Die späteren Kapitel bleiben im Panoptikum. Über dem Bild der Regeln
-     liegt die Leinwand der Kamerafahrt und darüber, sobald die Kamera
-     angekommen ist, das Standbild in voller Schärfe mit dem, was dazukommt. */
-  .flight,
-  .shot,
-  .shot-pass {
-    position: absolute;
-    inset: 0;
-    inline-size: 100%;
-    block-size: 100%;
-    border-radius: var(--radius);
+  /* Das Standbild eines Schritts liegt über dem Überblick; das vorige
+     bleibt darunter stehen, bis das neue eingeblendet ist. */
+  .shot {
     opacity: 0;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
+    transition: opacity 0.6s ease;
   }
 
-  .ways[data-flying] .flight,
   .shot.on {
+    z-index: 2;
     opacity: 1;
   }
 
+  .shot.under {
+    z-index: 1;
+    opacity: 1;
+    transition: none;
+  }
+
   .shot-pass {
+    z-index: 3;
+    opacity: 0;
     mix-blend-mode: screen;
     transition: opacity 0.9s ease;
   }
 
-  .ways[data-arrived] .shot-pass.on {
+  .ways:not([data-playing]) .shot-pass.on {
     opacity: 1;
   }
 
-  /* Im Standbild gelten die Namen der Zellen nicht mehr. */
-  .ways[data-shot] .way-label {
+  /* Der Clip deckt das Bild, solange er läuft, und blendet danach über
+     dem Standbild aus. */
+  .clip {
+    z-index: 4;
+    object-fit: cover;
     opacity: 0;
+    transition: opacity 0.45s ease;
   }
 
-  .way-label {
-    transition:
-      color 0.5s ease,
-      opacity 0.4s ease;
-  }
-
-  /* Worte im Bild: was ein Teil davon bedeutet, auf einem dunklen
-     Schild, damit sie auch auf hellen Stellen des Bildes lesbar sind. */
-  .mark,
-  .world-caption {
-    position: absolute;
-    z-index: 1;
-    padding: 0.25em 0.55em;
-    border-radius: var(--radius-sm);
-    background: rgb(9 12 19 / 0.8);
-    color: #e8ebef;
-    font-weight: 600;
-    line-height: 1.15;
-    opacity: 0;
-    transition:
-      opacity 0.5s ease,
-      translate 0.5s ease;
-    pointer-events: none;
-  }
-
-  .mark {
-    inset-inline-start: var(--x);
-    inset-block-start: var(--y);
-    max-inline-size: 9.5em;
-    translate: -50% calc(-50% + 0.5rem);
-    font-size: clamp(0.72rem, 0.5rem + 1.7cqi, 1rem);
-    text-align: center;
-    text-wrap: balance;
-    overflow-wrap: normal;
-  }
-
-  .ways[data-arrived] .mark.on {
+  .clip.on {
     opacity: 1;
-    translate: -50% -50%;
+    transition-duration: 0.2s;
   }
 
-  .ways[data-arrived] .world-caption.on {
-    opacity: 1;
-  }
-
-  .world-caption {
-    inset-inline-start: 2.5%;
-    inset-block-end: 2.5%;
-    max-inline-size: 95%;
-    color: #c5cad2;
-    font-size: clamp(0.68rem, 0.5rem + 1.2cqi, 0.85rem);
-    font-weight: 500;
-  }
-
-  .mark-measured {
-    color: #ff6a64;
-  }
-
-  /* Kosten und belegter Nutzen liegen nebeneinander: das eine Schild
-     steht links von seinem Stapel, das andere rechts. */
-  .mark-cost {
-    max-inline-size: 8em;
-    translate: -88% calc(-50% + 0.5rem);
-    text-align: end;
-  }
-
-  .mark-measured {
-    max-inline-size: 6em;
-    translate: -12% calc(-50% + 0.5rem);
-    text-align: start;
-  }
-
-  .ways[data-arrived] .mark-cost.on {
-    translate: -88% -50%;
-  }
-
-  .ways[data-arrived] .mark-measured.on {
-    translate: -12% -50%;
-  }
-
-  /* Das Schild zu einer Zahlung steht über ihr, nicht auf ihr. */
-  .mark-tag {
-    translate: -50% calc(-150% + 0.5rem);
-  }
-
-  .ways[data-arrived] .mark-tag.on {
-    translate: -50% -150%;
-  }
-
-  .mark-modelled {
-    color: #cfd9f2;
-  }
-
-  /* Versprochen und gemessen: zwei Worte am Himmel neben den
-     Lautsprechern, das Versprechen hell, was belegt ist, rot. */
-  .mark-promise,
-  .mark-record {
-    max-inline-size: 6.2em;
-    padding: 0;
-    background: none;
-    text-shadow:
-      0 1px 2px rgb(0 0 0 / 0.9),
-      0 0 12px rgb(0 0 0 / 0.8);
-    font-size: clamp(1.05rem, 0.5rem + 4.2cqi, 2.3rem);
-    font-weight: var(--weight-heading);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-  }
-
-  .mark-promise {
-    translate: -78% calc(-135% + 0.5rem);
-  }
-
-  .mark-record {
-    color: #ff5a55;
-    translate: -22% calc(-135% + 0.5rem);
-    transition-delay: 0.5s;
-  }
-
-  .ways[data-arrived] .mark-promise.on {
-    translate: -78% -135%;
-  }
-
-  .ways[data-arrived] .mark-record.on {
-    translate: -22% -135%;
-  }
-
-  .mark-promise::before,
-  .mark-record::before {
-    content: attr(data-label);
-    display: block;
-    margin-block-end: 0.25em;
-    color: #aab0b8;
-    font-size: clamp(0.62rem, 0.45rem + 1.1cqi, 0.8rem);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  /* Das Jahr steht nur, solange es läuft. */
-  .view:is(
-    [data-chapter="du"],
-    [data-chapter="rechnung"],
-    [data-chapter="versprochen"]
-  ) .ways-centre {
-    opacity: 0;
-  }
-
-  .ways-centre {
-    z-index: 1;
-    transition: opacity 0.4s ease;
-  }
-
-  .ways svg {
-    position: absolute;
-    inset: 0;
-  }
+  /* ---------- Worte im Bild --------------------------------------------- */
 
   .way-label {
     position: absolute;
@@ -2027,7 +1428,6 @@ const noteKeep = String(kept / 100)
     max-inline-size: 7.5em;
     translate: -50% var(--dy);
     text-shadow: 0 1px 6px rgb(0 0 0 / 0.9);
-    /* Auf dem nächtlichen Bild hell, in beiden Farbschemata. */
     color: #d9dde3;
     font-size: clamp(0.7rem, 0.5rem + 1.6cqi, 0.95rem);
     font-weight: 600;
@@ -2035,19 +1435,33 @@ const noteKeep = String(kept / 100)
     text-align: center;
     text-wrap: balance;
     overflow-wrap: normal;
-    transition: color 0.5s ease;
+    transition:
+      color 0.5s ease,
+      opacity 0.4s ease;
   }
 
   .way-label.covered {
     color: #ff5a55;
   }
 
-  /* Das Jahr groß in der Ecke des Bildes. */
+  /* Die Namen der Zellen gelten nur im Überblick. */
+  .ways:is([data-shot], [data-playing]) .way-label {
+    opacity: 0;
+  }
+
+  /* Das Jahr groß in der Ecke des Bildes, solange es läuft. */
   .ways-centre {
     position: absolute;
-    inset-block-start: 3%;
-    inset-inline-start: 3.5%;
+    inset-block-start: 4%;
+    inset-inline-start: 4.5%;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
     pointer-events: none;
+  }
+
+  .ways[data-years]:not([data-playing]) .ways-centre {
+    opacity: 1;
   }
 
   .ways-centre strong {
@@ -2064,44 +1478,193 @@ const noteKeep = String(kept / 100)
     color: #aab0b8;
   }
 
-  /* ---------- Papier ---------------------------------------------------- */
+  /* Eine Zahl im Bild und was sie ist, auf einem dunklen Schild, damit
+     sie auch auf hellen Stellen lesbar ist. */
+  .mark,
+  .world-caption {
+    position: absolute;
+    z-index: 1;
+    border-radius: var(--radius-sm);
+    background: rgb(9 12 19 / 0.8);
+    color: #e8ebef;
+    line-height: 1.15;
+    opacity: 0;
+    transition:
+      opacity 0.5s ease,
+      translate 0.5s ease;
+    pointer-events: none;
+  }
 
-  /* Eine Kachel je Seite im Amtsblatt. Das Skript wählt die Spaltenzahl,
-     bei der alle 488 am größten in den Platz passen. */
-  .wall-wrap {
-    position: relative;
+  .mark {
+    --tx: -50%;
+    --ty: -50%;
+    inset-inline-start: var(--x);
+    inset-block-start: var(--y);
     display: grid;
-    place-items: center;
-    min-block-size: 0;
+    gap: 0.1em;
+    max-inline-size: 10.5em;
+    padding: 0.3em 0.6em;
+    translate: var(--tx) calc(var(--ty) + 0.5rem);
+    font-size: clamp(0.72rem, 0.5rem + 1.7cqi, 1rem);
+    font-weight: 600;
+    text-align: center;
+    text-wrap: balance;
+    overflow-wrap: normal;
   }
 
-  /* Eine Seite, die gerade vorliest. */
-  .page.speaking {
-    border-color: var(--accent);
-    background: color-mix(in oklab, var(--red) 55%, var(--paper));
-    box-shadow: 0 0 0.8rem color-mix(in oklab, var(--red) 60%, transparent);
-    animation: page-speak 0.9s ease-in-out infinite alternate;
+  .mark small {
+    color: #aab0b8;
+    font-size: 0.8em;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
-  @keyframes page-speak {
-    to {
-      scale: 1.35;
-    }
+  .mark b {
+    color: #fff;
+    font-size: clamp(1.05rem, 0.6rem + 3.4cqi, 2rem);
+    font-weight: var(--weight-heading);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    white-space: nowrap;
   }
+
+  .mark b + span {
+    color: #c5cad2;
+    font-size: 0.9em;
+    font-weight: 500;
+  }
+
+  .ways:not([data-playing]) .mark.on {
+    opacity: 1;
+    translate: var(--tx) var(--ty);
+    transition-delay: 0.35s;
+  }
+
+  .ways:not([data-playing]) .world-caption.on {
+    opacity: 1;
+    transition-delay: 0.35s;
+  }
+
+  .world-caption {
+    inset-inline-start: 4.5%;
+    inset-block-end: 4%;
+    max-inline-size: 91%;
+    padding: 0.25em 0.55em;
+    color: #c5cad2;
+    font-size: clamp(0.68rem, 0.5rem + 1.2cqi, 0.85rem);
+    font-weight: 500;
+  }
+
+  /* Die beiden Grenzen stehen über ihren Stapeln, der Cent über sich. */
+  .mark-then,
+  .mark-now,
+  .mark-cent {
+    --ty: -125%;
+  }
+
+  .mark-cent b,
+  .mark-cent small,
+  .mark-convictions b,
+  .mark-state b,
+  .mark-measured {
+    color: #ff6a64;
+  }
+
+  /* Was liegen bleibt, steht links im Hof, was weitergeht, vorn. */
+  .mark-convictions {
+    --tx: -115%;
+    --ty: -60%;
+  }
+
+  /* Der Streifen des Staates links unter sich, der Rest unter dem Schein. */
+  .mark-state {
+    --tx: -12%;
+    --ty: 150%;
+    text-align: start;
+  }
+
+  .mark-rest {
+    --tx: -5%;
+    --ty: 170%;
+  }
+
+  /* Kosten und belegter Nutzen liegen nebeneinander: das eine Schild
+     steht links von seinem Stapel, das andere rechts. */
+  .mark-cost {
+    --tx: -88%;
+    max-inline-size: 8em;
+    text-align: end;
+  }
+
+  .mark-measured {
+    --tx: -12%;
+    max-inline-size: 6em;
+    text-align: start;
+  }
+
+  .mark-modelled {
+    color: #cfd9f2;
+  }
+
+  /* Das Schild zu einer Zahlung steht über ihr, nicht auf ihr. */
+  .mark-tag {
+    --ty: -150%;
+  }
+
+  /* Versprochen und gemessen: zwei Worte am Himmel neben den
+     Lautsprechern, das Versprechen hell, was belegt ist, rot. */
+  .mark-promise,
+  .mark-record {
+    --ty: -135%;
+    max-inline-size: 6.2em;
+    padding: 0;
+    background: none;
+    text-shadow:
+      0 1px 2px rgb(0 0 0 / 0.9),
+      0 0 12px rgb(0 0 0 / 0.8);
+    font-size: clamp(1.05rem, 0.5rem + 4.2cqi, 2.3rem);
+    font-weight: var(--weight-heading);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+  }
+
+  .mark-promise small,
+  .mark-record small {
+    margin-block-end: 0.25em;
+    font-size: clamp(0.62rem, 0.45rem + 1.1cqi, 0.8rem);
+  }
+
+  .mark-promise {
+    --tx: -78%;
+  }
+
+  .mark-record {
+    --tx: -22%;
+    color: #ff5a55;
+  }
+
+  .ways:not([data-playing]) .mark-record.on {
+    transition-delay: 0.85s;
+  }
+
+  /* ---------- Vorlesen -------------------------------------------------- */
 
   /* Was gerade gelesen wird, wörtlich, mit Fundstelle. */
   .wall-voice {
     position: absolute;
     inset-inline: 4%;
-    inset-block-end: 3%;
+    inset-block-end: 12%;
+    z-index: 2;
     display: grid;
     gap: 0.35rem;
     padding: 0.7rem 1rem;
-    border-inline-start: 4px solid var(--red);
+    border-inline-start: 4px solid var(--accent);
     border-radius: var(--radius-sm);
-    background: color-mix(in oklab, var(--paper) 92%, transparent);
+    background: rgb(9 12 19 / 0.9);
     box-shadow: 0 0.6rem 2rem rgb(0 0 0 / 0.35);
-    color: var(--foreground);
+    color: #e8ebef;
     font-size: clamp(0.8rem, 0.7rem + 0.4vw, 1rem);
     line-height: 1.4;
     opacity: 0;
@@ -2118,7 +1681,7 @@ const noteKeep = String(kept / 100)
   }
 
   .wall-voice small {
-    color: var(--ink-3);
+    color: #aab0b8;
     font-size: var(--type-meta);
   }
 
@@ -2152,7 +1715,7 @@ const noteKeep = String(kept / 100)
     position: absolute;
     inset-block-start: var(--space-s);
     inset-inline-end: var(--space-s);
-    z-index: 3;
+    z-index: 4;
     display: grid;
     place-items: center;
     inline-size: 3rem;
@@ -2160,9 +1723,8 @@ const noteKeep = String(kept / 100)
     padding: 0;
     border: 1px solid var(--line);
     border-radius: 50%;
-    background: var(--panel);
+    background: rgb(11 14 23 / 0.7);
     color: var(--foreground);
-    box-shadow: 0 0.4rem 1.2rem rgb(0 0 0 / 0.25);
     cursor: pointer;
     opacity: 0;
     visibility: hidden;
@@ -2175,7 +1737,7 @@ const noteKeep = String(kept / 100)
       background 0.2s ease;
   }
 
-  .view[data-scene="tower"] .film-voice {
+  .view[data-chapter="papier"] .film-voice {
     opacity: 1;
     visibility: visible;
     scale: 1;
@@ -2205,8 +1767,8 @@ const noteKeep = String(kept / 100)
   }
 
   .film-voice[aria-pressed="true"] {
-    border-color: var(--red);
-    background: var(--red);
+    border-color: var(--accent);
+    background: var(--accent);
     color: #fff;
   }
 
@@ -2220,239 +1782,9 @@ const noteKeep = String(kept / 100)
     }
   }
 
-  .wall {
-    display: grid;
-    grid-template-columns: repeat(var(--cols, 24), var(--tile, 1rem));
-    gap: 2px;
-  }
-
-  .page {
-    aspect-ratio: 5 / 6;
-    border: 1px solid var(--material-edge);
-    border-radius: 1px;
-    background:
-      linear-gradient(var(--line), var(--line)) 20% 30% / 60% 1px no-repeat,
-      linear-gradient(var(--line), var(--line)) 20% 50% / 60% 1px no-repeat,
-      linear-gradient(var(--line), var(--line)) 20% 70% / 40% 1px no-repeat,
-      var(--paper);
-    opacity: 0;
-    scale: 0.6;
-    transition:
-      opacity 0.3s ease calc(var(--k) * 2ms),
-      scale 0.3s ease calc(var(--k) * 2ms);
-  }
-
-  .view[data-scene="tower"] .page.first,
-  .wall.on .page {
-    opacity: 1;
-    scale: 1;
-  }
-
-  /* Die sechs Seiten von 1991, rot. */
-  .page.first {
-    border-color: var(--accent);
-    background: var(--red);
-  }
-
-  /* ---------- Ergebnis -------------------------------------------------- */
-
-  .result {
-    display: grid;
-    place-items: center;
-    min-block-size: 0;
-  }
-
-  .sand,
-  .note {
-    grid-area: 1 / 1;
-    opacity: 0;
-    visibility: hidden;
-    transition:
-      opacity 0.5s ease,
-      visibility 0.5s;
-  }
-
-  .sand.on,
-  .note.on {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  /* Ein Punkt je Meldung, auf einer Leinwand (src/lib/film-sand.ts). Die
-     Farb- und Schriftproben liest das Skript, damit Hell und Dunkel
-     stimmen; die Zahlen der Verurteilungen und Meldungen zeichnet es
-     selbst, damit sie mit der Kamera wachsen und schrumpfen. */
-  .sand {
-    position: relative;
-    inline-size: 100%;
-    block-size: 100%;
-  }
-
-  .sand canvas {
-    position: absolute;
-    inset: 0;
-    inline-size: 100%;
-    block-size: 100%;
-  }
-
-  .sand i {
-    display: none;
-  }
-
-  .sand [data-sand-grey] {
-    color: var(--bar);
-  }
-
-  .sand [data-sand-red] {
-    color: var(--red);
-  }
-
-  .sand [data-sand-text] {
-    color: var(--foreground);
-    font-size: var(--step-2);
-    font-weight: var(--weight-heading);
-  }
-
-  .sand [data-sand-muted] {
-    color: var(--ink-2);
-    font-size: var(--type-meta);
-  }
-
-  .sand [data-sand-panel] {
-    color: var(--panel);
-  }
-
-  /* Gespeichert, nicht weitergegeben: mitten im blassen Block. */
-  .sand-label {
-    position: absolute;
-    display: grid;
-    justify-items: center;
-    padding: 0.3em 0.7em;
-    border-radius: var(--radius-sm);
-    background: var(--panel);
-    translate: -50% -50%;
-    color: var(--ink-2);
-    font-size: var(--type-meta);
-    line-height: 1.2;
-    text-align: center;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .sand-label b {
-    color: var(--foreground);
-    font-size: var(--step-2);
-    font-weight: var(--weight-heading);
-    letter-spacing: -0.02em;
-  }
-
-  .sand[data-state="kept"] .sand-label {
-    opacity: 1;
-    transition-delay: 1.2s;
-  }
-
-  /* Ein Hunderter reißt (src/lib/film-note.ts): Der Staat bekommt einen
-     schmalen Streifen, den Rest behalten die Kriminellen. Das Feld hat ein
-     festes Seitenverhältnis, damit die Leiste des Browsers beim Scrollen
-     nichts neu zeichnet. */
-  .note {
-    position: relative;
-    inline-size: min(100%, 100cqh * 1.15);
-    aspect-ratio: 1.25;
-  }
-
-  .note canvas {
-    position: absolute;
-    inset: 0;
-    inline-size: 100%;
-    block-size: 100%;
-  }
-
-  .note i {
-    display: none;
-  }
-
-  .note [data-note-paper] {
-    color: var(--note);
-  }
-
-  .note [data-note-edge] {
-    color: var(--note-edge);
-  }
-
-  .note [data-note-red] {
-    color: var(--red);
-  }
-
-  .note [data-note-shadow] {
-    color: light-dark(rgb(0 0 0 / 0.3), rgb(0 0 0 / 0.7));
-  }
-
-  .note-label {
-    position: absolute;
-    display: grid;
-    color: var(--ink-2);
-    font-size: var(--type-meta);
-    line-height: 1.2;
-    white-space: nowrap;
-    opacity: 0;
-    translate: 0 0.4rem;
-    transition:
-      opacity 0.5s ease,
-      translate 0.5s ease;
-  }
-
-  .note-label b {
-    color: var(--foreground);
-    font-size: clamp(1.5rem, 1rem + 2.5cqi, 2.6rem);
-    font-weight: var(--weight-heading);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-  }
-
-  .note-label.kept,
-  .note-label.kept b {
-    color: var(--accent);
-  }
-
-  /* Unter dem Rest des Scheins, an seiner rechten Kante. */
-  .note-label.rest {
-    justify-items: end;
-    translate: -100% 0.4rem;
-  }
-
-  .note[data-done] .note-label {
-    opacity: 1;
-    translate: 0 0;
-  }
-
-  .note[data-done] .note-label.rest {
-    translate: -100% 0;
-    transition-delay: 0.25s;
-  }
-
   /* ---------- Schmal ---------------------------------------------------- */
 
   @container campaign (width < 60rem) {
-    .cash {
-      --pile: min(50cqi, (100cqh - 9rem) * 0.86);
-    }
-
-    .cash-label b {
-      font-size: clamp(1.2rem, 0.8rem + 2.4cqi, 1.8rem);
-    }
-
-    /* Was der Cent bedeutet, sagt die Schlagzeile darunter schon. */
-    .cash-row.zero .cash-detail {
-      display: none;
-    }
-
-    .scene {
-      gap: var(--space-2xs);
-      padding: var(--space-s) var(--space-s) var(--space-xs);
-    }
-
     .say h3 {
       max-inline-size: none;
     }

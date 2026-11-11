@@ -14,19 +14,20 @@ import { leaks, peopleAffected, roundPeople } from "@/data/leaks"
 import { type Language, pathFor } from "@/lib/i18n"
 
 // The history page's scroll film: how the rules piled up, step by small
-// step, and how little came of it, in five chapters of eleven short steps, the rules and the readers of the
-// register on one running timeline from 1977 to today.
-// It starts with the reader, from which amount you have to show ID, shows
-// the ways money takes filling with rules and the register filling with
-// readers, and ends with the result. Four more chapters of twelve steps
-// stay in the picture of the rules chapter, the panopticon, and move the
-// camera through it: what is decided next, what it means for you, the
-// bill, and what was promised.
+// step, how little came of it, what is decided next, what it means for the
+// reader, what it costs and what was promised: nine chapters of 23 short
+// steps, all of them in one rendered world, a panopticon at night
+// (scripts/artwork/render-panopticon.py). It starts at a table in one
+// cell, with the amount from which you have to show ID, rises over the
+// ring while the year runs from 1977 and the searchlights come on, and
+// goes back into the cell and the yard for every figure after that.
 // Each step is a headline of a few words, at most one line under it, and
-// changes one picture: a contrast you see before you read. Every figure is verified in
+// one still; where a step has a clip, the camera's way to its still plays
+// once when the step comes up. Every figure is verified in
 // dac8-wiki/.wiki/wiki/references/rule-growth-and-effect-evidence.md and
-// aml-kyc-history-austria.md; the charts below the film carry the full
-// series. Keep both languages in sync and say no more than the source does.
+// aml-kyc-history-austria.md; the section to check below the film carries
+// the full series. Keep both languages in sync and say no more than the
+// source does.
 
 type Text = Record<Language, string>
 export type Source = { label: Text; href: string }
@@ -36,19 +37,23 @@ const eurlex = (path: string, de: string, en: string): Source => ({
   href: `https://eur-lex.europa.eu/eli/${path}/oj`,
 })
 
-export type Scene =
-  | "threshold"
-  | "rules"
-  | "watch"
-  | "tower"
-  | "result"
-  | "world"
-
-// The stills of the later chapters, rendered in the panopticon's world
-// (scripts/artwork/render-panopticon.py): the EU's 27 account registers,
-// the view from the crypto cell, the breach in the tower, the notice on
-// the cell's table, the pallets in the yard and the loudspeakers.
+// The stills, rendered in the panopticon's world: the table in the crypto
+// cell with the two limits in notes, in gold and the cent; the cell's walls
+// with the first directive's pages and with all of them; the yard with one
+// slip per report; the note on the table; the EU's 27 account registers;
+// the view from the cell; the breach in the tower; the notice on the
+// table; the pallets in the yard and the loudspeakers. A step without a
+// still shows the overview, where the year runs with the scroll.
 export type Shot =
+  | "cash"
+  | "gold"
+  | "cent"
+  | "wall6"
+  | "wall"
+  | "reports"
+  | "kept"
+  | "convictions"
+  | "note"
   | "wide"
   | "cell"
   | "leak"
@@ -57,22 +62,36 @@ export type Shot =
   | "yard-benefit"
   | "horn"
 
+// The clips (public/film/<name>.mp4): the camera's way to a step's still
+// and what happens in the world on the way.
+export type Clip =
+  | "cent"
+  | "rise"
+  | "wall"
+  | "paper"
+  | "reports"
+  | "note"
+  | "back"
+  | "wide"
+  | "cell"
+  | "leak"
+  | "letter"
+  | "yard"
+  | "benefit"
+  | "horn"
+
 // The story's order: what is asked of you, how many rules ask it, who gets
 // to look, how much paper they fill, and what comes of it.
-export const chapters: { id: string; scene: Scene; label: Text }[] = [
-  { id: "ausweis", scene: "threshold", label: { de: "Ausweis", en: "ID" } },
-  { id: "regeln", scene: "rules", label: { de: "Regeln", en: "Rules" } },
-  { id: "zweck", scene: "watch", label: { de: "Zugriff", en: "Access" } },
-  { id: "papier", scene: "tower", label: { de: "Papier", en: "Paper" } },
-  { id: "ergebnis", scene: "result", label: { de: "Ergebnis", en: "Result" } },
-  { id: "weiter", scene: "rules", label: { de: "Weiter", en: "Next" } },
-  { id: "du", scene: "world", label: { de: "Für dich", en: "For you" } },
-  { id: "rechnung", scene: "world", label: { de: "Rechnung", en: "Bill" } },
-  {
-    id: "versprochen",
-    scene: "world",
-    label: { de: "Versprochen", en: "Promised" },
-  },
+export const chapters: { id: string; label: Text }[] = [
+  { id: "ausweis", label: { de: "Ausweis", en: "ID" } },
+  { id: "regeln", label: { de: "Regeln", en: "Rules" } },
+  { id: "zweck", label: { de: "Zugriff", en: "Access" } },
+  { id: "papier", label: { de: "Papier", en: "Paper" } },
+  { id: "ergebnis", label: { de: "Ergebnis", en: "Result" } },
+  { id: "weiter", label: { de: "Weiter", en: "Next" } },
+  { id: "du", label: { de: "Für dich", en: "For you" } },
+  { id: "rechnung", label: { de: "Rechnung", en: "Bill" } },
+  { id: "versprochen", label: { de: "Versprochen", en: "Promised" } },
 ]
 
 export type Step = {
@@ -89,12 +108,11 @@ export type Step = {
   // A date and its procedural status, above the headline.
   when?: Text
   status?: Status
-  // The step's own scene where it differs from its chapter's.
-  scene?: Scene
-  // The still this step shows, and the flight that leads the camera to it
-  // (public/film/flight<n>/), run through with the scroll.
+  // The still this step shows, and the clip that leads the camera to it.
   shot?: Shot
-  flight?: number
+  clip?: Clip
+  // In the overview from the paper chapter on, the pages hang in the cell.
+  late?: boolean
   // What the picture names in a few words: what was promised and what is
   // on record, or what a part of it stands for.
   marks?: { id: string; text: Text }[]
@@ -190,7 +208,7 @@ export const goldSources: Source[] = [
   },
 ]
 // The ounces the coins in the film's pictures add up to, by year of the
-// threshold (scripts/artwork/render-cash.py, gold-brick and gold-bundle).
+// threshold (scripts/artwork/render-panopticon.py, OUNCES_1991 and the coins beside).
 export const goldShown: Record<number, number> = { 1991: 47, 2027: 2.7 }
 // Troy ounces of gold an amount bought in its year, whole ounces from ten.
 export const inGold = (amount: number, year: number) => {
@@ -287,7 +305,7 @@ const promised: Step[] = pairs.flatMap((pair, k) =>
           id: `versprochen-${pair.id}`,
           chapter: "versprochen",
           shot: "horn" as const,
-          flight: k === 0 ? 6 : undefined,
+          clip: k === 0 ? ("horn" as const) : undefined,
           title: pair.film.title,
           text: pair.film.text,
           marks: [
@@ -310,6 +328,11 @@ export const steps: Step[] = [
   {
     id: "ausweis-bar",
     chapter: "ausweis",
+    shot: "cash",
+    caption: {
+      de: "Maßstabsgetreu, 1991 in heutigem Geld.",
+      en: "At true scale, 1991 in today’s money.",
+    },
     title: {
       de: "Die Ausweisgrenze sinkt: von 33.900\u00a0€ auf 10.000\u00a0€.",
       en: "The ID limit falls: from €33,900 to €10,000.",
@@ -333,6 +356,11 @@ export const steps: Step[] = [
   {
     id: "ausweis-gold",
     chapter: "ausweis",
+    shot: "gold",
+    caption: {
+      de: `Maßstabsgetreu, Gold zum Preis von 1991 und von ${goldPrice.asOf.de}.`,
+      en: `At true scale, gold at the price of 1991 and of ${goldPrice.asOf.en}.`,
+    },
     title: {
       de: `In Gold: von ${ounces("de")[0]} auf ${ounces("de")[1]} Unzen.`,
       en: `In gold: from ${ounces("en")[0]} to ${ounces("en")[1]} ounces.`,
@@ -346,6 +374,8 @@ export const steps: Step[] = [
   {
     id: "ausweis-krypto",
     chapter: "ausweis",
+    shot: "cent",
+    clip: "cent",
     title: {
       de: "Krypto: ab dem ersten Cent.",
       en: "Crypto: from the first cent.",
@@ -369,6 +399,7 @@ export const steps: Step[] = [
   {
     id: "regeln",
     chapter: "regeln",
+    clip: "rise",
     years: [1977, 2015],
     // Only the Savings Directive ever ended, repealed by Directive (EU)
     // 2015/2060 because the broader DAC2 superseded it.
@@ -406,6 +437,12 @@ export const steps: Step[] = [
   {
     id: "papier-1991",
     chapter: "papier",
+    shot: "wall6",
+    clip: "wall",
+    caption: {
+      de: "Ein Blatt je Seite im Amtsblatt der EU.",
+      en: "One sheet per page in the EU Official Journal.",
+    },
     title: {
       de: "1991: 6 Seiten.",
       en: "1991: 6 pages.",
@@ -423,6 +460,12 @@ export const steps: Step[] = [
   {
     id: "papier-heute",
     chapter: "papier",
+    shot: "wall",
+    clip: "paper",
+    caption: {
+      de: "Ein Blatt je Seite im Amtsblatt der EU, rot die erste Richtlinie von 1991.",
+      en: "One sheet per page in the EU Official Journal; red, the first directive of 1991.",
+    },
     title: {
       de: "Seither beschlossen: 488 Seiten.",
       en: "Adopted since: 488 pages.",
@@ -454,6 +497,12 @@ export const steps: Step[] = [
   {
     id: "ergebnis-2025",
     chapter: "ergebnis",
+    shot: "reports",
+    clip: "reports",
+    caption: {
+      de: "Ein Zettel je Verdachtsmeldung.",
+      en: "One slip per suspicion report.",
+    },
     title: {
       de: "13.989 Verdachtsmeldungen.",
       en: "13,989 suspicion reports.",
@@ -476,6 +525,11 @@ export const steps: Step[] = [
   {
     id: "ergebnis-liegen",
     chapter: "ergebnis",
+    shot: "kept",
+    caption: {
+      de: "Ein Zettel je Verdachtsmeldung.",
+      en: "One slip per suspicion report.",
+    },
     title: {
       de: "9.665 bleiben liegen. Gespeichert.",
       en: "9,665 go nowhere. Stored.",
@@ -489,6 +543,11 @@ export const steps: Step[] = [
   {
     id: "ergebnis-urteile",
     chapter: "ergebnis",
+    shot: "convictions",
+    caption: {
+      de: "Ein Zettel je Verdachtsmeldung.",
+      en: "One slip per suspicion report.",
+    },
     title: {
       de: "139 Verurteilungen.",
       en: "139 convictions.",
@@ -502,6 +561,8 @@ export const steps: Step[] = [
   {
     id: "ergebnis-euro",
     chapter: "ergebnis",
+    shot: "note",
+    clip: "note",
     title: {
       de: "Von 100 €, die Kriminelle einnehmen, zieht der Staat rund 2 € ein.",
       en: "Of €100 criminals make, the state confiscates about €2.",
@@ -521,6 +582,8 @@ export const steps: Step[] = [
   {
     id: "weiter-bargeld",
     chapter: "weiter",
+    clip: "back",
+    late: true,
     years: [thisYear, 2027],
     ...next("amlr"),
     title: {
@@ -535,6 +598,7 @@ export const steps: Step[] = [
   {
     id: "weiter-finanzamt",
     chapter: "weiter",
+    late: true,
     years: [2027, 2028],
     ...next("dac10"),
     text: {
@@ -545,16 +609,14 @@ export const steps: Step[] = [
   {
     id: "weiter-register",
     chapter: "weiter",
-    scene: "world",
     shot: "wide",
-    flight: 1,
+    clip: "wide",
     years: [2028, 2029],
     ...next("register-eu"),
   },
   {
     id: "weiter-zahlungen",
     chapter: "weiter",
-    scene: "world",
     shot: "wide",
     years: [2029, 2030],
     ...next("r16"),
@@ -575,7 +637,7 @@ export const steps: Step[] = [
     id: "du-erfasst",
     chapter: "du",
     shot: "cell",
-    flight: 2,
+    clip: "cell",
     title: {
       de: "Und du? Gemeldet wirst du ohne Verdacht.",
       en: "And you? You are reported without suspicion.",
@@ -597,7 +659,7 @@ export const steps: Step[] = [
     id: "du-datenleck",
     chapter: "du",
     shot: "leak",
-    flight: 3,
+    clip: "leak",
     title: {
       de: "Gesammelte Daten gehen verloren, auch bei Behörden.",
       en: "Collected data get lost, at authorities too.",
@@ -625,7 +687,7 @@ export const steps: Step[] = [
     id: "du-grund",
     chapter: "du",
     shot: "letter",
-    flight: 4,
+    clip: "letter",
     title: {
       de: "Abgelehnt oder gekündigt, ohne zu erfahren, warum.",
       en: "Refused or closed, without being told why.",
@@ -650,7 +712,7 @@ export const steps: Step[] = [
     id: "rechnung-kosten",
     chapter: "rechnung",
     shot: "yard-cost",
-    flight: 5,
+    clip: "yard",
     title: {
       de: `Die Rechnung: über ${costFloor("de")} Milliarden Euro im Jahr.`,
       en: `The bill: over ${costFloor("en")} billion euros a year.`,
@@ -678,6 +740,7 @@ export const steps: Step[] = [
     id: "rechnung-nutzen",
     chapter: "rechnung",
     shot: "yard-benefit",
+    clip: "benefit",
     title: {
       de: `Belegt ist ein Nutzen von ${formatNumber(reportingBenefit.fromData, "de")} Milliarden.`,
       en: `The benefit on record is ${formatNumber(reportingBenefit.fromData, "en")} billion.`,
