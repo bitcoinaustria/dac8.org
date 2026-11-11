@@ -51,7 +51,6 @@ export type LetterFacts = {
 }
 
 export type LetterFields = {
-  salutation: "female" | "male" | "neutral"
   recipient: string
   sender: string
   location: string
@@ -86,7 +85,7 @@ type Part = {
 }
 
 // Sentences about the sender, joined into one paragraph with their own
-// words. The first two reveal holdings and say so.
+// words. The last two reveal holdings; the generator says so above them.
 const about: Part[] = [
   {
     id: "voter",
@@ -102,8 +101,8 @@ const about: Part[] = [
   {
     id: "savings",
     label: {
-      de: "Ich spare in Bitcoin (verrät, dass du Bitcoin besitzt)",
-      en: "I save in bitcoin (reveals that you hold bitcoin)",
+      de: "Ich spare in Bitcoin",
+      en: "I save in bitcoin",
     },
     text: {
       de: "Ich spare selbst in Bitcoin, so wie andere in Gold oder auf dem Sparbuch.",
@@ -113,8 +112,8 @@ const about: Part[] = [
   {
     id: "pension",
     label: {
-      de: "Bitcoin ist Teil meiner Pensionsvorsorge (verrät, dass du Bitcoin besitzt)",
-      en: "Bitcoin is part of my retirement savings (reveals that you hold bitcoin)",
+      de: "Bitcoin ist Teil meiner Pensionsvorsorge",
+      en: "Bitcoin is part of my retirement savings",
     },
     text: {
       de: "Bitcoin ist Teil meiner Vorsorge für die Pension.",
@@ -279,13 +278,20 @@ export const letterDefaults = [...about, ...reasons, ...demands]
   .filter((part) => part.on)
   .map((part) => part.id)
 
+// Ready-made choices of arguments and demands, so that nobody has to read
+// every part first. The long one leaves out the holding period, which is the
+// sender's own demand and has to be picked by hand.
+export const letterPresets = {
+  short: ["leaks", "attacks", "suspicion", "stockpile", "ownWallet"],
+  standard: letterDefaults,
+  long: [...reasons, ...demands]
+    .map((part) => part.id)
+    .filter((id) => id !== "holding"),
+}
+
 const text = {
   de: {
-    salutation: {
-      female: "Sehr geehrte Frau Abgeordnete",
-      male: "Sehr geehrter Herr Abgeordneter",
-      neutral: "Guten Tag",
-    },
+    salutation: "Guten Tag",
     generic: "Sehr geehrte Damen und Herren,",
     senderPlaceholder: "[Dein Name]",
     thesis:
@@ -300,11 +306,7 @@ const text = {
     closing: "Mit freundlichen Grüßen",
   },
   en: {
-    salutation: {
-      female: "Dear Ms",
-      male: "Dear Mr",
-      neutral: "Dear",
-    },
+    salutation: "Dear",
     generic: "Dear Sir or Madam,",
     senderPlaceholder: "[Your name]",
     thesis:
@@ -335,7 +337,7 @@ export const buildLetter = (
         return typeof value === "string" ? value : value(facts, link)
       })
   const salutation = fields.recipient
-    ? `${t.salutation[fields.salutation]} ${fields.recipient},`
+    ? `${t.salutation} ${fields.recipient},`
     : t.generic
   const signature = [fields.sender || t.senderPlaceholder, fields.location]
     .filter(Boolean)
