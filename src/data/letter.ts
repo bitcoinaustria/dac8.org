@@ -75,8 +75,9 @@ type Part = {
   id: string
   // Shown beside the checkbox, in the language of the page.
   label: Record<Language, string>
-  // One line under the label on what the part adds.
-  hint: Record<Language, string>
+  // One line under the label on what the part adds, where the label alone
+  // does not say it.
+  hint?: Record<Language, string>
   // Chosen when the page loads.
   on?: boolean
   // In the language of the letter.
@@ -87,17 +88,13 @@ type Part = {
 }
 
 // Sentences about the sender, joined into one paragraph with their own
-// words. The last two reveal holdings and say so in their hint.
+// words. The last two reveal holdings, which their labels make plain.
 const about: Part[] = [
   {
     id: "voter",
     label: {
       de: "Ich bin in Österreich wahlberechtigt",
       en: "I am entitled to vote in Austria",
-    },
-    hint: {
-      de: "Zeigt dem Büro, dass du mitentscheidest.",
-      en: "Shows the office that you have a vote.",
     },
     text: {
       de: "Ich bin in Österreich wahlberechtigt, und dieses Thema entscheidet mit, wen ich wähle.",
@@ -110,10 +107,6 @@ const about: Part[] = [
       de: "Ich spare in Bitcoin",
       en: "I save in bitcoin",
     },
-    hint: {
-      de: "Sagt dem Büro, dass du Bitcoin besitzt.",
-      en: "Tells the office that you hold bitcoin.",
-    },
     text: {
       de: "Ich spare selbst in Bitcoin, so wie andere in Gold oder auf dem Sparbuch.",
       en: "I save in bitcoin myself, as others do in gold or a savings account.",
@@ -124,10 +117,6 @@ const about: Part[] = [
     label: {
       de: "Bitcoin ist Teil meiner Pensionsvorsorge",
       en: "Bitcoin is part of my retirement savings",
-    },
-    hint: {
-      de: "Sagt dem Büro, dass du Bitcoin besitzt.",
-      en: "Tells the office that you hold bitcoin.",
     },
     text: {
       de: "Bitcoin ist Teil meiner Vorsorge für die Pension.",

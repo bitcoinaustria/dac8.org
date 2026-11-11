@@ -110,7 +110,7 @@ const groups = [
                   checked={part.on}
                 />
                 <strong>{part.label[language]}</strong>
-                <span>{part.hint[language]}</span>
+                {part.hint && <span>{part.hint[language]}</span>}
               </label>
             ))}
           </fieldset>
@@ -160,7 +160,7 @@ const groups = [
             <label>
               <input type="checkbox" name="chosen" value={part.id} />
               <strong>{part.label[language]}</strong>
-              <span>{part.hint[language]}</span>
+              {part.hint && <span>{part.hint[language]}</span>}
             </label>
           ))}
       </fieldset>
