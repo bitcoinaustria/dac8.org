@@ -241,8 +241,8 @@ export const leaks: Leak[] = [
       en: "Thousands of private queries in the tax system.",
     },
     text: {
-      de: "Ein Finanzbeamter griff sechs Jahre lang ohne dienstlichen Grund mehrere tausend Mal auf Steuerdaten zu, darunter von mehr als 1.000 Menschen aus seinem Heimatort. 2024 registrierte das Bundesamt zur Korruptionsbekämpfung im öffentlichen Dienst 116 neue Fälle unbefugter Datenabfragen und -weitergaben.",
-      en: "For six years, a tax official accessed tax records several thousand times without any official reason, including those of more than 1,000 people from his home town. In 2024, Austria’s anti-corruption office registered 116 new cases of unauthorised data queries and disclosures in the public sector.",
+      de: "Ein Finanzbeamter griff sechs Jahre lang ohne dienstlichen Grund mehrere tausend Mal auf Steuerdaten zu, darunter von mehr als 1.000 Menschen aus seinem Heimatort. 2025 registrierte das Bundesamt zur Korruptionsbekämpfung im öffentlichen Dienst 105 neue Fälle unbefugter Datenabfragen und -weitergaben.",
+      en: "For six years, a tax official accessed tax records several thousand times without any official reason, including those of more than 1,000 people from his home town. In 2025, Austria’s anti-corruption office registered 105 new cases of unauthorised data queries and disclosures in the public sector.",
     },
     people: 1000,
     sources: [
@@ -255,10 +255,10 @@ export const leaks: Leak[] = [
       },
       {
         label: {
-          de: "BAK-Jahresbericht 2024",
-          en: "BAK annual report 2024",
+          de: "BAK-Jahresbericht 2025",
+          en: "BAK annual report 2025",
         },
-        href: "https://www.bak.gv.at/Downloads/files/Jahresberichte/BAK_Jahresbericht_2024_bf_20250422.pdf",
+        href: "https://www.bak.gv.at/Downloads/files/jahresberichte/bak_jahresbericht_2025.pdf",
       },
     ],
   },
@@ -401,6 +401,64 @@ export const leaks: Leak[] = [
           en: "LAG Nürnberg, 3 Sa 265/20",
         },
         href: "https://lag.bayern.de/imperia/md/content/stmas/lag/nuernberg/entscheidungen/2021/3_sa_265_20.pdf",
+      },
+    ],
+  },
+  {
+    id: "germany-police-register",
+    name: { de: "Deutschland", en: "Germany" },
+    year: 2002,
+    holders: ["authority"],
+    kind: { de: "Polizei", en: "Police" },
+    lost: ["identity"],
+    headline: {
+      de: "Anschriften aus dem Polizeisystem für Erpresserbriefe.",
+      en: "Home addresses from police systems for extortion letters.",
+    },
+    text: {
+      de: "Ein Mann notierte vor Banken im Ausland die Kennzeichen deutscher Autos. Ein Bekannter, ein sächsischer Polizist, ließ eine Kollegin über die dienstlichen Datensysteme der Polizei 37 Halter ermitteln und gab ihre Daten weiter. 23 von ihnen bekamen Erpresserbriefe: 10.000 Mark, sonst erfahre das Finanzamt von ihrem Auslandskonto. Dass der Polizist den Plan kannte, sah das Landgericht nicht als erwiesen an und sprach ihn frei. Der Bundesgerichtshof hob den Freispruch 2002 auf, weil schon die Weitergabe der Anschriften geschützte Verwaltungsdaten preisgab, und ordnete eine neue Verhandlung an.",
+      en: "A man noted the number plates of German cars outside banks abroad. An acquaintance, a Saxon police officer, had a colleague look up 37 vehicle owners in the police’s official data systems and passed their details on. 23 of them received extortion letters: 10,000 marks, or the tax office would learn of their foreign account. The trial court did not find it proven that the officer knew of the plan and acquitted him. In 2002 the Federal Court of Justice overturned the acquittal, holding that passing on the home addresses alone disclosed protected administrative data, and ordered a new trial.",
+    },
+    people: 37,
+    sources: [
+      {
+        label: {
+          de: "BGH, 1 StR 150/02",
+          en: "Federal Court of Justice, 1 StR 150/02",
+        },
+        href: "https://www.bundesgerichtshof.de/SharedDocs/Entscheidungen/DE/Strafsenate/1_StS/2002/1_StR_150-02.pdf?__blob=publicationFile&v=1",
+      },
+    ],
+  },
+  {
+    id: "norway-tax-lists",
+    name: { de: "Norwegen", en: "Norway" },
+    year: 2009,
+    holders: ["authority"],
+    kind: { de: "Steuerverwaltung", en: "Tax administration" },
+    lost: ["holdings"],
+    headline: {
+      de: "Öffentliche Steuerlisten als Zielliste.",
+      en: "Public tax lists as a target list.",
+    },
+    text: {
+      de: "Norwegen veröffentlicht jedes Jahr Einkommen, Vermögen und Steuer seiner Steuerpflichtigen, mit Name, Geburtsjahr und Wohnort. 2009 meldete die Polizei Drohbriefe, in denen Menschen mit hohem Einkommen oder Vermögen Geld abgepresst werden sollte, und einen Fall von Villeneinbrüchen und versuchtem Raub, der direkt mit gezielten Suchen in den Listen zusammenhing. Eine breite Nutzung durch Kriminelle sah sie nicht belegt, wohl aber einige schwere Einzelfälle. Heute muss sich anmelden, wer sucht, und jeder sieht, wer seine Zahlen angesehen hat.",
+      en: "Every year Norway publishes the income, wealth and tax of its taxpayers, with name, year of birth and locality. In 2009 the police reported threatening letters demanding money from people with high income or wealth, and a case of villa burglaries and attempted robbery directly linked to targeted searches of the lists. They did not find widespread use by criminals established, but a few serious individual cases. Today searchers must log in, and everyone can see who has looked at their figures.",
+    },
+    sources: [
+      {
+        label: {
+          de: "Storting, Dokument 8:15 S (2010–2011)",
+          en: "Storting, Document 8:15 S (2010–2011)",
+        },
+        href: "https://www.stortinget.no/globalassets/pdf/representantforslag/2010-2011/dok8-201011-015.pdf",
+      },
+      {
+        label: {
+          de: "Norwegische Steuerverwaltung",
+          en: "Norwegian Tax Administration",
+        },
+        href: "https://www.skatteetaten.no/person/skatt/skatteoppgjor/skattelistene/",
       },
     ],
   },
