@@ -1,21 +1,21 @@
 ---
 import SourceRefs from "@/components/SourceRefs.astro"
 import { historySources } from "@/data/history-sources"
-import { openPairs, pairs } from "@/data/history-promises"
+import { pairs } from "@/data/history-promises"
 import type { Language } from "@/lib/i18n"
 
 interface Props {
   language: Language
 }
 
-// Promised, measured: a dark band of pairs, what politicians announced for
-// a rule on the left, what their own institutions know about it on the
-// right. Data and verification in src/data/history-promises.ts.
+// Promised, measured, in detail below the film, which shows the first
+// three: every pair, what politicians announced for a rule on the left,
+// what their own institutions know about it on the right. Data and
+// verification in src/data/history-promises.ts.
 const { language } = Astro.props
 const en = language === "en"
 const { cite } = historySources(language)
-const shown = pairs.slice(0, openPairs)
-const more = pairs.slice(openPairs)
+const shown = pairs
 const labels = {
   promise: en ? "Promised" : "Versprochen",
   record: en ? "Measured" : "Gemessen",
@@ -62,42 +62,6 @@ const labels = {
       </li>
     ))}
   </ol>
-  {more.length > 0 && (
-    <details class="pairs-more">
-      <summary>
-        {en ? `${more.length} more pairs` : `${more.length} weitere Paare`}
-      </summary>
-      <ol class="pairs">
-    {more.map((pair) => (
-      <li class="pair">
-        <p class="pair-topic">{pair.topic[language]}</p>
-        <div class="pair-side promise">
-          <p class="pair-label">{labels.promise}</p>
-          <p class="pair-token">{pair.token.promise[language]}</p>
-          <blockquote>{pair.promise.quote[language]}</blockquote>
-          <p class="pair-who">
-            {pair.promise.who[language]}, {pair.promise.year}
-            <SourceRefs sources={cite([pair.promise.source])} language={language} />
-          </p>
-        </div>
-        <div class="pair-side record">
-          <p class="pair-label">{labels.record}</p>
-          <p class="pair-token">{pair.token.record[language]}</p>
-          {pair.record.map((said) => (
-            <div class="pair-said">
-              <blockquote>{said.quote[language]}</blockquote>
-              <p class="pair-who">
-                {said.who[language]}, {said.year}
-                <SourceRefs sources={cite([said.source])} language={language} />
-              </p>
-            </div>
-          ))}
-        </div>
-      </li>
-    ))}
-      </ol>
-    </details>
-  )}
 </section>
 
 <style>
@@ -219,36 +183,6 @@ const labels = {
     color: var(--ink-3);
     font-size: var(--type-meta);
     line-height: 1.4;
-  }
-
-  .pairs-more {
-    margin-block-start: var(--space-xl);
-  }
-
-  .pairs-more > summary {
-    display: inline-flex;
-    gap: 0.5em;
-    align-items: center;
-    padding: 0.55em 1.1em;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-    color: var(--ink);
-    font-weight: 600;
-    list-style: none;
-    cursor: pointer;
-  }
-
-  .pairs-more > summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .pairs-more > summary::after {
-    content: "+";
-    color: var(--ink-3);
-  }
-
-  .pairs-more[open] > summary::after {
-    content: "–";
   }
 
   .pair-who :global(a) {

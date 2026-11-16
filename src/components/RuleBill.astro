@@ -6,7 +6,7 @@ import {
   reportingBenefit,
   reportingCosts,
 } from "@/data/history-evidence"
-import { corrected, estimates, recovery } from "@/data/history-gap"
+import { corrected, estimates } from "@/data/history-gap"
 import { balanceSources, historySources } from "@/data/history-sources"
 import type { Language } from "@/lib/i18n"
 
@@ -14,8 +14,8 @@ interface Props {
   language: Language
 }
 
-// The bill: report volumes on separate, labelled scales, the missing
-// connection to outcomes, then Europol's assessment, reporting costs and
+// The bill in detail, below the film: report volumes on separate,
+// labelled scales, the missing connection to outcomes, reporting costs and
 // the estimated benefit, with what of it is measured said in words so the
 // two cards cannot be read as "it pays".
 const { language } = Astro.props
@@ -60,14 +60,6 @@ const dac8Fix = corrected.find((fix) => fix.id === "dac8") ?? corrected[0]
   </h2>
 
   <ReportLandscape language={language} />
-
-  <blockquote class="sc-quote" data-reveal>
-    <p>{recovery.quote[language]}</p>
-    <footer>
-      {en ? "Europol, 2025" : "Europol, 2025"}
-      <SourceRefs sources={cite([recovery.sources[1]])} language={language} />
-    </footer>
-  </blockquote>
 
   <ol class="balance-grid">
     <!-- Kosten: the yearly cost grows with every duty -->
@@ -161,25 +153,6 @@ const dac8Fix = corrected.find((fix) => fix.id === "dac8") ?? corrected[0]
   </ol>
 </section>
 
-<script>
-  // Lines draw themselves once the chart comes into view.
-  const parts = document.querySelectorAll<HTMLElement>(
-    ".scissors [data-reveal]",
-  )
-  const watch = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries)
-        if (entry.isIntersecting) {
-          entry.target.classList.add("seen")
-          watch.unobserve(entry.target)
-        }
-    },
-    { rootMargin: "0px 0px -20% 0px" },
-  )
-  for (const part of parts) watch.observe(part)
-  document.documentElement.classList.add("scissors-ready")
-</script>
-
 <style>
   .scissors {
     --bar: light-dark(#3b4147, #a7afb6);
@@ -191,28 +164,6 @@ const dac8Fix = corrected.find((fix) => fix.id === "dac8") ?? corrected[0]
     );
     display: grid;
     gap: var(--space-l);
-  }
-
-  .sc-quote {
-    display: grid;
-    gap: var(--space-2xs);
-    margin: 0;
-    padding-inline-start: var(--space-l);
-    border-inline-start: 6px solid var(--red);
-  }
-
-  .sc-quote p {
-    color: var(--ink);
-    font-size: var(--type-h3);
-    font-weight: var(--weight-heading);
-    line-height: 1.2;
-    letter-spacing: -0.015em;
-    text-wrap: pretty;
-  }
-
-  .sc-quote footer {
-    color: var(--ink-3);
-    font-size: var(--type-meta);
   }
 
   /* ---------- Kosten und Nutzen, Personal ------------------------------ */
@@ -415,24 +366,5 @@ const dac8Fix = corrected.find((fix) => fix.id === "dac8") ?? corrected[0]
 
   .benefit-labels .model {
     text-align: end;
-  }
-
-  /* ---------- Auftritt beim Scrollen ----------------------------------- */
-
-  :global(html.scissors-ready) [data-reveal].sc-quote:not(.seen) {
-    opacity: 0;
-    translate: 0 1rem;
-  }
-
-  .sc-quote {
-    transition:
-      opacity 0.6s ease,
-      translate 0.6s ease;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .sc-quote {
-      transition: none !important;
-    }
   }
 </style>

@@ -29,15 +29,15 @@ import { languageFor, pathFor } from "@/lib/i18n"
 
 // The apparatus of anti-money-laundering and tax-reporting rules, of which
 // DAC8 is the latest piece, told as a ratchet: each step small, none taken
-// back, the next already decided. The scroll film (RuleFilm.astro) shows
-// how it grew, who gets to look and what comes of it; "and it goes on"
-// (RuleNext.astro) the steps decided or proposed; "what it means for you"
-// (RuleBalance.astro) that everyone is captured, data get lost and
-// accounts are refused without a reason; "the bill" (RuleBill.astro) and
-// "promised, measured" (RulePromises.astro) that hardly anyone measures
-// what it brings. The conclusion turns that into the legal point: the
-// state must justify an intrusion, and courts have drawn limits before. At
-// the end, folded away, everything to check. The page never argues that a
+// back, the next already decided. The scroll film (RuleFilm.astro) tells
+// all of it in one picture after another: how it grew, who gets to look
+// and what comes of it, then, staying in its panopticon, the steps
+// decided or proposed, what it means for you, the bill, and what was
+// promised. The conclusion turns that into the legal point: the state
+// must justify an intrusion, and courts have drawn limits before. Below
+// it, folded away, the later chapters in detail (RuleNext, RuleBalance,
+// RuleBill and RulePromises, which the film shortens to a line each) and
+// everything to check. The page never argues that a
 // rule would be justified if it worked. In every chart red marks what
 // comes of the rules or what is new.
 const language = languageFor(Astro.url.pathname)
@@ -71,14 +71,6 @@ const { list: sources, cite } = historySources(language)
     </header>
 
     <RuleFilm language={language} />
-
-    <RuleNext language={language} />
-
-    <RuleBalance language={language} />
-
-    <RuleBill language={language} />
-
-    <RulePromises language={language} />
 
     <section id="grenzen" class="band" aria-labelledby="grenzen-heading">
       <h2 id="grenzen-heading">
@@ -114,6 +106,29 @@ const { list: sources, cite } = historySources(language)
       <a class="button primary" href={pathFor("participate", language)}
         >{en ? "Get involved" : "Mitmachen"}</a
       >
+    </section>
+
+    <section aria-labelledby="einzelheiten-heading">
+      <details id="einzelheiten" class="history-check history-details">
+        <summary>
+          <h2 id="einzelheiten-heading">
+            {en ? "The film’s later chapters, in detail." : "Die späteren Kapitel des Films, ausführlich."}
+          </h2>
+          <span class="history-check-what">
+            {en
+              ? "What comes next, what it means for you, the bill and every pair of promise and record, each with its sources."
+              : "Was als Nächstes kommt, was es für dich heißt, die Rechnung und alle Paare aus Versprechen und Bilanz, jeweils mit Quellen."}
+          </span>
+        </summary>
+
+        <RuleNext language={language} />
+
+        <RuleBalance language={language} />
+
+        <RuleBill language={language} />
+
+        <RulePromises language={language} />
+      </details>
     </section>
 
     <section aria-labelledby="nachpruefen-heading">
@@ -435,6 +450,25 @@ const { list: sources, cite } = historySources(language)
 
   .history-check h2 {
     font-size: var(--type-h3);
+  }
+
+  /* Die ausführlichen Kapitel untereinander, jedes mit einer Linie davor
+     und einer Überschrift, die kleiner ist als die der Seite. */
+  .history-details > :global(section) {
+    margin-block-start: var(--space-2xl);
+    padding-block-start: var(--space-xl);
+    border-block-start: 1px solid var(--line);
+    scroll-margin-block-start: calc(var(--header-height) + var(--space-l));
+  }
+
+  .history-details > summary + :global(section) {
+    margin-block-start: var(--space-l);
+    padding-block-start: 0;
+    border-block-start: 0;
+  }
+
+  .history-details > :global(section > h2) {
+    font-size: var(--type-h2);
   }
 
   .history-check-what {
