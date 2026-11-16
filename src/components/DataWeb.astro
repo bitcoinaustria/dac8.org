@@ -232,6 +232,47 @@ const tally = (count: number) =>
 // A first width for a card from its label; the script measures the text.
 const cardWidth = (label: string) => Math.round(label.length * 7.2 + 26)
 const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
+
+// A small symbol for what a card carries, drawn in a 12-unit box.
+const glyphs = {
+  id: "M-5.5 -4.5h11v9h-11z M1 -1.5h3 M1 1.5h3 M-3.7 -1.3a1.2 1.2 0 1 0 2.4 0a1.2 1.2 0 1 0 -2.4 0 M-4.3 2.7c0.4 -1.5 3.2 -1.5 3.6 0",
+  holdings: "M-4.5 5v-3.5 M-1.5 5v-6.5 M1.5 5v-9 M4.5 5v-5",
+  home: "M-5.5 0L0 -5l5.5 5 M-4 -1.2V5h8V-1.2 M-1.3 5V1.8h2.6V5",
+  report: "M-4 -5.5h5l3 3v8h-8z M1 -5.5v3h3 M-2 0.5h4 M-2 3h4",
+}
+type Glyph = keyof typeof glyphs
+const glyphFor: Partial<Record<Place, Glyph>> = {
+  provider: "id",
+  taxTool: "holdings",
+  shop: "home",
+  taxOffice: "report",
+}
+// The cards in drawing order: what each place keeps, the report on its
+// way to the tax office, then the red copies a leak makes.
+const cardList: {
+  label: string
+  icon: Glyph
+  kind?: string
+  data: Record<string, string>
+}[] = [
+  ...holding.map((node) => ({
+    label: node.holds?.[language] ?? "",
+    icon: glyphFor[node.id] ?? "report",
+    data: { "data-card": node.id },
+  })),
+  {
+    label: `${reports.card[language]} ${reports.first}`,
+    icon: "report",
+    kind: "moving",
+    data: { "data-report-card": "", "data-label": reports.card[language] },
+  },
+  ...leaked.map((node) => ({
+    label: node.holds?.[language] ?? "",
+    icon: glyphFor[node.id] ?? "report",
+    kind: "copy",
+    data: { "data-copy": node.id },
+  })),
+]
 ---
 
 <p class="note lead">{note[language]}</p>
@@ -483,51 +524,15 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
         </g>
 
         <g class="cards">
-          {holding.map((node) => {
-            const label = node.holds?.[language] ?? ""
-            return (
-              <g class="card" data-card={node.id}>
-                <rect class="card-bg" x={-cardWidth(label) / 2} y="-12" width={cardWidth(label)} height="24" rx="6" />
-                <rect class="card-stripe" x={-cardWidth(label) / 2} y="-12" width="5" height="24" rx="2" />
-                <text class="card-text" x="2.5" y="4.5">{label}</text>
+          {cardList.map((card) => (
+            <g class:list={["card", card.kind]} {...card.data}>
+              <g class="card-glyph" transform={`translate(${-cardWidth(card.label) / 2 + 6} 0)`}>
+                <circle class="card-glyph-bg" r="9" />
+                <path class="card-glyph-lines" d={glyphs[card.icon]} />
               </g>
-            )
-          })}
-          <g
-            class="card moving"
-            data-report-card
-            data-label={reports.card[language]}
-          >
-            <rect
-              class="card-bg"
-              x="-48"
-              y="-12"
-              width="96"
-              height="24"
-              rx="6"
-            />
-            <rect
-              class="card-stripe"
-              x="-48"
-              y="-12"
-              width="5"
-              height="24"
-              rx="2"
-            />
-            <text class="card-text" x="2.5" y="4.5">
-              {`${reports.card[language]} ${reports.first}`}
-            </text>
-          </g>
-          {leaked.map((node) => {
-            const label = node.holds?.[language] ?? ""
-            return (
-              <g class="card copy" data-copy={node.id}>
-                <rect class="card-bg" x={-cardWidth(label) / 2} y="-12" width={cardWidth(label)} height="24" rx="6" />
-                <rect class="card-stripe" x={-cardWidth(label) / 2} y="-12" width="5" height="24" rx="2" />
-                <text class="card-text" x="2.5" y="4.5">{label}</text>
-              </g>
-            )
-          })}
+              <text class="card-text" x="8" y="4.5">{card.label}</text>
+            </g>
+          ))}
           {leaked.map((node) => (
               <g class="case" data-case-pill={node.id} data-case={node.leak}>
                 <rect class="case-bg" x={-cardWidth(caseName(node.leak ?? "")) / 2 - 10} y="-13" width={cardWidth(caseName(node.leak ?? "")) + 20} height="26" rx="13" />
@@ -1104,29 +1109,38 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     opacity: calc(1 - var(--leak));
   }
 
-  /* Karten: grau, was bei einer Stelle liegt; rot, was ein Datenleck
-     kopiert hat. Jede bewegt sich einmal, mit dem Scrollen. */
+  /* Karten: Symbol und Beschriftung ohne Rahmen, wie in einer
+     Zeitungsgrafik; grau, was bei einer Stelle liegt, rot, was ein
+     Datenleck kopiert hat. Jede bewegt sich einmal, mit dem Scrollen. */
   .card {
+    --card-ink: light-dark(#3a3f45, #c9ced3);
     opacity: 0;
     pointer-events: none;
   }
 
-  .card-bg {
-    fill: light-dark(#ffffff, #e9ebed);
-    stroke: #8f979e;
-    stroke-width: 1;
-    filter: drop-shadow(0 2px 3px var(--material-shade));
+  .card-glyph-bg {
+    fill: var(--panel);
   }
 
-  .card-stripe {
-    fill: #3a3f45;
+  .card-glyph-lines {
+    fill: none;
+    stroke: var(--card-ink);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .card-text {
-    fill: #1f2124;
-    font-size: 13px;
+    fill: var(--card-ink);
+    font-size: 12px;
     font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     text-anchor: middle;
+    paint-order: stroke;
+    stroke: var(--panel);
+    stroke-width: 5px;
+    stroke-linejoin: round;
   }
 
   /* Hochformat, also am Handy: Die Fälle öffnen die Knöpfe im Untertitel,
@@ -1195,17 +1209,8 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
     font-size: 11px;
   }
 
-  .card.copy .card-bg {
-    stroke: var(--signal);
-    stroke-width: 1.5;
-  }
-
-  .card.copy .card-stripe {
-    fill: var(--signal);
-  }
-
-  .card.copy .card-text {
-    fill: var(--signal);
+  .card.copy {
+    --card-ink: var(--signal);
   }
 
   /* Der Fall unter einer Stelle: eine rote Marke, die eine Karte mit dem
@@ -1796,26 +1801,28 @@ const leakScene = scenes.findIndex((scene) => scene.id === "lecks")
 
     // Cards and case labels fit their text, in whatever font the page got.
     const fit = () => {
-      for (const group of root.querySelectorAll<SVGGElement>(".card, .case")) {
-        const text = group.querySelector<SVGTextElement>(
-          ".card-text, .case-text",
-        )
+      // A card is its symbol, then its label, centred as a whole.
+      for (const group of root.querySelectorAll<SVGGElement>(".card")) {
+        const text = group.querySelector<SVGTextElement>(".card-text")
         if (!text) continue
         const width = text.getComputedTextLength()
-        const isCase = group.classList.contains("case")
-        const total = width + (isCase ? 44 : 28)
-        const bg = group.querySelector(".card-bg, .case-bg")
+        const left = -(width + 18) / 2
+        text.setAttribute("x", String(left + 17 + width / 2))
+        group
+          .querySelector(".card-glyph")
+          ?.setAttribute("transform", `translate(${left + 6} 0)`)
+      }
+      for (const group of root.querySelectorAll<SVGGElement>(".case")) {
+        const text = group.querySelector<SVGTextElement>(".case-text")
+        if (!text) continue
+        const total = text.getComputedTextLength() + 44
+        const bg = group.querySelector(".case-bg")
         bg?.setAttribute("x", String(-total / 2))
         bg?.setAttribute("width", String(total))
+        text.setAttribute("x", String(-9))
         group
-          .querySelector(".card-stripe")
-          ?.setAttribute("x", String(-total / 2))
-        if (isCase) {
-          text.setAttribute("x", String(-9))
-          group
-            .querySelector(".case-more")
-            ?.setAttribute("transform", `translate(${total / 2 - 15} 0)`)
-        }
+          .querySelector(".case-more")
+          ?.setAttribute("transform", `translate(${total / 2 - 15} 0)`)
       }
     }
 
