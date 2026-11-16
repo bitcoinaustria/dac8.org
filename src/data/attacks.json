@@ -1,6 +1,6 @@
 [
   {
-    "date": "2014-12-29",
+    "date": "2014-05-01",
     "year": 2014,
     "city": "Santa Barbara",
     "country": "United States",
@@ -12,22 +12,6 @@
       {
         "url": "http://www.wired.com/2014/12/finney-swat/",
         "archive": "https://archive.is/WvHB9"
-      }
-    ]
-  },
-  {
-    "date": "2015-01-03",
-    "year": 2015,
-    "city": "Atlanta",
-    "country": "United States",
-    "countryCode": "US",
-    "lat": 33.75,
-    "lng": -84.39,
-    "headline": "BTM thieves strike smoke shop, fire gun",
-    "reports": [
-      {
-        "url": "https://www.coindesk.com/bitcoin-atm-thieves-strike-atlanta-smoke-shop",
-        "archive": "https://archive.is/R98Nn"
       }
     ]
   },
@@ -66,16 +50,32 @@
   {
     "date": "2015-05-27",
     "year": 2015,
-    "city": "New York",
+    "city": "Brooklyn",
     "country": "United States",
     "countryCode": "US",
-    "lat": 40.71,
-    "lng": -74.01,
-    "headline": "Firefighter kidnapped, robbed of $1,100, & stabbed by crypto thieves",
+    "lat": 40.68,
+    "lng": -73.94,
+    "headline": "A 28-year-old who advertised bitcoins for sale on Craigslist met a purported buyer on a Crown Heights street corner, was led to a car where a second man pulled a gun, and was forced to transfer his bitcoins before the robbers took his phone and drove off.",
     "reports": [
       {
         "url": "https://www.cnbc.com/2015/06/05/new-york-city-man-robbed-at-gunpoint-for-bitcoin.html",
-        "archive": "https://web.archive.org/web/20170212084543/https://www.cnbc.com/2015/06/05/new-york-city-man-robbed-at-gunpoint-for-bitcoin.html"
+        "archive": "https://web.archive.org/web/20261024003018/https://www.cnbc.com/2015/06/05/new-york-city-man-robbed-at-gunpoint-for-bitcoin.html"
+      }
+    ]
+  },
+  {
+    "date": "2015-11-03",
+    "year": 2015,
+    "city": "Atlanta",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 33.75,
+    "lng": -84.39,
+    "headline": "BTM thieves strike smoke shop, fire gun",
+    "reports": [
+      {
+        "url": "https://www.coindesk.com/bitcoin-atm-thieves-strike-atlanta-smoke-shop",
+        "archive": "https://archive.is/R98Nn"
       }
     ]
   },
@@ -96,18 +96,18 @@
     ]
   },
   {
-    "date": "2016-07-11",
+    "date": "2016-01-10",
     "year": 2016,
-    "city": "Kaunas",
-    "country": "Lithuania",
-    "countryCode": "LT",
-    "lat": 54.9,
-    "lng": 23.93,
-    "headline": "Cryptocurrency executive kidnapped at car wash",
+    "city": "Tübingen",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 48.52,
+    "lng": 9.05,
+    "headline": "A 16-year-old who travelled overnight from the Allgäu to buy bitcoins for cash met the supposed seller in a car park on Hegelstraße; two other men suddenly grabbed and threatened him and took several thousand euros and his phone.",
     "reports": [
       {
-        "url": "http://kauno.diena.lt/naujienos/kaunas/nusikaltimai-ir-nelaimes/ne-bernvakario-pokstas-kaune-buvo-pagrobtas-bitkoinu-prekeivis-827044",
-        "archive": "https://archive.is/VDAjq"
+        "url": "https://www.presseportal.de/blaulicht/pm/110976/3222211",
+        "archive": "https://web.archive.org/web/20160117084953/http://www.presseportal.de:80/blaulicht/pm/110976/3222211"
       }
     ]
   },
@@ -140,22 +140,6 @@
       {
         "url": "https://www.toronto.com/news-story/6810325-toronto-police-arrest-teens-in-string-of-bitcoin-related-robberies/",
         "archive": "https://archive.is/wmHQ3"
-      }
-    ]
-  },
-  {
-    "date": "2016-11-06",
-    "year": 2016,
-    "city": "Oudenbosch",
-    "country": "Netherlands",
-    "countryCode": "NL",
-    "lat": 51.59,
-    "lng": 4.53,
-    "headline": "Dutch Bitcoin ATM Owner Laughs at Thieves Who Took His Machine",
-    "reports": [
-      {
-        "url": "https://bitsonline.com/bitcoin-atm-stolen-netherlands/",
-        "archive": "https://archive.is/ERN61"
       }
     ]
   },
@@ -280,6 +264,22 @@
     ]
   },
   {
+    "date": "2017-07-11",
+    "year": 2017,
+    "city": "Kaunas",
+    "country": "Lithuania",
+    "countryCode": "LT",
+    "lat": 54.9,
+    "lng": 23.93,
+    "headline": "Cryptocurrency executive kidnapped at car wash",
+    "reports": [
+      {
+        "url": "http://kauno.diena.lt/naujienos/kaunas/nusikaltimai-ir-nelaimes/ne-bernvakario-pokstas-kaune-buvo-pagrobtas-bitkoinu-prekeivis-827044",
+        "archive": "https://archive.is/VDAjq"
+      }
+    ]
+  },
+  {
     "date": "2017-09-04",
     "year": 2017,
     "city": "Kyiv",
@@ -340,6 +340,22 @@
       {
         "url": "https://www.cbs17.com/news/durham-man-says-enemies-called-911-to-report-false-hostage-situation/",
         "archive": "https://archive.is/p5gEf"
+      }
+    ]
+  },
+  {
+    "date": "2017-11-01",
+    "year": 2017,
+    "city": "Oudenbosch",
+    "country": "Netherlands",
+    "countryCode": "NL",
+    "lat": 51.59,
+    "lng": 4.53,
+    "headline": "Dutch Bitcoin ATM Owner Laughs at Thieves Who Took His Machine",
+    "reports": [
+      {
+        "url": "https://bitsonline.com/bitcoin-atm-stolen-netherlands/",
+        "archive": "https://archive.is/ERN61"
       }
     ]
   },
@@ -1264,6 +1280,22 @@
     ]
   },
   {
+    "date": "2019-01-01",
+    "year": 2019,
+    "city": "Gwangju",
+    "country": "South Korea",
+    "countryCode": "KR",
+    "lat": 35.16,
+    "lng": 126.85,
+    "headline": "A man who had lost about KRW 100 million of relatives' money in cryptocurrency and was being pressed to repay it abducted a woman in her sixties he knew from the underground car park of her apartment building in Buk-gu with an accomplice, drove her to a reservoir in Seo-gu and logged into her exchange account, but found only worthless tokens and released her.",
+    "reports": [
+      {
+        "url": "https://www.donga.com/news/Society/article/all/20230412/118792014/1",
+        "archive": "https://web.archive.org/web/20230505152602/https://www.donga.com/news/Society/article/all/20230412/118792014/1"
+      }
+    ]
+  },
+  {
     "date": "2019-02-10",
     "year": 2019,
     "city": "Drouwenerveen",
@@ -1276,6 +1308,22 @@
       {
         "url": "https://futurism.com/robbers-tortured-man-drill-steal-cryptocurrency",
         "archive": "https://archive.is/drBqh"
+      }
+    ]
+  },
+  {
+    "date": "2019-02-21",
+    "year": 2019,
+    "city": "Paris",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 48.86,
+    "lng": 2.35,
+    "headline": "A man who came to buy EUR 18,000 of bitcoin in cash in the 16th arrondissement walked into an ambush: the seller never appeared, but two men disguised as police officers — one in a fake dreadlock wig — beat him with a telescopic baton and stole the cash; a couple from Argenteuil suspected of setting the trap and two men from Montreuil were later placed under formal investigation.",
+    "reports": [
+      {
+        "url": "https://www.leparisien.fr/paris-75/faux-policier-rasta-explosifs-des-balkans-et-arnaque-au-bitcoin-la-deroutante-enquete-de-la-pj-parisienne-18-02-2021-8425415.php",
+        "archive": "https://web.archive.org/web/20210731003317/https://www.leparisien.fr/paris-75/faux-policier-rasta-explosifs-des-balkans-et-arnaque-au-bitcoin-la-deroutante-enquete-de-la-pj-parisienne-18-02-2021-8425415.php"
       }
     ]
   },
@@ -1383,7 +1431,7 @@
     "countryCode": "IN",
     "lat": 26.91,
     "lng": 75.79,
-    "headline": "Criminal Gang Abducts &amp; Tortures Cryptocurrency Traders, Demands 80 BTC Ransom",
+    "headline": "Criminal Gang Abducts & Tortures Cryptocurrency Traders, Demands 80 BTC Ransom",
     "reports": [
       {
         "url": "https://www.newsweek.com/cryptocurrency-traders-abducted-tortured-india-criminal-gang-arrested-bitcoin-ransom-1449274",
@@ -1600,6 +1648,22 @@
     ]
   },
   {
+    "date": "2020-01-09",
+    "year": 2020,
+    "city": "Seoul",
+    "country": "South Korea",
+    "countryCode": "KR",
+    "lat": 37.57,
+    "lng": 126.98,
+    "headline": "Two men followed the crypto YouTuber \"Spunky\", founder of Bitgosu, into the lift of his apartment building in Seongdong-gu, put homemade handcuffs on him and beat him unconscious with an iron pipe while trying to seize a USB drive holding his bitcoin information; the victim was hospitalized and the hired attacker was sentenced to 7 years in prison while the organizer fled to Australia.",
+    "reports": [
+      {
+        "url": "https://www.hani.co.kr/arti/economy/it/924012.html",
+        "archive": "https://web.archive.org/web/20250319115218/https://www.hani.co.kr/arti/economy/it/924012.html"
+      }
+    ]
+  },
+  {
     "date": "2020-01-14",
     "year": 2020,
     "city": "Charkhi Dadri",
@@ -1612,6 +1676,22 @@
       {
         "url": "https://www.amarujala.com/haryana/charkhi-dadri/four-accused-of-kidnapping-young-man-arrested-for-grabbing-bitcoins-charkhidadri-news-rtk5451070156",
         "archive": "https://web.archive.org/web/20261014203517/https://www.amarujala.com/haryana/charkhi-dadri/four-accused-of-kidnapping-young-man-arrested-for-grabbing-bitcoins-charkhidadri-news-rtk5451070156"
+      }
+    ]
+  },
+  {
+    "date": "2020-01-20",
+    "year": 2020,
+    "city": "桃園市",
+    "country": "臺灣",
+    "countryCode": "TW",
+    "lat": 24.99,
+    "lng": 121.3,
+    "headline": "A man posing as a crypto seller agreed over LINE to sell Mr. Wu cryptocurrency for TWD 2,673,000 in cash at the Starbucks in Taoyuan high-speed rail station; two of the four men who drove up from Taichung counted the cash into a backpack, then pepper-sprayed Wu and his friend in the face on instructions sent over Telegram and ran out with it. Wu chased them despite the pain and wrenched the bag back from one of them outside the café, and the four fled empty-handed; three were sentenced to 1 year 4 months for aggravated snatch theft with a weapon.",
+    "reports": [
+      {
+        "url": "https://judgment.judicial.gov.tw/FJUD/data.aspx?ty=JD&id=TYDM%2c109%2c%e8%a8%b4%2c1237%2c20220121%2c1",
+        "archive": null
       }
     ]
   },
@@ -2176,6 +2256,22 @@
       {
         "url": "https://www.tvp.info/51937085/olsztyn-napad-na-kantor-z-uzyciem-broni-strzelal-do-pracownikow-kantoru-skardziono-zloto-policja-szuka-sprawcy-tvp-info",
         "archive": "https://archive.is/YOvMq"
+      }
+    ]
+  },
+  {
+    "date": "2021-01-28",
+    "year": 2021,
+    "city": "Neuilly-sur-Seine",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 48.88,
+    "lng": 2.27,
+    "headline": "A 31-year-old woman holding about EUR 50,000 in bitcoin was attacked at her home in Neuilly-sur-Seine by her former partner, who brought in an accomplice from Romania to steal the coins: she was bound, beaten and stamped on, found about ten hours later and placed in an induced coma, and was left with permanent neurocognitive damage.",
+    "reports": [
+      {
+        "url": "https://www.leparisien.fr/faits-divers/tout-a-ete-fait-pour-quelle-meure-sauvagement-sequestree-par-son-ex-a-neuilly-pour-50-000-euros-en-bitcoins-26-06-2024-LZIM34QY7RF5NN75EGIRUKE6KI.php",
+        "archive": "https://web.archive.org/web/20240910203352/https://www.leparisien.fr/faits-divers/tout-a-ete-fait-pour-quelle-meure-sauvagement-sequestree-par-son-ex-a-neuilly-pour-50-000-euros-en-bitcoins-26-06-2024-LZIM34QY7RF5NN75EGIRUKE6KI.php"
       }
     ]
   },
@@ -3248,6 +3344,22 @@
       {
         "url": "https://fij.ng/article/crypto-trader-flees-calabar-after-police-extorted-n1-7m-from-him-in-3-weeks/",
         "archive": "https://web.archive.org/web/20250217230236/https://fij.ng/article/crypto-trader-flees-calabar-after-police-extorted-n1-7m-from-him-in-3-weeks/"
+      }
+    ]
+  },
+  {
+    "date": "2021-11-11",
+    "year": 2021,
+    "city": "臺北市",
+    "country": "臺灣",
+    "countryCode": "TW",
+    "lat": 25.04,
+    "lng": 121.56,
+    "headline": "A group posted a fake offer of 300,000 USDT in a Telegram OTC group, and through two unwitting brokers Mr. Chen, 33, agreed to buy 200,000 USDT for TWD 5.54 million in cash; in a private room of a Japanese restaurant off Zhongshan North Road the two men sent to meet him counted the money, then one grabbed the bag. Chen pulled it back, the bag tore and the cash spilled, and he shouted that he was being robbed; the second man briefly held him so his partner could break free and both fled with nothing. Police arrested them within two days, and in August 2025 the Taipei District Court convicted both of attempted snatch theft.",
+    "reports": [
+      {
+        "url": "https://news.ltn.com.tw/news/society/breakingnews/3735841",
+        "archive": null
       }
     ]
   },
@@ -4328,6 +4440,22 @@
     ]
   },
   {
+    "date": "2022-07-13",
+    "year": 2022,
+    "city": "新北市",
+    "country": "臺灣",
+    "countryCode": "TW",
+    "lat": 25.04,
+    "lng": 121.45,
+    "headline": "Mr. Chen, 21, was sent by his employer, a crypto dealer, to collect TWD 2.4 million in cash from a buyer inside the buyer's car in a Xinzhuang car park; the buyer's side had planned all along to take the money back, and as Chen walked back to his own car two accomplices hiding behind it rushed out, one pepper-sprayed him in the eyes and they picked up the dropped bag and drove off. Police traced four men on camera and arrested them two days later in Kaohsiung and at Taoyuan airport as two were about to fly to Cambodia; in March 2024 a court sentenced two of them to 18 and 16 months for aggravated snatch theft.",
+    "reports": [
+      {
+        "url": "https://news.ltn.com.tw/news/society/breakingnews/3996900",
+        "archive": null
+      }
+    ]
+  },
+  {
     "date": "2022-07-25",
     "year": 2022,
     "city": "Horst",
@@ -4604,6 +4732,22 @@
     ]
   },
   {
+    "date": "2022-10-03",
+    "year": 2022,
+    "city": "대한민국",
+    "country": "대한민국",
+    "countryCode": "KR",
+    "lat": 36.64,
+    "lng": 127.7,
+    "headline": "A crew recruited through a Telegram \"odd jobs\" channel settled on futures trader and crypto YouTuber \"Tankboy\" (Tangbo), whose address had leaked during livestreams, but the two men who came to his flat posing as estate agents were overpowered by bodyguards and handed to police, who found duct tape in their bags.",
+    "reports": [
+      {
+        "url": "https://ilyo.co.kr/?ac=article_view&entry_id=438749",
+        "archive": "https://web.archive.org/web/20251021111528/https://ilyo.co.kr/?ac=article_view&entry_id=438749"
+      }
+    ]
+  },
+  {
     "date": "2022-10-08",
     "year": 2022,
     "city": "Necochea",
@@ -4808,6 +4952,22 @@
       {
         "url": "https://data.rechtspraak.nl/uitspraken/content?id=ECLI:NL:RBNHO:2025:5261",
         "archive": "https://archive.is/9ov89"
+      }
+    ]
+  },
+  {
+    "date": "2022-12-02",
+    "year": 2022,
+    "city": "桃園市",
+    "country": "臺灣",
+    "countryCode": "TW",
+    "lat": 25.05,
+    "lng": 121.29,
+    "headline": "Two USDT sellers left a taxi carrying TWD 5.72 million in cash from two sales, at Taoyuan high-speed rail station and at a convenience store in Luzhu; a rented car with stolen plates that had followed them rammed the taxi at a red light, and of the three men inside one pointed a gun-like object at Chiu, one pointed an air gun at Yu through the window and one sprayed pepper spray into the taxi before they took both bags and drove off. The court found TWD 5.72 million was taken, and in July 2023 the Taoyuan court sentenced two of the robbers to 7 years 4 months.",
+    "reports": [
+      {
+        "url": "https://news.ltn.com.tw/news/society/breakingnews/4144814",
+        "archive": null
       }
     ]
   },
@@ -5788,6 +5948,22 @@
     ]
   },
   {
+    "date": "2023-08-22",
+    "year": 2023,
+    "city": "Ferrara",
+    "country": "Italy",
+    "countryCode": "IT",
+    "lat": 44.83,
+    "lng": 11.62,
+    "headline": "A young man lured by an acquaintance to a house on the outskirts of Ferrara was set upon at the door by three men, two in balaclavas, who attacked him with a pistol and a taser, tied him with cable ties and tape and forced him to give the unlock codes of his phone and bank in a bid to seize about EUR 40,000 in bitcoin; he freed himself with a nail and escaped through a window.",
+    "reports": [
+      {
+        "url": "https://www.estense.com/2026/1215222/droga-armi-e-soldi-sequestrato-dal-commando-per-40mila-euro-in-bitcoin/",
+        "archive": "https://web.archive.org/web/20261031022325/https://www.estense.com/2026/1215222/droga-armi-e-soldi-sequestrato-dal-commando-per-40mila-euro-in-bitcoin/"
+      }
+    ]
+  },
+  {
     "date": "2023-08-24",
     "year": 2023,
     "city": "Cures",
@@ -6622,11 +6798,11 @@
   {
     "date": "2024-04-18",
     "year": 2024,
-    "city": "Singapore (Lianhe Zaobao)",
+    "city": "Bukit Timah",
     "country": "Singapore",
     "countryCode": "SG",
-    "lat": 1.29,
-    "lng": 103.85,
+    "lat": 1.33,
+    "lng": 103.78,
     "headline": "4 men rob suspected Chinese crypto gambling ring of $3M USD.",
     "reports": [
       {
@@ -6846,15 +7022,15 @@
   {
     "date": "2024-06-17",
     "year": 2024,
-    "city": "London",
+    "city": "Hoxton",
     "country": "United Kingdom",
     "countryCode": "GB",
-    "lat": 51.51,
-    "lng": -0.13,
-    "headline": "3 men armed with machetes invade home, force owner to transfer 1,000+ ETH.",
+    "lat": 51.53,
+    "lng": -0.08,
+    "headline": "Three teenagers travelled from Sheffield, posed as delivery drivers to get into the victim's flat, and threatened him with large knives until he transferred ~1,112 ETH (~$4.3M) and handed over his car keys; the crypto was recovered within 72 hours and the gang was caught hours later after posting the getaway on Snapchat, receiving 16 years of youth detention between them in November 2025.",
     "reports": [
       {
-        "url": null,
+        "url": "https://www.standard.co.uk/news/crime/met-police-teenagers-amazon-drivers-hoxton-london-cryptocurrency-b1269685.html",
         "archive": "https://archive.is/u3sUN"
       }
     ]
@@ -7552,6 +7728,22 @@
     ]
   },
   {
+    "date": "2024-11-21",
+    "year": 2024,
+    "city": "Norden",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 53.6,
+    "lng": 7.2,
+    "headline": "A 37-year-old bitcoin holder spotted in a Norden barbershop by one of two brothers who had earlier extracted EUR 9,000 from him by claiming to protect him from a bounty on his head was taken by car to a spot near a concrete plant, beaten and threatened with a knife until he transferred EUR 25,000 and handed over about EUR 6,000 in crypto and two diamonds; the brothers were sentenced to over seven years each.",
+    "reports": [
+      {
+        "url": "https://www.nwzonline.de/norden/gericht-in-aurich-urteilt-zwei-brueder-aus-norden-muessen-fuer-sieben-jahre-ins-gefaengnis_a_4,2,3224234000.html",
+        "archive": "https://web.archive.org/web/20251219015522/https://www.nwzonline.de/norden/gericht-in-aurich-urteilt-zwei-brueder-aus-norden-muessen-fuer-sieben-jahre-ins-gefaengnis_a_4,2,3224234000.html"
+      }
+    ]
+  },
+  {
     "date": "2024-11-22",
     "year": 2024,
     "city": "Las Vegas",
@@ -7676,6 +7868,22 @@
       {
         "url": "https://newsmaker.md/ru/video-v-moldove-zaderzhali-muzhchin-kotorye-pohitili-i-vyvezli-predprinimatelya-iz-dubossar-oni-pytalis-poluchit-dostup-k-ego-kriptokoshelku-s-400-tys",
         "archive": "https://archive.is/gsoU0"
+      }
+    ]
+  },
+  {
+    "date": "2024-12-19",
+    "year": 2024,
+    "city": "Amsterdam",
+    "country": "Netherlands",
+    "countryCode": "NL",
+    "lat": 52.37,
+    "lng": 4.9,
+    "headline": "A man lured by an acquaintance to a car park near the Haardstee was forced into a car at gunpoint, beaten and taken to a basement storage unit in Weesp, where a gun, a knife and an angle grinder at his neck were used to make him hand over the codes of his phone, banking and crypto apps; police later found him there bound, bloodied and taped.",
+    "reports": [
+      {
+        "url": "https://uitspraken.rechtspraak.nl/details?id=ECLI:NL:RBAMS:2025:7199",
+        "archive": null
       }
     ]
   },
@@ -7856,6 +8064,22 @@
       {
         "url": "https://cryptoast.fr/pere-influenceur-crypto-sequestre-soir-nouvel-an/",
         "archive": "https://archive.is/ATZ7u"
+      }
+    ]
+  },
+  {
+    "date": "2025-01-02",
+    "year": 2025,
+    "city": "新北市",
+    "country": "臺灣",
+    "countryCode": "TW",
+    "lat": 25.01,
+    "lng": 121.51,
+    "headline": "A crypto seller met a go-between in the underground car park of Xiulang Elementary School in Yonghe to be paid NT$9,552,000 in cash for a crypto purchase; a robbery crew directed by two people on Telegram had learned of the handover, and when Chen drove out with the money they followed and blocked his car, one man holding pepper spray while two others smashed the windows with baseball bats and beat him, leaving him with a cut forehead, a bruised forearm and an eye injury. They took NT$8,552,000 and fled; the New Taipei District Court sentenced two of the robbers to 7 years 4 months.",
+    "reports": [
+      {
+        "url": "https://judgment.judicial.gov.tw/FJUD/data.aspx?ty=JD&id=PCDM%2c114%2c%e5%8e%9f%e8%a8%b4%2c16%2c20250430%2c1",
+        "archive": null
       }
     ]
   },
@@ -8484,6 +8708,22 @@
       {
         "url": "https://www.abc.es/espana/canarias/hicieron-pasar-policias-encerraron-victima-furgon-robaron-20260812131858-nt.html",
         "archive": "https://archive.is/T5xlm"
+      }
+    ]
+  },
+  {
+    "date": "2025-03-17",
+    "year": 2025,
+    "city": "Caaguazú",
+    "country": "Paraguay / Paraguái",
+    "countryCode": "PY",
+    "lat": -25.33,
+    "lng": -55.83,
+    "headline": "A gang of at least twelve men attacked a crypto-mining farm in Caaguazú, took the workers there hostage and made off with 520 mining machines; in October 2026 the National Police attributed the raid to the gang of Junior Ramón Delvalle Almeida, held responsible for nine major raids on mining farms.",
+    "reports": [
+      {
+        "url": "https://www.abc.com.py/policiales/2026/10/07/los-nueve-asaltos-atribuidos-a-la-banda-que-baleo-a-dos-mujeres-tras-una-jineteada-en-eusebio-ayala/",
+        "archive": "https://web.archive.org/web/20261104053220/https://www.abc.com.py/policiales/2026/10/07/los-nueve-asaltos-atribuidos-a-la-banda-que-baleo-a-dos-mujeres-tras-una-jineteada-en-eusebio-ayala/"
       }
     ]
   },
@@ -9912,6 +10152,22 @@
     ]
   },
   {
+    "date": "2025-10-09",
+    "year": 2025,
+    "city": "Sandviken",
+    "country": "Sweden",
+    "countryCode": "SE",
+    "lat": 60.62,
+    "lng": 16.78,
+    "headline": "A man driving to work on the E16 near Kungsgarden was rammed from behind by a rented white van; five masked men tried to drag him out while threatening him with a knife, but he fought them off, escaped in his car and called police, who arrested five within hours — nine people aged 18 to 28 were indicted for attempted kidnapping.",
+    "reports": [
+      {
+        "url": "https://www.svt.se/nyheter/lokalt/gavleborg/fem-doms-till-fangelse-efter-kidnappningsdramat-i-sandviken",
+        "archive": "https://web.archive.org/web/20260404071223/https://www.svt.se/nyheter/lokalt/gavleborg/fem-doms-till-fangelse-efter-kidnappningsdramat-i-sandviken"
+      }
+    ]
+  },
+  {
     "date": "2025-10-10",
     "year": 2025,
     "city": "Kharkiv",
@@ -10183,7 +10439,7 @@
     "countryCode": "US",
     "lat": 37.77,
     "lng": -122.42,
-    "headline": "Armed robber posing as a delivery worker invaded home, tied up the homeowner, took $11 million worth of cryptocurrency.",
+    "headline": "Armed robber posing as a delivery worker invaded a home near Dolores Park, tied up the homeowner with duct tape and forced him at gunpoint to surrender wallet access, taking ~$13 million in crypto ($3M in ETH and $10M in BTC) while receiving instructions by phone.",
     "reports": [
       {
         "url": "https://www.sfchronicle.com/crime/article/sf-cryptocurrency-robbery-21203804.php",
@@ -10544,6 +10800,22 @@
     ]
   },
   {
+    "date": "2025-12-31",
+    "year": 2025,
+    "city": "Playa del Inglés",
+    "country": "Spain",
+    "countryCode": "ES",
+    "lat": 27.76,
+    "lng": -15.58,
+    "headline": "In the early hours at a shopping and nightlife centre in Playa del Inglés, two young men struck up a conversation with a foreign tourist and snatched his phone, one kicking him as they fled; minutes later, from his hotel, the victim found 33,000 USDT had been transferred out of his wallet, and a 23-year-old with a police record was arrested at Alicante-Elche airport months later.",
+    "reports": [
+      {
+        "url": "https://rtvc.es/detenido-un-joven-por-robar-el-movil-a-un-turista-y-sustraerle-33-000-usdt-en-criptoactivos-19-agosto-2026/",
+        "archive": "https://web.archive.org/web/20261010170020/https://rtvc.es/detenido-un-joven-por-robar-el-movil-a-un-turista-y-sustraerle-33-000-usdt-en-criptoactivos-19-agosto-2026/"
+      }
+    ]
+  },
+  {
     "date": "2026-01-01",
     "year": 2026,
     "city": "대한민국",
@@ -10556,6 +10828,22 @@
       {
         "url": "https://n.news.naver.com/mnews/article/449/0000341045",
         "archive": "https://archive.is/OEPmE"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-01",
+    "year": 2026,
+    "city": "Kyiv",
+    "country": "Ukraine",
+    "countryCode": "UA",
+    "lat": 50.45,
+    "lng": 30.52,
+    "headline": "A 30-year-old Kyiv man who was expecting an electrician opened his door to two strangers, who burst in, pinned him to the floor and claimed to be law enforcement checking an alleged collaboration with Russia while forcing him to transfer all his crypto savings to an account they controlled; two residents of Zhytomyr Oblast were later arrested.",
+    "reports": [
+      {
+        "url": "https://kyiv.npu.gov.ua/news/u-kyievi-dvoie-psevdopravookhorontsiv-vderlysia-do-kvartyry-kyianyna-ta-zavolodily-160-tysiachamy-hryven-politseiski-zatrymaly-zlovmysnykiv",
+        "archive": "https://web.archive.org/web/20261109004130/https://kyiv.npu.gov.ua/news/u-kyievi-dvoie-psevdopravookhorontsiv-vderlysia-do-kvartyry-kyianyna-ta-zavolodily-160-tysiachamy-hryven-politseiski-zatrymaly-zlovmysnykiv"
       }
     ]
   },
@@ -11734,7 +12022,7 @@
     "country": "France",
     "countryCode": "FR",
     "lat": 48.61,
-    "lng": 4.67,
+    "lng": -4.67,
     "headline": "Two men held three adults and two children hostage at their home, and managed to extort €700,000 in cryptocurrency from them.",
     "reports": [
       {
@@ -11932,6 +12220,22 @@
       {
         "url": "https://www.avonandsomerset.police.uk/news/2026/10/men-jailed-for-breaking-into-bristol-home-and-threatening-man-for-cryptocurrency/",
         "archive": "https://web.archive.org/web/20261017064056/https://www.avonandsomerset.police.uk/news/2026/10/men-jailed-for-breaking-into-bristol-home-and-threatening-man-for-cryptocurrency"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-15",
+    "year": 2026,
+    "city": "Paris",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 48.86,
+    "lng": 2.35,
+    "headline": "Two young men, one in a surgical mask, rang repeatedly for about twenty minutes at the door of a cryptocurrency investor in the 10th arrondissement while a fake delivery man contacted him on WhatsApp; the victim, who had already escaped an earlier abduction attempt, did not open the door, and a 17-year-old recruited through a messaging app was later charged with attempted organised theft.",
+    "reports": [
+      {
+        "url": "https://www.leparisien.fr/faits-divers/tentative-de-cryptorapt-a-paris-un-adolescent-ecroue-les-donnees-de-la-societe-waltio-au-coeur-de-lenquete-05-08-2026-ZW5QJJHLWNBTLELYKMLK7WZS7U.php",
+        "archive": "https://web.archive.org/web/20260814090142/https://www.evasionfm.com/un-adolescent-interpelle-en-essonne-pour-une-tentative-de-cryptorapt-a-paris"
       }
     ]
   },
@@ -12832,6 +13136,22 @@
     ]
   },
   {
+    "date": "2026-10-16",
+    "year": 2026,
+    "city": "Saint Petersburg",
+    "country": "Russia",
+    "countryCode": "RU",
+    "lat": 59.94,
+    "lng": 30.32,
+    "headline": "Around midnight outside 1 Narodnaya Street in the Nevsky District, masked men posing as police officers forced a 24-year-old broker at a cryptocurrency exchange into a Toyota Camry; under duress he transferred 70,000 USDT to a wallet they designated and was released, and six men were arrested within hours after witnesses alerted police, with RUB 10 million in cash seized.",
+    "reports": [
+      {
+        "url": "https://www.fontanka.ru/2026/11/04/76744089/",
+        "archive": "https://web.archive.org/web/20261111172026/https://www.fontanka.ru/2026/11/04/76744089/"
+      }
+    ]
+  },
+  {
     "date": "2026-10-21",
     "year": 2026,
     "city": "Brétigny-sur-Orge",
@@ -12864,6 +13184,22 @@
     ]
   },
   {
+    "date": "2026-10-22",
+    "year": 2026,
+    "city": "Tel Aviv",
+    "country": "Israel",
+    "countryCode": "IL",
+    "lat": 32.09,
+    "lng": 34.78,
+    "headline": "A resident of central Israel went to Ibn Gabirol Street to close a deal to buy cryptocurrency for ILS 50,000 in cash; the two men from Jaljulia who were to complete the deal sprayed him with pepper spray and fled with the money, but were arrested that night nearby carrying the cash.",
+    "reports": [
+      {
+        "url": "https://www.israelhayom.co.il/news/crime/article/21692545",
+        "archive": "https://web.archive.org/web/20261028103126/https://www.israelhayom.co.il/news/crime/article/21692545"
+      }
+    ]
+  },
+  {
     "date": "2026-10-24",
     "year": 2026,
     "city": "Asan",
@@ -12876,6 +13212,22 @@
       {
         "url": "https://www.yna.co.kr/view/AKR20261028143300063",
         "archive": null
+      }
+    ]
+  },
+  {
+    "date": "2026-10-31",
+    "year": 2026,
+    "city": "La Roche-sur-Yon",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 46.67,
+    "lng": -1.43,
+    "headline": "Victim who had been kidnapped before in 2022 and also arrested the year before for kidnapping, fired a gun at hooded men who had tried to break into his house. The victim was arrested and sentenced to 2.5 years for endangering the public by firing into the street.",
+    "reports": [
+      {
+        "url": "https://cryptoast.fr/tentative-enlevement-vendee-prison-ferme-pour-victime-passif-complique/",
+        "archive": "https://archive.is/A4WL9"
       }
     ]
   }
