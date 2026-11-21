@@ -14,7 +14,7 @@ import type { Language } from "@/lib/i18n"
 // The press material must say the same, so change a reason there too. The
 // arguments page shows each reason as a headline and one sentence; the
 // evidence sits behind a disclosure with its sources. The letter to members
-// of the National Council asks for three of the demands in its own words.
+// of the National Council asks for four of the demands in its own words.
 //
 // This page owns the why. What is reported, what stays with the provider and
 // for how long is set out in the dossier; restate a fact here only where a
@@ -622,7 +622,7 @@ export const objections: Record<Language, Point[]> = {
 }
 
 // The page shows title and text. The letter to members of the National
-// Council (src/data/letter.ts) asks for three of these in its own words, so
+// Council (src/data/letter.ts) asks for four of these in its own words, so
 // change a demand there too.
 export type Demand = { title: string; text: string }
 

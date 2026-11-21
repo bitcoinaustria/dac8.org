@@ -5,7 +5,7 @@ import {
   letterOptions,
   letterSubject,
 } from "@/data/letter"
-import { attacks, countIn, euCountries, latestYear } from "@/lib/attacks"
+import { attacks } from "@/lib/attacks"
 import type { Language } from "@/lib/i18n"
 
 interface Props {
@@ -17,8 +17,6 @@ const en = language === "en"
 // Counted here because the attack archive is too large for the script.
 const facts: LetterFacts = {
   attacks: attacks.length,
-  year: latestYear,
-  inYearEu: countIn(latestYear, euCountries),
 }
 const initial = buildLetter(
   language,
@@ -131,7 +129,7 @@ const steps = en
       </p>
       <label class="field">
         <span>{en ? "Subject" : "Betreff"}</span>
-        <input data-letter-subject readonly value={letterSubject[language]}>
+        <input data-letter-subject value={letterSubject[language]}>
       </label>
       <label class="field">
         <span>{en ? "Letter, editable" : "Brief, bearbeitbar"}</span>
@@ -407,6 +405,7 @@ const steps = en
       root.dataset.letterLanguage === "en" ? "en" : "de"
     ) as Language
     let edited = false
+    let subjectEdited = false
     const setEdited = (value: boolean) => {
       edited = value
       notice.hidden = !value
@@ -421,7 +420,7 @@ const steps = en
     }
 
     const render = () => {
-      subject.value = letterSubject[language]
+      if (!subjectEdited) subject.value = letterSubject[language]
       const letter = buildLetter(
         language,
         {
@@ -477,8 +476,16 @@ const steps = en
       setEdited(true)
       updateMail()
     })
+    // Senders may write their own subject, so that offices do not file
+    // every letter as one campaign. The reset and the language switch
+    // restore it.
+    subject.addEventListener("input", () => {
+      subjectEdited = true
+      updateMail()
+    })
     reset.addEventListener("click", () => {
       setEdited(false)
+      subjectEdited = false
       render()
     })
     switcher.addEventListener("click", () => {
@@ -495,6 +502,7 @@ const steps = en
         return
       language = language === "de" ? "en" : "de"
       setEdited(false)
+      subjectEdited = false
       render()
     })
     copy.addEventListener("click", async () => {
