@@ -84,9 +84,9 @@ type Option = {
 const reasons: Text[] = [
   {
     de: (facts, link) =>
-      `Bitcoin funktioniert wie Bargeld: Wer die Schlüssel hat, kann ihn übertragen, auch unter Zwang. Eine Liste, wer vermutlich wie viel davon daheim hat, ist darum gefährlich, und solche Listen bleiben nicht sicher. In Frankreich gerieten 2026 die Bestände der Kunden eines Krypto-Steuerdienstes in fremde Hände; laut Polizei wählen Täter damit Opfer für Gewalttaten aus. Öffentlich bekannt sind weltweit ${count("de", facts.attacks)} körperliche Angriffe auf Menschen, die Kryptowerte besitzen oder besitzen sollen: ${link}`,
+      `Bitcoin funktioniert wie Bargeld: Wer die Schlüssel hat, kann ihn übertragen, auch unter Zwang. Eine Liste, wer vermutlich wie viel davon daheim hat, ist darum gefährlich, und solche Listen bleiben nicht sicher. In Frankreich gerieten 2026 Daten über die Bestände der Kunden eines Krypto-Steuerdienstes in fremde Hände; laut Polizei wählen Täter damit Opfer für Gewalttaten aus. Öffentlich bekannt sind weltweit ${count("de", facts.attacks)} körperliche Angriffe auf Menschen, die Kryptowerte besitzen oder bei denen man das vermutet: ${link}`,
     en: (facts, link) =>
-      `Bitcoin works like cash: whoever holds the keys can move it, even under duress. A list of who probably keeps how much of it at home is therefore dangerous, and such lists do not stay safe. In 2026, the holdings of a French crypto tax service’s customers fell into the wrong hands; according to the police, criminals use them to pick victims for violent crime. Worldwide, ${count("en", facts.attacks)} physical attacks on people who hold crypto-assets, or are believed to, are publicly known: ${link}`,
+      `Bitcoin works like cash: whoever holds the keys can move it, even under duress. A list of who probably keeps bitcoin at home, and how much, is therefore dangerous, and such lists do not stay safe. In 2026, data on the holdings of a French crypto tax service’s customers fell into the wrong hands; according to the police, criminals use it to pick victims of violent crime. Worldwide, there are ${count("en", facts.attacks)} publicly known physical attacks on people who hold crypto-assets, or are believed to: ${link}`,
   },
   {
     de: "Kriminelle kommen trotzdem durch: Laut Geldwäschemeldestelle eröffnen sie Konten mit gefälschten österreichischen Pässen, auf die Namen echter, unbeteiligter Menschen. Erfasst werden alle anderen.",
@@ -98,16 +98,16 @@ const reasons: Text[] = [
 // National Council can do alone while DAC8 applies, which the close names.
 const demands: Text[] = [
   {
-    de: "Keine Finanzakte ohne Verdacht. Österreich soll sich in der EU dafür einsetzen, dass die anlasslose Meldung fällt, und der Neufassung der Richtlinie, die nur einstimmig beschlossen werden kann, nur zustimmen, wenn die neuen Registerzugriffe und die Meldung zur eigenen Wallet fallen.",
-    en: "No financial file without suspicion. Austria should work in the EU to end blanket reporting, and agree to the recast of the directive, which needs the consent of every member state, only if the new register access and the report on transfers to one’s own wallet are dropped.",
+    de: "Keine Finanzakte ohne Verdacht. Österreich soll sich in der EU dafür einsetzen, dass die anlasslose Meldung endet. Der Neufassung, die einstimmig beschlossen werden muss, soll es nur zustimmen, wenn die neuen Registerzugriffe und die Meldung von Übertragungen auf die eigene Wallet gestrichen werden.",
+    en: "No financial file without suspicion. Austria should push in the EU to end blanket reporting. Since the recast needs the consent of every member state, Austria should agree to it only if the new register access and the reporting of transfers to a customer’s own wallet are dropped.",
   },
   {
     de: "Solange DAC8 gilt: keine Daten auf Vorrat. Nach § 20 Krypto-MPfG müssen Anbieter die Meldedaten für alle Kunden aufbereiten, auch für jene, die nie gemeldet werden. Deutschland und die Niederlande verlangen das nur für gemeldete Kunden.",
     en: "While DAC8 applies: no stockpiling of data. Under Section 20 Krypto-MPfG, providers must prepare the reporting data for all customers, including those who are never reported. Germany and the Netherlands require it only for reported customers.",
   },
   {
-    de: "Solange DAC8 gilt: fünf statt zehn Jahre. Was im Jänner 2026 erfasst wird, liegt bis Ende 2036 beim Anbieter, „aus Vereinfachungsgründen“. Für Meldungen über Bankkonten gelten fünf Jahre.",
-    en: "While DAC8 applies: five years instead of ten. What is recorded in January 2026 stays with the provider until the end of 2036, “for reasons of simplicity”. Reports on bank accounts are kept for five years.",
+    de: "Solange DAC8 gilt: fünf statt zehn Jahre. Was im Jänner 2026 für die Meldung erfasst wird, liegt bis Ende 2036 beim Anbieter, laut Gesetzesbegründung „aus Vereinfachungsgründen“. Für Meldungen über Bankkonten gelten fünf Jahre.",
+    en: "While DAC8 applies: five years instead of ten. What is recorded for the report in January 2026 stays with the provider until the end of 2036, “for reasons of simplicity”, as the bill’s explanatory notes put it. Reports on bank accounts are kept for five years.",
   },
 ]
 
@@ -118,11 +118,11 @@ const about: Option[] = [
     id: "voter",
     label: {
       de: "Ich bin in Österreich wahlberechtigt",
-      en: "I can vote in Austria",
+      en: "I am eligible to vote in Austria",
     },
     text: {
       de: "Ich bin in Österreich wahlberechtigt, und dieses Thema entscheidet mit, wen ich wähle.",
-      en: "I can vote in Austria, and this issue will weigh on how I vote.",
+      en: "I am eligible to vote in Austria, and this issue will influence how I vote.",
     },
   },
   {
@@ -144,7 +144,7 @@ const about: Option[] = [
     },
     text: {
       de: "Bitcoin ist Teil meiner Vorsorge für die Pension.",
-      en: "Bitcoin is part of my savings for retirement.",
+      en: "Bitcoin is part of my pension planning.",
     },
   },
 ]
@@ -159,7 +159,7 @@ const view: Option[] = [
     },
     text: {
       de: "Was ich mit meinem Geld mache, geht niemanden etwas an. Rechtfertigen muss sich nicht, wer spart, sondern ein Gesetz, das ohne jeden Verdacht Daten über alle Kunden sammeln lässt.",
-      en: "What I do with my money is nobody else’s business. It is not savers who owe a justification, but a law that collects data on every customer without any suspicion.",
+      en: "What I do with my money is nobody else’s business. Savers owe no one a justification; a law that collects data on every customer without any suspicion does.",
     },
   },
 ]
@@ -177,8 +177,8 @@ const ownDemands: Option[] = [
       en: "Your own demand, not the campaign’s.",
     },
     text: {
-      de: "Die Haltefrist für Bitcoin wieder einführen. Bis zur Steuerreform 2022 waren Gewinne nach einem Jahr steuerfrei, wie bis heute bei Goldmünzen und in Deutschland auch bei Bitcoin. Sie abzuschaffen war ein Fehler: Es trifft jene, die langfristig sparen.",
-      en: "Bring back the holding period for bitcoin. Until the 2022 tax reform, gains were tax-free after one year, as they still are for gold coins and, in Germany, for bitcoin too. Abolishing it was a mistake: it hits those who save for the long term.",
+      de: "Die Haltefrist für Bitcoin wieder einführen. Bis zur Steuerreform 2022 waren Gewinne nach einem Jahr steuerfrei, wie bis heute bei Goldmünzen und in Deutschland auch bei Bitcoin. Die Haltefrist abzuschaffen war ein Fehler: Das trifft jene, die langfristig sparen.",
+      en: "Bring back the holding period for bitcoin. Until the 2022 tax reform, gains were tax-free after one year, as they still are for gold coins and, in Germany, for bitcoin too. Abolishing the holding period was a mistake that hits those who save for the long term.",
     },
   },
 ]
@@ -193,10 +193,10 @@ const text = {
     senderPlaceholder: "[Dein Name]",
     thesis:
       "anlasslose finanzielle Überwachung schützt niemanden. Sie zeigt Kriminellen, bei wem etwas zu holen ist. Ohne konkreten Verdacht soll der Staat nicht erfahren, was jemand besitzt und wofür er sein Geld ausgibt. Ich bitte Sie, sich für die Forderungen unten einzusetzen.",
-    law: "Seit Jänner 2026 erfassen Krypto-Anbieter nach dem Krypto-Meldepflichtgesetz (Krypto-MPfG), das die EU-Richtlinie DAC8 umsetzt, für jeden Kunden Name, Anschrift, Geburtsdatum und Steuernummer und wie viel er im Jahr kauft, verkauft und auf die eigene Wallet überträgt, ohne jeden Verdacht. Ab 2027 geht das jedes Jahr ans Finanzamt, als Jahressummen ohne Wallet-Adressen. Wer Bargeld abhebt oder bei der Bank Goldmünzen kauft und daheim verwahrt, steht in keiner solchen Meldung. Und das ist nur der jüngste Schritt: Als Nächstes sollen Steuerbehörden auch auf Geldwäsche-Register, etwa für Immobilien, und auf Pensionsregister zugreifen.",
+    law: "Seit Jänner 2026 erfassen Krypto-Anbieter nach dem Krypto-Meldepflichtgesetz (Krypto-MPfG), das die EU-Richtlinie DAC8 umsetzt, für jeden Kunden Name, Anschrift, Geburtsdatum und Steuernummer und wie viel er im Jahr kauft, verkauft und auf die eigene Wallet überträgt, ohne jeden Verdacht. Ab 2027 geht das jedes Jahr ans Finanzamt, als Jahressummen ohne Wallet-Adressen. Wer Bargeld abhebt oder bei der Bank Goldmünzen kauft und daheim verwahrt, steht in keiner solchen Meldung. Und das ist nur der jüngste Schritt: Nach der vorgeschlagenen Neufassung der Richtlinie sollen Steuerbehörden auch auf Geldwäsche-Register, etwa für Immobilien, und auf Pensionsregister zugreifen.",
     ask: "Meine Forderungen:",
     question:
-      "Die Punkte 2 und 3 kann der Nationalrat selbst beschließen. Werden Sie sich gegen die anlasslose Meldung einsetzen und, solange sie gilt, diese beiden Änderungen unterstützen? Ich bitte um Ihre Antwort.",
+      "Die Punkte 2 und 3 kann der Nationalrat selbst beschließen. Lehnen Sie die anlasslose Meldung ab, und werden Sie, solange sie gilt, für diese beiden Änderungen eintreten? Ich bitte um Ihre Antwort.",
     closing: "Mit freundlichen Grüßen",
   },
   en: {
@@ -204,11 +204,11 @@ const text = {
     generic: "Dear Sir or Madam,",
     senderPlaceholder: "[Your name]",
     thesis:
-      "Blanket financial surveillance protects no one. It shows criminals where there is something to take. Without specific suspicion, the state should not learn what someone owns and what they spend their money on. I ask you to support the demands below.",
-    law: "Since January 2026, under the Krypto-Meldepflichtgesetz (Krypto-MPfG), which implements the EU directive DAC8, crypto-asset providers have recorded every customer’s name, home address, date of birth and tax number, and how much they buy, sell and transfer to their own wallet each year, without any suspicion. From 2027 this goes to the tax office every year, as annual totals without wallet addresses. Someone who withdraws cash, or buys gold coins at a bank and keeps them at home, appears in no such report. And this is only the latest step: next, tax authorities are to gain access to anti-money-laundering registers, including for real estate, and to pension registers.",
+      "Blanket financial surveillance protects no one. It shows criminals where there is something to take. Without specific suspicion, the state should not be told what someone owns or what they spend their money on. I am writing to ask you to support the demands below.",
+    law: "Since January 2026, under the Krypto-Meldepflichtgesetz (Krypto-MPfG), which implements the EU directive DAC8, crypto-asset providers have been recording every customer’s name, home address, date of birth and tax number, and how much they buy, sell and transfer to their own wallet each year, without any suspicion. From 2027 this goes to the tax office every year, as annual totals without wallet addresses. Someone who withdraws cash, or buys gold coins at a bank and keeps them at home, appears in no such report. And this is only the latest step: under the proposed recast of the directive, tax authorities would gain access to anti-money-laundering registers, including for real estate, and to pension registers.",
     ask: "My demands:",
     question:
-      "The National Council can enact points 2 and 3 itself. Will you work against blanket reporting and, while it applies, support these two changes? I look forward to your reply.",
+      "The National Council can enact points 2 and 3 itself. Do you oppose blanket reporting, and while it applies, will you back these two changes? I look forward to your reply.",
     closing: "Kind regards,",
   },
 }
