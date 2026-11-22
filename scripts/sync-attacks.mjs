@@ -51,6 +51,36 @@ const reportsOf = (links = []) => {
   return reports.filter((report) => report.url || report.archive)
 }
 
+// Fixes for slips in the upstream text that Lopp has not corrected yet. Each
+// applies only while the text it corrects is still there; translations are
+// keyed by the corrected text.
+const corrections = [
+  ["abducted at the by men", "abducted by men"],
+  ["broke into a house home", "broke into a home"],
+]
+
+// Some descriptions open with the amount from a spreadsheet column, joined by
+// a dash ("KRW 30,000,000 — Four teenagers…"). The site shows no amount
+// field, so the amount moves to the end as its own sentence and the
+// description starts with what happened. A bare "Unknown" says nothing and
+// goes.
+const amountLeadIn = /^((?:(?!\. ).){1,300}?) [—–] (?=[A-Z])/
+const withStop = (text) => (/[.!?]$/.test(text) ? text : `${text}.`)
+const cleanHeadline = (text) => {
+  let headline = text.trim()
+  for (const [wrong, right] of corrections)
+    headline = headline.replace(wrong, right)
+  const match = headline.match(amountLeadIn)
+  if (!match || !/\d|^Unknown\b/.test(match[1])) return headline
+  const amount = match[1]
+    .replace(/ [—–] /g, "; ")
+    .replace(/^[A-Z](?=[a-z])/, (letter) => letter.toLowerCase())
+  const rest = headline.slice(match[0].length)
+  return amount === "unknown"
+    ? rest
+    : `${withStop(rest)} Amount: ${withStop(amount)}`
+}
+
 const attacks = upstream.map((entry, index) => {
   const headline = entry.links?.find(
     (link) => link.label && !link.label.trim().startsWith("("),
@@ -63,7 +93,7 @@ const attacks = upstream.map((entry, index) => {
     countryCode: entry.country_code?.trim() || null,
     lat: Math.round(entry.lat * 100) / 100,
     lng: Math.round(entry.lng * 100) / 100,
-    headline: headline?.trim() || null,
+    headline: headline?.trim() ? cleanHeadline(headline) : null,
     reports: reportsOf(entry.links),
   }
   if (
