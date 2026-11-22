@@ -37,10 +37,11 @@ export const shareScenes: {
   {
     // Numbered after the first eight so existing share URLs stay the same.
     id: "scene-09-profile",
-    // The German square still says "Leck", baked in by the artwork lab;
-    // change this title to "Datenleck" when the lab re-exports it.
+    // The German square and story still say "Leck", baked in by the artwork
+    // lab, which has no export script in this repository; the title here
+    // already says "Datenleck" and the lab should re-export both images.
     title: {
-      de: "Jedes Leck macht dein Profil genauer.",
+      de: "Jedes Datenleck macht dein Profil genauer.",
       en: "Every leak sharpens your profile.",
     },
     text: {

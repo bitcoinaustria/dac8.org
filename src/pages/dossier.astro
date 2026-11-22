@@ -29,7 +29,7 @@ const faqs = [
   {
     question: "Lässt sich aus der Meldung mein Vermögen ablesen?",
     answer:
-      "Nicht direkt. Gemeldet werden Jahressummen, kein aktueller Bestand und kein Gesamtvermögen. Deinen Kontostand kennt der Anbieter aber, und über die Jahre zeigen die Meldungen, wie viel du bewegst. Wer sie mit dem Kontenregister und Blockchain-Analyse oder, nach einem Datenleck, mit Anbieteraufzeichnungen zusammenführt, kann ein detailliertes Bild der Vermögensverhältnisse gewinnen.",
+      "Nicht direkt. Gemeldet werden Jahressummen, kein aktueller Bestand und kein Gesamtvermögen. Deinen Kontostand kennt der Anbieter aber, und über die Jahre zeigen die Meldungen, wie viel du bewegst. Wer sie mit dem staatlichen Kontenregister, das zeigt, wer welche Bankkonten hat, mit einer Auswertung der öffentlichen Blockchain-Zahlungen oder, nach einem Datenleck, mit den Unterlagen des Anbieters zusammenführt, kann sich ein genaues Bild deiner Finanzen machen.",
   },
   {
     question: "Was ist mit Käufen und Verkäufen vor 2026?",
@@ -47,9 +47,10 @@ const faqs = [
       "Vorerst nichts: Die Datenerfassung läuft während des Verfahrens weiter. Wir sind überzeugt, dass die Erfassung aller Kunden gegen Grundrechte verstößt. Die Datenschutzbehörde ist an die Gesetze gebunden und darf sie nicht auf ihre Vereinbarkeit mit Verfassungs- oder Unionsrecht prüfen. Diese Frage liegt daher bei den Gerichten, auch die Frage, ob der Fall zum Europäischen Gerichtshof kommt. Wie lange das dauert und wie sich Privatpersonen beteiligen können, klären wir noch.",
   },
   {
-    question: "Wie erkenne ich Phishing mit der Meldepflicht?",
+    question:
+      "Wie erkenne ich Phishing, also betrügerische Nachrichten, die die Meldepflicht als Vorwand nutzen?",
     answer:
-      "In Österreich kursieren schon gefälschte FinanzOnline-Nachrichten, die unter Verweis auf neue Krypto-Steuerregeln nach deinen Beständen fragen. Das Finanzamt fragt nicht per E-Mail oder SMS danach. Niemand, der seriös ist, verlangt, dass du eine Wallet verbindest oder deine Wiederherstellungsphrase eingibst, also die Wörter, mit denen sich eine Wallet wiederherstellen lässt. Die Daten für DAC8 meldet dein Anbieter selbst. Sprich zurückhaltend über deine Bestände, auch im Bekanntenkreis und in sozialen Medien.",
+      "In Österreich kursieren schon gefälschte Nachrichten im Namen von FinanzOnline, dem Online-Portal der österreichischen Finanzverwaltung, die unter Verweis auf neue Krypto-Steuerregeln nach deinen Beständen fragen. Das Finanzamt fragt nicht per E-Mail oder SMS danach. Niemand, der seriös ist, verlangt, dass du eine Wallet verbindest oder deine Wiederherstellungsphrase eingibst, also die Wörter, mit denen sich eine Wallet wiederherstellen lässt. Die Daten für DAC8 meldet dein Anbieter selbst. Sprich zurückhaltend über deine Bestände, auch im Bekanntenkreis und in sozialen Medien.",
     link: {
       href: "https://www.watchlist-internet.at/news/phishing-falle-finanzonline-krypto/",
       label: "Warnung der Watchlist Internet",
@@ -83,9 +84,9 @@ const faqs = [
           Betroffen bist du, wenn du Kryptowerte über einen
           <Term id="anbieter">Anbieter</Term>
           wie eine Börse, einen Broker oder eine App kaufst, verkaufst oder
-          verwahren lässt. Wer nur
-          <Term id="selbstverwahrung">selbst verwahrt</Term>
-          und nie einen Anbieter nutzt, wird nicht gemeldet.
+          verwahren lässt. Wer seine Kryptowerte nur
+          <Term id="selbstverwahrung">selbst verwahrt</Term>, also die Schlüssel
+          dazu selbst hält, und nie einen Anbieter nutzt, wird nicht gemeldet.
         </p>
       </div>
     </header>
@@ -124,11 +125,13 @@ const faqs = [
               Vorgänge
             </li>
             <li>
-              Übertragungen auf <Term id="wallet">Wallets</Term> ohne bekannten
+              Übertragungen auf <Term id="wallet">Wallets</Term> (Apps oder
+              Geräte, die Schlüssel zu Kryptowerten verwalten) ohne bekannten
               Anbieter, in der Regel auch deine eigene:
               <strong
                 >als Summe, ohne
-                <Term id="wallet-adresse">Wallet-Adressen</Term></strong
+                <Term id="wallet-adresse">Wallet-Adressen</Term>
+                (sozusagen Kontonummern auf der Blockchain)</strong
               >
             </li>
             <li>
@@ -146,7 +149,7 @@ const faqs = [
           <h3>Bleibt beim Anbieter</h3>
           <p class="basis">
             <a href={law.fmGwG}>§ 21 FM-GwG</a>,
-            <a href={law.transferRegulation}>Verordnung (EU) 2023/1113</a>
+            <a href={law.transferRegulation.href}>Verordnung (EU) 2023/1113</a>
           </p>
           <ul>
             <li>
@@ -218,7 +221,7 @@ const faqs = [
               <td data-label="Wie lange">
                 <strong>mindestens fünf Jahre</strong>, eine Höchstfrist nennt
                 die Richtlinie nicht
-                <a class="basis" href={law.dac8}>Art. 22 Abs. 3 DAC</a>
+                <a class="basis" href={law.dac8.href}>Art. 22 Abs. 3 DAC</a>
               </td>
             </tr>
           </tbody>
@@ -240,7 +243,7 @@ const faqs = [
         gilt.
       </p>
       <p class="basis">
-        <a href={law.dac8}>Richtlinie (EU) 2023/2226</a>,
+        <a href={law.dac8.href}>Richtlinie (EU) 2023/2226</a>,
         <a href={law.kryptoMPfG}>BGBl. I Nr. 96/2025</a>
       </p>
       <ol class="flow" aria-label="Der Weg der ersten Meldung">
@@ -298,9 +301,9 @@ const faqs = [
         <div class="sources">
           <p class="sources-intro">
             Das Dossier stützt sich auf Gesetze, EU-Recht, Urteile und Berichte.
-            Stand der Recherche: {researchDate}. Quellen zur Entwicklung von
-            1977 bis zur Neufassung stehen in der
-            <a href="/geschichte/">Geschichte der DAC</a>.
+            Stand der Recherche: {researchDate}. Quellen zur Entwicklung der
+            Steuer- und Geldwäscheregeln seit 1977 stehen auf der Seite
+            <a href="/geschichte/">Geschichte der Regeln</a>.
           </p>
           <details class="bibliography">
             <summary>

@@ -116,8 +116,8 @@ export const scenes: Scene[] = [
       en: "Your data ends up in more and more places.",
     },
     text: {
-      de: "Börse: Ausweis und Geschäfte. Wallet-Hersteller: Lieferanschrift beim Gerätekauf. Steuertool: Daten mehrerer Börsen und Wallets. **Und sie geben Daten weiter, an Stellen, die du nie ausgesucht hast.**",
-      en: "Exchange: ID and trades. Wallet maker: delivery address when you order a device. Tax tool: data from multiple exchanges and wallets. **And they pass data on, to places you never chose.**",
+      de: "Börse: Ausweis und Geschäfte. Wallet-Hersteller: Lieferanschrift beim Kauf eines Geräts für deine eigenen Schlüssel. Steuertool: Daten mehrerer Börsen und Wallets. **Und sie geben Daten weiter, an Stellen, die du nie ausgesucht hast.**",
+      en: "Exchange: ID and trades. Wallet maker: delivery address when you order a device for your own keys. Tax tool: data from multiple exchanges and wallets. **And they pass data on, to places you never chose.**",
     },
   },
   {
@@ -128,12 +128,12 @@ export const scenes: Scene[] = [
       en: "From 2027, the exchange reports you automatically every year.",
     },
     text: {
-      de: "Ans Finanzamt, ohne Wallet-Adressen. **Die Börse muss die Meldedaten zehn Jahre nach dem betreffenden Kalenderjahr löschen.** Andere Kundenunterlagen können länger bleiben.",
-      en: "To the tax office, without wallet addresses. **The exchange must delete the reported data ten years after the calendar year it covers.** Other customer records may remain longer.",
+      de: "Ans Finanzamt, ohne Wallet-Adressen, die Kontonummern auf der Blockchain. **Die Börse muss die Meldedaten zehn Jahre nach dem betreffenden Kalenderjahr löschen.** Andere Kundenunterlagen können länger bleiben.",
+      en: "To the tax office, without wallet addresses, the account numbers on the blockchain. **The exchange must delete the reported data ten years after the calendar year it covers.** Other customer records may remain longer.",
     },
     brief: {
-      de: "Ohne Wallet-Adressen. **Meldedaten: Löschung nach zehn Jahren.** Andere Kundenunterlagen können länger bleiben.",
-      en: "Without wallet addresses. **Reported data: deleted after ten years.** Other customer records may remain longer.",
+      de: "Ohne Wallet-Adressen, die Kontonummern auf der Blockchain. **Meldedaten: Löschung nach zehn Jahren.** Andere Kundenunterlagen können länger bleiben.",
+      en: "Without wallet addresses, the account numbers on the blockchain. **Reported data: deleted after ten years.** Other customer records may remain longer.",
     },
   },
   {

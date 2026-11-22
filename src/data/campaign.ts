@@ -34,7 +34,7 @@ export const legalRoute = {
       text: "kann die Entscheidung der Datenschutzbehörde überprüfen",
     },
     {
-      title: "VfGH / EuGH",
+      title: "Verfassungsgerichtshof / Europäischer Gerichtshof",
       text: "können das österreichische Gesetz bzw. die EU-Richtlinie prüfen",
     },
   ],
@@ -52,7 +52,7 @@ export const legalRoute = {
       text: "can review the Data Protection Authority’s decision",
     },
     {
-      title: "Constitutional Court / CJEU",
+      title: "Constitutional Court / EU Court of Justice",
       text: "can review national law or the EU directive, respectively",
     },
   ],

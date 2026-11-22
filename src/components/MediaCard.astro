@@ -102,7 +102,9 @@ const languageNames = new Intl.DisplayNames([language], { type: "language" })
       <a href={item.url} hreflang={item.language}>{item.title}</a>
     </Heading>
     {item.guest && (
-      <p class="media-guest">{en ? "With " : "Mit "}{item.guest}</p>
+      <p class="media-guest">
+        {en ? `With ${item.guest.replace(/\bDr\./g, "Dr")}` : `Mit ${item.guest}`}
+      </p>
     )}
     <p class="media-footer">
       <span class="media-action" aria-hidden="true">

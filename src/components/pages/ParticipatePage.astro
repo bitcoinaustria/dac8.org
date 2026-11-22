@@ -120,7 +120,7 @@ const other = en ? "de" : "en"
             {en ? "Support as an organisation" : "Als Organisation unterstützen"}
           </h3>
           <p>
-            {en ? "Businesses, associations and other organisations can help fund the proceedings or contribute expertise. Crypto-asset service providers are welcome to support the case too." : "Unternehmen, Verbände und andere Organisationen können das Verfahren finanziell unterstützen oder fachliche Expertise beitragen. Das gilt auch für Krypto-Dienstleister."}
+            {en ? "Businesses, associations and other organisations can help fund the proceedings or contribute expertise. Crypto-asset service providers are welcome to support the case too." : "Unternehmen, Verbände und andere Organisationen können das Verfahren finanziell unterstützen oder fachliche Expertise beitragen. Das gilt auch für Krypto-Anbieter."}
           </p>
           <p>
             {en ? "We agree with you in advance whether and how we name your support in public." : "Ob und wie wir eure Unterstützung öffentlich nennen, stimmen wir vorab mit euch ab."}
@@ -132,11 +132,13 @@ const other = en ? "de" : "en"
         <article>
           <h3>{en ? "Work with us" : "Mit uns zusammenarbeiten"}</h3>
           <p>
-            {en ? "This campaign currently focuses on Austria. Organisations and experts who want to challenge DAC8 in other countries are welcome to get in touch." : "Diese Kampagne richtet sich derzeit auf Österreich. Organisationen und Fachleute, die DAC8 in anderen Ländern angehen wollen, können sich bei uns melden."}
+            {en ? "This campaign currently focuses on Austria. Organisations and experts who want to challenge DAC8 in other countries are welcome to get in touch." : "Diese Kampagne konzentriert sich derzeit auf Österreich. Organisationen und Fachleute, die DAC8 in anderen Ländern angehen wollen, können sich bei uns melden."}
           </p>
           <a
             class="button"
-            href="mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"
+            href={en
+              ? "mailto:kontakt@dac8.org?subject=Working%20together%20on%20DAC8"
+              : "mailto:kontakt@dac8.org?subject=Zusammenarbeit%20zu%20DAC8"}
             >kontakt@dac8.org</a
           >
         </article>

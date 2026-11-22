@@ -417,7 +417,7 @@ export const leaks: Leak[] = [
     },
     text: {
       de: "Mit anderswo gestohlenen Passwörtern meldeten sich Kriminelle in rund 26.000 Online-Konten der kanadischen Steuerbehörde an und sahen Daten von etwa 34.000 Menschen ein, darunter Anschrift, Steuer- und Bankdaten. Sie änderten Bankverbindungen und Anschriften und kassierten Rückzahlungen und Sozialleistungen. Bis 2025 zählte die Behörde 42.755 bestätigte Fälle, in denen Dritte Steuerdaten unbefugt nutzten; der Datenschutzbeauftragte stellte 2026 Verstöße gegen das Datenschutzgesetz fest.",
-      en: "Using passwords stolen elsewhere, criminals logged into around 26,000 online accounts at the Canada Revenue Agency and saw data on about 34,000 people, including postal address, tax and banking details. They changed bank details and addresses and collected refunds and benefits. By 2025 the agency counted 42,755 confirmed cases of third parties using taxpayer data without authorisation; in 2026 the privacy commissioner found breaches of the Privacy Act.",
+      en: "Using passwords stolen elsewhere, criminals logged into around 26,000 online accounts at the Canada Revenue Agency and saw data on about 34,000 people, including postal address, tax and banking details. They changed bank details and postal addresses and collected refunds and benefits. By 2025 the agency counted 42,755 confirmed cases of third parties using taxpayer data without authorisation; in 2026 the privacy commissioner found breaches of the Privacy Act.",
     },
     people: 34000,
     sources: [
@@ -446,7 +446,7 @@ export const leaks: Leak[] = [
     lost: ["holdings"],
     headline: {
       de: "47 Millionen Pfund über Steuerkonten.",
-      en: "£47m taken through tax accounts.",
+      en: "£47 million taken through tax accounts.",
     },
     text: {
       de: "Mit Identitätsdaten, die sie anderswo per Phishing erbeutet hatten, legten Kriminelle Steuerkonten bei der britischen Steuerbehörde HMRC an oder übernahmen bestehende und forderten Rückzahlungen. HMRC schrieb rund 100.000 Betroffene an und nannte dem Parlament einen Schaden von 47 Millionen Pfund. Die eigenen Systeme seien dabei nicht gehackt worden.",
@@ -817,8 +817,8 @@ export const leaks: Leak[] = [
       en: "347,000 email addresses from Trezor’s newsletter.",
     },
     text: {
-      de: "Über eine Lücke in der Anmeldung drangen Angreifer in 138 Kundenkonten des Newsletter-Dienstes Brevo ein, exportierten aus 43 die Kontakte und verschickten aus sechs Phishing. Aus der Liste des Wallet-Herstellers Trezor gingen 347.149 E-Mail-Adressen verloren. Eine gefälschte Sicherheitswarnung an diese Liste führte zu einer App, die nach der Wallet-Sicherung fragte; rund 2.500 Menschen klickten. Laut Fachpresse waren auch BitBox und der Krypto-Steuerdienst CoinTracking betroffen.",
-      en: "Through a login flaw, attackers got into 138 customer accounts at the newsletter service Brevo, exported contacts from 43 and sent phishing from six. 347,149 email addresses were taken from the list of the wallet maker Trezor. A fake security alert to that list led to an app that asked for the wallet backup; around 2,500 people clicked. According to the trade press, BitBox and the crypto tax service CoinTracking were also affected.",
+      de: "Über eine Lücke in der Anmeldung drangen Angreifer in 138 Kundenkonten des Newsletter-Dienstes Brevo ein, exportierten aus 43 die Kontakte und verschickten aus sechs Phishing, also gefälschte Nachrichten, die Zugangsdaten oder Geld erschleichen sollen. Aus der Liste des Wallet-Herstellers Trezor gingen 347.149 E-Mail-Adressen verloren. Eine gefälschte Sicherheitswarnung an diese Liste führte zu einer App, die nach der Wiederherstellungsphrase fragte, also den meist 12 oder 24 Wörtern, mit denen man über die Bitcoin einer Wallet verfügt; rund 2.500 Menschen klickten. Laut Fachpresse waren auch BitBox und der Krypto-Steuerdienst CoinTracking betroffen.",
+      en: "Through a login flaw, attackers got into 138 customer accounts at the newsletter service Brevo, exported contacts from 43 and from six sent phishing, fake messages meant to trick people out of passwords or money. 347,149 email addresses were taken from the list of the wallet maker Trezor. A fake security alert to that list led to an app that asked for the recovery phrase, the usually 12 or 24 words that give control over the bitcoin in a wallet; around 2,500 people clicked. According to the trade press, BitBox and the crypto tax service CoinTracking were also affected.",
     },
     sources: [
       {
@@ -873,8 +873,8 @@ export const leaks: Leak[] = [
       en: "Support contacts as a phishing list.",
     },
     text: {
-      de: "Angreifer gelangten in das externe Support-Portal des Hardware-Wallet-Herstellers. Dort lagen Name oder Spitzname und E-Mail-Adresse von bis zu 66.000 Menschen, die seit Dezember 2021 den Support kontaktiert hatten. 41 von ihnen schrieben die Angreifer direkt an und fragten nach der Wiederherstellungsphrase.",
-      en: "Attackers got into the hardware wallet maker’s third-party support portal. It held the name or nickname and email address of up to 66,000 people who had contacted support since December 2021. The attackers wrote to 41 of them directly, asking for their recovery phrase.",
+      de: "Angreifer gelangten in das externe Support-Portal des Hardware-Wallet-Herstellers, der Geräte baut, auf denen man die Schlüssel zu seinen Bitcoin selbst verwahrt. Dort lagen Name oder Spitzname und E-Mail-Adresse von bis zu 66.000 Menschen, die seit Dezember 2021 den Support kontaktiert hatten. 41 von ihnen schrieben die Angreifer direkt an und fragten nach der Wiederherstellungsphrase.",
+      en: "Attackers got into the third-party support portal of the hardware wallet maker, whose devices let people keep the keys to their bitcoin themselves. It held the name or nickname and email address of up to 66,000 people who had contacted support since December 2021. The attackers wrote to 41 of them directly, asking for their recovery phrase.",
     },
     people: 41,
     sources: [
@@ -977,11 +977,11 @@ export const leaks: Leak[] = [
     lost: [],
     headline: {
       de: "Kundendaten beim Dienstleister, danach Phishing.",
-      en: "Customer data at a vendor, then phishing.",
+      en: "Customer data at a service provider, then phishing.",
     },
     text: {
       de: "Bei einem Dienstleister der Krypto-Börse Gemini sammelten Angreifer E-Mail-Adressen und Teile der Telefonnummern von Kunden. Darauf folgten Phishing-Kampagnen gegen diese Kunden. Die Systeme und Konten von Gemini selbst waren laut Gemini nicht betroffen.",
-      en: "At a vendor of the crypto exchange Gemini, attackers collected customers’ email addresses and partial phone numbers. Phishing campaigns against those customers followed. According to Gemini, its own systems and accounts were not affected.",
+      en: "At a service provider of the crypto exchange Gemini, attackers collected customers’ email addresses and partial phone numbers. Phishing campaigns against those customers followed. According to Gemini, its own systems and accounts were not affected.",
     },
     sources: [
       {
@@ -1210,7 +1210,7 @@ export const doorstepCases: DoorstepCase[] = [
       en: "A police officer supplies the home address.",
     },
     text: {
-      de: "Ein Detective erschleicht sich einen Ortungsbeschluss und verschafft einem Auftraggeber die Wohnadresse eines Mannes, der viel Krypto besitzen soll. Wenig später versuchen drei Bewaffnete, in dessen Haus einzudringen, und fliehen erst, als das Opfer schießt.",
+      de: "Ein Polizeiermittler erschleicht sich einen Ortungsbeschluss und verschafft einem Auftraggeber die Wohnadresse eines Mannes, der viel Krypto besitzen soll. Wenig später versuchen drei Bewaffnete, in dessen Haus einzudringen, und fliehen erst, als das Opfer schießt.",
       en: "A detective obtains a location warrant under false pretences and gives a client the home address of a man believed to hold a lot of crypto. Soon after, three armed men try to force their way into his home and only flee when the victim fires a shot.",
     },
     sources: [
