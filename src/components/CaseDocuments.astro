@@ -1,0 +1,159 @@
+---
+import Disclosure from "@/components/Disclosure.astro"
+import { caseDocumentsFor } from "@/data/case-documents"
+
+interface Props {
+  language: "de" | "en"
+}
+
+// The documents of the proceedings, for lawyers and organisations who bring
+// a test case in their own country. Written for them, never as a call on
+// readers to send requests to their providers. The list grows with every
+// filing, opinion and decision; add them in src/data/case-documents.ts, which
+// also says what to remove before a PDF goes online. The documents are in
+// German; passages others can reuse are shown in full, with a working
+// translation on the English page.
+const { language } = Astro.props
+const en = language === "en"
+const documents = caseDocumentsFor()
+const formatDate = new Intl.DateTimeFormat(en ? "en-GB" : "de-AT", {
+  dateStyle: "long",
+  timeZone: "Europe/Vienna",
+})
+const pages = (count: number) =>
+  en
+    ? `${count} ${count === 1 ? "page" : "pages"}, in German`
+    : `${count} ${count === 1 ? "Seite" : "Seiten"}`
+---
+
+<section
+  id="unterlagen"
+  class="band documents"
+  aria-labelledby="unterlagen-heading"
+>
+  <div class="documents-text">
+    <h2 id="unterlagen-heading">
+      {en ? "Our documents, open to all." : "Unsere Unterlagen, offen für alle."}
+    </h2>
+    <p class="section-intro">
+      {en ? "So that lawyers and organisations in other countries need not start from scratch, we publish every document in the case as soon as it exists, expert opinions and decisions included. Only enclosures with ID, bank and tax data stay unpublished." : "Damit Anwälte und Organisationen in anderen Ländern nicht bei null anfangen müssen, veröffentlichen wir jedes Dokument des Verfahrens, sobald es vorliegt, auch Gutachten und Entscheidungen. Nur Beilagen mit Ausweis-, Bank- und Steuerdaten bleiben unveröffentlicht."}
+    </p>
+    <p class="documents-note">
+      {en ? "In German and free to use under the " : "Auf Deutsch und frei verwendbar unter der "}<a
+        href="/verfahren/LICENSE.txt"
+        >{en ? "MIT License" : "MIT-Lizenz"}</a
+      >.
+      {en ? "Only the reporting act (Krypto-Meldepflichtgesetz) and the Data Protection Act (DSG) are Austrian; DAC8, the GDPR and the Charter of Fundamental Rights apply across the EU." : "Österreichisch sind nur das Krypto-Meldepflichtgesetz und das Datenschutzgesetz; DAC8, DSGVO und Grundrechtecharta gelten EU-weit."}
+    </p>
+  </div>
+  <ol class="documents-steps">
+    {documents.map((item) => (
+      <li>
+        <time datetime={item.date}>{formatDate.format(new Date(`${item.date}T12:00:00Z`))}</time>
+        <h3>{item.title[language]}</h3>
+        <p>{item.text[language]}</p>
+        <a class="text-link" href={item.href} hreflang="de" download
+          >PDF <span class="documents-meta">{pages(item.pages)}</span></a
+        >
+        {item.excerpt && (
+          <Disclosure>
+            <Fragment slot="summary">{item.excerpt.title[language]}</Fragment>
+            <div class="documents-reasons" lang="de">
+              {item.excerpt.de.map((paragraph) => <p>{paragraph}</p>)}
+            </div>
+            {en && item.excerpt.en && (
+              <div class="documents-reasons">
+                <p class="documents-translation">Working translation, not official:</p>
+                {item.excerpt.en.map((paragraph) => <p>{paragraph}</p>)}
+              </div>
+            )}
+          </Disclosure>
+        )}
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  /* Links wofür die Unterlagen da sind, rechts die Dokumente als
+     Zeitleiste. */
+  .documents {
+    display: grid;
+    align-items: start;
+    gap: var(--space-l) var(--space-2xl);
+  }
+
+  .documents-note {
+    margin-block-start: var(--space-m);
+    max-inline-size: var(--measure-text);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    text-wrap: pretty;
+  }
+
+  .documents-steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .documents-steps li {
+    padding-block: var(--space-m);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .documents-steps li:first-child {
+    padding-block-start: 0;
+    border-block-start: 0;
+  }
+
+  .documents-steps time {
+    display: block;
+    margin-block-end: var(--space-3xs);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+  }
+
+  .documents-steps h3 {
+    margin-block-end: var(--space-2xs);
+  }
+
+  .documents-steps p {
+    max-inline-size: var(--measure-text);
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  .documents-meta {
+    margin-inline-start: var(--space-2xs);
+    color: var(--ink-3);
+    font-size: var(--type-meta);
+    font-weight: 400;
+  }
+
+  .documents-steps :global(.disclosure) {
+    margin-block-start: var(--space-s);
+  }
+
+  .documents-reasons {
+    display: grid;
+    gap: var(--space-xs);
+    padding: 0 var(--space-m) var(--space-m);
+    font-size: var(--type-meta);
+  }
+
+  .documents-reasons + .documents-reasons {
+    padding-block-start: var(--space-s);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .documents-translation {
+    font-weight: 600;
+  }
+
+  @container campaign (width >= 56rem) {
+    .documents {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+  }
+</style>
