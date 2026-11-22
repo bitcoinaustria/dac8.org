@@ -5,7 +5,7 @@ import {
   letterOptions,
   letterSubject,
 } from "@/data/letter"
-import { attacks } from "@/lib/attacks"
+import { countIn, euCountries, latestDate, latestYear } from "@/lib/attacks"
 import type { Language } from "@/lib/i18n"
 
 interface Props {
@@ -15,8 +15,14 @@ interface Props {
 const { language } = Astro.props
 const en = language === "en"
 // Counted here because the attack archive is too large for the script.
+// The letter compares the last full year with the one before, since the
+// current year is still running, and counts EU cases only.
 const facts: LetterFacts = {
-  attacks: attacks.length,
+  year: latestYear,
+  through: latestDate ?? "",
+  euThisYear: countIn(latestYear, euCountries),
+  euLastYear: countIn(latestYear - 1, euCountries),
+  euYearBefore: countIn(latestYear - 2, euCountries),
 }
 const initial = buildLetter(
   language,
@@ -64,7 +70,7 @@ const steps = en
         {en ? "What would you like to add?" : "Was möchtest du ergänzen?"}
       </h3>
       <p class="letter-lead">
-        {en ? "The letter explains the law, the data breaches and the attacks, and makes the campaign’s demands. Add what comes from you, or leave it empty and add it in your email program. Everything stays in your browser." : "Der Brief erklärt das Gesetz, die Datenlecks und die Überfälle und stellt die Forderungen der Kampagne. Ergänze, was von dir kommt, oder lass es leer und ergänze es im Mailprogramm. Alles bleibt in deinem Browser."}
+        {en ? "The letter explains the law, why financial privacy matters and what data breaches lead to, and makes the campaign’s demands. Add what comes from you, or leave it empty and add it in your email program. Everything stays in your browser." : "Der Brief erklärt das Gesetz, warum finanzielle Privatsphäre zählt und wozu Datenlecks führen, und stellt die Forderungen der Kampagne. Ergänze, was von dir kommt, oder lass es leer und ergänze es im Mailprogramm. Alles bleibt in deinem Browser."}
       </p>
       <div class="form-grid">
         <label class="field">

@@ -13,8 +13,10 @@ import { type Language, pathFor } from "@/lib/i18n"
 // themselves and views the campaign does not state for them.
 //
 // An email is no study: every figure is one more thing an office can check,
-// so the letter keeps one count, one case and the dates its demands rest
-// on, and links the page that carries the rest with sources.
+// so the letter keeps one trend, one case and the dates its demands rest
+// on, and links the page that carries the rest with sources. The trend is
+// EU-wide, since EU law is the subject, and the case is one in which leaked
+// tax data led attackers to a family.
 //
 // By default the letter never makes the sender reveal whether they hold
 // bitcoin: a letter for privacy must not cost the sender theirs. The
@@ -26,8 +28,12 @@ import { type Language, pathFor } from "@/lib/i18n"
 // The facts restate sourced text on the site: report contents with birth
 // date (glossary), cash, gold and the own-wallet sum (reason #bargeld), the
 // build-up (reason on growing surveillance in arguments.ts; register access
-// in the recast, history.ts), bitcoin as cash and the attack archive (the
-// attacks page), Waltio (leaks.ts), forged passports (reason #anlasslos),
+// in the recast, history.ts), what payments reveal and how being watched
+// changes behaviour (reason #alle), bitcoin as cash and the attack archive
+// (the attacks page), Waltio (leaks.ts) and the Taverny case (the archive,
+// after Le Parisien, 23 September 2026: targeted through the Waltio file,
+// which showed 2024 balances, about 100 euros left; Journal du Coin retells
+// it), forged passports (reason #anlasslos),
 // § 20, Germany and the Netherlands, the demands (#forderungen,
 // src/data/arguments.ts) and the recast, which needs every member state
 // (history.ts). Gold kept at home rests on the absence of any reporting
@@ -40,12 +46,17 @@ import { type Language, pathFor } from "@/lib/i18n"
 // whatever the holding time (§ 27b EStG), while gold coins stay tax-free
 // after a year (§ 31 EStG), as crypto-assets do in Germany (§ 23 dEStG).
 
-// The count from the attack archive, passed in by the page because the
+// EU counts from the attack archive, passed in by the page because the
 // archive is too large for the browser script. The archive keeps every known
 // attack, whatever made the victim known, so the letter never presents the
-// count as attacks after data leaks.
+// counts as attacks after data leaks.
 export type LetterFacts = {
-  attacks: number
+  // The archive's latest year, still running, and its latest date.
+  year: number
+  through: string
+  euThisYear: number
+  euLastYear: number
+  euYearBefore: number
 }
 
 export type LetterFields = {
@@ -62,8 +73,40 @@ export const letterSubject: Record<Language, string> = {
   en: "Krypto-Meldepflichtgesetz: no financial file without suspicion",
 }
 
+const locale = (language: Language) => (language === "en" ? "en-GB" : "de-AT")
+
 const count = (language: Language, value: number) =>
-  value.toLocaleString(language === "en" ? "en-GB" : "de-AT")
+  value.toLocaleString(locale(language))
+
+const month = (language: Language, date: string) =>
+  new Date(`${date}T12:00:00Z`).toLocaleDateString(locale(language), {
+    month: "long",
+    timeZone: "UTC",
+  })
+
+// The trend in EU attacks: the growth of the last full year over the one
+// before, and, once the running year has passed the last, that too. Without
+// growth, the last full year's count.
+const trend = (language: Language, facts: LetterFacts) => {
+  const en = language === "en"
+  const last = facts.year - 1
+  const growth = Math.round(
+    (facts.euLastYear / Math.max(facts.euYearBefore, 1) - 1) * 100,
+  )
+  const ahead =
+    facts.through && facts.euThisYear > facts.euLastYear
+      ? en
+        ? `, and by ${month(language, facts.through)} ${facts.year} there were already more than in the whole of ${last}`
+        : `, und ${facts.year} waren es bis ${month(language, facts.through)} schon mehr als im ganzen Jahr ${last}`
+      : ""
+  if (growth > 0 && facts.euYearBefore > 0)
+    return en
+      ? `In the EU, ${growth} per cent more attacks on crypto holders became public in ${last} than in ${last - 1}${ahead}.`
+      : `In der EU wurden ${last} um ${growth} Prozent mehr Angriffe auf Krypto-Besitzer öffentlich bekannt als ${last - 1}${ahead}.`
+  return en
+    ? `In ${last}, ${count(language, facts.euLastYear)} attacks on crypto holders became public in the EU${ahead}.`
+    : `In der EU wurden ${last} ${count(language, facts.euLastYear)} Angriffe auf Krypto-Besitzer öffentlich bekannt${ahead}.`
+}
 
 type Text = Record<
   Language,
@@ -80,13 +123,18 @@ type Option = {
   text: Text
 }
 
-// The facts every letter carries, after what the act requires.
+// The facts every letter carries, after what the act requires: privacy
+// itself, then the danger of the file, then that it misses its target.
 const reasons: Text[] = [
   {
+    de: "Das ist Massenüberwachung, Schritt für Schritt, bis eine Finanzakte über jeden besteht. Zahlungen verraten, wem jemand spendet, wen er unterstützt, wie es um seine Gesundheit steht und woran er glaubt, und wer weiß, dass all das erfasst wird, verhält sich anders. Darum gibt es das Briefgeheimnis, und darum soll der Staat auch beim Geld erst bei einem Verdacht hinsehen.",
+    en: "This is mass surveillance, built step by step until there is a financial file on everyone. Payments reveal whom someone donates to, whom they support, how their health is and what they believe, and anyone who knows all of it is being recorded behaves differently. That is why letters are private, and why the state should need a suspicion before it looks at people’s money too.",
+  },
+  {
     de: (facts, link) =>
-      `Bitcoin funktioniert wie Bargeld: Wer die Schlüssel hat, kann ihn übertragen, auch unter Zwang. Eine Liste, wer vermutlich wie viel davon daheim hat, ist darum gefährlich, und solche Listen bleiben nicht sicher. In Frankreich gerieten 2026 Daten über die Bestände der Kunden eines Krypto-Steuerdienstes in fremde Hände; laut Polizei wählen Täter damit Opfer für Gewalttaten aus. Öffentlich bekannt sind weltweit ${count("de", facts.attacks)} körperliche Angriffe auf Menschen, die Kryptowerte besitzen oder bei denen man das vermutet: ${link}`,
+      `Solche Akten sind auch gefährlich. Bitcoin funktioniert wie Bargeld: Wer die Schlüssel hat, kann ihn übertragen, auch unter Zwang. In Frankreich gerieten Anfang 2026 Daten über Gewinne und Bestände der Kunden eines Krypto-Steuerdienstes in fremde Hände. Im Juli fesselten in Taverny drei maskierte Männer eine Mutter und ihr zehnjähriges Kind und quälten den Vater mit einem Elektroschocker. Ihr Hinweis stammte aus diesen Daten; die Familie besaß nur mehr rund 100 Euro in Kryptowerten. ${trend("de", facts)} Die Fälle mit Quellen: ${link}`,
     en: (facts, link) =>
-      `Bitcoin works like cash: whoever holds the keys can move it, even under duress. A list of who probably keeps bitcoin at home, and how much, is therefore dangerous, and such lists do not stay safe. In 2026, data on the holdings of a French crypto tax service’s customers fell into the wrong hands; according to the police, criminals use it to pick victims of violent crime. Worldwide, there are ${count("en", facts.attacks)} publicly known physical attacks on people who hold crypto-assets, or are believed to: ${link}`,
+      `Such files are dangerous too. Bitcoin works like cash: whoever holds the keys can move it, even under duress. In early 2026, data on the gains and holdings of a French crypto tax service’s customers fell into the wrong hands. In July, three masked men in Taverny tied up a mother and her ten-year-old child and tortured the father with a stun gun. Their tip came from that data; the family had only about 100 euros left in crypto-assets. ${trend("en", facts)} The cases, with sources: ${link}`,
   },
   {
     de: "Kriminelle kommen trotzdem durch: Laut Geldwäschemeldestelle eröffnen sie Konten mit gefälschten österreichischen Pässen, auf die Namen echter, unbeteiligter Menschen. Erfasst werden alle anderen.",
@@ -192,8 +240,8 @@ const text = {
     generic: "Sehr geehrte Damen und Herren,",
     senderPlaceholder: "[Dein Name]",
     thesis:
-      "anlasslose finanzielle Überwachung schützt niemanden. Sie zeigt Kriminellen, bei wem etwas zu holen ist. Ohne konkreten Verdacht soll der Staat nicht erfahren, was jemand besitzt und wofür er sein Geld ausgibt. Ich bitte Sie, sich für die Forderungen unten einzusetzen.",
-    law: "Seit Jänner 2026 erfassen Krypto-Anbieter nach dem Krypto-Meldepflichtgesetz (Krypto-MPfG), das die EU-Richtlinie DAC8 umsetzt, für jeden Kunden Name, Anschrift, Geburtsdatum und Steuernummer und wie viel er im Jahr kauft, verkauft und auf die eigene Wallet überträgt, ohne jeden Verdacht. Ab 2027 geht das jedes Jahr ans Finanzamt, als Jahressummen ohne Wallet-Adressen. Wer Bargeld abhebt oder bei der Bank Goldmünzen kauft und daheim verwahrt, steht in keiner solchen Meldung. Und das ist nur der jüngste Schritt: Nach der vorgeschlagenen Neufassung der Richtlinie sollen Steuerbehörden auch auf Geldwäsche-Register, etwa für Immobilien, und auf Pensionsregister zugreifen.",
+      "was jemand besitzt und wofür er sein Geld ausgibt, geht den Staat ohne konkreten Verdacht nichts an. Das Krypto-Meldepflichtgesetz kehrt das um: Es behandelt jeden Kunden, als stünde er unter Verdacht, und legt Listen an, die Kriminellen zeigen, bei wem etwas zu holen ist. Ich bitte Sie, sich für die Forderungen unten einzusetzen.",
+    law: "Seit Jänner 2026 erfassen Krypto-Anbieter nach diesem Gesetz (Krypto-MPfG), das die EU-Richtlinie DAC8 umsetzt, für jeden Kunden Name, Anschrift, Geburtsdatum und Steuernummer und wie viel er im Jahr kauft, verkauft und auf die eigene Wallet überträgt, ohne jeden Verdacht. Ab 2027 geht das jedes Jahr ans Finanzamt, als Jahressummen ohne Wallet-Adressen. Wer Bargeld abhebt oder bei der Bank Goldmünzen kauft und daheim verwahrt, steht in keiner solchen Meldung. Und das ist nur der jüngste Schritt: Nach der vorgeschlagenen Neufassung der Richtlinie sollen Steuerbehörden auch auf Geldwäsche-Register, etwa für Immobilien, und auf Pensionsregister zugreifen.",
     ask: "Meine Forderungen:",
     question:
       "Die Punkte 2 und 3 kann der Nationalrat selbst beschließen. Lehnen Sie die anlasslose Meldung ab, und werden Sie, solange sie gilt, für diese beiden Änderungen eintreten? Ich bitte um Ihre Antwort.",
@@ -204,8 +252,8 @@ const text = {
     generic: "Dear Sir or Madam,",
     senderPlaceholder: "[Your name]",
     thesis:
-      "Blanket financial surveillance protects no one. It shows criminals where there is something to take. Without specific suspicion, the state should not be told what someone owns or what they spend their money on. I am writing to ask you to support the demands below.",
-    law: "Since January 2026, under the Krypto-Meldepflichtgesetz (Krypto-MPfG), which implements the EU directive DAC8, crypto-asset providers have been recording every customer’s name, home address, date of birth and tax number, and how much they buy, sell and transfer to their own wallet each year, without any suspicion. From 2027 this goes to the tax office every year, as annual totals without wallet addresses. Someone who withdraws cash, or buys gold coins at a bank and keeps them at home, appears in no such report. And this is only the latest step: under the proposed recast of the directive, tax authorities would gain access to anti-money-laundering registers, including for real estate, and to pension registers.",
+      "What someone owns and what they spend their money on is none of the state’s business without specific suspicion. The Krypto-Meldepflichtgesetz turns this around: it treats every customer as a suspect, and builds lists that show criminals where there is something to take. I am writing to ask you to support the demands below.",
+    law: "Since January 2026, under this act (Krypto-MPfG), which implements the EU directive DAC8, crypto-asset providers have been recording every customer’s name, home address, date of birth and tax number, and how much they buy, sell and transfer to their own wallet each year, without any suspicion. From 2027 this goes to the tax office every year, as annual totals without wallet addresses. Someone who withdraws cash, or buys gold coins at a bank and keeps them at home, appears in no such report. And this is only the latest step: under the proposed recast of the directive, tax authorities would gain access to anti-money-laundering registers, including for real estate, and to pension registers.",
     ask: "My demands:",
     question:
       "The National Council can enact points 2 and 3 itself. Do you oppose blanket reporting, and while it applies, will you back these two changes? I look forward to your reply.",
