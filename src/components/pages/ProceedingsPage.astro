@@ -1,4 +1,5 @@
 ---
+import CaseDocuments from "@/components/CaseDocuments.astro"
 import EuropeanFront from "@/components/EuropeanFront.astro"
 import LegalRoute from "@/components/LegalRoute.astro"
 import MediaCoverage from "@/components/MediaCoverage.astro"
@@ -9,7 +10,7 @@ import { donateFor, feedFor, languageFor, pathFor } from "@/lib/i18n"
 
 // What we do: the conviction and one way to help first, then where the case
 // stands, the questions it asks, why it can work, the cases elsewhere in
-// Europe and what journalists need. Each section says its point in a line
+// Europe, the documents others can reuse and what journalists need. Each section says its point in a line
 // or two; the press questions keep the detail behind a click. The updates
 // get a section only once there are any; until then the status line
 // points to the feed.
@@ -79,6 +80,7 @@ const lawyerProfile = en
     { id: "rechtsweg", label: en ? "Status" : "Stand" },
     { id: "beschwerde", label: en ? "Complaint" : "Beschwerde" },
     { id: "europa", label: en ? "Europe" : "Europa" },
+    { id: "unterlagen", label: en ? "Documents" : "Unterlagen" },
     ...(entries.length
       ? [{ id: "neuigkeiten", label: en ? "Updates" : "Neuigkeiten" }]
       : []),
@@ -195,6 +197,8 @@ const lawyerProfile = en
     </section>
 
     <EuropeanFront language={language} />
+
+    <CaseDocuments language={language} />
 
     {entries.length > 0 && (
     <section
