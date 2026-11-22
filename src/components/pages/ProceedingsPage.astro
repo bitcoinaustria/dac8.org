@@ -34,11 +34,11 @@ const questions = en
       },
       {
         title: "Does the tax office need this data?",
-        text: "It even includes what you move to your own wallet each year, as a total without wallet addresses. That is no more taxable than withdrawing cash.",
+        text: "It even includes what you move each year to your own wallet, an app or device where only you hold the keys: as a total, without wallet addresses. That is no more taxable than withdrawing cash.",
       },
       {
         title: "Could it be done with less?",
-        text: "Yes: Germany and the Netherlands compile data only for customers who are actually reported, and Ireland keeps it six years instead of ten.",
+        text: "Yes: Germany and the Netherlands compile data only for customers who are actually reported, and in Ireland crypto-asset providers generally keep it for six years instead of ten.",
       },
     ]
   : [
@@ -48,11 +48,11 @@ const questions = en
       },
       {
         title: "Braucht das Finanzamt diese Daten?",
-        text: "Gemeldet wird sogar, wie viel du im Jahr auf deine eigene Wallet überträgst, als Summe ohne Wallet-Adressen. Steuerpflichtig ist das so wenig wie eine Bargeldbehebung.",
+        text: "Gemeldet wird sogar, wie viel du im Jahr auf deine eigene Wallet überträgst, also in eine App oder auf ein Gerät, bei dem nur du die Schlüssel hast: als Summe, ohne Wallet-Adressen. Steuerpflichtig ist das so wenig wie eine Bargeldbehebung.",
       },
       {
         title: "Ginge es mit weniger?",
-        text: "Ja: Deutschland und die Niederlande lassen Daten nur für Kunden zusammenstellen, die wirklich gemeldet werden, und Irland bewahrt sie sechs statt zehn Jahre auf.",
+        text: "Ja: Deutschland und die Niederlande lassen Daten nur für Kunden zusammenstellen, die wirklich gemeldet werden, und in Irland bewahren Krypto-Anbieter sie grundsätzlich sechs statt zehn Jahre auf.",
       },
     ]
 
@@ -107,7 +107,7 @@ const lawyerProfile = en
       </div>
       <div id="rechtsweg" class="case-status">
         <p class="case-status-filed">
-          {en ? "Filed in October 2026 by attorney Dr Oliver Völkel (CERHA HEMPEL), at Bitcoin Austria’s initiative." : "Eingebracht im Oktober 2026 von Rechtsanwalt Dr. Oliver Völkel (CERHA HEMPEL), auf Initiative von Bitcoin Austria."}
+          {en ? "Filed in October 2026 by lawyer Dr Oliver Völkel (CERHA HEMPEL), at Bitcoin Austria’s initiative." : "Eingebracht im Oktober 2026 von Rechtsanwalt Dr. Oliver Völkel (CERHA HEMPEL), auf Initiative von Bitcoin Austria."}
         </p>
         <LegalRoute language={language} />
         {latest ? (
@@ -176,7 +176,7 @@ const lawyerProfile = en
           <li>
             <a href={retentionCjeu} hreflang={language}>April 2014</a>
             <span
-              >{en ? "The CJEU declares the EU directive invalid." : "Der EuGH erklärt die EU-Richtlinie für ungültig."}</span
+              >{en ? "The Court of Justice of the European Union declares the EU directive invalid." : "Der Europäische Gerichtshof erklärt die EU-Richtlinie für ungültig."}</span
             >
           </li>
           <li>
@@ -226,7 +226,7 @@ const lawyerProfile = en
       <div class="press-contact">
         <h2 id="presse-heading">{en ? "For the media" : "Für Medien"}</h2>
         <p class="section-intro">
-          {en ? "The association and the attorney are available for questions and interviews." : "Für Rückfragen und Interviews stehen der Verein und der Anwalt zur Verfügung."}
+          {en ? "The association and the lawyer are available for questions and interviews." : "Für Rückfragen und Interviews stehen der Verein und der Anwalt zur Verfügung."}
         </p>
         <ul class="contacts">
           <li>
@@ -251,7 +251,7 @@ const lawyerProfile = en
               >{en ? "Dr Oliver Völkel, LL.M." : "Dr. Oliver Völkel, LL.M."}</strong
             >
             <p>
-              {en ? "Attorney and partner at CERHA HEMPEL in Vienna. He filed the complaint." : "Rechtsanwalt und Partner bei CERHA HEMPEL in Wien. Er hat die Beschwerde eingebracht."}
+              {en ? "Lawyer and partner at CERHA HEMPEL in Vienna. He filed the complaint." : "Rechtsanwalt und Partner bei CERHA HEMPEL in Wien. Er hat die Beschwerde eingebracht."}
             </p>
             <a class="text-link" href={lawyerProfile}
               >{en ? "Profile at CERHA HEMPEL" : "Profil bei CERHA HEMPEL"}</a

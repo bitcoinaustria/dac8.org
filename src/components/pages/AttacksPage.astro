@@ -72,7 +72,7 @@ const strings = en
       <p class="atlas-lead">
         {en
             ? "An archive of known physical attacks on people who hold crypto-assets, or are believed to. Bitcoin works like cash: whoever holds the keys can move it. That draws criminals, hackers far away as well as attackers in person. So nobody should know who holds how much."
-            : "Ein Archiv bekannter körperlicher Angriffe auf Menschen, die Kryptowerte besitzen oder besitzen sollen. Bitcoin funktioniert wie Bargeld: Wer die Schlüssel hat, kann ihn übertragen. Das zieht Kriminelle an, Hacker aus der Ferne ebenso wie Täter vor Ort. Darum sollte niemand wissen, wer wie viel besitzt."}
+            : "Ein Archiv bekannter körperlicher Angriffe auf Menschen, die Kryptowerte besitzen oder bei denen Täter sie vermuten. Bitcoin funktioniert wie Bargeld: Wer die Schlüssel hat, kann die Bitcoin übertragen. Das zieht Kriminelle an, Hacker aus der Ferne ebenso wie Täter vor Ort. Darum sollte niemand wissen, wer wie viel besitzt."}
       </p>
       <p class="atlas-caveat">
         <strong
@@ -237,7 +237,7 @@ const strings = en
 
 <script>
   import attacks from "@/data/attacks.json"
-  import { headlineOf } from "@/lib/attacks"
+  import { headlineOf, placeOf } from "@/lib/attacks"
   import L from "leaflet"
   import "leaflet/dist/leaflet.css"
   import "leaflet.markercluster/dist/MarkerCluster.css"
@@ -258,19 +258,10 @@ const strings = en
     const language = root.dataset.language === "en" ? "en" : "de"
     const strings = JSON.parse(root.dataset.strings ?? "{}")
     const locale = language === "en" ? "en-GB" : "de-AT"
-    const regions = new Intl.DisplayNames([language], { type: "region" })
     const latestYear = Math.max(...attacks.map((attack) => attack.year))
     const recentFrom = latestYear - 1
 
-    const place = (attack: Attack) => {
-      const country =
-        (attack.countryCode && regions.of(attack.countryCode)) ??
-        attack.country ??
-        ""
-      return attack.city && attack.city !== country
-        ? `${attack.city}, ${country}`
-        : country
-    }
+    const place = (attack: Attack) => placeOf(attack, language)
     const dateOf = (attack: Attack) =>
       attack.date
         ? new Date(`${attack.date}T12:00:00Z`).toLocaleDateString(locale, {

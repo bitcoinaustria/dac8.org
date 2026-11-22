@@ -127,11 +127,6 @@ const convoyRuling =
   "https://www.fct-cf.gc.ca/Content/assets/pdf/base/2024.01.23-306-22-T-316-22-T-347-22-T-382-22.pdf"
 const convoyAppeal =
   "https://decisions.fca-caf.gc.ca/fca-caf/decisions/en/item/521758/index.do"
-// Austrian financial intelligence unit, report 2024, pp. 25-36: reports
-// kept without initial suspicion, and accounts opened with forged
-// Austrian passports bearing real people's data.
-const fiuReport =
-  "https://www.bundeskriminalamt.at/308/files/409_2025_Geldwaeschebericht_2024_A4_V20251020_Web.pdf"
 // Impact assessment: no data on gains already taxed (p. 12), estimate from
 // bitcoin gains scaled up to all crypto-assets (Annex 4, pp. 66-68).
 const impactAssessment =
@@ -145,14 +140,19 @@ const registerLaw2015 =
 const registerLaw2026 =
   "https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_2026_I_46/BGBLA_2026_I_46.html"
 const accountRegistries = "https://eur-lex.europa.eu/eli/dir/2024/1640/oj"
-// Report 2025, pp. 29-37: reports received and final convictions for money
-// laundering, which the unit does not link to particular reports.
+// Austrian financial intelligence unit, report 2025: reports kept without
+// initial suspicion and deleted after five years at most (p. 19 of the PDF),
+// reports received and final convictions for money laundering, which the
+// unit does not link to particular reports (pp. 29-37), and accounts opened
+// with forged Austrian passports bearing real people's data (p. 39 of the
+// PDF).
 const fiuReport2025 =
   "https://www.bundeskriminalamt.at/308/files/374-2026-geldwaeschebericht-2025-a4-v20260915-web-bf.pdf"
-// 2010 to 2014: about 2.2 percent of estimated criminal proceeds frozen or
-// seized, 1.1 percent finally confiscated.
-const assetRecovery =
-  "https://www.europol.europa.eu/sites/default/files/documents/criminal_asset_recovery_in_the_eu_web_version_0.pdf"
+// Europol's latest estimate: confiscation of criminal proceeds stagnates at
+// around 2 percent (pp. 13 and 25). The History page cites the same source
+// (src/data/overregulation.ts, socta).
+const socta =
+  "https://www.europol.europa.eu/cms/sites/default/files/documents/EU-SOCTA-2025.pdf"
 // Bribed support staff took data from systems they were allowed to use.
 const coinbaseIncident =
   "https://www.sec.gov/Archives/edgar/data/1679788/000167978825000094/coin-20250514.htm"
@@ -224,7 +224,7 @@ export const reasons: Reason[] = [
         "Niemand muss reich sein, um finanzielle Privatsphäre zu brauchen.",
       text: "Überträgst du Bitcoin über eine Börse, einen Broker oder eine App, wird dort gespeichert, wer an wen zahlt. Daraus kann hervorgehen, wem du spendest, wen du unterstützt und wo du Mitglied bist.",
       proof: [
-        "Das verlangt die EU-Geldtransferverordnung: Namen und Wallet-Adressen von Absender und Empfänger, auch wenn das Ziel deine eigene Wallet ist. Aufbewahrt wird das bei allen Kunden, ohne Verdacht und über Jahre.",
+        "Das verlangt die EU-Geldtransferverordnung: Namen und Wallet-Adressen (sozusagen Kontonummern auf der Blockchain) von Absender und Empfänger, auch wenn das Ziel deine eigene Wallet ist, also eine App oder ein Gerät, in dem du deine Bitcoin selbst verwahrst. Aufbewahrt wird das bei allen Kunden, ohne Verdacht und über Jahre.",
         "Die europäischen Datenschutzbehörden warnen, dass schon einzelne Zahlungen viel verraten: Spenden etwa politische oder religiöse Überzeugungen, Arztrechnungen die Gesundheit. In der Jahresmeldung stehen davon nur Jahressummen, beim Anbieter liegt jede einzelne Zahlung.",
         "Wie schnell Zahlungswege und Finanzdaten gegen politische Anliegen eingesetzt werden, zeigen zwei bekannte Fälle. Im Dezember 2010 blockierten Visa, Mastercard und PayPal Spenden an WikiLeaks, ohne dazu gerichtlich verpflichtet zu sein. 2022 ließ Kanada während der Trucker-Proteste rund 280 Konten, Karten und Kreditlinien einfrieren, und Banken mussten Angaben über betroffene Kunden an die Polizei weitergeben. Kanadische Gerichte urteilten 2024 und 2026, noch nicht rechtskräftig, dass diese Weitergabe gegen den Schutz vor unangemessener Durchsuchung verstieß.",
         "Überwachung wirkt auch ohne Datenleck. Das Bundesverfassungsgericht schrieb 1983: „Wer unsicher ist, ob abweichende Verhaltensweisen jederzeit notiert und als Information dauerhaft gespeichert, verwendet oder weitergegeben werden, wird versuchen, nicht durch solche Verhaltensweisen aufzufallen.“",
@@ -245,9 +245,9 @@ export const reasons: Reason[] = [
       title: "Nobody has to be rich to need financial privacy.",
       text: "Move bitcoin through an exchange, broker or app, and it stores who pays whom. That can show whom you donate to, whom you support and where you are a member.",
       proof: [
-        "The EU transfer of funds regulation requires it: the names and wallet addresses of sender and recipient, even when the destination is your own wallet. It is kept for every customer, without suspicion, for years.",
+        "The EU transfer of funds regulation requires it: the names and wallet addresses (a kind of account number on the blockchain) of sender and recipient, even when the destination is your own wallet, meaning an app or device where you keep your bitcoin yourself. It is kept for every customer, without suspicion, for years.",
         "Europe’s data protection authorities warn that even single payments reveal a lot: donations can show political or religious beliefs, medical bills someone’s health. Of these, the annual report carries only yearly totals; the provider holds every single payment.",
-        "Two well-known cases show how quickly payment routes and financial data can be used against political causes. In December 2010, Visa, Mastercard and PayPal blocked donations to WikiLeaks without any court order requiring them to. In 2022, during the trucker protests, Canada had around 280 accounts, cards and credit lines frozen, and banks had to pass information about the customers concerned to the police. Canadian courts ruled in 2024 and 2026, not yet finally, that this sharing breached the protection against unreasonable search.",
+        "Two well-known cases show how quickly payment routes and financial data can be used against political causes. In December 2010, Visa, Mastercard and PayPal blocked donations to WikiLeaks without any court order requiring them to. In 2022, during the trucker protests, Canada had around 280 accounts, cards and credit lines frozen, and banks had to pass information about the customers concerned to the police. Canadian courts ruled in 2024 and 2026, in decisions that are not yet final, that this sharing breached the protection against unreasonable search.",
         "Surveillance has an effect even without a data leak. Germany’s Federal Constitutional Court wrote in 1983 that anyone unsure whether behaviour that departs from the norm is recorded at any time and permanently stored, used or passed on as information will try not to attract attention through it.",
       ],
       sources: [
@@ -365,7 +365,7 @@ export const reasons: Reason[] = [
         "Aus Summe und Anzahl der Käufe und Übertragungen lässt sich grob schätzen, wie viel jemand bewegt. Die Schätzung kann weit danebenliegen, weil dasselbe Geld mehrfach zählen kann. Wer die Daten erbeutet, filtert trotzdem Menschen heraus, die vermögend wirken.",
         "Beim französischen Krypto-Steuerdienst Waltio gelangten E-Mail-Adressen, Gewinne und Verluste sowie Jahresendbestände der Kunden in fremde Hände. Laut französischer Polizei ist das Datenleck ein Grund für die Zunahme solcher Gewalttaten: Täter wählen damit Opfer aus und irren sich dabei teils über deren tatsächliche Bestände.",
         "Beim Hardware-Wallet-Hersteller Ledger gelangten 2020 Namen, Anschriften und Telefonnummern von rund 272.000 Käufern ins Netz, eine Liste von Menschen, die Bitcoin vermutlich selbst verwahren.",
-        "In Österreich nutzen Betrüger die neuen Krypto-Steuerregeln schon als Vorwand: Gefälschte FinanzOnline-Nachrichten fragen nach Krypto-Beständen, eine wahllos verschickte SMS-Masche auch nach Gold und Bargeld.",
+        "In Österreich nutzen Betrüger die neuen Krypto-Steuerregeln schon als Vorwand: Gefälschte Nachrichten im Namen von FinanzOnline, dem Online-Portal der österreichischen Finanzverwaltung, fragen nach Krypto-Beständen, eine wahllos verschickte SMS-Masche auch nach Gold und Bargeld.",
       ],
       sources: [
         { href: waltio, label: "Waltio" },
@@ -383,7 +383,7 @@ export const reasons: Reason[] = [
         "Totals and counts of purchases and transfers give a rough estimate of how much someone moves. The estimate can be far off, because the same money can count more than once. Anyone who gets hold of the data still singles out people who appear wealthy.",
         "At the French crypto tax service Waltio, customers’ email addresses, gains and losses and year-end balances fell into the wrong hands. According to the French police, the leak is one reason for the rise in such violent crime: criminals use the data to select victims, sometimes misjudging what they actually hold.",
         "In 2020, the names, postal addresses and phone numbers of around 272,000 customers of the hardware wallet maker Ledger were leaked online: a list of people who probably keep bitcoin in self-custody.",
-        "In Austria, fraudsters already use the new crypto tax rules as a pretext: fake FinanzOnline messages ask about crypto holdings, and an SMS scam sent out at random also asks about gold and cash.",
+        "In Austria, fraudsters already use the new crypto tax rules as a pretext: fake messages posing as FinanzOnline, Austria’s online tax portal, ask about crypto holdings, and an SMS scam sent out at random also asks about gold and cash.",
       ],
       sources: [
         { href: waltio, label: "Waltio" },
@@ -429,7 +429,7 @@ export const reasons: Reason[] = [
       proof: [
         "The file is built for everyone: the provider must prepare reporting data for every customer, including those who are never reported. Here Austria goes beyond the EU directive. Germany and the Netherlands require it only for customers whose data actually goes to the tax office.",
         "The provider deletes each annual report only ten years after its reporting year, according to the bill’s explanatory notes “for reasons of simplicity”. For reports on bank accounts, the period is five years, and Ireland generally sets six for crypto-asset providers.",
-        "And whether the data is really deleted when the period ends, you have to take on trust. In 2026, orders from 2019 to 2021 turned up in a data leak at the wallet maker Trezor’s shipping provider, although the shipping company had repeatedly confirmed in writing that it had deleted them.",
+        "And you have to take it on trust that the data is really deleted once the period ends. In 2026, orders from 2019 to 2021 turned up in a data leak at the wallet maker Trezor’s shipping provider, although the shipping company had repeatedly confirmed in writing that it had deleted them.",
         "Under anti-money-laundering rules, the provider also keeps your ID, wallet addresses and individual transactions, currently until ten years after the relationship ends. For DAC8, it adds your tax identification number and tax residence. At the tax authority, the annual reports from every provider you use come together; if you live in Germany, at the German one.",
         "Tax authorities lose data too: in 2019, data on more than six million people leaked from the Bulgarian tax authority. According to the OECD, it included account data from the automatic exchange that DAC8 reports will travel through.",
         "What matters is the overall picture: reports across several providers and years, a breach at a tax tool and attributable blockchain data can together add up to a profile of activity and presumed wealth.",
@@ -456,13 +456,13 @@ export const reasons: Reason[] = [
       text: "Gemeldet wird, wer über eine Börse, einen Broker oder eine App kauft. Wer Bitcoin von Mensch zu Mensch kauft oder sich in Bitcoin bezahlen lässt, steht nicht darin: Die Meldung folgt dem Weg, nicht einem Verdacht.",
       proof: [
         "Der Verfassungsgerichtshof hob 2014 die Vorratsdatenspeicherung von Telefon- und Internetdaten auf. Sie erfasse „fast ausschließlich Personen, die keinerlei Anlass […] für die Datenspeicherung gegeben haben“.",
-        "Auch was ins Leere läuft, bleibt gespeichert: 2024 gingen bei der österreichischen Geldwäschemeldestelle 11.111 Verdachtsmeldungen ein, 1.228 davon von Krypto-Anbietern. 8.138 führten vorerst nicht weiter, mangels Anfangsverdachts, also eines Anhaltspunkts für eine Straftat, oder weiterer Ansätze. Sie bleiben für spätere Auswertungen bis zu fünf Jahre gespeichert.",
+        "Auch was ins Leere läuft, bleibt gespeichert: 2025 gingen bei der österreichischen Geldwäschemeldestelle 13.989 Verdachtsmeldungen ein, 2.671 davon von Krypto-Anbietern. 9.665 führten vorerst nicht weiter, mangels Anfangsverdachts, also eines Anhaltspunkts für eine Straftat, oder weiterer Ansätze. Sie bleiben für spätere Auswertungen bis zu fünf Jahre gespeichert.",
         "Die Ausweisprüfung zeigt, wessen Ausweis vorgelegt wurde, nicht wer das Konto nutzt. Laut Geldwäschemeldestelle eröffnen Kriminelle Konten mit gefälschten österreichischen Pässen, die Daten echter, unbeteiligter Menschen tragen.",
         "Die zusätzlichen Steuereinnahmen durch DAC8 schätzte die Kommission auf bis zu 2,4 Milliarden Euro im Jahr. Gerechnet hat sie mit der Steuer auf alle Gewinne aus Bitcoin, hochgerechnet auf alle Kryptowerte, obwohl sie nach eigenen Angaben nicht wusste, wie viel davon bereits versteuert war.",
       ],
       sources: [
         { href: retentionRuling, label: "VfGH G 47/2012" },
-        { href: fiuReport, label: "Geldwäsche-Lagebericht 2024" },
+        { href: fiuReport2025, label: "Geldwäsche-Lagebericht 2025" },
         { href: impactAssessment, label: "SWD(2022) 401" },
       ],
     },
@@ -473,13 +473,13 @@ export const reasons: Reason[] = [
       text: "Anyone who buys through an exchange, broker or app is reported. Anyone who buys from another person or is paid in bitcoin is not: the report follows the route, not any suspicion.",
       proof: [
         "In 2014, Austria’s Constitutional Court struck down the retention of phone and internet data. It found that the retention captured almost exclusively people who had given no cause for it.",
-        "Even what leads nowhere stays on file: in 2024, Austria’s financial intelligence unit received 11,111 suspicious transaction reports, 1,228 of them from crypto-asset providers. 8,138 led nowhere for now, for lack of an initial suspicion of a crime or of further leads. They are kept for later analysis for up to five years.",
+        "Even what leads nowhere stays on file: in 2025, Austria’s financial intelligence unit received 13,989 suspicious transaction reports, 2,671 of them from crypto-asset providers. 9,665 led nowhere for now, for lack of an initial suspicion of a crime or of further leads. They are kept for later analysis for up to five years.",
         "The ID check shows whose ID was presented, not who uses the account. According to the financial intelligence unit, criminals open accounts with forged Austrian passports bearing the data of real, uninvolved people.",
         "The Commission estimated the extra tax revenue from DAC8 at up to 2.4 billion euros a year. It counted the tax on all bitcoin gains, scaled up to all crypto-assets, although by its own account it did not know how much of that had already been taxed.",
       ],
       sources: [
         { href: retentionRuling, label: "VfGH G 47/2012" },
-        { href: fiuReport, label: "Money laundering report 2024" },
+        { href: fiuReport2025, label: "Money laundering report 2025" },
         { href: impactAssessment, label: "SWD(2022) 401" },
       ],
     },
@@ -495,7 +495,7 @@ export const reasons: Reason[] = [
       proof: [
         "Wie so etwas wächst, zeigt Österreich: Das Kontenregister entstand 2015 im selben Gesetz, das das Bankgeheimnis lockerte. Seit Juli 2026 nutzt es auch das Amt für Betrugsbekämpfung, etwa gegen Sozialbetrug und Scheinfirmen. In Deutschland fragten Gerichtsvollzieher 2013 erst 61.760 Mal ab, wer welche Konten hat, 2023 schon 844.427 Mal.",
         "DAC8 ist ein Baustein unter mehreren: Den Ausweis prüft der Anbieter schon bei der Kontoeröffnung, Absender und Empfänger erfasst er bei jeder Übertragung. Bis 2029 werden die Kontenregister EU-weit vernetzt; sie erfassen dann auch Konten bei Krypto-Anbietern, ohne Kontostände.",
-        "Was das bringt, misst kaum jemand. 2025 gingen in Österreich 13.989 Verdachtsmeldungen ein, und es gab 139 Verurteilungen wegen Geldwäsche; einzelnen Meldungen lassen sie sich nicht zuordnen. Von 100 Euro aus Straftaten in der EU wurden laut Europol für 2010 bis 2014 rund 1,1 Euro endgültig eingezogen.",
+        "Was das bringt, misst kaum jemand. 2025 gingen in Österreich 13.989 Verdachtsmeldungen ein, und es gab 139 Verurteilungen wegen Geldwäsche; einzelnen Meldungen lassen sie sich nicht zuordnen. Von 100 Euro aus Straftaten in der EU zieht der Staat laut einer Schätzung von Europol aus 2025 rund 2 Euro ein.",
       ],
       sources: [
         { href: dac8, label: "Richtlinie (EU) 2023/2226" },
@@ -504,7 +504,7 @@ export const reasons: Reason[] = [
         { href: accountLookups, label: "BT-Drucksache 20/10841" },
         { href: accountRegistries, label: "Richtlinie (EU) 2024/1640" },
         { href: fiuReport2025, label: "Geldwäsche-Lagebericht 2025" },
-        { href: assetRecovery, label: "Europol 2016" },
+        { href: socta, label: "Europol, EU-SOCTA 2025" },
       ],
     },
     en: {
@@ -514,7 +514,7 @@ export const reasons: Reason[] = [
       proof: [
         "Austria shows how such uses grow: its account register was created in 2015 by the same act that loosened banking secrecy. Since July 2026, the anti-fraud office uses it too, for example against benefit fraud and shell companies. In Germany, bailiffs looked up who holds which accounts 61,760 times in 2013 and 844,427 times in 2023.",
         "DAC8 is one building block among several: the provider checks your ID when you open the account and records the sender and recipient of every transfer. By 2029, account registries will be connected across the EU and will then also cover accounts at crypto-asset providers, without balances.",
-        "What it achieves is hardly measured. In 2025, Austria received 13,989 suspicion reports, and there were 139 convictions for money laundering; the convictions cannot be traced to particular reports. Of 100 euros from crime in the EU, about 1.1 euros were finally confiscated in 2010 to 2014, as Europol estimates it.",
+        "What it achieves is hardly measured. In 2025, Austria received 13,989 suspicion reports, and there were 139 convictions for money laundering; the convictions cannot be traced to particular reports. Of 100 euros from crime in the EU, the state confiscates about 2 euros, according to a 2025 Europol estimate.",
       ],
       sources: [
         { href: dac8, label: "Directive (EU) 2023/2226" },
@@ -523,7 +523,7 @@ export const reasons: Reason[] = [
         { href: accountLookups, label: "Bundestag paper 20/10841" },
         { href: accountRegistries, label: "Directive (EU) 2024/1640" },
         { href: fiuReport2025, label: "Money laundering report 2025" },
-        { href: assetRecovery, label: "Europol 2016" },
+        { href: socta, label: "Europol, EU-SOCTA 2025" },
       ],
     },
   },
@@ -554,7 +554,7 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "„Brauchen wir die Daten nicht gegen Kriminalität?“",
-      text: "Ermittlungen brauchen Informationen. Daraus folgt nicht, dass jede zusätzliche Angabe, jeder weitere Zugriff und jede lange Speicherfrist nötig ist. Wer Daten über alle verlangt, muss ihren Nutzen belegen und zeigen, dass gezielte Ermittlungen bei konkretem Verdacht nicht genügen.",
+      text: "Im Rechtsstaat beginnen Ermittlungen bei einem konkreten Verdacht, nicht mit einer Akte über alle. Wer trotzdem Daten über alle verlangt, muss ihren Nutzen belegen und zeigen, dass gezielte Ermittlungen nicht genügen. Und auch dann ist nicht jede zusätzliche Angabe, jeder weitere Zugriff und jede lange Speicherfrist nötig.",
     },
     {
       title: "„Die Daten sind doch verschlüsselt.“",
@@ -567,7 +567,7 @@ export const objections: Record<Language, Point[]> = {
     {
       title:
         "„Der Verfassungsgerichtshof hat den Austausch von Kontodaten doch erlaubt.“",
-      text: "Für Kontostand und Zinsen, ja: Diese berührten laut Gericht nicht den Kernbereich des Privatlebens. DAC8 meldet mehr, nämlich Beträge, die Menge an Bitcoin oder anderen Kryptowerten und die Zahl der Transaktionen, auch über Kunden im Inland, und Österreich lässt die Anbieter die Meldung zehn statt fünf Jahre aufbewahren. Ob das verhältnismäßig ist, hat der Verfassungsgerichtshof bisher nicht entschieden.",
+      text: "Für Kontostand und Zinsen, ja: Diese berührten laut Gericht nicht den Kernbereich des Privatlebens. DAC8 meldet mehr, nämlich Jahressummen, die Menge an Bitcoin oder anderen Kryptowerten und meist auch die Zahl der Transaktionen, auch über Kunden im Inland, und Österreich lässt die Anbieter die Meldung zehn statt fünf Jahre aufbewahren. Ob das verhältnismäßig ist, hat der Verfassungsgerichtshof bisher nicht entschieden.",
       sources: [{ href: accountDataRuling, label: "VfGH E 2097/2021" }],
     },
     {
@@ -594,7 +594,7 @@ export const objections: Record<Language, Point[]> = {
     },
     {
       title: "“Don’t we need the data to fight crime?”",
-      text: "Investigations need information. That does not make every extra detail, every further access and every long retention period necessary. Whoever demands data on everyone must prove its benefit and show that targeted investigations based on specific suspicion would not do.",
+      text: "Under the rule of law, investigations start from specific suspicion, not from a file on everyone. Whoever still demands data on everyone must prove its benefit and show that targeted investigations would not do. Even then, not every extra detail, every further access and every long retention period is necessary.",
     },
     {
       title: "“But the data is encrypted.”",
@@ -607,7 +607,7 @@ export const objections: Record<Language, Point[]> = {
     {
       title:
         "“The Constitutional Court has already allowed the exchange of account data.”",
-      text: "For balances and interest, yes: according to the court, they did not touch the core of private life. DAC8 reports more, namely amounts, the quantity of bitcoin or other crypto-assets and the number of transactions, also on customers at home, and Austria has providers keep the report ten years instead of five. Whether that is proportionate, the Constitutional Court has not yet decided.",
+      text: "For balances and interest, yes: according to the court, they did not touch the core of private life. DAC8 reports more, namely annual totals, the quantity of bitcoin or other crypto-assets and, for most kinds of transaction, their number, also on customers at home, and Austria has providers keep the report ten years instead of five. Whether that is proportionate, the Constitutional Court has not yet decided.",
       sources: [{ href: accountDataRuling, label: "VfGH E 2097/2021" }],
     },
     {

@@ -135,7 +135,7 @@ export const seo: Record<Page, Record<Language, PageMetadata>> = {
     en: {
       title: "Legal notice",
       description:
-        "Legal notice and disclosures under Austrian law. dac8.org is an initiative by the nonprofit association Bitcoin Austria.",
+        "Legal notice and disclosures under Austrian law. dac8.org is an initiative by the non-profit association Bitcoin Austria.",
       imageLines: ["Legal notice."],
     },
   },

@@ -14,7 +14,7 @@ import YearColumns from "@/components/YearColumns.astro"
 import { ruleChronicle } from "@/data/aml-history"
 import { historyResearchDate } from "@/data/history"
 import { rulings } from "@/data/history-next"
-import { historySources } from "@/data/history-sources"
+import { historySources, hrefIn } from "@/data/history-sources"
 import {
   accountsExchanged,
   accountsSources,
@@ -43,9 +43,9 @@ import { languageFor, pathFor } from "@/lib/i18n"
 const language = languageFor(Astro.url.pathname)
 const en = language === "en"
 const n = (value: number) => formatNumber(value, language)
-const label = (source: { label: Record<string, string>; href: string }) => ({
+const label = (source: Parameters<typeof hrefIn>[0]) => ({
   label: source.label[language],
-  href: source.href,
+  href: hrefIn(source, language),
 })
 const first = reportsByYear[0]
 const { list: sources, cite } = historySources(language)
@@ -108,8 +108,8 @@ const { list: sources, cite } = historySources(language)
       </ol>
       <p class="section-intro">
         {en
-          ? "Whether DAC8 stays within such limits, only courts can settle. That is why we are preparing proceedings."
-          : "Ob DAC8 solche Grenzen einhält, können nur Gerichte klären. Darum bereiten wir Verfahren vor."}
+          ? "Only courts can settle whether DAC8 stays within such limits. That is why, at Bitcoin Austria’s initiative, a complaint was filed with the Austrian Data Protection Authority in October 2026."
+          : "Ob DAC8 solche Grenzen einhält, können nur Gerichte klären. Darum wurde auf Initiative von Bitcoin Austria im Oktober 2026 eine Beschwerde bei der österreichischen Datenschutzbehörde eingebracht."}
       </p>
       <a class="button primary" href={pathFor("participate", language)}
         >{en ? "Get involved" : "Mitmachen"}</a
@@ -125,7 +125,7 @@ const { list: sources, cite } = historySources(language)
           <span class="history-check-what">
             {en
               ? "Each rule with its date, content and primary sources, then the full series behind the film."
-              : "Jede Regel mit Datum, Inhalt und Primärquellen, danach die ganzen Reihen hinter dem Film."}
+              : "Jede Regel mit Datum, Inhalt und Primärquellen, danach die vollständigen Datenreihen hinter dem Film."}
           </span>
         </summary>
 
@@ -204,7 +204,7 @@ const { list: sources, cite } = historySources(language)
             </blockquote>
             <p class="admission-who">
               {item.who[language]},{" "}
-              <a href={item.source.href}>{item.source.label[language]}</a>
+              <a href={hrefIn(item.source, language)}>{item.source.label[language]}</a>
             </p>
           </li>
         ))}

@@ -521,7 +521,7 @@ export const history: Entry[] = [
         title: "DAC8: Kryptowerte",
         text: "Krypto-Anbieter melden Identität und Jahreswerte je Kryptowert, auch für Kunden im eigenen Land. DAC8 ändert außerdem Regeln, die für alle DAC-Daten gelten.",
         more: "Seither dürfen die Staaten alle ausgetauschten Informationen auch gegen Geldwäsche und Terrorismusfinanzierung einsetzen und, ohne Zustimmung des Herkunftsstaats, für EU-Sanktionen. Zudem bringt DAC8 E-Geld in den Kontenaustausch.",
-        reporters: "Krypto-Börsen und Broker",
+        reporters: "Krypto-Anbieter (Börsen, Broker und Apps)",
         austria: "Krypto-Meldepflichtgesetz, seit 1. Jänner 2026",
       },
       en: {
@@ -529,7 +529,7 @@ export const history: Entry[] = [
         title: "DAC8: crypto-assets",
         text: "Crypto-asset service providers report identity and annual values per crypto-asset, including for domestic customers. DAC8 also changes rules that apply to all DAC data.",
         more: "Since then, Member States may also use every item exchanged to fight money laundering and terrorist financing and, without the sending country’s consent, for EU sanctions. DAC8 further brings e-money into account reporting.",
-        reporters: "Crypto exchanges and brokers",
+        reporters: "Crypto-asset providers (exchanges, brokers and apps)",
         austria: "Crypto-Asset Reporting Obligations Act, since 1 January 2026",
       },
     },
@@ -595,7 +595,7 @@ export const history: Entry[] = [
         when: "Proposed on 24 June 2026",
         title: "The recast, often called “DAC10”",
         text: "The Commission wants to merge all amendments so far into one new directive and simplify them.",
-        more: "To simplify, it proposes 90 instead of 30 days for tax arrangements, changed platform thresholds and an EU tool to verify tax numbers. At the same time, tax authorities would gain access to anti-money laundering registers, including for real estate, and to pension registers. The crypto fields stay the same in substance. In August 2026, the European Data Protection Supervisor recommended tighter limits on this access and on retention.",
+        more: "To simplify, it proposes 90 instead of 30 days for tax arrangements, changed platform thresholds and an EU tool to verify tax numbers. At the same time, tax authorities would gain access to anti-money laundering registers, including for property, and to pension registers. The crypto fields stay the same in substance. In August 2026, the European Data Protection Supervisor recommended tighter limits on this access and on retention.",
         reporters: "Not yet law",
         austria:
           "Needs the agreement of every EU country in the Council; Parliament is only consulted. Planned to apply in 2028 and 2030",

@@ -14,7 +14,7 @@ import {
   recovery,
 } from "@/data/history-gap"
 import { chats, nextSteps, rulings } from "@/data/history-next"
-import { pairSources } from "@/data/history-promises"
+import { pairSources, pairs } from "@/data/history-promises"
 import { leaks } from "@/data/leaks"
 import { steps } from "@/data/overregulation"
 import { type Language, pathFor } from "@/lib/i18n"
@@ -26,6 +26,14 @@ import { type Language, pathFor } from "@/lib/i18n"
 // rulings in the conclusion. A source cited again keeps its number. Where the
 // story needs the name, such as a quotation, the text names it as well.
 // The charts to check, folded away below, keep their own source lists.
+// Any source of the page's data files; some link a document per language.
+type Citable = {
+  label: Record<Language, string>
+  href: string | Record<Language, string>
+}
+export const hrefIn = (source: Citable, language: Language) =>
+  typeof source.href === "string" ? source.href : source.href[language]
+
 export type HistorySource = {
   n: number
   label: string
@@ -35,6 +43,8 @@ export type HistorySource = {
 }
 
 const bulgaria = leaks.find((leak) => leak.id === "bulgaria")
+// The answer to parliament that the report charts quote (ReportLandscape).
+const reportOutcome = pairs.find((pair) => pair.id === "a-fiu-at")?.record[1]
 
 // What each field of the balance cites, in its order.
 export const balanceSources = (language: Language) => ({
@@ -99,18 +109,17 @@ export const refsHtml = (sources: HistorySource[], language: Language) => {
 export const historySources = (language: Language) => {
   const list: HistorySource[] = []
   const numbers = new Map<string, number>()
-  const add = (source: Source) => {
-    if (numbers.has(source.href)) return
+  const add = (source: Citable) => {
+    const href = hrefIn(source, language)
+    if (numbers.has(href)) return
     const n = list.length + 1
-    numbers.set(source.href, n)
-    const external = /^https?:/.test(source.href)
+    numbers.set(href, n)
+    const external = /^https?:/.test(href)
     list.push({
       n,
       label: source.label[language],
-      href: source.href,
-      host: external
-        ? new URL(source.href).hostname.replace(/^www\./, "")
-        : undefined,
+      href,
+      host: external ? new URL(href).hostname.replace(/^www\./, "") : undefined,
     })
   }
   for (const step of steps) step.sources.forEach(add)
@@ -126,9 +135,12 @@ export const historySources = (language: Language) => {
     ...cited.bulgaria,
     ...cited.unexplained,
     ...cited.withheld,
-    ...reportsByYearSources,
+    // The report charts: Germany first, then Austria, then the answer to
+    // parliament below them, which the pairs cite again.
     ...germanReportsSources,
     ...germanConvictionsSources,
+    ...reportsByYearSources,
+    ...(reportOutcome ? [reportOutcome.source] : []),
     // Only Europol’s 2025 estimate is cited on the page.
     ...recovery.sources.slice(1),
     ...cited.costs,
@@ -140,8 +152,8 @@ export const historySources = (language: Language) => {
   ])
     add(source)
   // The numbers for a passage, each once, in order.
-  const cite = (sources: Source[]) =>
-    [...new Set(sources.map((source) => numbers.get(source.href)))]
+  const cite = (sources: Citable[]) =>
+    [...new Set(sources.map((source) => numbers.get(hrefIn(source, language))))]
       .filter((n): n is number => n !== undefined)
       .sort((a, b) => a - b)
       .map((n) => list[n - 1])

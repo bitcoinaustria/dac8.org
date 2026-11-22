@@ -123,7 +123,7 @@ export const challenges: Challenge[] = [
       date: "October 2026",
       forum: "Data Protection Authority",
       text: [
-        "A complaint by attorney Dr Oliver Völkel, at Bitcoin Austria’s initiative. Our aim is the Court of Justice of the EU.",
+        "A complaint by lawyer Dr Oliver Völkel, at Bitcoin Austria’s initiative. Our aim is the Court of Justice of the EU.",
       ],
     },
   },

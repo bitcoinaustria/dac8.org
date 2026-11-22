@@ -17,7 +17,7 @@ const sourceCount = sourceGroups.reduce(
 const sources = sourceGroups.map((group) => ({
   title: group.titleEn,
   sources: group.sources.map((source) => ({
-    href: source.href,
+    href: "hrefEn" in source ? source.hrefEn : source.href,
     label: source.labelEn,
   })),
 }))
@@ -31,7 +31,7 @@ const faqs = [
   {
     question: "Can the report reveal my wealth?",
     answer:
-      "Not directly. It contains annual totals, not current balances or total wealth. Your provider does know your balance, though, and over the years the reports show how much you move. Anyone who combines them with the bank account register and blockchain analysis or, after a breach, with provider records can build a detailed picture of a person’s assets.",
+      "Not directly. It contains annual totals, not current balances or total wealth. Your provider does know your balance, though, and over the years the reports show how much you move. Anyone who combines them with the state’s bank account register, which shows who holds which bank accounts, with an analysis of public blockchain payments or, after a data leak, with the provider’s records can build a detailed picture of your finances.",
   },
   {
     question: "What about purchases and sales before 2026?",
@@ -49,9 +49,10 @@ const faqs = [
       "Nothing yet: data collection continues during the proceedings. We are convinced that collecting data on every customer violates fundamental rights. The Data Protection Authority is bound by the law and may not review whether it is compatible with constitutional or EU law. That question therefore lies with the courts, as does whether the case goes to the Court of Justice of the European Union. How long this will take, and how individuals can take part, we are still working out.",
   },
   {
-    question: "How do I recognise phishing that uses the reporting duty?",
+    question:
+      "How do I recognise phishing, meaning fraudulent messages that use the reporting duty as a pretext?",
     answer:
-      "Fake FinanzOnline messages are already circulating in Austria, asking about your holdings on the pretext of new crypto tax rules. The tax office does not ask about them by email or text message. No legitimate sender asks you to connect a wallet or enter your recovery phrase, the words that restore a wallet. Your provider reports the DAC8 data itself. Be discreet about your holdings, including with acquaintances and on social media.",
+      "Fake messages posing as FinanzOnline, Austria’s online tax portal, are already circulating in Austria, asking about your holdings on the pretext of new crypto tax rules. The tax office does not ask about them by email or text message. No legitimate sender asks you to connect a wallet or enter your recovery phrase, the words that restore a wallet. Your provider reports the DAC8 data itself. Be discreet about your holdings, including with acquaintances and on social media.",
     link: {
       href: "https://www.watchlist-internet.at/news/phishing-falle-finanzonline-krypto/",
       label: "Watchlist Internet warning (German)",
@@ -85,8 +86,9 @@ const faqs = [
           You are affected if you buy, sell or keep crypto-assets through a
           <Term id="anbieter">provider</Term>
           such as an exchange, broker or app. Anyone who only uses
-          <Term id="selbstverwahrung">self-custody</Term>
-          and never uses a provider is not reported.
+          <Term id="selbstverwahrung">self-custody</Term>, holding the keys to
+          their crypto-assets themselves, and never uses a provider is not
+          reported.
         </p>
       </div>
     </header>
@@ -129,11 +131,13 @@ const faqs = [
               categories, the number of transactions
             </li>
             <li>
-              Transfers to <Term id="wallet">wallets</Term> with no known
-              provider, usually including your own:
+              Transfers to <Term id="wallet">wallets</Term> (apps or devices
+              that manage the keys to crypto-assets) with no known provider,
+              usually including your own:
               <strong
                 >as a total, without
-                <Term id="wallet-adresse">wallet addresses</Term></strong
+                <Term id="wallet-adresse">wallet addresses</Term>
+                (a kind of account number on the blockchain)</strong
               >
             </li>
             <li>
@@ -151,7 +155,9 @@ const faqs = [
           <h3>Stays with the provider</h3>
           <p class="basis">
             <a href={law.fmGwG}>Section 21 FM-GwG</a>,
-            <a href={law.transferRegulation}>Regulation (EU) 2023/1113</a>
+            <a href={law.transferRegulation.hrefEn}
+              >Regulation (EU) 2023/1113</a
+            >
           </p>
           <ul>
             <li>
@@ -223,7 +229,7 @@ const faqs = [
               <td data-label="How long">
                 <strong>at least five years</strong>; the directive sets no
                 maximum
-                <a class="basis" href={law.dac8}>Article 22(3) DAC</a>
+                <a class="basis" href={law.dac8.hrefEn}>Article 22(3) DAC</a>
               </td>
             </tr>
           </tbody>
@@ -245,7 +251,7 @@ const faqs = [
         has applied since 1 January 2026.
       </p>
       <p class="basis">
-        <a href={law.dac8}>Directive (EU) 2023/2226</a>,
+        <a href={law.dac8.hrefEn}>Directive (EU) 2023/2226</a>,
         <a href={law.kryptoMPfG}>Federal Law Gazette I No. 96/2025</a>
       </p>
       <ol class="flow" aria-label="How the first report travels">
@@ -303,9 +309,10 @@ const faqs = [
         <div class="sources">
           <p class="sources-intro">
             The dossier rests on legislation, EU law, court rulings and reports.
-            Research last updated: {researchDate}. Sources on the development
-            from 1977 to the recast are in the
-            <a href="/en/history/">history of the DAC</a>.
+            Research last updated: {researchDate}. Sources on the development of
+            tax and anti-money-laundering rules since 1977 are on the
+            <a href="/en/history/">History of the rules</a>
+            page.
           </p>
           <details class="bibliography">
             <summary>

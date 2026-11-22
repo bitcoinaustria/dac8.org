@@ -1,3 +1,15 @@
+// EUR-Lex in the reader's language, as in src/data/history.ts: href is the
+// German text, hrefEn the English one. Entries without hrefEn use href on
+// both pages.
+const eli = (path: string) => ({
+  href: `https://eur-lex.europa.eu/eli/${path}/oj/deu`,
+  hrefEn: `https://eur-lex.europa.eu/eli/${path}/oj/eng`,
+})
+const celex = (id: string) => ({
+  href: `https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:${id}`,
+  hrefEn: `https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=CELEX:${id}`,
+})
+
 // Primary texts the dossier cites next to each fact, such as „§ 18
 // Krypto-MPfG“ beside what goes to the tax office. They are listed in the
 // bibliography below as well, so a reference never points anywhere else.
@@ -14,8 +26,8 @@ export const law = {
     "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20009769",
   // DAC8 also added Art. 22(3) to Directive 2011/16/EU: at least five years
   // for reports received from another member state.
-  dac8: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:32023L2226",
-  transferRegulation: "https://eur-lex.europa.eu/eli/reg/2023/1113/oj",
+  dac8: celex("32023L2226"),
+  transferRegulation: eli("reg/2023/1113"),
 } as const
 
 export const sourceGroups = [
@@ -71,33 +83,33 @@ export const sourceGroups = [
       {
         label: "Richtlinie (EU) 2023/2226 (DAC8)",
         labelEn: "Directive (EU) 2023/2226 (DAC8)",
-        href: law.dac8,
+        ...law.dac8,
       },
       {
         label:
           "Verordnung (EU) 2023/1113: Angaben zu Absender und Empfänger bei Krypto-Übertragungen",
         labelEn:
           "Regulation (EU) 2023/1113: originator and beneficiary information for crypto-asset transfers",
-        href: law.transferRegulation,
+        ...law.transferRegulation,
       },
       {
         label:
           "Richtlinie (EU) 2024/1640, Art. 16: Kontenregister und ihre EU-weite Vernetzung",
         labelEn:
           "Directive (EU) 2024/1640, Article 16: account registries and their EU-wide interconnection",
-        href: "https://eur-lex.europa.eu/eli/dir/2024/1640/oj",
+        ...eli("dir/2024/1640"),
       },
       {
         label: "MiCA, Art. 68 Abs. 9: Aufbewahrungsfristen",
         labelEn: "MiCA, Article 68(9): retention periods",
-        href: "https://eur-lex.europa.eu/eli/reg/2023/1114/oj/eng",
+        ...eli("reg/2023/1114"),
       },
       {
         label:
           "Verordnung (EU) 2025/1140: Anbieteraufzeichnungen mit Blockchain-Bezug",
         labelEn:
           "Regulation (EU) 2025/1140: provider records linked to blockchain data",
-        href: "https://eur-lex.europa.eu/eli/reg_del/2025/1140/oj/eng",
+        ...eli("reg_del/2025/1140"),
       },
       {
         label: "Folgenabschätzung der EU-Kommission zu DAC8, SWD(2022) 401",
@@ -107,12 +119,12 @@ export const sourceGroups = [
       {
         label: "Richtlinie (EU) 2025/872 (DAC9)",
         labelEn: "Directive (EU) 2025/872 (DAC9)",
-        href: "https://eur-lex.europa.eu/eli/dir/2025/872/oj/deu",
+        ...eli("dir/2025/872"),
       },
       {
         label: "Kommissionsvorschlag COM(2026) 308: Neufassung der Richtlinie",
         labelEn: "Commission proposal COM(2026) 308: recast of the directive",
-        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:52026PC0308",
+        ...celex("52026PC0308"),
       },
       {
         label: "EU-Kommission: Überblick zum DAC-System",
@@ -146,7 +158,7 @@ export const sourceGroups = [
       {
         label: "EuGH C-293/12 und C-594/12: Vorratsdatenspeicherung",
         labelEn: "CJEU C-293/12 and C-594/12: data retention",
-        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:62012CJ0293",
+        ...celex("62012CJ0293"),
       },
     ],
   },
@@ -250,7 +262,7 @@ export const sourceGroups = [
       },
       {
         label:
-          "Gendarmerie nationale: Entführung von David Balland und seiner Partnerin, Januar 2025",
+          "Gendarmerie nationale: Entführung von David Balland und seiner Partnerin, Jänner 2025",
         labelEn:
           "French Gendarmerie: kidnapping of David Balland and his partner, January 2025",
         href: "https://www.gendarmerie.interieur.gouv.fr/gendinfo/criminalite-organisee-et-enquetes/2025/enlevement-de-david-balland-un-engagement-massif-et-complet-de-la-gendarmerie-nationale",

@@ -35,7 +35,12 @@ export const glossary: Record<Language, Term[]> = {
     {
       id: "wallet-adresse",
       term: "Wallet-Adresse",
-      text: "Eine Zeichenfolge wie bc1q…, an die man Bitcoin schicken kann, ähnlich einer Kontonummer. Zahlungen an eine Adresse sind auf der Blockchain öffentlich. Nicht zu verwechseln mit deiner Wohnadresse.",
+      text: "Eine Zeichenfolge wie bc1q…, an die man Bitcoin schicken kann, ähnlich einer Kontonummer. Zahlungen an eine Wallet-Adresse sind auf der Blockchain öffentlich. Nicht zu verwechseln mit deiner Wohnadresse.",
+    },
+    {
+      id: "blockchain",
+      term: "Blockchain",
+      text: "Das öffentliche Verzeichnis aller Bitcoin-Zahlungen. Jeder kann darin sehen, welche Beträge an welche Wallet-Adressen gingen, Namen stehen aber nicht darin.",
     },
     {
       id: "selbstverwahrung",
@@ -97,7 +102,12 @@ export const glossary: Record<Language, Term[]> = {
     {
       id: "wallet-adresse",
       term: "Wallet address",
-      text: "A string such as bc1q… that bitcoin can be sent to, much like an account number. Payments to an address are public on the blockchain. Not to be confused with your home address.",
+      text: "A string such as bc1q… that bitcoin can be sent to, much like an account number. Payments to a wallet address are public on the blockchain. Not to be confused with your home address.",
+    },
+    {
+      id: "blockchain",
+      term: "Blockchain",
+      text: "The public ledger of all bitcoin payments. Anyone can see which amounts went to which wallet addresses, but it holds no names.",
     },
     {
       id: "selbstverwahrung",

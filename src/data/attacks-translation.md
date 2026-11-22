@@ -7,6 +7,13 @@ translation. When Lopp edits a description, the old translation no longer
 matches and the page falls back to the English text until it is translated
 again. `pnpm sync:attacks` lists descriptions that still lack a translation.
 
+The sync tidies the English before it writes `attacks.json`, so the keys are
+the tidied text: it fixes a few known slips in Lopp's wording (listed in
+`scripts/sync-attacks.mjs`), and where a description opens with an amount
+joined by a dash ("KRW 30,000,000 — Four teenagers…"), it moves the amount to
+the end as "Amount: KRW 30,000,000." and drops a bare "Unknown". Translate
+that closing sentence as Betrag: 30.000.000 KRW.
+
 These are real crimes against real people. A translation must say exactly what
 the English says: no more, no less, no sharper, no softer.
 
@@ -34,12 +41,20 @@ the English says: no more, no less, no sharper, no softer.
   stays past.
 - Numbers use German notation: 12.000, 0,5 BTC, 1,5 Millionen. Write out
   Million(en) and Milliarde(n); _$50k_ becomes 50.000 Dollar.
+- Indian number words become German numbers: _lakh_ is 100.000 and _crore_
+  10 Millionen, so _25 lakh INR_ becomes 2,5 Millionen INR and _3 crore_
+  30 Millionen.
 - Currencies stay as given, never converted: _$_ becomes Dollar, _USD_ or _US$_
-  becomes US-Dollar, _HK$_ Hongkong-Dollar, _€_, _EUR_ or _euros_ Euro. Token
-  tickers (BTC, ETH, USDT) stay as they are; _$9,375 USDT_ means 9.375 USDT,
-  while _$18,000 in USDT_ stays 18.000 Dollar in USDT.
+  becomes US-Dollar, _HK$_ Hongkong-Dollar, _NT$_ TWD, _€_, _EUR_ or _euros_
+  Euro; no $ sign stays in the German. Token tickers (BTC, ETH, USDT) stay as
+  they are; _$9,375 USDT_ means 9.375 USDT, while _$18,000 in USDT_ stays
+  18.000 Dollar in USDT.
 - Ages: _74-year-old man_ becomes 74-jähriger Mann.
-- Dates in the text: _Dec 22_ becomes 22. Dezember.
+- Dates in the text: _Dec 22_ becomes 22. Dezember. Write Austrian month
+  names: Jänner, never Januar, as in the date above each case.
+- No dashes as punctuation: Lopp's em dashes and spaced en dashes become a
+  colon, commas or parentheses, whichever the sentence needs. Ranges use bis
+  (35.000 bis 40.000 USDT), not a dash.
 - Place names and nationalities as in German usage; do not add places.
 - Use German typographic quotes („…“) and apostrophes (’).
 - If the English is garbled or ambiguous, do not guess silently. Keep the
@@ -79,6 +94,7 @@ the English says: no more, no less, no sharper, no softer.
 | exchange                             | Börse, Kryptobörse                           |
 | miner, mining                        | Miner, Mining                                |
 | bitcoin ATM, BTM                     | Bitcoin-Automat                              |
-| wallet, hardware wallet, seed phrase | Wallet, Hardware-Wallet, Seed-Phrase         |
+| wallet, hardware wallet, seed phrase | Wallet, Hardware-Wallet, Wiederherstellungsphrase |
+| crypto assets, cryptoassets          | Kryptowerte                                  |
 | SWATting                             | Swatting                                     |
 | wrench attack                        | sogenannter Wrench-Angriff                   |
