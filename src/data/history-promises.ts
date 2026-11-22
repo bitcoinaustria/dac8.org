@@ -70,7 +70,7 @@ export const pairs: Pair[] = [
         original: "en",
         quote: {
           de: "Wie viel der Krypto-Gewinne schon versteuert wird, darüber gebe es keine Informationen. Die 2,4 Milliarden sind die Steuer auf alle Gewinne des Jahres 2020 zum Höchstsatz von 35 Prozent.",
-          en: "“There is no information available about how much realised capital gains have actually been taxed.” The 2.4 billion is the tax on all 2020 gains at the top rate of 35 percent.",
+          en: "“There is no information available about how much realised capital gains have actually been taxed.” The 2.4 billion is the tax on all 2020 gains at the top rate of 35 per cent.",
         },
         source: {
           label: {
@@ -117,7 +117,7 @@ export const pairs: Pair[] = [
         year: 2025,
         original: "de",
         quote: {
-          de: "Die Zahl stütze sich auf die Schätzung der Kommission, wie viel Steuer auf alle Krypto-Gewinne des Jahres 2020 anfiele. „Nähere Informationen zu den Berechnungen und Annahmen des BMF sind in der WFA nicht enthalten.“",
+          de: "Die Zahl stütze sich auf die Schätzung der Kommission, wie viel Steuer auf alle Krypto-Gewinne des Jahres 2020 anfiele. „Nähere Informationen zu den Berechnungen und Annahmen des BMF [Finanzministeriums] sind in der WFA [Folgenabschätzung] nicht enthalten.“",
           en: "The figure rests on the Commission’s estimate of the tax on all crypto gains of 2020; further details of the finance ministry’s calculations and assumptions are not in the impact assessment.",
         },
         source: {
@@ -136,7 +136,7 @@ export const pairs: Pair[] = [
         year: 2025,
         original: "de",
         quote: {
-          de: "„Das in der WFA erwartete Mehraufkommen entspricht also weitgehend dem Kapitalertragsteueraufkommen aus Kryptowährungen im Jahr 2024.“",
+          de: "„Das in der WFA [Folgenabschätzung] erwartete Mehraufkommen entspricht also weitgehend dem Kapitalertragsteueraufkommen aus Kryptowährungen im Jahr 2024.“",
           en: "The extra revenue expected thus largely equals all the capital gains tax collected on crypto in 2024.",
         },
         source: {
@@ -203,8 +203,8 @@ export const pairs: Pair[] = [
         year: 2025,
         original: "de",
         quote: {
-          de: "„Daher ist ein statistischer Nachweis der Höhe der Einnahmen aus der Besteuerung von Kryptowerten nicht möglich.“",
-          en: "A statistical proof of how much tax crypto brings in is therefore not possible.",
+          de: "„[E]in statistischer Nachweis der Höhe der Einnahmen aus der Besteuerung von Kryptowerten [ist] nicht möglich.“",
+          en: "A statistical proof of how much tax crypto brings in is not possible.",
         },
         source: {
           label: {
@@ -325,18 +325,18 @@ export const pairs: Pair[] = [
     promise: {
       who: {
         de: "Markus Marterbauer, Finanzminister, in der Fragestunde des Nationalrats, über ein Paket, das auch den Datenaustausch zu Kryptowerten umfasst",
-        en: "Markus Marterbauer, finance minister, at question time in the Nationalrat, on a package that includes the data exchange on crypto",
+        en: "Markus Marterbauer, finance minister, at question time in the National Council, on a package that includes the data exchange on crypto",
       },
       year: 2026,
       original: "de",
       quote: {
         de: "„Wir erwarten im heurigen Jahr ein Aufkommen von zusätzlich 270 Millionen Euro …“",
-        en: "We expect additional revenue of 270 million euros this year.",
+        en: "He said he expected additional revenue of 270 million euros this year.",
       },
       source: {
         label: {
           de: "Nationalrat, 73. Sitzung, 26. März 2026, Fragestunde",
-          en: "Nationalrat, 73rd sitting, 26 March 2026, question time, in German",
+          en: "National Council, 73rd sitting, 26 March 2026, question time, in German",
         },
         href: "https://www.parlament.gv.at/dokument/XXVIII/NRSITZ/73/A_-_10_09_23_00931336.html",
       },
@@ -351,12 +351,12 @@ export const pairs: Pair[] = [
         original: "de",
         quote: {
           de: "„Es ist gar nicht so einfach, das sozusagen zu messen …“ Und zur Steuerlücke: „Wir haben auch nicht vor, eine eigene Studie dazu zu machen.“",
-          en: "It is not at all easy to measure this, he said; and on the tax gap: nor do we plan a study of our own.",
+          en: "It is not at all easy to measure this, he said, adding on the tax gap that the ministry did not plan a study of its own.",
         },
         source: {
           label: {
             de: "Nationalrat, 73. Sitzung, 26. März 2026, Fragestunde",
-            en: "Nationalrat, 73rd sitting, 26 March 2026, question time, in German",
+            en: "National Council, 73rd sitting, 26 March 2026, question time, in German",
           },
           href: "https://www.parlament.gv.at/dokument/XXVIII/NRSITZ/73/A_-_10_09_23_00931336.html",
         },
@@ -448,7 +448,7 @@ export const pairs: Pair[] = [
       year: 2023,
       original: "de",
       quote: {
-        de: "„Karner: Sensibilisierung bei Geldwäsche zeigt Wirkung“ – das Dunkelfeld werde „immer weiter verkleinert“.",
+        de: "„Karner: Sensibilisierung bei Geldwäsche zeigt Wirkung“; das Dunkelfeld werde „immer weiter verkleinert“.",
         en: "Raising awareness of money laundering is working, it said; the hidden part is shrinking ever further.",
       },
       source: {
@@ -469,7 +469,7 @@ export const pairs: Pair[] = [
         original: "de",
         quote: {
           de: "„… 81 rechtskräftige Urteile wegen Geldwäscherei …, was ein Minus von fünf Prozent im Vergleich zum Vorjahr bedeutet.“",
-          en: "81 final convictions for money laundering, five percent fewer than the year before.",
+          en: "81 final convictions for money laundering, five per cent fewer than the year before.",
         },
         source: {
           label: {
@@ -570,7 +570,7 @@ export const pairs: Pair[] = [
       original: "en",
       quote: {
         de: "Der Prüfaufwand für die Krypto-Anbieter sei sehr gering.",
-        en: "“The verification burden on CASPs is very limited.”",
+        en: "“The verification burden on CASPs [crypto-asset service providers] is very limited.”",
       },
       source: {
         label: {

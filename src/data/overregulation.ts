@@ -179,7 +179,9 @@ export const steps: Step[] = [
   // The general threshold stayed at 15,000 from 1991 until the AMLR lowers
   // it in 2027 (rule-growth-and-effect-evidence.md, "Thresholds"); the
   // first step shows 1991 and 2027 together, in today's money, the second
-  // the same two in gold.
+  // the same two in gold. Single cash transactions need ID from €3,000
+  // (Regulation (EU) 2024/1624, Art. 19), which the first step says too,
+  // so the picture's "in cash from €3,000" cannot read as a second limit.
   {
     id: "ausweis-bar",
     chapter: "ausweis",
@@ -188,8 +190,8 @@ export const steps: Step[] = [
       en: "The ID limit falls: from €33,900 to €10,000.",
     },
     text: {
-      de: "Ab diesem Betrag musst du dich bei einem einzelnen Geschäft ohne Konto ausweisen. 1991 in heutigem Geld, die neue Grenze ab Juli 2027.",
-      en: "From this amount you must show ID for a single transaction without an account. 1991 in today’s money; the new limit from July 2027.",
+      de: "Ab diesem Betrag musst du dich ab Juli 2027 bei einem einzelnen Geschäft ohne Konto ausweisen, bei Bargeld schon ab 3.000\u00a0€. Die 33.900\u00a0€ sind die Grenze von 1991 in heutigem Geld.",
+      en: "From July 2027 you must show ID for a single transaction without an account from this amount, and from €3,000 if you pay in cash. The €33,900 is the 1991 limit in today’s money.",
     },
     sources: [
       eurlex("dir/1991/308", "Richtlinie 91/308/EWG", "Directive 91/308/EEC"),
@@ -246,12 +248,12 @@ export const steps: Step[] = [
     // Only the Savings Directive ever ended, repealed by Directive (EU)
     // 2015/2060 because the broader DAC2 superseded it.
     title: {
-      de: "Ein Weg nach dem anderen.",
-      en: "One way after another.",
+      de: "Konto, Sparbuch, Krypto: eins nach dem anderen.",
+      en: "Account, savings book, crypto: one after another.",
     },
     text: {
-      de: "Weggefallen ist seit 1977 eine einzige Regel, für eine umfassendere.",
-      en: "Since 1977 a single rule has gone, for a broader one.",
+      de: "Seit 1977 fiel nur eine einzige Regel wieder weg, weil eine noch umfassendere sie ersetzte.",
+      en: "Since 1977 only a single rule has gone, replaced by a broader one.",
     },
     sources: [allRules],
   },
@@ -269,8 +271,8 @@ export const steps: Step[] = [
       en: "And ever more look in.",
     },
     text: {
-      de: "Ins Kontenregister 2016 drei Behörden, heute neun.",
-      en: "Into the account register: three authorities in 2016, nine today.",
+      de: "Österreichs Kontenregister zeigt, wer welche Konten hat. 2016 durften drei Behörden hineinschauen, heute neun.",
+      en: "Austria’s account register shows who holds which accounts. Three authorities could search it in 2016, nine today.",
     },
     sources: [ris(2015, 116), ris(2021, 25), ris(2026, 46)],
   },
@@ -291,20 +293,24 @@ export const steps: Step[] = [
       eurlex("dir/1991/308", "Richtlinie 91/308/EWG", "Directive 91/308/EEC"),
     ],
   },
-  // Every act in the pile below, repealed ones included, whole texts:
-  // about 272,000 words, at 200 words a minute a little over 22 hours.
+  // Every act in the pile below, the first directive and repealed ones
+  // included, whole texts: about 272,000 words, at 200 words a minute a
+  // little over 22 hours. The text says so, because the section to check
+  // gives 8.9 hours for the three 2024 acts alone, without recitals
+  // (LawGrowth.astro).
   {
     id: "papier-heute",
     chapter: "papier",
     title: {
-      de: "Seither beschlossen: 488 Seiten.",
-      en: "Adopted since: 488 pages.",
+      de: "Seit 1991 zusammen: 488 Seiten.",
+      en: "Since 1991 altogether: 488 pages.",
     },
     text: {
-      de: "Gut 22 Stunden Lesezeit.",
-      en: "Over 22 hours of reading.",
+      de: "Alle Geldwäsche-Gesetze der EU, auch die aufgehobenen: gut 22 Stunden Lesezeit.",
+      en: "Every EU anti-money-laundering act, repealed ones included: over 22 hours of reading.",
     },
     sources: [
+      allRules,
       eurlex(
         "reg/2024/1624",
         "Verordnung (EU) 2024/1624",

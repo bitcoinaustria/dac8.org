@@ -9,6 +9,8 @@ import type { Language } from "@/lib/i18n"
 
 type Text = Record<Language, string>
 export type Source = { label: Text; href: string }
+// A source published in each language, linked in the reader's.
+export type LocalisedSource = { label: Text; href: Text }
 
 // Words of the enacting terms and annexes, without recitals, so the old and
 // the new text count alike. The FATF standard has no recitals; its count is
@@ -195,8 +197,11 @@ export const auditSample = {
       de: "Europäischer Rechnungshof, Sonderbericht 03/2021, Rn. 68 und 115",
       en: "European Court of Auditors, special report 03/2021, paras 68 and 115",
     },
-    href: "https://www.eca.europa.eu/Lists/ECADocuments/SR21_03/SR_Exchange_tax_inform_DE.pdf",
-  } satisfies Source,
+    href: {
+      de: "https://www.eca.europa.eu/Lists/ECADocuments/SR21_03/SR_Exchange_tax_inform_DE.pdf",
+      en: "https://www.eca.europa.eu/Lists/ECADocuments/SR21_03/SR_Exchange_tax_inform_EN.pdf",
+    },
+  } satisfies LocalisedSource,
 }
 
 // Europol, 2010 to 2014: share of estimated criminal proceeds in the EU
@@ -334,7 +339,7 @@ export const admissions: {
   id: string
   who: Text
   quote: Text
-  source: Source
+  source: Source | LocalisedSource
 }[] = [
   {
     id: "kommission",
@@ -373,8 +378,8 @@ export const admissions: {
       en: "Austrian Court of Audit, 2019, on the finance ministry",
     },
     quote: {
-      de: "Das Ministerium „hatte keine Kosten–Nutzen–Analyse angedacht“; die Finanzämter sagten, Erfolge des Informationsaustauschs könnten „grundsätzlich nicht gemessen werden“.",
-      en: "The ministry had not considered a cost–benefit analysis; tax offices said the success of the information exchange could not in principle be measured.",
+      de: "Das Ministerium „hatte keine Kosten-Nutzen-Analyse angedacht“; die Finanzämter sagten, Erfolge des Informationsaustauschs könnten „grundsätzlich nicht gemessen werden“.",
+      en: "The ministry had not considered a cost-benefit analysis; tax offices said the success of the information exchange could not in principle be measured.",
     },
     source: {
       label: {
@@ -573,7 +578,7 @@ export const effectTiles: {
     figure: { de: "0,3 %", en: "0.3%" },
     text: {
       de: "der direkten Steuern in der EU bringen alle ausgetauschten Steuerdaten laut Kommission, großteils geschätzt ohne Daten",
-      en: "of direct taxes in the EU is what all exchanged tax data bring, according to the Commission, mostly estimated without data",
+      en: "of direct taxes in the EU is what all exchanged tax data brings, according to the Commission, mostly estimated without data",
     },
     source: {
       label: { de: "SWD(2025) 365, S. 36", en: "SWD(2025) 365, p. 36" },
@@ -600,10 +605,10 @@ export const effectTiles: {
   },
   {
     id: "krypto-anteil",
-    figure: { de: "rund 1 %", en: "about 1%" },
+    figure: { de: "unter 1 %", en: "under 1%" },
     text: {
-      de: "des Krypto-Volumens ging 2025 an Kriminelle oder sanktionierte Stellen, nach Schätzung zweier Analysefirmen, eine Untergrenze",
-      en: "of crypto volume went to criminals or sanctioned entities in 2025, as two analysis firms estimate it, a lower bound",
+      de: "des Krypto-Volumens ging 2025 an Kriminelle oder sanktionierte Stellen, nach Schätzung der Analysefirma Chainalysis, eine Untergrenze",
+      en: "of crypto volume went to criminals or sanctioned entities in 2025, as the analysis firm Chainalysis estimates it, a lower bound",
     },
     source: cryptoIllicit.sources[0],
   },

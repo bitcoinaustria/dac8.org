@@ -482,7 +482,7 @@ const amlEntries: Entry[] = [
         when: "Since 30 December 2024",
         title: "Names travel with every transfer",
         text: "Every transfer through a provider carries the name and wallet address, much like an account number, of sender and recipient, with no minimum amount, plus the sender’s home address and ID number or date and place of birth. The providers store them.",
-        more: "For transfers to your own wallet, a program or device with which you hold the keys yourself, the provider records these details; from 1,000 euros it must check that the wallet belongs to the customer. Transfers from person to person, without a provider, are not covered.",
+        more: "For transfers to your own wallet, an app or device with which you hold the keys yourself, the provider records these details; from 1,000 euros it must check that the wallet belongs to the customer. Transfers from person to person, without a provider, are not covered.",
         reporters: "Crypto-asset providers",
         austria: "Applies directly as an EU regulation",
       },

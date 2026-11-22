@@ -14,12 +14,16 @@ interface Props {
   sources: HistorySource[]
 }
 
-// Suspicion reports against convictions for money laundering, compared
+// Suspicion reports against convictions for money laundering. The two
+// figures on top are the counts of the latest year, so the scale stays
+// visible: about a hundred reports for each conviction. The chart compares
 // from a year the reader picks: both as a multiple of that year, so the
-// two counts, of very different size, share one scale. Only the years
-// with both counts are shown. The two are not linked case by case; the
-// chart compares how they grew, not which report led to which judgment.
-// Without the script it shows the first year against the last.
+// two counts, of very different size, share one scale. Multiples do not
+// lead, because a small base year (Austria: 12 convictions in 2009) makes
+// them look like success. Only the years with both counts are shown. The
+// two are not linked case by case; the chart compares how they grew, not
+// which report led to which judgment. Without the script it shows the
+// first year against the last.
 const { language, id, country, reports, convictions, note, sources } =
   Astro.props
 const en = language === "en"
@@ -35,10 +39,6 @@ const rows = reports
   }))
 const first = rows[0]
 const last = rows[rows.length - 1]
-const times = (to: number, from: number) => {
-  const k = to / from
-  return `×${n(k >= 10 ? Math.round(k) : Math.round(k * 10) / 10)}`
-}
 // One decimal always, so 1 reads as 1,0 beside 3,2.
 const tenth = new Intl.NumberFormat(en ? "en-GB" : "de-DE", {
   minimumFractionDigits: 1,
@@ -73,8 +73,8 @@ const script = JSON.stringify({
   words: {
     since: en ? "Since" : "Seit",
     per100: en
-      ? "{a} convictions per 100 reports in {from}, {b} in {to}."
-      : "{from} kamen auf 100 Meldungen {a} Verurteilungen, {to} waren es {b}.",
+      ? "{b} convictions per 100 reports in {to}, {a} in {from}."
+      : "{to} kamen auf 100 Meldungen {b} Verurteilungen, {from} waren es {a}.",
   },
 })
 const count = rows.length
@@ -96,20 +96,19 @@ const count = rows.length
 
   <div class="compare-pair">
     <p class="compare-count reports">
-      <b data-times="reports">{times(last.reports, first.reports)}</b>
-      <span>{en ? "suspicion reports" : "Verdachtsmeldungen"}</span>
-      <small data-span="reports">{n(first.reports)} → {n(last.reports)}</small>
+      <b>{n(last.reports)}</b>
+      <span
+        >{en ? `suspicion reports in ${last.year}` : `Verdachtsmeldungen ${last.year}`}</span
+      >
+      <small data-span="reports">{first.year}: {n(first.reports)}</small>
     </p>
     <p class="compare-count convictions">
-      <b data-times="convictions"
-        >{times(last.convictions, first.convictions)}</b
-      >
+      <b>{n(last.convictions)}</b>
       <span
-        >{en ? "convictions for money laundering" : "Verurteilungen wegen Geldwäsche"}</span
+        >{en ? `convictions for money laundering in ${last.year}` : `Verurteilungen wegen Geldwäsche ${last.year}`}</span
       >
       <small data-span="convictions"
-        >{n(first.convictions)}
-        → {n(last.convictions)}</small
+        >{first.year}: {n(first.convictions)}</small
       >
     </p>
   </div>
@@ -154,8 +153,8 @@ const count = rows.length
 
   <p class="compare-ratio" data-ratio>
     {en
-      ? `${per100(first)} convictions per 100 reports in ${first.year}, ${per100(last)} in ${last.year}.`
-      : `${first.year} kamen auf 100 Meldungen ${per100(first)} Verurteilungen, ${last.year} waren es ${per100(last)}.`}
+      ? `${per100(last)} convictions per 100 reports in ${last.year}, ${per100(first)} in ${first.year}.`
+      : `${last.year} kamen auf 100 Meldungen ${per100(last)} Verurteilungen, ${first.year} waren es ${per100(first)}.`}
   </p>
 
   <p class="compare-note">
@@ -169,8 +168,8 @@ const count = rows.length
 
 <script>
   // Picking a year makes it the base: every bar and the line show the
-  // count as a multiple of that year's, and the two figures above say how
-  // many times as many there were in the last year. The change is tweened.
+  // count as a multiple of that year's, and the lines under the two
+  // figures above give that year's counts. The change is tweened.
   type Config = {
     rows: [number, number, number][]
     geometry: {
@@ -192,9 +191,6 @@ const count = rows.length
     const { rows, geometry } = config
     const { left, right, top, floor, slot } = geometry
     const format = new Intl.NumberFormat(config.locale)
-    const one = (k: number) =>
-      k >= 10 ? Math.round(k) : Math.round(k * 10) / 10
-    const times = (k: number) => `×${format.format(one(k))}`
     const tenth = new Intl.NumberFormat(config.locale, {
       minimumFractionDigits: 1,
       maximumFractionDigits: 1,
@@ -214,10 +210,6 @@ const count = rows.length
     const pick = $<HTMLOutputElement>("[data-pick]")
     const since = $<HTMLElement>("[data-since]")
     const ratio = $<HTMLElement>("[data-ratio]")
-    const timesEl = {
-      reports: $<HTMLElement>('[data-times="reports"]'),
-      convictions: $<HTMLElement>('[data-times="convictions"]'),
-    }
     const spanEl = {
       reports: $<HTMLElement>('[data-span="reports"]'),
       convictions: $<HTMLElement>('[data-span="convictions"]'),
@@ -317,12 +309,10 @@ const count = rows.length
         slider.value = String(base)
         slider.setAttribute("aria-valuetext", String(y0))
       }
-      if (timesEl.reports) timesEl.reports.textContent = times(r1 / r0)
-      if (timesEl.convictions) timesEl.convictions.textContent = times(c1 / c0)
       if (spanEl.reports)
-        spanEl.reports.textContent = `${format.format(r0)} → ${format.format(r1)}`
+        spanEl.reports.textContent = `${y0}: ${format.format(r0)}`
       if (spanEl.convictions)
-        spanEl.convictions.textContent = `${format.format(c0)} → ${format.format(c1)}`
+        spanEl.convictions.textContent = `${y0}: ${format.format(c0)}`
       if (ratio)
         ratio.textContent = config.words.per100
           .replace("{a}", per100(c0, r0))
@@ -418,8 +408,9 @@ const count = rows.length
     font-weight: 600;
   }
 
-  /* Zwei Zahlen nebeneinander, grau und rot: so oft so viele wie damals. */
+  /* Zwei Zahlen nebeneinander, grau und rot: so viele im letzten Jahr. */
   .compare-pair {
+    container-type: inline-size;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-s);
@@ -436,7 +427,8 @@ const count = rows.length
 
   .compare-count b {
     color: var(--foreground);
-    font-size: clamp(2.6rem, 1.4rem + 4.2vw, 4.4rem);
+    /* Counts of up to six digits must fit half the card. */
+    font-size: clamp(1.7rem, 10cqi, 3.6rem);
     font-weight: var(--weight-heading);
     font-variant-numeric: tabular-nums;
     line-height: 0.95;

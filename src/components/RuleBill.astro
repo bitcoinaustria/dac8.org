@@ -97,7 +97,7 @@ const dac8Fix = corrected.find((fix) => fix.id === "dac8") ?? corrected[0]
       <p class="balance-line">
         {en
           ? "The running cost of three duties to report to the tax office, every year, as the Commission estimates it."
-          : "Laufende Kosten von drei Meldepflichten an die Steuer, jedes Jahr, nach Schätzung der Kommission."}
+          : "Laufende Kosten von drei steuerlichen Meldepflichten, jedes Jahr, nach Schätzung der Kommission."}
         <SourceRefs sources={cite(cited.costs)} language={language} />
       </p>
       <p class="balance-line">
@@ -148,13 +148,13 @@ const dac8Fix = corrected.find((fix) => fix.id === "dac8") ?? corrected[0]
       </div>
       <p class="balance-line">
         {en
-          ? `What all exchanged tax data bring a year, as the Commission estimates it: €${n(benefit.billions)} billion.`
+          ? `What all exchanged tax data brings a year, as the Commission estimates it: €${n(benefit.billions)} billion.`
           : `So viel bringen alle ausgetauschten Steuerdaten im Jahr, schätzt die Kommission: ${n(benefit.billions)} Milliarden Euro.`}
         <SourceRefs sources={cite(cited.benefit)} language={language} />
       </p>
       <p class="balance-admission">
         {en
-          ? `Measured from data are €${n(benefit.fromData)} billion, about what three of the reporting duties cost every year. The rest comes from a model.`
+          ? `Only €${n(benefit.fromData)} billion of it is backed by data, about what three of the reporting duties cost every year. The rest comes from a model.`
           : `Aus Daten belegt sind ${n(benefit.fromData)} Milliarden, etwa so viel, wie drei der Meldepflichten jedes Jahr kosten. Der Rest stammt aus einem Modell.`}
       </p>
     </li>

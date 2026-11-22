@@ -10,7 +10,8 @@ import type { Language } from "@/lib/i18n"
 // 2022/0155(COD) as of October 2026. Never word a proposal as law.
 
 type Text = Record<Language, string>
-export type Source = { label: Text; href: string }
+// EUR-Lex documents link to the reader's language, as in history.ts.
+export type Source = { label: Text; href: string | Text }
 export type Status = "decided" | "proposed" | "standard"
 
 export type NextStep = {
@@ -28,7 +29,10 @@ const eurlex = (path: string, de: string, en: string): Source => ({
 })
 const celex = (id: string, de: string, en: string): Source => ({
   label: { de, en },
-  href: `https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:${id}`,
+  href: {
+    de: `https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:${id}`,
+    en: `https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=CELEX:${id}`,
+  },
 })
 
 export const statusLabel: Record<Status, Text> = {
@@ -68,7 +72,7 @@ export const nextSteps: NextStep[] = [
     },
     text: {
       de: "Die Kommission will Steuerbehörden Zugang zu diesen Registern geben, auch für Immobilien, und zu Pensionsregistern. Der Datenschutzbeauftragte der EU verlangt engere Grenzen; zustimmen müssen alle EU-Staaten.",
-      en: "The Commission wants tax authorities to access these registers, including for real estate, and pension registers. The EU’s data protection supervisor calls for tighter limits; every EU country must agree.",
+      en: "The Commission wants tax authorities to access these registers, including for property, and pension registers. The EU’s data protection supervisor calls for tighter limits; every EU country must agree.",
     },
     sources: [
       celex(
@@ -177,13 +181,11 @@ export const rulings: Ruling[] = [
       en: "The EU Court of Justice strikes down the retention of phone and internet data, on a referral that also came from Austria; Austria’s Constitutional Court overturns it.",
     },
     sources: [
-      {
-        label: {
-          de: "EuGH C-293/12 und C-594/12",
-          en: "CJEU C-293/12 and C-594/12",
-        },
-        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:62012CJ0293",
-      },
+      celex(
+        "62012CJ0293",
+        "EuGH C-293/12 und C-594/12",
+        "CJEU C-293/12 and C-594/12",
+      ),
       {
         label: {
           de: "VfGH G 47/2012 ua",
@@ -201,13 +203,11 @@ export const rulings: Ruling[] = [
       en: "The court strikes down public access to the register of who ultimately owns companies, an anti-money-laundering rule: the interference with private life goes beyond what is necessary.",
     },
     sources: [
-      {
-        label: {
-          de: "EuGH C-37/20 und C-601/20",
-          en: "CJEU C-37/20 and C-601/20",
-        },
-        href: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX:62020CJ0037",
-      },
+      celex(
+        "62020CJ0037",
+        "EuGH C-37/20 und C-601/20",
+        "CJEU C-37/20 and C-601/20",
+      ),
     ],
   },
 ]
